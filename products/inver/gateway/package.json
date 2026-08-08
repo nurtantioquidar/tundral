@@ -18,6 +18,7 @@
     "typescript": "^5.7.0"
   },
   "dependencies": {
-    "@monet/contracts": "workspace:*"
+    "@monet/contracts": "workspace:*",
+    "effect": "^3.22.1"
   }
 }

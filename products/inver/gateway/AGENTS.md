@@ -280,6 +280,15 @@ guess model limits. Until verified, omit uncertain limits rather than publishing
 
 - Runtime: Bun.
 - Language: strict TypeScript using ES modules.
+- Effect is this module's runtime foundation. The migration is staged and in progress; read
+  `../../../docs/effect-migration.md` before writing Effect code here, and respect the stage order.
+  Migrated so far: `src/config.ts`. Everything else is still plain TypeScript — do not convert a
+  module ahead of its stage, and never mix a migration with a behavior change in one commit.
+- Configuration is defined once as `gatewayConfig` (an `Effect.Config`) in `src/config.ts`. Add new
+  settings there, not by reading `process.env` at a call site. Secrets use `Config.redacted` and are
+  unwrapped only at the `loadGatewayConfig` boundary.
+- Effect must not leak into `@monet/contracts`. That package is consumed by the Next.js web app and
+  stays framework-neutral.
 - Persistence: `bun:sqlite` with foreign keys and WAL enabled.
 - Prefer small modules with explicit interfaces over adding logic directly to `server.ts` or
   `database/gateway-database.ts`.
