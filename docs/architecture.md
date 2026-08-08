@@ -2,20 +2,29 @@
 
 ## Shape of the product
 
-Monet should feel like one product with multiple metered capabilities. The codebase is a monorepo so
-contracts, product changes, and migrations can be reviewed together, but deployables retain clear
-runtime and data boundaries.
+Monet is a line of independent products, not one product with multiple capabilities. Each product
+has its own subdomain, brand, accounts, and release schedule. `monet.sh` is an index that routes a
+visitor to the right one; it holds no state. The codebase is a monorepo so contracts, product
+changes, and migrations can be reviewed together, but deployables retain clear runtime and data
+boundaries.
 
 ```text
-Customer coding harness ───────────────► Inference gateway public API
-                                                │
-Browser ─► Web product shell ─► Control plane ──┤ private, authenticated commands
-   │              │                 │            │
-   │              │                 │            └► Future feature services
-   │              │                 └► identity, entitlements, payments
+                    monet.sh (hub) ── links only ──► product subdomains
+                                                      │
+Customer coding harness ───────────────► Inver gateway public API
+                                                      │
+Browser ─► inver.monet.sh ─► Control plane ───────────┤ private, authenticated commands
+   │              │              │                     │
+   │              │              │                     └► Future feature services
+   │              │              └► identity, entitlements, payments
    │              └► onboarding, usage, keys, feature UIs
    └► never calls /internal service routes directly
+
+Browser ─► regretz.monet.sh (placeholder; no backend, no accounts)
 ```
+
+Products share the design-token layer in `packages/ui` and nothing else at runtime. They do not
+share sessions, accounts, or databases. A signed-in Inver customer is not signed in to Regretz.
 
 The control plane is a target boundary, not a requirement for the current pilot. Today the inference
 gateway remains the source of truth for its customer password accounts, keys, credits, reservations,
@@ -45,7 +54,8 @@ failures must remain isolated.
 
 ## Frontend direction
 
-Use one web application with feature-oriented routes, for example:
+Use one web application per product, on that product's own subdomain, with feature-oriented routes.
+Inver's, for example:
 
 ```text
 /
@@ -57,13 +67,17 @@ Use one web application with feature-oriented routes, for example:
 /admin/*
 ```
 
-The durable route behavior, interaction states, content hierarchy, and BFF data semantics are
-defined in the [frontend product contract](frontend-product-contract.md). That contract deliberately
-allows the visual system and component architecture to be redesigned.
+The hub at `monet.sh` is deliberately not one of these. It has a single route, no backend, and no
+session. Its only content is the product list; anything else duplicated there would drift from the
+product that owns it.
 
-The web backend acts as a backend-for-frontend. It authenticates browser sessions and calls private
-service APIs with service credentials. It must not expose operator credentials or relay unrestricted
-paths to internal services.
+The durable route behavior, interaction states, content hierarchy, and BFF data semantics for Inver
+are defined in the [frontend product contract](frontend-product-contract.md). That contract
+deliberately allows the visual system and component architecture to be redesigned.
+
+A product's web backend acts as a backend-for-frontend. It authenticates browser sessions and calls
+private service APIs with service credentials. It must not expose operator credentials or relay
+unrestricted paths to internal services.
 
 The web BFF uses separate gateway credentials for customer self-service and operator administration.
 The customer credential cannot issue credits, freeze customers, enumerate all customers, or change
@@ -77,15 +91,16 @@ gateway's narrow internal contracts; the browser never receives the gateway admi
 ciphertext, or provider API key. Public model routes may fail over only between capabilities with
 the same canonical model identity.
 
-A feature may contribute pages, components, and backend calls inside the same web app. Create a
-separate frontend only if the feature has a separate brand, audience, security boundary, or release
-lifecycle.
+A feature may contribute pages, components, and backend calls inside its product's web app. Create a
+separate frontend only when the work is genuinely a separate product — its own brand, audience,
+security boundary, and release lifecycle. That test is what makes Regretz a product rather than a
+route inside Inver.
 
 ## Evolution stages
 
 ### Stage 1: controlled pilot
 
-- One inference-gateway process.
+- One Inver gateway process.
 - SQLite ledger on persistent disk.
 - Offline promotional/payment credits.
 - Operator administration over localhost or a private tunnel.
@@ -93,7 +108,7 @@ lifecycle.
 
 ### Stage 2: product shell
 
-- Use `apps/web` for signup, usage, API-key management, documentation, and operator workflows.
+- Use `products/inver/web` for signup, usage, API-key management, documentation, and operator workflows.
 - Keep the inference ledger authoritative; access it through authenticated internal commands.
 - Maintain shared request/response schemas and boundary validators in `packages/contracts`.
 
@@ -108,7 +123,7 @@ lifecycle.
 ### Stage 4: measured scale
 
 - Move from SQLite/in-memory coordination to Postgres and Redis or a durable queue before running
-  multiple inference-gateway instances.
+  multiple Inver gateway instances.
 - Add capacity-aware queues, monitoring, alerting, and upstream-pool health.
 - Scale based on observed active concurrency, not registered-user count.
 

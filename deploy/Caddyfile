@@ -1,0 +1,54 @@
+# Monet edge routing — the single source of truth for which host reaches which process.
+#
+# Hosts and local dev ports:
+#   monet.sh            -> hub          127.0.0.1:3000
+#   inver.monet.sh      -> inver web    127.0.0.1:3001
+#   regretz.monet.sh    -> regretz web  127.0.0.1:3002
+#   {$GATEWAY_DOMAIN}   -> inver gateway 127.0.0.1:8080   (public OpenAI-compatible API)
+#
+# The gateway block is the only one that terminates a public API. Its /internal/* and /metrics
+# guard is a non-negotiable invariant: those routes are operator-only and must never be publicly
+# routable. Do not add a web host that proxies to :8080.
+
+(monet_common) {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+}
+
+{$HUB_DOMAIN:monet.sh} {
+	import monet_common
+	reverse_proxy 127.0.0.1:3000
+}
+
+{$INVER_WEB_DOMAIN:inver.monet.sh} {
+	import monet_common
+	reverse_proxy 127.0.0.1:3001
+}
+
+{$REGRETZ_WEB_DOMAIN:regretz.monet.sh} {
+	import monet_common
+	reverse_proxy 127.0.0.1:3002
+}
+
+{$GATEWAY_DOMAIN} {
+	import monet_common
+
+	# Operator surface. Public traffic must never reach these paths.
+	@private path /internal/* /metrics
+	respond @private 404
+
+	request_body {
+		max_size 10MB
+	}
+
+	reverse_proxy 127.0.0.1:8080 {
+		health_uri /ready
+		health_interval 30s
+	}
+}

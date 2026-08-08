@@ -1,0 +1,89 @@
+/* regretz.monet.sh — placeholder surface. Uses the shared Monet token layer so the product reads as
+ * part of the same line before it has a visual identity of its own. */
+
+@import "@monet/ui/tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-control);
+}
+
+.shell {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: var(--space-3xl) var(--space-lg) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  min-height: 100dvh;
+}
+
+.wordmark {
+  margin: 0 0 var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.statement {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display-s);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: var(--space-md) 0 0;
+  max-width: 46ch;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+.foot {
+  margin-top: auto;
+  padding-top: var(--space-lg);
+  border-top: var(--rule-hairline);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-neutral);
+}
+
+.foot__back {
+  color: var(--color-accent);
+}
+
+.foot__host {
+  color: var(--color-muted);
+}

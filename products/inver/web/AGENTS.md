@@ -1,10 +1,13 @@
-# Monet Web Agent Guide
+# Inver Web Agent Guide
 
 ## Project purpose
 
-This module is Monet's product shell: the public landing page, the customer console, and the
-operator (admin) console for the inference gateway. It is a backend-for-frontend — the browser
-never calls the gateway directly; Next.js server code does, with server-held credentials.
+This module serves `inver.monet.sh`: Inver's public landing page, its customer console, and its
+operator (admin) console. It is a backend-for-frontend — the browser never calls the gateway
+directly; Next.js server code does, with server-held credentials.
+
+This is Inver's surface, not Monet's. The product-line index at `monet.sh` (`apps/hub`) links here
+and owns nothing else; do not move Inver's landing content, pricing, or sign-in there.
 
 Follow the repository-root `AGENTS.md` first. Keep this application independently deployable and do
 not import source files from sibling applications.
@@ -83,9 +86,13 @@ production must provide the scoped value.
 
 ## Design system
 
-The current implementation uses tokens in `src/app/tokens.css`, but its theme, component styling,
-and page composition are not contractual. A frontend redesign may replace them if it remains
-coherent across public, customer, and operator surfaces.
+Design tokens live in `@monet/ui` and are shared with every other Monet frontend; this app's theme,
+component styling, and page composition are not contractual. A frontend redesign may replace the
+styling if it remains coherent across public, customer, and operator surfaces.
+
+Changing a token changes `monet.sh` and `regretz.monet.sh` too. Restyle this app in its own
+`src/app/globals.css`; reach into `packages/ui` only for a deliberate brand-wide change, and then
+verify every consumer. See `packages/ui/AGENTS.md`.
 
 - Preserve the route behavior, content hierarchy, state handling, money semantics, and security
   boundaries in `../../docs/frontend-product-contract.md`.
@@ -102,7 +109,7 @@ coherent across public, customer, and operator surfaces.
 ## Commands
 
 ```bash
-bun run dev        # dev server on :3000 (expects the gateway on GATEWAY_URL)
+bun run dev        # dev server on :3001 (expects the gateway on GATEWAY_URL)
 bun run typecheck  # required verification
 bun run build      # production build
 ```

@@ -4,11 +4,11 @@
 
 Monet separates browser identity from inference credentials:
 
-- customers register and sign in to `apps/web` with an email address and password;
+- customers register and sign in to `products/inver/web` with an email address and password;
 - the web backend keeps a signed, `httpOnly` customer session containing the gateway customer ID;
 - API keys are used only by coding harnesses against the inference gateway's public `/v1/*`
   endpoints;
-- `apps/web` calls narrow `/internal/*` gateway contracts with its server-held admin credential.
+- `products/inver/web` calls narrow `/internal/*` gateway contracts with its server-held admin credential.
 
 The browser never receives the gateway admin credential and never calls an internal gateway route.
 The inference gateway remains the sole writer for customer accounts, API keys, balances,

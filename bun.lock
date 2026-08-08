@@ -5,8 +5,36 @@
     "": {
       "name": "monet",
     },
-    "apps/inference-gateway": {
-      "name": "@monet/inference-gateway",
+    "apps/hub": {
+      "name": "@monet/hub",
+      "version": "0.1.0",
+      "dependencies": {
+        "@monet/ui": "workspace:*",
+        "next": "^15.3.4",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+      },
+      "devDependencies": {
+        "@types/node": "^22",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "typescript": "^5.7.0",
+      },
+    },
+    "packages/contracts": {
+      "name": "@monet/contracts",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "typescript": "^5.7.0",
+      },
+    },
+    "packages/ui": {
+      "name": "@monet/ui",
+      "version": "0.1.0",
+    },
+    "products/inver/gateway": {
+      "name": "@monet/inver-gateway",
       "version": "0.1.0",
       "dependencies": {
         "@monet/contracts": "workspace:*",
@@ -16,11 +44,12 @@
         "typescript": "^5.7.0",
       },
     },
-    "apps/web": {
-      "name": "@monet/web",
+    "products/inver/web": {
+      "name": "@monet/inver-web",
       "version": "0.1.0",
       "dependencies": {
         "@monet/contracts": "workspace:*",
+        "@monet/ui": "workspace:*",
         "next": "^15.3.4",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
@@ -33,11 +62,19 @@
         "typescript": "^5.7.0",
       },
     },
-    "packages/contracts": {
-      "name": "@monet/contracts",
+    "products/regretz/web": {
+      "name": "@monet/regretz-web",
       "version": "0.1.0",
+      "dependencies": {
+        "@monet/ui": "workspace:*",
+        "next": "^15.3.4",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+      },
       "devDependencies": {
-        "@types/bun": "latest",
+        "@types/node": "^22",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
         "typescript": "^5.7.0",
       },
     },
@@ -97,9 +134,15 @@
 
     "@monet/contracts": ["@monet/contracts@workspace:packages/contracts"],
 
-    "@monet/inference-gateway": ["@monet/inference-gateway@workspace:apps/inference-gateway"],
+    "@monet/hub": ["@monet/hub@workspace:apps/hub"],
 
-    "@monet/web": ["@monet/web@workspace:apps/web"],
+    "@monet/inver-gateway": ["@monet/inver-gateway@workspace:products/inver/gateway"],
+
+    "@monet/inver-web": ["@monet/inver-web@workspace:products/inver/web"],
+
+    "@monet/regretz-web": ["@monet/regretz-web@workspace:products/regretz/web"],
+
+    "@monet/ui": ["@monet/ui@workspace:packages/ui"],
 
     "@next/env": ["@next/env@15.5.21", "", {}, "sha512-hjJI/GfrjWHgNguRIBzItjRRu0m3Nrz17GhxsjuHfjIvg9hyg3239REd2dpI+bpMTFuVrVprHzEQ19m++cDtbw=="],
 

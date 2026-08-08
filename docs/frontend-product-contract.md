@@ -41,19 +41,19 @@ Browser
   │
   │ customer/admin session + server actions
   ▼
-apps/web (Next.js backend-for-frontend)
+products/inver/web (Next.js backend-for-frontend)
   │
   │ scoped GATEWAY_WEB_KEY / GATEWAY_ADMIN_KEY, server-side only
   ▼
-apps/inference-gateway /internal/* contracts
+products/inver/gateway /internal/* contracts
   │
   └── sole writer for accounts, keys, credits, limits, usage, routes, and ledger
 
-Customer harness ── customer API key ──► apps/inference-gateway /v1/*
+Customer harness ── customer API key ──► products/inver/gateway /v1/*
 ```
 
 Browser code must never fetch the gateway, hold the gateway admin key, or receive upstream
-credentials. `apps/web/src/server/gateway-client.ts` is the executable BFF adapter;
+credentials. `products/inver/web/src/server/gateway-client.ts` is the executable BFF adapter;
 `packages/contracts` is the source of truth for cross-application JSON shapes. If an HTTP contract
 changes, update the contracts package, gateway producer, BFF adapter, this document's semantics, and
 every consuming view in the same change.

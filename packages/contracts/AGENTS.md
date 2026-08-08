@@ -3,7 +3,7 @@
 ## Purpose
 
 `@monet/contracts` contains the explicit, transport-level HTTP contracts shared by independently
-deployable Monet applications. It exists because both `apps/inference-gateway` and `apps/web`
+deployable Monet applications. It exists because both `products/inver/gateway` and `products/inver/web`
 consume the same request and response shapes.
 
 Follow the repository-root `AGENTS.md` first. `CLAUDE.md` must remain a relative symlink to this

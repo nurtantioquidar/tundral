@@ -5,15 +5,20 @@
   "packageManager": "bun@1.3.13",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "products/*/*"
   ],
   "scripts": {
-    "dev:inference": "bun run --filter @monet/inference-gateway dev",
-    "dev:web": "bun run --filter @monet/web dev",
-    "start:inference": "bun run --filter @monet/inference-gateway start",
-    "start:web": "bun run --filter @monet/web start",
-    "test": "bun run --filter @monet/contracts test && bun run --filter @monet/inference-gateway test",
-    "typecheck": "bun run --filter @monet/contracts typecheck && bun run --filter @monet/inference-gateway typecheck && bun run --filter @monet/web typecheck",
-    "check": "bun run --filter @monet/contracts check && bun run --filter @monet/inference-gateway check && bun run --filter @monet/web check"
+    "dev:hub": "bun run --filter @monet/hub dev",
+    "dev:inver": "bun run --filter @monet/inver-web dev",
+    "dev:inver-gateway": "bun run --filter @monet/inver-gateway dev",
+    "dev:regretz": "bun run --filter @monet/regretz-web dev",
+    "start:hub": "bun run --filter @monet/hub start",
+    "start:inver": "bun run --filter @monet/inver-web start",
+    "start:inver-gateway": "bun run --filter @monet/inver-gateway start",
+    "start:regretz": "bun run --filter @monet/regretz-web start",
+    "test": "bun run --filter @monet/contracts test && bun run --filter @monet/inver-gateway test",
+    "typecheck": "bun run --filter @monet/contracts typecheck && bun run --filter @monet/inver-gateway typecheck && bun run --filter @monet/inver-web typecheck && bun run --filter @monet/hub typecheck && bun run --filter @monet/regretz-web typecheck",
+    "check": "bun run --filter @monet/contracts check && bun run --filter @monet/inver-gateway check && bun run --filter @monet/inver-web check && bun run --filter @monet/hub check && bun run --filter @monet/regretz-web check"
   }
 }

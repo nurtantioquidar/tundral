@@ -1,0 +1,16 @@
+{
+  "name": "@monet/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./tokens.css"
+  },
+  "files": [
+    "tokens.css"
+  ],
+  "scripts": {
+    "typecheck": "true",
+    "check": "true"
+  }
+}

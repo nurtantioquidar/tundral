@@ -1,7 +1,7 @@
 /* Hallmark · macrostructure: Narrative Workflow · theme: Coral · tone: utilitarian · anchor hue: 30 warm coral
  * nav: N5 floating pill (public) + bordered bar (console) · footer: Ft5 statement — see tokens.css for the full stamp */
 
-@import "./tokens.css";
+@import "@monet/ui/tokens.css";
 
 /* ---------- Base ---------- */
 
