@@ -1,0 +1,23 @@
+{
+  "name": "@monet/inference-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot src/server.ts",
+    "start": "bun src/server.ts",
+    "test": "bun test",
+    "test:integration": "RUN_HTTP_INTEGRATION=true bun test test/http-integration.test.ts",
+    "typecheck": "bunx tsc --noEmit",
+    "check": "bun run typecheck && bun test",
+    "backup": "./scripts/backup-db.sh",
+    "bootstrap:codex": "bun scripts/bootstrap-codex-upstream.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "@monet/contracts": "workspace:*"
+  }
+}

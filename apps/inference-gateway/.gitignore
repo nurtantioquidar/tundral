@@ -1,0 +1,7 @@
+.env
+gateway.db
+gateway.db-shm
+gateway.db-wal
+backups/
+node_modules/
+

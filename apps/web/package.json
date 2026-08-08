@@ -1,0 +1,26 @@
+{
+  "name": "@monet/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run typecheck"
+  },
+  "dependencies": {
+    "@monet/contracts": "workspace:*",
+    "next": "^15.3.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "server-only": "^0.0.1",
+    "typescript": "^5.7.0"
+  }
+}

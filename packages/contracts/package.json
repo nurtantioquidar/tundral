@@ -1,0 +1,22 @@
+{
+  "name": "@monet/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./customer": "./src/customer.ts",
+    "./pricing": "./src/pricing.ts",
+    "./upstreams": "./src/upstreams.ts",
+    "./validation": "./src/validation.ts"
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit",
+    "check": "bun run typecheck && bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.0"
+  }
+}

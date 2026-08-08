@@ -1,0 +1,25 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "coding-gateway/gpt-5.6-luna-medium",
+  "provider": {
+    "coding-gateway": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Local Coding Gateway",
+      "options": {
+        "baseURL": "http://127.0.0.1:8080/v1",
+        "apiKey": "{env:CODING_GATEWAY_API_KEY}"
+      },
+      "models": {
+        "gpt-5.6-luna-low": {
+          "name": "GPT-5.6 Luna Low"
+        },
+        "gpt-5.6-luna-medium": {
+          "name": "GPT-5.6 Luna Medium"
+        },
+        "gpt-5.5": {
+          "name": "GPT-5.5"
+        }
+      }
+    }
+  }
+}

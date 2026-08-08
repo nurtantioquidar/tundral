@@ -1,0 +1,34 @@
+[
+  {
+    "date": "2026-08-03",
+    "macrostructure": "Narrative Workflow (structure preserved — theme-layer redesign)",
+    "theme": "custom",
+    "theme_axes": "dark / geist-sans / warm",
+    "vibe": "opencode terminal — near-black, flat borders, amber signal",
+    "enrichment": "none (typography + one real code artifact)",
+    "nav": "N5 floating pill (unchanged)",
+    "footer": "Ft5 statement (unchanged)",
+    "scope": "app",
+    "brief": "Monet · dark-mode retheme of the whole web app inspired by opencode; tokens.css swapped, markup untouched"
+  },
+  {
+    "date": "2026-07-25",
+    "macrostructure": "Narrative Workflow",
+    "theme": "Coral",
+    "theme_axes": "light / geist-sans / warm",
+    "enrichment": "none (typography + one real code artifact)",
+    "nav": "N5 floating pill",
+    "footer": "Ft5 statement",
+    "brief": "Monet · landing rebuilt off the templated hero/3-up/steps rhythm; pricing now read live from the gateway rate card"
+  },
+  {
+    "date": "2026-07-24",
+    "macrostructure": "Stat-Led",
+    "theme": "Cobalt",
+    "theme_axes": "light / grotesk-sans / cool",
+    "enrichment": "none (graphite quickstart band)",
+    "nav": "N13 inline ⌘K pill",
+    "footer": "Ft2 inline single line",
+    "brief": "Monet · prepaid OpenAI-compatible inference gateway — landing + consoles"
+  }
+]

@@ -1,0 +1,120 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Narrative Workflow (structure preserved) · theme: custom "terminal-dark"
+ * redesign 2026-08-03: theme-layer swap only — the Coral structure, markup, and class system are untouched.
+ * vibe: "opencode terminal — near-black, flat borders, mono data register, one amber signal"
+ * paper oklch(17.5% 0.004 250) · accent oklch(76% 0.14 60) warm-amber · display/body Geist · outlier Geist Mono
+ * theme axes: dark / geist-sans / warm — differs from Coral (light) on paper band, from Cobalt (light/cool) on two axes
+ * elevation: borders over shadows (terminal-flat); radii stepped down 8/12 → 4/8 for the sharper opencode read
+ * contrast spot-checks (WCAG AA on --color-paper): ink 14.9:1 · ink-2 11.2:1 · neutral 6.0:1 · muted 4.9:1
+ *   accent 6.6:1 · error 5.4:1 · ok 6.4:1 · warn 7.8:1 · accent-ink on accent 5.6:1 — verified in-browser at Step 7
+ * nav: N5 floating pill (unchanged) · footer: Ft5 statement (unchanged)
+ *
+ * Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4 */
+
+:root {
+  color-scheme: dark;
+
+  /* Paper and ink — neutral near-black planes, separated by lightness steps and hairline rules,
+   * never by shadow. Ink is faintly warm so long text doesn't read blue-cold. */
+  --color-paper: oklch(17.5% 0.004 250);
+  --color-paper-2: oklch(20.5% 0.005 250);
+  --color-paper-3: oklch(24.5% 0.006 250);
+  --color-rule: oklch(29% 0.006 250);
+  --color-rule-2: oklch(38% 0.008 250);
+  --color-neutral: oklch(72% 0.008 250);
+  --color-muted: oklch(67% 0.01 250);
+  --color-ink: oklch(93% 0.004 90);
+  --color-ink-2: oklch(84% 0.006 90);
+
+  /* The code artifact sits on a plane darker than the page — a terminal inside the terminal —
+   * and is delimited by its rule, not a shadow. */
+  --color-carbon: oklch(13% 0.003 250);
+  --color-carbon-2: oklch(16% 0.004 250);
+  --color-carbon-rule: oklch(32% 0.008 250);
+  --color-carbon-ink: oklch(93% 0.004 90);
+  --color-carbon-muted: oklch(70% 0.01 250);
+
+  /* The one signal — terminal amber. Light enough to carry text on near-black; dark ink on filled
+   * controls. Soft variants are dark tints (backgrounds), not pastels. */
+  --color-accent: oklch(76% 0.14 60);
+  --color-accent-deep: oklch(69% 0.14 55);
+  --color-accent-ink: oklch(16% 0.02 60);
+  --color-accent-soft: oklch(27% 0.045 60);
+  --color-accent-bright: oklch(80% 0.14 65); /* accent on carbon */
+  --color-focus: oklch(76% 0.14 60);
+  /* Error keeps clear distance from the amber accent (ΔH ≈ 35, higher chroma) so destructive
+   * controls never read as brand. */
+  --color-error: oklch(70% 0.19 25);
+  --color-error-soft: oklch(25% 0.06 25);
+  --color-ok: oklch(76% 0.13 150);
+  --color-ok-soft: oklch(25% 0.05 150);
+  /* Amber-adjacent warn moves to true yellow at 90 and higher lightness, so "staged, not live"
+   * separates from both the accent and success. */
+  --color-warn: oklch(82% 0.12 90);
+  --color-warn-soft: oklch(26% 0.05 90);
+
+  /* Type — Geist for display and body, Geist Mono as the data register reserved for code, masked
+   * secrets, IDs, and tabular numerics. The dark theme leans on the mono register for its
+   * terminal identity rather than swapping faces. */
+  --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+
+  /* Scale — major third from 16px */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-code: 0.8125rem;
+  --text-base: 1rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5625rem;
+  --text-xl: 1.9531rem;
+  --text-2xl: 2.4414rem;
+  --text-3xl: 3.0518rem;
+  --text-display-s: clamp(1.75rem, 2.5vw + 0.75rem, 2.75rem);
+  --text-display: clamp(2.5rem, 4vw + 1rem, 4.5rem); /* 21–50 char headlines */
+  --text-statement: clamp(1.75rem, 4vw + 0.5rem, 3.25rem); /* Ft5 closing line */
+  --text-stage: clamp(1.5rem, 1.5vw + 1rem, 2.25rem); /* F4 stage headings */
+  --text-micro: 0.625rem; /* chart axis labels only */
+
+  /* Space — 4pt scale */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 200ms;
+  --dur-long: 420ms;
+
+  /* Overlays — alpha variants of paper/black, tokenised */
+  --color-nav-veil: oklch(17.5% 0.004 250 / 0.82);
+  --color-scrim: oklch(5% 0 0 / 0.6);
+
+  /* Geometry — terminal-sharp: 4px controls, 8px cards, pills survive only on public CTAs.
+   * Elevation is carried by rules and paper steps; shadows are kept only as faint grounding. */
+  --radius-control: 4px;
+  --radius-card: 8px;
+  --radius-pill: 999px;
+  --rule-hairline: 1px solid var(--color-rule);
+  --shadow-whisper: 0 1px 2px oklch(0% 0 0 / 0.35);
+  --shadow-pill: 0 8px 24px -12px oklch(0% 0 0 / 0.5);
+  --shadow-modal: 0 12px 40px -12px oklch(0% 0 0 / 0.6);
+
+  /* Z scale */
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+}
