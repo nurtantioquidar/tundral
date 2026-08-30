@@ -242,7 +242,7 @@ impl ContextManager {
                 break; // never include the system message
             }
             tail_bytes += message.approximate_bytes();
-            if matches!(message, ChatMessage::User { .. }) {
+            if matches!(message, ChatMessage::User { .. }) && !is_checkpoint(message) {
                 user_turns += 1;
             }
             start = index;
@@ -294,7 +294,10 @@ impl ContextManager {
             model,
             messages: summarizer_messages,
             tools: tools.to_vec(),
-            max_output_tokens: self.config.max_summary_tokens,
+            // Thinking tokens count against the output budget on DeepSeek
+            // reasoning models; give the summarizer headroom so reasoning
+            // cannot starve the narrative itself.
+            max_output_tokens: self.config.max_summary_tokens.saturating_add(4_096),
             effort,
         };
         let turn = provider.stream(&request, cancel, &mut NullSink).await?;
@@ -328,27 +331,44 @@ impl ContextManager {
     /// `keep_last_turns`-th user message from the end. Starting at a user
     /// message guarantees no orphaned tool results and that every retained
     /// assistant tool-call message still carries its reasoning_content.
+    /// A previous checkpoint is never counted as a user turn and never
+    /// retained — the new checkpoint supersedes it (they must not stack).
     fn summary_tail_start(&self, messages: &[ChatMessage]) -> usize {
         let mut user_turns = 0usize;
+        let mut fallback_start = messages.len().min(1);
         for (index, message) in messages.iter().enumerate().rev() {
             if index == 0 {
                 break;
             }
+            if is_checkpoint(message) {
+                // The old checkpoint (and anything before it) must not enter
+                // the tail even when the turn budget is not yet satisfied.
+                fallback_start = index + 1;
+                break;
+            }
             if matches!(message, ChatMessage::User { .. }) {
                 user_turns += 1;
+                fallback_start = index;
                 if user_turns >= self.config.keep_last_turns {
                     return index;
                 }
             }
         }
-        // Fewer user turns than the keep budget: keep everything after system.
-        1.min(messages.len())
+        // Fewer real user turns than the keep budget: keep everything after
+        // the system message (and after any superseded checkpoint).
+        fallback_start
     }
 
     /// Halve the retained tail after a provider context-length error.
     pub fn shrink_keep_last_turns(&mut self) {
         self.config.keep_last_turns = (self.config.keep_last_turns / 2).max(1);
     }
+}
+
+const CHECKPOINT_PREFIX: &str = "CONTEXT CHECKPOINT";
+
+fn is_checkpoint(message: &ChatMessage) -> bool {
+    matches!(message, ChatMessage::User { content } if content.starts_with(CHECKPOINT_PREFIX))
 }
 
 /// Placeholder text for an elided tool result: names the originating call so
@@ -647,6 +667,67 @@ mod tests {
             recorded[0].last(),
             Some(ChatMessage::User { content }) if content.contains("compacted")
         ));
+    }
+
+    #[tokio::test]
+    async fn repeated_summarization_never_stacks_checkpoints() {
+        // keep_last_turns exceeds the available user turns: the tail budget is
+        // never satisfied, which previously let the old checkpoint be counted
+        // as a user turn and retained alongside the new one.
+        let mut manager = ContextManager::new(ContextConfig {
+            keep_last_turns: 10,
+            ..ContextConfig::default()
+        });
+        let mut messages = vec![
+            ChatMessage::System {
+                content: "system".into(),
+            },
+            ChatMessage::User {
+                content: "first ask".into(),
+            },
+            ChatMessage::Assistant(AssistantMessage {
+                content: Some("first answer".into()),
+                reasoning_content: None,
+                tool_calls: vec![],
+            }),
+        ];
+        manager.ledger.rebase(&messages);
+        let provider = ScriptedProvider::new(vec![
+            AssistantMessage {
+                content: Some("narrative one".into()),
+                reasoning_content: None,
+                tool_calls: vec![],
+            },
+            AssistantMessage {
+                content: Some("narrative two".into()),
+                reasoning_content: None,
+                tool_calls: vec![],
+            },
+        ]);
+        for _ in 0..2 {
+            manager
+                .summarize(
+                    &mut messages,
+                    &crate::tools::tool_schemas(),
+                    &provider,
+                    Model::DeepseekV4Flash,
+                    ReasoningEffort::High,
+                    &CancellationToken::new(),
+                )
+                .await
+                .unwrap();
+        }
+        let checkpoints = messages.iter().filter(|m| is_checkpoint(m)).count();
+        assert_eq!(checkpoints, 1, "checkpoints stacked: {messages:?}");
+        assert!(matches!(
+            &messages[1],
+            ChatMessage::User { content } if content.contains("narrative two")
+        ));
+        // The real conversation tail survived both compactions.
+        assert!(messages.iter().any(|m| matches!(
+            m,
+            ChatMessage::User { content } if content == "first ask"
+        )));
     }
 
     #[test]
