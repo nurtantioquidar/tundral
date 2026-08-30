@@ -31,7 +31,12 @@ pub struct ContextConfig {
     /// smaller rewrites are worse than leaving the cache prefix intact.
     pub min_savings_fraction: f64,
     pub protected_tail_tokens: u64,
+    /// Maximum user turns kept verbatim by summarization — a preference, not
+    /// a floor: the tail is always capped by `tail_budget_fraction` so a few
+    /// giant turns can never leave the rebuilt history over threshold.
     pub keep_last_turns: usize,
+    /// Hard cap on the verbatim tail as a fraction of the effective window.
+    pub tail_budget_fraction: f64,
     pub max_summary_tokens: u32,
 }
 
@@ -47,6 +52,7 @@ impl Default for ContextConfig {
             min_savings_fraction: 0.25,
             protected_tail_tokens: 40_000,
             keep_last_turns: 6,
+            tail_budget_fraction: 0.35,
             max_summary_tokens: 2_000,
         }
     }
@@ -230,9 +236,12 @@ impl ContextManager {
         })
     }
 
-    /// First message index of the protected tail: at least the last
-    /// `protected_tail_tokens` worth of messages AND the last
-    /// `keep_last_turns` user turns stay verbatim.
+    /// First message index of the elision-protected tail: the last
+    /// `protected_tail_tokens` worth of messages, and never less than the
+    /// entire latest user turn (its tool results may be needed for the very
+    /// next reply). Deliberately NOT a multi-turn floor: when single turns
+    /// carry huge tool outputs, a turn-count floor would protect nearly the
+    /// whole transcript and starve elision into expensive summarization.
     fn protected_tail_start(&self, messages: &[ChatMessage]) -> usize {
         let mut tail_bytes: u64 = 0;
         let mut user_turns = 0usize;
@@ -247,7 +256,7 @@ impl ContextManager {
             }
             start = index;
             if self.ledger.tokens_for_bytes(tail_bytes) >= self.config.protected_tail_tokens
-                && user_turns >= self.config.keep_last_turns
+                && user_turns >= 1
             {
                 break;
             }
@@ -327,36 +336,51 @@ impl ContextManager {
         })
     }
 
-    /// The verbatim tail kept after summarization: starts at the
-    /// `keep_last_turns`-th user message from the end. Starting at a user
-    /// message guarantees no orphaned tool results and that every retained
-    /// assistant tool-call message still carries its reasoning_content.
-    /// A previous checkpoint is never counted as a user turn and never
-    /// retained — the new checkpoint supersedes it (they must not stack).
+    /// The verbatim tail kept after summarization: up to `keep_last_turns`
+    /// user turns, hard-capped by `tail_budget_fraction` of the effective
+    /// window so the rebuilt history is guaranteed to land well below the
+    /// compact threshold (a turn-count floor here caused summarize thrash:
+    /// giant turns kept the rebuilt history over threshold, forcing another
+    /// full-miss summarize on every provider call). The tail always starts at
+    /// a user message (no orphaned tool results, reasoning_content retained)
+    /// and always includes at least the latest user turn. A previous
+    /// checkpoint is never counted and never retained — the new checkpoint
+    /// supersedes it.
     fn summary_tail_start(&self, messages: &[ChatMessage]) -> usize {
+        let tail_budget_tokens =
+            (self.config.effective_window() as f64 * self.config.tail_budget_fraction) as u64;
+        let mut tail_bytes: u64 = 0;
         let mut user_turns = 0usize;
-        let mut fallback_start = messages.len().min(1);
+        // Default to an empty tail; never fall back to a position that would
+        // re-include the system message or a superseded checkpoint.
+        let mut chosen = messages.len();
+        let mut turn_bytes: u64 = 0;
         for (index, message) in messages.iter().enumerate().rev() {
             if index == 0 {
                 break;
             }
             if is_checkpoint(message) {
-                // The old checkpoint (and anything before it) must not enter
-                // the tail even when the turn budget is not yet satisfied.
-                fallback_start = index + 1;
                 break;
             }
+            turn_bytes += message.approximate_bytes();
             if matches!(message, ChatMessage::User { .. }) {
+                // A complete turn (this user message through the last counted
+                // message) is included only if it fits the budget — except the
+                // latest turn, which is always kept.
+                let projected = tail_bytes + turn_bytes;
+                if user_turns > 0 && self.ledger.tokens_for_bytes(projected) > tail_budget_tokens {
+                    break;
+                }
                 user_turns += 1;
-                fallback_start = index;
+                tail_bytes = projected;
+                turn_bytes = 0;
+                chosen = index;
                 if user_turns >= self.config.keep_last_turns {
-                    return index;
+                    break;
                 }
             }
         }
-        // Fewer real user turns than the keep budget: keep everything after
-        // the system message (and after any superseded checkpoint).
-        fallback_start
+        chosen
     }
 
     /// Halve the retained tail after a provider context-length error.
@@ -667,6 +691,70 @@ mod tests {
             recorded[0].last(),
             Some(ChatMessage::User { content }) if content.contains("compacted")
         ));
+    }
+
+    #[tokio::test]
+    async fn summarize_tail_is_capped_by_token_budget_not_turn_count() {
+        // Five giant turns with keep_last_turns=6: a turn-count floor would
+        // keep everything and leave the rebuilt history over threshold
+        // (summarize thrash). The token budget must cap the tail instead.
+        let mut manager = ContextManager::new(ContextConfig {
+            window_tokens: 20_000,
+            output_reserve_tokens: 0,
+            safety_margin_tokens: 0,
+            keep_last_turns: 6,
+            tail_budget_fraction: 0.3,
+            ..ContextConfig::default()
+        });
+        let mut messages = vec![ChatMessage::System {
+            content: "system".into(),
+        }];
+        for index in 0..5 {
+            messages.push(ChatMessage::User {
+                content: format!("turn {index}"),
+            });
+            messages.push(ChatMessage::Assistant(AssistantMessage {
+                content: None,
+                reasoning_content: Some("r".into()),
+                tool_calls: vec![tool_call(
+                    &format!("c{index}"),
+                    "read_file",
+                    r#"{"path":"big.rs"}"#,
+                )],
+            }));
+            messages.push(ChatMessage::Tool {
+                tool_call_id: format!("c{index}"),
+                content: "x".repeat(30_000), // ~7.5k tokens per turn
+            });
+        }
+        manager.ledger.rebase(&messages);
+        let provider = ScriptedProvider::new(vec![AssistantMessage {
+            content: Some("summary".into()),
+            reasoning_content: None,
+            tool_calls: vec![],
+        }]);
+        let outcome = manager
+            .summarize(
+                &mut messages,
+                &crate::tools::tool_schemas(),
+                &provider,
+                Model::DeepseekV4Flash,
+                ReasoningEffort::High,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        // Only the latest giant turn fits the 6k-token budget.
+        let user_turns = messages
+            .iter()
+            .filter(|m| matches!(m, ChatMessage::User { .. }) && !is_checkpoint(m))
+            .count();
+        assert_eq!(user_turns, 1, "tail must be budget-capped: {messages:?}");
+        assert!(matches!(
+            &messages[2],
+            ChatMessage::User { content } if content == "turn 4"
+        ));
+        assert!(outcome.after_tokens < outcome.before_tokens / 2);
     }
 
     #[tokio::test]
