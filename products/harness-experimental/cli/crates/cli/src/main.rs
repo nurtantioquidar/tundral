@@ -64,6 +64,11 @@ struct Cli {
     #[arg(short = 'p', long)]
     prompt: Option<String>,
 
+    /// With --prompt: suppress streaming and emit one machine-readable JSON
+    /// result on stdout. Requires --auto or --read-only (no prompts).
+    #[arg(long)]
+    json: bool,
+
     /// Override the DeepSeek endpoint (or set DEEPSEEK_BASE_URL).
     #[arg(long)]
     base_url: Option<String>,
@@ -173,6 +178,47 @@ async fn main() -> Result<()> {
     let show_reasoning = !cli.quiet_reasoning;
     if let Some(prompt) = cli.prompt {
         let mut agent = agent;
+        if cli.json {
+            if agent.permission_mode() == PermissionMode::Ask {
+                bail!("--json cannot prompt for approvals; pass --auto or --read-only");
+            }
+            let report = agent
+                .run_turn(
+                    prompt,
+                    &hx_core::session::approval::AutoApprove,
+                    &mut hx_core::provider::NullSink,
+                    &tokio_util::sync::CancellationToken::new(),
+                )
+                .await?;
+            let usage = report.usage;
+            println!(
+                "{}",
+                serde_json::json!({
+                    "session_id": agent.session_id,
+                    "model": agent.model().wire_name(),
+                    "response": report.assistant_text,
+                    "provider_calls": report.provider_calls,
+                    "tool_calls": report.tool_calls,
+                    "input_tokens": usage.input_tokens,
+                    "cache_hit_input_tokens": usage.cache_hit_input_tokens,
+                    "cache_miss_input_tokens": usage.cache_miss_input_tokens,
+                    "output_tokens": usage.output_tokens,
+                    "cache_hit_percent": (usage.cache_hit_rate() * 1000.0).round() / 10.0,
+                    "actual_cost_microusd": report.actual_microusd,
+                    "normalized_cache_miss_cost_microusd": report.normalized_microusd,
+                    "session_cost_microusd": agent.total_actual_microusd(),
+                    "context_utilization_percent": (agent.utilization() * 1000.0).round() / 10.0,
+                    "compactions": report.compactions,
+                    "elisions": report.elisions,
+                    "cancelled": report.cancelled,
+                    "budget_exhausted": report.budget_exhausted,
+                })
+            );
+            if report.cancelled {
+                std::process::exit(130);
+            }
+            return Ok(());
+        }
         let report =
             repl::run_turn_interruptible(&mut agent, prompt, &repl::TerminalGate, show_reasoning)
                 .await?;

@@ -70,6 +70,8 @@ pub struct TurnReport {
     pub tool_calls: u32,
     pub usage: Usage,
     pub actual_microusd: u64,
+    /// Cache-blind cost (all input at the miss rate) for fair comparisons.
+    pub normalized_microusd: u64,
     pub compactions: u32,
     pub elisions: u32,
 }
@@ -373,6 +375,7 @@ impl Agent {
             report.provider_calls += 1;
             report.usage.add(turn.usage);
             report.actual_microusd += turn.cost.actual_microusd;
+            report.normalized_microusd += turn.cost.normalized_cache_miss_microusd;
             self.total_usage.add(turn.usage);
             self.total_actual_microusd += turn.cost.actual_microusd;
             // Anchor BEFORE pushing: the response usage already covers the

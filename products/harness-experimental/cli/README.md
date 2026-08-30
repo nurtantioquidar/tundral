@@ -7,9 +7,15 @@ An experimental fast interactive coding agent CLI in Rust, DeepSeek-native, buil
 export DEEPSEEK_API_KEY=...
 cargo run -p hx                     # REPL in the current repo
 cargo run -p hx -- --auto -p "fix the failing test"   # one-shot, no prompts
+cargo run -p hx -- --auto --json -p "..."             # one-shot, machine-readable report
 cargo run -p hx -- --resume         # resume the latest session
 cargo run -p hx -- sessions         # list saved sessions
 ```
+
+`--json` emits one JSON object on stdout (tokens, cache counters, cost,
+context utilization, compaction counts) — used by `../bench/` for the
+head-to-head against `products/harness/cli` and the full-window compaction
+exercise.
 
 ## Why it is fast and cheap
 
