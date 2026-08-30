@@ -160,6 +160,71 @@ async function runHarness(task: string): Promise<RunResult> {
   }
 }
 
+async function runCodex(task: string): Promise<RunResult> {
+  const dir = checkout(task);
+  try {
+    const argv = [
+      "codex",
+      "exec",
+      "--json",
+      "--ephemeral",
+      "--skip-git-repo-check",
+      "-s",
+      "workspace-write",
+      "-C",
+      dir,
+    ];
+    if (process.env.CODEX_MODEL) argv.push("-m", process.env.CODEX_MODEL);
+    argv.push(PROMPT);
+    const { stdout, stderr, code, wall_ms } = await runCli(argv, dir, {});
+    // JSONL events: accumulate any usage objects and capture the model name.
+    let input = 0;
+    let cached = 0;
+    let output = 0;
+    let model: string | undefined;
+    let sawUsage = false;
+    for (const line of stdout.split("\n")) {
+      let event: any;
+      try {
+        event = JSON.parse(line);
+      } catch {
+        continue;
+      }
+      const usage = event?.usage ?? event?.msg?.info?.total_token_usage;
+      if (usage && typeof usage.input_tokens === "number") {
+        sawUsage = true;
+        input += usage.input_tokens;
+        cached += usage.cached_input_tokens ?? usage.cached_tokens ?? 0;
+        output += usage.output_tokens ?? 0;
+      }
+      model ??= event?.model ?? event?.msg?.model ?? event?.thread?.model;
+    }
+    if (code !== 0) {
+      return {
+        system: "codex",
+        task,
+        verified: await verify(dir),
+        wall_ms,
+        error: `exit ${code}; stderr tail: ${stderr.trim().slice(-200)}`,
+      };
+    }
+    return {
+      system: "codex",
+      task,
+      verified: await verify(dir),
+      wall_ms,
+      input_tokens: sawUsage ? input : undefined,
+      cached_input_tokens: sawUsage ? cached : undefined,
+      cache_hit_percent: sawUsage && input > 0 ? Math.round((cached / input) * 1000) / 10 : undefined,
+      output_tokens: sawUsage ? output : undefined,
+      cost_microusd: null, // subscription: no per-call price
+      model,
+    };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 const args = process.argv.slice(2);
 const only = args.includes("--only") ? args[args.indexOf("--only") + 1] : undefined;
 const taskFilter = args.includes("--task") ? args[args.indexOf("--task") + 1] : undefined;
@@ -169,7 +234,7 @@ const tasks = readdirSync(join(BENCH_DIR, "fixtures")).filter(
 
 const results: RunResult[] = [];
 for (const task of tasks) {
-  if (only !== "harness") {
+  if (only === undefined || only === "hx") {
     if (!process.env.DEEPSEEK_API_KEY) {
       console.error("DEEPSEEK_API_KEY missing: skipping hx side");
     } else {
@@ -177,13 +242,17 @@ for (const task of tasks) {
       results.push(await runHx(task));
     }
   }
-  if (only !== "hx") {
+  if (only === undefined || only === "harness") {
     if (!HARNESS_BIN) {
       console.error("HARNESS_BIN missing: skipping harness side");
     } else {
       console.error(`running harness / ${task} …`);
       results.push(await runHarness(task));
     }
+  }
+  if (only === undefined || only === "codex") {
+    console.error(`running codex / ${task} …`);
+    results.push(await runCodex(task));
   }
 }
 

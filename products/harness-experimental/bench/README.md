@@ -19,10 +19,16 @@ DEEPSEEK_API_KEY=... bun bench.ts                     # both sides
 uses its default ChatGPT-subscription provider unless `HARNESS_PROVIDER` /
 `HARNESS_MODEL` (and the matching API key env var) are set.
 
-**Caveat:** the two harnesses cannot share a model (hx is DeepSeek-native;
-harness has OpenAI/Anthropic/subscription). Verified-completion and cost are
-therefore model-confounded; cache-hit shape, token volumes, and wall-clock are
-the comparable signals.
+The runner also drives the **real Codex CLI** (`codex exec --json -s
+workspace-write`) as a production baseline — `--only codex`, optional
+`CODEX_MODEL`. Note `products/harness/cli`'s subscription provider is
+hardcoded read-only sandbox, so it cannot pass mutation tasks; use its
+`openai`/`anthropic` provider with an API key for a fair run.
+
+**Caveat:** the systems cannot share a model (hx is DeepSeek-native; Codex and
+harness run OpenAI models). Verified-completion and cost are therefore
+model-confounded; cache-hit shape, fresh-token volume, and wall-clock are the
+comparable signals.
 
 ## Full-window compaction exercise (`longrun.ts`)
 
