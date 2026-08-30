@@ -21,6 +21,9 @@ pub struct ApprovalRequest {
     pub tool_name: String,
     /// One-line preview, e.g. `run_command(cargo test)`.
     pub preview: String,
+    /// Rich preview of what approval would do: an edit diff, the head of a
+    /// file write, or the exact command line. Rendered by the UI.
+    pub detail: Option<String>,
     /// Session-scope approval key: approving "for the session" allows future
     /// calls with the same key without prompting.
     pub scope_key: String,

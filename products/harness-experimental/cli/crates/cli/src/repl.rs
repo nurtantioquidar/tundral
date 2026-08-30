@@ -87,12 +87,35 @@ impl StreamSink for TerminalSink {
 
 pub struct TerminalGate;
 
+const GREEN: &str = "\x1b[32m";
+
+/// Colorize a rich approval detail: `-` lines red, `+` lines green.
+fn render_detail(detail: &str) -> String {
+    let mut rendered = String::new();
+    for line in detail.lines() {
+        let trimmed = line.trim_start();
+        if trimmed.starts_with("- ") || trimmed == "-" {
+            rendered.push_str(&format!("  {RED}{line}{RESET}\n"));
+        } else if trimmed.starts_with("+ ") || trimmed == "+" {
+            rendered.push_str(&format!("  {GREEN}{line}{RESET}\n"));
+        } else {
+            rendered.push_str(&format!("  {DIM}{line}{RESET}\n"));
+        }
+    }
+    rendered
+}
+
 #[async_trait::async_trait]
 impl ApprovalGate for TerminalGate {
     async fn review(&self, request: &ApprovalRequest) -> Decision {
         let preview = request.preview.clone();
+        let detail = request.detail.clone();
         tokio::task::spawn_blocking(move || {
-            eprint!("\n  allow {preview}? [y]es / [a]lways for session / [N]o: ");
+            eprintln!("\n  {CYAN}{preview}{RESET}");
+            if let Some(detail) = detail {
+                eprint!("{}", render_detail(&detail));
+            }
+            eprint!("  allow? [y]es / [a]lways for session / [N]o: ");
             let _ = std::io::stderr().flush();
             let mut line = String::new();
             if std::io::stdin().read_line(&mut line).is_err() {
@@ -161,9 +184,10 @@ commands:
   /usage    tokens, cost, cache-hit rate, context utilization
   /compact  force a summarization compaction now
   /mode     show or set permission mode: /mode ask|auto|read-only
+  /model    show or switch model: /model deepseek-v4-flash|deepseek-v4-pro
   /help     this help
   /quit     exit (also Ctrl-D)
-Ctrl-C cancels the in-flight turn.";
+End a line with \\ to continue on the next line. Ctrl-C cancels the turn.";
 
 /// Run one turn with Ctrl-C wired to the cancellation token.
 pub async fn run_turn_interruptible(
@@ -202,12 +226,26 @@ pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
         mode_name(agent.permission_mode()),
     );
     loop {
-        let line = match editor.readline("hx> ") {
+        let mut line = match editor.readline("hx> ") {
             Ok(line) => line,
             Err(rustyline::error::ReadlineError::Interrupted) => continue,
             Err(rustyline::error::ReadlineError::Eof) => break,
             Err(error) => return Err(error.into()),
         };
+        // Trailing backslash continues the input on the next line.
+        while line.trim_end().ends_with('\\') {
+            let trimmed = line.trim_end();
+            line = format!("{}\n", &trimmed[..trimmed.len() - 1]);
+            match editor.readline("...> ") {
+                Ok(next) => line.push_str(&next),
+                Err(rustyline::error::ReadlineError::Interrupted) => {
+                    line.clear();
+                    break;
+                }
+                Err(rustyline::error::ReadlineError::Eof) => break,
+                Err(error) => return Err(error.into()),
+            }
+        }
         let input = line.trim().to_string();
         if input.is_empty() {
             continue;
@@ -231,6 +269,24 @@ pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
                         agent.utilization() * 100.0
                     ),
                     Err(error) => eprintln!("{RED}compaction failed: {error}{RESET}"),
+                }
+                continue;
+            }
+            _ if input.starts_with("/model") => {
+                match input.trim_start_matches("/model").trim() {
+                    "" => println!("model: {}", agent.model().wire_name()),
+                    name => match hx_core::domain::Model::parse(name) {
+                        Some(model) => {
+                            agent.set_model(model);
+                            println!(
+                                "{DIM}[model set: {}; next request re-caches the prefix]{RESET}",
+                                model.wire_name()
+                            );
+                        }
+                        None => {
+                            eprintln!("unknown model: {name} (deepseek-v4-flash | deepseek-v4-pro)")
+                        }
+                    },
                 }
                 continue;
             }

@@ -12,7 +12,7 @@ const READ_CAP_BYTES: usize = 24_000;
 const LIST_CAP_ENTRIES: usize = 500;
 const WRITE_CAP_BYTES: usize = 500_000;
 
-fn resolve(root: &Path, path: &str) -> Result<std::path::PathBuf, PolicyError> {
+pub(crate) fn resolve(root: &Path, path: &str) -> Result<std::path::PathBuf, PolicyError> {
     let relative = validate_relative_path(path)?;
     confine_to_root(root, &relative)
 }

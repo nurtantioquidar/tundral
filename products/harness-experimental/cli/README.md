@@ -35,8 +35,35 @@ exercise.
 
 ## Safety
 
-Read tools run freely; edits and commands prompt (`y`/`a`/`N`) unless `--auto`, and `--read-only`
-denies them outright. Paths are confined to the workspace root (symlink-escape checked); commands
-run as argv vectors from an allowlist with credential-stripped environments — there is no shell.
+Read tools run freely; edits and commands prompt unless `--auto`, and `--read-only` denies them
+outright. Approval prompts show **what will actually happen** — a colorized diff for `edit` (with
+occurrence warnings), the content head for `write_file`, the exact argv for `run_command` — then
+`y`/`a`(lways for session)/`N`. Paths are confined to the workspace root (symlink-escape checked);
+commands run as argv vectors from an allowlist with credential-stripped environments — no shell.
+
+## Install and configure
+
+```bash
+cargo install --path crates/cli --locked        # installs ~/.cargo/bin/hx
+```
+
+Recommended shell wrapper (key fetched from 1Password per launch, never stored):
+
+```bash
+hx() { DEEPSEEK_API_KEY=$(op read "op://<vault>/<item>/password") command hx "$@"; }
+```
+
+Config is layered: defaults ← `~/.config/hx/config.toml` ← `<repo>/.hx.toml` ← flags:
+
+```toml
+model = "deepseek-v4-flash"   # or deepseek-v4-pro
+effort = "high"               # or max
+mode = "ask"                  # ask | auto | read-only
+max_cost_usd = "0.50"
+quiet_reasoning = false
+```
+
+REPL extras: `/model` switches models mid-session, `/mode` switches permissions, end a line with
+`\` for multi-line input.
 
 See [AGENTS.md](AGENTS.md) for module layout and invariants.

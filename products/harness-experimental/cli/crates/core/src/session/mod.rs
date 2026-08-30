@@ -197,6 +197,12 @@ impl Agent {
         self.config.permission_mode = mode;
     }
 
+    /// Switch models mid-session. History stays valid; the provider's prefix
+    /// cache is per model, so the next request pays a one-time re-cache.
+    pub fn set_model(&mut self, model: Model) {
+        self.config.model = model;
+    }
+
     fn record(&self, event: &SessionEvent) -> Result<(), SessionError> {
         if let Some(store) = &self.store {
             store.append(event)?;
@@ -470,6 +476,11 @@ impl Agent {
                     let request = ApprovalRequest {
                         tool_name: call.name.clone(),
                         preview: describe_call(&call.name, &call.arguments),
+                        detail: crate::tools::approval_detail(
+                            self.executor.root(),
+                            &call.name,
+                            &call.arguments,
+                        ),
                         scope_key: key.clone(),
                     };
                     match gate.review(&request).await {

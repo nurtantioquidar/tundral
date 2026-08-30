@@ -1,5 +1,6 @@
 //! hx — fast interactive coding agent CLI (harness-experimental).
 
+mod config;
 mod repl;
 
 use std::path::PathBuf;
@@ -28,13 +29,13 @@ struct Cli {
     #[arg(long)]
     root: Option<PathBuf>,
 
-    /// Model: deepseek-v4-flash | deepseek-v4-pro.
-    #[arg(long, default_value = "deepseek-v4-flash")]
-    model: String,
+    /// Model: deepseek-v4-flash | deepseek-v4-pro (default from config, else flash).
+    #[arg(long)]
+    model: Option<String>,
 
-    /// Reasoning effort: high | max.
-    #[arg(long, default_value = "high")]
-    effort: String,
+    /// Reasoning effort: high | max (default from config, else high).
+    #[arg(long)]
+    effort: Option<String>,
 
     /// Approve every tool call without prompting.
     #[arg(long)]
@@ -99,13 +100,21 @@ async fn main() -> Result<()> {
         .canonicalize()
         .with_context(|| format!("workspace root not found: {}", root.display()))?;
 
-    let Some(model) = Model::parse(&cli.model) else {
-        bail!(
-            "unknown model: {} (deepseek-v4-flash | deepseek-v4-pro)",
-            cli.model
-        );
+    // Layered configuration: defaults ← global file ← repo file ← flags.
+    let file = config::load(&root)?;
+
+    let model_name = cli
+        .model
+        .or(file.model)
+        .unwrap_or_else(|| "deepseek-v4-flash".to_string());
+    let Some(model) = Model::parse(&model_name) else {
+        bail!("unknown model: {model_name} (deepseek-v4-flash | deepseek-v4-pro)");
     };
-    let effort = match cli.effort.as_str() {
+    let effort_name = cli
+        .effort
+        .or(file.effort)
+        .unwrap_or_else(|| "high".to_string());
+    let effort = match effort_name.as_str() {
         "high" => ReasoningEffort::High,
         "max" => ReasoningEffort::Max,
         other => bail!("unknown effort: {other} (high | max)"),
@@ -114,12 +123,16 @@ async fn main() -> Result<()> {
         (true, true) => bail!("--auto and --read-only are mutually exclusive"),
         (true, false) => PermissionMode::Auto,
         (false, true) => PermissionMode::ReadOnly,
-        (false, false) => PermissionMode::Ask,
+        (false, false) => match file.mode.as_deref() {
+            Some("auto") => PermissionMode::Auto,
+            Some("read-only") | Some("readonly") => PermissionMode::ReadOnly,
+            Some("ask") | None => PermissionMode::Ask,
+            Some(other) => bail!("unknown mode in config: {other} (ask | auto | read-only)"),
+        },
     };
-    let max_session_cost_microusd = match &cli.max_cost_usd {
+    let max_session_cost_microusd = match cli.max_cost_usd.as_ref().or(file.max_cost_usd.as_ref()) {
         Some(text) => Some(
-            usd_to_microusd(text)
-                .with_context(|| format!("invalid --max-cost-usd value: {text}"))?,
+            usd_to_microusd(text).with_context(|| format!("invalid max_cost_usd value: {text}"))?,
         ),
         None => None,
     };
@@ -135,7 +148,8 @@ async fn main() -> Result<()> {
         .context("DEEPSEEK_API_KEY is required (export it in your shell)")?;
     let base_url = cli
         .base_url
-        .or_else(|| std::env::var("DEEPSEEK_BASE_URL").ok());
+        .or_else(|| std::env::var("DEEPSEEK_BASE_URL").ok())
+        .or(file.base_url);
     let provider = Arc::new(DeepSeekProvider::new(api_key, base_url));
 
     let agent = match &cli.resume {
@@ -175,7 +189,7 @@ async fn main() -> Result<()> {
         }
     };
 
-    let show_reasoning = !cli.quiet_reasoning;
+    let show_reasoning = !(cli.quiet_reasoning || file.quiet_reasoning.unwrap_or(false));
     if let Some(prompt) = cli.prompt {
         let mut agent = agent;
         if cli.json {

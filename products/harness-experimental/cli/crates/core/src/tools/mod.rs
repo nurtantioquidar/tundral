@@ -244,9 +244,236 @@ pub fn describe_call(name: &str, arguments: &str) -> String {
     }
 }
 
+const DETAIL_CAP_BYTES: usize = 4_000;
+const DIFF_CONTEXT_LINES: usize = 3;
+
+/// Rich preview for approval prompts: what will actually change if the user
+/// says yes. Returns None for calls where the one-line preview is enough or
+/// when the arguments cannot be interpreted (the executor will surface the
+/// real error after approval anyway).
+pub fn approval_detail(root: &Path, name: &str, arguments: &str) -> Option<String> {
+    let args: serde_json::Value = serde_json::from_str(arguments).ok()?;
+    let text = |key: &str| args.get(key).and_then(serde_json::Value::as_str);
+    let detail = match name {
+        "edit" => {
+            let path = text("path")?;
+            let old_string = text("old_string")?;
+            let new_string = text("new_string")?;
+            let replace_all = args
+                .get("replace_all")
+                .and_then(serde_json::Value::as_bool)
+                .unwrap_or(false);
+            edit_diff(root, path, old_string, new_string, replace_all)?
+        }
+        "write_file" => {
+            let path = text("path")?;
+            let content = text("content")?;
+            let existing = fs_tools::resolve(root, path)
+                .ok()
+                .and_then(|resolved| std::fs::metadata(resolved).ok());
+            let mut rendered = match existing {
+                Some(meta) => format!(
+                    "overwrites {path} ({} bytes) with {} bytes:\n",
+                    meta.len(),
+                    content.len()
+                ),
+                None => format!("creates {path} ({} bytes):\n", content.len()),
+            };
+            for line in content.lines().take(40) {
+                rendered.push_str("  + ");
+                rendered.push_str(line);
+                rendered.push('\n');
+            }
+            if content.lines().count() > 40 {
+                rendered.push_str("  … (truncated)\n");
+            }
+            rendered
+        }
+        "run_command" => {
+            let argv = args.get("command")?.as_array()?;
+            let line = argv
+                .iter()
+                .filter_map(serde_json::Value::as_str)
+                .collect::<Vec<_>>()
+                .join(" ");
+            let timeout = args
+                .get("timeout_seconds")
+                .and_then(serde_json::Value::as_u64)
+                .unwrap_or(60);
+            format!("  $ {line}\n  (workspace root, {timeout}s timeout, credential-stripped env)\n")
+        }
+        _ => return None,
+    };
+    Some(truncate_detail(detail))
+}
+
+/// Unified-style diff for an exact-string edit: context lines, `-` for the
+/// removed block, `+` for the replacement, anchored at the first match.
+fn edit_diff(
+    root: &Path,
+    path: &str,
+    old_string: &str,
+    new_string: &str,
+    replace_all: bool,
+) -> Option<String> {
+    let resolved = fs_tools::resolve(root, path).ok()?;
+    let original = std::fs::read_to_string(resolved).ok()?;
+    let occurrences = original.matches(old_string).count();
+    if occurrences == 0 {
+        return Some(format!("{path}: old_string not found (edit will fail)\n"));
+    }
+    let match_start = original.find(old_string)?;
+    let match_end = match_start + old_string.len();
+    // Expand the match to whole lines so substring replacements render as the
+    // resulting line, not the bare replacement text.
+    let line_start = original[..match_start].rfind('\n').map_or(0, |i| i + 1);
+    let line_end = original[match_end..]
+        .find('\n')
+        .map_or(original.len(), |i| match_end + i);
+    let old_block = &original[line_start..line_end];
+    let new_block = format!(
+        "{}{}{}",
+        &original[line_start..match_start],
+        new_string,
+        &original[match_end..line_end]
+    );
+    let lines: Vec<&str> = original.lines().collect();
+    let block_first = original[..match_start].matches('\n').count();
+    let block_last = (block_first + old_block.lines().count().max(1)).min(lines.len());
+    let match_line = block_first + 1;
+
+    let mut rendered = format!(
+        "{path}:{match_line}{}\n",
+        if replace_all && occurrences > 1 {
+            format!(" ({occurrences} occurrences; first shown, replace_all)")
+        } else if occurrences > 1 {
+            format!(" ({occurrences} occurrences — edit will fail without replace_all)")
+        } else {
+            String::new()
+        }
+    );
+    for line in lines
+        .iter()
+        .take(block_first)
+        .skip(block_first.saturating_sub(DIFF_CONTEXT_LINES))
+    {
+        rendered.push_str(&format!("    {line}\n"));
+    }
+    for line in old_block.lines() {
+        rendered.push_str(&format!("  - {line}\n"));
+    }
+    if new_block.is_empty() {
+        rendered.push_str("  + (deleted)\n");
+    } else {
+        for line in new_block.lines() {
+            rendered.push_str(&format!("  + {line}\n"));
+        }
+    }
+    for line in lines.iter().skip(block_last).take(DIFF_CONTEXT_LINES) {
+        rendered.push_str(&format!("    {line}\n"));
+    }
+    Some(rendered)
+}
+
+fn truncate_detail(mut detail: String) -> String {
+    if detail.len() > DETAIL_CAP_BYTES {
+        let mut end = DETAIL_CAP_BYTES;
+        while !detail.is_char_boundary(end) {
+            end -= 1;
+        }
+        detail.truncate(end);
+        detail.push_str("\n  … (truncated)\n");
+    }
+    detail
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn approval_detail_renders_edit_diffs() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(
+            dir.path().join("f.rs"),
+            "fn a() {}\nfn target() {\n    old_body();\n}\nfn z() {}\n",
+        )
+        .unwrap();
+        let detail = approval_detail(
+            dir.path(),
+            "edit",
+            r#"{"path":"f.rs","old_string":"    old_body();","new_string":"    new_body();\n    extra();"}"#,
+        )
+        .unwrap();
+        assert!(detail.contains("f.rs:3"), "{detail}");
+        assert!(detail.contains("  -     old_body();"), "{detail}");
+        assert!(detail.contains("  +     new_body();"), "{detail}");
+        assert!(detail.contains("  +     extra();"), "{detail}");
+        assert!(detail.contains("    fn target() {"), "{detail}");
+        assert!(detail.contains("    fn z() {}"), "{detail}");
+    }
+
+    #[test]
+    fn approval_detail_flags_ambiguous_and_missing_edits() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("dup.txt"), "x\nx\n").unwrap();
+        let ambiguous = approval_detail(
+            dir.path(),
+            "edit",
+            r#"{"path":"dup.txt","old_string":"x","new_string":"y"}"#,
+        )
+        .unwrap();
+        assert!(ambiguous.contains("edit will fail without replace_all"));
+        let missing = approval_detail(
+            dir.path(),
+            "edit",
+            r#"{"path":"dup.txt","old_string":"absent","new_string":"y"}"#,
+        )
+        .unwrap();
+        assert!(missing.contains("not found"));
+    }
+
+    #[test]
+    fn approval_detail_splices_substring_replacements_into_the_line() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("s.txt"), "hello world\nbye\n").unwrap();
+        let detail = approval_detail(
+            dir.path(),
+            "edit",
+            r#"{"path":"s.txt","old_string":"world","new_string":"rust"}"#,
+        )
+        .unwrap();
+        assert!(detail.contains("  - hello world"), "{detail}");
+        assert!(detail.contains("  + hello rust"), "{detail}");
+    }
+
+    #[test]
+    fn approval_detail_previews_writes_and_commands() {
+        let dir = tempfile::tempdir().unwrap();
+        let write = approval_detail(
+            dir.path(),
+            "write_file",
+            r#"{"path":"new.txt","content":"hello\nworld"}"#,
+        )
+        .unwrap();
+        assert!(write.contains("creates new.txt"));
+        assert!(write.contains("  + hello"));
+        let command = approval_detail(
+            dir.path(),
+            "run_command",
+            r#"{"command":["cargo","test"],"timeout_seconds":120}"#,
+        )
+        .unwrap();
+        assert!(command.contains("$ cargo test"));
+        assert!(command.contains("120s timeout"));
+        let huge = approval_detail(
+            dir.path(),
+            "write_file",
+            &format!(r#"{{"path":"big.txt","content":"{}"}}"#, "a".repeat(10_000)),
+        )
+        .unwrap();
+        assert!(huge.len() < DETAIL_CAP_BYTES + 100);
+    }
 
     #[test]
     fn schemas_serialize_deterministically_and_match_registry() {
