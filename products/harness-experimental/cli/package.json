@@ -1,0 +1,10 @@
+{
+  "name": "@monet/harness-experimental-cli",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "typecheck": "cargo check --workspace --locked",
+    "test": "cargo test --workspace --locked",
+    "check": "cargo fmt --check && cargo clippy --workspace --locked --all-targets -- -D warnings && cargo test --workspace --locked"
+  }
+}
