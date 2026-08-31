@@ -203,7 +203,7 @@ pub fn tool_schemas() -> Vec<ToolSchema> {
         },
         ToolSchema {
             name: "symbol_search".into(),
-            description: "Atlas code graph: exact-name symbol lookup. mode=definitions returns where a symbol is defined (path:line, kind, signature); mode=references returns call sites by name (may include same-name symbols from other scopes).".into(),
+            description: "Atlas code graph: exact-name symbol lookup. mode=definitions returns where a symbol is defined (path:line, kind, signature); mode=references returns call sites by name (may include same-name symbols from other scopes). For a string you already know the location shape of, search_text is usually one shot.".into(),
             parameters: json!({
                 "type": "object",
                 "properties": {

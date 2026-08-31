@@ -20,10 +20,14 @@ Rules:
   what was verified.";
 
 /// Appended only when the Atlas tools are enabled for the session (large
-/// repos). Measured 2026-09-01: on small repos this guidance costs turns.
+/// repos). Steering measured on the 2026-09-01 A/B: repo_map won orientation
+/// (10 vs 15 turns) and sweeps (29k vs 44k tokens); ripgrep won exact-string
+/// lookup — so route by task shape.
 pub const ATLAS_INSTRUCTIONS: &str = "\n\
-- This is a large repository: repo_map gives a ranked orientation map and
-  symbol_search finds definitions/usages faster than text search.";
+- This is a large repository. To orient yourself or sweep for a pattern
+  across it, start with repo_map. Use symbol_search when you don't yet know
+  where a symbol lives; when you already know the exact string, search_text
+  (ripgrep) answers in one shot.";
 
 /// Build the session system prompt. Byte-stable for the life of the session:
 /// same inputs, same bytes.
@@ -94,6 +98,10 @@ mod tests {
         assert_eq!(a, b);
         assert!(a.contains("Workspace: monet"));
         assert!(a.contains("Do the thing."));
+        assert!(!a.contains("repo_map"), "atlas line must be gated");
+        let with_atlas = build_system_prompt("monet", None, true);
+        assert!(with_atlas.contains("repo_map"));
+        assert!(with_atlas.contains("search_text"));
     }
 
     #[test]
