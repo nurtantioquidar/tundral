@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/core", "crates/cli"]
+members = ["crates/core", "crates/cli", "crates/atlas"]
 
 [workspace.package]
 version = "0.1.0"
@@ -39,6 +39,13 @@ grep-searcher = "0.1"
 dirs = "6"
 uuid = { version = "1", features = ["v4"] }
 tempfile = "3"
+tree-sitter = "0.25"
+streaming-iterator = "0.1"
+tree-sitter-rust = "0.24"
+tree-sitter-python = "0.25"
+tree-sitter-typescript = "0.23"
+tree-sitter-javascript = "0.25"
+blake3 = "1"
 
 [profile.release]
 lto = "thin"
