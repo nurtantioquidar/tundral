@@ -1,32 +1,35 @@
-# Harness-experimental CLI Agent Guide
+# Harness CLI Agent Guide
 
 ## Purpose
 
-`hx` is an experimental fast interactive coding agent CLI, written in Rust: a chat REPL that runs
-tools inside the user's repository against DeepSeek's Chat Completions API. It is a parallel
-implementation to `products/harness/cli` built for comparison; the two share **no code** and must
-never import from each other. Design goals: speed (Rust, streaming), Codex-style auto-compaction,
-and opencode-style prompt-cache hit rates.
+`hx` is the Harness product: a fast interactive coding agent CLI in Rust — a chat REPL that runs
+tools inside the user's repository against DeepSeek's Chat Completions API. Design pillars: speed
+(Rust, streaming, lean prompts), a cache-first prompt layout (opencode-class hit rates), two-stage
+auto-compaction with a typed working state, and deterministic safety (approval-gated diffs,
+argv-only commands).
+
+It was selected over a parallel implementation after a benchmarked comparison; the evidence and
+the losing tree's archive location are recorded in `docs/harness-implementation-comparison.md`.
 
 ## Ownership boundaries
 
 This module owns its conversation state, tool execution policy, context management, DeepSeek
-request semantics, and local session persistence under
-`~/.local/state/harness-experimental/sessions/`. It calls DeepSeek directly with a user-supplied
-`DEEPSEEK_API_KEY`; it never routes traffic through Inver and never imports source from another
-Monet application. It is not wired into the root `check`/`test` chains while the experiment runs.
+request semantics, and local session persistence under `~/.local/state/hx/sessions/`. It calls
+DeepSeek directly with a user-supplied `DEEPSEEK_API_KEY`; it never routes traffic through Inver
+and never imports source from another Monet application.
 
 ## Layout
 
 ```text
 crates/core   # hx-core: UI-free engine
-  domain      # messages, 4-counter usage, integer micro-USD money, price cards
+  domain      # messages, 4-counter usage, integer micro-USD money, tiered price cards
   provider    # DeepSeek SSE streaming, tool-call delta assembly; scripted fake for tests
   tools       # registry + security policy (path confinement, argv-only commands)
   context     # prompt layout, anchor+drift token ledger, elision + summarize compaction
   session     # deterministic agent loop, approval gating, typed working state,
               # JSONL persistence/resume
 crates/cli    # hx: rustyline REPL, streaming render, terminal approval prompts
+../bench      # fixture benchmark vs external harnesses + full-window compaction exercise
 ```
 
 ## Commands
@@ -34,8 +37,8 @@ crates/cli    # hx: rustyline REPL, streaming render, terminal approval prompts
 ```bash
 cargo test --workspace --locked                       # offline test suite
 cargo fmt --check && cargo clippy --workspace --locked --all-targets -- -D warnings
-bun run --filter @monet/harness-experimental-cli check  # all of the above
-cargo run -p hx -- --help                             # the binary
+bun run --filter @monet/harness-cli check             # all of the above
+bun run dev:harness                                   # REPL via the repo root
 HX_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p hx-core --test live_deepseek  # paid smoke test
 ```
 
@@ -63,7 +66,8 @@ HX_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p hx-core --test live_deepseek  
    pass key-based redaction. Conversation content IS persisted (required for `--resume`), with
    0700/0600 permissions.
 7. Provider cache-hit, cache-miss, input, and output token counts remain distinct end to end.
-   Money is integer micro-USD; decimal USD is presentation only. Price cards are versioned.
+   Money is integer micro-USD; decimal USD is presentation only. Price cards are versioned and
+   tier-aware (DeepSeek peak/off-peak UTC windows).
 8. Tests use the scripted provider and temporary directories; the deterministic suite must never
    touch the network or a paid model. Live tests are opt-in via `HX_LIVE_TEST=1`.
 9. The system prompt and tool schemas are the cross-session cached prefix. Any change to their
@@ -73,6 +77,6 @@ HX_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p hx-core --test live_deepseek  
 
 ## Verification
 
-Run `bun run --filter @monet/harness-experimental-cli check` (or the cargo commands above) after
-every change. Cache-critical changes must keep the byte-prefix property test
+Run `bun run --filter @monet/harness-cli check` (or the cargo commands above) after every change.
+Cache-critical changes must keep the byte-prefix property test
 (`requests_grow_append_only_between_provider_calls`) and the compaction invariant tests green.

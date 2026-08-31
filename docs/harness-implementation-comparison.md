@@ -1,4 +1,17 @@
-# Harness implementation comparison (decision pending)
+# Harness implementation comparison (decided 2026-08-31)
+
+**Decision: hx was adopted as the Harness product.** The former
+`products/harness-experimental` tree now lives at `products/harness` (workspace
+`@monet/harness-cli`, binary `hx`, sessions under `~/.local/state/hx/`). The
+Codex-built implementation was removed from the working tree without ever being
+committed; a full source archive is kept at
+`~/monet-backups/codex-harness-20260831-2026.tar.gz`. Its best idea — the typed
+working-state checkpoint — was ported into hx (with the `update_plan` tool)
+before the decision.
+
+The evidence that informed the decision follows, unchanged.
+
+---
 
 Two parallel Rust coding-agent implementations were built to compare approaches:
 

@@ -1,6 +1,6 @@
-# hx — harness-experimental
+# hx — Harness
 
-An experimental fast interactive coding agent CLI in Rust, DeepSeek-native, built around one idea:
+A fast interactive coding agent CLI in Rust, DeepSeek-native, built around one idea:
 **maximize prompt-cache hits, and when the window fills, compact rarely and chunkily.**
 
 ```bash

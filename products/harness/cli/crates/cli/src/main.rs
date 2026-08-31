@@ -1,4 +1,4 @@
-//! hx — fast interactive coding agent CLI (harness-experimental).
+//! hx — the Harness interactive coding agent CLI.
 
 mod config;
 mod repl;

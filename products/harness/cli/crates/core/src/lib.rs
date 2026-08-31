@@ -1,4 +1,4 @@
-//! hx-core: UI-free engine of the harness-experimental coding agent.
+//! hx-core: UI-free engine of hx, the Harness coding agent.
 //!
 //! Layering: `domain` (types, money) → `provider` (DeepSeek streaming) →
 //! `tools` (policy-confined execution) → `context` (cache-aware history and

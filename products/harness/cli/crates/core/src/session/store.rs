@@ -65,7 +65,7 @@ impl SessionStore {
                     .unwrap_or_else(|| PathBuf::from("."))
                     .join(".local/state")
             })
-            .join("harness-experimental/sessions")
+            .join("hx/sessions")
     }
 
     pub fn create(session_id: &str) -> std::io::Result<Self> {
