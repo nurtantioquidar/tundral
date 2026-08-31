@@ -70,6 +70,9 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   Atlas-on was slower and costlier on every small repo (worst case 43 turns vs 11). Default:
   enabled only when the repo has ≥100 indexable files; `--atlas` / `--no-atlas` / `.butterfly.toml
   atlas=` force either way; the prompt guidance line only exists when the tools do.
+- **Deterministic search fusion** — the model never has to pick the right search: a `search_text`
+  for a plain identifier gets Atlas definitions prepended, and a `symbol_search` index miss falls
+  back to ripgrep in the same result. Behavior-only (no prompt/schema bytes changed).
 - **Large-repo A/B validated** (2026-09-01, 390-file production monorepo, 3 read-only tasks, both
   arms fully correct): orientation — Atlas 10 turns / 28 tool calls vs 15 / 69 without;
   cross-service sweep — 29k vs 44k input tokens (37% cheaper); exact-string lookup — ripgrep wins

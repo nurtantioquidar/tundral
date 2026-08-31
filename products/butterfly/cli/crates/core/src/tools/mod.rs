@@ -5,7 +5,7 @@
 mod command;
 mod fs_tools;
 pub mod policy;
-mod search;
+pub(crate) mod search;
 
 use std::path::{Path, PathBuf};
 

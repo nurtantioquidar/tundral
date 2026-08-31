@@ -588,15 +588,66 @@ impl Agent {
         if cancel.is_cancelled() {
             return None;
         }
-        Some(
-            self.executor
-                .execute(&call.name, &call.arguments, cancel)
-                .await,
-        )
+        let mut output = self
+            .executor
+            .execute(&call.name, &call.arguments, cancel)
+            .await;
+        // Search fusion, direction 1: a text search for a plain identifier
+        // gets Atlas definitions prepended — structural answers with zero
+        // extra turns, whichever tool the model picked.
+        if call.name == "search_text" && !output.is_error {
+            let pattern = serde_json::from_str::<serde_json::Value>(&call.arguments)
+                .ok()
+                .and_then(|args| {
+                    args.get("pattern")
+                        .and_then(serde_json::Value::as_str)
+                        .map(str::to_string)
+                });
+            if let Some(block) = pattern.and_then(|p| self.atlas_definitions_block(&p)) {
+                output.content = format!("{block}\nText matches (ripgrep):\n{}", output.content);
+            }
+        }
+        Some(output)
     }
 }
 
+/// A bare identifier (the only shape Atlas indexes by name).
+fn is_plain_identifier(text: &str) -> bool {
+    text.len() >= 3
+        && text
+            .chars()
+            .next()
+            .is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
+        && text.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+}
+
 impl Agent {
+    /// Deterministic search fusion: the model never has to choose the right
+    /// search tool. A text search for a plain identifier gets the index's
+    /// definitions prepended; a symbol lookup that misses the index falls
+    /// back to a text search in the same result — no extra turn either way.
+    fn atlas_definitions_block(&mut self, name: &str) -> Option<String> {
+        if !self.config.atlas_enabled || !is_plain_identifier(name) {
+            return None;
+        }
+        self.atlas.refresh();
+        let defs = self.atlas.definitions(name);
+        if defs.is_empty() {
+            return None;
+        }
+        let mut block = String::from("Definitions (Atlas):\n");
+        for (path, def) in defs.iter().take(10) {
+            block.push_str(&format!(
+                "  {}:{} [{}] {}\n",
+                path.display(),
+                def.line,
+                def.kind.label(),
+                def.signature
+            ));
+        }
+        Some(block)
+    }
+
     /// Execute one Atlas tool call: incremental refresh, then a ranked map or
     /// symbol lookup. Working-state files seed the ranking so the map leans
     /// toward what the session is already touching.
@@ -665,7 +716,25 @@ impl Agent {
                         .collect(),
                 };
                 if lines.is_empty() {
-                    lines.push(format!("[no {mode} found for '{symbol}']"));
+                    lines.push(format!(
+                        "[no {mode} found in the Atlas index for '{symbol}']"
+                    ));
+                    // Search fusion, direction 2: an index miss falls back to
+                    // ripgrep in the same result — no wasted turn.
+                    if is_plain_identifier(symbol) {
+                        let fallback = crate::tools::search::search_text(
+                            self.executor.root(),
+                            crate::tools::search::SearchTextArgs {
+                                pattern: format!(r"\b{symbol}\b"),
+                                path: None,
+                                case_insensitive: false,
+                            },
+                        );
+                        if let Ok(result) = fallback {
+                            lines.push("Text matches (ripgrep fallback):".to_string());
+                            lines.push(result.content);
+                        }
+                    }
                 }
                 if lines.len() > 100 {
                     lines.truncate(100);
@@ -1124,6 +1193,65 @@ mod tests {
             tool_contents[3].contains("lib.rs:2 [fn] pub fn gamma"),
             "{}",
             tool_contents[3]
+        );
+    }
+
+    #[tokio::test]
+    async fn search_fusion_makes_either_tool_return_the_best_of_both() {
+        let dir = workspace();
+        std::fs::write(
+            dir.path().join("lib.rs"),
+            "// the magic_token lives here\npub fn alpha() {}\npub fn beta() { alpha(); }\n",
+        )
+        .unwrap();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            // Model greps for a known symbol: Atlas defs ride along.
+            assistant_with_call("c1", "search_text", r#"{"pattern":"alpha"}"#),
+            // Model asks the index for something only present in a comment:
+            // ripgrep fallback rides along.
+            assistant_with_call("c2", "symbol_search", r#"{"name":"magic_token"}"#),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        agent
+            .run_turn(
+                "find things".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        let tool_contents: Vec<&str> = agent
+            .messages()
+            .iter()
+            .filter_map(|m| match m {
+                ChatMessage::Tool { content, .. } => Some(content.as_str()),
+                _ => None,
+            })
+            .collect();
+        assert!(
+            tool_contents[0].contains("Definitions (Atlas):")
+                && tool_contents[0].contains("lib.rs:2 [fn]")
+                && tool_contents[0].contains("Text matches (ripgrep):"),
+            "{}",
+            tool_contents[0]
+        );
+        assert!(
+            tool_contents[1].contains("no definitions found in the Atlas index")
+                && tool_contents[1].contains("ripgrep fallback")
+                && tool_contents[1].contains("magic_token lives here"),
+            "{}",
+            tool_contents[1]
         );
     }
 
