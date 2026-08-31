@@ -6,9 +6,9 @@ pub mod approval;
 pub mod store;
 pub mod working_state;
 
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use tokio_util::sync::CancellationToken;
 
@@ -75,6 +75,11 @@ pub enum SessionError {
     Resume(String),
 }
 
+/// Messages typed while a turn is running; drained into the conversation at
+/// the next provider-call boundary (pi-style steering). Cloneable so the UI
+/// can push while `run_turn` mutably borrows the agent.
+pub type SteerQueue = Arc<Mutex<VecDeque<String>>>;
+
 /// What happened during one user turn, for the UI to render.
 #[derive(Debug, Default, Clone)]
 pub struct TurnReport {
@@ -105,6 +110,7 @@ pub struct Agent {
     session_approvals: HashSet<String>,
     working_state: working_state::WorkingState,
     atlas: butterfly_atlas::Atlas,
+    steer: SteerQueue,
 }
 
 impl Agent {
@@ -155,6 +161,7 @@ impl Agent {
             session_approvals: HashSet::new(),
             working_state: working_state::WorkingState::default(),
             atlas,
+            steer: SteerQueue::default(),
         })
     }
 
@@ -192,11 +199,19 @@ impl Agent {
             session_approvals: HashSet::new(),
             working_state: replayed.working_state,
             atlas,
+            steer: SteerQueue::default(),
         })
     }
 
     pub fn working_state(&self) -> &working_state::WorkingState {
         &self.working_state
+    }
+
+    /// Handle for queueing user messages while a turn runs. Delivered in
+    /// order at the next provider-call boundary; anything still queued when
+    /// the turn ends is the caller's to drain (run as fresh turns).
+    pub fn steer_handle(&self) -> SteerQueue {
+        self.steer.clone()
     }
 
     pub fn messages(&self) -> &[ChatMessage] {
@@ -307,7 +322,7 @@ impl Agent {
             self.context.need(),
             CompactionNeed::Compact | CompactionNeed::Urgent
         ) {
-            self.compact_now(cancel).await?;
+            self.compact_now(cancel, None).await?;
             report.compactions += 1;
         }
         Ok(())
@@ -317,13 +332,18 @@ impl Agent {
     /// checkpoint's structured half is the tracked working state — data the
     /// loop recorded as it happened, immune to summarizer quality and to
     /// earlier compactions.
-    pub async fn compact_now(&mut self, cancel: &CancellationToken) -> Result<(), SessionError> {
+    pub async fn compact_now(
+        &mut self,
+        cancel: &CancellationToken,
+        focus: Option<&str>,
+    ) -> Result<(), SessionError> {
         let checkpoint = self.working_state.render();
         let outcome = self
             .context
             .summarize(
                 &mut self.messages,
                 &checkpoint,
+                focus,
                 &self.tools,
                 self.provider.as_ref(),
                 self.config.model,
@@ -363,7 +383,7 @@ impl Agent {
             Err(ProviderError::ContextLengthExceeded) => {
                 // Last resort: shrink the retained tail, compact, retry once.
                 self.context.shrink_keep_last_turns();
-                self.compact_now(cancel).await?;
+                self.compact_now(cancel, None).await?;
                 let request = ProviderRequest {
                     model: self.config.model,
                     messages: self.messages.clone(),
@@ -389,6 +409,14 @@ impl Agent {
         let mut report = TurnReport::default();
         self.push_user(input)?;
         loop {
+            // Steering: deliver queued user messages at the turn boundary.
+            let queued: Vec<String> = {
+                let mut steer = self.steer.lock().expect("steer lock");
+                steer.drain(..).collect()
+            };
+            for message in queued {
+                self.push_user(message)?;
+            }
             if self.budget_exhausted() {
                 report.budget_exhausted = true;
                 report.assistant_text.push_str(&format!(
@@ -1103,7 +1131,10 @@ mod tests {
         )));
 
         // Compaction checkpoint carries the tracked state verbatim.
-        agent.compact_now(&CancellationToken::new()).await.unwrap();
+        agent
+            .compact_now(&CancellationToken::new(), None)
+            .await
+            .unwrap();
         match &agent.messages()[1] {
             ChatMessage::User { content } => {
                 assert!(content.contains("Objective: greet the world"), "{content}");
@@ -1194,6 +1225,44 @@ mod tests {
             "{}",
             tool_contents[3]
         );
+    }
+
+    #[tokio::test]
+    async fn steering_messages_enter_history_at_the_turn_boundary() {
+        let dir = workspace();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call("c1", "read_file", r#"{"path":"hello.txt"}"#),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider.clone(),
+            dir.path().to_path_buf(),
+            SessionConfig::default(),
+            None,
+        )
+        .unwrap();
+        let steer = agent.steer_handle();
+        steer
+            .lock()
+            .unwrap()
+            .push_back("also check the tests".to_string());
+        agent
+            .run_turn(
+                "read the file".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        // The steered message was delivered as a user message and reached the
+        // provider in the very first request of the turn.
+        let requests = provider.recorded_requests();
+        assert!(requests[0].iter().any(|m| matches!(
+            m,
+            ChatMessage::User { content } if content == "also check the tests"
+        )));
+        assert!(steer.lock().unwrap().is_empty());
     }
 
     #[tokio::test]

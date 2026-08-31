@@ -1,6 +1,7 @@
 //! butterfly — the Harness interactive coding agent CLI.
 
 mod config;
+mod export;
 mod repl;
 
 use std::path::PathBuf;
@@ -92,17 +93,33 @@ struct Cli {
 enum Command {
     /// List saved sessions, newest first.
     Sessions,
+    /// Export a session transcript to a self-contained HTML file.
+    Export {
+        /// Session id (defaults to the latest session).
+        session: Option<String>,
+        /// Output path (defaults to butterfly-session-<id>.html).
+        #[arg(long)]
+        out: Option<PathBuf>,
+    },
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
-    if let Some(Command::Sessions) = cli.command {
-        let root = SessionStore::state_root();
-        for session in SessionStore::list_sessions(&root) {
-            println!("{session}");
+    match &cli.command {
+        Some(Command::Sessions) => {
+            let root = SessionStore::state_root();
+            for session in SessionStore::list_sessions(&root) {
+                println!("{session}");
+            }
+            return Ok(());
         }
-        return Ok(());
+        Some(Command::Export { session, out }) => {
+            let path = export::export_session(session.as_deref(), out.clone())?;
+            println!("{}", path.display());
+            return Ok(());
+        }
+        None => {}
     }
 
     let root = match cli.root {

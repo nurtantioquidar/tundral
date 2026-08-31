@@ -187,7 +187,7 @@ const HELP: &str = "\
 commands:
   /usage    tokens, cost, cache-hit rate, context utilization
   /plan     show the tracked working state (objective, tasks, files, commands)
-  /compact  force a summarization compaction now
+  /compact  force a compaction now; optional focus: /compact keep the auth details
   /mode     show or set permission mode: /mode ask|auto|read-only
   /model    show or switch model: /model deepseek-v4-flash|deepseek-v4-pro
   /help     this help
@@ -220,43 +220,123 @@ pub async fn run_turn_interruptible(
     Ok(report)
 }
 
+/// Everything the input thread can report.
+enum InputEvent {
+    Line(String),
+    Interrupt,
+    Eof,
+}
+
+/// The input thread owns stdin and rustyline for the whole session so lines
+/// can arrive WHILE a turn is running (pi-style steering). It only produces
+/// events; the async loop decides what each line means (approval answer,
+/// steering message, or new turn).
+fn spawn_input_thread(sender: tokio::sync::mpsc::UnboundedSender<InputEvent>) {
+    std::thread::spawn(move || {
+        let Ok(mut editor) = rustyline::DefaultEditor::new() else {
+            let _ = sender.send(InputEvent::Eof);
+            return;
+        };
+        let history_path =
+            butterfly_core::session::store::SessionStore::state_root().join("repl-history");
+        let _ = editor.load_history(&history_path);
+        loop {
+            let mut line = match editor.readline("butterfly> ") {
+                Ok(line) => line,
+                Err(rustyline::error::ReadlineError::Interrupted) => {
+                    if sender.send(InputEvent::Interrupt).is_err() {
+                        break;
+                    }
+                    continue;
+                }
+                Err(_) => {
+                    let _ = sender.send(InputEvent::Eof);
+                    break;
+                }
+            };
+            // Trailing backslash continues the input on the next line.
+            while line.trim_end().ends_with('\\') {
+                let trimmed = line.trim_end();
+                line = format!("{}\n", &trimmed[..trimmed.len() - 1]);
+                match editor.readline("...> ") {
+                    Ok(next) => line.push_str(&next),
+                    Err(_) => {
+                        line.clear();
+                        break;
+                    }
+                }
+            }
+            let input = line.trim().to_string();
+            if input.is_empty() {
+                continue;
+            }
+            let _ = editor.add_history_entry(&input);
+            if sender.send(InputEvent::Line(input)).is_err() {
+                break;
+            }
+        }
+        let _ = editor.save_history(&history_path);
+    });
+}
+
+/// Approval gate for the REPL: the answer arrives on the shared input line.
+/// While a claim is pending, the next typed line resolves it instead of being
+/// queued as steering.
+pub struct ChannelGate {
+    claim: std::sync::Arc<std::sync::Mutex<Option<tokio::sync::oneshot::Sender<String>>>>,
+}
+
+#[async_trait::async_trait]
+impl ApprovalGate for ChannelGate {
+    async fn review(&self, request: &ApprovalRequest) -> Decision {
+        eprintln!("\n  {CYAN}{}{RESET}", request.preview);
+        if let Some(warning) = &request.policy_warning {
+            eprintln!("  {RED}⚠ {warning}{RESET}");
+        }
+        if let Some(detail) = &request.detail {
+            eprint!("{}", render_detail(detail));
+        }
+        eprintln!("  allow? [y]es / [a]lways for session / [N]o — answer on the input line");
+        let (sender, receiver) = tokio::sync::oneshot::channel();
+        *self.claim.lock().expect("claim lock") = Some(sender);
+        match receiver.await {
+            Ok(answer) => match answer.trim().to_ascii_lowercase().as_str() {
+                "y" | "yes" => Decision::Approve,
+                "a" | "always" => Decision::ApproveForSession,
+                _ => Decision::Deny,
+            },
+            Err(_) => Decision::Deny,
+        }
+    }
+}
+
 pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
-    let mut editor = rustyline::DefaultEditor::new()?;
-    let history_path =
-        butterfly_core::session::store::SessionStore::state_root().join("repl-history");
-    let _ = editor.load_history(&history_path);
+    let (sender, mut events) = tokio::sync::mpsc::unbounded_channel();
+    spawn_input_thread(sender);
+    let claim: std::sync::Arc<std::sync::Mutex<Option<tokio::sync::oneshot::Sender<String>>>> =
+        std::sync::Arc::default();
+    let gate = ChannelGate {
+        claim: claim.clone(),
+    };
     println!(
-        "{DIM}butterfly · {} · session {} · {} mode · /help for commands{RESET}",
+        "{DIM}butterfly · {} · session {} · {} mode · /help for commands · type while it works: messages land at the next turn boundary{RESET}",
         agent.model().wire_name(),
         agent.session_id,
         mode_name(agent.permission_mode()),
     );
+    // Steered messages left over when a turn ends become the next turns.
+    let mut pending: std::collections::VecDeque<String> = std::collections::VecDeque::new();
     loop {
-        let mut line = match editor.readline("butterfly> ") {
-            Ok(line) => line,
-            Err(rustyline::error::ReadlineError::Interrupted) => continue,
-            Err(rustyline::error::ReadlineError::Eof) => break,
-            Err(error) => return Err(error.into()),
-        };
-        // Trailing backslash continues the input on the next line.
-        while line.trim_end().ends_with('\\') {
-            let trimmed = line.trim_end();
-            line = format!("{}\n", &trimmed[..trimmed.len() - 1]);
-            match editor.readline("...> ") {
-                Ok(next) => line.push_str(&next),
-                Err(rustyline::error::ReadlineError::Interrupted) => {
-                    line.clear();
-                    break;
-                }
-                Err(rustyline::error::ReadlineError::Eof) => break,
-                Err(error) => return Err(error.into()),
+        let input = if let Some(queued) = pending.pop_front() {
+            println!("{DIM}[queued]{RESET} {queued}");
+            queued
+        } else {
+            match events.recv().await {
+                Some(InputEvent::Line(line)) => line,
+                Some(InputEvent::Interrupt) => continue,
+                Some(InputEvent::Eof) | None => break,
             }
-        }
-        let input = line.trim().to_string();
-        if input.is_empty() {
-            continue;
-        }
-        let _ = editor.add_history_entry(&input);
+        };
         match input.as_str() {
             "/quit" | "/exit" => break,
             "/help" => {
@@ -271,9 +351,11 @@ pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
                 print!("{}", agent.working_state().render());
                 continue;
             }
-            "/compact" => {
+            _ if input == "/compact" || input.starts_with("/compact ") => {
+                let focus = input.strip_prefix("/compact").unwrap_or("").trim();
+                let focus = (!focus.is_empty()).then_some(focus);
                 let cancel = CancellationToken::new();
-                match agent.compact_now(&cancel).await {
+                match agent.compact_now(&cancel, focus).await {
                     Ok(()) => println!(
                         "{DIM}[compacted; ctx now {:.0}%]{RESET}",
                         agent.utilization() * 100.0
@@ -316,12 +398,46 @@ pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
             }
             _ => {}
         }
-        match run_turn_interruptible(&mut agent, input, &TerminalGate, show_reasoning).await {
+        // Run the turn while continuing to consume input events: lines answer
+        // a pending approval or queue as steering; Ctrl-C cancels.
+        let cancel = CancellationToken::new();
+        let steer = agent.steer_handle();
+        let result = {
+            let mut sink = TerminalSink::new(show_reasoning);
+            let turn = agent.run_turn(input, &gate, &mut sink, &cancel);
+            tokio::pin!(turn);
+            loop {
+                tokio::select! {
+                    result = &mut turn => break result,
+                    event = events.recv() => match event {
+                        Some(InputEvent::Line(line)) => {
+                            let pending_claim = claim.lock().expect("claim lock").take();
+                            match pending_claim {
+                                Some(sender) => {
+                                    let _ = sender.send(line);
+                                }
+                                None => {
+                                    steer.lock().expect("steer lock").push_back(line);
+                                    eprintln!("{DIM}[queued: delivered at the next turn boundary]{RESET}");
+                                }
+                            }
+                        }
+                        Some(InputEvent::Interrupt) => {
+                            eprintln!("\n{DIM}[cancelling…]{RESET}");
+                            cancel.cancel();
+                        }
+                        Some(InputEvent::Eof) | None => cancel.cancel(),
+                    }
+                }
+            }
+        };
+        println!();
+        match result {
             Ok(report) => print_turn_status(&agent, &report),
             Err(error) => eprintln!("{RED}error: {error}{RESET}"),
         }
+        pending.extend(steer.lock().expect("steer lock").drain(..));
     }
-    let _ = editor.save_history(&history_path);
     Ok(())
 }
 

@@ -293,6 +293,7 @@ impl ContextManager {
         &mut self,
         messages: &mut Vec<ChatMessage>,
         checkpoint: &str,
+        focus: Option<&str>,
         tools: &[ToolSchema],
         provider: &dyn Provider,
         model: crate::domain::Model,
@@ -301,8 +302,15 @@ impl ContextManager {
     ) -> Result<CompactionOutcome, ProviderError> {
         let before_tokens = self.ledger.estimated_next_prompt_tokens();
         let mut summarizer_messages = messages.clone();
+        let instruction = match focus {
+            Some(focus) => format!(
+                "{}\n\nUser guidance — emphasize this in the summary:\n{focus}",
+                prompt::SUMMARIZE_INSTRUCTION
+            ),
+            None => prompt::SUMMARIZE_INSTRUCTION.to_string(),
+        };
         summarizer_messages.push(ChatMessage::User {
-            content: prompt::SUMMARIZE_INSTRUCTION.to_string(),
+            content: instruction,
         });
         let request = ProviderRequest {
             model,
@@ -572,6 +580,7 @@ mod tests {
             .summarize(
                 &mut messages,
                 "## Working state (tracked)\nFiles read: file_0.rs",
+                None,
                 &crate::tools::tool_schemas(),
                 &provider,
                 Model::DeepseekV4Flash,
@@ -669,6 +678,7 @@ mod tests {
             .summarize(
                 &mut messages,
                 "## Working state (tracked)\nFiles read: file_0.rs",
+                None,
                 &crate::tools::tool_schemas(),
                 &provider,
                 Model::DeepseekV4Flash,
@@ -730,6 +740,7 @@ mod tests {
                 .summarize(
                     &mut messages,
                     "checkpoint",
+                    None,
                     &crate::tools::tool_schemas(),
                     &provider,
                     Model::DeepseekV4Flash,

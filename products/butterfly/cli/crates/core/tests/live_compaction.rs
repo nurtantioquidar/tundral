@@ -108,7 +108,10 @@ async fn live_two_stage_compaction_and_continuation() {
 
     // Stage 2, forced (the /compact path), against the live API.
     let before_utilization = agent.utilization();
-    agent.compact_now(&cancel).await.expect("live summarize");
+    agent
+        .compact_now(&cancel, None)
+        .await
+        .expect("live summarize");
     eprintln!(
         "compact: util {:.0}% -> {:.0}%",
         before_utilization * 100.0,
@@ -121,8 +124,8 @@ async fn live_two_stage_compaction_and_continuation() {
                 "checkpoint shape"
             );
             assert!(
-                content.contains("## Mechanical state"),
-                "mechanical section survived"
+                content.contains("## Working state"),
+                "working-state section survived"
             );
             eprintln!("checkpoint head:\n{}", &content[..content.len().min(600)]);
         }

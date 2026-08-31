@@ -54,8 +54,13 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 ### CLI / REPL
 - **Line-based streaming REPL** — dim reasoning stream, tool-call activity line, per-turn status
   (tokens, cache-hit %, cost, context %). `crates/cli/src/repl.rs`
-- **Slash commands** — `/usage`, `/plan`, `/compact`, `/mode`, `/model`, `/help`; backslash
-  multi-line input; Ctrl-C turn cancellation.
+- **Slash commands** — `/usage`, `/plan`, `/compact [focus]` (optional guidance threaded into the
+  summarizer), `/mode`, `/model`, `/help`; backslash multi-line input; Ctrl-C turn cancellation.
+- **Mid-turn steering (pi-style)** — a persistent input thread owns stdin; lines typed while a
+  turn runs answer a pending approval, or queue and enter the conversation at the next
+  provider-call boundary; leftovers become the next turns.
+- **HTML session export** — `butterfly export [id] [--out path]`: self-contained transcript with
+  reasoning/tool output collapsed and cost totals. `crates/cli/src/export.rs`
 - **Layered config** — `~/.config/butterfly/config.toml` ← `<repo>/.butterfly.toml` ← flags.
 - **Headless one-shot** — `-p` with `--json` machine-readable report (used by bench).
 
@@ -95,9 +100,7 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 
 ## Planned (ordered)
 
-1. **pi-inspired UX** (research: Terminal-Bench-#2 minimalist agent) — `/compact [focus]`
-   instructions; message queuing during a running turn; HTML session export.
-2. **Streaming command output** — long `run_command`s currently render nothing until they finish.
+1. **Streaming command output** — long `run_command`s currently render nothing until they finish.
 3. **Git-aware dynamic context** — branch/status in appended messages, never the prefix.
 4. **Telemetry alarm** — flag an unexpected cache-miss request (no compaction/elision preceded it)
    as a byte-stability regression.

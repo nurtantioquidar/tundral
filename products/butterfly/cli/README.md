@@ -10,6 +10,7 @@ cargo run -p butterfly -- --auto -p "fix the failing test"   # one-shot, no prom
 cargo run -p butterfly -- --auto --json -p "..."             # one-shot, machine-readable report
 cargo run -p butterfly -- --resume         # resume the latest session
 cargo run -p butterfly -- sessions         # list saved sessions
+cargo run -p butterfly -- export           # latest session -> shareable HTML
 ```
 
 `--json` emits one JSON object on stdout (tokens, cache counters, cost,
@@ -63,8 +64,9 @@ max_cost_usd = "0.50"
 quiet_reasoning = false
 ```
 
-REPL extras: `/model` switches models mid-session, `/mode` switches permissions, `/plan` shows the
-tracked working state (objective, tasks, files touched, command outcomes — maintained by the loop
+REPL extras: type while a turn runs — messages are delivered at the next turn boundary (pi-style
+steering); `/compact [focus]` compacts with optional guidance; `/model` switches models
+mid-session, `/mode` switches permissions, `/plan` shows the tracked working state (objective, tasks, files touched, command outcomes — maintained by the loop
 and the model's `update_plan` tool; it survives compaction and resume by construction), and a
 trailing `\` continues input on the next line.
 
