@@ -231,6 +231,68 @@ async function runCodex(task: string): Promise<RunResult> {
   }
 }
 
+async function runOpencode(task: string): Promise<RunResult> {
+  const dir = checkout(task);
+  try {
+    const model = process.env.OPENCODE_MODEL ?? "deepseek/deepseek-v4-flash";
+    const { stdout, stderr, code, wall_ms } = await runCli(
+      ["opencode", "run", "-m", model, "--format", "json", "--dir", dir, PROMPT],
+      dir,
+      {},
+    );
+    let input = 0;
+    let cached = 0;
+    let output = 0;
+    let cost = 0;
+    let steps = 0;
+    let toolCalls = 0;
+    for (const line of stdout.split("\n")) {
+      let event: any;
+      try {
+        event = JSON.parse(line);
+      } catch {
+        continue;
+      }
+      if (event?.type === "step_finish" && event.part?.tokens) {
+        steps += 1;
+        // opencode reports FRESH input and cached reads separately; normalize
+        // to butterfly's semantics (input = total, cached ⊆ input).
+        const fresh = event.part.tokens.input ?? 0;
+        const read = event.part.tokens.cache?.read ?? 0;
+        input += fresh + read;
+        cached += read;
+        output += (event.part.tokens.output ?? 0) + (event.part.tokens.reasoning ?? 0);
+        cost += event.part.cost ?? 0;
+      }
+      if (event?.type === "tool" || event?.part?.type === "tool") toolCalls += 1;
+    }
+    if (code !== 0 || steps === 0) {
+      return {
+        system: "opencode",
+        task,
+        verified: await verify(dir),
+        wall_ms,
+        error: `exit ${code}; stderr tail: ${stderr.trim().slice(-200)}`,
+      };
+    }
+    return {
+      system: "opencode",
+      task,
+      verified: await verify(dir),
+      wall_ms,
+      provider_calls: steps,
+      tool_calls: toolCalls,
+      input_tokens: input,
+      cached_input_tokens: cached,
+      cache_hit_percent: input > 0 ? Math.round((cached / input) * 1000) / 10 : 0,
+      output_tokens: output,
+      cost_microusd: Math.round(cost * 1_000_000),
+    };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 const args = process.argv.slice(2);
 const only = args.includes("--only") ? args[args.indexOf("--only") + 1] : undefined;
 const taskFilter = args.includes("--task") ? args[args.indexOf("--task") + 1] : undefined;
@@ -259,6 +321,10 @@ for (const task of tasks) {
   if (only === undefined || only === "codex") {
     console.error(`running codex / ${task} …`);
     results.push(await runCodex(task));
+  }
+  if (only === "opencode") {
+    console.error(`running opencode / ${task} …`);
+    results.push(await runOpencode(task));
   }
 }
 

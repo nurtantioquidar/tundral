@@ -93,6 +93,12 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 - **Live smoke tests** — `BUTTERFLY_LIVE_TEST=1` gated (wire round-trip, two-stage compaction).
 - Results to date: 5/5 verified vs Codex CLI's 5/5 at ~3× speed and ~6× fewer fresh tokens
   (model-confounded; see `docs/harness-implementation-comparison.md`).
+- **Same-model harness A/B vs opencode** (2026-09-01, both on deepseek-v4-flash, six fixtures,
+  6/6 verified each): Butterfly 2.3× faster wall-clock (62s vs 141s total), 4.2× less total input
+  (106k vs 441k tokens), 3.2× fewer fresh tokens, ~26% cheaper. opencode's cache-hit RATE is
+  slightly higher (82–92% vs 77–88%) because its ~8.6k-token baseline prompt re-reads from cache
+  every turn — percentage flatters volume; fresh tokens is the honest metric. First
+  non-model-confounded harness comparison. One run per cell.
 
 ## In progress
 
