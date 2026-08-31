@@ -209,10 +209,26 @@ async fn main() -> Result<()> {
             if agent.permission_mode() == PermissionMode::Ask {
                 bail!("--json cannot prompt for approvals; pass --auto or --read-only");
             }
+            // Headless: nobody can answer a forced review, so policy-warned
+            // calls (e.g. non-allowlisted commands) are denied, not approved.
+            struct HeadlessGate;
+            #[async_trait::async_trait]
+            impl butterfly_core::session::approval::ApprovalGate for HeadlessGate {
+                async fn review(
+                    &self,
+                    request: &butterfly_core::session::approval::ApprovalRequest,
+                ) -> butterfly_core::session::approval::Decision {
+                    if request.policy_warning.is_some() {
+                        butterfly_core::session::approval::Decision::Deny
+                    } else {
+                        butterfly_core::session::approval::Decision::Approve
+                    }
+                }
+            }
             let report = agent
                 .run_turn(
                     prompt,
-                    &butterfly_core::session::approval::AutoApprove,
+                    &HeadlessGate,
                     &mut butterfly_core::provider::NullSink,
                     &tokio_util::sync::CancellationToken::new(),
                 )

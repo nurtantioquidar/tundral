@@ -478,51 +478,67 @@ impl Agent {
                 call.name
             )));
         };
-        // Validate command policy BEFORE the approval gate: never ask the user
-        // to approve something deterministic policy will reject anyway.
+        // Classify command policy BEFORE the approval gate: forbidden commands
+        // never reach a prompt; commands outside the auto-run allowlist force
+        // a review even in auto mode.
+        let mut policy_warning: Option<String> = None;
         if call.name == "run_command" {
             if let Some(argv) = parse_argv(&call.arguments) {
-                if let Err(error) = crate::tools::policy::validate_command(&argv) {
-                    return Some(crate::tools::ToolOutput::error(error.to_string()));
+                match crate::tools::policy::classify_command(&argv) {
+                    crate::tools::policy::CommandClass::Forbidden(reason) => {
+                        return Some(crate::tools::ToolOutput::error(reason));
+                    }
+                    crate::tools::policy::CommandClass::NeedsApproval(reason) => {
+                        policy_warning = Some(reason);
+                    }
+                    crate::tools::policy::CommandClass::AutoEligible => {}
                 }
             }
         }
         let outcome = policy_outcome(self.config.permission_mode, kind);
-        let approved = match outcome {
-            PolicyOutcome::AutoApprove => true,
-            PolicyOutcome::Deny => false,
-            PolicyOutcome::NeedsReview => {
-                let key = approval::scope_key(&call.name, &call.arguments);
-                if self.session_approvals.contains(&key) {
-                    true
-                } else {
-                    let request = ApprovalRequest {
-                        tool_name: call.name.clone(),
-                        preview: describe_call(&call.name, &call.arguments),
-                        detail: crate::tools::approval_detail(
-                            self.executor.root(),
-                            &call.name,
-                            &call.arguments,
-                        ),
-                        scope_key: key.clone(),
-                    };
-                    match gate.review(&request).await {
-                        Decision::Approve => true,
-                        Decision::ApproveForSession => {
-                            self.session_approvals.insert(key);
-                            true
-                        }
-                        Decision::Deny => false,
+        let needs_review = match outcome {
+            PolicyOutcome::Deny => {
+                return Some(crate::tools::ToolOutput::error(
+                    "denied: session is in read-only mode".to_string(),
+                ));
+            }
+            PolicyOutcome::NeedsReview => true,
+            // Auto-approval never extends past the allowlist: a policy
+            // warning forces the gate regardless of permission mode.
+            PolicyOutcome::AutoApprove => policy_warning.is_some(),
+        };
+        let approved = if !needs_review {
+            true
+        } else {
+            let key = approval::scope_key(&call.name, &call.arguments);
+            if self.session_approvals.contains(&key) {
+                true
+            } else {
+                let request = ApprovalRequest {
+                    tool_name: call.name.clone(),
+                    preview: describe_call(&call.name, &call.arguments),
+                    detail: crate::tools::approval_detail(
+                        self.executor.root(),
+                        &call.name,
+                        &call.arguments,
+                    ),
+                    policy_warning: policy_warning.clone(),
+                    scope_key: key.clone(),
+                };
+                match gate.review(&request).await {
+                    Decision::Approve => true,
+                    Decision::ApproveForSession => {
+                        self.session_approvals.insert(key);
+                        true
                     }
+                    Decision::Deny => false,
                 }
             }
         };
         if !approved {
-            let reason = match outcome {
-                PolicyOutcome::Deny => "denied: session is in read-only mode",
-                _ => "denied by user; adjust the approach or ask them",
-            };
-            return Some(crate::tools::ToolOutput::error(reason.to_string()));
+            return Some(crate::tools::ToolOutput::error(
+                "denied by user; adjust the approach or ask them".to_string(),
+            ));
         }
         if cancel.is_cancelled() {
             return None;
@@ -718,20 +734,20 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn policy_rejected_commands_never_reach_the_gate() {
+    async fn forbidden_commands_never_reach_the_gate() {
         struct PanicGate;
         #[async_trait::async_trait]
         impl ApprovalGate for PanicGate {
             async fn review(&self, request: &ApprovalRequest) -> Decision {
                 panic!(
-                    "gate consulted for policy-rejected call: {}",
+                    "gate consulted for policy-forbidden call: {}",
                     request.preview
                 );
             }
         }
         let dir = workspace();
         let provider = Arc::new(ScriptedProvider::new(vec![
-            assistant_with_call("c1", "run_command", r#"{"command":["rm","-rf","x"]}"#),
+            assistant_with_call("c1", "run_command", r#"{"command":["sudo","ls"]}"#),
             final_text("adjusted"),
         ]));
         let mut agent = Agent::new(
@@ -743,7 +759,7 @@ mod tests {
         .unwrap();
         let report = agent
             .run_turn(
-                "delete stuff".into(),
+                "escalate".into(),
                 &PanicGate,
                 &mut NullSink,
                 &CancellationToken::new(),
@@ -753,8 +769,58 @@ mod tests {
         assert_eq!(report.assistant_text, "adjusted");
         assert!(agent.messages().iter().any(|m| matches!(
             m,
-            ChatMessage::Tool { content, .. } if content.contains("not in allowlist")
+            ChatMessage::Tool { content, .. } if content.contains("privilege escalation")
         )));
+    }
+
+    #[tokio::test]
+    async fn auto_mode_still_gates_non_allowlisted_commands() {
+        use std::sync::atomic::{AtomicU32, Ordering};
+        struct RecordingGate {
+            reviews: AtomicU32,
+        }
+        #[async_trait::async_trait]
+        impl ApprovalGate for RecordingGate {
+            async fn review(&self, request: &ApprovalRequest) -> Decision {
+                assert!(
+                    request.policy_warning.is_some(),
+                    "forced review must carry the policy warning"
+                );
+                self.reviews.fetch_add(1, Ordering::SeqCst);
+                Decision::Approve
+            }
+        }
+        let dir = workspace();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call("c1", "run_command", r#"{"command":["touch","made.txt"]}"#),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        let gate = RecordingGate {
+            reviews: AtomicU32::new(0),
+        };
+        agent
+            .run_turn(
+                "make a file".into(),
+                &gate,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        // Auto mode did NOT auto-run the unknown binary: the gate was
+        // consulted once, and after approval the command actually executed.
+        assert_eq!(gate.reviews.load(Ordering::SeqCst), 1);
+        assert!(dir.path().join("made.txt").exists());
     }
 
     #[tokio::test]

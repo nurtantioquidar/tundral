@@ -1,8 +1,8 @@
-# Harness CLI Agent Guide
+# Butterfly CLI Agent Guide
 
 ## Purpose
 
-`butterfly` is the Harness product: a fast interactive coding agent CLI in Rust — a chat REPL that runs
+`butterfly` is the Butterfly product: a fast interactive coding agent CLI in Rust — a chat REPL that runs
 tools inside the user's repository against DeepSeek's Chat Completions API. Design pillars: speed
 (Rust, streaming, lean prompts), a cache-first prompt layout (opencode-class hit rates), two-stage
 auto-compaction with a typed working state, and deterministic safety (approval-gated diffs,
@@ -38,7 +38,7 @@ crates/cli    # butterfly: rustyline REPL, streaming render, terminal approval p
 cargo test --workspace --locked                       # offline test suite
 cargo fmt --check && cargo clippy --workspace --locked --all-targets -- -D warnings
 bun run --filter @monet/butterfly-cli check             # all of the above
-bun run dev:harness                                   # REPL via the repo root
+bun run dev:butterfly                                 # REPL via the repo root
 BUTTERFLY_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p butterfly-core --test live_deepseek  # paid smoke test
 ```
 
@@ -61,7 +61,9 @@ BUTTERFLY_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p butterfly-core --test l
    never judges its own completion and read-only tools never prompt.
 5. Tool paths are confined to the workspace root: no absolute paths, no `..`, no `.git` internals,
    no secret-bearing files, realpath re-check after resolution. Commands execute as argv vectors —
-   never a shell — from an allowlist, with credential-like environment variables stripped.
+   never a shell — with credential-stripped environments. Strictly-allowlisted commands may
+   auto-run per the permission mode; anything else requires explicit human approval EVEN in auto
+   mode (headless runs deny instead); privilege escalation (sudo/su/doas) never runs.
 6. Never log or persist provider credentials. Structured payloads persisted about config or errors
    pass key-based redaction. Conversation content IS persisted (required for `--resume`), with
    0700/0600 permissions.

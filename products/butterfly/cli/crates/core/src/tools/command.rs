@@ -9,7 +9,7 @@ use std::time::Duration;
 use serde::Deserialize;
 use tokio_util::sync::CancellationToken;
 
-use super::policy::{sanitized_environment, validate_command};
+use super::policy::{classify_command, sanitized_environment, CommandClass, PolicyError};
 use super::{ToolError, ToolOutput};
 
 const OUTPUT_CAP_BYTES: usize = 40_000;
@@ -30,7 +30,11 @@ pub async fn run_command(
     args: RunCommandArgs,
     cancel: &CancellationToken,
 ) -> Result<ToolOutput, ToolError> {
-    validate_command(&args.command)?;
+    // Approval decisions happen upstream in the session loop; the executor is
+    // the last line of defense only for the never-runnable class.
+    if let CommandClass::Forbidden(reason) = classify_command(&args.command) {
+        return Err(ToolError::Policy(PolicyError::Command(reason)));
+    }
     let timeout = Duration::from_secs(
         args.timeout_seconds
             .unwrap_or(DEFAULT_TIMEOUT_SECONDS)
@@ -123,12 +127,12 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn rejects_disallowed_commands_before_spawning() {
+    async fn rejects_forbidden_commands_before_spawning() {
         let dir = tempfile::tempdir().unwrap();
         let result = run_command(
             dir.path(),
             RunCommandArgs {
-                command: vec!["bash".into(), "-c".into(), "true".into()],
+                command: vec!["sudo".into(), "true".into()],
                 timeout_seconds: None,
             },
             &CancellationToken::new(),

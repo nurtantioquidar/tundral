@@ -138,56 +138,74 @@ const PACKAGE_NETWORK_VERBS: &[&str] = &[
     "upgrade",
 ];
 
-/// Validate a model-issued argv vector. There is no shell anywhere: the vector
-/// is spawned directly, so metacharacters are inert; the policy instead
-/// controls which binaries run and with which argument shapes.
-pub fn validate_command(argv: &[String]) -> Result<(), PolicyError> {
+/// Privilege escalation is never runnable, approved or not.
+const FORBIDDEN_COMMANDS: &[&str] = &["doas", "su", "sudo"];
+
+/// How a model-issued argv vector may run. There is no shell anywhere — the
+/// vector is spawned directly, so metacharacters are inert; the policy
+/// controls which binaries may run WITHOUT a human in the loop.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CommandClass {
+    /// Allowlisted binary with strict argument shape: eligible for auto-run
+    /// when the permission mode allows it.
+    AutoEligible,
+    /// Runnable, but only with explicit human approval — even in auto mode.
+    /// The string is the reason shown in the approval prompt.
+    NeedsApproval(String),
+    /// Never runs.
+    Forbidden(String),
+}
+
+pub fn classify_command(argv: &[String]) -> CommandClass {
     let Some(program) = argv.first() else {
-        return Err(PolicyError::Command("empty command".into()));
+        return CommandClass::Forbidden("empty command".into());
     };
+    if FORBIDDEN_COMMANDS.contains(&program.as_str()) {
+        return CommandClass::Forbidden(format!("privilege escalation is never run: {program}"));
+    }
     if !ALLOWED_COMMANDS.contains(&program.as_str()) {
-        return Err(PolicyError::Command(format!(
-            "binary not in allowlist: {program}"
-        )));
+        return CommandClass::NeedsApproval(format!(
+            "'{program}' is not in the auto-run allowlist"
+        ));
     }
     for argument in &argv[1..] {
         if Path::new(argument).is_absolute() {
-            return Err(PolicyError::Command(format!(
-                "absolute path argument: {argument}"
-            )));
+            return CommandClass::NeedsApproval(format!(
+                "absolute path argument escapes the workspace: {argument}"
+            ));
         }
         if argument == ".." || argument.contains("../") || argument.contains("/..") {
-            return Err(PolicyError::Command(format!(
-                "parent-directory argument: {argument}"
-            )));
+            return CommandClass::NeedsApproval(format!(
+                "parent-directory argument escapes the workspace: {argument}"
+            ));
         }
     }
     if program == "git" {
         let subcommand = argv.get(1).map(String::as_str).unwrap_or_default();
         if !ALLOWED_GIT_SUBCOMMANDS.contains(&subcommand) {
-            return Err(PolicyError::Command(format!(
-                "git subcommand not allowed: {subcommand}"
-            )));
+            return CommandClass::NeedsApproval(format!(
+                "git '{subcommand}' can modify repository state"
+            ));
         }
     }
     if INTERPRETERS.contains(&program.as_str()) {
         for argument in &argv[1..] {
             if INLINE_EVAL_FLAGS.contains(&argument.as_str()) {
-                return Err(PolicyError::Command(format!(
-                    "inline evaluation flag not allowed: {argument}"
-                )));
+                return CommandClass::NeedsApproval(format!(
+                    "inline code evaluation ({argument}) bypasses file review"
+                ));
             }
         }
     }
     if PACKAGE_MANAGERS.contains(&program.as_str()) {
         let subcommand = argv.get(1).map(String::as_str).unwrap_or_default();
         if PACKAGE_NETWORK_VERBS.contains(&subcommand) {
-            return Err(PolicyError::Command(format!(
-                "package manager network action not allowed: {program} {subcommand}"
-            )));
+            return CommandClass::NeedsApproval(format!(
+                "package manager network action: {program} {subcommand}"
+            ));
         }
     }
-    Ok(())
+    CommandClass::AutoEligible
 }
 
 /// Drop credential-like variables from the inherited environment.
@@ -240,23 +258,35 @@ mod tests {
     }
 
     #[test]
-    fn command_policy_matches_the_ported_rules() {
-        let ok = |argv: &[&str]| {
-            validate_command(&argv.iter().map(|s| s.to_string()).collect::<Vec<_>>())
+    fn command_policy_classifies_three_ways() {
+        let classify = |argv: &[&str]| {
+            classify_command(&argv.iter().map(|s| s.to_string()).collect::<Vec<_>>())
         };
-        assert!(ok(&["cargo", "test"]).is_ok());
-        assert!(ok(&["pwd"]).is_ok());
-        assert!(ok(&["git", "status"]).is_ok());
-        assert!(ok(&["git", "push"]).is_err());
-        assert!(ok(&["rm", "-rf", "x"]).is_err());
-        assert!(ok(&["bash", "-c", "echo hi"]).is_err());
-        assert!(ok(&["python3", "-c", "print(1)"]).is_err());
-        assert!(ok(&["node", "--eval", "1"]).is_err());
-        assert!(ok(&["npm", "install"]).is_err());
-        assert!(ok(&["cargo", "publish"]).is_err());
-        assert!(ok(&["cargo", "build", "--release"]).is_ok());
-        assert!(ok(&["cat", "/etc/passwd"]).is_err());
-        assert!(ok(&["ls", "../.."]).is_err());
+        let auto = CommandClass::AutoEligible;
+        // Strict allowlisted commands stay auto-eligible.
+        assert_eq!(classify(&["cargo", "test"]), auto);
+        assert_eq!(classify(&["pwd"]), auto);
+        assert_eq!(classify(&["git", "status"]), auto);
+        assert_eq!(classify(&["cargo", "build", "--release"]), auto);
+        // Everything that used to be a hard reject is now approvable…
+        let needs = |argv: &[&str]| matches!(classify(argv), CommandClass::NeedsApproval(_));
+        assert!(needs(&["git", "push"]));
+        assert!(needs(&["rm", "-rf", "x"]));
+        assert!(needs(&["bash", "-c", "echo hi"]));
+        assert!(needs(&["python3", "-c", "print(1)"]));
+        assert!(needs(&["node", "--eval", "1"]));
+        assert!(needs(&["npm", "install"]));
+        assert!(needs(&["cargo", "publish"]));
+        assert!(needs(&["cat", "/etc/passwd"]));
+        assert!(needs(&["ls", "../.."]));
+        assert!(needs(&["mv", "a", "b"]));
+        // …except privilege escalation, which never runs.
+        assert!(matches!(
+            classify(&["sudo", "ls"]),
+            CommandClass::Forbidden(_)
+        ));
+        assert!(matches!(classify(&["su", "-"]), CommandClass::Forbidden(_)));
+        assert!(matches!(classify(&[]), CommandClass::Forbidden(_)));
     }
 
     #[test]

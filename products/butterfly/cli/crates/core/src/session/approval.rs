@@ -24,6 +24,10 @@ pub struct ApprovalRequest {
     /// Rich preview of what approval would do: an edit diff, the head of a
     /// file write, or the exact command line. Rendered by the UI.
     pub detail: Option<String>,
+    /// Set when deterministic policy FORCED this review (e.g. a command
+    /// outside the auto-run allowlist): the reason, shown prominently.
+    /// Headless gates must deny requests carrying a warning.
+    pub policy_warning: Option<String>,
     /// Session-scope approval key: approving "for the session" allows future
     /// calls with the same key without prompting.
     pub scope_key: String,

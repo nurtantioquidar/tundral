@@ -110,8 +110,12 @@ impl ApprovalGate for TerminalGate {
     async fn review(&self, request: &ApprovalRequest) -> Decision {
         let preview = request.preview.clone();
         let detail = request.detail.clone();
+        let warning = request.policy_warning.clone();
         tokio::task::spawn_blocking(move || {
             eprintln!("\n  {CYAN}{preview}{RESET}");
+            if let Some(warning) = warning {
+                eprintln!("  {RED}⚠ {warning}{RESET}");
+            }
             if let Some(detail) = detail {
                 eprint!("{}", render_detail(&detail));
             }
