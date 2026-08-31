@@ -32,7 +32,8 @@ comparable signals.
 
 ## Full-window compaction exercise (`longrun.ts`)
 
-Fills hx's real 128k window by reading large repository files turn after turn
+Fills a pinned 128k window (`--window-tokens 131072`; the model's real window
+is 1M, too expensive to fill) by reading large repository files turn after turn
 in one resumed session until elision/summarization fire naturally, then probes
 continuity ("list every file you read", "what did the first files cover") and
 scores recall. Covers what the tiny-window live test cannot: summarizer

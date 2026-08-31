@@ -19,6 +19,8 @@ pub struct FileConfig {
     pub max_cost_usd: Option<String>,
     pub base_url: Option<String>,
     pub quiet_reasoning: Option<bool>,
+    /// Context window override in tokens (default: the model's real window).
+    pub window_tokens: Option<u64>,
 }
 
 impl FileConfig {
@@ -30,6 +32,7 @@ impl FileConfig {
             max_cost_usd: over.max_cost_usd.or(self.max_cost_usd),
             base_url: over.base_url.or(self.base_url),
             quiet_reasoning: over.quiet_reasoning.or(self.quiet_reasoning),
+            window_tokens: over.window_tokens.or(self.window_tokens),
         }
     }
 }

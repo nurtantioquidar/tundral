@@ -43,8 +43,9 @@ pub struct ContextConfig {
 impl Default for ContextConfig {
     fn default() -> Self {
         Self {
-            window_tokens: 128_000,
-            output_reserve_tokens: 8_000,
+            // Verified 2026-08-31: deepseek-v4 serves a 1M-token window.
+            window_tokens: 1_000_000,
+            output_reserve_tokens: 16_000,
             safety_margin_tokens: 4_000,
             prepare_threshold: 0.70,
             compact_threshold: 0.80,

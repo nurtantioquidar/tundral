@@ -73,6 +73,11 @@ struct Cli {
     /// Override the DeepSeek endpoint (or set DEEPSEEK_BASE_URL).
     #[arg(long)]
     base_url: Option<String>,
+
+    /// Override the context window in tokens (tuning/testing; default is the
+    /// model's real window).
+    #[arg(long)]
+    window_tokens: Option<u64>,
 }
 
 #[derive(Subcommand)]
@@ -136,11 +141,19 @@ async fn main() -> Result<()> {
         ),
         None => None,
     };
+    let mut context = hx_core::context::ContextConfig {
+        window_tokens: model.context_window_tokens(),
+        ..hx_core::context::ContextConfig::default()
+    };
+    if let Some(window) = cli.window_tokens.or(file.window_tokens) {
+        context.window_tokens = window;
+    }
     let config = SessionConfig {
         model,
         effort,
         permission_mode,
         max_session_cost_microusd,
+        context,
         ..SessionConfig::default()
     };
 

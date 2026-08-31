@@ -121,14 +121,52 @@ impl Model {
         }
     }
 
+    /// Advertised window is 1M (docs: "1M", OpenRouter: 1,048,576); use a
+    /// conservative round million.
     pub fn context_window_tokens(self) -> u64 {
-        128_000
+        1_000_000
     }
 }
 
-pub const PRICE_VERSION: &str = "2026-04-24-usd";
+/// Verified against https://api-docs.deepseek.com/quick_start/pricing on
+/// 2026-08-31. DeepSeek bills by UTC time of day: peak is 01:00–04:00 and
+/// 06:00–10:00 UTC Monday–Friday; every other hour is off-peak at half the
+/// peak rate.
+pub const PRICE_VERSION: &str = "2026-08-31-usd";
 
-/// Micro-USD per million tokens.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum PriceTier {
+    Peak,
+    OffPeak,
+}
+
+impl PriceTier {
+    /// Tier for the current UTC wall-clock time.
+    pub fn current_utc() -> PriceTier {
+        let seconds = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_secs())
+            .unwrap_or(0);
+        Self::for_epoch_seconds(seconds)
+    }
+
+    /// 1970-01-01 was a Thursday; weekday 0 = Monday here.
+    pub fn for_epoch_seconds(seconds: u64) -> PriceTier {
+        let days = seconds / 86_400;
+        let weekday = (days + 3) % 7; // 0 = Monday … 6 = Sunday
+        let hour = (seconds % 86_400) / 3_600;
+        let weekday_is_business = weekday < 5;
+        let hour_is_peak = (1..4).contains(&hour) || (6..10).contains(&hour);
+        if weekday_is_business && hour_is_peak {
+            PriceTier::Peak
+        } else {
+            PriceTier::OffPeak
+        }
+    }
+}
+
+/// Micro-USD per million tokens at PEAK rates; off-peak is exactly half.
 #[derive(Debug, Clone, Copy)]
 pub struct PriceCard {
     pub cache_hit_input: u64,
@@ -139,14 +177,14 @@ pub struct PriceCard {
 pub fn price_card(model: Model) -> PriceCard {
     match model {
         Model::DeepseekV4Flash => PriceCard {
-            cache_hit_input: 2_800,
-            cache_miss_input: 140_000,
-            output: 280_000,
+            cache_hit_input: 14_000,
+            cache_miss_input: 440_000,
+            output: 1_320_000,
         },
         Model::DeepseekV4Pro => PriceCard {
-            cache_hit_input: 3_625,
-            cache_miss_input: 435_000,
-            output: 870_000,
+            cache_hit_input: 44_000,
+            cache_miss_input: 1_320_000,
+            output: 3_960_000,
         },
     }
 }
@@ -156,8 +194,22 @@ fn tokens_cost_microusd(tokens: u64, microusd_per_million: u64) -> u64 {
     u64::try_from(product.div_ceil(1_000_000)).unwrap_or(u64::MAX)
 }
 
+/// Price a request at the current UTC tier.
 pub fn price_usage(model: Model, usage: Usage) -> Cost {
-    let card = price_card(model);
+    price_usage_at(model, usage, PriceTier::current_utc())
+}
+
+pub fn price_usage_at(model: Model, usage: Usage, tier: PriceTier) -> Cost {
+    let peak = price_card(model);
+    let divisor = match tier {
+        PriceTier::Peak => 1,
+        PriceTier::OffPeak => 2,
+    };
+    let card = PriceCard {
+        cache_hit_input: peak.cache_hit_input / divisor,
+        cache_miss_input: peak.cache_miss_input / divisor,
+        output: peak.output / divisor,
+    };
     let actual = tokens_cost_microusd(usage.cache_hit_input_tokens, card.cache_hit_input)
         .saturating_add(tokens_cost_microusd(
             usage.cache_miss_input_tokens,
@@ -223,19 +275,39 @@ mod tests {
     }
 
     #[test]
-    fn pricing_uses_distinct_counters() {
+    fn pricing_uses_distinct_counters_per_tier() {
         let usage = Usage {
             input_tokens: 1_000_000,
             cache_hit_input_tokens: 900_000,
             cache_miss_input_tokens: 100_000,
             output_tokens: 10_000,
         };
-        let cost = price_usage(Model::DeepseekV4Flash, usage);
-        // 0.9M * 2,800/M + 0.1M * 140,000/M + 0.01M * 280,000/M
-        assert_eq!(cost.actual_microusd, 2_520 + 14_000 + 2_800);
+        let peak = price_usage_at(Model::DeepseekV4Flash, usage, PriceTier::Peak);
+        // 0.9M * 14,000/M + 0.1M * 440,000/M + 0.01M * 1,320,000/M
+        assert_eq!(peak.actual_microusd, 12_600 + 44_000 + 13_200);
         // normalized prices ALL input at the miss rate
-        assert_eq!(cost.normalized_cache_miss_microusd, 140_000 + 2_800);
-        assert_eq!(cost.price_version, PRICE_VERSION);
+        assert_eq!(peak.normalized_cache_miss_microusd, 440_000 + 13_200);
+        assert_eq!(peak.price_version, PRICE_VERSION);
+        let off_peak = price_usage_at(Model::DeepseekV4Flash, usage, PriceTier::OffPeak);
+        assert_eq!(off_peak.actual_microusd, peak.actual_microusd / 2);
+    }
+
+    #[test]
+    fn price_tier_follows_utc_business_windows() {
+        // 2026-08-31 is a Monday. 02:00 UTC = peak; 05:00 = off-peak;
+        // 07:00 = peak; 12:00 = off-peak.
+        let monday_midnight = 1_788_134_400; // 2026-08-31T00:00:00Z
+        let at = |hour: u64| monday_midnight + hour * 3_600;
+        assert_eq!(PriceTier::for_epoch_seconds(at(2)), PriceTier::Peak);
+        assert_eq!(PriceTier::for_epoch_seconds(at(5)), PriceTier::OffPeak);
+        assert_eq!(PriceTier::for_epoch_seconds(at(7)), PriceTier::Peak);
+        assert_eq!(PriceTier::for_epoch_seconds(at(12)), PriceTier::OffPeak);
+        // Sunday 07:00 UTC is off-peak (weekend).
+        let sunday = monday_midnight - 86_400;
+        assert_eq!(
+            PriceTier::for_epoch_seconds(sunday + 7 * 3_600),
+            PriceTier::OffPeak
+        );
     }
 
     #[test]
@@ -246,9 +318,9 @@ mod tests {
             cache_miss_input_tokens: 1,
             output_tokens: 0,
         };
-        // 1 token at 140,000 micro-USD/M rounds up to 1 micro-USD.
+        // 1 token at 440,000 micro-USD/M rounds up to 1 micro-USD.
         assert_eq!(
-            price_usage(Model::DeepseekV4Flash, usage).actual_microusd,
+            price_usage_at(Model::DeepseekV4Flash, usage, PriceTier::Peak).actual_microusd,
             1
         );
         let huge = Usage {
@@ -257,7 +329,7 @@ mod tests {
             cache_miss_input_tokens: u64::MAX,
             output_tokens: u64::MAX,
         };
-        let _ = price_usage(Model::DeepseekV4Pro, huge);
+        let _ = price_usage_at(Model::DeepseekV4Pro, huge, PriceTier::Peak);
     }
 
     #[test]

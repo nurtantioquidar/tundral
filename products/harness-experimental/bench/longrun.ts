@@ -1,8 +1,9 @@
-// Long-session exercise: fill hx's REAL 128k window with genuine repository
-// reading work until auto-compaction fires naturally, then probe continuity.
-// This measures what the tiny-window live test cannot: summarizer narrative
-// quality over ~100k tokens of real content, and cache-hit recovery after a
-// full-scale compaction.
+// Long-session exercise: fill a 128k-token window (pinned via --window-tokens;
+// deepseek-v4's real window is 1M, which would cost too much to fill) with
+// genuine repository reading work until auto-compaction fires naturally, then
+// probe continuity. This measures what the tiny-window live test cannot:
+// summarizer narrative quality over ~100k tokens of real content, and
+// cache-hit recovery after a full-scale compaction.
 //
 // Usage:  DEEPSEEK_API_KEY=... bun longrun.ts [repo-root]
 // Writes results/longrun-<epoch>.json with every turn's metrics and the
@@ -44,7 +45,9 @@ async function hxTurn(prompt: string, sessionId?: string): Promise<Record<string
     "--json",
     "--quiet-reasoning",
     "--max-cost-usd",
-    "0.50",
+    "1.00",
+    "--window-tokens",
+    "131072",
     "--root",
     ROOT,
     "-p",
