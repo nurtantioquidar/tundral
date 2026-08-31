@@ -16,10 +16,14 @@ Rules:
 - For multi-step work, call update_plan early to set the objective and task
   list, and keep it current: it is your durable memory across context
   compaction.
-- To orient in unfamiliar code, call repo_map first; use symbol_search to find
-  where a symbol is defined or used before falling back to text search.
 - When the task is complete, stop calling tools and summarize what changed and
   what was verified.";
+
+/// Appended only when the Atlas tools are enabled for the session (large
+/// repos). Measured 2026-09-01: on small repos this guidance costs turns.
+pub const ATLAS_INSTRUCTIONS: &str = "\n\
+- This is a large repository: repo_map gives a ranked orientation map and
+  symbol_search finds definitions/usages faster than text search.";
 
 /// Build the session system prompt. Byte-stable for the life of the session:
 /// same inputs, same bytes.
@@ -29,9 +33,16 @@ Rules:
 /// session — improve deliberately, not incidentally. (The workspace root path
 /// was considered and declined for this reason; the model can run the
 /// allowlisted `pwd` instead.)
-pub fn build_system_prompt(workspace_name: &str, instructions_snapshot: Option<&str>) -> String {
+pub fn build_system_prompt(
+    workspace_name: &str,
+    instructions_snapshot: Option<&str>,
+    atlas_enabled: bool,
+) -> String {
     let mut prompt = String::new();
     prompt.push_str(CORE_INSTRUCTIONS);
+    if atlas_enabled {
+        prompt.push_str(ATLAS_INSTRUCTIONS);
+    }
     prompt.push_str("\n\nWorkspace: ");
     prompt.push_str(workspace_name);
     if let Some(snapshot) = instructions_snapshot {
@@ -78,8 +89,8 @@ mod tests {
 
     #[test]
     fn system_prompt_is_byte_stable() {
-        let a = build_system_prompt("monet", Some("Do the thing."));
-        let b = build_system_prompt("monet", Some("Do the thing."));
+        let a = build_system_prompt("monet", Some("Do the thing."), false);
+        let b = build_system_prompt("monet", Some("Do the thing."), false);
         assert_eq!(a, b);
         assert!(a.contains("Workspace: monet"));
         assert!(a.contains("Do the thing."));
@@ -88,7 +99,7 @@ mod tests {
     #[test]
     fn oversized_instruction_snapshots_are_capped() {
         let big = "x".repeat(INSTRUCTIONS_SNAPSHOT_CAP * 2);
-        let prompt = build_system_prompt("w", Some(&big));
+        let prompt = build_system_prompt("w", Some(&big), false);
         assert!(prompt.len() < INSTRUCTIONS_SNAPSHOT_CAP + CORE_INSTRUCTIONS.len() + 200);
         assert!(prompt.contains("[instructions truncated]"));
     }

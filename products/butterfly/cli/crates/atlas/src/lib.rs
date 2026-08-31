@@ -31,6 +31,30 @@ pub struct RefreshStats {
     pub removed: usize,
 }
 
+/// Count indexable files under `root`, stopping early at `stop_at`. Used to
+/// decide whether Atlas is worth enabling: on small repos a plain text search
+/// answers in one call and index tools only add turns (measured, 2026-09-01).
+pub fn count_indexable_files(root: &Path, stop_at: usize) -> usize {
+    let mut count = 0usize;
+    let walker = ignore::WalkBuilder::new(root)
+        .hidden(false)
+        .git_ignore(true)
+        .git_exclude(true)
+        .require_git(false)
+        .filter_entry(|entry| entry.file_name() != ".git")
+        .build();
+    for entry in walker.flatten() {
+        if entry.file_type().is_some_and(|t| t.is_file()) && Lang::from_path(entry.path()).is_some()
+        {
+            count += 1;
+            if count >= stop_at {
+                break;
+            }
+        }
+    }
+    count
+}
+
 /// The in-memory index. Built lazily on first use; `refresh()` re-parses only
 /// files whose content hash changed.
 pub struct Atlas {

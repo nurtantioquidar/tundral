@@ -27,6 +27,8 @@ interface RunResult {
   task: string;
   verified: boolean;
   wall_ms: number;
+  provider_calls?: number;
+  tool_calls?: number;
   input_tokens?: number;
   cached_input_tokens?: number;
   cache_hit_percent?: number;
@@ -98,21 +100,25 @@ function lastJsonLine(stdout: string): Record<string, unknown> | undefined {
 
 async function runButterfly(task: string): Promise<RunResult> {
   const dir = checkout(task);
+  const label = process.env.BUTTERFLY_LABEL ?? "butterfly";
+  const extraArgs = (process.env.BUTTERFLY_EXTRA_ARGS ?? "").split(/\s+/).filter(Boolean);
   try {
     const { stdout, stderr, code, wall_ms } = await runCli(
-      [BUTTERFLY_BIN, "--auto", "--json", "--no-save", "--quiet-reasoning", "--max-cost-usd", "0.10", "--root", dir, "-p", PROMPT],
+      [BUTTERFLY_BIN, "--auto", "--json", "--no-save", "--quiet-reasoning", "--max-cost-usd", "0.10", ...extraArgs, "--root", dir, "-p", PROMPT],
       dir,
       {},
     );
     const report = lastJsonLine(stdout);
     if (code !== 0 || !report) {
-      return { system: "butterfly", task, verified: false, wall_ms, error: stderr.trim().slice(-400) || `exit ${code}` };
+      return { system: label, task, verified: false, wall_ms, error: stderr.trim().slice(-400) || `exit ${code}` };
     }
     return {
-      system: "butterfly",
+      system: label,
       task,
       verified: await verify(dir),
       wall_ms,
+      provider_calls: report.provider_calls as number,
+      tool_calls: report.tool_calls as number,
       input_tokens: report.input_tokens as number,
       cached_input_tokens: report.cache_hit_input_tokens as number,
       cache_hit_percent: report.cache_hit_percent as number,
@@ -258,11 +264,11 @@ for (const task of tasks) {
 
 const usd = (micro?: number | null) =>
   micro == null ? "n/a" : `$${(micro / 1_000_000).toFixed(6)}`;
-console.log("\n| system | task | verified | wall | in tokens | cached | hit% | out | cost |");
-console.log("|---|---|---|---|---|---|---|---|---|");
+console.log("\n| system | task | verified | wall | turns | tools | in tokens | cached | hit% | out | cost |");
+console.log("|---|---|---|---|---|---|---|---|---|---|---|");
 for (const r of results) {
   console.log(
-    `| ${r.system} | ${r.task} | ${r.error ? "ERROR" : r.verified ? "✅" : "❌"} | ${(r.wall_ms / 1000).toFixed(1)}s | ${r.input_tokens ?? "-"} | ${r.cached_input_tokens ?? "-"} | ${r.cache_hit_percent ?? "-"} | ${r.output_tokens ?? "-"} | ${usd(r.cost_microusd)} |`,
+    `| ${r.system} | ${r.task} | ${r.error ? "ERROR" : r.verified ? "✅" : "❌"} | ${(r.wall_ms / 1000).toFixed(1)}s | ${r.provider_calls ?? "-"} | ${r.tool_calls ?? "-"} | ${r.input_tokens ?? "-"} | ${r.cached_input_tokens ?? "-"} | ${r.cache_hit_percent ?? "-"} | ${r.output_tokens ?? "-"} | ${usd(r.cost_microusd)} |`,
   );
   if (r.error) console.log(`  error: ${r.error}`);
 }

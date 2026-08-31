@@ -60,9 +60,16 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 - **Headless one-shot** — `-p` with `--json` machine-readable report (used by bench).
 
 ### Atlas (native code graph)
-- **M0: extraction + incremental index** — tree-sitter definitions/references/imports for
+- **Extraction + incremental index** — tree-sitter definitions/references/imports for
   Rust/Python/TS/TSX/JS; blake3 content-hash refresh with mtime fast path; deterministic lookups.
-  Not yet exposed as tools. `crates/atlas/`
+  `crates/atlas/`
+- **`repo_map` + `symbol_search` tools** — personalized-PageRank ranked map (working-state files
+  seed the ranking) and exact-name definition/reference lookup; read-only, never gated; the
+  session invalidates paths its own edits touch (new symbols findable in the same turn).
+- **Size-gated by measurement** — A/B on six fixtures (2026-09-01): both arms 6/6 verified, but
+  Atlas-on was slower and costlier on every small repo (worst case 43 turns vs 11). Default:
+  enabled only when the repo has ≥100 indexable files; `--atlas` / `--no-atlas` / `.butterfly.toml
+  atlas=` force either way; the prompt guidance line only exists when the tools do.
 
 ### Bench and evaluation
 - **Fixture benchmark** — five bun-test tasks (three simple, two multi-file/search-heavy) run
@@ -75,11 +82,8 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 
 ## In progress
 
-- **Atlas M1** — personalized PageRank + token-budgeted `repo_map` renderer; `repo_map` and
-  `symbol_search` read-only tools (one sanctioned prefix change, operator-approved);
-  `edit`/`write_file` → index invalidation.
-- **Atlas M2** — index-suited bench tier (cross-file rename, find-usages, cold-start orientation);
-  default-on vs `--atlas` flag decided on evidence.
+- **Atlas large-repo validation** — the size gate's auto-on path and a large-repo A/B (the six
+  small fixtures measured the small-repo case; the ≥100-file regime is where Atlas should pay).
 
 ## Planned (ordered)
 

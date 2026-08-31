@@ -121,8 +121,11 @@ impl Agent {
             .map(|name| name.to_string_lossy().into_owned())
             .unwrap_or_else(|| root.display().to_string());
         let instructions = crate::context::prompt::load_instructions_snapshot(&root);
-        let system_prompt =
-            crate::context::prompt::build_system_prompt(&workspace_name, instructions.as_deref());
+        let system_prompt = crate::context::prompt::build_system_prompt(
+            &workspace_name,
+            instructions.as_deref(),
+            config.atlas_enabled,
+        );
         let session_id = uuid::Uuid::new_v4().simple().to_string();
         if let Some(store) = &store {
             store.append(&SessionEvent::SessionStarted {

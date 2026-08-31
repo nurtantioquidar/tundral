@@ -82,6 +82,10 @@ struct Cli {
     /// Disable the Atlas code-graph tools (repo_map, symbol_search).
     #[arg(long)]
     no_atlas: bool,
+
+    /// Force-enable Atlas regardless of repository size.
+    #[arg(long)]
+    atlas: bool,
 }
 
 #[derive(Subcommand)]
@@ -158,7 +162,17 @@ async fn main() -> Result<()> {
         permission_mode,
         max_session_cost_microusd,
         context,
-        atlas_enabled: !cli.no_atlas && file.atlas.unwrap_or(true),
+        // Atlas defaults on only for large repos: measured 2026-09-01, index
+        // tools cost turns on small ones. Flags/config force either way.
+        atlas_enabled: if cli.no_atlas {
+            false
+        } else if cli.atlas {
+            true
+        } else if let Some(configured) = file.atlas {
+            configured
+        } else {
+            butterfly_atlas::count_indexable_files(&root, 100) >= 100
+        },
         ..SessionConfig::default()
     };
 

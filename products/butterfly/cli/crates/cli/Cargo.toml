@@ -11,6 +11,7 @@ path = "src/main.rs"
 
 [dependencies]
 butterfly-core = { path = "../core" }
+butterfly-atlas = { path = "../atlas" }
 tokio = { workspace = true }
 tokio-util = { workspace = true }
 serde = { workspace = true }
