@@ -77,6 +77,11 @@ BUTTERFLY_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p butterfly-core --test l
    operator's explicit sign-off with the trade-off stated. Never change prefix bytes as a side
    effect of an unrelated fix.
 
+## Feature map
+
+`docs/butterfly-features.md` is the canonical inventory of shipped / in-progress / planned /
+rejected features. Update it in the same change that lands or removes a feature.
+
 ## Verification
 
 Run `bun run --filter @monet/butterfly-cli check` (or the cargo commands above) after every change.
