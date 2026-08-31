@@ -5,6 +5,7 @@
 //! messages), never the cached prompt prefix.
 
 mod extract;
+mod rank;
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};

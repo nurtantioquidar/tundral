@@ -171,6 +171,7 @@ name = "butterfly-core"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "butterfly-atlas",
  "dirs",
  "futures-util",
  "grep-regex",

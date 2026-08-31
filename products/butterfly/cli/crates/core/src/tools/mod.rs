@@ -68,6 +68,9 @@ pub const TOOL_NAMES: &[(&str, ToolKind)] = &[
     // schemas identical for prefix caching (sanctioned prefix change,
     // operator-approved 2026-08-31).
     ("update_plan", ToolKind::ReadOnly),
+    // Atlas tools (sanctioned prefix change, operator-approved 2026-08-31).
+    ("repo_map", ToolKind::ReadOnly),
+    ("symbol_search", ToolKind::ReadOnly),
 ];
 
 pub fn tool_kind(name: &str) -> Option<ToolKind> {
@@ -183,6 +186,31 @@ pub fn tool_schemas() -> Vec<ToolSchema> {
                         "description": "Replaces the task list"
                     }
                 },
+                "additionalProperties": false
+            }),
+        },
+        ToolSchema {
+            name: "repo_map".into(),
+            description: "Atlas code graph: a ranked map of the repository's files and their definitions (signatures with line numbers). Use it to orient in unfamiliar code before reading files. Optional focus (symbol names or path fragments) biases the ranking.".into(),
+            parameters: json!({
+                "type": "object",
+                "properties": {
+                    "focus": {"type": "array", "items": {"type": "string"}, "description": "Symbol names or path fragments to bias toward"},
+                    "max_tokens": {"type": "integer", "description": "Approximate output budget, 200-4000 (default 1500)"}
+                },
+                "additionalProperties": false
+            }),
+        },
+        ToolSchema {
+            name: "symbol_search".into(),
+            description: "Atlas code graph: exact-name symbol lookup. mode=definitions returns where a symbol is defined (path:line, kind, signature); mode=references returns call sites by name (may include same-name symbols from other scopes).".into(),
+            parameters: json!({
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string", "description": "Exact symbol name"},
+                    "mode": {"type": "string", "enum": ["definitions", "references"], "description": "Default: definitions"}
+                },
+                "required": ["name"],
                 "additionalProperties": false
             }),
         },

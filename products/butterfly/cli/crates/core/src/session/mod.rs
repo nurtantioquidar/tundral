@@ -19,6 +19,17 @@ use crate::provider::{
     ToolSchema,
 };
 use crate::tools::{describe_call, tool_kind, tool_schemas, ToolExecutor};
+
+/// The session's tool list; Atlas tools drop out when disabled (their
+/// schemas are the tail of the frozen ordering, so the shared prefix of the
+/// remaining schemas is unchanged).
+fn session_tools(atlas_enabled: bool) -> Vec<ToolSchema> {
+    let mut tools = tool_schemas();
+    if !atlas_enabled {
+        tools.retain(|tool| tool.name != "repo_map" && tool.name != "symbol_search");
+    }
+    tools
+}
 use approval::{
     policy_outcome, ApprovalGate, ApprovalRequest, Decision, PermissionMode, PolicyOutcome,
 };
@@ -35,6 +46,8 @@ pub struct SessionConfig {
     /// Provider round-trips allowed for a single user input.
     pub max_provider_calls_per_input: u32,
     pub context: ContextConfig,
+    /// Expose the Atlas code-graph tools (repo_map, symbol_search).
+    pub atlas_enabled: bool,
 }
 
 impl Default for SessionConfig {
@@ -47,6 +60,7 @@ impl Default for SessionConfig {
             max_session_cost_microusd: None,
             max_provider_calls_per_input: 50,
             context: ContextConfig::default(),
+            atlas_enabled: true,
         }
     }
 }
@@ -90,6 +104,7 @@ pub struct Agent {
     total_actual_microusd: u64,
     session_approvals: HashSet<String>,
     working_state: working_state::WorkingState,
+    atlas: butterfly_atlas::Atlas,
 }
 
 impl Agent {
@@ -122,11 +137,12 @@ impl Agent {
             content: system_prompt,
         }];
         context.ledger.rebase(&messages);
+        let atlas = butterfly_atlas::Atlas::new(root.clone());
         Ok(Self {
             session_id,
             provider,
             executor: ToolExecutor::new(root),
-            tools: tool_schemas(),
+            tools: session_tools(config.atlas_enabled),
             messages,
             context,
             store,
@@ -135,6 +151,7 @@ impl Agent {
             total_actual_microusd: 0,
             session_approvals: HashSet::new(),
             working_state: working_state::WorkingState::default(),
+            atlas,
         })
     }
 
@@ -157,11 +174,12 @@ impl Agent {
         }
         let mut context = ContextManager::new(config.context.clone());
         context.ledger.rebase(&replayed.messages);
+        let atlas = butterfly_atlas::Atlas::new(root.clone());
         Ok(Self {
             session_id,
             provider,
             executor: ToolExecutor::new(root),
-            tools: tool_schemas(),
+            tools: session_tools(config.atlas_enabled),
             messages: replayed.messages,
             context,
             store: Some(store),
@@ -170,6 +188,7 @@ impl Agent {
             total_actual_microusd: replayed.total_actual_microusd,
             session_approvals: HashSet::new(),
             working_state: replayed.working_state,
+            atlas,
         })
     }
 
@@ -442,6 +461,19 @@ impl Agent {
                 sink.on_tool_result(&preview, output.is_error);
                 self.working_state
                     .observe(&call.name, &call.arguments, !output.is_error);
+                // The agent's own writes are the likeliest index mutations.
+                if !output.is_error && matches!(call.name.as_str(), "edit" | "write_file") {
+                    if let Some(path) = serde_json::from_str::<serde_json::Value>(&call.arguments)
+                        .ok()
+                        .and_then(|args| {
+                            args.get("path")
+                                .and_then(serde_json::Value::as_str)
+                                .map(std::path::PathBuf::from)
+                        })
+                    {
+                        self.atlas.invalidate(&path);
+                    }
+                }
                 let content = if output.is_error {
                     format!("ERROR: {}", output.content)
                 } else {
@@ -471,6 +503,16 @@ impl Agent {
                 Ok(summary) => crate::tools::ToolOutput::text(summary),
                 Err(error) => crate::tools::ToolOutput::error(error),
             });
+        }
+        // Atlas tools read session-owned index state: handled here, read-only,
+        // never gated.
+        if call.name == "repo_map" || call.name == "symbol_search" {
+            if !self.config.atlas_enabled {
+                return Some(crate::tools::ToolOutput::error(
+                    "atlas is disabled in this session".to_string(),
+                ));
+            }
+            return Some(self.atlas_tool(&call.name, &call.arguments));
         }
         let Some(kind) = tool_kind(&call.name) else {
             return Some(crate::tools::ToolOutput::error(format!(
@@ -548,6 +590,88 @@ impl Agent {
                 .execute(&call.name, &call.arguments, cancel)
                 .await,
         )
+    }
+}
+
+impl Agent {
+    /// Execute one Atlas tool call: incremental refresh, then a ranked map or
+    /// symbol lookup. Working-state files seed the ranking so the map leans
+    /// toward what the session is already touching.
+    fn atlas_tool(&mut self, name: &str, arguments: &str) -> crate::tools::ToolOutput {
+        let args: serde_json::Value = match serde_json::from_str(arguments) {
+            Ok(value) => value,
+            Err(error) => {
+                return crate::tools::ToolOutput::error(format!("invalid arguments: {error}"))
+            }
+        };
+        self.atlas.refresh();
+        match name {
+            "repo_map" => {
+                let mut focus: Vec<String> = args
+                    .get("focus")
+                    .and_then(|value| value.as_array())
+                    .map(|items| {
+                        items
+                            .iter()
+                            .filter_map(|item| item.as_str().map(str::to_string))
+                            .collect()
+                    })
+                    .unwrap_or_default();
+                focus.extend(self.working_state.files_changed.iter().cloned());
+                focus.extend(self.working_state.files_read.iter().cloned());
+                let max_tokens = args
+                    .get("max_tokens")
+                    .and_then(serde_json::Value::as_u64)
+                    .unwrap_or(1_500)
+                    .clamp(200, 4_000) as usize;
+                crate::tools::ToolOutput::text(self.atlas.render_map(&focus, max_tokens))
+            }
+            "symbol_search" => {
+                let Some(symbol) = args.get("name").and_then(serde_json::Value::as_str) else {
+                    return crate::tools::ToolOutput::error("missing required: name".to_string());
+                };
+                let mode = args
+                    .get("mode")
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or("definitions");
+                let mut lines: Vec<String> = match mode {
+                    "references" => self
+                        .atlas
+                        .references(symbol)
+                        .into_iter()
+                        .map(|(path, line)| format!("{}:{line}", path.display()))
+                        .collect(),
+                    _ => self
+                        .atlas
+                        .definitions(symbol)
+                        .into_iter()
+                        .map(|(path, def)| {
+                            let container = def
+                                .container
+                                .as_deref()
+                                .map(|c| format!(" (in {c})"))
+                                .unwrap_or_default();
+                            format!(
+                                "{}:{} [{}] {}{container}",
+                                path.display(),
+                                def.line,
+                                def.kind.label(),
+                                def.signature
+                            )
+                        })
+                        .collect(),
+                };
+                if lines.is_empty() {
+                    lines.push(format!("[no {mode} found for '{symbol}']"));
+                }
+                if lines.len() > 100 {
+                    lines.truncate(100);
+                    lines.push("[truncated at 100 results]".to_string());
+                }
+                crate::tools::ToolOutput::text(lines.join("\n"))
+            }
+            _ => crate::tools::ToolOutput::error(format!("unknown atlas tool: {name}")),
+        }
     }
 }
 
@@ -933,6 +1057,103 @@ mod tests {
         )
         .unwrap();
         assert_eq!(resumed.working_state(), agent.working_state());
+    }
+
+    #[tokio::test]
+    async fn atlas_tools_map_search_and_track_own_writes() {
+        let dir = workspace();
+        std::fs::write(
+            dir.path().join("lib.rs"),
+            "pub fn alpha() {}\npub fn beta() { alpha(); }\n",
+        )
+        .unwrap();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call("c1", "repo_map", r#"{}"#),
+            assistant_with_call("c2", "symbol_search", r#"{"name":"alpha"}"#),
+            assistant_with_call(
+                "c3",
+                "edit",
+                r#"{"path":"lib.rs","old_string":"pub fn alpha() {}","new_string":"pub fn alpha() {}\npub fn gamma() {}"}"#,
+            ),
+            assistant_with_call("c4", "symbol_search", r#"{"name":"gamma"}"#),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        agent
+            .run_turn(
+                "map it".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        let tool_contents: Vec<&str> = agent
+            .messages()
+            .iter()
+            .filter_map(|m| match m {
+                ChatMessage::Tool { content, .. } => Some(content.as_str()),
+                _ => None,
+            })
+            .collect();
+        assert!(
+            tool_contents[0].contains("Atlas repo map") && tool_contents[0].contains("fn alpha"),
+            "{}",
+            tool_contents[0]
+        );
+        assert!(
+            tool_contents[1].contains("lib.rs:1 [fn]"),
+            "{}",
+            tool_contents[1]
+        );
+        // The agent's own edit was invalidated and re-indexed: the NEW symbol
+        // is findable in the same turn.
+        assert!(
+            tool_contents[3].contains("lib.rs:2 [fn] pub fn gamma"),
+            "{}",
+            tool_contents[3]
+        );
+    }
+
+    #[tokio::test]
+    async fn disabling_atlas_removes_only_the_tail_schemas() {
+        let dir = workspace();
+        let with = Agent::new(
+            Arc::new(ScriptedProvider::new(vec![])),
+            dir.path().to_path_buf(),
+            SessionConfig::default(),
+            None,
+        )
+        .unwrap();
+        let without = Agent::new(
+            Arc::new(ScriptedProvider::new(vec![])),
+            dir.path().to_path_buf(),
+            SessionConfig {
+                atlas_enabled: false,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        assert_eq!(with.tools.len(), without.tools.len() + 2);
+        // The remaining schemas are a strict prefix of the full set: byte
+        // stability for non-atlas sessions is unaffected.
+        for (a, b) in without.tools.iter().zip(with.tools.iter()) {
+            assert_eq!(a.name, b.name);
+            assert_eq!(
+                serde_json::to_string(&a.parameters).unwrap(),
+                serde_json::to_string(&b.parameters).unwrap()
+            );
+        }
     }
 
     #[tokio::test]

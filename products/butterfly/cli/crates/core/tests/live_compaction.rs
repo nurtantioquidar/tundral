@@ -53,6 +53,7 @@ async fn live_two_stage_compaction_and_continuation() {
             max_summary_tokens: 700,
             ..ContextConfig::default()
         },
+        atlas_enabled: true,
     };
     let mut agent = Agent::new(provider, root, config, None).expect("agent");
     let cancel = CancellationToken::new();

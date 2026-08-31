@@ -21,6 +21,8 @@ pub struct FileConfig {
     pub quiet_reasoning: Option<bool>,
     /// Context window override in tokens (default: the model's real window).
     pub window_tokens: Option<u64>,
+    /// Enable the Atlas code-graph tools (default true).
+    pub atlas: Option<bool>,
 }
 
 impl FileConfig {
@@ -33,6 +35,7 @@ impl FileConfig {
             base_url: over.base_url.or(self.base_url),
             quiet_reasoning: over.quiet_reasoning.or(self.quiet_reasoning),
             window_tokens: over.window_tokens.or(self.window_tokens),
+            atlas: over.atlas.or(self.atlas),
         }
     }
 }

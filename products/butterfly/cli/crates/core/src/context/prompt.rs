@@ -16,6 +16,8 @@ Rules:
 - For multi-step work, call update_plan early to set the objective and task
   list, and keep it current: it is your durable memory across context
   compaction.
+- To orient in unfamiliar code, call repo_map first; use symbol_search to find
+  where a symbol is defined or used before falling back to text search.
 - When the task is complete, stop calling tools and summarize what changed and
   what was verified.";
 

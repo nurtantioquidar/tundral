@@ -78,6 +78,10 @@ struct Cli {
     /// model's real window).
     #[arg(long)]
     window_tokens: Option<u64>,
+
+    /// Disable the Atlas code-graph tools (repo_map, symbol_search).
+    #[arg(long)]
+    no_atlas: bool,
 }
 
 #[derive(Subcommand)]
@@ -154,6 +158,7 @@ async fn main() -> Result<()> {
         permission_mode,
         max_session_cost_microusd,
         context,
+        atlas_enabled: !cli.no_atlas && file.atlas.unwrap_or(true),
         ..SessionConfig::default()
     };
 
