@@ -1,0 +1,5 @@
+{
+  "name": "fixture-rate-limiter",
+  "private": true,
+  "type": "module"
+}
