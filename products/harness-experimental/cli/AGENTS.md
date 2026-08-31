@@ -24,7 +24,8 @@ crates/core   # hx-core: UI-free engine
   provider    # DeepSeek SSE streaming, tool-call delta assembly; scripted fake for tests
   tools       # registry + security policy (path confinement, argv-only commands)
   context     # prompt layout, anchor+drift token ledger, elision + summarize compaction
-  session     # deterministic agent loop, approval gating, JSONL persistence/resume
+  session     # deterministic agent loop, approval gating, typed working state,
+              # JSONL persistence/resume
 crates/cli    # hx: rustyline REPL, streaming render, terminal approval prompts
 ```
 
@@ -47,7 +48,9 @@ HX_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p hx-core --test live_deepseek  
    history slots.
 2. Compaction is rare and chunky: elision must clear the `min_savings_fraction` floor, and
    summarization rides the warm cache (current history + one appended instruction). New checkpoints
-   supersede old ones; they never stack.
+   supersede old ones; they never stack. The checkpoint's structured half is the typed working
+   state (loop-observed files/commands + model-declared plan via `update_plan`), which lives
+   outside the transcript and survives elision, compaction, and resume by construction.
 3. `reasoning_content` is preserved on assistant tool-call messages sent back to the provider
    (absent is serialized as null, never omitted). Post-compaction tails start at a user message,
    keep tool-call/tool-result groups atomic, and retain reasoning on kept tool-call messages.

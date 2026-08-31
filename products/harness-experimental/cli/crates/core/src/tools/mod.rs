@@ -64,6 +64,10 @@ pub const TOOL_NAMES: &[(&str, ToolKind)] = &[
     ("edit", ToolKind::Mutating),
     ("write_file", ToolKind::Mutating),
     ("run_command", ToolKind::Command),
+    // Appended last deliberately: keeps the serialized bytes of the earlier
+    // schemas identical for prefix caching (sanctioned prefix change,
+    // operator-approved 2026-08-31).
+    ("update_plan", ToolKind::ReadOnly),
 ];
 
 pub fn tool_kind(name: &str) -> Option<ToolKind> {
@@ -159,6 +163,29 @@ pub fn tool_schemas() -> Vec<ToolSchema> {
                 "additionalProperties": false
             }),
         },
+        ToolSchema {
+            name: "update_plan".into(),
+            description: "Record your working plan. Set the objective once, keep the task list current as you work, and record decisions when you make them. This state survives context compaction verbatim.".into(),
+            parameters: json!({
+                "type": "object",
+                "properties": {
+                    "objective": {"type": "string", "description": "What this session is trying to accomplish"},
+                    "constraints": {"type": "array", "items": {"type": "string"}, "description": "Replaces the constraint list"},
+                    "add_decisions": {"type": "array", "items": {"type": "string"}, "description": "Decisions made, appended"},
+                    "tasks": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {"text": {"type": "string"}, "done": {"type": "boolean"}},
+                            "required": ["text", "done"],
+                            "additionalProperties": false
+                        },
+                        "description": "Replaces the task list"
+                    }
+                },
+                "additionalProperties": false
+            }),
+        },
     ]
 }
 
@@ -229,6 +256,11 @@ pub fn describe_call(name: &str, arguments: &str) -> String {
                         .join(" ")
                 })
                 .unwrap_or_default(),
+            "update_plan" => value
+                .get("objective")
+                .and_then(serde_json::Value::as_str)
+                .map(|o| o.chars().take(60).collect())
+                .unwrap_or_else(|| "plan".to_string()),
             _ => value
                 .get("path")
                 .or_else(|| value.get("pattern"))

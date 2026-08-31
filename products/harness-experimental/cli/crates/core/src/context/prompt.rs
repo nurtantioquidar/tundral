@@ -13,6 +13,9 @@ Rules:
 - Commands run as argv vectors with no shell; there is no piping or expansion.
 - Validate your work: run the most targeted test or check that covers the change.
 - Never invent file contents or claim a check passed without tool output proving it.
+- For multi-step work, call update_plan early to set the objective and task
+  list, and keep it current: it is your durable memory across context
+  compaction.
 - When the task is complete, stop calling tools and summarize what changed and
   what was verified.";
 

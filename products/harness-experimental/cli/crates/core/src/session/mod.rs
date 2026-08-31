@@ -4,6 +4,7 @@
 
 pub mod approval;
 pub mod store;
+pub mod working_state;
 
 use std::collections::HashSet;
 use std::path::PathBuf;
@@ -88,6 +89,7 @@ pub struct Agent {
     total_usage: Usage,
     total_actual_microusd: u64,
     session_approvals: HashSet<String>,
+    working_state: working_state::WorkingState,
 }
 
 impl Agent {
@@ -132,6 +134,7 @@ impl Agent {
             total_usage: Usage::default(),
             total_actual_microusd: 0,
             session_approvals: HashSet::new(),
+            working_state: working_state::WorkingState::default(),
         })
     }
 
@@ -166,7 +169,12 @@ impl Agent {
             total_usage: replayed.total_usage,
             total_actual_microusd: replayed.total_actual_microusd,
             session_approvals: HashSet::new(),
+            working_state: replayed.working_state,
         })
+    }
+
+    pub fn working_state(&self) -> &working_state::WorkingState {
+        &self.working_state
     }
 
     pub fn messages(&self) -> &[ChatMessage] {
@@ -283,12 +291,17 @@ impl Agent {
         Ok(())
     }
 
-    /// Stage-2 compaction, also exposed for the /compact command.
+    /// Stage-2 compaction, also exposed for the /compact command. The
+    /// checkpoint's structured half is the tracked working state — data the
+    /// loop recorded as it happened, immune to summarizer quality and to
+    /// earlier compactions.
     pub async fn compact_now(&mut self, cancel: &CancellationToken) -> Result<(), SessionError> {
+        let checkpoint = self.working_state.render();
         let outcome = self
             .context
             .summarize(
                 &mut self.messages,
+                &checkpoint,
                 &self.tools,
                 self.provider.as_ref(),
                 self.config.model,
@@ -427,6 +440,8 @@ impl Agent {
                 }
                 let output = output.expect("checked above");
                 sink.on_tool_result(&preview, output.is_error);
+                self.working_state
+                    .observe(&call.name, &call.arguments, !output.is_error);
                 let content = if output.is_error {
                     format!("ERROR: {}", output.content)
                 } else {
@@ -449,6 +464,14 @@ impl Agent {
         gate: &dyn ApprovalGate,
         cancel: &CancellationToken,
     ) -> Option<crate::tools::ToolOutput> {
+        // update_plan mutates session state, not the workspace: handled here,
+        // never gated (recording a plan is not a side effect on the world).
+        if call.name == "update_plan" {
+            return Some(match self.working_state.apply_update(&call.arguments) {
+                Ok(summary) => crate::tools::ToolOutput::text(summary),
+                Err(error) => crate::tools::ToolOutput::error(error),
+            });
+        }
         let Some(kind) = tool_kind(&call.name) else {
             return Some(crate::tools::ToolOutput::error(format!(
                 "unknown tool: {}",
@@ -766,6 +789,84 @@ mod tests {
         assert!(report.budget_exhausted);
         assert!(report.assistant_text.contains("cost cap"));
         assert_eq!(report.provider_calls, 1);
+    }
+
+    #[tokio::test]
+    async fn working_state_tracks_plan_and_tools_and_feeds_checkpoints() {
+        let dir = workspace();
+        let state = tempfile::tempdir().unwrap();
+        let store = SessionStore::create_under(state.path(), "ws").unwrap();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call(
+                "c1",
+                "update_plan",
+                r#"{"objective":"greet the world","tasks":[{"text":"read file","done":false}]}"#,
+            ),
+            assistant_with_call("c2", "read_file", r#"{"path":"hello.txt"}"#),
+            assistant_with_call("c3", "run_command", r#"{"command":["cat","hello.txt"]}"#),
+            final_text("done"),
+            // Summarizer turn for compact_now below.
+            final_text("narrative"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            Some(store),
+        )
+        .unwrap();
+        agent
+            .run_turn(
+                "do the thing".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+
+        let state_now = agent.working_state();
+        assert_eq!(state_now.objective.as_deref(), Some("greet the world"));
+        assert_eq!(state_now.tasks.len(), 1);
+        assert!(state_now.files_read.contains("hello.txt"));
+        assert_eq!(state_now.commands.len(), 1);
+        assert!(state_now.commands[0].ok);
+        // The plan confirmation flowed back to the model as a tool result.
+        assert!(agent.messages().iter().any(|m| matches!(
+            m,
+            ChatMessage::Tool { content, .. } if content.contains("plan updated")
+        )));
+
+        // Compaction checkpoint carries the tracked state verbatim.
+        agent.compact_now(&CancellationToken::new()).await.unwrap();
+        match &agent.messages()[1] {
+            ChatMessage::User { content } => {
+                assert!(content.contains("Objective: greet the world"), "{content}");
+                assert!(content.contains("`cat hello.txt` → ok"), "{content}");
+                assert!(content.contains("narrative"));
+            }
+            other => panic!("expected checkpoint, got {other:?}"),
+        }
+        // State survives compaction (it lives outside the transcript)…
+        assert_eq!(
+            agent.working_state().objective.as_deref(),
+            Some("greet the world")
+        );
+
+        // …and survives resume via replay.
+        let store = SessionStore::create_under(state.path(), "ws").unwrap();
+        let resumed = Agent::resume(
+            Arc::new(ScriptedProvider::new(vec![])),
+            dir.path().to_path_buf(),
+            SessionConfig::default(),
+            store,
+            "ws".into(),
+        )
+        .unwrap();
+        assert_eq!(resumed.working_state(), agent.working_state());
     }
 
     #[tokio::test]

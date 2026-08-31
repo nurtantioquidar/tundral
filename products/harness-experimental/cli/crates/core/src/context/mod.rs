@@ -285,10 +285,14 @@ impl ContextManager {
     /// Stage 2: summarization restart. The summarizer request reuses the
     /// current byte-identical history plus one appended instruction, so it
     /// rides the warm prefix cache instead of paying a cold full-window read.
+    /// `checkpoint` is the caller's structured continuity state (the tracked
+    /// working state); it is data, not summarizer output, so it cannot be
+    /// degraded by a weak narrative and it survives earlier compactions.
     #[allow(clippy::too_many_arguments)]
     pub async fn summarize(
         &mut self,
         messages: &mut Vec<ChatMessage>,
+        checkpoint: &str,
         tools: &[ToolSchema],
         provider: &dyn Provider,
         model: crate::domain::Model,
@@ -313,7 +317,6 @@ impl ContextManager {
         let turn = provider.stream(&request, cancel, &mut NullSink).await?;
         let narrative = turn.message.content.unwrap_or_default();
 
-        let checkpoint = mechanical_checkpoint(messages);
         let tail_start = self.summary_tail_start(messages);
         let mut rebuilt: Vec<ChatMessage> = Vec::with_capacity(messages.len() - tail_start + 2);
         rebuilt.push(messages[0].clone());
@@ -419,79 +422,6 @@ fn describe_elided(messages: &[ChatMessage], tool_index: usize) -> String {
             crate::tools::describe_call(&call.name, &call.arguments)
         ),
         None => format!("[elided tool output ({size} bytes)]"),
-    }
-}
-
-/// Mechanical continuity state extracted from the transcript itself — file
-/// paths and commands come from real tool calls, so they cannot be
-/// hallucinated by the summarizer.
-pub fn mechanical_checkpoint(messages: &[ChatMessage]) -> String {
-    use std::collections::BTreeSet;
-    let mut read: BTreeSet<String> = BTreeSet::new();
-    let mut changed: BTreeSet<String> = BTreeSet::new();
-    let mut commands: Vec<String> = Vec::new();
-    for message in messages {
-        let ChatMessage::Assistant(assistant) = message else {
-            continue;
-        };
-        for call in &assistant.tool_calls {
-            let arguments: serde_json::Value =
-                serde_json::from_str(&call.arguments).unwrap_or(serde_json::Value::Null);
-            let path = arguments
-                .get("path")
-                .and_then(serde_json::Value::as_str)
-                .map(str::to_string);
-            match call.name.as_str() {
-                "read_file" => {
-                    read.extend(path);
-                }
-                "edit" | "write_file" => {
-                    changed.extend(path);
-                }
-                "run_command" => {
-                    if let Some(argv) = arguments.get("command").and_then(|v| v.as_array()) {
-                        let rendered = argv
-                            .iter()
-                            .filter_map(serde_json::Value::as_str)
-                            .collect::<Vec<_>>()
-                            .join(" ");
-                        if !commands.contains(&rendered) {
-                            commands.push(rendered);
-                        }
-                    }
-                }
-                _ => {}
-            }
-        }
-    }
-    let mut checkpoint = String::from("## Mechanical state (from tool-call log)\n");
-    checkpoint.push_str(&format!(
-        "Files changed: {}\n",
-        join_or_none(changed.iter())
-    ));
-    checkpoint.push_str(&format!("Files read: {}\n", join_or_none(read.iter())));
-    checkpoint.push_str(&format!("Commands run: {}", join_or_none(commands.iter())));
-    checkpoint
-}
-
-fn join_or_none<'a>(mut items: impl Iterator<Item = &'a String>) -> String {
-    let mut rendered = String::new();
-    let mut count = 0usize;
-    for item in items.by_ref() {
-        if count > 0 {
-            rendered.push_str(", ");
-        }
-        rendered.push_str(item);
-        count += 1;
-        if count >= 40 {
-            rendered.push_str(", …");
-            break;
-        }
-    }
-    if count == 0 {
-        "none".to_string()
-    } else {
-        rendered
     }
 }
 
@@ -641,6 +571,7 @@ mod tests {
         let outcome = manager
             .summarize(
                 &mut messages,
+                "## Working state (tracked)\nFiles read: file_0.rs",
                 &crate::tools::tool_schemas(),
                 &provider,
                 Model::DeepseekV4Flash,
@@ -737,6 +668,7 @@ mod tests {
         let outcome = manager
             .summarize(
                 &mut messages,
+                "## Working state (tracked)\nFiles read: file_0.rs",
                 &crate::tools::tool_schemas(),
                 &provider,
                 Model::DeepseekV4Flash,
@@ -797,6 +729,7 @@ mod tests {
             manager
                 .summarize(
                     &mut messages,
+                    "checkpoint",
                     &crate::tools::tool_schemas(),
                     &provider,
                     Model::DeepseekV4Flash,

@@ -156,6 +156,13 @@ pub struct ReplayedSession {
     pub total_actual_microusd: u64,
     pub model: Option<String>,
     pub workspace: Option<String>,
+    pub working_state: super::working_state::WorkingState,
+}
+
+/// A persisted tool result that the live loop recorded as failed. Must match
+/// the rendering in the session loop (`ERROR: …` prefix, cancellation text).
+fn tool_result_failed(content: &str) -> bool {
+    content.starts_with("ERROR:") || content == "cancelled by user"
 }
 
 pub fn replay(events: &[SessionEvent]) -> ReplayedSession {
@@ -164,6 +171,11 @@ pub fn replay(events: &[SessionEvent]) -> ReplayedSession {
     let mut total_actual: u64 = 0;
     let mut model = None;
     let mut workspace = None;
+    let mut working_state = super::working_state::WorkingState::default();
+    // Working state folds from the ORIGINAL event stream, so it accumulates
+    // across elisions and history rebases (which only rewrite the transcript).
+    let mut pending_calls: std::collections::HashMap<String, (String, String)> =
+        std::collections::HashMap::new();
     for event in events {
         match event {
             SessionEvent::SessionStarted {
@@ -182,15 +194,31 @@ pub fn replay(events: &[SessionEvent]) -> ReplayedSession {
                 content: content.clone(),
             }),
             SessionEvent::AssistantMessage { message } => {
+                for call in &message.tool_calls {
+                    pending_calls
+                        .insert(call.id.clone(), (call.name.clone(), call.arguments.clone()));
+                }
                 messages.push(ChatMessage::Assistant(message.clone()))
             }
             SessionEvent::ToolResult {
                 tool_call_id,
                 content,
-            } => messages.push(ChatMessage::Tool {
-                tool_call_id: tool_call_id.clone(),
-                content: content.clone(),
-            }),
+            } => {
+                if let Some((name, arguments)) = pending_calls.remove(tool_call_id) {
+                    let success = !tool_result_failed(content);
+                    if name == "update_plan" {
+                        if success {
+                            let _ = working_state.apply_update(&arguments);
+                        }
+                    } else {
+                        working_state.observe(&name, &arguments, success);
+                    }
+                }
+                messages.push(ChatMessage::Tool {
+                    tool_call_id: tool_call_id.clone(),
+                    content: content.clone(),
+                })
+            }
             SessionEvent::UsageRecorded {
                 usage,
                 actual_microusd,
@@ -220,6 +248,7 @@ pub fn replay(events: &[SessionEvent]) -> ReplayedSession {
         total_actual_microusd: total_actual,
         model,
         workspace,
+        working_state,
     }
 }
 

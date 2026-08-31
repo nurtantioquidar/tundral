@@ -63,7 +63,9 @@ max_cost_usd = "0.50"
 quiet_reasoning = false
 ```
 
-REPL extras: `/model` switches models mid-session, `/mode` switches permissions, end a line with
-`\` for multi-line input.
+REPL extras: `/model` switches models mid-session, `/mode` switches permissions, `/plan` shows the
+tracked working state (objective, tasks, files touched, command outcomes — maintained by the loop
+and the model's `update_plan` tool; it survives compaction and resume by construction), and a
+trailing `\` continues input on the next line.
 
 See [AGENTS.md](AGENTS.md) for module layout and invariants.

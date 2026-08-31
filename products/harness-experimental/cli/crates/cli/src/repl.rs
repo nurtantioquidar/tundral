@@ -182,6 +182,7 @@ fn print_usage(agent: &Agent) {
 const HELP: &str = "\
 commands:
   /usage    tokens, cost, cache-hit rate, context utilization
+  /plan     show the tracked working state (objective, tasks, files, commands)
   /compact  force a summarization compaction now
   /mode     show or set permission mode: /mode ask|auto|read-only
   /model    show or switch model: /model deepseek-v4-flash|deepseek-v4-pro
@@ -259,6 +260,10 @@ pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
             }
             "/usage" => {
                 print_usage(&agent);
+                continue;
+            }
+            "/plan" => {
+                print!("{}", agent.working_state().render());
                 continue;
             }
             "/compact" => {
