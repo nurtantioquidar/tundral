@@ -83,9 +83,20 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 - **Distinct turn chrome** — submitted prompts echo as inverse-highlighted bars; agent responses
   carry a `●` block marker with aligned continuation lines; turns close with a dim
   `✳ done in Ns · …` stats line.
-- **Markdown rendering, markers hidden** — headings/bold/inline-code render styled with the
-  `##`/`**`/backtick syntax stripped (fence delimiters become spacer lines; fence content stays
-  byte-identical for copy-paste); reasoning stays dim.
+- **Markdown rendering, markers hidden, word-wrapped** (Codex-inspired, dogfood 2026-09-01) —
+  headings/bold/inline-code render styled with the `##`/`**`/backtick syntax stripped; prose is
+  word-wrapped to the terminal with hanging indents (bullets and numbered lists wrap under their
+  own text; styles survive row breaks); a spacer line precedes each `●` block; code stays
+  verbatim (never word-wrapped) with a 2-column indent.
+- **Reasoning hidden by default** (Codex-inspired) — the TUI suppresses the reasoning stream (the
+  activity line still shows progress); Ctrl+R toggles it live; config `quiet_reasoning = false`
+  opts back in at startup. Hidden reasoning is still recorded for the transcript overlay. `-p`
+  and non-TTY keep the old flag semantics.
+- **Ctrl+T transcript overlay** — a transient alternate-screen pager over the full session
+  (user bars, responses, tool lines, and reasoning even when hidden), scrollable (↑/↓, PgUp/PgDn,
+  g/G), dismissed with q/Esc/Ctrl+T; the main screen underneath is untouched, and output that
+  streams in while the overlay is open queues and flushes on close. 10k-line ring buffer. The
+  overlay is the one sanctioned alternate-screen use — the main flow never leaves scrollback.
 - **Arrow-key approvals** — the input block becomes a yes / always / no menu (↑↓ + Enter;
   `y`/`a`/`n`/Esc shortcuts kept), with the colorized diff preview above it.
 - **Slash commands** — `/usage`, `/plan`, `/compact [focus]` (optional guidance threaded into the

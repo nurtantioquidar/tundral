@@ -17,7 +17,7 @@ use unicode_width::UnicodeWidthChar;
 
 use super::completion::{active_trigger, ChoiceKind, CompletionIndex};
 use super::editor::Editor;
-use super::markdown::MarkdownRenderer;
+use super::markdown::{self as md, MarkdownRenderer};
 use crate::repl::render_detail;
 
 const DIM: &str = "\x1b[2m";
@@ -33,6 +33,9 @@ const SYNC_END: &str = "\x1b[?2026l";
 const MAX_INPUT_ROWS: usize = 8;
 const MAX_DROPDOWN_ROWS: usize = 6;
 const SPINNER: [&str; 10] = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+const TRANSCRIPT_CAP: usize = 10_000;
+const ALT_SCREEN_ENTER: &str = "\x1b[?1049h\x1b[?25l";
+const ALT_SCREEN_LEAVE: &str = "\x1b[?1049l\x1b[?25h";
 
 /// What a handled input event means for the session loop.
 pub enum UiAction {
@@ -120,6 +123,21 @@ struct UiInner {
     /// True when the next assistant text line starts a response block and
     /// gets the `●` marker; continuation lines are indented under it.
     text_block_start: bool,
+    /// Whether the last committed scrollback line was blank (vertical
+    /// rhythm: a new `●` block inserts a spacer when it wasn't).
+    last_blank: bool,
+    /// Stream reasoning to the screen. Off by default, Codex-style; Ctrl+R
+    /// toggles live. Hidden reasoning is still recorded in the transcript.
+    show_reasoning: bool,
+    /// Partial reasoning line buffered while reasoning is hidden.
+    hidden_reasoning: String,
+    /// Everything committed to scrollback (plus hidden reasoning), for the
+    /// Ctrl+T overlay. Capped ring.
+    transcript: std::collections::VecDeque<String>,
+    /// Ctrl+T transcript overlay: Some(scroll offset from the tail). While
+    /// open, committed output is queued and flushed on close.
+    overlay: Option<usize>,
+    pending_output: Vec<String>,
     /// Scrolling mode only: the cursor's row within the block at last draw —
     /// MoveUp(cursor_row) reaches the block's top line for erase-and-redraw.
     cursor_row: usize,
@@ -181,6 +199,107 @@ fn truncate_cols(text: &str, max: usize) -> String {
     }
     out.push('…');
     out
+}
+
+/// Truncate a STYLED line to `max` visible columns (escapes pass through,
+/// visible chars are counted); always ends with a reset.
+fn truncate_styled(line: &str, max: usize) -> String {
+    if visible_cols(line) <= max {
+        return format!("{line}{RESET}");
+    }
+    let mut out = String::new();
+    let mut cols = 0usize;
+    let mut chars = line.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch == '\x1b' {
+            out.push(ch);
+            if chars.peek() == Some(&'[') {
+                out.push(chars.next().expect("peeked"));
+                for esc in chars.by_ref() {
+                    out.push(esc);
+                    if esc.is_ascii_alphabetic() {
+                        break;
+                    }
+                }
+            }
+            continue;
+        }
+        let w = ch.width().unwrap_or(0);
+        if cols + w > max.saturating_sub(1) {
+            out.push('…');
+            break;
+        }
+        cols += w;
+        out.push(ch);
+    }
+    out.push_str(RESET);
+    out
+}
+
+/// Word-wrap styled spans into rows of at most `first_budget` /
+/// `cont_budget` columns, breaking at spaces (hard-cutting single words
+/// longer than a row). Styles survive across row boundaries.
+fn styled_rows(spans: &[md::Span], first_budget: usize, cont_budget: usize) -> Vec<String> {
+    let chars: Vec<(char, md::SpanStyle)> = spans
+        .iter()
+        .flat_map(|s| s.text.chars().map(move |c| (c, s.style)))
+        .collect();
+    let mut rows: Vec<Vec<(char, md::SpanStyle)>> = Vec::new();
+    let mut row: Vec<(char, md::SpanStyle)> = Vec::new();
+    let mut cols = 0usize;
+    let mut budget = first_budget.max(8);
+    let mut last_space: Option<usize> = None;
+    for &(ch, style) in &chars {
+        let w = ch.width().unwrap_or(0);
+        if cols + w > budget && !row.is_empty() {
+            if let Some(at) = last_space {
+                let carry = row.split_off(at + 1);
+                while row.last().is_some_and(|(c, _)| *c == ' ') {
+                    row.pop();
+                }
+                rows.push(std::mem::take(&mut row));
+                row = carry;
+            } else {
+                rows.push(std::mem::take(&mut row));
+            }
+            budget = cont_budget.max(8);
+            cols = row.iter().map(|(c, _)| c.width().unwrap_or(0)).sum();
+            last_space = row.iter().rposition(|(c, _)| *c == ' ');
+            if ch == ' ' && row.is_empty() {
+                continue;
+            }
+        }
+        if ch == ' ' {
+            last_space = Some(row.len());
+        }
+        row.push((ch, style));
+        cols += w;
+    }
+    if !row.is_empty() || rows.is_empty() {
+        rows.push(row);
+    }
+    rows.into_iter()
+        .map(|row| {
+            let mut out = String::new();
+            let mut current = md::SpanStyle::Plain;
+            for (ch, style) in row {
+                if style != current {
+                    if current != md::SpanStyle::Plain {
+                        out.push_str(md::RESET);
+                    }
+                    if style != md::SpanStyle::Plain {
+                        out.push_str(style.escape());
+                    }
+                    current = style;
+                }
+                out.push(ch);
+            }
+            if current != md::SpanStyle::Plain {
+                out.push_str(md::RESET);
+            }
+            out
+        })
+        .collect()
 }
 
 /// Keep the tail of a streaming line within `max` columns.
@@ -296,7 +415,7 @@ impl UiInner {
             let hint = if self.activity.is_some() {
                 "steer: message lands at the next turn boundary"
             } else {
-                "message · @ file · / command · ctrl+j newline"
+                "message · @ file · / command · ctrl+t transcript"
             };
             return (vec![format!("{prompt}{DIM}{hint}{RESET}")], 0, 2);
         }
@@ -377,8 +496,40 @@ impl UiInner {
         format!("{color}{}{RESET}", truncate_cols(&line, width))
     }
 
-    /// Erase the block, optionally append committed output, redraw.
+    /// Commit output (recorded into the transcript) and redraw. While the
+    /// Ctrl+T overlay is open, committed output queues and the overlay
+    /// refreshes instead of touching the main screen.
     fn paint(&mut self, output: Option<&str>) {
+        if let Some(output) = output {
+            for line in output.split('\n') {
+                self.record(line.to_string());
+            }
+            self.last_blank = output
+                .split('\n')
+                .next_back()
+                .is_none_or(|line| visible_cols(line) == 0);
+        }
+        if self.overlay.is_some() {
+            if let Some(output) = output {
+                self.pending_output.push(output.to_string());
+            }
+            self.draw_overlay();
+            return;
+        }
+        self.paint_screen(output);
+    }
+
+    /// Append a line to the transcript ring (Ctrl+T overlay backing store).
+    fn record(&mut self, line: String) {
+        if self.transcript.len() >= TRANSCRIPT_CAP {
+            self.transcript.pop_front();
+        }
+        self.transcript.push_back(line);
+    }
+
+    /// Erase the block, optionally append committed output, redraw the main
+    /// screen. Bypasses transcript recording (callers already recorded).
+    fn paint_screen(&mut self, output: Option<&str>) {
         let buf = match self.place {
             Place::Pinned { .. } => self.pinned_frame(output),
             Place::Scrolling => self.scrolling_frame(output),
@@ -386,6 +537,73 @@ impl UiInner {
         let mut out = std::io::stdout().lock();
         let _ = out.write_all(buf.as_bytes());
         let _ = out.flush();
+    }
+
+    /// Draw the transcript overlay on the alternate screen: full session
+    /// including reasoning that streaming keeps hidden.
+    fn draw_overlay(&mut self) {
+        let Some(offset) = self.overlay else {
+            return;
+        };
+        let width = self.width.max(20);
+        let height = self.height.max(4);
+        let rows = height - 1;
+        let total = self.transcript.len();
+        let max_offset = total.saturating_sub(rows);
+        let offset = offset.min(max_offset);
+        self.overlay = Some(offset);
+        let end = total - offset;
+        let start = end.saturating_sub(rows);
+        let mut buf = format!("{SYNC_BEGIN}\x1b[2J\x1b[1;1H\x1b[?7l");
+        for i in start..end {
+            buf.push_str(&truncate_styled(&self.transcript[i], width));
+            buf.push_str("\r\n");
+        }
+        for _ in end - start..rows {
+            buf.push_str("\r\n");
+        }
+        let footer =
+            format!(" transcript · {total} lines · ↑/↓ pgup/pgdn scroll · q or ctrl+t to close ",);
+        buf.push_str(&format!(
+            "{INVERSE}{}{RESET}",
+            truncate_cols(&footer, width)
+        ));
+        buf.push_str("\x1b[?7h");
+        buf.push_str(SYNC_END);
+        let mut out = std::io::stdout().lock();
+        let _ = out.write_all(buf.as_bytes());
+        let _ = out.flush();
+    }
+
+    fn open_overlay(&mut self) {
+        if self.overlay.is_some() || self.menu.is_some() {
+            return;
+        }
+        let mut out = std::io::stdout().lock();
+        let _ = out.write_all(ALT_SCREEN_ENTER.as_bytes());
+        let _ = out.flush();
+        drop(out);
+        self.overlay = Some(0);
+        self.draw_overlay();
+    }
+
+    fn close_overlay(&mut self) {
+        if self.overlay.take().is_none() {
+            return;
+        }
+        {
+            let mut out = std::io::stdout().lock();
+            let _ = out.write_all(ALT_SCREEN_LEAVE.as_bytes());
+            let _ = out.flush();
+        }
+        // Flush output that arrived while the overlay was open onto the
+        // main screen (it is already in the transcript).
+        let pending = std::mem::take(&mut self.pending_output);
+        if pending.is_empty() {
+            self.paint_screen(None);
+        } else {
+            self.paint_screen(Some(&pending.join("\n")));
+        }
     }
 
     /// Append the block draw (wrapped in autowrap-off) and cursor placement
@@ -489,18 +707,54 @@ impl UiInner {
         buf
     }
 
-    /// Markdown-render one assistant text line, with the `●` block marker on
-    /// the first line of a response block and alignment indents after it.
+    /// Markdown-render one assistant text line: word-wrapped to the terminal
+    /// with hanging indents (lists wrap under their own text), the `●` block
+    /// marker on the first line of a response block, a spacer line before a
+    /// new block, and code kept verbatim. May return multiple '\n'-joined
+    /// physical lines.
     fn render_text_line(&mut self, line: &str) -> String {
-        let rendered = self.renderer.render_line(line);
-        if line.trim().is_empty() {
-            return rendered;
-        }
-        if self.text_block_start {
-            self.text_block_start = false;
-            format!("● {rendered}")
-        } else {
-            format!("  {rendered}")
+        let width = self.width.max(20);
+        match self.renderer.render(line) {
+            md::Rendered::Raw(styled) => {
+                if styled.is_empty() {
+                    String::new()
+                } else {
+                    format!("  {styled}")
+                }
+            }
+            md::Rendered::Prose { spans, cont_indent } => {
+                if line.trim().is_empty() {
+                    return String::new();
+                }
+                let starting = self.text_block_start;
+                self.text_block_start = false;
+                let rows = styled_rows(
+                    &spans,
+                    width.saturating_sub(2),
+                    width.saturating_sub(2 + cont_indent),
+                );
+                let mut out = String::new();
+                if starting && !self.last_blank {
+                    out.push('\n');
+                }
+                let cont_prefix = format!("  {}", " ".repeat(cont_indent));
+                for (i, row) in rows.iter().enumerate() {
+                    if i > 0 {
+                        out.push('\n');
+                    }
+                    out.push_str(if i == 0 {
+                        if starting {
+                            "● "
+                        } else {
+                            "  "
+                        }
+                    } else {
+                        &cont_prefix
+                    });
+                    out.push_str(row);
+                }
+                out
+            }
         }
     }
 
@@ -610,7 +864,12 @@ impl UiInner {
 }
 
 impl Ui {
-    pub fn new(editor: Editor, index: CompletionIndex, status: Status) -> Arc<Self> {
+    pub fn new(
+        editor: Editor,
+        index: CompletionIndex,
+        status: Status,
+        show_reasoning: bool,
+    ) -> Arc<Self> {
         let (width, height) = crossterm::terminal::size()
             .map(|(w, h)| (w as usize, h as usize))
             .unwrap_or((100, 30));
@@ -631,6 +890,12 @@ impl Ui {
                 live: None,
                 renderer: MarkdownRenderer::default(),
                 text_block_start: true,
+                last_blank: true,
+                show_reasoning,
+                hidden_reasoning: String::new(),
+                transcript: std::collections::VecDeque::new(),
+                overlay: None,
+                pending_output: Vec::new(),
                 cursor_row: 0,
             }),
         })
@@ -691,6 +956,11 @@ impl Ui {
     pub fn end_activity(&self) {
         let mut inner = self.lock();
         inner.commit_live();
+        // Any partial hidden-reasoning line still belongs in the transcript.
+        if !inner.hidden_reasoning.is_empty() {
+            let remainder = std::mem::take(&mut inner.hidden_reasoning);
+            inner.record(format!("{DIM}{remainder}{RESET}"));
+        }
         inner.activity = None;
         inner.paint(None);
     }
@@ -730,6 +1000,7 @@ impl Ui {
     /// and park the shell cursor right after the committed content.
     pub fn teardown(&self) {
         let mut inner = self.lock();
+        inner.close_overlay();
         inner.commit_live();
         inner.menu = None;
         inner.dropdown = None;
@@ -802,6 +1073,35 @@ impl Ui {
         code: KeyCode,
         modifiers: KeyModifiers,
     ) -> Option<UiAction> {
+        // The transcript overlay captures everything until closed.
+        if let Some(offset) = inner.overlay {
+            let page = inner.height.max(4) - 1;
+            match code {
+                KeyCode::Up | KeyCode::Char('k') => inner.overlay = Some(offset + 1),
+                KeyCode::Down | KeyCode::Char('j') => {
+                    inner.overlay = Some(offset.saturating_sub(1))
+                }
+                KeyCode::PageUp => inner.overlay = Some(offset + page),
+                KeyCode::PageDown => inner.overlay = Some(offset.saturating_sub(page)),
+                KeyCode::Home | KeyCode::Char('g') => inner.overlay = Some(usize::MAX),
+                KeyCode::End | KeyCode::Char('G') => inner.overlay = Some(0),
+                KeyCode::Char('q') | KeyCode::Esc => {
+                    inner.close_overlay();
+                    return None;
+                }
+                KeyCode::Char('t') if modifiers.contains(KeyModifiers::CONTROL) => {
+                    inner.close_overlay();
+                    return None;
+                }
+                KeyCode::Char('c') if modifiers.contains(KeyModifiers::CONTROL) => {
+                    inner.close_overlay();
+                    return None;
+                }
+                _ => {}
+            }
+            inner.draw_overlay();
+            return None;
+        }
         // Approval menu captures everything until resolved.
         if inner.menu.is_some() {
             match code {
@@ -844,6 +1144,18 @@ impl Ui {
             }
             KeyCode::Char('d') if control && inner.editor.is_empty() => {
                 return Some(UiAction::Eof);
+            }
+            KeyCode::Char('t') if control => {
+                inner.open_overlay();
+            }
+            KeyCode::Char('r') if control => {
+                inner.show_reasoning = !inner.show_reasoning;
+                let notice = if inner.show_reasoning {
+                    "[reasoning stream on (ctrl+r to hide)]"
+                } else {
+                    "[reasoning stream off; ctrl+t shows the full transcript]"
+                };
+                inner.paint(Some(&format!("{DIM}{notice}{RESET}")));
             }
             KeyCode::Char('j') if control => {
                 inner.editor.insert('\n');
@@ -992,12 +1304,11 @@ impl Ui {
 /// Streams a turn into the shared surface.
 pub struct UiSink {
     ui: Arc<Ui>,
-    show_reasoning: bool,
 }
 
 impl UiSink {
-    pub fn new(ui: Arc<Ui>, show_reasoning: bool) -> Self {
-        Self { ui, show_reasoning }
+    pub fn new(ui: Arc<Ui>) -> Self {
+        Self { ui }
     }
 }
 
@@ -1007,14 +1318,23 @@ impl StreamSink for UiSink {
     }
 
     fn on_reasoning(&mut self, delta: &str) {
-        if !self.show_reasoning {
-            let mut inner = self.ui.lock();
-            if let Some(activity) = &mut inner.activity {
-                activity.out_bytes += delta.len() as u64;
-            }
+        let mut inner = self.ui.lock();
+        if inner.show_reasoning {
+            inner.stream(LiveKind::Reasoning, delta);
             return;
         }
-        self.ui.lock().stream(LiveKind::Reasoning, delta);
+        // Hidden from the screen, but the transcript (Ctrl+T) keeps it.
+        if let Some(activity) = &mut inner.activity {
+            activity.out_bytes += delta.len() as u64;
+        }
+        inner.hidden_reasoning.push_str(delta);
+        while let Some(at) = inner.hidden_reasoning.find('\n') {
+            let line: String = inner.hidden_reasoning.drain(..=at).collect();
+            let line = line.trim_end_matches('\n');
+            if !line.is_empty() {
+                inner.record(format!("{DIM}{line}{RESET}"));
+            }
+        }
     }
 
     fn on_tool_start(&mut self, preview: &str) {
@@ -1102,6 +1422,12 @@ mod tests {
             live: None,
             renderer: MarkdownRenderer::default(),
             text_block_start: true,
+            last_blank: true,
+            show_reasoning: false,
+            hidden_reasoning: String::new(),
+            transcript: std::collections::VecDeque::new(),
+            overlay: None,
+            pending_output: Vec::new(),
             cursor_row: 0,
         }
     }
@@ -1234,5 +1560,96 @@ mod tests {
         };
         inner.pinned_frame(None);
         assert_eq!(inner.place, Place::Scrolling);
+    }
+
+    #[test]
+    fn prose_word_wraps_at_word_boundaries_with_block_prefixes() {
+        let mut inner = inner_at_width(30);
+        inner.last_blank = false;
+        inner.text_block_start = true;
+        let out = inner
+            .render_text_line("The quick brown fox jumps over the lazy dog near the riverbank");
+        let lines: Vec<&str> = out.split('\n').collect();
+        // Spacer first (previous line was not blank), then ● + indented rows.
+        assert_eq!(lines[0], "");
+        assert!(lines[1].starts_with("● "));
+        assert!(lines[2].starts_with("  "));
+        for line in &lines[1..] {
+            assert!(visible_cols(line) <= 30, "row too wide: {line:?}");
+            // No mid-word cuts: each row ends at a word boundary.
+            assert!(!line.ends_with(' '));
+        }
+        assert!(lines[1].ends_with("fox") || !lines[1].contains("jumps over the lazy"));
+    }
+
+    #[test]
+    fn bullets_hang_wrapped_rows_under_their_text() {
+        let mut inner = inner_at_width(30);
+        inner.last_blank = true;
+        inner.text_block_start = false;
+        let out = inner.render_text_line("- a bullet item with enough words to wrap around");
+        let lines: Vec<&str> = out.split('\n').collect();
+        assert!(lines.len() >= 2);
+        assert!(lines[0].contains('•'));
+        // Continuations indent 2 (block) + 2 (bullet hang) = 4 columns.
+        assert!(
+            lines[1].starts_with("    "),
+            "hanging indent lost: {:?}",
+            lines[1]
+        );
+    }
+
+    #[test]
+    fn bold_spans_survive_row_wrapping() {
+        let spans = vec![
+            md::Span {
+                style: md::SpanStyle::Plain,
+                text: "start ".into(),
+            },
+            md::Span {
+                style: md::SpanStyle::Bold,
+                text: "a bold run that is long enough to cross rows".into(),
+            },
+        ];
+        let rows = styled_rows(&spans, 20, 20);
+        assert!(rows.len() >= 2);
+        // Every row that contains bold text re-opens the style.
+        for row in &rows[1..] {
+            assert!(row.contains(md::BOLD), "style dropped on wrap: {row:?}");
+        }
+    }
+
+    #[test]
+    fn long_words_hard_cut_instead_of_overflowing() {
+        let spans = vec![md::Span {
+            style: md::SpanStyle::Plain,
+            text: "x".repeat(50),
+        }];
+        let rows = styled_rows(&spans, 20, 20);
+        assert_eq!(rows.len(), 3);
+        assert!(rows.iter().all(|r| visible_cols(r) <= 20));
+    }
+
+    #[test]
+    fn transcript_records_commits_and_overlay_math_clamps() {
+        let mut inner = inner_at_width(40);
+        inner.height = 10;
+        // paint() would write to the terminal; exercise record() directly.
+        for i in 0..20 {
+            inner.record(format!("line {i}"));
+        }
+        assert_eq!(inner.transcript.len(), 20);
+        assert_eq!(inner.transcript[0], "line 0");
+    }
+
+    #[test]
+    fn truncate_styled_counts_visible_columns_only() {
+        let styled = format!("{}0123456789{}0123456789", md::CYAN, md::RESET);
+        let cut = truncate_styled(&styled, 12);
+        assert!(visible_cols(&cut) <= 12);
+        assert!(cut.contains('…'));
+        assert!(cut.starts_with(md::CYAN));
+        let fits = truncate_styled("short", 12);
+        assert!(fits.starts_with("short"));
     }
 }

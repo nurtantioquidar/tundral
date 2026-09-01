@@ -310,7 +310,11 @@ async fn main() -> Result<()> {
     }
     use std::io::IsTerminal as _;
     if std::io::stdin().is_terminal() && std::io::stdout().is_terminal() {
-        tui::run(agent, workspace_root, show_reasoning).await
+        // The TUI hides the reasoning stream by default (Ctrl+R toggles it
+        // live; Ctrl+T shows the full transcript). Config can opt back in
+        // with an explicit `quiet_reasoning = false`.
+        let tui_reasoning = !cli.quiet_reasoning && file.quiet_reasoning == Some(false);
+        tui::run(agent, workspace_root, tui_reasoning).await
     } else {
         repl::plain_repl(agent, show_reasoning).await
     }

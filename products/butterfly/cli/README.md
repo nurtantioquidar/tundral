@@ -71,9 +71,12 @@ edge. Sessions get the inline TUI: type `@` for fuzzy file/dir/symbol completion
 `[pasted #N: X lines]` placeholder that expands on submit, and the input area is anchored by a
 rule above and a two-line footer below (`model | workspace | ctx:% | cost | cache:%`, plus a
 mode line — `Shift+Tab` cycles ask → auto → read-only). Your prompts echo as highlighted bars;
-agent responses carry a `●` marker; assistant markdown renders styled with the syntax markers
-hidden. Approvals are an arrow-key yes/always/no menu (`y`/`a`/`n` still work). `Ctrl-J` inserts
-a newline; `Ctrl-C` clears the line or cancels the turn; `Esc` interrupts a running turn. Type while a turn runs — messages are delivered at the next turn boundary (pi-style
+agent responses carry a `●` marker and render as word-wrapped styled markdown (markers hidden,
+lists hang under their own text, code verbatim). The reasoning stream is hidden by default —
+`Ctrl-R` toggles it live, and `Ctrl-T` opens a scrollable full-transcript overlay (reasoning
+included) that leaves the main screen untouched. Approvals are an arrow-key yes/always/no menu
+(`y`/`a`/`n` still work). `Ctrl-J` inserts a newline; `Ctrl-C` clears the line or cancels the
+turn; `Esc` interrupts a running turn. Type while a turn runs — messages are delivered at the next turn boundary (pi-style
 steering). `/compact [focus]` compacts with optional guidance; `/model` switches models
 mid-session, `/mode` switches permissions, `/plan` shows the tracked working state (objective,
 tasks, files touched, command outcomes — maintained by the loop and the model's `update_plan`

@@ -164,7 +164,12 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
     let index = CompletionIndex::new(root, COMMANDS.to_vec());
 
     let guard = TerminalGuard::new()?;
-    let ui = Ui::new(editor, index, status_of(&agent, &workspace, None));
+    let ui = Ui::new(
+        editor,
+        index,
+        status_of(&agent, &workspace, None),
+        show_reasoning,
+    );
     ui.enter_screen();
     ui.set_session_data(recency_of(&agent), symbols);
     ui.print(&format!(
@@ -216,7 +221,7 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
         // turn's gate keeps the mode it started with).
         let mut mode_cycles = 0usize;
         let result = {
-            let mut sink = UiSink::new(ui.clone(), show_reasoning);
+            let mut sink = UiSink::new(ui.clone());
             let turn = agent.run_turn(input, &gate, &mut sink, &cancel);
             tokio::pin!(turn);
             loop {

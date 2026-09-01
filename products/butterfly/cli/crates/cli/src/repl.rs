@@ -202,6 +202,8 @@ commands:
 input:
   @path      mention a file (type @ for fuzzy completion; Tab/Enter accepts)
   Shift+Tab  cycle permission mode: ask → auto → read-only
+  Ctrl-T     toggle the full-transcript overlay (includes hidden reasoning)
+  Ctrl-R     toggle the live reasoning stream (hidden by default)
   Ctrl-J     insert a newline · Ctrl-C clears the line or cancels the turn
   Esc        close the dropdown, or interrupt the running turn
   paste      large pastes collapse to a placeholder and expand on submit
