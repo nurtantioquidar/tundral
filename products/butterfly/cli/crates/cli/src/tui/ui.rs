@@ -24,6 +24,8 @@ const DIM: &str = "\x1b[2m";
 const RESET: &str = "\x1b[0m";
 const CYAN: &str = "\x1b[36m";
 const RED: &str = "\x1b[31m";
+const YELLOW: &str = "\x1b[33m";
+const GREEN: &str = "\x1b[32m";
 const INVERSE: &str = "\x1b[7m";
 const SYNC_BEGIN: &str = "\x1b[?2026h";
 const SYNC_END: &str = "\x1b[?2026l";
@@ -35,6 +37,8 @@ const SPINNER: [&str; 10] = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "�
 /// What a handled input event means for the session loop.
 pub enum UiAction {
     Submit(String),
+    /// Shift+Tab: advance the permission mode (ask → auto → read-only).
+    CycleMode,
     Interrupt,
     Eof,
 }
@@ -70,6 +74,7 @@ struct Menu {
 
 pub struct Status {
     pub model: String,
+    pub workspace: String,
     pub mode: &'static str,
     pub ctx_pct: f64,
     pub session_cost_microusd: u64,
@@ -93,6 +98,9 @@ struct UiInner {
     activity: Option<Activity>,
     live: Option<LiveLine>,
     renderer: MarkdownRenderer,
+    /// True when the next assistant text line starts a response block and
+    /// gets the `●` marker; continuation lines are indented under it.
+    text_block_start: bool,
     /// The cursor's row within the block at last draw: MoveUp(cursor_row)
     /// reaches the block's top line for erase-and-redraw.
     cursor_row: usize,
@@ -153,10 +161,26 @@ impl UiInner {
             let text = tail_cols(&live.text, width);
             lines.push(match live.kind {
                 LiveKind::Reasoning => format!("{DIM}{text}{RESET}"),
-                LiveKind::Text => text,
+                LiveKind::Text if self.text_block_start => format!("● {text}"),
+                LiveKind::Text => format!("  {text}"),
                 LiveKind::Tool => format!("{CYAN}{text}{RESET}"),
             });
         }
+        if let Some(activity) = &self.activity {
+            let mut working = format!(
+                "✳ {} {}s · ~{} tok",
+                SPINNER[activity.spinner % SPINNER.len()],
+                activity.started.elapsed().as_secs(),
+                activity.out_bytes / 4,
+            );
+            if let Some(tool) = &activity.tool {
+                working.push_str(&format!(" · {tool}"));
+            }
+            working.push_str(" · esc/ctrl+c to interrupt");
+            lines.push(format!("{DIM}{}{RESET}", truncate_cols(&working, width)));
+        }
+        // The input area is anchored by a rule above and the footer below.
+        lines.push(format!("{DIM}{}{RESET}", "─".repeat(width)));
         let cursor_row;
         let cursor_col;
         if let Some(menu) = &self.menu {
@@ -195,6 +219,7 @@ impl UiInner {
             }
         }
         lines.push(self.compose_status(width));
+        lines.push(self.compose_mode_line(width));
         (lines, cursor_row, cursor_col)
     }
 
@@ -267,27 +292,26 @@ impl UiInner {
 
     fn compose_status(&self, width: usize) -> String {
         let mut status = format!(
-            "{} · {} · ctx {:.0}% · {}",
+            "{} | {} | ctx:{:.0}% | {}",
             self.status.model,
-            self.status.mode,
+            self.status.workspace,
             self.status.ctx_pct * 100.0,
             format_microusd_as_usd(self.status.session_cost_microusd),
         );
         if let Some(cache) = self.status.cache_pct {
-            status.push_str(&format!(" · cache {cache:.0}%"));
-        }
-        if let Some(activity) = &self.activity {
-            status.push_str(&format!(
-                " · {} {}s · ~{} tok",
-                SPINNER[activity.spinner % SPINNER.len()],
-                activity.started.elapsed().as_secs(),
-                activity.out_bytes / 4,
-            ));
-            if let Some(tool) = &activity.tool {
-                status.push_str(&format!(" · {tool}"));
-            }
+            status.push_str(&format!(" | cache:{cache:.0}%"));
         }
         format!("{DIM}{}{RESET}", truncate_cols(&status, width))
+    }
+
+    fn compose_mode_line(&self, width: usize) -> String {
+        let color = match self.status.mode {
+            "auto" => YELLOW,
+            "read-only" => GREEN,
+            _ => DIM,
+        };
+        let line = format!("▶▶ {} mode (shift+tab to cycle)", self.status.mode);
+        format!("{color}{}{RESET}", truncate_cols(&line, width))
     }
 
     /// Erase the block, optionally append committed output above it, redraw.
@@ -322,6 +346,21 @@ impl UiInner {
         self.cursor_row = cursor_row;
     }
 
+    /// Markdown-render one assistant text line, with the `●` block marker on
+    /// the first line of a response block and alignment indents after it.
+    fn render_text_line(&mut self, line: &str) -> String {
+        let rendered = self.renderer.render_line(line);
+        if line.trim().is_empty() {
+            return rendered;
+        }
+        if self.text_block_start {
+            self.text_block_start = false;
+            format!("● {rendered}")
+        } else {
+            format!("  {rendered}")
+        }
+    }
+
     /// Commit the live line (if any) into scrollback.
     fn commit_live(&mut self) {
         if let Some(live) = self.live.take() {
@@ -329,9 +368,15 @@ impl UiInner {
                 return;
             }
             let styled = match live.kind {
-                LiveKind::Reasoning => format!("{DIM}{}{RESET}", live.text),
-                LiveKind::Text => self.renderer.render_line(&live.text),
-                LiveKind::Tool => format!("{CYAN}{}{RESET}", live.text),
+                LiveKind::Reasoning => {
+                    self.text_block_start = true;
+                    format!("{DIM}{}{RESET}", live.text)
+                }
+                LiveKind::Text => self.render_text_line(&live.text),
+                LiveKind::Tool => {
+                    self.text_block_start = true;
+                    format!("{CYAN}{}{RESET}", live.text)
+                }
             };
             self.paint(Some(&styled));
         }
@@ -353,13 +398,21 @@ impl UiInner {
         live.text.push_str(delta);
         let mut committed = String::new();
         while let Some(at) = self.live.as_ref().and_then(|l| l.text.find('\n')) {
-            let live = self.live.as_mut().expect("live line");
-            let line: String = live.text.drain(..=at).collect();
+            let line: String = {
+                let live = self.live.as_mut().expect("live line");
+                live.text.drain(..=at).collect()
+            };
             let line = line.trim_end_matches('\n');
             let styled = match kind {
-                LiveKind::Reasoning => format!("{DIM}{line}{RESET}"),
-                LiveKind::Text => self.renderer.render_line(line),
-                LiveKind::Tool => format!("{CYAN}{line}{RESET}"),
+                LiveKind::Reasoning => {
+                    self.text_block_start = true;
+                    format!("{DIM}{line}{RESET}")
+                }
+                LiveKind::Text => self.render_text_line(line),
+                LiveKind::Tool => {
+                    self.text_block_start = true;
+                    format!("{CYAN}{line}{RESET}")
+                }
             };
             if !committed.is_empty() {
                 committed.push('\n');
@@ -429,6 +482,7 @@ impl Ui {
                 activity: None,
                 live: None,
                 renderer: MarkdownRenderer::default(),
+                text_block_start: true,
                 cursor_row: 0,
             }),
         })
@@ -458,6 +512,7 @@ impl Ui {
     pub fn begin_activity(&self) {
         let mut inner = self.lock();
         inner.renderer = MarkdownRenderer::default();
+        inner.text_block_start = true;
         inner.activity = Some(Activity {
             started: Instant::now(),
             spinner: 0,
@@ -657,7 +712,17 @@ impl Ui {
                     inner.paint(None);
                     return None;
                 }
-                inner.paint(Some(&format!("{CYAN}❯{RESET} {visible}")));
+                // Echo the prompt as a highlighted bar so user turns stand
+                // apart from agent output in scrollback.
+                let width = inner.width.max(20);
+                let bar: Vec<String> = visible
+                    .lines()
+                    .map(|line| {
+                        let pad = width.saturating_sub(width_of(line) + 4);
+                        format!("{INVERSE}{DIM} ❯ {line}{}{RESET}", " ".repeat(pad))
+                    })
+                    .collect();
+                inner.paint(Some(&format!("{}\n", bar.join("\n"))));
                 return Some(UiAction::Submit(submitted));
             }
             KeyCode::Backspace => {
@@ -688,6 +753,9 @@ impl Ui {
                 inner.editor.move_end();
                 inner.paint(None);
             }
+            KeyCode::BackTab => {
+                return Some(UiAction::CycleMode);
+            }
             KeyCode::Tab => {
                 if inner.dropdown.is_some() {
                     inner.accept_selected();
@@ -695,8 +763,12 @@ impl Ui {
                 }
             }
             KeyCode::Esc => {
-                inner.dropdown = None;
-                inner.paint(None);
+                if inner.dropdown.is_some() {
+                    inner.dropdown = None;
+                    inner.paint(None);
+                } else if inner.activity.is_some() {
+                    return Some(UiAction::Interrupt);
+                }
             }
             KeyCode::Up => {
                 if let Some(dropdown) = &mut inner.dropdown {
@@ -786,6 +858,7 @@ impl StreamSink for UiSink {
             // in between): the result mark still needs a visible home.
             inner.paint(Some(&format!("{CYAN}⚒ {preview}{RESET}{mark}")));
         }
+        inner.text_block_start = true;
         if let Some(activity) = &mut inner.activity {
             activity.tool = None;
         }

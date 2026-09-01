@@ -57,14 +57,33 @@ impl Drop for TerminalGuard {
     }
 }
 
-fn status_of(agent: &Agent, cache_pct: Option<f64>) -> Status {
+fn status_of(agent: &Agent, workspace: &str, cache_pct: Option<f64>) -> Status {
     Status {
         model: agent.model().wire_name().to_string(),
+        workspace: workspace.to_string(),
         mode: mode_name(agent.permission_mode()),
         ctx_pct: agent.utilization(),
         session_cost_microusd: agent.total_actual_microusd(),
         cache_pct,
     }
+}
+
+fn next_mode(mode: butterfly_core::session::approval::PermissionMode) -> &'static str {
+    use butterfly_core::session::approval::PermissionMode;
+    match mode {
+        PermissionMode::Ask => "auto",
+        PermissionMode::Auto => "read-only",
+        PermissionMode::ReadOnly => "ask",
+    }
+}
+
+fn set_mode(agent: &mut Agent, name: &str) {
+    use butterfly_core::session::approval::PermissionMode;
+    agent.set_permission_mode(match name {
+        "auto" => PermissionMode::Auto,
+        "read-only" => PermissionMode::ReadOnly,
+        _ => PermissionMode::Ask,
+    });
 }
 
 /// Files the session already touched, most useful first (changed then read).
@@ -138,10 +157,14 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
     let symbols = collect_symbols(&mut agent);
     let history_path = SessionStore::state_root().join("repl-history");
     let editor = Editor::new(Some(history_path));
+    let workspace = root
+        .file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_else(|| root.display().to_string());
     let index = CompletionIndex::new(root, COMMANDS.to_vec());
 
     let guard = TerminalGuard::new()?;
-    let ui = Ui::new(editor, index, status_of(&agent, None));
+    let ui = Ui::new(editor, index, status_of(&agent, &workspace, None));
     ui.set_session_data(recency_of(&agent), symbols);
     ui.print(&format!(
         "{DIM}butterfly · {} · session {} · {} mode · /help for commands{RESET}",
@@ -163,6 +186,12 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
         } else {
             match events.recv().await {
                 Some(UiAction::Submit(text)) => text,
+                Some(UiAction::CycleMode) => {
+                    let next = next_mode(agent.permission_mode());
+                    set_mode(&mut agent, next);
+                    ui.set_status(status_of(&agent, &workspace, last_cache));
+                    continue;
+                }
                 Some(UiAction::Interrupt) => continue,
                 Some(UiAction::Eof) | None => break,
             }
@@ -171,7 +200,7 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
             CommandResult::Quit => break,
             CommandResult::Output(text) => {
                 ui.print(text.trim_end_matches('\n'));
-                ui.set_status(status_of(&agent, last_cache));
+                ui.set_status(status_of(&agent, &workspace, last_cache));
                 continue;
             }
             CommandResult::NotACommand => {}
@@ -181,6 +210,10 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
         let steer = agent.steer_handle();
         ui.begin_activity();
         let gate = UiGate::new(ui.clone());
+        let turn_started = std::time::Instant::now();
+        // Shift+Tab presses during a turn apply once it ends (the running
+        // turn's gate keeps the mode it started with).
+        let mut mode_cycles = 0usize;
         let result = {
             let mut sink = UiSink::new(ui.clone(), show_reasoning);
             let turn = agent.run_turn(input, &gate, &mut sink, &cancel);
@@ -193,6 +226,12 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
                             steer.lock().expect("steer lock").push_back(line);
                             ui.print(&format!(
                                 "{DIM}[queued: delivered at the next turn boundary]{RESET}"
+                            ));
+                        }
+                        Some(UiAction::CycleMode) => {
+                            mode_cycles += 1;
+                            ui.print(&format!(
+                                "{DIM}[mode change applies when the turn ends]{RESET}"
                             ));
                         }
                         Some(UiAction::Interrupt) => {
@@ -208,11 +247,15 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
         match result {
             Ok(report) => {
                 last_cache = Some(report.usage.cache_hit_rate() * 100.0);
-                ui.print(&turn_status_line(&agent, &report));
+                ui.print(&turn_status_line(&agent, &report, turn_started.elapsed()));
             }
             Err(error) => ui.print(&format!("{RED}error: {error}{RESET}")),
         }
-        ui.set_status(status_of(&agent, last_cache));
+        for _ in 0..mode_cycles {
+            let next = next_mode(agent.permission_mode());
+            set_mode(&mut agent, next);
+        }
+        ui.set_status(status_of(&agent, &workspace, last_cache));
         if agent.atlas_enabled() {
             let _ = agent.atlas_mut().refresh();
         }

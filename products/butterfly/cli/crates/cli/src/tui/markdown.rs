@@ -4,7 +4,6 @@
 //! heavyweight syntax-highlighting dependency.
 
 const BOLD: &str = "\x1b[1m";
-const DIM: &str = "\x1b[2m";
 const CYAN: &str = "\x1b[36m";
 const RESET: &str = "\x1b[0m";
 
@@ -14,12 +13,15 @@ pub struct MarkdownRenderer {
 }
 
 impl MarkdownRenderer {
-    /// Style one complete output line. Stateful across lines for code fences.
+    /// Style one complete output line, hiding markdown syntax markers
+    /// (Claude Code-style rendering: styled text, not annotated text).
+    /// Stateful across lines for code fences.
     pub fn render_line(&mut self, line: &str) -> String {
         let trimmed = line.trim_start();
         if trimmed.starts_with("```") {
             self.in_fence = !self.in_fence;
-            return format!("{DIM}{line}{RESET}");
+            // The delimiter itself renders as a blank spacer line.
+            return String::new();
         }
         if self.in_fence {
             // Code stays byte-identical for copy-paste; only tinted.
@@ -28,7 +30,8 @@ impl MarkdownRenderer {
         if trimmed.starts_with('#') {
             let level = trimmed.chars().take_while(|&c| c == '#').count();
             if level <= 6 && trimmed[level..].starts_with(' ') {
-                return format!("{BOLD}{CYAN}{line}{RESET}");
+                let text = trimmed[level..].trim_start();
+                return format!("{BOLD}{CYAN}{text}{RESET}");
             }
         }
         let styled = style_inline(line);
@@ -89,24 +92,30 @@ mod tests {
     use super::*;
 
     #[test]
-    fn headings_and_bullets_are_styled() {
+    fn headings_and_bullets_are_styled_with_markers_hidden() {
         let mut md = MarkdownRenderer::default();
-        assert!(md.render_line("## Plan").contains(BOLD));
+        let heading = md.render_line("## Plan");
+        assert!(heading.contains(BOLD));
+        assert!(!heading.contains('#'), "heading markers must be hidden");
+        assert!(heading.contains("Plan"));
         assert!(md.render_line("- do the thing").contains('•'));
         assert!(md.render_line("  * nested").contains('•'));
         // A bare #hashtag is not a heading.
-        assert!(!md.render_line("#hashtag").contains(BOLD));
+        let hashtag = md.render_line("#hashtag");
+        assert!(!hashtag.contains(BOLD));
+        assert!(hashtag.contains("#hashtag"));
     }
 
     #[test]
-    fn fences_toggle_state_and_tint_content() {
+    fn fences_toggle_state_hide_delimiters_and_tint_content() {
         let mut md = MarkdownRenderer::default();
-        md.render_line("```rust");
+        let open = md.render_line("```rust");
+        assert!(open.is_empty(), "fence delimiters render as spacer lines");
         assert!(md.in_fence());
         let code = md.render_line("let **x** = 1;");
         // Inside a fence, inline markers must NOT be interpreted.
         assert!(code.contains("**x**"));
-        md.render_line("```");
+        assert!(md.render_line("```").is_empty());
         assert!(!md.in_fence());
     }
 

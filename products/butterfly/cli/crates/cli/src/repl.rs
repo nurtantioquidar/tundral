@@ -138,7 +138,11 @@ impl ApprovalGate for TerminalGate {
 }
 
 /// One-line dim turn summary, shared by both loops.
-pub(crate) fn turn_status_line(agent: &Agent, report: &TurnReport) -> String {
+pub(crate) fn turn_status_line(
+    agent: &Agent,
+    report: &TurnReport,
+    elapsed: std::time::Duration,
+) -> String {
     let cache_rate = (report.usage.cache_hit_rate() * 100.0).round();
     let utilization = (agent.utilization() * 100.0).round();
     let mut extras = String::new();
@@ -152,7 +156,8 @@ pub(crate) fn turn_status_line(agent: &Agent, report: &TurnReport) -> String {
         extras.push_str(" · cancelled");
     }
     format!(
-        "{DIM}[{} calls · in {} ({cache_rate:.0}% cached) · out {} · {} | session {} · ctx {utilization:.0}%{extras}]{RESET}",
+        "{DIM}✳ done in {:.1}s · {} calls · in {} ({cache_rate:.0}% cached) · out {} · {} | session {} · ctx {utilization:.0}%{extras}{RESET}",
+        elapsed.as_secs_f64(),
         report.provider_calls,
         format_tokens(report.usage.input_tokens),
         format_tokens(report.usage.output_tokens),
@@ -195,9 +200,11 @@ commands:
   /help     this help
   /quit     exit (also Ctrl-D)
 input:
-  @path     mention a file (type @ for fuzzy completion; Tab/Enter accepts)
-  Ctrl-J    insert a newline · Ctrl-C clears the line or cancels the turn
-  paste     large pastes collapse to a placeholder and expand on submit
+  @path      mention a file (type @ for fuzzy completion; Tab/Enter accepts)
+  Shift+Tab  cycle permission mode: ask → auto → read-only
+  Ctrl-J     insert a newline · Ctrl-C clears the line or cancels the turn
+  Esc        close the dropdown, or interrupt the running turn
+  paste      large pastes collapse to a placeholder and expand on submit
   Type while a turn runs: messages are delivered at the next turn boundary.";
 
 /// Outcome of trying `input` as a slash command.
@@ -391,6 +398,7 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
         // pending approval or queue as steering; Ctrl-C cancels.
         let cancel = CancellationToken::new();
         let steer = agent.steer_handle();
+        let turn_started = std::time::Instant::now();
         let result = {
             let mut sink = TerminalSink::new(show_reasoning);
             let turn = agent.run_turn(input, &gate, &mut sink, &cancel);
@@ -424,7 +432,10 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
         };
         println!();
         match result {
-            Ok(report) => println!("{}", turn_status_line(&agent, &report)),
+            Ok(report) => println!(
+                "{}",
+                turn_status_line(&agent, &report, turn_started.elapsed())
+            ),
             Err(error) => eprintln!("{RED}error: {error}{RESET}"),
         }
         pending.extend(steer.lock().expect("steer lock").drain(..));

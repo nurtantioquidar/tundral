@@ -66,11 +66,12 @@ quiet_reasoning = false
 
 Interactive TTY sessions get the inline TUI: type `@` for fuzzy file/dir/symbol completion
 (mentions stay path text; the agent reads them with `read_file`), large pastes collapse to a
-`[pasted #N: X lines]` placeholder that expands on submit, a persistent status bar shows
-`model · mode · ctx % · cost · cache %` (plus spinner/elapsed/tokens while a turn runs), assistant
-output renders as terminal markdown, and approvals are an arrow-key yes/always/no menu
-(`y`/`a`/`n` still work). `Ctrl-J` inserts a newline; `Ctrl-C` clears the line or cancels the
-turn. Type while a turn runs — messages are delivered at the next turn boundary (pi-style
+`[pasted #N: X lines]` placeholder that expands on submit, and the input area is anchored by a
+rule above and a two-line footer below (`model | workspace | ctx:% | cost | cache:%`, plus a
+mode line — `Shift+Tab` cycles ask → auto → read-only). Your prompts echo as highlighted bars;
+agent responses carry a `●` marker; assistant markdown renders styled with the syntax markers
+hidden. Approvals are an arrow-key yes/always/no menu (`y`/`a`/`n` still work). `Ctrl-J` inserts
+a newline; `Ctrl-C` clears the line or cancels the turn; `Esc` interrupts a running turn. Type while a turn runs — messages are delivered at the next turn boundary (pi-style
 steering). `/compact [focus]` compacts with optional guidance; `/model` switches models
 mid-session, `/mode` switches permissions, `/plan` shows the tracked working state (objective,
 tasks, files touched, command outcomes — maintained by the loop and the model's `update_plan`
