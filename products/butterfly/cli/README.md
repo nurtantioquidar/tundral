@@ -64,7 +64,9 @@ max_cost_usd = "0.50"
 quiet_reasoning = false
 ```
 
-Interactive TTY sessions get the inline TUI: type `@` for fuzzy file/dir/symbol completion
+Interactive TTY sessions take over the screen Claude Code-style: your shell scrolls into
+scrollback (never erased), content flows from the top, and the input stays pinned to the bottom
+edge. Sessions get the inline TUI: type `@` for fuzzy file/dir/symbol completion
 (mentions stay path text; the agent reads them with `read_file`), large pastes collapse to a
 `[pasted #N: X lines]` placeholder that expands on submit, and the input area is anchored by a
 rule above and a two-line footer below (`model | workspace | ctx:% | cost | cache:%`, plus a

@@ -88,8 +88,27 @@ struct Activity {
     out_bytes: u64,
 }
 
+/// Where the block lives on screen. A session starts `Pinned`: the screen is
+/// taken over (old shell content scrolls into scrollback), content flows
+/// from the top, and the block sits at the bottom edge — Claude Code style.
+/// Once content grows enough to meet the block, painting hands off to
+/// `Scrolling`: the block rides directly under the content and the terminal
+/// scrolls naturally, preserving scrollback. The handoff is one-way.
+#[derive(Clone, Copy, PartialEq, Debug)]
+enum Place {
+    Pinned {
+        /// Next free 1-based screen row for committed output.
+        content_row: usize,
+        /// Top row of the block at last draw (for erasing before redraw).
+        prev_block_top: usize,
+    },
+    Scrolling,
+}
+
 struct UiInner {
     width: usize,
+    height: usize,
+    place: Place,
     editor: Editor,
     index: CompletionIndex,
     dropdown: Option<Dropdown>,
@@ -101,8 +120,8 @@ struct UiInner {
     /// True when the next assistant text line starts a response block and
     /// gets the `●` marker; continuation lines are indented under it.
     text_block_start: bool,
-    /// The cursor's row within the block at last draw: MoveUp(cursor_row)
-    /// reaches the block's top line for erase-and-redraw.
+    /// Scrolling mode only: the cursor's row within the block at last draw —
+    /// MoveUp(cursor_row) reaches the block's top line for erase-and-redraw.
     cursor_row: usize,
 }
 
@@ -112,6 +131,37 @@ pub struct Ui {
 
 fn width_of(text: &str) -> usize {
     text.chars().map(|c| c.width().unwrap_or(0)).sum()
+}
+
+/// Visible column count with ANSI escape sequences stripped.
+fn visible_cols(line: &str) -> usize {
+    let mut cols = 0usize;
+    let mut chars = line.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch == '\x1b' {
+            if chars.peek() == Some(&'[') {
+                chars.next();
+                for esc in chars.by_ref() {
+                    if esc.is_ascii_alphabetic() {
+                        break;
+                    }
+                }
+            }
+            continue;
+        }
+        cols += ch.width().unwrap_or(0);
+    }
+    cols
+}
+
+/// Physical terminal rows one committed output line occupies after wrapping.
+fn physical_rows(line: &str, width: usize) -> usize {
+    let cols = visible_cols(line);
+    if width == 0 || cols == 0 {
+        1
+    } else {
+        cols.div_ceil(width)
+    }
 }
 
 /// Truncate plain text to `max` columns, appending `…` when cut.
@@ -327,21 +377,20 @@ impl UiInner {
         format!("{color}{}{RESET}", truncate_cols(&line, width))
     }
 
-    /// Erase the block, optionally append committed output above it, redraw.
+    /// Erase the block, optionally append committed output, redraw.
     fn paint(&mut self, output: Option<&str>) {
-        let mut buf = String::from(SYNC_BEGIN);
-        if self.cursor_row > 0 {
-            buf.push_str(&format!("\x1b[{}A", self.cursor_row));
-        }
-        buf.push('\r');
-        buf.push_str("\x1b[J");
-        if let Some(output) = output {
-            for line in output.split('\n') {
-                buf.push_str(line);
-                buf.push_str(RESET);
-                buf.push_str("\r\n");
-            }
-        }
+        let buf = match self.place {
+            Place::Pinned { .. } => self.pinned_frame(output),
+            Place::Scrolling => self.scrolling_frame(output),
+        };
+        let mut out = std::io::stdout().lock();
+        let _ = out.write_all(buf.as_bytes());
+        let _ = out.flush();
+    }
+
+    /// Append the block draw (wrapped in autowrap-off) and cursor placement
+    /// for scrolling mode, where positions are cursor-relative.
+    fn append_scrolling_block(&mut self, buf: &mut String) {
         let (lines, cursor_row, cursor_col) = self.compose_block();
         // Autowrap is disabled while the block draws: even if a glyph the
         // width tables call narrow renders wide (●, ⚒, ▸ on some terminals),
@@ -359,11 +408,85 @@ impl UiInner {
         if cursor_col > 0 {
             buf.push_str(&format!("\x1b[{cursor_col}C"));
         }
-        buf.push_str(SYNC_END);
-        let mut out = std::io::stdout().lock();
-        let _ = out.write_all(buf.as_bytes());
-        let _ = out.flush();
         self.cursor_row = cursor_row;
+    }
+
+    /// Scrolling mode: the block rides directly under committed content and
+    /// the terminal scrolls naturally.
+    fn scrolling_frame(&mut self, output: Option<&str>) -> String {
+        let mut buf = String::from(SYNC_BEGIN);
+        if self.cursor_row > 0 {
+            buf.push_str(&format!("\x1b[{}A", self.cursor_row));
+        }
+        buf.push('\r');
+        buf.push_str("\x1b[J");
+        if let Some(output) = output {
+            for line in output.split('\n') {
+                buf.push_str(&line.replace('\t', "    "));
+                buf.push_str(RESET);
+                buf.push_str("\r\n");
+            }
+        }
+        self.append_scrolling_block(&mut buf);
+        buf.push_str(SYNC_END);
+        buf
+    }
+
+    /// Pinned mode: content is written at `content_row` (top-down) while the
+    /// block sits at the bottom edge of the screen. When content reaches the
+    /// block region — or the terminal is too small — hand off to scrolling.
+    fn pinned_frame(&mut self, output: Option<&str>) -> String {
+        let width = self.width.max(20);
+        let height = self.height.max(4);
+        let Place::Pinned {
+            mut content_row,
+            prev_block_top,
+        } = self.place
+        else {
+            unreachable!("pinned_frame outside pinned mode");
+        };
+        let mut buf = String::from(SYNC_BEGIN);
+        // Erase the old block area first so overflowing output can never
+        // interleave with a stale block.
+        buf.push_str(&format!("\x1b[{};1H\x1b[J", prev_block_top.min(height)));
+        if let Some(output) = output {
+            buf.push_str(&format!("\x1b[{content_row};1H"));
+            for line in output.split('\n') {
+                let line = line.replace('\t', "    ");
+                buf.push_str(&line);
+                buf.push_str(RESET);
+                buf.push_str("\r\n");
+                content_row += physical_rows(&line, width);
+            }
+        }
+        let (lines, cursor_row, cursor_col) = self.compose_block();
+        let block_height = lines.len();
+        let block_top = (height.saturating_sub(block_height) + 1).max(1);
+        if content_row > block_top || block_height >= height {
+            // Content met the block (or the terminal is tiny): one-way
+            // handoff to the scrolling model, drawing from the content edge.
+            self.place = Place::Scrolling;
+            if output.is_none() {
+                buf.push_str(&format!("\x1b[{};1H", content_row.min(height)));
+            }
+            self.append_scrolling_block(&mut buf);
+        } else {
+            buf.push_str(&format!("\x1b[{block_top};1H"));
+            buf.push_str("\x1b[?7l");
+            buf.push_str(&lines.join("\r\n"));
+            buf.push_str("\x1b[?7h");
+            buf.push_str(&format!(
+                "\x1b[{};{}H",
+                block_top + cursor_row,
+                cursor_col + 1
+            ));
+            self.place = Place::Pinned {
+                content_row,
+                prev_block_top: block_top,
+            };
+        }
+        buf.push_str(SYNC_END);
+        buf
     }
 
     /// Markdown-render one assistant text line, with the `●` block marker on
@@ -488,12 +611,17 @@ impl UiInner {
 
 impl Ui {
     pub fn new(editor: Editor, index: CompletionIndex, status: Status) -> Arc<Self> {
-        let width = crossterm::terminal::size()
-            .map(|(w, _)| w as usize)
-            .unwrap_or(100);
+        let (width, height) = crossterm::terminal::size()
+            .map(|(w, h)| (w as usize, h as usize))
+            .unwrap_or((100, 30));
         Arc::new(Self {
             inner: Mutex::new(UiInner {
                 width,
+                height,
+                place: Place::Pinned {
+                    content_row: 1,
+                    prev_block_top: height.max(1),
+                },
                 editor,
                 index,
                 dropdown: None,
@@ -510,6 +638,24 @@ impl Ui {
 
     fn lock(&self) -> std::sync::MutexGuard<'_, UiInner> {
         self.inner.lock().expect("ui lock")
+    }
+
+    /// Take over the visible screen, Claude Code-style: newline-flood the
+    /// old shell content into scrollback (NOT erased — no alternate screen,
+    /// history stays reachable), then draw the block at the bottom edge.
+    pub fn enter_screen(&self) {
+        let mut inner = self.lock();
+        let flood = "\n".repeat(inner.height.max(1));
+        {
+            let mut out = std::io::stdout().lock();
+            let _ = out.write_all(flood.as_bytes());
+            let _ = out.flush();
+        }
+        inner.place = Place::Pinned {
+            content_row: 1,
+            prev_block_top: 1,
+        };
+        inner.paint(None);
     }
 
     /// Commit styled lines into scrollback above the block.
@@ -580,18 +726,31 @@ impl Ui {
         receiver
     }
 
-    /// Restore the terminal and leave the scrollback tidy.
+    /// Restore the terminal and leave the scrollback tidy: erase the block
+    /// and park the shell cursor right after the committed content.
     pub fn teardown(&self) {
         let mut inner = self.lock();
         inner.commit_live();
         inner.menu = None;
         inner.dropdown = None;
         let mut buf = String::new();
-        if inner.cursor_row > 0 {
-            buf.push_str(&format!("\x1b[{}A", inner.cursor_row));
+        match inner.place {
+            Place::Pinned {
+                content_row,
+                prev_block_top,
+            } => {
+                let height = inner.height.max(1);
+                buf.push_str(&format!("\x1b[{};1H\x1b[J", prev_block_top.min(height)));
+                buf.push_str(&format!("\x1b[{};1H", content_row.min(height)));
+            }
+            Place::Scrolling => {
+                if inner.cursor_row > 0 {
+                    buf.push_str(&format!("\x1b[{}A", inner.cursor_row));
+                }
+                buf.push('\r');
+                buf.push_str("\x1b[J");
+            }
         }
-        buf.push('\r');
-        buf.push_str("\x1b[J");
         let mut out = std::io::stdout().lock();
         let _ = out.write_all(buf.as_bytes());
         let _ = out.flush();
@@ -603,8 +762,20 @@ impl Ui {
     pub fn handle_event(&self, event: Event) -> Option<UiAction> {
         let mut inner = self.lock();
         match event {
-            Event::Resize(w, _) => {
+            Event::Resize(w, h) => {
                 inner.width = w as usize;
+                inner.height = h as usize;
+                // Reflow on resize is terminal-dependent; the pinned row
+                // bookkeeping can't survive it reliably, so hand off to the
+                // cursor-relative scrolling model.
+                if let Place::Pinned { content_row, .. } = inner.place {
+                    let row = content_row.min(inner.height.max(1));
+                    let mut out = std::io::stdout().lock();
+                    let _ = out.write_all(format!("\x1b[{row};1H\x1b[J").as_bytes());
+                    let _ = out.flush();
+                    inner.place = Place::Scrolling;
+                    inner.cursor_row = 0;
+                }
                 inner.paint(None);
                 None
             }
@@ -910,30 +1081,11 @@ impl ApprovalGate for UiGate {
 mod tests {
     use super::*;
 
-    /// Visible column count with ANSI escape sequences stripped.
-    fn visible_cols(line: &str) -> usize {
-        let mut cols = 0usize;
-        let mut chars = line.chars().peekable();
-        while let Some(ch) = chars.next() {
-            if ch == '\x1b' {
-                if chars.peek() == Some(&'[') {
-                    chars.next();
-                    for esc in chars.by_ref() {
-                        if esc.is_ascii_alphabetic() {
-                            break;
-                        }
-                    }
-                }
-                continue;
-            }
-            cols += ch.width().unwrap_or(0);
-        }
-        cols
-    }
-
     fn inner_at_width(width: usize) -> UiInner {
         UiInner {
             width,
+            height: 30,
+            place: Place::Scrolling,
             editor: Editor::new(None),
             index: CompletionIndex::with_entries(vec![], vec![]),
             dropdown: None,
@@ -1006,5 +1158,81 @@ mod tests {
         });
         let (lines, _, _) = inner.compose_block();
         assert!(lines.iter().all(|line| visible_cols(line) <= 50));
+    }
+
+    #[test]
+    fn physical_rows_counts_wrapping_and_ignores_ansi() {
+        assert_eq!(physical_rows("", 20), 1);
+        assert_eq!(physical_rows("short", 20), 1);
+        assert_eq!(physical_rows(&"x".repeat(20), 20), 1);
+        assert_eq!(physical_rows(&"x".repeat(45), 20), 3);
+        assert_eq!(physical_rows("\x1b[36mstyled\x1b[0m", 20), 1);
+    }
+
+    #[test]
+    fn pinned_block_sits_at_the_bottom_edge() {
+        let mut inner = inner_at_width(80);
+        inner.height = 30;
+        inner.place = Place::Pinned {
+            content_row: 1,
+            prev_block_top: 30,
+        };
+        let block_height = inner.compose_block().0.len();
+        let frame = inner.pinned_frame(None);
+        let expected_top = 30 - block_height + 1;
+        assert!(
+            frame.contains(&format!("\x1b[{expected_top};1H")),
+            "block must draw at the bottom edge (row {expected_top}): {frame:?}"
+        );
+        assert_eq!(
+            inner.place,
+            Place::Pinned {
+                content_row: 1,
+                prev_block_top: expected_top,
+            }
+        );
+    }
+
+    #[test]
+    fn pinned_output_advances_content_row_by_physical_rows() {
+        let mut inner = inner_at_width(20);
+        inner.height = 30;
+        inner.place = Place::Pinned {
+            content_row: 1,
+            prev_block_top: 30,
+        };
+        // One short line (1 row) + one 45-col line (3 rows at width 20).
+        let output = format!("short\n{}", "y".repeat(45));
+        inner.pinned_frame(Some(&output));
+        match inner.place {
+            Place::Pinned { content_row, .. } => assert_eq!(content_row, 5),
+            other => panic!("expected pinned, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn pinned_hands_off_to_scrolling_when_content_meets_the_block() {
+        let mut inner = inner_at_width(80);
+        inner.height = 10;
+        let block_height = inner.compose_block().0.len();
+        let block_top = 10 - block_height + 1;
+        inner.place = Place::Pinned {
+            content_row: block_top, // the next output row collides
+            prev_block_top: block_top,
+        };
+        inner.pinned_frame(Some("one more line"));
+        assert_eq!(inner.place, Place::Scrolling);
+    }
+
+    #[test]
+    fn tiny_terminals_go_straight_to_scrolling() {
+        let mut inner = inner_at_width(80);
+        inner.height = 3;
+        inner.place = Place::Pinned {
+            content_row: 1,
+            prev_block_top: 1,
+        };
+        inner.pinned_frame(None);
+        assert_eq!(inner.place, Place::Scrolling);
     }
 }

@@ -165,6 +165,7 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
 
     let guard = TerminalGuard::new()?;
     let ui = Ui::new(editor, index, status_of(&agent, &workspace, None));
+    ui.enter_screen();
     ui.set_session_data(recency_of(&agent), symbols);
     ui.print(&format!(
         "{DIM}butterfly · {} · session {} · {} mode · /help for commands{RESET}",

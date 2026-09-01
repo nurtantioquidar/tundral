@@ -60,6 +60,12 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   exceed the terminal width or the erase math strands stale frames in scrollback — enforced by
   per-line budgets, a unit test, and an autowrap-off guard around the block draw.
   `crates/cli/src/tui/`
+- **Screen takeover with a bottom-pinned input** (dogfood 2026-09-01) — entering `butterfly`
+  newline-floods the old shell screen into scrollback (never erased) and pins the input block to
+  the bottom edge, Claude Code-style: content flows from the top, the prompt stays at the bottom.
+  When content grows enough to meet the block (or on resize / tiny terminals), painting hands off
+  one-way to the cursor-relative scrolling model. Exit erases the block and parks the shell
+  prompt right after the transcript.
 - **@-mentions with fuzzy completion** — typing `@` opens a live dropdown over an ignore-aware
   file/dir walk (nucleo fuzzy matching), session-recency-boosted (files the agent touched float
   up), plus Atlas symbol names in Atlas-enabled repos; directories drill down with `/`. Submitted
