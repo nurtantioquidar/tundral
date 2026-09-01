@@ -158,12 +158,16 @@ impl UiInner {
         let width = self.width.max(20);
         let mut lines: Vec<String> = Vec::new();
         if let Some(live) = &self.live {
-            let text = tail_cols(&live.text, width);
+            // The 2-column block marker/indent counts against the width
+            // budget: a block line wider than the terminal wraps to two
+            // physical rows and corrupts the erase math (stranded frames).
+            let plain = tail_cols(&live.text, width);
+            let prefixed = tail_cols(&live.text, width.saturating_sub(2));
             lines.push(match live.kind {
-                LiveKind::Reasoning => format!("{DIM}{text}{RESET}"),
-                LiveKind::Text if self.text_block_start => format!("● {text}"),
-                LiveKind::Text => format!("  {text}"),
-                LiveKind::Tool => format!("{CYAN}{text}{RESET}"),
+                LiveKind::Reasoning => format!("{DIM}{plain}{RESET}"),
+                LiveKind::Text if self.text_block_start => format!("● {prefixed}"),
+                LiveKind::Text => format!("  {prefixed}"),
+                LiveKind::Tool => format!("{CYAN}{plain}{RESET}"),
             });
         }
         if let Some(activity) = &self.activity {
@@ -204,11 +208,20 @@ impl UiInner {
         if let Some(dropdown) = &self.dropdown {
             for (i, choice) in dropdown.choices.iter().take(MAX_DROPDOWN_ROWS).enumerate() {
                 let marker = if i == dropdown.selected { "▸" } else { " " };
-                let label = truncate_cols(&choice.label, width.saturating_sub(24).max(12));
-                let hint = if choice.hint.is_empty() {
+                // Row budget: 4 prefix cols + label + 2 + hint ≤ width.
+                // Wide terminals reserve ~22 cols for the hint; narrow ones
+                // give the label everything and drop the hint.
+                let label_budget = if width >= 44 {
+                    width - 28
+                } else {
+                    width.saturating_sub(4)
+                };
+                let label = truncate_cols(&choice.label, label_budget.max(8));
+                let hint_budget = width.saturating_sub(4 + width_of(&label) + 2);
+                let hint = if choice.hint.is_empty() || hint_budget < 4 {
                     String::new()
                 } else {
-                    format!("  {}", truncate_cols(&choice.hint, 20))
+                    format!("  {}", truncate_cols(&choice.hint, hint_budget))
                 };
                 let styled = if i == dropdown.selected {
                     format!("  {INVERSE}{marker} {label}{RESET}{DIM}{hint}{RESET}")
@@ -330,7 +343,14 @@ impl UiInner {
             }
         }
         let (lines, cursor_row, cursor_col) = self.compose_block();
+        // Autowrap is disabled while the block draws: even if a glyph the
+        // width tables call narrow renders wide (●, ⚒, ▸ on some terminals),
+        // an overlong line clamps at the right edge instead of wrapping —
+        // wrapping here breaks the erase row math and strands stale frames
+        // in scrollback. Committed output above keeps normal wrapping.
+        buf.push_str("\x1b[?7l");
         buf.push_str(&lines.join("\r\n"));
+        buf.push_str("\x1b[?7h");
         let up = lines.len().saturating_sub(1).saturating_sub(cursor_row);
         if up > 0 {
             buf.push_str(&format!("\x1b[{up}A"));
@@ -883,5 +903,108 @@ impl ApprovalGate for UiGate {
     async fn review(&self, request: &ApprovalRequest) -> Decision {
         let receiver = self.ui.open_menu(request);
         receiver.await.unwrap_or(Decision::Deny)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Visible column count with ANSI escape sequences stripped.
+    fn visible_cols(line: &str) -> usize {
+        let mut cols = 0usize;
+        let mut chars = line.chars().peekable();
+        while let Some(ch) = chars.next() {
+            if ch == '\x1b' {
+                if chars.peek() == Some(&'[') {
+                    chars.next();
+                    for esc in chars.by_ref() {
+                        if esc.is_ascii_alphabetic() {
+                            break;
+                        }
+                    }
+                }
+                continue;
+            }
+            cols += ch.width().unwrap_or(0);
+        }
+        cols
+    }
+
+    fn inner_at_width(width: usize) -> UiInner {
+        UiInner {
+            width,
+            editor: Editor::new(None),
+            index: CompletionIndex::with_entries(vec![], vec![]),
+            dropdown: None,
+            menu: None,
+            status: Status {
+                model: "deepseek-v4-flash".into(),
+                workspace: "a-rather-long-workspace-name".into(),
+                mode: "read-only",
+                ctx_pct: 0.42,
+                session_cost_microusd: 123_456,
+                cache_pct: Some(93.4),
+            },
+            activity: None,
+            live: None,
+            renderer: MarkdownRenderer::default(),
+            text_block_start: true,
+            cursor_row: 0,
+        }
+    }
+
+    /// The invariant behind the erase math: no composed block line may be
+    /// wider than the terminal, or it wraps to two physical rows and every
+    /// later repaint strands a stale frame in scrollback (user-reported).
+    #[test]
+    fn no_block_line_exceeds_terminal_width() {
+        for width in [24usize, 40, 60, 80] {
+            let mut inner = inner_at_width(width);
+            // Long streaming text line WITH the ● prefix budget in play.
+            inner.live = Some(LiveLine {
+                kind: LiveKind::Text,
+                text: "x".repeat(width * 3),
+            });
+            inner.activity = Some(Activity {
+                started: Instant::now(),
+                spinner: 3,
+                tool: Some("read_file(some/deeply/nested/path.rs)".into()),
+                out_bytes: 123_456,
+            });
+            inner.dropdown = Some(Dropdown {
+                choices: vec![super::super::completion::Choice {
+                    insert: "@x".into(),
+                    label: "a/very/long/path/that/goes/on/forever/and/ever/mod.rs".into(),
+                    hint: "struct · a/very/long/location.rs:1234".into(),
+                    kind: ChoiceKind::Symbol,
+                }],
+                selected: 0,
+                token_start: 0,
+            });
+            inner
+                .editor
+                .insert_str("some typed input that is fairly long too");
+            let (lines, _, _) = inner.compose_block();
+            for line in &lines {
+                assert!(
+                    visible_cols(line) <= width,
+                    "line exceeds {width} cols ({}): {line:?}",
+                    visible_cols(line),
+                );
+            }
+        }
+    }
+
+    /// Tool and reasoning live lines (no prefix) must also fit exactly.
+    #[test]
+    fn unprefixed_live_lines_fit_too() {
+        let mut inner = inner_at_width(50);
+        inner.live = Some(LiveLine {
+            kind: LiveKind::Tool,
+            text: format!("⚒ read_file({})", "y".repeat(200)),
+        });
+        let (lines, _, _) = inner.compose_block();
+        assert!(lines.iter().all(|line| visible_cols(line) <= 50));
     }
 }

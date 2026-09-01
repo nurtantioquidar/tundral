@@ -56,7 +56,10 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   screen: copy/paste, scrollback, and tmux keep working); a redrawn-in-place bottom block holds
   the input editor, completion dropdown, and status bar. Custom crossterm editor (rustyline
   removed): multi-line input (Ctrl-J), history, word ops. Non-TTY stdin falls back to a plain
-  line loop. `crates/cli/src/tui/`
+  line loop. Block-width invariant (regression, dogfood 2026-09-01): no composed block line may
+  exceed the terminal width or the erase math strands stale frames in scrollback — enforced by
+  per-line budgets, a unit test, and an autowrap-off guard around the block draw.
+  `crates/cli/src/tui/`
 - **@-mentions with fuzzy completion** — typing `@` opens a live dropdown over an ignore-aware
   file/dir walk (nucleo fuzzy matching), session-recency-boosted (files the agent touched float
   up), plus Atlas symbol names in Atlas-enabled repos; directories drill down with `/`. Submitted
