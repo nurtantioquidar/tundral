@@ -3,6 +3,7 @@
 mod config;
 mod export;
 mod repl;
+mod tui;
 
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -129,6 +130,7 @@ async fn main() -> Result<()> {
     let root = root
         .canonicalize()
         .with_context(|| format!("workspace root not found: {}", root.display()))?;
+    let workspace_root = root.clone();
 
     // Layered configuration: defaults ← global file ← repo file ← flags.
     let file = config::load(&root)?;
@@ -306,5 +308,10 @@ async fn main() -> Result<()> {
         }
         return Ok(());
     }
-    repl::repl(agent, show_reasoning).await
+    use std::io::IsTerminal as _;
+    if std::io::stdin().is_terminal() && std::io::stdout().is_terminal() {
+        tui::run(agent, workspace_root, show_reasoning).await
+    } else {
+        repl::plain_repl(agent, show_reasoning).await
+    }
 }

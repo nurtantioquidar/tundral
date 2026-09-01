@@ -218,6 +218,16 @@ impl Agent {
         &self.messages
     }
 
+    pub fn atlas_enabled(&self) -> bool {
+        self.config.atlas_enabled
+    }
+
+    /// The session's Atlas index (UI features like @-mention symbol
+    /// completion read it; refreshing it never touches the transcript).
+    pub fn atlas_mut(&mut self) -> &mut butterfly_atlas::Atlas {
+        &mut self.atlas
+    }
+
     pub fn total_usage(&self) -> Usage {
         self.total_usage
     }

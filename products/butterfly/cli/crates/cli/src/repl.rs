@@ -1,5 +1,7 @@
-//! Line-based streaming REPL: rustyline input, ANSI streaming output,
-//! terminal approval prompts, Ctrl-C turn cancellation.
+//! Non-TUI terminal paths and shared session-loop pieces: the streaming
+//! sink and approval gate for `-p` runs, the slash-command handler used by
+//! both loops, and a plain line-based loop for non-TTY stdin (pipes,
+//! scripts). Interactive TTY sessions run the inline TUI in `tui`.
 
 use std::io::Write as _;
 
@@ -14,6 +16,7 @@ const DIM: &str = "\x1b[2m";
 const RESET: &str = "\x1b[0m";
 const CYAN: &str = "\x1b[36m";
 const RED: &str = "\x1b[31m";
+const GREEN: &str = "\x1b[32m";
 
 #[derive(PartialEq)]
 enum RenderMode {
@@ -87,10 +90,8 @@ impl StreamSink for TerminalSink {
 
 pub struct TerminalGate;
 
-const GREEN: &str = "\x1b[32m";
-
 /// Colorize a rich approval detail: `-` lines red, `+` lines green.
-fn render_detail(detail: &str) -> String {
+pub(crate) fn render_detail(detail: &str) -> String {
     let mut rendered = String::new();
     for line in detail.lines() {
         let trimmed = line.trim_start();
@@ -136,7 +137,8 @@ impl ApprovalGate for TerminalGate {
     }
 }
 
-fn print_turn_status(agent: &Agent, report: &TurnReport) {
+/// One-line dim turn summary, shared by both loops.
+pub(crate) fn turn_status_line(agent: &Agent, report: &TurnReport) -> String {
     let cache_rate = (report.usage.cache_hit_rate() * 100.0).round();
     let utilization = (agent.utilization() * 100.0).round();
     let mut extras = String::new();
@@ -149,14 +151,14 @@ fn print_turn_status(agent: &Agent, report: &TurnReport) {
     if report.cancelled {
         extras.push_str(" · cancelled");
     }
-    println!(
+    format!(
         "{DIM}[{} calls · in {} ({cache_rate:.0}% cached) · out {} · {} | session {} · ctx {utilization:.0}%{extras}]{RESET}",
         report.provider_calls,
         format_tokens(report.usage.input_tokens),
         format_tokens(report.usage.output_tokens),
         format_microusd_as_usd(report.actual_microusd),
         format_microusd_as_usd(agent.total_actual_microusd()),
-    );
+    )
 }
 
 fn format_tokens(tokens: u64) -> String {
@@ -167,20 +169,20 @@ fn format_tokens(tokens: u64) -> String {
     }
 }
 
-fn print_usage(agent: &Agent) {
+fn usage_text(agent: &Agent) -> String {
     let usage = agent.total_usage();
-    println!("session {}", agent.session_id);
-    println!("  model            {}", agent.model().wire_name());
-    println!("  input tokens     {}", usage.input_tokens);
-    println!("    cache hits     {}", usage.cache_hit_input_tokens);
-    println!("    cache misses   {}", usage.cache_miss_input_tokens);
-    println!("    hit rate       {:.1}%", usage.cache_hit_rate() * 100.0);
-    println!("  output tokens    {}", usage.output_tokens);
-    println!(
-        "  actual cost      {}",
-        format_microusd_as_usd(agent.total_actual_microusd())
-    );
-    println!("  context used     {:.0}%", agent.utilization() * 100.0);
+    format!(
+        "session {}\n  model            {}\n  input tokens     {}\n    cache hits     {}\n    cache misses   {}\n    hit rate       {:.1}%\n  output tokens    {}\n  actual cost      {}\n  context used     {:.0}%",
+        agent.session_id,
+        agent.model().wire_name(),
+        usage.input_tokens,
+        usage.cache_hit_input_tokens,
+        usage.cache_miss_input_tokens,
+        usage.cache_hit_rate() * 100.0,
+        usage.output_tokens,
+        format_microusd_as_usd(agent.total_actual_microusd()),
+        agent.utilization() * 100.0,
+    )
 }
 
 const HELP: &str = "\
@@ -192,9 +194,83 @@ commands:
   /model    show or switch model: /model deepseek-v4-flash|deepseek-v4-pro
   /help     this help
   /quit     exit (also Ctrl-D)
-End a line with \\ to continue on the next line. Ctrl-C cancels the turn.";
+input:
+  @path     mention a file (type @ for fuzzy completion; Tab/Enter accepts)
+  Ctrl-J    insert a newline · Ctrl-C clears the line or cancels the turn
+  paste     large pastes collapse to a placeholder and expand on submit
+  Type while a turn runs: messages are delivered at the next turn boundary.";
 
-/// Run one turn with Ctrl-C wired to the cancellation token.
+/// Outcome of trying `input` as a slash command.
+pub enum CommandResult {
+    /// It was a command; show this text.
+    Output(String),
+    Quit,
+    /// Not a command — run it as a user turn.
+    NotACommand,
+}
+
+/// Handle the shared slash commands (used by both the TUI and plain loops).
+pub async fn handle_command(agent: &mut Agent, input: &str) -> CommandResult {
+    match input {
+        "/quit" | "/exit" => CommandResult::Quit,
+        "/help" => CommandResult::Output(HELP.to_string()),
+        "/usage" => CommandResult::Output(usage_text(agent)),
+        "/plan" => CommandResult::Output(agent.working_state().render()),
+        _ if input == "/compact" || input.starts_with("/compact ") => {
+            let focus = input.strip_prefix("/compact").unwrap_or("").trim();
+            let focus = (!focus.is_empty()).then_some(focus);
+            let cancel = CancellationToken::new();
+            CommandResult::Output(match agent.compact_now(&cancel, focus).await {
+                Ok(()) => format!(
+                    "{DIM}[compacted; ctx now {:.0}%]{RESET}",
+                    agent.utilization() * 100.0
+                ),
+                Err(error) => format!("{RED}compaction failed: {error}{RESET}"),
+            })
+        }
+        _ if input.starts_with("/model") => {
+            CommandResult::Output(match input.trim_start_matches("/model").trim() {
+                "" => format!("model: {}", agent.model().wire_name()),
+                name => match butterfly_core::domain::Model::parse(name) {
+                    Some(model) => {
+                        agent.set_model(model);
+                        format!(
+                            "{DIM}[model set: {}; next request re-caches the prefix]{RESET}",
+                            model.wire_name()
+                        )
+                    }
+                    None => {
+                        format!("unknown model: {name} (deepseek-v4-flash | deepseek-v4-pro)")
+                    }
+                },
+            })
+        }
+        _ if input.starts_with("/mode") => {
+            CommandResult::Output(match input.trim_start_matches("/mode").trim() {
+                "" => format!("mode: {}", mode_name(agent.permission_mode())),
+                "ask" => {
+                    agent.set_permission_mode(PermissionMode::Ask);
+                    "mode: ask".to_string()
+                }
+                "auto" => {
+                    agent.set_permission_mode(PermissionMode::Auto);
+                    "mode: auto".to_string()
+                }
+                "read-only" | "readonly" => {
+                    agent.set_permission_mode(PermissionMode::ReadOnly);
+                    "mode: read-only".to_string()
+                }
+                other => format!("unknown mode: {other} (ask|auto|read-only)"),
+            })
+        }
+        _ if input.starts_with('/') => {
+            CommandResult::Output(format!("unknown command: {input} (/help)"))
+        }
+        _ => CommandResult::NotACommand,
+    }
+}
+
+/// Run one turn with Ctrl-C wired to the cancellation token (`-p` runs).
 pub async fn run_turn_interruptible(
     agent: &mut Agent,
     input: String,
@@ -215,74 +291,40 @@ pub async fn run_turn_interruptible(
             }
         }
     };
-    // The sink was moved into scope above; ensure the cursor is on a fresh line.
     println!();
     Ok(report)
 }
 
-/// Everything the input thread can report.
+/// Everything the plain input thread can report.
 enum InputEvent {
     Line(String),
-    Interrupt,
     Eof,
 }
 
-/// The input thread owns stdin and rustyline for the whole session so lines
-/// can arrive WHILE a turn is running (pi-style steering). It only produces
-/// events; the async loop decides what each line means (approval answer,
-/// steering message, or new turn).
-fn spawn_input_thread(sender: tokio::sync::mpsc::UnboundedSender<InputEvent>) {
+/// Plain stdin reader for non-TTY sessions (pipes, scripts): lines arrive
+/// whole; no raw mode, no completion, no history.
+fn spawn_line_thread(sender: tokio::sync::mpsc::UnboundedSender<InputEvent>) {
     std::thread::spawn(move || {
-        let Ok(mut editor) = rustyline::DefaultEditor::new() else {
-            let _ = sender.send(InputEvent::Eof);
-            return;
-        };
-        let history_path =
-            butterfly_core::session::store::SessionStore::state_root().join("repl-history");
-        let _ = editor.load_history(&history_path);
-        loop {
-            let mut line = match editor.readline("butterfly> ") {
-                Ok(line) => line,
-                Err(rustyline::error::ReadlineError::Interrupted) => {
-                    if sender.send(InputEvent::Interrupt).is_err() {
-                        break;
-                    }
-                    continue;
-                }
-                Err(_) => {
-                    let _ = sender.send(InputEvent::Eof);
-                    break;
-                }
-            };
-            // Trailing backslash continues the input on the next line.
-            while line.trim_end().ends_with('\\') {
-                let trimmed = line.trim_end();
-                line = format!("{}\n", &trimmed[..trimmed.len() - 1]);
-                match editor.readline("...> ") {
-                    Ok(next) => line.push_str(&next),
-                    Err(_) => {
-                        line.clear();
-                        break;
-                    }
-                }
-            }
+        use std::io::BufRead as _;
+        let stdin = std::io::stdin();
+        for line in stdin.lock().lines() {
+            let Ok(line) = line else { break };
             let input = line.trim().to_string();
             if input.is_empty() {
                 continue;
             }
-            let _ = editor.add_history_entry(&input);
             if sender.send(InputEvent::Line(input)).is_err() {
-                break;
+                return;
             }
         }
-        let _ = editor.save_history(&history_path);
+        let _ = sender.send(InputEvent::Eof);
     });
 }
 
-/// Approval gate for the REPL: the answer arrives on the shared input line.
-/// While a claim is pending, the next typed line resolves it instead of being
-/// queued as steering.
-pub struct ChannelGate {
+/// Approval gate for the plain loop: the answer arrives on the shared input
+/// stream. While a claim is pending, the next line resolves it instead of
+/// being queued as steering.
+struct ChannelGate {
     claim: std::sync::Arc<std::sync::Mutex<Option<tokio::sync::oneshot::Sender<String>>>>,
 }
 
@@ -310,16 +352,17 @@ impl ApprovalGate for ChannelGate {
     }
 }
 
-pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
+/// Line-based session loop for non-TTY stdin.
+pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
     let (sender, mut events) = tokio::sync::mpsc::unbounded_channel();
-    spawn_input_thread(sender);
+    spawn_line_thread(sender);
     let claim: std::sync::Arc<std::sync::Mutex<Option<tokio::sync::oneshot::Sender<String>>>> =
         std::sync::Arc::default();
     let gate = ChannelGate {
         claim: claim.clone(),
     };
     println!(
-        "{DIM}butterfly · {} · session {} · {} mode · /help for commands · type while it works: messages land at the next turn boundary{RESET}",
+        "{DIM}butterfly · {} · session {} · {} mode · /help for commands{RESET}",
         agent.model().wire_name(),
         agent.session_id,
         mode_name(agent.permission_mode()),
@@ -333,73 +376,19 @@ pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
         } else {
             match events.recv().await {
                 Some(InputEvent::Line(line)) => line,
-                Some(InputEvent::Interrupt) => continue,
                 Some(InputEvent::Eof) | None => break,
             }
         };
-        match input.as_str() {
-            "/quit" | "/exit" => break,
-            "/help" => {
-                println!("{HELP}");
+        match handle_command(&mut agent, &input).await {
+            CommandResult::Quit => break,
+            CommandResult::Output(text) => {
+                println!("{text}");
                 continue;
             }
-            "/usage" => {
-                print_usage(&agent);
-                continue;
-            }
-            "/plan" => {
-                print!("{}", agent.working_state().render());
-                continue;
-            }
-            _ if input == "/compact" || input.starts_with("/compact ") => {
-                let focus = input.strip_prefix("/compact").unwrap_or("").trim();
-                let focus = (!focus.is_empty()).then_some(focus);
-                let cancel = CancellationToken::new();
-                match agent.compact_now(&cancel, focus).await {
-                    Ok(()) => println!(
-                        "{DIM}[compacted; ctx now {:.0}%]{RESET}",
-                        agent.utilization() * 100.0
-                    ),
-                    Err(error) => eprintln!("{RED}compaction failed: {error}{RESET}"),
-                }
-                continue;
-            }
-            _ if input.starts_with("/model") => {
-                match input.trim_start_matches("/model").trim() {
-                    "" => println!("model: {}", agent.model().wire_name()),
-                    name => match butterfly_core::domain::Model::parse(name) {
-                        Some(model) => {
-                            agent.set_model(model);
-                            println!(
-                                "{DIM}[model set: {}; next request re-caches the prefix]{RESET}",
-                                model.wire_name()
-                            );
-                        }
-                        None => {
-                            eprintln!("unknown model: {name} (deepseek-v4-flash | deepseek-v4-pro)")
-                        }
-                    },
-                }
-                continue;
-            }
-            _ if input.starts_with("/mode") => {
-                match input.trim_start_matches("/mode").trim() {
-                    "" => println!("mode: {}", mode_name(agent.permission_mode())),
-                    "ask" => agent.set_permission_mode(PermissionMode::Ask),
-                    "auto" => agent.set_permission_mode(PermissionMode::Auto),
-                    "read-only" | "readonly" => agent.set_permission_mode(PermissionMode::ReadOnly),
-                    other => eprintln!("unknown mode: {other} (ask|auto|read-only)"),
-                }
-                continue;
-            }
-            _ if input.starts_with('/') => {
-                eprintln!("unknown command: {input} (/help)");
-                continue;
-            }
-            _ => {}
+            CommandResult::NotACommand => {}
         }
-        // Run the turn while continuing to consume input events: lines answer
-        // a pending approval or queue as steering; Ctrl-C cancels.
+        // Run the turn while continuing to consume input: lines answer a
+        // pending approval or queue as steering; Ctrl-C cancels.
         let cancel = CancellationToken::new();
         let steer = agent.steer_handle();
         let result = {
@@ -422,18 +411,20 @@ pub async fn repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
                                 }
                             }
                         }
-                        Some(InputEvent::Interrupt) => {
-                            eprintln!("\n{DIM}[cancelling…]{RESET}");
-                            cancel.cancel();
-                        }
                         Some(InputEvent::Eof) | None => cancel.cancel(),
+                    },
+                    signal = tokio::signal::ctrl_c() => {
+                        if signal.is_ok() {
+                            eprintln!("\n{DIM}[cancelling…]{RESET}");
+                        }
+                        cancel.cancel();
                     }
                 }
             }
         };
         println!();
         match result {
-            Ok(report) => print_turn_status(&agent, &report),
+            Ok(report) => println!("{}", turn_status_line(&agent, &report)),
             Err(error) => eprintln!("{RED}error: {error}{RESET}"),
         }
         pending.extend(steer.lock().expect("steer lock").drain(..));

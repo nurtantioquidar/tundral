@@ -51,14 +51,32 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   `crates/core/src/session/store.rs`
 - **State under `~/.local/state/butterfly/`**.
 
-### CLI / REPL
-- **Line-based streaming REPL** — dim reasoning stream, tool-call activity line, per-turn status
-  (tokens, cache-hit %, cost, context %). `crates/cli/src/repl.rs`
+### CLI / TUI
+- **Inline TUI** (2026-09-01) — output streams into native terminal scrollback (no alternate
+  screen: copy/paste, scrollback, and tmux keep working); a redrawn-in-place bottom block holds
+  the input editor, completion dropdown, and status bar. Custom crossterm editor (rustyline
+  removed): multi-line input (Ctrl-J), history, word ops. Non-TTY stdin falls back to a plain
+  line loop. `crates/cli/src/tui/`
+- **@-mentions with fuzzy completion** — typing `@` opens a live dropdown over an ignore-aware
+  file/dir walk (nucleo fuzzy matching), session-recency-boosted (files the agent touched float
+  up), plus Atlas symbol names in Atlas-enabled repos; directories drill down with `/`. Submitted
+  mentions stay path text (path-hint semantics): a system-prompt line (sanctioned prefix change,
+  operator-approved 2026-09-01) tells the model to `read_file` them — user messages stay small
+  and reads stay elidable. Slash commands complete in the same dropdown.
+- **Paste placeholders** — bracketed paste; multi-line or >200-char pastes collapse to
+  `[pasted #N: X lines]` in the editor (backspace removes atomically) and expand verbatim on
+  submit.
+- **Status bar + live activity** — persistent `model · mode · ctx % · session cost · cache %`;
+  while a turn runs: spinner, elapsed seconds, ~output tokens, current tool.
+- **Markdown rendering** — line-buffered styling of assistant text (headings, bold, inline code,
+  bullets, tinted fences whose content stays byte-identical for copy-paste); reasoning stays dim.
+- **Arrow-key approvals** — the input block becomes a yes / always / no menu (↑↓ + Enter;
+  `y`/`a`/`n`/Esc shortcuts kept), with the colorized diff preview above it.
 - **Slash commands** — `/usage`, `/plan`, `/compact [focus]` (optional guidance threaded into the
-  summarizer), `/mode`, `/model`, `/help`; backslash multi-line input; Ctrl-C turn cancellation.
-- **Mid-turn steering (pi-style)** — a persistent input thread owns stdin; lines typed while a
-  turn runs answer a pending approval, or queue and enter the conversation at the next
-  provider-call boundary; leftovers become the next turns.
+  summarizer), `/mode`, `/model`, `/help`; Ctrl-C clears the line or cancels the turn.
+- **Mid-turn steering (pi-style)** — the input thread owns stdin for the whole session; messages
+  typed while a turn runs queue and enter the conversation at the next provider-call boundary;
+  leftovers become the next turns.
 - **HTML session export** — `butterfly export [id] [--out path]`: self-contained transcript with
   reasoning/tool output collapsed and cost totals. `crates/cli/src/export.rs`
 - **Layered config** — `~/.config/butterfly/config.toml` ← `<repo>/.butterfly.toml` ← flags.

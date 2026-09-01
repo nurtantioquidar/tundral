@@ -3,6 +3,8 @@
 
 const INSTRUCTIONS_SNAPSHOT_CAP: usize = 12_000;
 
+// The @-mention convention line is a sanctioned prefix change
+// (operator-approved 2026-09-01, one-time re-cache per repo).
 pub const CORE_INSTRUCTIONS: &str = "\
 You are Butterfly, a fast coding agent working inside the user's repository.
 
@@ -16,6 +18,9 @@ Rules:
 - For multi-step work, call update_plan early to set the objective and task
   list, and keep it current: it is your durable memory across context
   compaction.
+- The user may reference workspace files as @-mentions (e.g. @src/main.rs).
+  Treat them as workspace-relative paths and read the relevant ones with
+  read_file before answering.
 - When the task is complete, stop calling tools and summarize what changed and
   what was verified.";
 

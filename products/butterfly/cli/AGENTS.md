@@ -28,7 +28,9 @@ crates/core   # butterfly-core: UI-free engine
   context     # prompt layout, anchor+drift token ledger, elision + summarize compaction
   session     # deterministic agent loop, approval gating, typed working state,
               # JSONL persistence/resume
-crates/cli    # butterfly: rustyline REPL, streaming render, terminal approval prompts
+crates/cli    # butterfly: inline TUI (crossterm editor, @-mention fuzzy completion,
+              # status bar, arrow-key approvals, paste placeholders, markdown render);
+              # plain line loop for non-TTY stdin; -p headless path
 ../bench      # fixture benchmark vs external harnesses + full-window compaction exercise
 ```
 
