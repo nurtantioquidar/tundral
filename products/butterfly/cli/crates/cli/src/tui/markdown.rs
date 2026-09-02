@@ -16,6 +16,8 @@ pub enum SpanStyle {
     Code,
     Heading,
     Marker,
+    /// Secondary text (reasoning, status notes): dim, re-wrappable.
+    Dim,
 }
 
 impl SpanStyle {
@@ -26,6 +28,7 @@ impl SpanStyle {
             SpanStyle::Code => CYAN,
             SpanStyle::Heading => "\x1b[1m\x1b[36m",
             SpanStyle::Marker => CYAN,
+            SpanStyle::Dim => "\x1b[2m",
         }
     }
 }

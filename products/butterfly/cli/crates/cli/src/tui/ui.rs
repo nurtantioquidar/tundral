@@ -108,6 +108,76 @@ enum Place {
     Scrolling,
 }
 
+/// One logical transcript entry. Entries render to physical rows at a GIVEN
+/// width, so the visible screen can be re-wrapped from source on resize
+/// (Codex-tidy) and the Ctrl+T overlay wraps instead of truncating.
+#[derive(Clone, Debug, PartialEq)]
+enum Entry {
+    Blank,
+    /// Pre-styled verbatim line (tool lines, code, notices): reprinted
+    /// as-is, clamped rather than re-wrapped.
+    Fixed(String),
+    /// A logical line of the user's prompt, drawn as a highlighted bar.
+    UserBar(String),
+    /// Re-wrappable assistant prose.
+    Prose {
+        block_start: bool,
+        spans: Vec<md::Span>,
+        cont_indent: usize,
+    },
+}
+
+/// Render one entry to physical rows at `width` columns.
+fn render_entry(entry: &Entry, width: usize) -> Vec<String> {
+    let width = width.max(20);
+    match entry {
+        Entry::Blank => vec![String::new()],
+        Entry::Fixed(line) => vec![line.clone()],
+        Entry::UserBar(text) => {
+            let spans = vec![md::Span {
+                style: md::SpanStyle::Plain,
+                text: text.clone(),
+            }];
+            styled_rows(&spans, width.saturating_sub(4), width.saturating_sub(4))
+                .into_iter()
+                .enumerate()
+                .map(|(i, row)| {
+                    let prefix = if i == 0 { " ❯ " } else { "   " };
+                    let pad = width.saturating_sub(visible_cols(&row) + 3);
+                    format!("{INVERSE}{DIM}{prefix}{row}{}{RESET}", " ".repeat(pad))
+                })
+                .collect()
+        }
+        Entry::Prose {
+            block_start,
+            spans,
+            cont_indent,
+        } => {
+            let rows = styled_rows(
+                spans,
+                width.saturating_sub(2),
+                width.saturating_sub(2 + cont_indent),
+            );
+            let cont_prefix = format!("  {}", " ".repeat(*cont_indent));
+            rows.into_iter()
+                .enumerate()
+                .map(|(i, row)| {
+                    let prefix = if i == 0 {
+                        if *block_start {
+                            "● "
+                        } else {
+                            "  "
+                        }
+                    } else {
+                        &cont_prefix
+                    };
+                    format!("{prefix}{row}")
+                })
+                .collect()
+        }
+    }
+}
+
 struct UiInner {
     width: usize,
     height: usize,
@@ -131,13 +201,16 @@ struct UiInner {
     show_reasoning: bool,
     /// Partial reasoning line buffered while reasoning is hidden.
     hidden_reasoning: String,
-    /// Everything committed to scrollback (plus hidden reasoning), for the
-    /// Ctrl+T overlay. Capped ring.
-    transcript: std::collections::VecDeque<String>,
+    /// Everything committed to scrollback (plus hidden reasoning), as
+    /// logical entries re-renderable at any width: backs the Ctrl+T overlay
+    /// and the full-screen re-wrap on resize. The bool marks whether the
+    /// entry was drawn on the main screen (hidden reasoning is not — the
+    /// resize repaint must not resurrect it). Capped ring.
+    transcript: std::collections::VecDeque<(bool, Entry)>,
     /// Ctrl+T transcript overlay: Some(scroll offset from the tail). While
     /// open, committed output is queued and flushed on close.
     overlay: Option<usize>,
-    pending_output: Vec<String>,
+    pending_output: Vec<Entry>,
     /// Scrolling mode only: the cursor's row within the block at last draw —
     /// MoveUp(cursor_row) reaches the block's top line for erase-and-redraw.
     cursor_row: usize,
@@ -496,35 +569,68 @@ impl UiInner {
         format!("{color}{}{RESET}", truncate_cols(&line, width))
     }
 
-    /// Commit output (recorded into the transcript) and redraw. While the
-    /// Ctrl+T overlay is open, committed output queues and the overlay
-    /// refreshes instead of touching the main screen.
+    /// Commit pre-styled output lines (recorded as Fixed/Blank entries) and
+    /// redraw.
     fn paint(&mut self, output: Option<&str>) {
-        if let Some(output) = output {
-            for line in output.split('\n') {
-                self.record(line.to_string());
+        match output {
+            Some(output) => {
+                let entries: Vec<Entry> = output
+                    .split('\n')
+                    .map(|line| {
+                        if visible_cols(line) == 0 {
+                            Entry::Blank
+                        } else {
+                            Entry::Fixed(line.to_string())
+                        }
+                    })
+                    .collect();
+                self.commit_entries(entries);
             }
-            self.last_blank = output
-                .split('\n')
-                .next_back()
-                .is_none_or(|line| visible_cols(line) == 0);
+            None => {
+                if self.overlay.is_some() {
+                    self.draw_overlay();
+                } else {
+                    self.paint_screen(None);
+                }
+            }
+        }
+    }
+
+    /// Commit logical entries: record them into the transcript ring, then
+    /// render at the current width and draw. While the Ctrl+T overlay is
+    /// open, entries queue and the overlay refreshes instead of touching the
+    /// main screen.
+    fn commit_entries(&mut self, entries: Vec<Entry>) {
+        if entries.is_empty() {
+            return;
+        }
+        if let Some(last) = entries.last() {
+            self.last_blank = matches!(last, Entry::Blank);
+        }
+        for entry in &entries {
+            self.record(true, entry.clone());
         }
         if self.overlay.is_some() {
-            if let Some(output) = output {
-                self.pending_output.push(output.to_string());
-            }
+            self.pending_output.extend(entries);
             self.draw_overlay();
             return;
         }
-        self.paint_screen(output);
+        let width = self.width;
+        let text: Vec<String> = entries
+            .iter()
+            .flat_map(|entry| render_entry(entry, width))
+            .collect();
+        self.paint_screen(Some(&text.join("\n")));
     }
 
-    /// Append a line to the transcript ring (Ctrl+T overlay backing store).
-    fn record(&mut self, line: String) {
+    /// Append an entry to the transcript ring. `on_screen` entries take part
+    /// in the resize repaint; transcript-only entries (hidden reasoning)
+    /// appear solely in the Ctrl+T overlay.
+    fn record(&mut self, on_screen: bool, entry: Entry) {
         if self.transcript.len() >= TRANSCRIPT_CAP {
             self.transcript.pop_front();
         }
-        self.transcript.push_back(line);
+        self.transcript.push_back((on_screen, entry));
     }
 
     /// Erase the block, optionally append committed output, redraw the main
@@ -548,15 +654,21 @@ impl UiInner {
         let width = self.width.max(20);
         let height = self.height.max(4);
         let rows = height - 1;
-        let total = self.transcript.len();
+        // Entries re-wrap to the overlay's width at draw time.
+        let lines: Vec<String> = self
+            .transcript
+            .iter()
+            .flat_map(|(_, entry)| render_entry(entry, width))
+            .collect();
+        let total = lines.len();
         let max_offset = total.saturating_sub(rows);
         let offset = offset.min(max_offset);
         self.overlay = Some(offset);
         let end = total - offset;
         let start = end.saturating_sub(rows);
         let mut buf = format!("{SYNC_BEGIN}\x1b[2J\x1b[1;1H\x1b[?7l");
-        for i in start..end {
-            buf.push_str(&truncate_styled(&self.transcript[i], width));
+        for line in &lines[start..end] {
+            buf.push_str(&truncate_styled(line, width));
             buf.push_str("\r\n");
         }
         for _ in end - start..rows {
@@ -602,8 +714,78 @@ impl UiInner {
         if pending.is_empty() {
             self.paint_screen(None);
         } else {
-            self.paint_screen(Some(&pending.join("\n")));
+            let width = self.width;
+            let text: Vec<String> = pending
+                .iter()
+                .flat_map(|entry| render_entry(entry, width))
+                .collect();
+            self.paint_screen(Some(&text.join("\n")));
         }
+    }
+
+    /// Repaint the entire visible screen from the transcript: content
+    /// re-wrapped to the current width fills upward from the block, which is
+    /// re-pinned at the bottom edge. Used on resize, when terminal reflow
+    /// invalidates both the erase math and the old wrap points. Content
+    /// above the visible screen stays in scrollback as it was.
+    fn repaint_all(&mut self) {
+        let width = self.width.max(20);
+        let height = self.height.max(4);
+        let (block_lines, cursor_row, cursor_col) = self.compose_block();
+        let block_height = block_lines.len();
+        if block_height >= height {
+            // Tiny terminal: clear and let the scrolling model take over.
+            let mut buf = format!("{SYNC_BEGIN}\x1b[2J\x1b[1;1H");
+            self.place = Place::Scrolling;
+            self.cursor_row = 0;
+            self.append_scrolling_block(&mut buf);
+            buf.push_str(SYNC_END);
+            let mut out = std::io::stdout().lock();
+            let _ = out.write_all(buf.as_bytes());
+            let _ = out.flush();
+            return;
+        }
+        let avail = height - block_height;
+        let mut rows: Vec<String> = Vec::new();
+        'fill: for entry in self
+            .transcript
+            .iter()
+            .rev()
+            .filter_map(|(on_screen, entry)| on_screen.then_some(entry))
+        {
+            let rendered = render_entry(entry, width);
+            for line in rendered.into_iter().rev() {
+                rows.push(line);
+                if rows.len() >= avail {
+                    break 'fill;
+                }
+            }
+        }
+        // Drop leading blank rows so the tail sits snug under real content.
+        while rows.last().is_some_and(|line| visible_cols(line) == 0) {
+            rows.pop();
+        }
+        rows.reverse();
+        let block_top = height - block_height + 1;
+        let mut buf = format!("{SYNC_BEGIN}\x1b[2J\x1b[1;1H\x1b[?7l");
+        buf.push_str(&rows.join("\r\n"));
+        buf.push_str(&format!("\x1b[{block_top};1H"));
+        buf.push_str(&block_lines.join("\r\n"));
+        buf.push_str("\x1b[?7h");
+        buf.push_str(&format!(
+            "\x1b[{};{}H",
+            block_top + cursor_row,
+            cursor_col + 1
+        ));
+        buf.push_str(SYNC_END);
+        let mut out = std::io::stdout().lock();
+        let _ = out.write_all(buf.as_bytes());
+        let _ = out.flush();
+        self.place = Place::Pinned {
+            content_row: rows.len() + 1,
+            prev_block_top: block_top,
+        };
+        self.cursor_row = cursor_row;
     }
 
     /// Append the block draw (wrapped in autowrap-off) and cursor placement
@@ -707,53 +889,57 @@ impl UiInner {
         buf
     }
 
-    /// Markdown-render one assistant text line: word-wrapped to the terminal
-    /// with hanging indents (lists wrap under their own text), the `●` block
-    /// marker on the first line of a response block, a spacer line before a
-    /// new block, and code kept verbatim. May return multiple '\n'-joined
-    /// physical lines.
-    fn render_text_line(&mut self, line: &str) -> String {
-        let width = self.width.max(20);
+    /// Markdown-render one assistant text line into logical entries:
+    /// re-wrappable prose with the `●` block marker on the first line of a
+    /// response block (plus a spacer entry before a new block), code kept
+    /// verbatim.
+    fn render_text_entries(&mut self, line: &str) -> Vec<Entry> {
         match self.renderer.render(line) {
             md::Rendered::Raw(styled) => {
                 if styled.is_empty() {
-                    String::new()
+                    vec![Entry::Blank]
                 } else {
-                    format!("  {styled}")
+                    vec![Entry::Fixed(format!("  {styled}"))]
                 }
             }
             md::Rendered::Prose { spans, cont_indent } => {
                 if line.trim().is_empty() {
-                    return String::new();
+                    return vec![Entry::Blank];
                 }
                 let starting = self.text_block_start;
                 self.text_block_start = false;
-                let rows = styled_rows(
-                    &spans,
-                    width.saturating_sub(2),
-                    width.saturating_sub(2 + cont_indent),
-                );
-                let mut out = String::new();
+                let mut entries = Vec::new();
                 if starting && !self.last_blank {
-                    out.push('\n');
+                    entries.push(Entry::Blank);
                 }
-                let cont_prefix = format!("  {}", " ".repeat(cont_indent));
-                for (i, row) in rows.iter().enumerate() {
-                    if i > 0 {
-                        out.push('\n');
-                    }
-                    out.push_str(if i == 0 {
-                        if starting {
-                            "● "
-                        } else {
-                            "  "
-                        }
-                    } else {
-                        &cont_prefix
-                    });
-                    out.push_str(row);
-                }
-                out
+                entries.push(Entry::Prose {
+                    block_start: starting,
+                    spans,
+                    cont_indent,
+                });
+                entries
+            }
+        }
+    }
+
+    /// One committed line of `kind` as logical entries.
+    fn line_entries(&mut self, kind: LiveKind, line: &str) -> Vec<Entry> {
+        match kind {
+            LiveKind::Reasoning => {
+                self.text_block_start = true;
+                vec![Entry::Prose {
+                    block_start: false,
+                    spans: vec![md::Span {
+                        style: md::SpanStyle::Dim,
+                        text: line.to_string(),
+                    }],
+                    cont_indent: 0,
+                }]
+            }
+            LiveKind::Text => self.render_text_entries(line),
+            LiveKind::Tool => {
+                self.text_block_start = true;
+                vec![Entry::Fixed(format!("{CYAN}{line}{RESET}"))]
             }
         }
     }
@@ -764,18 +950,9 @@ impl UiInner {
             if live.text.is_empty() {
                 return;
             }
-            let styled = match live.kind {
-                LiveKind::Reasoning => {
-                    self.text_block_start = true;
-                    format!("{DIM}{}{RESET}", live.text)
-                }
-                LiveKind::Text => self.render_text_line(&live.text),
-                LiveKind::Tool => {
-                    self.text_block_start = true;
-                    format!("{CYAN}{}{RESET}", live.text)
-                }
-            };
-            self.paint(Some(&styled));
+            let text = live.text;
+            let entries = self.line_entries(live.kind, &text);
+            self.commit_entries(entries);
         }
     }
 
@@ -793,33 +970,24 @@ impl UiInner {
             text: String::new(),
         });
         live.text.push_str(delta);
-        let mut committed = String::new();
+        let mut committed: Vec<Entry> = Vec::new();
         while let Some(at) = self.live.as_ref().and_then(|l| l.text.find('\n')) {
             let line: String = {
                 let live = self.live.as_mut().expect("live line");
                 live.text.drain(..=at).collect()
             };
             let line = line.trim_end_matches('\n');
-            let styled = match kind {
-                LiveKind::Reasoning => {
-                    self.text_block_start = true;
-                    format!("{DIM}{line}{RESET}")
-                }
-                LiveKind::Text => self.render_text_line(line),
-                LiveKind::Tool => {
-                    self.text_block_start = true;
-                    format!("{CYAN}{line}{RESET}")
-                }
-            };
-            if !committed.is_empty() {
-                committed.push('\n');
+            let entries = self.line_entries(kind, line);
+            // Track spacing across lines within one batch.
+            if let Some(last) = entries.last() {
+                self.last_blank = matches!(last, Entry::Blank);
             }
-            committed.push_str(&styled);
+            committed.extend(entries);
         }
         if committed.is_empty() {
             self.paint(None);
         } else {
-            self.paint(Some(&committed));
+            self.commit_entries(committed);
         }
     }
 
@@ -916,11 +1084,7 @@ impl Ui {
             let _ = out.write_all(flood.as_bytes());
             let _ = out.flush();
         }
-        inner.place = Place::Pinned {
-            content_row: 1,
-            prev_block_top: 1,
-        };
-        inner.paint(None);
+        inner.repaint_all();
     }
 
     /// Commit styled lines into scrollback above the block.
@@ -928,6 +1092,25 @@ impl Ui {
         let mut inner = self.lock();
         inner.commit_live();
         inner.paint(Some(text));
+    }
+
+    /// Commit plain text as dim, word-wrapped, re-wrappable prose (turn
+    /// summaries and other long notes that must survive a resize tidily).
+    pub fn print_note(&self, text: &str) {
+        let mut inner = self.lock();
+        inner.commit_live();
+        let entries: Vec<Entry> = text
+            .lines()
+            .map(|line| Entry::Prose {
+                block_start: false,
+                spans: vec![md::Span {
+                    style: md::SpanStyle::Dim,
+                    text: line.to_string(),
+                }],
+                cont_indent: 2,
+            })
+            .collect();
+        inner.commit_entries(entries);
     }
 
     pub fn set_status(&self, status: Status) {
@@ -959,7 +1142,15 @@ impl Ui {
         // Any partial hidden-reasoning line still belongs in the transcript.
         if !inner.hidden_reasoning.is_empty() {
             let remainder = std::mem::take(&mut inner.hidden_reasoning);
-            inner.record(format!("{DIM}{remainder}{RESET}"));
+            let entry = Entry::Prose {
+                block_start: false,
+                spans: vec![md::Span {
+                    style: md::SpanStyle::Dim,
+                    text: remainder,
+                }],
+                cont_indent: 0,
+            };
+            inner.record(false, entry);
         }
         inner.activity = None;
         inner.paint(None);
@@ -1036,18 +1227,16 @@ impl Ui {
             Event::Resize(w, h) => {
                 inner.width = w as usize;
                 inner.height = h as usize;
-                // Reflow on resize is terminal-dependent; the pinned row
-                // bookkeeping can't survive it reliably, so hand off to the
-                // cursor-relative scrolling model.
-                if let Place::Pinned { content_row, .. } = inner.place {
-                    let row = content_row.min(inner.height.max(1));
-                    let mut out = std::io::stdout().lock();
-                    let _ = out.write_all(format!("\x1b[{row};1H\x1b[J").as_bytes());
-                    let _ = out.flush();
-                    inner.place = Place::Scrolling;
-                    inner.cursor_row = 0;
+                if inner.overlay.is_some() {
+                    inner.draw_overlay();
+                } else {
+                    // Terminal reflow invalidates every cursor-relative
+                    // assumption AND re-wraps previously committed lines at
+                    // the wrong width. Repaint the whole visible screen from
+                    // the transcript, re-wrapped to the new width, with the
+                    // block re-pinned at the bottom edge.
+                    inner.repaint_all();
                 }
-                inner.paint(None);
                 None
             }
             Event::Paste(content) => {
@@ -1217,15 +1406,12 @@ impl Ui {
                 }
                 // Echo the prompt as a highlighted bar so user turns stand
                 // apart from agent output in scrollback.
-                let width = inner.width.max(20);
-                let bar: Vec<String> = visible
+                let mut entries: Vec<Entry> = visible
                     .lines()
-                    .map(|line| {
-                        let pad = width.saturating_sub(width_of(line) + 4);
-                        format!("{INVERSE}{DIM} ❯ {line}{}{RESET}", " ".repeat(pad))
-                    })
+                    .map(|l| Entry::UserBar(l.to_string()))
                     .collect();
-                inner.paint(Some(&format!("{}\n", bar.join("\n"))));
+                entries.push(Entry::Blank);
+                inner.commit_entries(entries);
                 return Some(UiAction::Submit(submitted));
             }
             KeyCode::Backspace => {
@@ -1332,7 +1518,15 @@ impl StreamSink for UiSink {
             let line: String = inner.hidden_reasoning.drain(..=at).collect();
             let line = line.trim_end_matches('\n');
             if !line.is_empty() {
-                inner.record(format!("{DIM}{line}{RESET}"));
+                let entry = Entry::Prose {
+                    block_start: false,
+                    spans: vec![md::Span {
+                        style: md::SpanStyle::Dim,
+                        text: line.to_string(),
+                    }],
+                    cont_indent: 0,
+                };
+                inner.record(false, entry);
             }
         }
     }
@@ -1567,9 +1761,13 @@ mod tests {
         let mut inner = inner_at_width(30);
         inner.last_blank = false;
         inner.text_block_start = true;
-        let out = inner
-            .render_text_line("The quick brown fox jumps over the lazy dog near the riverbank");
-        let lines: Vec<&str> = out.split('\n').collect();
+        let entries = inner
+            .render_text_entries("The quick brown fox jumps over the lazy dog near the riverbank");
+        let out: Vec<String> = entries
+            .iter()
+            .flat_map(|entry| render_entry(entry, 30))
+            .collect();
+        let lines: Vec<&str> = out.iter().map(String::as_str).collect();
         // Spacer first (previous line was not blank), then ● + indented rows.
         assert_eq!(lines[0], "");
         assert!(lines[1].starts_with("● "));
@@ -1587,8 +1785,12 @@ mod tests {
         let mut inner = inner_at_width(30);
         inner.last_blank = true;
         inner.text_block_start = false;
-        let out = inner.render_text_line("- a bullet item with enough words to wrap around");
-        let lines: Vec<&str> = out.split('\n').collect();
+        let entries = inner.render_text_entries("- a bullet item with enough words to wrap around");
+        let out: Vec<String> = entries
+            .iter()
+            .flat_map(|entry| render_entry(entry, 30))
+            .collect();
+        let lines: Vec<&str> = out.iter().map(String::as_str).collect();
         assert!(lines.len() >= 2);
         assert!(lines[0].contains('•'));
         // Continuations indent 2 (block) + 2 (bullet hang) = 4 columns.
@@ -1636,10 +1838,66 @@ mod tests {
         inner.height = 10;
         // paint() would write to the terminal; exercise record() directly.
         for i in 0..20 {
-            inner.record(format!("line {i}"));
+            inner.record(true, Entry::Fixed(format!("line {i}")));
         }
         assert_eq!(inner.transcript.len(), 20);
-        assert_eq!(inner.transcript[0], "line 0");
+        assert_eq!(inner.transcript[0], (true, Entry::Fixed("line 0".into())));
+    }
+
+    #[test]
+    fn entries_rewrap_to_the_width_they_are_rendered_at() {
+        let entry = Entry::Prose {
+            block_start: true,
+            spans: vec![md::Span {
+                style: md::SpanStyle::Plain,
+                text: "words that will wrap differently at different widths for sure".into(),
+            }],
+            cont_indent: 0,
+        };
+        let narrow = render_entry(&entry, 24);
+        let wide = render_entry(&entry, 80);
+        assert!(narrow.len() > wide.len(), "narrow must produce more rows");
+        assert!(narrow.iter().all(|row| visible_cols(row) <= 24));
+        assert_eq!(wide.len(), 1);
+        assert!(wide[0].starts_with("● "));
+        // User bars re-pad to the width they are rendered at.
+        let bar = Entry::UserBar("fix the bug".into());
+        for width in [24usize, 60] {
+            let rows = render_entry(&bar, width);
+            assert_eq!(visible_cols(&rows[0]), width, "bar must span the width");
+        }
+    }
+
+    #[test]
+    fn repaint_math_refills_from_the_transcript_tail() {
+        let mut inner = inner_at_width(40);
+        inner.height = 12;
+        for i in 0..30 {
+            inner.record(true, Entry::Fixed(format!("line {i}")));
+        }
+        // Hidden reasoning must NOT surface in the repaint fill.
+        inner.record(false, Entry::Fixed("secret reasoning line".into()));
+        // Mirror repaint_all's fill loop (the drawing itself needs a tty).
+        let block_height = inner.compose_block().0.len();
+        let avail = inner.height - block_height;
+        let mut rows: Vec<String> = Vec::new();
+        'fill: for entry in inner
+            .transcript
+            .iter()
+            .rev()
+            .filter_map(|(on_screen, entry)| on_screen.then_some(entry))
+        {
+            for line in render_entry(entry, inner.width).into_iter().rev() {
+                rows.push(line);
+                if rows.len() >= avail {
+                    break 'fill;
+                }
+            }
+        }
+        rows.reverse();
+        assert_eq!(rows.len(), avail);
+        assert_eq!(rows.last().expect("tail"), "line 29");
+        assert!(rows.iter().all(|row| !row.contains("secret")));
     }
 
     #[test]

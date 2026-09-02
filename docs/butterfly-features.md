@@ -95,8 +95,15 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 - **Ctrl+T transcript overlay** — a transient alternate-screen pager over the full session
   (user bars, responses, tool lines, and reasoning even when hidden), scrollable (↑/↓, PgUp/PgDn,
   g/G), dismissed with q/Esc/Ctrl+T; the main screen underneath is untouched, and output that
-  streams in while the overlay is open queues and flushes on close. 10k-line ring buffer. The
+  streams in while the overlay is open queues and flushes on close. 10k-entry ring buffer. The
   overlay is the one sanctioned alternate-screen use — the main flow never leaves scrollback.
+- **Logical transcript + resize re-wrap** (dogfood 2026-09-01) — the transcript ring stores
+  logical entries (re-wrappable prose spans, user-bar text, fixed lines), rendered to physical
+  rows at display time. On resize — where terminal reflow both invalidates the erase math
+  (previously stranding stale block frames, one rule line each) and re-wraps old-width lines
+  raggedly — the whole visible screen repaints from the transcript, re-wrapped to the new width,
+  with the block re-pinned at the bottom edge. The overlay wraps from the same source instead of
+  truncating. Scrollback above the visible screen keeps its original wrap (immutable by design).
 - **Arrow-key approvals** — the input block becomes a yes / always / no menu (↑↓ + Enter;
   `y`/`a`/`n`/Esc shortcuts kept), with the colorized diff preview above it.
 - **Slash commands** — `/usage`, `/plan`, `/compact [focus]` (optional guidance threaded into the

@@ -156,7 +156,7 @@ pub(crate) fn turn_status_line(
         extras.push_str(" · cancelled");
     }
     format!(
-        "{DIM}✳ done in {:.1}s · {} calls · in {} ({cache_rate:.0}% cached) · out {} · {} | session {} · ctx {utilization:.0}%{extras}{RESET}",
+        "✳ done in {:.1}s · {} calls · in {} ({cache_rate:.0}% cached) · out {} · {} | session {} · ctx {utilization:.0}%{extras}",
         elapsed.as_secs_f64(),
         report.provider_calls,
         format_tokens(report.usage.input_tokens),
@@ -435,7 +435,7 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
         println!();
         match result {
             Ok(report) => println!(
-                "{}",
+                "{DIM}{}{RESET}",
                 turn_status_line(&agent, &report, turn_started.elapsed())
             ),
             Err(error) => eprintln!("{RED}error: {error}{RESET}"),
