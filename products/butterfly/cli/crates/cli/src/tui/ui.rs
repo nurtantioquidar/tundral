@@ -567,7 +567,6 @@ impl UiInner {
             }
         }
         lines.push(self.compose_status(width));
-        lines.push(self.compose_mode_line(width));
         (lines, cursor_row, cursor_col)
     }
 
@@ -638,25 +637,31 @@ impl UiInner {
         (visible, cursor_row - start, cursor_col)
     }
 
+    /// One footer line, Codex-style: status left, mode right-aligned in
+    /// its color. Deliberately minimal — cost and cache-hit rate print
+    /// after every turn in the ✳ summary (and /usage has the breakdown).
     fn compose_status(&self, width: usize) -> String {
-        // Deliberately minimal: cost and cache-hit rate print after every
-        // turn in the ✳ summary (and /usage has the full breakdown).
-        let status = format!(
+        let left = format!(
             "{} | Context {:.0}% left",
             self.status.model,
             (1.0 - self.status.ctx_pct).max(0.0) * 100.0,
         );
-        format!("{DIM}{}{RESET}", truncate_cols(&status, width))
-    }
-
-    fn compose_mode_line(&self, width: usize) -> String {
         let color = match self.status.mode {
             "auto" => YELLOW,
             "read-only" => GREEN,
             _ => DIM,
         };
-        let line = format!("▶▶ {} mode (shift+tab to cycle)", self.status.mode);
-        format!("{color}{}{RESET}", truncate_cols(&line, width))
+        let right = format!("{} mode (shift+tab to cycle)", self.status.mode);
+        let pad = width.saturating_sub(width_of(&left) + width_of(&right));
+        if pad >= 2 {
+            format!("{DIM}{left}{RESET}{}{color}{right}{RESET}", " ".repeat(pad))
+        } else {
+            // Narrow terminal: keep both, left-joined and truncated.
+            format!(
+                "{DIM}{}{RESET}",
+                truncate_cols(&format!("{left} · {right}"), width)
+            )
+        }
     }
 
     /// Commit pre-styled output lines (recorded as Fixed/Blank entries) and
@@ -1978,6 +1983,18 @@ mod tests {
     fn tiny_terminals_go_straight_to_scrolling() {
         let mut inner = inner_at_width(80);
         inner.height = 3;
+        // A live line and activity row grow the block past the (clamped)
+        // terminal height, forcing the scrolling fallback.
+        inner.live = Some(LiveLine {
+            kind: LiveKind::Text,
+            text: "streaming".into(),
+        });
+        inner.activity = Some(Activity {
+            started: Instant::now(),
+            spinner: 0,
+            tool: None,
+            out_bytes: 0,
+        });
         inner.place = Place::Pinned {
             content_row: 1,
             prev_block_top: 1,

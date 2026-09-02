@@ -75,9 +75,10 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 - **Paste placeholders** — bracketed paste; multi-line or >200-char pastes collapse to
   `[pasted #N: X lines]` in the editor (backspace removes atomically) and expand verbatim on
   submit.
-- **Two-line footer + live activity** — a deliberately minimal `model | Context n% left` line
-  (cost/cache/cwd removed 2026-09-02: the per-turn ✳ summary and /usage already carry them) plus
-  a mode line colored by permission mode; Shift+Tab is the ONLY way to cycle
+- **One-line footer + live activity** — deliberately minimal, Codex-shaped: `model | Context n%
+  left` on the left with the permission mode right-aligned in its color (cost/cache/cwd removed
+  2026-09-02: the per-turn ✳ summary and /usage already carry them; narrow terminals join the
+  halves left-aligned); Shift+Tab is the ONLY way to cycle
   ask → auto → read-only (`/mode` removed as redundant; mid-turn presses apply when the turn
   ends — the running turn keeps the mode it started with). Dropdown hints start at one shared
   column (Codex-style label padding). While a turn runs, a `✳ spinner · elapsed · ~tokens · tool` line sits
