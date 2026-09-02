@@ -14,6 +14,7 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 use anyhow::{Context, Result};
+use butterfly_core::domain::Model;
 use butterfly_core::session::store::SessionStore;
 use butterfly_core::session::Agent;
 use tokio_util::sync::CancellationToken;
@@ -230,6 +231,36 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
                     Ok(None) => ui.print_note("connect cancelled"),
                     Err(_) => {}
                 }
+                continue;
+            }
+            CommandResult::PickModel => {
+                const MODELS: [Model; 2] = [Model::DeepseekV4Flash, Model::DeepseekV4Pro];
+                let current = agent.model();
+                let items: Vec<String> = MODELS
+                    .iter()
+                    .map(|model| {
+                        let mut label = format!("{} ({})", model.display_name(), model.wire_name());
+                        if *model == current {
+                            label.push_str(" · current");
+                        }
+                        label
+                    })
+                    .collect();
+                let initial = MODELS.iter().position(|m| *m == current).unwrap_or(0);
+                match ui.open_select("switch model", items, initial).await {
+                    Ok(Some(index)) if MODELS[index] != current => {
+                        let model = MODELS[index];
+                        agent.set_model(model);
+                        crate::state::remember_model(model.wire_name());
+                        ui.print_note(&format!(
+                            "model set: {} ({}); next request re-caches the prefix",
+                            model.display_name(),
+                            model.wire_name()
+                        ));
+                    }
+                    _ => ui.print_note("model unchanged"),
+                }
+                ui.set_status(status_of(&agent, &workspace, last_cache));
                 continue;
             }
             CommandResult::Output(text) => {

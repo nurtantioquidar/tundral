@@ -88,6 +88,15 @@ struct Connect {
     responder: oneshot::Sender<Option<(String, String)>>,
 }
 
+/// Generic arrow-key selector (e.g. the /model picker): resolves with the
+/// chosen index, or None on cancel.
+struct Select {
+    title: String,
+    items: Vec<String>,
+    selected: usize,
+    responder: oneshot::Sender<Option<usize>>,
+}
+
 pub struct Status {
     pub model: String,
     pub workspace: String,
@@ -200,6 +209,7 @@ struct UiInner {
     dropdown: Option<Dropdown>,
     menu: Option<Menu>,
     connect: Option<Connect>,
+    select: Option<Select>,
     status: Status,
     activity: Option<Activity>,
     live: Option<LiveLine>,
@@ -409,6 +419,25 @@ fn tail_cols(text: &str, max: usize) -> String {
 }
 
 impl UiInner {
+    /// The terminal cursor is hidden while a selector owns the block (there
+    /// is nothing to type at); it shows for the editor and key entry.
+    fn cursor_escape(&self) -> &'static str {
+        let selecting = self.menu.is_some()
+            || self.select.is_some()
+            || matches!(
+                &self.connect,
+                Some(Connect {
+                    stage: ConnectStage::Provider { .. },
+                    ..
+                })
+            );
+        if selecting {
+            "\x1b[?25l"
+        } else {
+            "\x1b[?25h"
+        }
+    }
+
     /// Compose the block: (styled lines, cursor row, cursor column).
     fn compose_block(&self) -> (Vec<String>, usize, usize) {
         let width = self.width.max(20);
@@ -472,6 +501,19 @@ impl UiInner {
                     cursor_col = 2 + width_of(&masked);
                 }
             }
+        } else if let Some(select) = &self.select {
+            lines.push(select.title.clone());
+            for (i, item) in select.items.iter().enumerate() {
+                let row = truncate_cols(item, width.saturating_sub(4));
+                if i == select.selected {
+                    lines.push(format!("  {CYAN}▸ {row}{RESET}"));
+                } else {
+                    lines.push(format!("  {DIM}  {row}{RESET}"));
+                }
+            }
+            lines.push(format!("{DIM}enter select · esc cancel{RESET}"));
+            cursor_row = lines.len().saturating_sub(1);
+            cursor_col = 0;
         } else if let Some(menu) = &self.menu {
             for (i, (label, _)) in MENU.iter().enumerate() {
                 let marker = if i == menu.selected { "▸" } else { " " };
@@ -820,6 +862,7 @@ impl UiInner {
             block_top + cursor_row,
             cursor_col + 1
         ));
+        buf.push_str(self.cursor_escape());
         buf.push_str(SYNC_END);
         let mut out = std::io::stdout().lock();
         let _ = out.write_all(buf.as_bytes());
@@ -851,6 +894,7 @@ impl UiInner {
         if cursor_col > 0 {
             buf.push_str(&format!("\x1b[{cursor_col}C"));
         }
+        buf.push_str(self.cursor_escape());
         self.cursor_row = cursor_row;
     }
 
@@ -923,6 +967,7 @@ impl UiInner {
                 block_top + cursor_row,
                 cursor_col + 1
             ));
+            buf.push_str(self.cursor_escape());
             self.place = Place::Pinned {
                 content_row,
                 prev_block_top: block_top,
@@ -1097,6 +1142,7 @@ impl Ui {
                 dropdown: None,
                 menu: None,
                 connect: None,
+                select: None,
                 status,
                 activity: None,
                 live: None,
@@ -1228,6 +1274,35 @@ impl Ui {
         receiver
     }
 
+    /// Open a generic arrow-key selector; resolves with the chosen index or
+    /// None on cancel.
+    pub fn open_select(
+        &self,
+        title: &str,
+        items: Vec<String>,
+        initial: usize,
+    ) -> oneshot::Receiver<Option<usize>> {
+        let mut inner = self.lock();
+        let (sender, receiver) = oneshot::channel();
+        if items.is_empty()
+            || inner.select.is_some()
+            || inner.connect.is_some()
+            || inner.menu.is_some()
+        {
+            let _ = sender.send(None);
+            return receiver;
+        }
+        let initial = initial.min(items.len() - 1);
+        inner.select = Some(Select {
+            title: title.to_string(),
+            items,
+            selected: initial,
+            responder: sender,
+        });
+        inner.paint(None);
+        receiver
+    }
+
     /// Open the approval menu; the returned receiver resolves with the
     /// user's decision.
     fn open_menu(&self, request: &ApprovalRequest) -> oneshot::Receiver<Decision> {
@@ -1258,6 +1333,7 @@ impl Ui {
         inner.commit_live();
         inner.menu = None;
         inner.connect = None;
+        inner.select = None;
         inner.dropdown = None;
         let mut buf = String::new();
         match inner.place {
@@ -1404,6 +1480,33 @@ impl Ui {
             if let Some(result) = resolve {
                 if let Some(connect) = inner.connect.take() {
                     let _ = connect.responder.send(result);
+                }
+            }
+            inner.paint(None);
+            return None;
+        }
+        // A generic selector captures everything until resolved.
+        if inner.select.is_some() {
+            let mut resolve: Option<Option<usize>> = None;
+            if let Some(select) = &mut inner.select {
+                match code {
+                    KeyCode::Up | KeyCode::Char('k') => {
+                        select.selected = select.selected.saturating_sub(1);
+                    }
+                    KeyCode::Down | KeyCode::Char('j') => {
+                        select.selected = (select.selected + 1).min(select.items.len() - 1);
+                    }
+                    KeyCode::Enter => resolve = Some(Some(select.selected)),
+                    KeyCode::Esc => resolve = Some(None),
+                    KeyCode::Char('c') if modifiers.contains(KeyModifiers::CONTROL) => {
+                        resolve = Some(None);
+                    }
+                    _ => {}
+                }
+            }
+            if let Some(result) = resolve {
+                if let Some(select) = inner.select.take() {
+                    let _ = select.responder.send(result);
                 }
             }
             inner.paint(None);
@@ -1723,6 +1826,7 @@ mod tests {
             dropdown: None,
             menu: None,
             connect: None,
+            select: None,
             status: Status {
                 model: "deepseek-v4-flash".into(),
                 workspace: "a-rather-long-workspace-name".into(),

@@ -120,11 +120,14 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   after that, sessions just start. `/connect` in-session replaces the stored key. Resolution:
   `DEEPSEEK_API_KEY` env > store > wizard; headless `-p/--json` still fails fast. The key is
   masked while typing and never enters history, transcript, or session logs.
-- **Model stickiness** — the last-used model (via `--model` or `/model`) persists in
+- **Model stickiness + picker** — bare `/model` opens an arrow-key picker over the hardcoded
+  model list (display names — DeepSeek V4 Flash / DeepSeek V4 Pro — current model marked;
+  `/model <wire-name>` still switches directly). The last-used model persists in
   `~/.local/state/butterfly/state.toml`; new sessions start on it regardless of repo. Explicit
-  pins (flag, `model =` in config files) win over the remembered value. Models carry display
-  names (DeepSeek V4 Flash / DeepSeek V4 Pro) in pickers and notices; wire names stay in
+  pins (flag, `model =` in config files) win over the remembered value; wire names stay in
   status and logs.
+- **Cursor discipline** — the terminal cursor hides while any selector owns the block (provider
+  picker, model picker, approval menu) and returns for the editor and masked key entry.
 - **Headless one-shot** — `-p` with `--json` machine-readable report (used by bench).
 
 ### Atlas (native code graph)

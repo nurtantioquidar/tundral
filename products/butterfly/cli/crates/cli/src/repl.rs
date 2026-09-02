@@ -197,7 +197,7 @@ commands:
   /plan     show the tracked working state (objective, tasks, files, commands)
   /compact  force a compaction now; optional focus: /compact keep the auth details
   /mode     show or set permission mode: /mode ask|auto|read-only
-  /model    show or switch model: /model deepseek-v4-flash|deepseek-v4-pro
+  /model    pick a model (arrow keys), or /model <name> to switch directly
   /help     this help
   /quit     exit (also Ctrl-D)
 input:
@@ -216,6 +216,8 @@ pub enum CommandResult {
     Output(String),
     /// Run the interactive provider-connect flow (TUI only).
     Connect,
+    /// Open the interactive model picker (TUI; plain loops print instead).
+    PickModel,
     Quit,
     /// Not a command — run it as a user turn.
     NotACommand,
@@ -243,11 +245,7 @@ pub async fn handle_command(agent: &mut Agent, input: &str) -> CommandResult {
         }
         _ if input.starts_with("/model") => {
             CommandResult::Output(match input.trim_start_matches("/model").trim() {
-                "" => format!(
-                    "model: {} ({})",
-                    agent.model().display_name(),
-                    agent.model().wire_name()
-                ),
+                "" => return CommandResult::PickModel,
                 name => match butterfly_core::domain::Model::parse(name) {
                     Some(model) => {
                         agent.set_model(model);
@@ -405,6 +403,14 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
                 println!(
                     "/connect needs an interactive terminal; run butterfly in a TTY \
                      (or set DEEPSEEK_API_KEY)"
+                );
+                continue;
+            }
+            CommandResult::PickModel => {
+                println!(
+                    "model: {} ({}) — switch with /model deepseek-v4-flash|deepseek-v4-pro",
+                    agent.model().display_name(),
+                    agent.model().wire_name()
                 );
                 continue;
             }
