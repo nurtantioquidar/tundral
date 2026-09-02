@@ -13,6 +13,7 @@ pub const RESET: &str = "\x1b[0m";
 pub enum SpanStyle {
     Plain,
     Bold,
+    Italic,
     Code,
     Heading,
     Marker,
@@ -25,6 +26,7 @@ impl SpanStyle {
         match self {
             SpanStyle::Plain => "",
             SpanStyle::Bold => BOLD,
+            SpanStyle::Italic => "\x1b[3m",
             SpanStyle::Code => CYAN,
             SpanStyle::Heading => "\x1b[1m\x1b[36m",
             SpanStyle::Marker => CYAN,
@@ -139,45 +141,85 @@ fn split_numbered_item(text: &str) -> Option<(&str, &str)> {
     Some((&text[..digits + 1], body))
 }
 
-/// `**bold**` and `` `code` `` spans; unmatched markers pass through as-is.
-fn inline_spans(line: &str) -> Vec<Span> {
+/// One level of nesting: extract `` `code` `` spans inside emphasized text
+/// so identifiers keep the code color even when the model bolds them
+/// (`**\`ContextConfig\`**` must not leak raw backticks).
+fn nested_spans(content: &str, outer: SpanStyle) -> Vec<Span> {
     let mut spans = Vec::new();
-    let mut rest = line;
-    loop {
-        // (offset, is_bold) of the earliest span opener, if any.
-        let next = match (rest.find("**"), rest.find('`')) {
-            (None, None) => None,
-            (Some(b), None) => Some((b, true)),
-            (None, Some(c)) => Some((c, false)),
-            (Some(b), Some(c)) => Some(if b < c { (b, true) } else { (c, false) }),
+    let mut rest = content;
+    while let Some(open) = rest.find('`') {
+        let Some(close) = rest[open + 1..].find('`') else {
+            break;
         };
-        let Some((at, is_bold)) = next else {
-            if !rest.is_empty() {
-                spans.push(span(SpanStyle::Plain, rest));
-            }
-            return spans;
-        };
-        let (open_len, close, style) = if is_bold {
-            (2, "**", SpanStyle::Bold)
-        } else {
-            (1, "`", SpanStyle::Code)
-        };
-        match rest[at + open_len..].find(close) {
-            Some(end) => {
-                if at > 0 {
-                    spans.push(span(SpanStyle::Plain, &rest[..at]));
-                }
-                spans.push(span(style, &rest[at + open_len..at + open_len + end]));
-                rest = &rest[at + open_len + end + close.len()..];
-            }
-            None => {
-                if !rest.is_empty() {
-                    spans.push(span(SpanStyle::Plain, rest));
-                }
-                return spans;
-            }
+        if open > 0 {
+            spans.push(span(outer, &rest[..open]));
+        }
+        spans.push(span(SpanStyle::Code, &rest[open + 1..open + 1 + close]));
+        rest = &rest[open + 1 + close + 1..];
+    }
+    if !rest.is_empty() {
+        spans.push(span(outer, rest));
+    }
+    spans
+}
+
+/// A single-`*` emphasis closing at the FIRST `*` in `content` (the text
+/// after the opener). Valid only when the content neither starts nor ends
+/// with whitespace — so `2 * 3` stays arithmetic, `*effective*` italicizes.
+fn emphasis_end(content: &str) -> Option<usize> {
+    let first = content.chars().next()?;
+    if first.is_whitespace() || first == '*' {
+        return None;
+    }
+    let close = content.find('*')?;
+    let before = content[..close].chars().next_back()?;
+    if before.is_whitespace() {
+        return None;
+    }
+    Some(close)
+}
+
+/// `**bold**`, `*italic*`, and `` `code` `` spans (code also recognized one
+/// level inside emphasis); unmatched markers pass through as-is.
+fn inline_spans(line: &str) -> Vec<Span> {
+    let mut spans: Vec<Span> = Vec::new();
+    let mut plain = String::new();
+    fn flush(plain: &mut String, spans: &mut Vec<Span>) {
+        if !plain.is_empty() {
+            spans.push(span(SpanStyle::Plain, std::mem::take(plain)));
         }
     }
+    let mut i = 0usize;
+    while i < line.len() {
+        let rest = &line[i..];
+        if let Some(after) = rest.strip_prefix("**") {
+            if let Some(end) = after.find("**") {
+                flush(&mut plain, &mut spans);
+                spans.extend(nested_spans(&after[..end], SpanStyle::Bold));
+                i += 2 + end + 2;
+                continue;
+            }
+        } else if let Some(after) = rest.strip_prefix('`') {
+            if let Some(end) = after.find('`') {
+                flush(&mut plain, &mut spans);
+                spans.push(span(SpanStyle::Code, &after[..end]));
+                i += 1 + end + 1;
+                continue;
+            }
+        } else if let Some(after) = rest.strip_prefix('*') {
+            if let Some(end) = emphasis_end(after) {
+                flush(&mut plain, &mut spans);
+                spans.extend(nested_spans(&after[..end], SpanStyle::Italic));
+                i += 1 + end + 1;
+                continue;
+            }
+        }
+        let ch = rest.chars().next().expect("in-bounds char");
+        plain.push(ch);
+        i += ch.len_utf8();
+    }
+    flush(&mut plain, &mut spans);
+    spans
 }
 
 #[cfg(test)]
@@ -265,5 +307,45 @@ mod tests {
         let odd = inline_spans("2 ** 3 is not bold");
         assert_eq!(odd.len(), 1);
         assert_eq!(odd[0].text, "2 ** 3 is not bold");
+    }
+
+    #[test]
+    fn single_asterisk_emphasis_renders_italic_but_math_stays_literal() {
+        let spans = inline_spans("the *effective* window");
+        assert_eq!(spans.len(), 3);
+        assert_eq!(spans[1].style, SpanStyle::Italic);
+        assert_eq!(spans[1].text, "effective");
+        // Multi-word emphasis works too.
+        let spans = inline_spans("*current history plus one instruction*");
+        assert_eq!(spans.len(), 1);
+        assert_eq!(spans[0].style, SpanStyle::Italic);
+        // Arithmetic never italicizes.
+        for literal in ["2 * 3", "2 * 3 * 4", "a * b"] {
+            let spans = inline_spans(literal);
+            assert_eq!(spans.len(), 1, "{literal:?}");
+            assert_eq!(spans[0].style, SpanStyle::Plain);
+            assert_eq!(spans[0].text, literal);
+        }
+    }
+
+    #[test]
+    fn code_nested_in_emphasis_keeps_the_code_style_and_drops_backticks() {
+        // The exact shape from the dogfood report: **`ContextConfig`** — ...
+        let spans = inline_spans("**`ContextConfig`** — tunable knobs");
+        assert_eq!(spans[0].style, SpanStyle::Code);
+        assert_eq!(spans[0].text, "ContextConfig");
+        assert!(spans.iter().all(|s| !s.text.contains('`')));
+        // Mixed content inside bold keeps both styles.
+        let spans = inline_spans("**bold `code` mix**");
+        let styles: Vec<SpanStyle> = spans.iter().map(|s| s.style).collect();
+        assert_eq!(
+            styles,
+            vec![SpanStyle::Bold, SpanStyle::Code, SpanStyle::Bold]
+        );
+        // And inside italics.
+        let spans = inline_spans("*see `rebase()` here*");
+        assert!(spans
+            .iter()
+            .any(|s| s.style == SpanStyle::Code && s.text == "rebase()"));
     }
 }

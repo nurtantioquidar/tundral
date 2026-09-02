@@ -86,7 +86,9 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   carry a `●` block marker with aligned continuation lines; turns close with a dim
   `✳ done in Ns · …` stats line.
 - **Markdown rendering, markers hidden, word-wrapped** (Codex-inspired, dogfood 2026-09-01) —
-  headings/bold/inline-code render styled with the `##`/`**`/backtick syntax stripped; prose is
+  headings/bold/*italic*/inline-code render styled with the `##`/`**`/`*`/backtick syntax
+  stripped (single-`*` emphasis requires tight markers, so `2 * 3` stays arithmetic; code spans
+  are recognized one level inside emphasis, so `**\`Ident\`**` never leaks backticks); prose is
   word-wrapped to the terminal with hanging indents (bullets and numbered lists wrap under their
   own text; styles survive row breaks); a spacer line precedes each `●` block; code stays
   verbatim (never word-wrapped) with a 2-column indent.
