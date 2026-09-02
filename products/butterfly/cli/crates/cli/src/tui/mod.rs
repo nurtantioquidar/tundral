@@ -162,11 +162,10 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
     let ui = Ui::new(editor, index, status_of(&agent), show_reasoning);
     ui.enter_screen();
     ui.set_session_data(recency_of(&agent), symbols);
+    // Model and mode already live in the footer; the header stays lean.
     ui.print_note(&format!(
-        "butterfly · {} · session {} · {} mode · /help for commands",
-        agent.model().wire_name(),
+        "butterfly · session {} · /help for commands",
         agent.session_id,
-        mode_name(agent.permission_mode()),
     ));
 
     let (sender, mut events) = tokio::sync::mpsc::unbounded_channel();
