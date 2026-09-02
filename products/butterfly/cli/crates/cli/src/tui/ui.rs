@@ -1625,6 +1625,14 @@ impl Ui {
                     inner.paint(None);
                     return None;
                 }
+                // Bare picker commands are composer interactions, not
+                // conversation turns: the picker opens in place of the
+                // input and nothing echoes into the transcript
+                // (Codex-style).
+                if matches!(submitted.as_str(), "/model" | "/connect") {
+                    inner.paint(None);
+                    return Some(UiAction::Submit(submitted));
+                }
                 // Echo the prompt as a highlighted bar so user turns stand
                 // apart from agent output in scrollback.
                 let mut entries: Vec<Entry> = visible

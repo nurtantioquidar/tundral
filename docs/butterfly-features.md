@@ -126,7 +126,9 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   masked while typing and never enters history, transcript, or session logs.
 - **Model stickiness + picker** — bare `/model` opens an arrow-key picker over the hardcoded
   model list (display names — DeepSeek V4 Flash / DeepSeek V4 Pro — current model marked;
-  `/model <wire-name>` still switches directly). The last-used model persists in
+  `/model <wire-name>` still switches directly). Bare `/model` and `/connect` are composer
+  interactions, Codex-style: the picker opens in place of the input with no user-bar echo, and
+  cancelling leaves zero transcript residue (only an actual change prints a note). The last-used model persists in
   `~/.local/state/butterfly/state.toml`; new sessions start on it regardless of repo. Explicit
   pins (flag, `model =` in config files) win over the remembered value; wire names stay in
   status and logs.

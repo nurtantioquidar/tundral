@@ -208,28 +208,25 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
         match handle_command(&mut agent, &input).await {
             CommandResult::Quit => break,
             CommandResult::Connect => {
-                match ui.open_connect().await {
-                    Ok(Some((provider, api_key))) => {
-                        match crate::credentials::save_key(&provider, &api_key) {
-                            Ok(path) => {
-                                let mut note = format!(
-                                    "connected · {provider} key saved to {} · new sessions use it automatically",
-                                    path.display()
+                // Cancel resolves as None/Err: the composer returns silently.
+                if let Ok(Some((provider, api_key))) = ui.open_connect().await {
+                    match crate::credentials::save_key(&provider, &api_key) {
+                        Ok(path) => {
+                            let mut note = format!(
+                                "connected · {provider} key saved to {} · new sessions use it automatically",
+                                path.display()
+                            );
+                            if std::env::var("DEEPSEEK_API_KEY").is_ok() {
+                                note.push_str(
+                                    " (note: DEEPSEEK_API_KEY is set and takes precedence)",
                                 );
-                                if std::env::var("DEEPSEEK_API_KEY").is_ok() {
-                                    note.push_str(
-                                        " (note: DEEPSEEK_API_KEY is set and takes precedence)",
-                                    );
-                                }
-                                ui.print_note(&note);
                             }
-                            Err(error) => {
-                                ui.print(&format!("{RED}could not save the key: {error}{RESET}"));
-                            }
+                            ui.print_note(&note);
+                        }
+                        Err(error) => {
+                            ui.print(&format!("{RED}could not save the key: {error}{RESET}"));
                         }
                     }
-                    Ok(None) => ui.print_note("connect cancelled"),
-                    Err(_) => {}
                 }
                 continue;
             }
@@ -258,7 +255,8 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
                             model.wire_name()
                         ));
                     }
-                    _ => ui.print_note("model unchanged"),
+                    // Cancel / unchanged: the composer returns, no residue.
+                    _ => {}
                 }
                 ui.set_status(status_of(&agent, &workspace, last_cache));
                 continue;
