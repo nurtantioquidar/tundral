@@ -84,8 +84,18 @@ impl MarkdownRenderer {
             let level = trimmed.chars().take_while(|&c| c == '#').count();
             if level <= 6 && trimmed[level..].starts_with(' ') {
                 let text = trimmed[level..].trim_start();
+                // Headings run the inline parser too (`## \`mod.rs\``
+                // must not leak backticks), then restyle uniformly — a
+                // heading is one visual unit.
+                let spans = inline_spans(text)
+                    .into_iter()
+                    .map(|mut s| {
+                        s.style = SpanStyle::Heading;
+                        s
+                    })
+                    .collect();
                 return Rendered::Prose {
-                    spans: vec![span(SpanStyle::Heading, text)],
+                    spans,
                     cont_indent: 0,
                 };
             }
@@ -247,6 +257,19 @@ mod tests {
         }
         // A bare #hashtag is not a heading.
         assert_eq!(plain_text(&md.render("#hashtag")), "#hashtag");
+        // Inline markers inside headings are parsed away too (dogfood:
+        // "## `mod.rs` contents" leaked its backticks), and the heading
+        // stays one uniform visual unit.
+        let rendered = md.render("## `mod.rs` contents");
+        match &rendered {
+            Rendered::Prose { spans, .. } => {
+                assert_eq!(plain_text(&rendered), "mod.rs contents");
+                assert!(spans.iter().all(|s| s.style == SpanStyle::Heading));
+                assert!(spans.iter().all(|s| !s.text.contains('`')));
+            }
+            other => panic!("expected prose, got {other:?}"),
+        }
+        assert_eq!(plain_text(&md.render("### **Key pieces:**")), "Key pieces:");
     }
 
     #[test]
