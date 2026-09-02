@@ -28,12 +28,11 @@ const DIM: &str = "\x1b[2m";
 const RESET: &str = "\x1b[0m";
 const RED: &str = "\x1b[31m";
 
-const COMMANDS: [(&str, &str); 9] = [
+const COMMANDS: [(&str, &str); 8] = [
     ("compact", "force a compaction now; optional focus text"),
     ("connect", "save a provider API key"),
     ("exit", "exit"),
     ("help", "show commands"),
-    ("mode", "show or set permission mode"),
     ("model", "show or switch model"),
     ("plan", "show the tracked working state"),
     ("quit", "exit"),
@@ -60,15 +59,27 @@ impl Drop for TerminalGuard {
     }
 }
 
-fn status_of(agent: &Agent, workspace: &str, cache_pct: Option<f64>) -> Status {
+fn status_of(agent: &Agent, cwd: &str, cache_pct: Option<f64>) -> Status {
     Status {
         model: agent.model().wire_name().to_string(),
-        workspace: workspace.to_string(),
+        cwd: cwd.to_string(),
         mode: mode_name(agent.permission_mode()),
         ctx_pct: agent.utilization(),
         session_cost_microusd: agent.total_actual_microusd(),
         cache_pct,
     }
+}
+
+/// The workspace path with the home directory abbreviated to `~`.
+fn home_abbrev(path: &std::path::Path) -> String {
+    let display = path.display().to_string();
+    if let Some(home) = dirs::home_dir() {
+        let home = home.display().to_string();
+        if let Some(rest) = display.strip_prefix(&home) {
+            return format!("~{rest}");
+        }
+    }
+    display
 }
 
 fn next_mode(mode: butterfly_core::session::approval::PermissionMode) -> &'static str {
@@ -160,10 +171,7 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
     let symbols = collect_symbols(&mut agent);
     let history_path = SessionStore::state_root().join("repl-history");
     let editor = Editor::new(Some(history_path));
-    let workspace = root
-        .file_name()
-        .map(|name| name.to_string_lossy().into_owned())
-        .unwrap_or_else(|| root.display().to_string());
+    let workspace = home_abbrev(&root);
     let index = CompletionIndex::new(root, COMMANDS.to_vec());
 
     let guard = TerminalGuard::new()?;

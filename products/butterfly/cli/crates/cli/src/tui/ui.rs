@@ -102,7 +102,8 @@ struct Select {
 
 pub struct Status {
     pub model: String,
-    pub workspace: String,
+    /// Home-abbreviated working directory (e.g. ~/Projects/monet).
+    pub cwd: String,
     pub mode: &'static str,
     pub ctx_pct: f64,
     pub session_cost_microusd: u64,
@@ -554,9 +555,9 @@ impl UiInner {
                     format!("  {}", truncate_cols(&choice.hint, hint_budget))
                 };
                 let styled = if i == dropdown.selected {
-                    format!("  {BAND}{marker} {label}{RESET}{DIM}{hint}{RESET}")
+                    format!("  {CYAN}{marker} {label}{RESET}{DIM}{hint}{RESET}")
                 } else {
-                    format!("  {marker} {label}{DIM}{hint}{RESET}")
+                    format!("  {DIM}{marker} {label}{hint}{RESET}")
                 };
                 lines.push(styled);
             }
@@ -634,17 +635,28 @@ impl UiInner {
     }
 
     fn compose_status(&self, width: usize) -> String {
-        let mut status = format!(
-            "{} | {} | ctx:{:.0}% | {}",
+        // model | Context n% left | cwd | cost | cache — the cwd absorbs
+        // any width pressure (tail-truncated) so cost/cache never fall off.
+        let left = format!(
+            "{} | Context {:.0}% left | ",
             self.status.model,
-            self.status.workspace,
-            self.status.ctx_pct * 100.0,
-            format_microusd_as_usd(self.status.session_cost_microusd),
+            (1.0 - self.status.ctx_pct).max(0.0) * 100.0,
+        );
+        let mut right = format!(
+            " | {}",
+            format_microusd_as_usd(self.status.session_cost_microusd)
         );
         if let Some(cache) = self.status.cache_pct {
-            status.push_str(&format!(" | cache:{cache:.0}%"));
+            right.push_str(&format!(" | cache:{cache:.0}%"));
         }
-        format!("{DIM}{}{RESET}", truncate_cols(&status, width))
+        let budget = width
+            .saturating_sub(width_of(&left) + width_of(&right))
+            .max(8);
+        let cwd = tail_cols(&self.status.cwd, budget);
+        format!(
+            "{DIM}{}{RESET}",
+            truncate_cols(&format!("{left}{cwd}{right}"), width)
+        )
     }
 
     fn compose_mode_line(&self, width: usize) -> String {
@@ -1837,7 +1849,7 @@ mod tests {
             select: None,
             status: Status {
                 model: "deepseek-v4-flash".into(),
-                workspace: "a-rather-long-workspace-name".into(),
+                cwd: "~/a/rather/long/working/directory/path".into(),
                 mode: "read-only",
                 ctx_pct: 0.42,
                 session_cost_microusd: 123_456,

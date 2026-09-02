@@ -75,14 +75,15 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 - **Paste placeholders** — bracketed paste; multi-line or >200-char pastes collapse to
   `[pasted #N: X lines]` in the editor (backspace removes atomically) and expand verbatim on
   submit.
-- **Two-line footer + live activity** (Claude Code-style, 2026-09-01) — `model | workspace |
-  ctx:% | cost | cache:%` plus a mode line colored by permission mode; Shift+Tab cycles
-  ask → auto → read-only (mid-turn presses apply when the turn ends — the running turn keeps the
-  mode it started with). While a turn runs, a `✳ spinner · elapsed · ~tokens · tool` line sits
+- **Two-line footer + live activity** (Claude Code-style, 2026-09-01) — `model | Context n% left
+  | cwd | cost | cache:%` (home-abbreviated working directory, tail-truncated so cost/cache never
+  fall off) plus a mode line colored by permission mode; Shift+Tab is the ONLY way to cycle
+  ask → auto → read-only (`/mode` removed as redundant; mid-turn presses apply when the turn
+  ends — the running turn keeps the mode it started with). While a turn runs, a `✳ spinner · elapsed · ~tokens · tool` line sits
   above the input rule; Esc interrupts.
 - **Distinct turn chrome** — submitted prompts echo as subtle elevated bands (Codex-style
-  dark-gray, not harsh inverse video; same band styles dropdown selection and the overlay
-  footer); agent responses
+  dark-gray, not harsh inverse video; the overlay footer shares the band, while dropdown and
+  picker selection use plain cyan `▸` rows); agent responses
   carry a `●` block marker with aligned continuation lines; turns close with a dim
   `✳ done in Ns · …` stats line.
 - **Markdown rendering, markers hidden, word-wrapped** (Codex-inspired, dogfood 2026-09-01) —

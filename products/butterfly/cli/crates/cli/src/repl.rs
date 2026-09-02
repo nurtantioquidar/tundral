@@ -196,7 +196,6 @@ commands:
   /usage    tokens, cost, cache-hit rate, context utilization
   /plan     show the tracked working state (objective, tasks, files, commands)
   /compact  force a compaction now; optional focus: /compact keep the auth details
-  /mode     show or set permission mode: /mode ask|auto|read-only
   /model    pick a model (arrow keys), or /model <name> to switch directly
   /help     this help
   /quit     exit (also Ctrl-D)
@@ -261,24 +260,6 @@ pub async fn handle_command(agent: &mut Agent, input: &str) -> CommandResult {
                         format!("unknown model: {name} (deepseek-v4-flash | deepseek-v4-pro)")
                     }
                 },
-            })
-        }
-        _ if input.starts_with("/mode") => {
-            CommandResult::Output(match input.trim_start_matches("/mode").trim() {
-                "" => format!("mode: {}", mode_name(agent.permission_mode())),
-                "ask" => {
-                    agent.set_permission_mode(PermissionMode::Ask);
-                    "mode: ask".to_string()
-                }
-                "auto" => {
-                    agent.set_permission_mode(PermissionMode::Auto);
-                    "mode: auto".to_string()
-                }
-                "read-only" | "readonly" => {
-                    agent.set_permission_mode(PermissionMode::ReadOnly);
-                    "mode: read-only".to_string()
-                }
-                other => format!("unknown mode: {other} (ask|auto|read-only)"),
             })
         }
         _ if input.starts_with('/') => {
