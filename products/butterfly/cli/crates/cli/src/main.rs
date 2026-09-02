@@ -1,8 +1,10 @@
 //! butterfly — the Harness interactive coding agent CLI.
 
 mod config;
+mod credentials;
 mod export;
 mod repl;
+mod state;
 mod tui;
 
 use std::path::PathBuf;
@@ -135,13 +137,17 @@ async fn main() -> Result<()> {
     // Layered configuration: defaults ← global file ← repo file ← flags.
     let file = config::load(&root)?;
 
+    // Model resolution: explicit pins (flag, config files) win; otherwise
+    // the last model the user ran with sticks across sessions.
     let model_name = cli
         .model
         .or(file.model)
+        .or_else(state::last_model)
         .unwrap_or_else(|| "deepseek-v4-flash".to_string());
     let Some(model) = Model::parse(&model_name) else {
         bail!("unknown model: {model_name} (deepseek-v4-flash | deepseek-v4-pro)");
     };
+    state::remember_model(model.wire_name());
     let effort_name = cli
         .effort
         .or(file.effort)
@@ -195,8 +201,31 @@ async fn main() -> Result<()> {
         ..SessionConfig::default()
     };
 
-    let api_key = std::env::var("DEEPSEEK_API_KEY")
-        .context("DEEPSEEK_API_KEY is required (export it in your shell)")?;
+    // Key resolution: environment > credential store > first-run wizard.
+    use std::io::IsTerminal as _;
+    let api_key = match std::env::var("DEEPSEEK_API_KEY") {
+        Ok(key) if !key.trim().is_empty() => key,
+        _ => match credentials::load_key("deepseek") {
+            Some(key) => key,
+            None if std::io::stdin().is_terminal()
+                && std::io::stdout().is_terminal()
+                && !cli.json =>
+            {
+                // Genuine first run: connect once, never ask again.
+                match tui::connect::standalone_connect()? {
+                    Some((provider, key)) => {
+                        let path = credentials::save_key(&provider, &key)?;
+                        eprintln!("connected · key saved to {}", path.display());
+                        key
+                    }
+                    None => bail!("no API key configured (run butterfly and complete /connect, or export DEEPSEEK_API_KEY)"),
+                }
+            }
+            None => bail!(
+                "DEEPSEEK_API_KEY is required (export it, or run butterfly in a terminal once and use /connect)"
+            ),
+        },
+    };
     let base_url = cli
         .base_url
         .or_else(|| std::env::var("DEEPSEEK_BASE_URL").ok())
@@ -308,7 +337,6 @@ async fn main() -> Result<()> {
         }
         return Ok(());
     }
-    use std::io::IsTerminal as _;
     if std::io::stdin().is_terminal() && std::io::stdout().is_terminal() {
         // The TUI hides the reasoning stream by default (Ctrl+R toggles it
         // live; Ctrl+T shows the full transcript). Config can opt back in

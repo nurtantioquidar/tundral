@@ -114,6 +114,17 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 - **HTML session export** — `butterfly export [id] [--out path]`: self-contained transcript with
   reasoning/tool output collapsed and cost totals. `crates/cli/src/export.rs`
 - **Layered config** — `~/.config/butterfly/config.toml` ← `<repo>/.butterfly.toml` ← flags.
+- **`/connect` onboarding + credential store** (2026-09-01) — first run with no key anywhere
+  opens a guided wizard (provider picker — DeepSeek for now — then a masked key prompt) and saves
+  to `credentials.toml` (0600, the one sanctioned persistence spot, AGENTS.md invariant 6);
+  after that, sessions just start. `/connect` in-session replaces the stored key. Resolution:
+  `DEEPSEEK_API_KEY` env > store > wizard; headless `-p/--json` still fails fast. The key is
+  masked while typing and never enters history, transcript, or session logs.
+- **Model stickiness** — the last-used model (via `--model` or `/model`) persists in
+  `~/.local/state/butterfly/state.toml`; new sessions start on it regardless of repo. Explicit
+  pins (flag, `model =` in config files) win over the remembered value. Models carry display
+  names (DeepSeek V4 Flash / DeepSeek V4 Pro) in pickers and notices; wire names stay in
+  status and logs.
 - **Headless one-shot** — `-p` with `--json` machine-readable report (used by bench).
 
 ### Atlas (native code graph)

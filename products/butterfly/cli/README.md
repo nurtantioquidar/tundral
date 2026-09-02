@@ -4,8 +4,7 @@ A fast interactive coding agent CLI in Rust, DeepSeek-native, built around one i
 **maximize prompt-cache hits, and when the window fills, compact rarely and chunkily.**
 
 ```bash
-export DEEPSEEK_API_KEY=...
-cargo run -p butterfly                     # REPL in the current repo
+cargo run -p butterfly                     # REPL in the current repo; first run opens /connect
 cargo run -p butterfly -- --auto -p "fix the failing test"   # one-shot, no prompts
 cargo run -p butterfly -- --auto --json -p "..."             # one-shot, machine-readable report
 cargo run -p butterfly -- --resume         # resume the latest session
@@ -48,11 +47,18 @@ commands run as argv vectors from an allowlist with credential-stripped environm
 cargo install --path crates/cli --locked        # installs ~/.cargo/bin/butterfly
 ```
 
-Recommended shell wrapper (key fetched from 1Password per launch, never stored):
+The API key: the first interactive run opens the `/connect` wizard (pick DeepSeek, paste the key
+masked) and saves it to the credential store — `credentials.toml` in the platform config dir,
+0600, the one place a key may persist. Run `/connect` any time to replace it. Resolution order:
+`DEEPSEEK_API_KEY` env var > credential store > wizard; headless `-p/--json` runs never prompt.
+If you prefer the key never touch disk, the 1Password wrapper still works and wins over the store:
 
 ```bash
 butterfly() { DEEPSEEK_API_KEY=$(op read "op://<vault>/<item>/password") command butterfly "$@"; }
 ```
+
+The model sticks: whatever you last ran with (`--model` or `/model`) is what new sessions start
+on, until an explicit flag or config pin says otherwise.
 
 Config is layered: defaults ← `~/.config/butterfly/config.toml` ← `<repo>/.butterfly.toml` ← flags:
 

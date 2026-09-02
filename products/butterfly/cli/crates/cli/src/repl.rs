@@ -192,6 +192,7 @@ fn usage_text(agent: &Agent) -> String {
 
 const HELP: &str = "\
 commands:
+  /connect  save a provider API key (persists across sessions)
   /usage    tokens, cost, cache-hit rate, context utilization
   /plan     show the tracked working state (objective, tasks, files, commands)
   /compact  force a compaction now; optional focus: /compact keep the auth details
@@ -213,6 +214,8 @@ input:
 pub enum CommandResult {
     /// It was a command; show this text.
     Output(String),
+    /// Run the interactive provider-connect flow (TUI only).
+    Connect,
     Quit,
     /// Not a command — run it as a user turn.
     NotACommand,
@@ -222,6 +225,7 @@ pub enum CommandResult {
 pub async fn handle_command(agent: &mut Agent, input: &str) -> CommandResult {
     match input {
         "/quit" | "/exit" => CommandResult::Quit,
+        "/connect" => CommandResult::Connect,
         "/help" => CommandResult::Output(HELP.to_string()),
         "/usage" => CommandResult::Output(usage_text(agent)),
         "/plan" => CommandResult::Output(agent.working_state().render()),
@@ -239,12 +243,19 @@ pub async fn handle_command(agent: &mut Agent, input: &str) -> CommandResult {
         }
         _ if input.starts_with("/model") => {
             CommandResult::Output(match input.trim_start_matches("/model").trim() {
-                "" => format!("model: {}", agent.model().wire_name()),
+                "" => format!(
+                    "model: {} ({})",
+                    agent.model().display_name(),
+                    agent.model().wire_name()
+                ),
                 name => match butterfly_core::domain::Model::parse(name) {
                     Some(model) => {
                         agent.set_model(model);
+                        // Model choice sticks across sessions.
+                        crate::state::remember_model(model.wire_name());
                         format!(
-                            "{DIM}[model set: {}; next request re-caches the prefix]{RESET}",
+                            "{DIM}[model set: {} ({}); next request re-caches the prefix]{RESET}",
+                            model.display_name(),
                             model.wire_name()
                         )
                     }
@@ -390,6 +401,13 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
         };
         match handle_command(&mut agent, &input).await {
             CommandResult::Quit => break,
+            CommandResult::Connect => {
+                println!(
+                    "/connect needs an interactive terminal; run butterfly in a TTY \
+                     (or set DEEPSEEK_API_KEY)"
+                );
+                continue;
+            }
             CommandResult::Output(text) => {
                 println!("{text}");
                 continue;

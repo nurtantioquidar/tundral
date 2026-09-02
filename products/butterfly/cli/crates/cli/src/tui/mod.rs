@@ -4,6 +4,7 @@
 //! stdout are TTYs; pipes get the plain loop in `repl`.
 
 mod completion;
+pub mod connect;
 mod editor;
 mod markdown;
 mod ui;
@@ -26,8 +27,9 @@ const DIM: &str = "\x1b[2m";
 const RESET: &str = "\x1b[0m";
 const RED: &str = "\x1b[31m";
 
-const COMMANDS: [(&str, &str); 8] = [
+const COMMANDS: [(&str, &str); 9] = [
     ("compact", "force a compaction now; optional focus text"),
+    ("connect", "save a provider API key"),
     ("exit", "exit"),
     ("help", "show commands"),
     ("mode", "show or set permission mode"),
@@ -204,6 +206,32 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
         };
         match handle_command(&mut agent, &input).await {
             CommandResult::Quit => break,
+            CommandResult::Connect => {
+                match ui.open_connect().await {
+                    Ok(Some((provider, api_key))) => {
+                        match crate::credentials::save_key(&provider, &api_key) {
+                            Ok(path) => {
+                                let mut note = format!(
+                                    "connected · {provider} key saved to {} · new sessions use it automatically",
+                                    path.display()
+                                );
+                                if std::env::var("DEEPSEEK_API_KEY").is_ok() {
+                                    note.push_str(
+                                        " (note: DEEPSEEK_API_KEY is set and takes precedence)",
+                                    );
+                                }
+                                ui.print_note(&note);
+                            }
+                            Err(error) => {
+                                ui.print(&format!("{RED}could not save the key: {error}{RESET}"));
+                            }
+                        }
+                    }
+                    Ok(None) => ui.print_note("connect cancelled"),
+                    Err(_) => {}
+                }
+                continue;
+            }
             CommandResult::Output(text) => {
                 ui.print(text.trim_end_matches('\n'));
                 ui.set_status(status_of(&agent, &workspace, last_cache));

@@ -75,6 +75,19 @@ struct Menu {
     responder: oneshot::Sender<Decision>,
 }
 
+/// In-session /connect flow: pick a provider, paste the key (masked). The
+/// key lives only in this buffer until the caller saves it — it never enters
+/// the editor history, the transcript, or the session store.
+enum ConnectStage {
+    Provider { selected: usize },
+    Key { buffer: String },
+}
+
+struct Connect {
+    stage: ConnectStage,
+    responder: oneshot::Sender<Option<(String, String)>>,
+}
+
 pub struct Status {
     pub model: String,
     pub workspace: String,
@@ -186,6 +199,7 @@ struct UiInner {
     index: CompletionIndex,
     dropdown: Option<Dropdown>,
     menu: Option<Menu>,
+    connect: Option<Connect>,
     status: Status,
     activity: Option<Activity>,
     live: Option<LiveLine>,
@@ -429,7 +443,36 @@ impl UiInner {
         lines.push(format!("{DIM}{}{RESET}", "─".repeat(width)));
         let cursor_row;
         let cursor_col;
-        if let Some(menu) = &self.menu {
+        if let Some(connect) = &self.connect {
+            match &connect.stage {
+                ConnectStage::Provider { selected } => {
+                    lines.push("connect a provider".to_string());
+                    for (i, (_, label)) in super::connect::PROVIDERS.iter().enumerate() {
+                        if i == *selected {
+                            lines.push(format!("  {CYAN}▸ {label}{RESET}"));
+                        } else {
+                            lines.push(format!("  {DIM}  {label}{RESET}"));
+                        }
+                    }
+                    lines.push(format!("{DIM}enter continue · esc cancel{RESET}"));
+                    cursor_row = lines.len().saturating_sub(1);
+                    cursor_col = 0;
+                }
+                ConnectStage::Key { buffer } => {
+                    lines.push("paste your API key (input is masked)".to_string());
+                    let masked = if buffer.is_empty() {
+                        String::new()
+                    } else {
+                        super::connect::masked(buffer.chars().count())
+                    };
+                    let masked = tail_cols(&masked, width.saturating_sub(4));
+                    lines.push(format!("{CYAN}❯{RESET} {masked}"));
+                    lines.push(format!("{DIM}enter save · esc back{RESET}"));
+                    cursor_row = lines.len().saturating_sub(2);
+                    cursor_col = 2 + width_of(&masked);
+                }
+            }
+        } else if let Some(menu) = &self.menu {
             for (i, (label, _)) in MENU.iter().enumerate() {
                 let marker = if i == menu.selected { "▸" } else { " " };
                 let styled = if i == menu.selected {
@@ -1053,6 +1096,7 @@ impl Ui {
                 index,
                 dropdown: None,
                 menu: None,
+                connect: None,
                 status,
                 activity: None,
                 live: None,
@@ -1165,6 +1209,25 @@ impl Ui {
         }
     }
 
+    /// Open the /connect flow; resolves with Some((provider, api_key)) on
+    /// submit or None if the user backs out. The key is never echoed,
+    /// recorded, or persisted by the UI — the caller owns saving it.
+    pub fn open_connect(&self) -> oneshot::Receiver<Option<(String, String)>> {
+        let mut inner = self.lock();
+        let (sender, receiver) = oneshot::channel();
+        if inner.connect.is_some() || inner.menu.is_some() {
+            // Already mid-flow: refuse a second concurrent one.
+            let _ = sender.send(None);
+            return receiver;
+        }
+        inner.connect = Some(Connect {
+            stage: ConnectStage::Provider { selected: 0 },
+            responder: sender,
+        });
+        inner.paint(None);
+        receiver
+    }
+
     /// Open the approval menu; the returned receiver resolves with the
     /// user's decision.
     fn open_menu(&self, request: &ApprovalRequest) -> oneshot::Receiver<Decision> {
@@ -1194,6 +1257,7 @@ impl Ui {
         inner.close_overlay();
         inner.commit_live();
         inner.menu = None;
+        inner.connect = None;
         inner.dropdown = None;
         let mut buf = String::new();
         match inner.place {
@@ -1240,7 +1304,14 @@ impl Ui {
                 None
             }
             Event::Paste(content) => {
-                if inner.menu.is_none() {
+                if let Some(Connect {
+                    stage: ConnectStage::Key { buffer },
+                    ..
+                }) = &mut inner.connect
+                {
+                    buffer.push_str(content.trim());
+                    inner.paint(None);
+                } else if inner.menu.is_none() && inner.connect.is_none() {
                     inner.editor.insert_paste(&content);
                     inner.update_dropdown();
                     inner.paint(None);
@@ -1289,6 +1360,53 @@ impl Ui {
                 _ => {}
             }
             inner.draw_overlay();
+            return None;
+        }
+        // The /connect flow captures everything until resolved.
+        if inner.connect.is_some() {
+            let control = modifiers.contains(KeyModifiers::CONTROL);
+            let mut resolve: Option<Option<(String, String)>> = None;
+            if let Some(connect) = &mut inner.connect {
+                match (&mut connect.stage, code) {
+                    (_, KeyCode::Char('c')) if control => resolve = Some(None),
+                    (_, KeyCode::Char('d')) if control => resolve = Some(None),
+                    (ConnectStage::Provider { .. }, KeyCode::Esc) => resolve = Some(None),
+                    (ConnectStage::Provider { selected }, KeyCode::Up) => {
+                        *selected = selected.saturating_sub(1);
+                    }
+                    (ConnectStage::Provider { selected }, KeyCode::Down) => {
+                        *selected = (*selected + 1).min(super::connect::PROVIDERS.len() - 1);
+                    }
+                    (ConnectStage::Provider { .. }, KeyCode::Enter) => {
+                        connect.stage = ConnectStage::Key {
+                            buffer: String::new(),
+                        };
+                    }
+                    (ConnectStage::Key { .. }, KeyCode::Esc) => {
+                        connect.stage = ConnectStage::Provider { selected: 0 };
+                    }
+                    (ConnectStage::Key { buffer }, KeyCode::Backspace) => {
+                        buffer.pop();
+                    }
+                    (ConnectStage::Key { buffer }, KeyCode::Enter) => {
+                        let entered = buffer.trim().to_string();
+                        if !entered.is_empty() {
+                            let provider = super::connect::PROVIDERS[0].0.to_string();
+                            resolve = Some(Some((provider, entered)));
+                        }
+                    }
+                    (ConnectStage::Key { buffer }, KeyCode::Char(ch)) if !control => {
+                        buffer.push(ch);
+                    }
+                    _ => {}
+                }
+            }
+            if let Some(result) = resolve {
+                if let Some(connect) = inner.connect.take() {
+                    let _ = connect.responder.send(result);
+                }
+            }
+            inner.paint(None);
             return None;
         }
         // Approval menu captures everything until resolved.
@@ -1604,6 +1722,7 @@ mod tests {
             index: CompletionIndex::with_entries(vec![], vec![]),
             dropdown: None,
             menu: None,
+            connect: None,
             status: Status {
                 model: "deepseek-v4-flash".into(),
                 workspace: "a-rather-long-workspace-name".into(),

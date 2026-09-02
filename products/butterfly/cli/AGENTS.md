@@ -66,9 +66,12 @@ BUTTERFLY_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p butterfly-core --test l
    never a shell — with credential-stripped environments. Strictly-allowlisted commands may
    auto-run per the permission mode; anything else requires explicit human approval EVEN in auto
    mode (headless runs deny instead); privilege escalation (sudo/su/doas) never runs.
-6. Never log or persist provider credentials. Structured payloads persisted about config or errors
-   pass key-based redaction. Conversation content IS persisted (required for `--resume`), with
-   0700/0600 permissions.
+6. Never log or persist provider credentials in sessions, transcripts, telemetry, or editor
+   history. The ONE sanctioned location is the dedicated credential store written by `/connect`
+   (`~/.config/butterfly/credentials.toml` via the platform config dir, 0600 in a 0700 dir;
+   `DEEPSEEK_API_KEY` always takes precedence when set). Structured payloads persisted about
+   config or errors pass key-based redaction. Conversation content IS persisted (required for
+   `--resume`), with 0700/0600 permissions.
 7. Provider cache-hit, cache-miss, input, and output token counts remain distinct end to end.
    Money is integer micro-USD; decimal USD is presentation only. Price cards are versioned and
    tier-aware (DeepSeek peak/off-peak UTC windows).

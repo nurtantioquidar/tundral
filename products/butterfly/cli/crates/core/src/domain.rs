@@ -113,6 +113,15 @@ impl Model {
         }
     }
 
+    /// Human-facing name for pickers and notices (wire names stay in
+    /// status lines, logs, and the API).
+    pub fn display_name(self) -> &'static str {
+        match self {
+            Model::DeepseekV4Flash => "DeepSeek V4 Flash",
+            Model::DeepseekV4Pro => "DeepSeek V4 Pro",
+        }
+    }
+
     pub fn parse(name: &str) -> Option<Model> {
         match name {
             "deepseek-v4-flash" => Some(Model::DeepseekV4Flash),
