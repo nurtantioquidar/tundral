@@ -8,7 +8,6 @@ use std::io::Write as _;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
-use butterfly_core::domain::format_microusd_as_usd;
 use butterfly_core::provider::StreamSink;
 use butterfly_core::session::approval::{ApprovalGate, ApprovalRequest, Decision};
 use crossterm::event::{Event, KeyCode, KeyEventKind, KeyModifiers};
@@ -102,12 +101,8 @@ struct Select {
 
 pub struct Status {
     pub model: String,
-    /// Home-abbreviated working directory (e.g. ~/Projects/monet).
-    pub cwd: String,
     pub mode: &'static str,
     pub ctx_pct: f64,
-    pub session_cost_microusd: u64,
-    pub cache_pct: Option<f64>,
 }
 
 struct Activity {
@@ -537,21 +532,30 @@ impl UiInner {
             lines.extend(input_rows);
         }
         if let Some(dropdown) = &self.dropdown {
+            // Row budget: 4 prefix cols + label + 2 + hint ≤ width. Wide
+            // terminals reserve ~22 cols for the hint; narrow ones give the
+            // label everything and drop the hint.
+            let label_budget = if width >= 44 {
+                width - 28
+            } else {
+                width.saturating_sub(4)
+            };
+            let labels: Vec<String> = dropdown
+                .choices
+                .iter()
+                .take(MAX_DROPDOWN_ROWS)
+                .map(|choice| truncate_cols(&choice.label, label_budget.max(8)))
+                .collect();
+            // Hints start at one shared column (Codex-style alignment).
+            let label_col = labels.iter().map(|l| width_of(l)).max().unwrap_or(0);
             for (i, choice) in dropdown.choices.iter().take(MAX_DROPDOWN_ROWS).enumerate() {
                 let marker = if i == dropdown.selected { "▸" } else { " " };
-                // Row budget: 4 prefix cols + label + 2 + hint ≤ width.
-                // Wide terminals reserve ~22 cols for the hint; narrow ones
-                // give the label everything and drop the hint.
-                let label_budget = if width >= 44 {
-                    width - 28
-                } else {
-                    width.saturating_sub(4)
-                };
-                let label = truncate_cols(&choice.label, label_budget.max(8));
-                let hint_budget = width.saturating_sub(4 + width_of(&label) + 2);
+                let mut label = labels[i].clone();
+                let hint_budget = width.saturating_sub(4 + label_col + 2);
                 let hint = if choice.hint.is_empty() || hint_budget < 4 {
                     String::new()
                 } else {
+                    label.push_str(&" ".repeat(label_col - width_of(&labels[i])));
                     format!("  {}", truncate_cols(&choice.hint, hint_budget))
                 };
                 let styled = if i == dropdown.selected {
@@ -635,28 +639,14 @@ impl UiInner {
     }
 
     fn compose_status(&self, width: usize) -> String {
-        // model | Context n% left | cwd | cost | cache — the cwd absorbs
-        // any width pressure (tail-truncated) so cost/cache never fall off.
-        let left = format!(
-            "{} | Context {:.0}% left | ",
+        // Deliberately minimal: cost and cache-hit rate print after every
+        // turn in the ✳ summary (and /usage has the full breakdown).
+        let status = format!(
+            "{} | Context {:.0}% left",
             self.status.model,
             (1.0 - self.status.ctx_pct).max(0.0) * 100.0,
         );
-        let mut right = format!(
-            " | {}",
-            format_microusd_as_usd(self.status.session_cost_microusd)
-        );
-        if let Some(cache) = self.status.cache_pct {
-            right.push_str(&format!(" | cache:{cache:.0}%"));
-        }
-        let budget = width
-            .saturating_sub(width_of(&left) + width_of(&right))
-            .max(8);
-        let cwd = tail_cols(&self.status.cwd, budget);
-        format!(
-            "{DIM}{}{RESET}",
-            truncate_cols(&format!("{left}{cwd}{right}"), width)
-        )
+        format!("{DIM}{}{RESET}", truncate_cols(&status, width))
     }
 
     fn compose_mode_line(&self, width: usize) -> String {
@@ -1849,11 +1839,8 @@ mod tests {
             select: None,
             status: Status {
                 model: "deepseek-v4-flash".into(),
-                cwd: "~/a/rather/long/working/directory/path".into(),
                 mode: "read-only",
                 ctx_pct: 0.42,
-                session_cost_microusd: 123_456,
-                cache_pct: Some(93.4),
             },
             activity: None,
             live: None,

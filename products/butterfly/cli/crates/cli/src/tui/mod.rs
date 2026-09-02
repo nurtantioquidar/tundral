@@ -59,27 +59,12 @@ impl Drop for TerminalGuard {
     }
 }
 
-fn status_of(agent: &Agent, cwd: &str, cache_pct: Option<f64>) -> Status {
+fn status_of(agent: &Agent) -> Status {
     Status {
         model: agent.model().wire_name().to_string(),
-        cwd: cwd.to_string(),
         mode: mode_name(agent.permission_mode()),
         ctx_pct: agent.utilization(),
-        session_cost_microusd: agent.total_actual_microusd(),
-        cache_pct,
     }
-}
-
-/// The workspace path with the home directory abbreviated to `~`.
-fn home_abbrev(path: &std::path::Path) -> String {
-    let display = path.display().to_string();
-    if let Some(home) = dirs::home_dir() {
-        let home = home.display().to_string();
-        if let Some(rest) = display.strip_prefix(&home) {
-            return format!("~{rest}");
-        }
-    }
-    display
 }
 
 fn next_mode(mode: butterfly_core::session::approval::PermissionMode) -> &'static str {
@@ -171,16 +156,10 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
     let symbols = collect_symbols(&mut agent);
     let history_path = SessionStore::state_root().join("repl-history");
     let editor = Editor::new(Some(history_path));
-    let workspace = home_abbrev(&root);
     let index = CompletionIndex::new(root, COMMANDS.to_vec());
 
     let guard = TerminalGuard::new()?;
-    let ui = Ui::new(
-        editor,
-        index,
-        status_of(&agent, &workspace, None),
-        show_reasoning,
-    );
+    let ui = Ui::new(editor, index, status_of(&agent), show_reasoning);
     ui.enter_screen();
     ui.set_session_data(recency_of(&agent), symbols);
     ui.print_note(&format!(
@@ -193,7 +172,6 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
     let (sender, mut events) = tokio::sync::mpsc::unbounded_channel();
     spawn_event_thread(ui.clone(), sender);
 
-    let mut last_cache: Option<f64> = None;
     // Steered messages left over when a turn ends become the next turns.
     let mut pending: VecDeque<String> = VecDeque::new();
     loop {
@@ -206,7 +184,7 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
                 Some(UiAction::CycleMode) => {
                     let next = next_mode(agent.permission_mode());
                     set_mode(&mut agent, next);
-                    ui.set_status(status_of(&agent, &workspace, last_cache));
+                    ui.set_status(status_of(&agent));
                     continue;
                 }
                 Some(UiAction::Interrupt) => continue,
@@ -266,12 +244,12 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
                     // Cancel / unchanged: the composer returns, no residue.
                     _ => {}
                 }
-                ui.set_status(status_of(&agent, &workspace, last_cache));
+                ui.set_status(status_of(&agent));
                 continue;
             }
             CommandResult::Output(text) => {
                 ui.print(text.trim_end_matches('\n'));
-                ui.set_status(status_of(&agent, &workspace, last_cache));
+                ui.set_status(status_of(&agent));
                 continue;
             }
             CommandResult::NotACommand => {}
@@ -317,7 +295,6 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
         ui.end_activity();
         match result {
             Ok(report) => {
-                last_cache = Some(report.usage.cache_hit_rate() * 100.0);
                 ui.print_note(&turn_status_line(&agent, &report, turn_started.elapsed()));
             }
             Err(error) => ui.print(&format!("{RED}error: {error}{RESET}")),
@@ -326,7 +303,7 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
             let next = next_mode(agent.permission_mode());
             set_mode(&mut agent, next);
         }
-        ui.set_status(status_of(&agent, &workspace, last_cache));
+        ui.set_status(status_of(&agent));
         if agent.atlas_enabled() {
             let _ = agent.atlas_mut().refresh();
         }
