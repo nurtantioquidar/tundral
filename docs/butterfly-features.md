@@ -80,7 +80,9 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   ask → auto → read-only (mid-turn presses apply when the turn ends — the running turn keeps the
   mode it started with). While a turn runs, a `✳ spinner · elapsed · ~tokens · tool` line sits
   above the input rule; Esc interrupts.
-- **Distinct turn chrome** — submitted prompts echo as inverse-highlighted bars; agent responses
+- **Distinct turn chrome** — submitted prompts echo as subtle elevated bands (Codex-style
+  dark-gray, not harsh inverse video; same band styles dropdown selection and the overlay
+  footer); agent responses
   carry a `●` block marker with aligned continuation lines; turns close with a dim
   `✳ done in Ns · …` stats line.
 - **Markdown rendering, markers hidden, word-wrapped** (Codex-inspired, dogfood 2026-09-01) —

@@ -26,7 +26,10 @@ const CYAN: &str = "\x1b[36m";
 const RED: &str = "\x1b[31m";
 const YELLOW: &str = "\x1b[33m";
 const GREEN: &str = "\x1b[32m";
-const INVERSE: &str = "\x1b[7m";
+/// Subtle elevated band (Codex-style): dark-gray background with soft
+/// light-gray text, colors forced so the contrast is gentle on any theme —
+/// deliberately NOT inverse video, which reads as harsh black-on-white.
+const BAND: &str = "\x1b[48;5;236m\x1b[38;5;252m";
 const SYNC_BEGIN: &str = "\x1b[?2026h";
 const SYNC_END: &str = "\x1b[?2026l";
 
@@ -166,7 +169,7 @@ fn render_entry(entry: &Entry, width: usize) -> Vec<String> {
                 .map(|(i, row)| {
                     let prefix = if i == 0 { " ❯ " } else { "   " };
                     let pad = width.saturating_sub(visible_cols(&row) + 3);
-                    format!("{INVERSE}{DIM}{prefix}{row}{}{RESET}", " ".repeat(pad))
+                    format!("{BAND}{prefix}{row}{}{RESET}", " ".repeat(pad))
                 })
                 .collect()
         }
@@ -551,7 +554,7 @@ impl UiInner {
                     format!("  {}", truncate_cols(&choice.hint, hint_budget))
                 };
                 let styled = if i == dropdown.selected {
-                    format!("  {INVERSE}{marker} {label}{RESET}{DIM}{hint}{RESET}")
+                    format!("  {BAND}{marker} {label}{RESET}{DIM}{hint}{RESET}")
                 } else {
                     format!("  {marker} {label}{DIM}{hint}{RESET}")
                 };
@@ -761,10 +764,7 @@ impl UiInner {
         }
         let footer =
             format!(" transcript · {total} lines · ↑/↓ pgup/pgdn scroll · q or ctrl+t to close ",);
-        buf.push_str(&format!(
-            "{INVERSE}{}{RESET}",
-            truncate_cols(&footer, width)
-        ));
+        buf.push_str(&format!("{BAND}{}{RESET}", truncate_cols(&footer, width)));
         buf.push_str("\x1b[?7h");
         buf.push_str(SYNC_END);
         let mut out = std::io::stdout().lock();
