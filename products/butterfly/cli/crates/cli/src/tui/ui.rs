@@ -138,7 +138,8 @@ enum Entry {
     /// Pre-styled verbatim line (tool lines, code, notices): reprinted
     /// as-is, clamped rather than re-wrapped.
     Fixed(String),
-    /// A logical line of the user's prompt, drawn as a highlighted bar.
+    /// The user's whole prompt (may span lines), drawn as a highlighted bar
+    /// with the ❯ marker on the first row only (Codex-style).
     UserBar(String),
     /// Re-wrappable assistant prose.
     Prose {
@@ -155,11 +156,23 @@ fn render_entry(entry: &Entry, width: usize) -> Vec<String> {
         Entry::Blank => vec![String::new()],
         Entry::Fixed(line) => vec![line.clone()],
         Entry::UserBar(text) => {
-            let spans = vec![md::Span {
-                style: md::SpanStyle::Plain,
-                text: text.clone(),
-            }];
-            styled_rows(&spans, width.saturating_sub(4), width.saturating_sub(4))
+            let mut rendered = Vec::new();
+            for line in text.trim_end_matches('\n').split('\n') {
+                if line.is_empty() {
+                    rendered.push(String::new());
+                    continue;
+                }
+                let spans = vec![md::Span {
+                    style: md::SpanStyle::Plain,
+                    text: line.to_string(),
+                }];
+                rendered.extend(styled_rows(
+                    &spans,
+                    width.saturating_sub(4),
+                    width.saturating_sub(4),
+                ));
+            }
+            rendered
                 .into_iter()
                 .enumerate()
                 .map(|(i, row)| {
@@ -1641,13 +1654,9 @@ impl Ui {
                     return Some(UiAction::Submit(submitted));
                 }
                 // Echo the prompt as a highlighted bar so user turns stand
-                // apart from agent output in scrollback.
-                let mut entries: Vec<Entry> = visible
-                    .lines()
-                    .map(|l| Entry::UserBar(l.to_string()))
-                    .collect();
-                entries.push(Entry::Blank);
-                inner.commit_entries(entries);
+                // apart from agent output in scrollback. One entry for the
+                // whole message: the marker draws on the first row only.
+                inner.commit_entries(vec![Entry::UserBar(visible.to_string()), Entry::Blank]);
                 return Some(UiAction::Submit(submitted));
             }
             KeyCode::Backspace => {
@@ -2115,6 +2124,25 @@ mod tests {
             let rows = render_entry(&bar, width);
             assert_eq!(visible_cols(&rows[0]), width, "bar must span the width");
         }
+    }
+
+    #[test]
+    fn user_bars_mark_only_the_first_row_of_a_multiline_prompt() {
+        let bar = Entry::UserBar("hi tell me\n\n@crates/core/src/provider/mod.rs".into());
+        let rows = render_entry(&bar, 60);
+        assert_eq!(rows.len(), 3);
+        assert_eq!(rows.iter().filter(|row| row.contains('❯')).count(), 1);
+        assert!(rows[0].contains("❯ hi tell me"), "{}", rows[0]);
+        // The blank interior line and the continuation stay on the band,
+        // indented under the marker.
+        for row in &rows {
+            assert!(row.starts_with(BAND), "{row}");
+            assert_eq!(visible_cols(row), 60, "{row}");
+        }
+        assert!(rows[2].contains("   @crates"), "{}", rows[2]);
+        // A trailing newline adds no extra band row.
+        let trailing = Entry::UserBar("done\n".into());
+        assert_eq!(render_entry(&trailing, 60).len(), 1);
     }
 
     #[test]
