@@ -168,16 +168,18 @@ fn render_entry(entry: &Entry, width: usize) -> Vec<String> {
                 }];
                 rendered.extend(styled_rows(
                     &spans,
-                    width.saturating_sub(4),
-                    width.saturating_sub(4),
+                    width.saturating_sub(3),
+                    width.saturating_sub(3),
                 ));
             }
+            // Same vertical grid as every other element: marker in column 0,
+            // content in column 2 (❯/●/⚒/∴ all line up).
             rendered
                 .into_iter()
                 .enumerate()
                 .map(|(i, row)| {
-                    let prefix = if i == 0 { " ❯ " } else { "   " };
-                    let pad = width.saturating_sub(visible_cols(&row) + 3);
+                    let prefix = if i == 0 { "❯ " } else { "  " };
+                    let pad = width.saturating_sub(visible_cols(&row) + 2);
                     format!("{BAND}{prefix}{row}{}{RESET}", " ".repeat(pad))
                 })
                 .collect()
@@ -490,9 +492,9 @@ impl UiInner {
                     lines.push("connect a provider".to_string());
                     for (i, (_, label)) in super::connect::PROVIDERS.iter().enumerate() {
                         if i == *selected {
-                            lines.push(format!("  {CYAN}▸ {label}{RESET}"));
+                            lines.push(format!("{CYAN}▸ {label}{RESET}"));
                         } else {
-                            lines.push(format!("  {DIM}  {label}{RESET}"));
+                            lines.push(format!("{DIM}  {label}{RESET}"));
                         }
                     }
                     lines.push(format!("{DIM}enter continue · esc cancel{RESET}"));
@@ -516,23 +518,24 @@ impl UiInner {
         } else if let Some(select) = &self.select {
             lines.push(select.title.clone());
             for (i, item) in select.items.iter().enumerate() {
-                let row = truncate_cols(item, width.saturating_sub(4));
+                let row = truncate_cols(item, width.saturating_sub(3));
                 if i == select.selected {
-                    lines.push(format!("  {CYAN}▸ {row}{RESET}"));
+                    lines.push(format!("{CYAN}▸ {row}{RESET}"));
                 } else {
-                    lines.push(format!("  {DIM}  {row}{RESET}"));
+                    lines.push(format!("{DIM}  {row}{RESET}"));
                 }
             }
             lines.push(format!("{DIM}enter select · esc cancel{RESET}"));
             cursor_row = lines.len().saturating_sub(1);
             cursor_col = 0;
         } else if let Some(menu) = &self.menu {
+            // Same grid as the transcript: marker col 0, label col 2.
             for (i, (label, _)) in MENU.iter().enumerate() {
                 let marker = if i == menu.selected { "▸" } else { " " };
                 let styled = if i == menu.selected {
-                    format!("  {CYAN}{marker} {label}{RESET}")
+                    format!("{CYAN}{marker} {label}{RESET}")
                 } else {
-                    format!("  {DIM}{marker} {label}{RESET}")
+                    format!("{DIM}{marker} {label}{RESET}")
                 };
                 lines.push(styled);
             }
@@ -545,13 +548,13 @@ impl UiInner {
             lines.extend(input_rows);
         }
         if let Some(dropdown) = &self.dropdown {
-            // Row budget: 4 prefix cols + label + 2 + hint ≤ width. Wide
+            // Row budget: 2 prefix cols + label + 2 + hint ≤ width. Wide
             // terminals reserve ~22 cols for the hint; narrow ones give the
             // label everything and drop the hint.
             let label_budget = if width >= 44 {
-                width - 28
+                width - 26
             } else {
-                width.saturating_sub(4)
+                width.saturating_sub(2)
             };
             let labels: Vec<String> = dropdown
                 .choices
@@ -564,7 +567,7 @@ impl UiInner {
             for (i, choice) in dropdown.choices.iter().take(MAX_DROPDOWN_ROWS).enumerate() {
                 let marker = if i == dropdown.selected { "▸" } else { " " };
                 let mut label = labels[i].clone();
-                let hint_budget = width.saturating_sub(4 + label_col + 2);
+                let hint_budget = width.saturating_sub(2 + label_col + 2);
                 let hint = if choice.hint.is_empty() || hint_budget < 4 {
                     String::new()
                 } else {
@@ -572,9 +575,9 @@ impl UiInner {
                     format!("  {}", truncate_cols(&choice.hint, hint_budget))
                 };
                 let styled = if i == dropdown.selected {
-                    format!("  {CYAN}{marker} {label}{RESET}{DIM}{hint}{RESET}")
+                    format!("{CYAN}{marker} {label}{RESET}{DIM}{hint}{RESET}")
                 } else {
-                    format!("  {DIM}{marker} {label}{hint}{RESET}")
+                    format!("{DIM}{marker} {label}{hint}{RESET}")
                 };
                 lines.push(styled);
             }
@@ -1133,7 +1136,7 @@ impl UiInner {
     fn resolve_menu(&mut self, choice: usize) {
         if let Some(menu) = self.menu.take() {
             let (label, decision) = MENU[choice];
-            self.paint(Some(&format!("  {DIM}↳ {label}{RESET}")));
+            self.paint(Some(&format!("{DIM}↳ {label}{RESET}")));
             let _ = menu.responder.send(decision);
         }
     }
@@ -2139,7 +2142,9 @@ mod tests {
             assert!(row.starts_with(BAND), "{row}");
             assert_eq!(visible_cols(row), 60, "{row}");
         }
-        assert!(rows[2].contains("   @crates"), "{}", rows[2]);
+        assert!(rows[2].contains("  @crates"), "{}", rows[2]);
+        // Content column matches assistant prose: marker col 0, text col 2.
+        assert!(rows[0].starts_with(&format!("{BAND}❯ hi")), "{}", rows[0]);
         // A trailing newline adds no extra band row.
         let trailing = Entry::UserBar("done\n".into());
         assert_eq!(render_entry(&trailing, 60).len(), 1);
