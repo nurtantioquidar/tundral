@@ -456,7 +456,7 @@ impl UiInner {
         }
         if let Some(activity) = &self.activity {
             let mut working = format!(
-                "✳ {} {}s · ~{} tok",
+                "∴ {} {}s · ~{} tok",
                 SPINNER[activity.spinner % SPINNER.len()],
                 activity.started.elapsed().as_secs(),
                 activity.out_bytes / 4,
@@ -639,7 +639,7 @@ impl UiInner {
 
     /// One footer line, Codex-style: status left, mode right-aligned in
     /// its color. Deliberately minimal — cost and cache-hit rate print
-    /// after every turn in the ✳ summary (and /usage has the breakdown).
+    /// after every turn in the ∴ summary (and /usage has the breakdown).
     fn compose_status(&self, width: usize) -> String {
         let left = format!(
             "{} | Context {:.0}% left",

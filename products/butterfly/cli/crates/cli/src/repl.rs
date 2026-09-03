@@ -161,7 +161,7 @@ pub(crate) fn turn_status_line(
         extras.push_str(" · cancelled");
     }
     format!(
-        "✳ done in {:.1}s · {} calls · in {} ({cache_rate:.0}% cached) · out {} · {} | session {} · ctx {utilization:.0}%{extras}",
+        "∴ done in {:.1}s · {} calls · in {} ({cache_rate:.0}% cached) · out {} · {} | session {} · ctx {utilization:.0}%{extras}",
         elapsed.as_secs_f64(),
         report.provider_calls,
         format_tokens(report.usage.input_tokens),
