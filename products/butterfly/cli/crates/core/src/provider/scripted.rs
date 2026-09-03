@@ -13,6 +13,7 @@ pub struct ScriptedProvider {
     turns: Mutex<std::vec::IntoIter<AssistantMessage>>,
     pub requests: Mutex<Vec<Vec<ChatMessage>>>,
     usage_per_turn: Usage,
+    finish_override: Option<FinishReason>,
 }
 
 impl ScriptedProvider {
@@ -26,7 +27,15 @@ impl ScriptedProvider {
                 cache_miss_input_tokens: 200,
                 output_tokens: 100,
             },
+            finish_override: None,
         }
+    }
+
+    /// Report this finish reason on every response (e.g. `Length` to test
+    /// output-truncation surfacing).
+    pub fn with_finish(mut self, finish: FinishReason) -> Self {
+        self.finish_override = Some(finish);
+        self
     }
 
     pub fn with_usage(mut self, usage: Usage) -> Self {
@@ -60,11 +69,13 @@ impl Provider for ScriptedProvider {
         if let Some(text) = &message.content {
             sink.on_text(text);
         }
-        let finish = if message.tool_calls.is_empty() {
-            FinishReason::Stop
-        } else {
-            FinishReason::ToolCalls
-        };
+        let finish = self
+            .finish_override
+            .unwrap_or(if message.tool_calls.is_empty() {
+                FinishReason::Stop
+            } else {
+                FinishReason::ToolCalls
+            });
         let usage = self.usage_per_turn;
         Ok(CompletedTurn {
             cost: price_usage(Model::DeepseekV4Flash, usage),

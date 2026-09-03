@@ -294,6 +294,16 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
         ui.end_activity();
         match result {
             Ok(report) => {
+                if report.hit_output_limit {
+                    ui.print(&format!(
+                        "{RED}⚠ truncated: the response hit the output-token limit{RESET}"
+                    ));
+                }
+                if !report.cancelled && report.assistant_text.trim().is_empty() {
+                    ui.print_note(
+                        "no answer text arrived — the model spent its output budget                          reasoning (ctrl+t shows it); try again or narrow the ask",
+                    );
+                }
                 ui.print_note(&turn_status_line(&agent, &report, turn_started.elapsed()));
             }
             Err(error) => ui.print(&format!("{RED}error: {error}{RESET}")),

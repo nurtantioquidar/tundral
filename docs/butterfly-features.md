@@ -16,6 +16,12 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
   against the official pricing page 2026-08-31; cache-blind normalized cost alongside actual.
   `crates/core/src/domain.rs`
 - **Session cost caps** — `--max-cost-usd`, hard stop mid-turn.
+- **Output budget sized for reasoning** (dogfood 2026-09-03) — `max_output_tokens` defaults to
+  65,536 (a ceiling, not a spend; the API accepts ≥128k): reasoning shares the output budget, and
+  the old 8k cap let pro-at-high-effort burn it all thinking and end turns with zero content.
+  Any `finish_reason: length` response now sets `hit_output_limit` on the turn report — the TUI
+  prints a red truncation warning, an empty-answer turn gets an explicit notice pointing at the
+  Ctrl+T transcript, and `--json` carries the flag.
 
 ### Context engine (the core bet)
 - **Byte-stable prompt prefix** — frozen system prompt + tool schemas, append-only history,

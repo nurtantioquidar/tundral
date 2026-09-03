@@ -439,10 +439,15 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
         };
         println!();
         match result {
-            Ok(report) => println!(
-                "{DIM}{}{RESET}",
-                turn_status_line(&agent, &report, turn_started.elapsed())
-            ),
+            Ok(report) => {
+                if report.hit_output_limit {
+                    eprintln!("{RED}⚠ truncated: the response hit the output-token limit{RESET}");
+                }
+                println!(
+                    "{DIM}{}{RESET}",
+                    turn_status_line(&agent, &report, turn_started.elapsed())
+                );
+            }
             Err(error) => eprintln!("{RED}error: {error}{RESET}"),
         }
         pending.extend(steer.lock().expect("steer lock").drain(..));

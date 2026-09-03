@@ -56,7 +56,10 @@ impl Default for SessionConfig {
             model: Model::DeepseekV4Flash,
             effort: ReasoningEffort::High,
             permission_mode: PermissionMode::Ask,
-            max_output_tokens: 8_192,
+            // A ceiling, not a spend: reasoning shares this budget, and
+            // 8k starved pro-at-high-effort into content-less turns
+            // (dogfood 2026-09-03). The API accepts far larger caps.
+            max_output_tokens: 65_536,
             max_session_cost_microusd: None,
             max_provider_calls_per_input: 50,
             context: ContextConfig::default(),
@@ -86,6 +89,10 @@ pub struct TurnReport {
     pub assistant_text: String,
     pub cancelled: bool,
     pub budget_exhausted: bool,
+    /// Some provider response in this turn stopped at the output-token
+    /// limit (finish_reason "length"): the answer is truncated — possibly
+    /// to nothing, when reasoning consumed the whole budget.
+    pub hit_output_limit: bool,
     pub provider_calls: u32,
     pub tool_calls: u32,
     pub usage: Usage,
@@ -452,6 +459,9 @@ impl Agent {
                 Err(error) => return Err(error),
             };
             report.provider_calls += 1;
+            if turn.finish == crate::provider::FinishReason::Length {
+                report.hit_output_limit = true;
+            }
             report.usage.add(turn.usage);
             report.actual_microusd += turn.cost.actual_microusd;
             report.normalized_microusd += turn.cost.normalized_cache_miss_microusd;
@@ -861,6 +871,40 @@ mod tests {
             m,
             ChatMessage::Tool { content, .. } if content.contains("hello world")
         )));
+    }
+
+    #[tokio::test]
+    async fn output_limit_truncation_is_reported() {
+        let dir = workspace();
+        // A response that stopped at the output cap with EMPTY content —
+        // the exact dogfood failure: reasoning consumed the whole budget
+        // and the turn would otherwise end silently.
+        let provider = Arc::new(
+            ScriptedProvider::new(vec![AssistantMessage {
+                content: None,
+                reasoning_content: Some("thinking…".into()),
+                tool_calls: vec![],
+            }])
+            .with_finish(crate::provider::FinishReason::Length),
+        );
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig::default(),
+            None,
+        )
+        .unwrap();
+        let report = agent
+            .run_turn(
+                "explain".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert!(report.hit_output_limit, "length finish must be surfaced");
+        assert!(report.assistant_text.is_empty());
     }
 
     #[tokio::test]

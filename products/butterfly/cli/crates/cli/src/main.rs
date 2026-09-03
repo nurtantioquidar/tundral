@@ -322,6 +322,7 @@ async fn main() -> Result<()> {
                     "elisions": report.elisions,
                     "cancelled": report.cancelled,
                     "budget_exhausted": report.budget_exhausted,
+                    "hit_output_limit": report.hit_output_limit,
                 })
             );
             if report.cancelled {
