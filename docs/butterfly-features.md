@@ -47,6 +47,11 @@ statuses honest. Positioning: a fast DeepSeek-native, cache-first coding agent C
 - **Three-class command policy** — strict-allowlisted commands may auto-run; everything else
   prompts with the reason even in `--auto` (headless `--json` denies); `sudo`/`su`/`doas` never
   run. Argv-only, no shell, credential-stripped environments. `crates/core/src/tools/policy.rs`
+- **Lenient argv decoding** — models sometimes double-encode the `command` array as a JSON string;
+  `extract_argv` unwraps that shape everywhere (classify, preview, scope key, executor) while a
+  bare shell string is still rejected, and malformed commands fail fast with corrective guidance
+  before the approval gate — the user is never asked to approve a command that can't be shown.
+  Failed tool calls surface the error's first line after the ✗. `crates/core/src/tools/mod.rs`
 - **Approval gates with rich previews** — colorized whole-line diffs for `edit` (with occurrence
   warnings), content head for `write_file`, exact argv for `run_command`; `y`/`a`(lways)/`N` with
   session-scoped allows.

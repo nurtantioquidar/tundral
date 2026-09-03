@@ -504,12 +504,19 @@ impl Agent {
                 let output = self.execute_gated(call, gate, cancel).await;
                 if output.is_none() {
                     cancelled_mid_tools = true;
-                    sink.on_tool_result(&preview, true);
+                    sink.on_tool_result(&preview, true, None);
                     self.push_tool_result(call.id.clone(), "cancelled by user".into())?;
                     continue;
                 }
                 let output = output.expect("checked above");
-                sink.on_tool_result(&preview, output.is_error);
+                let error = output.is_error.then(|| {
+                    output
+                        .content
+                        .lines()
+                        .find(|line| !line.trim().is_empty())
+                        .unwrap_or("")
+                });
+                sink.on_tool_result(&preview, output.is_error, error);
                 self.working_state
                     .observe(&call.name, &call.arguments, !output.is_error);
                 // The agent's own writes are the likeliest index mutations.
@@ -573,19 +580,25 @@ impl Agent {
         };
         // Classify command policy BEFORE the approval gate: forbidden commands
         // never reach a prompt; commands outside the auto-run allowlist force
-        // a review even in auto mode.
+        // a review even in auto mode. Malformed arguments fail fast here —
+        // a human must never be asked to approve a command that can't be shown.
         let mut policy_warning: Option<String> = None;
         if call.name == "run_command" {
-            if let Some(argv) = parse_argv(&call.arguments) {
-                match crate::tools::policy::classify_command(&argv) {
-                    crate::tools::policy::CommandClass::Forbidden(reason) => {
-                        return Some(crate::tools::ToolOutput::error(reason));
-                    }
-                    crate::tools::policy::CommandClass::NeedsApproval(reason) => {
-                        policy_warning = Some(reason);
-                    }
-                    crate::tools::policy::CommandClass::AutoEligible => {}
+            let Some(argv) = parse_argv(&call.arguments) else {
+                return Some(crate::tools::ToolOutput::error(
+                    "invalid arguments: command must be a JSON array of strings (argv), \
+                     e.g. {\"command\": [\"git\", \"status\"]}"
+                        .to_string(),
+                ));
+            };
+            match crate::tools::policy::classify_command(&argv) {
+                crate::tools::policy::CommandClass::Forbidden(reason) => {
+                    return Some(crate::tools::ToolOutput::error(reason));
                 }
+                crate::tools::policy::CommandClass::NeedsApproval(reason) => {
+                    policy_warning = Some(reason);
+                }
+                crate::tools::policy::CommandClass::AutoEligible => {}
             }
         }
         let outcome = policy_outcome(self.config.permission_mode, kind);
@@ -796,15 +809,10 @@ impl Agent {
 }
 
 /// Extract the argv vector from run_command arguments; None when the
-/// arguments are malformed (the executor then reports the parse error).
+/// arguments are malformed (the caller then fails the call fast).
 fn parse_argv(arguments: &str) -> Option<Vec<String>> {
     let value: serde_json::Value = serde_json::from_str(arguments).ok()?;
-    let argv = value.get("command")?.as_array()?;
-    Some(
-        argv.iter()
-            .filter_map(|item| item.as_str().map(str::to_string))
-            .collect(),
-    )
+    crate::tools::extract_argv(value.get("command")?)
 }
 
 #[cfg(test)]
@@ -1048,6 +1056,92 @@ mod tests {
         assert!(agent.messages().iter().any(|m| matches!(
             m,
             ChatMessage::Tool { content, .. } if content.contains("privilege escalation")
+        )));
+    }
+
+    #[tokio::test]
+    async fn malformed_command_arguments_fail_fast_without_prompting() {
+        struct PanicGate;
+        #[async_trait::async_trait]
+        impl ApprovalGate for PanicGate {
+            async fn review(&self, request: &ApprovalRequest) -> Decision {
+                panic!("gate consulted for a malformed call: {}", request.preview);
+            }
+        }
+        let dir = workspace();
+        // A bare shell string is not argv: the call must error back to the
+        // model with corrective guidance, never reach a blank approval prompt.
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call("c1", "run_command", r#"{"command":"cat hello.txt"}"#),
+            final_text("adjusted"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig::default(),
+            None,
+        )
+        .unwrap();
+        let report = agent
+            .run_turn(
+                "read it".into(),
+                &PanicGate,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(report.assistant_text, "adjusted");
+        assert!(agent.messages().iter().any(|m| matches!(
+            m,
+            ChatMessage::Tool { content, .. } if content.contains("array of strings")
+        )));
+    }
+
+    #[tokio::test]
+    async fn double_encoded_argv_executes_like_the_schema_shape() {
+        struct PanicGate;
+        #[async_trait::async_trait]
+        impl ApprovalGate for PanicGate {
+            async fn review(&self, request: &ApprovalRequest) -> Decision {
+                panic!("allowlisted command prompted: {}", request.preview);
+            }
+        }
+        let dir = workspace();
+        // Models sometimes emit argv as a JSON-encoded string (dogfood
+        // 2026-09-03); it must classify, scope, and run as the real argv —
+        // in auto mode an allowlisted double-encoded call never prompts.
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call(
+                "c1",
+                "run_command",
+                r#"{"command":"[\"cat\", \"hello.txt\"]"}"#,
+            ),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        let report = agent
+            .run_turn(
+                "read it".into(),
+                &PanicGate,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(report.assistant_text, "done");
+        assert!(agent.messages().iter().any(|m| matches!(
+            m,
+            ChatMessage::Tool { content, .. } if content.contains("hello world")
         )));
     }
 

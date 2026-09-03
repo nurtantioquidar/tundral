@@ -20,9 +20,25 @@ const MAX_TIMEOUT_SECONDS: u64 = 300;
 #[serde(deny_unknown_fields)]
 pub struct RunCommandArgs {
     /// Command as an argv vector, e.g. ["cargo", "test"].
+    #[serde(deserialize_with = "lenient_argv")]
     pub command: Vec<String>,
     #[serde(default)]
     pub timeout_seconds: Option<u64>,
+}
+
+/// Deserialize argv leniently via [`super::extract_argv`]: models sometimes
+/// double-encode the array as a JSON string, and rejecting that shape strands
+/// them in a retry loop (dogfood 2026-09-03).
+fn lenient_argv<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = serde_json::Value::deserialize(deserializer)?;
+    super::extract_argv(&value).ok_or_else(|| {
+        serde::de::Error::custom(
+            "command must be a JSON array of strings (argv), e.g. [\"git\", \"status\"]",
+        )
+    })
 }
 
 pub async fn run_command(

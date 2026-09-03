@@ -301,7 +301,7 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
                 }
                 if !report.cancelled && report.assistant_text.trim().is_empty() {
                     ui.print_note(
-                        "no answer text arrived — the model spent its output budget                          reasoning (ctrl+t shows it); try again or narrow the ask",
+                        "no answer text arrived — the model spent its output budget reasoning (ctrl+t shows it); try again or narrow the ask",
                     );
                 }
                 ui.print_note(&turn_status_line(&agent, &report, turn_started.elapsed()));

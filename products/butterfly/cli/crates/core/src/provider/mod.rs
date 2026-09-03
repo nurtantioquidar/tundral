@@ -72,8 +72,10 @@ pub trait StreamSink: Send {
     fn on_tool_start(&mut self, preview: &str) {
         let _ = preview;
     }
-    fn on_tool_result(&mut self, preview: &str, is_error: bool) {
-        let _ = (preview, is_error);
+    /// `error` carries the failure's first line for display; None on success
+    /// (and on cancellation, which the caller narrates itself).
+    fn on_tool_result(&mut self, preview: &str, is_error: bool, error: Option<&str>) {
+        let _ = (preview, is_error, error);
     }
 }
 

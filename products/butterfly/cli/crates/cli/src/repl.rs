@@ -78,9 +78,14 @@ impl StreamSink for TerminalSink {
         let _ = std::io::stdout().flush();
     }
 
-    fn on_tool_result(&mut self, _preview: &str, is_error: bool) {
+    fn on_tool_result(&mut self, _preview: &str, is_error: bool, error: Option<&str>) {
         if is_error {
-            println!("{RED}✗{RESET}");
+            match error {
+                Some(reason) if !reason.is_empty() => {
+                    println!("{RED}✗{RESET} {DIM}{reason}{RESET}");
+                }
+                _ => println!("{RED}✗{RESET}"),
+            }
         } else {
             println!("✓");
         }

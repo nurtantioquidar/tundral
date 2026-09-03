@@ -1780,12 +1780,14 @@ impl StreamSink for UiSink {
         inner.paint(None);
     }
 
-    fn on_tool_result(&mut self, preview: &str, is_error: bool) {
+    fn on_tool_result(&mut self, preview: &str, is_error: bool, error: Option<&str>) {
         let mut inner = self.ui.lock();
-        let mark = if is_error {
-            format!(" {RED}✗{RESET}")
-        } else {
-            " ✓".to_string()
+        let mark = match (is_error, error) {
+            (true, Some(reason)) if !reason.is_empty() => {
+                format!(" {RED}✗{RESET} {DIM}{}{RESET}", truncate_cols(reason, 60))
+            }
+            (true, _) => format!(" {RED}✗{RESET}"),
+            (false, _) => " ✓".to_string(),
         };
         if inner
             .live

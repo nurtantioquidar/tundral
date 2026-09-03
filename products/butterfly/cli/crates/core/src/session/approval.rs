@@ -64,9 +64,8 @@ pub fn scope_key(tool_name: &str, arguments: &str) -> String {
             .and_then(|value| {
                 value
                     .get("command")
-                    .and_then(|c| c.get(0))
-                    .and_then(serde_json::Value::as_str)
-                    .map(str::to_string)
+                    .and_then(crate::tools::extract_argv)
+                    .and_then(|argv| argv.first().cloned())
             })
             .unwrap_or_default();
         format!("run_command:{binary}")
@@ -120,6 +119,11 @@ mod tests {
     fn command_scope_keys_include_the_binary() {
         assert_eq!(
             scope_key("run_command", r#"{"command":["cargo","test"]}"#),
+            "run_command:cargo"
+        );
+        // Double-encoded argv scopes to the real binary, not an empty key.
+        assert_eq!(
+            scope_key("run_command", r#"{"command":"[\"cargo\",\"test\"]"}"#),
             "run_command:cargo"
         );
         assert_eq!(scope_key("edit", "{}"), "edit");

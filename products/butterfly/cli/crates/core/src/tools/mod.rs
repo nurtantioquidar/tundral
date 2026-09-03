@@ -267,6 +267,27 @@ impl ToolExecutor {
     }
 }
 
+/// Interpret a `command` argument as an argv vector. Accepts the schema shape
+/// (array of strings) and the double-encoded shape some models emit (a string
+/// containing a JSON array of strings). Still argv-only: a bare command line
+/// like "git status" is rejected, never shell-split.
+pub fn extract_argv(command: &serde_json::Value) -> Option<Vec<String>> {
+    let items = match command {
+        serde_json::Value::Array(items) => items.clone(),
+        serde_json::Value::String(text) => {
+            match serde_json::from_str::<serde_json::Value>(text.trim()).ok()? {
+                serde_json::Value::Array(items) => items,
+                _ => return None,
+            }
+        }
+        _ => return None,
+    };
+    items
+        .iter()
+        .map(|item| item.as_str().map(str::to_string))
+        .collect()
+}
+
 /// Human-readable one-line preview of a tool call for approval prompts and
 /// transcript rendering.
 pub fn describe_call(name: &str, arguments: &str) -> String {
@@ -276,13 +297,8 @@ pub fn describe_call(name: &str, arguments: &str) -> String {
         .map(|value| match name {
             "run_command" => value
                 .get("command")
-                .and_then(serde_json::Value::as_array)
-                .map(|argv| {
-                    argv.iter()
-                        .filter_map(serde_json::Value::as_str)
-                        .collect::<Vec<_>>()
-                        .join(" ")
-                })
+                .and_then(extract_argv)
+                .map(|argv| argv.join(" "))
                 .unwrap_or_default(),
             "update_plan" => value
                 .get("objective")
@@ -350,12 +366,7 @@ pub fn approval_detail(root: &Path, name: &str, arguments: &str) -> Option<Strin
             rendered
         }
         "run_command" => {
-            let argv = args.get("command")?.as_array()?;
-            let line = argv
-                .iter()
-                .filter_map(serde_json::Value::as_str)
-                .collect::<Vec<_>>()
-                .join(" ");
+            let line = extract_argv(args.get("command")?)?.join(" ");
             let timeout = args
                 .get("timeout_seconds")
                 .and_then(serde_json::Value::as_u64)
@@ -579,5 +590,60 @@ mod tests {
             describe_call("read_file", r#"{"path":"src/main.rs"}"#),
             "read_file(src/main.rs)"
         );
+    }
+
+    #[test]
+    fn extract_argv_accepts_double_encoded_arrays_but_never_shell_strings() {
+        // The schema shape.
+        assert_eq!(
+            extract_argv(&json!(["git", "status"])),
+            Some(vec!["git".to_string(), "status".to_string()])
+        );
+        // The double-encoded shape some models emit (dogfood 2026-09-03).
+        assert_eq!(
+            extract_argv(&json!("[\"git\", \"status\", \"--short\"]")),
+            Some(vec![
+                "git".to_string(),
+                "status".to_string(),
+                "--short".to_string()
+            ])
+        );
+        // A bare command line is never shell-split.
+        assert_eq!(extract_argv(&json!("git status")), None);
+        // Non-string elements are rejected, not silently dropped.
+        assert_eq!(extract_argv(&json!(["git", 1])), None);
+        assert_eq!(extract_argv(&json!(42)), None);
+    }
+
+    #[test]
+    fn previews_and_details_render_double_encoded_commands() {
+        assert_eq!(
+            describe_call("run_command", r#"{"command":"[\"cargo\",\"test\"]"}"#),
+            "run_command(cargo test)"
+        );
+        let dir = tempfile::tempdir().unwrap();
+        let detail = approval_detail(
+            dir.path(),
+            "run_command",
+            r#"{"command":"[\"cargo\",\"test\"]"}"#,
+        )
+        .unwrap();
+        assert!(detail.contains("$ cargo test"), "{detail}");
+    }
+
+    #[tokio::test]
+    async fn executor_runs_double_encoded_argv() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("f.txt"), "hello\n").unwrap();
+        let executor = ToolExecutor::new(dir.path().to_path_buf());
+        let output = executor
+            .execute(
+                "run_command",
+                r#"{"command":"[\"cat\", \"f.txt\"]"}"#,
+                &CancellationToken::new(),
+            )
+            .await;
+        assert!(!output.is_error, "{}", output.content);
+        assert!(output.content.contains("hello"));
     }
 }
