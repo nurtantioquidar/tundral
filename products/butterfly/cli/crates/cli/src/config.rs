@@ -1,32 +1,45 @@
 //! Layered configuration: defaults ← ~/.config/butterfly/config.toml ← <repo>/.butterfly.toml
 //! ← command-line flags. Every field is optional at every layer; later layers
-//! win. Credentials are NOT config — the API key stays in the environment.
+//! win. `[[providers]]` and `[[models]]` tables accumulate across layers (repo
+//! entries apply after global ones, so a repo can override a global model by
+//! id). Credentials are NOT config — keys live in the environment or the
+//! credential store.
 
 use std::path::Path;
 
+use butterfly_core::model::{ModelConfig, ProviderConfig};
 use serde::Deserialize;
 
 #[derive(Debug, Default, Clone, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct FileConfig {
-    /// deepseek-v4-flash | deepseek-v4-pro
+    /// Model id from the registry (built-in or `[[models]]`).
     pub model: Option<String>,
-    /// high | max
+    /// Reasoning effort in the model's vocabulary (e.g. high | max).
     pub effort: Option<String>,
     /// ask | auto | read-only
     pub mode: Option<String>,
     /// Decimal USD session cap, e.g. "0.50".
     pub max_cost_usd: Option<String>,
+    /// Endpoint override for the selected model's provider.
     pub base_url: Option<String>,
     pub quiet_reasoning: Option<bool>,
     /// Context window override in tokens (default: the model's real window).
     pub window_tokens: Option<u64>,
     /// Enable the Atlas code-graph tools (default true).
     pub atlas: Option<bool>,
+    #[serde(default)]
+    pub providers: Vec<ProviderConfig>,
+    #[serde(default)]
+    pub models: Vec<ModelConfig>,
 }
 
 impl FileConfig {
     fn overlay(self, over: FileConfig) -> FileConfig {
+        let mut providers = self.providers;
+        providers.extend(over.providers);
+        let mut models = self.models;
+        models.extend(over.models);
         FileConfig {
             model: over.model.or(self.model),
             effort: over.effort.or(self.effort),
@@ -36,6 +49,8 @@ impl FileConfig {
             quiet_reasoning: over.quiet_reasoning.or(self.quiet_reasoning),
             window_tokens: over.window_tokens.or(self.window_tokens),
             atlas: over.atlas.or(self.atlas),
+            providers,
+            models,
         }
     }
 }
@@ -69,16 +84,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn repo_config_overlays_global_fields() {
+    fn repo_config_overlays_global_fields_and_accumulates_tables() {
         let base = toml::from_str::<FileConfig>(
-            "model = \"deepseek-v4-pro\"\nmax_cost_usd = \"1\"\nquiet_reasoning = true\n",
+            "model = \"deepseek-v4-pro\"\nmax_cost_usd = \"1\"\nquiet_reasoning = true\n\n[[models]]\nid = \"deepseek-v4-flash\"\ncontext_tokens = 131072\n",
         )
         .unwrap();
-        let repo = toml::from_str::<FileConfig>("model = \"deepseek-v4-flash\"\n").unwrap();
+        let repo = toml::from_str::<FileConfig>(
+            "model = \"deepseek-v4-flash\"\n\n[[models]]\nid = \"deepseek-v4-flash\"\ndefault_effort = \"max\"\n",
+        )
+        .unwrap();
         let merged = base.overlay(repo);
         assert_eq!(merged.model.as_deref(), Some("deepseek-v4-flash"));
         assert_eq!(merged.max_cost_usd.as_deref(), Some("1"));
         assert_eq!(merged.quiet_reasoning, Some(true));
+        // Global entry first, repo entry second: applied in that order.
+        assert_eq!(merged.models.len(), 2);
+        assert_eq!(merged.models[1].default_effort.as_deref(), Some("max"));
     }
 
     #[test]
@@ -87,5 +108,11 @@ mod tests {
         assert!(load_file(&dir.path().join("absent.toml")).is_ok());
         std::fs::write(dir.path().join(".butterfly.toml"), "modle = \"typo\"").unwrap();
         assert!(load_file(&dir.path().join(".butterfly.toml")).is_err());
+        std::fs::write(
+            dir.path().join("bad-model.toml"),
+            "[[models]]\nid = \"x\"\nbogus = 1\n",
+        )
+        .unwrap();
+        assert!(load_file(&dir.path().join("bad-model.toml")).is_err());
     }
 }

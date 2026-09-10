@@ -11,9 +11,10 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use butterfly_core::context::ContextConfig;
-use butterfly_core::domain::{format_microusd_as_usd, ChatMessage, Model};
-use butterfly_core::provider::deepseek::DeepSeekProvider;
-use butterfly_core::provider::{NullSink, ReasoningEffort};
+use butterfly_core::domain::{format_microusd_as_usd, ChatMessage};
+use butterfly_core::model::Registry;
+use butterfly_core::provider::openai_compat::OpenAiCompatProvider;
+use butterfly_core::provider::NullSink;
 use butterfly_core::session::approval::{AutoApprove, PermissionMode};
 use butterfly_core::session::{Agent, SessionConfig};
 use tokio_util::sync::CancellationToken;
@@ -24,9 +25,15 @@ async fn live_two_stage_compaction_and_continuation() {
         eprintln!("skipped: set BUTTERFLY_LIVE_TEST=1 to run");
         return;
     }
-    let api_key = std::env::var("DEEPSEEK_API_KEY").expect("DEEPSEEK_API_KEY");
-    let base_url = std::env::var("DEEPSEEK_BASE_URL").ok();
-    let provider = Arc::new(DeepSeekProvider::new(api_key, base_url));
+    let registry = Registry::builtin();
+    let model = registry
+        .resolve("deepseek-v4-flash")
+        .expect("builtin model");
+    let descriptor = registry.provider_for(&model).expect("provider");
+    let api_key = std::env::var(&descriptor.api_key_env).expect("DEEPSEEK_API_KEY");
+    let provider = Arc::new(
+        OpenAiCompatProvider::from_descriptor(descriptor, api_key, None).expect("endpoint"),
+    );
 
     // The butterfly workspace itself is the repository under test.
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -37,8 +44,8 @@ async fn live_two_stage_compaction_and_continuation() {
 
     // Tiny window so a few file reads cross the compact threshold.
     let config = SessionConfig {
-        model: Model::DeepseekV4Flash,
-        effort: ReasoningEffort::High,
+        effort: model.resolve_effort(None).unwrap(),
+        model,
         permission_mode: PermissionMode::ReadOnly,
         max_output_tokens: 4_096,
         max_session_cost_microusd: Some(100_000), // $0.10 hard stop
@@ -54,6 +61,11 @@ async fn live_two_stage_compaction_and_continuation() {
             ..ContextConfig::default()
         },
         atlas_enabled: true,
+        sandboxed: false,
+        task_type: None,
+        completion_gate: false,
+        independent_verifier: false,
+        verifier: false,
     };
     let mut agent = Agent::new(provider, root, config, None).expect("agent");
     let cancel = CancellationToken::new();

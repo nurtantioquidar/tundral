@@ -9,7 +9,9 @@ use std::time::Duration;
 use serde::Deserialize;
 use tokio_util::sync::CancellationToken;
 
-use super::policy::{classify_command, sanitized_environment, CommandClass, PolicyError};
+use super::policy::{
+    classify_command_with, sanitized_environment, CommandClass, PolicyError, PolicySettings,
+};
 use super::{ToolError, ToolOutput};
 
 const OUTPUT_CAP_BYTES: usize = 40_000;
@@ -44,11 +46,12 @@ where
 pub async fn run_command(
     root: &Path,
     args: RunCommandArgs,
+    settings: &PolicySettings,
     cancel: &CancellationToken,
 ) -> Result<ToolOutput, ToolError> {
     // Approval decisions happen upstream in the session loop; the executor is
     // the last line of defense only for the never-runnable class.
-    if let CommandClass::Forbidden(reason) = classify_command(&args.command) {
+    if let CommandClass::Forbidden(reason) = classify_command_with(&args.command, settings) {
         return Err(ToolError::Policy(PolicyError::Command(reason)));
     }
     let timeout = Duration::from_secs(
@@ -133,6 +136,7 @@ mod tests {
                 command: vec!["cat".into(), "f.txt".into()],
                 timeout_seconds: Some(10),
             },
+            &PolicySettings::default(),
             &CancellationToken::new(),
         )
         .await
@@ -151,6 +155,7 @@ mod tests {
                 command: vec!["sudo".into(), "true".into()],
                 timeout_seconds: None,
             },
+            &PolicySettings::default(),
             &CancellationToken::new(),
         )
         .await;
@@ -166,6 +171,7 @@ mod tests {
                 command: vec!["cat".into(), "missing.txt".into()],
                 timeout_seconds: Some(10),
             },
+            &PolicySettings::default(),
             &CancellationToken::new(),
         )
         .await

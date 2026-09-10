@@ -9,8 +9,10 @@ use anyhow::Result;
 use butterfly_core::domain::format_microusd_as_usd;
 use butterfly_core::provider::StreamSink;
 use butterfly_core::session::approval::{ApprovalGate, ApprovalRequest, Decision, PermissionMode};
-use butterfly_core::session::{Agent, TurnReport};
+use butterfly_core::session::{Agent, TaskOptions, TaskReport, TurnReport};
 use tokio_util::sync::CancellationToken;
+
+use crate::providers::ModelHub;
 
 const DIM: &str = "\x1b[2m";
 const RESET: &str = "\x1b[0m";
@@ -184,7 +186,7 @@ fn usage_text(agent: &Agent) -> String {
     format!(
         "session {}\n  model            {}\n  input tokens     {}\n    cache hits     {}\n    cache misses   {}\n    hit rate       {:.1}%\n  output tokens    {}\n  actual cost      {}\n  context used     {:.0}%",
         agent.session_id,
-        agent.model().wire_name(),
+        agent.model().id,
         usage.input_tokens,
         usage.cache_hit_input_tokens,
         usage.cache_miss_input_tokens,
@@ -228,7 +230,7 @@ pub enum CommandResult {
 }
 
 /// Handle the shared slash commands (used by both the TUI and plain loops).
-pub async fn handle_command(agent: &mut Agent, input: &str) -> CommandResult {
+pub async fn handle_command(agent: &mut Agent, input: &str, hub: &ModelHub) -> CommandResult {
     match input {
         "/quit" | "/exit" => CommandResult::Quit,
         "/connect" => CommandResult::Connect,
@@ -250,21 +252,7 @@ pub async fn handle_command(agent: &mut Agent, input: &str) -> CommandResult {
         _ if input.starts_with("/model") => {
             CommandResult::Output(match input.trim_start_matches("/model").trim() {
                 "" => return CommandResult::PickModel,
-                name => match butterfly_core::domain::Model::parse(name) {
-                    Some(model) => {
-                        agent.set_model(model);
-                        // Model choice sticks across sessions.
-                        crate::state::remember_model(model.wire_name());
-                        format!(
-                            "{DIM}[model set: {} ({}); next request re-caches the prefix]{RESET}",
-                            model.display_name(),
-                            model.wire_name()
-                        )
-                    }
-                    None => {
-                        format!("unknown model: {name} (deepseek-v4-flash | deepseek-v4-pro)")
-                    }
-                },
+                name => switch_model(agent, name, hub),
             })
         }
         _ if input.starts_with('/') => {
@@ -274,20 +262,42 @@ pub async fn handle_command(agent: &mut Agent, input: &str) -> CommandResult {
     }
 }
 
-/// Run one turn with Ctrl-C wired to the cancellation token (`-p` runs).
-pub async fn run_turn_interruptible(
+/// Resolve `name`, build its provider (key lookup included), and switch the
+/// agent. Any failure leaves the session on its current model.
+pub fn switch_model(agent: &mut Agent, name: &str, hub: &ModelHub) -> String {
+    let model = match hub.resolve(name) {
+        Ok(model) => model,
+        Err(error) => return format!("{RED}{error}{RESET}"),
+    };
+    let provider = match hub.build_provider(&model) {
+        Ok(provider) => provider,
+        Err(error) => return format!("{RED}{error}{RESET}"),
+    };
+    agent.set_model(model.clone(), provider);
+    // Model choice sticks across sessions.
+    crate::state::remember_model(&model.id);
+    format!(
+        "{DIM}[model set: {} ({}); next request re-caches the prefix]{RESET}",
+        model.display_name, model.id
+    )
+}
+
+/// Run an autonomous task (attempts + verification) with Ctrl-C wired to the
+/// cancellation token (`-p` runs).
+pub async fn run_task_interruptible(
     agent: &mut Agent,
     input: String,
+    options: &TaskOptions,
     gate: &dyn ApprovalGate,
     show_reasoning: bool,
-) -> Result<TurnReport> {
+) -> Result<TaskReport> {
     let cancel = CancellationToken::new();
     let mut sink = TerminalSink::new(show_reasoning);
-    let turn = agent.run_turn(input, gate, &mut sink, &cancel);
-    tokio::pin!(turn);
+    let task = agent.run_task(input, options, gate, &mut sink, &cancel);
+    tokio::pin!(task);
     let report = loop {
         tokio::select! {
-            result = &mut turn => break result?,
+            result = &mut task => break result?,
             signal = tokio::signal::ctrl_c() => {
                 signal?;
                 eprintln!("\n{DIM}[cancelling…]{RESET}");
@@ -357,7 +367,7 @@ impl ApprovalGate for ChannelGate {
 }
 
 /// Line-based session loop for non-TTY stdin.
-pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
+pub async fn plain_repl(mut agent: Agent, show_reasoning: bool, hub: &ModelHub) -> Result<()> {
     let (sender, mut events) = tokio::sync::mpsc::unbounded_channel();
     spawn_line_thread(sender);
     let claim: std::sync::Arc<std::sync::Mutex<Option<tokio::sync::oneshot::Sender<String>>>> =
@@ -367,7 +377,7 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
     };
     println!(
         "{DIM}butterfly · {} · session {} · {} mode · /help for commands{RESET}",
-        agent.model().wire_name(),
+        agent.model().id,
         agent.session_id,
         mode_name(agent.permission_mode()),
     );
@@ -383,20 +393,22 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool) -> Result<()> {
                 Some(InputEvent::Eof) | None => break,
             }
         };
-        match handle_command(&mut agent, &input).await {
+        match handle_command(&mut agent, &input, hub).await {
             CommandResult::Quit => break,
             CommandResult::Connect => {
                 println!(
                     "/connect needs an interactive terminal; run butterfly in a TTY \
-                     (or set DEEPSEEK_API_KEY)"
+                     (or export the provider's API key variable)"
                 );
                 continue;
             }
             CommandResult::PickModel => {
+                let model = agent.model();
                 println!(
-                    "model: {} ({}) — switch with /model deepseek-v4-flash|deepseek-v4-pro",
-                    agent.model().display_name(),
-                    agent.model().wire_name()
+                    "model: {} ({}) — switch with /model <id>; known: {}",
+                    model.display_name,
+                    model.id,
+                    hub.registry.model_ids().join(" | ")
                 );
                 continue;
             }

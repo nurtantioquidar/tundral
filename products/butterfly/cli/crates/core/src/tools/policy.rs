@@ -10,6 +10,59 @@
 use std::collections::HashMap;
 use std::path::{Component, Path, PathBuf};
 
+/// How strictly tools are confined. Defaults are the interactive contract
+/// (invariant 5). A sandboxed session — a disposable container the operator
+/// owns, e.g. a benchmark environment — relaxes confinement and the
+/// auto-run allowlist; privilege escalation stays forbidden everywhere.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PolicySettings {
+    /// Reject absolute paths, `..`, `.git` internals, and secret-bearing
+    /// names; re-check symlinks resolve inside the root.
+    pub confine_paths: bool,
+    /// Commands outside the strict allowlist force a human review (headless
+    /// runs deny them).
+    pub enforce_allowlist: bool,
+}
+
+impl Default for PolicySettings {
+    fn default() -> Self {
+        Self {
+            confine_paths: true,
+            enforce_allowlist: true,
+        }
+    }
+}
+
+impl PolicySettings {
+    pub const SANDBOXED: PolicySettings = PolicySettings {
+        confine_paths: false,
+        enforce_allowlist: false,
+    };
+}
+
+/// Resolve a model-supplied path under `settings`: confined mode validates and
+/// confines; unconfined mode accepts absolute paths and `..` as-is (relative
+/// paths still resolve against the root).
+pub fn resolve_path(
+    root: &Path,
+    path: &str,
+    settings: &PolicySettings,
+) -> Result<PathBuf, PolicyError> {
+    if settings.confine_paths {
+        let relative = validate_relative_path(path)?;
+        return confine_to_root(root, &relative);
+    }
+    if path.is_empty() {
+        return Err(PolicyError::Path("empty path".into()));
+    }
+    let candidate = Path::new(path);
+    Ok(if candidate.is_absolute() {
+        candidate.to_path_buf()
+    } else {
+        root.join(candidate)
+    })
+}
+
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum PolicyError {
     #[error("path is not allowed: {0}")]
@@ -157,11 +210,20 @@ pub enum CommandClass {
 }
 
 pub fn classify_command(argv: &[String]) -> CommandClass {
+    classify_command_with(argv, &PolicySettings::default())
+}
+
+/// Classification under explicit settings: without the allowlist, every
+/// non-forbidden argv is auto-eligible.
+pub fn classify_command_with(argv: &[String], settings: &PolicySettings) -> CommandClass {
     let Some(program) = argv.first() else {
         return CommandClass::Forbidden("empty command".into());
     };
     if FORBIDDEN_COMMANDS.contains(&program.as_str()) {
         return CommandClass::Forbidden(format!("privilege escalation is never run: {program}"));
+    }
+    if !settings.enforce_allowlist {
+        return CommandClass::AutoEligible;
     }
     if !ALLOWED_COMMANDS.contains(&program.as_str()) {
         return CommandClass::NeedsApproval(format!(
@@ -287,6 +349,27 @@ mod tests {
         ));
         assert!(matches!(classify(&["su", "-"]), CommandClass::Forbidden(_)));
         assert!(matches!(classify(&[]), CommandClass::Forbidden(_)));
+    }
+
+    #[test]
+    fn sandboxed_settings_relax_confinement_but_never_escalation() {
+        let root = tempfile::tempdir().unwrap();
+        let sandboxed = PolicySettings::SANDBOXED;
+        assert_eq!(
+            resolve_path(root.path(), "/etc/hostname", &sandboxed).unwrap(),
+            PathBuf::from("/etc/hostname")
+        );
+        assert!(resolve_path(root.path(), "../x", &sandboxed).is_ok());
+        assert!(resolve_path(root.path(), "/etc/hostname", &PolicySettings::default()).is_err());
+        let argv = |a: &[&str]| a.iter().map(|s| s.to_string()).collect::<Vec<_>>();
+        assert_eq!(
+            classify_command_with(&argv(&["rm", "-rf", "build"]), &sandboxed),
+            CommandClass::AutoEligible
+        );
+        assert!(matches!(
+            classify_command_with(&argv(&["sudo", "ls"]), &sandboxed),
+            CommandClass::Forbidden(_)
+        ));
     }
 
     #[test]

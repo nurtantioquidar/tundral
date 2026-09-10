@@ -17,6 +17,9 @@ pub enum SessionEvent {
         at_epoch_ms: u64,
         workspace: String,
         model: String,
+        /// Provider id; absent in logs written before descriptors existed.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        provider: Option<String>,
         system_prompt: String,
     },
     UserMessage {
@@ -273,6 +276,7 @@ mod tests {
                 at_epoch_ms: 1,
                 workspace: "w".into(),
                 model: "deepseek-v4-flash".into(),
+                provider: Some("deepseek".into()),
                 system_prompt: "sys".into(),
             })
             .unwrap();
@@ -291,6 +295,7 @@ mod tests {
                         name: "read_file".into(),
                         arguments: r#"{"path":"a"}"#.into(),
                     }],
+                    replay_state: None,
                 },
             })
             .unwrap();

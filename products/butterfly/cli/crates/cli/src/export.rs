@@ -160,6 +160,7 @@ mod tests {
                 at_epoch_ms: 1,
                 workspace: "w".into(),
                 model: "deepseek-v4-flash".into(),
+                provider: None,
                 system_prompt: "sys <secret>".into(),
             },
             SessionEvent::UserMessage {
@@ -174,6 +175,7 @@ mod tests {
                         name: "read_file".into(),
                         arguments: r#"{"path":"a"}"#.into(),
                     }],
+                    replay_state: None,
                 },
             },
             SessionEvent::ToolResult {

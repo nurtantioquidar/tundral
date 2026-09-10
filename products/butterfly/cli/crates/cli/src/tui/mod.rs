@@ -14,11 +14,11 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 use anyhow::{Context, Result};
-use butterfly_core::domain::Model;
 use butterfly_core::session::store::SessionStore;
 use butterfly_core::session::Agent;
 use tokio_util::sync::CancellationToken;
 
+use crate::providers::ModelHub;
 use crate::repl::{handle_command, mode_name, turn_status_line, CommandResult};
 use completion::CompletionIndex;
 use editor::Editor;
@@ -61,7 +61,7 @@ impl Drop for TerminalGuard {
 
 fn status_of(agent: &Agent) -> Status {
     Status {
-        model: agent.model().wire_name().to_string(),
+        model: agent.model().id.clone(),
         mode: mode_name(agent.permission_mode()),
         ctx_pct: agent.utilization(),
     }
@@ -149,7 +149,12 @@ fn spawn_event_thread(
     });
 }
 
-pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Result<()> {
+pub async fn run(
+    mut agent: Agent,
+    root: PathBuf,
+    show_reasoning: bool,
+    hub: &ModelHub,
+) -> Result<()> {
     if agent.atlas_enabled() {
         let _ = agent.atlas_mut().refresh();
     }
@@ -190,21 +195,27 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
                 Some(UiAction::Eof) | None => break,
             }
         };
-        match handle_command(&mut agent, &input).await {
+        match handle_command(&mut agent, &input, hub).await {
             CommandResult::Quit => break,
             CommandResult::Connect => {
                 // Cancel resolves as None/Err: the composer returns silently.
-                if let Ok(Some((provider, api_key))) = ui.open_connect().await {
+                if let Ok(Some((provider, api_key))) = ui.open_connect(hub.connect_choices()).await
+                {
                     match crate::credentials::save_key(&provider, &api_key) {
                         Ok(path) => {
                             let mut note = format!(
                                 "connected · {provider} key saved to {} · new sessions use it automatically",
                                 path.display()
                             );
-                            if std::env::var("DEEPSEEK_API_KEY").is_ok() {
-                                note.push_str(
-                                    " (note: DEEPSEEK_API_KEY is set and takes precedence)",
-                                );
+                            if let Some(env) = hub
+                                .registry
+                                .provider(&provider)
+                                .filter(|p| std::env::var(&p.api_key_env).is_ok())
+                                .map(|p| p.api_key_env.clone())
+                            {
+                                note.push_str(&format!(
+                                    " (note: {env} is set and takes precedence)"
+                                ));
                             }
                             ui.print_note(&note);
                         }
@@ -216,29 +227,23 @@ pub async fn run(mut agent: Agent, root: PathBuf, show_reasoning: bool) -> Resul
                 continue;
             }
             CommandResult::PickModel => {
-                const MODELS: [Model; 2] = [Model::DeepseekV4Flash, Model::DeepseekV4Pro];
+                let models = hub.registry.models().to_vec();
                 let current = agent.model();
-                let items: Vec<String> = MODELS
+                let items: Vec<String> = models
                     .iter()
                     .map(|model| {
-                        let mut label = format!("{} ({})", model.display_name(), model.wire_name());
-                        if *model == current {
+                        let mut label = format!("{} ({})", model.display_name, model.id);
+                        if model.id == current.id {
                             label.push_str(" · current");
                         }
                         label
                     })
                     .collect();
-                let initial = MODELS.iter().position(|m| *m == current).unwrap_or(0);
+                let initial = models.iter().position(|m| m.id == current.id).unwrap_or(0);
                 match ui.open_select("switch model", items, initial).await {
-                    Ok(Some(index)) if MODELS[index] != current => {
-                        let model = MODELS[index];
-                        agent.set_model(model);
-                        crate::state::remember_model(model.wire_name());
-                        ui.print_note(&format!(
-                            "model set: {} ({}); next request re-caches the prefix",
-                            model.display_name(),
-                            model.wire_name()
-                        ));
+                    Ok(Some(index)) if models[index].id != current.id => {
+                        let note = crate::repl::switch_model(&mut agent, &models[index].id, hub);
+                        ui.print_note(&note);
                     }
                     // Cancel / unchanged: the composer returns, no residue.
                     _ => {}

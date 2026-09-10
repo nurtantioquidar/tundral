@@ -17,7 +17,10 @@ use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
+use crate::failure::FailureKind;
+
 const LIST_CAP: usize = 20;
+const FAILURES_CAP: usize = 10;
 const ENTRY_CAP_CHARS: usize = 200;
 const FILES_SHOWN_CAP: usize = 40;
 const COMMANDS_CAP: usize = 20;
@@ -34,6 +37,14 @@ pub struct CommandOutcome {
     pub ok: bool,
 }
 
+/// A classified failure the loop recorded, kept for compaction checkpoints
+/// and routing metadata (`previous_failure`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RecordedFailure {
+    pub kind: FailureKind,
+    pub summary: String,
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WorkingState {
     pub objective: Option<String>,
@@ -44,6 +55,16 @@ pub struct WorkingState {
     pub files_read: BTreeSet<String>,
     /// Latest outcome per distinct command, most recent last.
     pub commands: Vec<CommandOutcome>,
+    /// Most recent classified failures (tool, verification, provider).
+    #[serde(default)]
+    pub failures: Vec<RecordedFailure>,
+    /// Verification commands the model declared via `update_plan`; the loop
+    /// runs them itself and never trusts a claimed result.
+    #[serde(default)]
+    pub verification_commands: Vec<Vec<String>>,
+    /// One-line result of the last verification stage, if any ran.
+    #[serde(default)]
+    pub verification: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -60,6 +81,10 @@ struct UpdatePlanArgs {
     /// Replaces the task list when present.
     #[serde(default)]
     tasks: Option<Vec<PlanTask>>,
+    /// Replaces the declared verification commands (argv vectors) when
+    /// present. Accepted but not advertised in the schema (prefix bytes).
+    #[serde(default)]
+    verification: Option<Vec<Vec<String>>>,
 }
 
 fn clip(text: &str) -> String {
@@ -104,6 +129,13 @@ impl WorkingState {
                     text: clip(&task.text),
                     done: task.done,
                 })
+                .take(LIST_CAP)
+                .collect();
+        }
+        if let Some(commands) = args.verification {
+            self.verification_commands = commands
+                .into_iter()
+                .filter(|argv| !argv.is_empty())
                 .take(LIST_CAP)
                 .collect();
         }
@@ -166,6 +198,20 @@ impl WorkingState {
         }
     }
 
+    /// Remember a classified failure (bounded, most recent last).
+    pub fn record_failure(&mut self, kind: FailureKind, summary: &str) {
+        self.failures.push(RecordedFailure {
+            kind,
+            summary: clip(summary),
+        });
+        let excess = self.failures.len().saturating_sub(FAILURES_CAP);
+        self.failures.drain(..excess);
+    }
+
+    pub fn last_failure(&self) -> Option<&RecordedFailure> {
+        self.failures.last()
+    }
+
     pub fn is_empty(&self) -> bool {
         *self == WorkingState::default()
     }
@@ -219,6 +265,15 @@ impl WorkingState {
                     if record.ok { "ok" } else { "failed" }
                 ));
             }
+        }
+        if !self.failures.is_empty() {
+            out.push_str("Known failures (most recent last):\n");
+            for failure in &self.failures {
+                out.push_str(&format!("- {}: {}\n", failure.kind, failure.summary));
+            }
+        }
+        if let Some(verification) = &self.verification {
+            out.push_str(&format!("Verification: {verification}\n"));
         }
         out
     }
@@ -308,5 +363,24 @@ mod tests {
         assert!(rendered.contains("Objective: o"));
         assert!(rendered.contains("`cargo test` → ok"));
         assert!(rendered.len() < ENTRY_CAP_CHARS + 400);
+    }
+
+    #[test]
+    fn failures_and_verification_are_tracked_and_rendered() {
+        let mut state = WorkingState::default();
+        for i in 0..(FAILURES_CAP + 3) {
+            state.record_failure(FailureKind::TestFailure, &format!("boom {i}"));
+        }
+        assert_eq!(state.failures.len(), FAILURES_CAP);
+        assert_eq!(state.last_failure().unwrap().summary, "boom 12");
+        state
+            .apply_update(r#"{"verification":[["cargo","test"],[]]}"#)
+            .unwrap();
+        assert_eq!(state.verification_commands, vec![vec!["cargo", "test"]]);
+        state.verification = Some("1/1 checks passed → verified".into());
+        let rendered = state.render();
+        assert!(rendered.contains("Known failures"));
+        assert!(rendered.contains("test_failure: boom 12"));
+        assert!(rendered.contains("Verification: 1/1 checks passed"));
     }
 }

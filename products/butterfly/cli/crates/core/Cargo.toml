@@ -20,6 +20,7 @@ grep-regex = { workspace = true }
 grep-searcher = { workspace = true }
 dirs = { workspace = true }
 uuid = { workspace = true }
+blake3 = { workspace = true }
 
 [dev-dependencies]
 tempfile = { workspace = true }

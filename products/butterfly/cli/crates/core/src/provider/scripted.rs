@@ -6,14 +6,22 @@ use std::sync::Mutex;
 
 use tokio_util::sync::CancellationToken;
 
-use super::{CompletedTurn, FinishReason, Provider, ProviderError, ProviderRequest, StreamSink};
-use crate::domain::{price_usage, AssistantMessage, ChatMessage, Model, Usage};
+use super::{
+    CompletedTurn, FinishReason, Provider, ProviderError, ProviderRequest, RoutingFacts,
+    RoutingMetadata, StreamSink, TaskFeedback,
+};
+use crate::domain::{price_usage, AssistantMessage, ChatMessage, Usage};
 
 pub struct ScriptedProvider {
     turns: Mutex<std::vec::IntoIter<AssistantMessage>>,
     pub requests: Mutex<Vec<Vec<ChatMessage>>>,
     usage_per_turn: Usage,
     finish_override: Option<FinishReason>,
+    routing_facts: Option<RoutingFacts>,
+    pub routing_requests: Mutex<Vec<Option<RoutingMetadata>>>,
+    pub feedback: Mutex<Vec<TaskFeedback>>,
+    /// Remaining calls that fail mid-stream with a transport error.
+    transport_failures: Mutex<u32>,
 }
 
 impl ScriptedProvider {
@@ -28,7 +36,32 @@ impl ScriptedProvider {
                 output_tokens: 100,
             },
             finish_override: None,
+            routing_facts: None,
+            routing_requests: Mutex::new(Vec::new()),
+            feedback: Mutex::new(Vec::new()),
+            transport_failures: Mutex::new(0),
         }
+    }
+
+    /// Fail the next `count` calls with a mid-stream transport error (the
+    /// request is still recorded), then behave normally.
+    pub fn with_transport_failures(self, count: u32) -> Self {
+        *self.transport_failures.lock().expect("failures lock") = count;
+        self
+    }
+
+    /// Return these routing facts on every turn (a fake router).
+    pub fn with_routing_facts(mut self, facts: RoutingFacts) -> Self {
+        self.routing_facts = Some(facts);
+        self
+    }
+
+    pub fn recorded_routing(&self) -> Vec<Option<RoutingMetadata>> {
+        self.routing_requests.lock().expect("routing lock").clone()
+    }
+
+    pub fn recorded_feedback(&self) -> Vec<TaskFeedback> {
+        self.feedback.lock().expect("feedback lock").clone()
     }
 
     /// Report this finish reason on every response (e.g. `Length` to test
@@ -60,6 +93,19 @@ impl Provider for ScriptedProvider {
             .lock()
             .expect("requests lock")
             .push(request.messages.clone());
+        self.routing_requests
+            .lock()
+            .expect("routing lock")
+            .push(request.routing.clone());
+        {
+            let mut failures = self.transport_failures.lock().expect("failures lock");
+            if *failures > 0 {
+                *failures -= 1;
+                return Err(ProviderError::Transport(
+                    "error decoding response body".into(),
+                ));
+            }
+        }
         let message = self
             .turns
             .lock()
@@ -78,10 +124,21 @@ impl Provider for ScriptedProvider {
             });
         let usage = self.usage_per_turn;
         Ok(CompletedTurn {
-            cost: price_usage(Model::DeepseekV4Flash, usage),
+            cost: price_usage(&request.model.pricing, usage),
             message,
             usage,
             finish,
+            latency_ms: 0,
+            retries: 0,
+            routing: self.routing_facts.clone(),
         })
+    }
+
+    async fn report_feedback(&self, feedback: &TaskFeedback) -> Result<(), ProviderError> {
+        self.feedback
+            .lock()
+            .expect("feedback lock")
+            .push(feedback.clone());
+        Ok(())
     }
 }

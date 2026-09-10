@@ -15,8 +15,9 @@ pub mod prompt;
 use tokio_util::sync::CancellationToken;
 
 use crate::domain::{ChatMessage, Cost, Usage};
+use crate::model::ModelDescriptor;
 use crate::provider::{
-    NullSink, Provider, ProviderError, ProviderRequest, ReasoningEffort, ToolSchema,
+    NullSink, Provider, ProviderError, ProviderRequest, RoutingMetadata, ToolSchema,
 };
 
 #[derive(Debug, Clone)]
@@ -146,7 +147,7 @@ impl TokenLedger {
         self.bytes_per_token
     }
 
-    fn tokens_for_bytes(&self, bytes: u64) -> u64 {
+    pub fn tokens_for_bytes(&self, bytes: u64) -> u64 {
         (bytes as f64 / self.bytes_per_token).ceil() as u64
     }
 }
@@ -187,6 +188,11 @@ impl ContextManager {
             config,
             ledger: TokenLedger::default(),
         }
+    }
+
+    /// Re-derive the window from a (new) model's context limit.
+    pub fn set_window_tokens(&mut self, window_tokens: u64) {
+        self.config.window_tokens = window_tokens;
     }
 
     pub fn utilization(&self) -> f64 {
@@ -296,8 +302,9 @@ impl ContextManager {
         focus: Option<&str>,
         tools: &[ToolSchema],
         provider: &dyn Provider,
-        model: crate::domain::Model,
-        effort: ReasoningEffort,
+        model: std::sync::Arc<ModelDescriptor>,
+        effort: Option<String>,
+        routing: Option<RoutingMetadata>,
         cancel: &CancellationToken,
     ) -> Result<CompactionOutcome, ProviderError> {
         let before_tokens = self.ledger.estimated_next_prompt_tokens();
@@ -313,14 +320,18 @@ impl ContextManager {
             content: instruction,
         });
         let request = ProviderRequest {
-            model,
             messages: summarizer_messages,
             tools: tools.to_vec(),
-            // Thinking tokens count against the output budget on DeepSeek
-            // reasoning models; give the summarizer headroom so reasoning
-            // cannot starve the narrative itself.
-            max_output_tokens: self.config.max_summary_tokens.saturating_add(4_096),
+            // Thinking tokens count against the output budget on reasoning
+            // models; give the summarizer headroom so reasoning cannot starve
+            // the narrative itself.
+            max_output_tokens: self
+                .config
+                .max_summary_tokens
+                .saturating_add(if model.supports_reasoning() { 4_096 } else { 0 }),
+            model,
             effort,
+            routing,
         };
         let turn = provider.stream(&request, cancel, &mut NullSink).await?;
         let narrative = turn.message.content.unwrap_or_default();
@@ -436,7 +447,8 @@ fn describe_elided(messages: &[ChatMessage], tool_index: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{AssistantMessage, Model, ToolCall};
+    use crate::domain::{AssistantMessage, ToolCall};
+    use crate::model::reference_model;
     use crate::provider::scripted::ScriptedProvider;
 
     fn tool_call(id: &str, name: &str, arguments: &str) -> ToolCall {
@@ -463,6 +475,7 @@ mod tests {
                     "read_file",
                     &format!(r#"{{"path":"file_{index}.rs"}}"#),
                 )],
+                replay_state: None,
             }));
             messages.push(ChatMessage::Tool {
                 tool_call_id: format!("call_{index}"),
@@ -472,6 +485,7 @@ mod tests {
                 content: Some(format!("done with {index}")),
                 reasoning_content: None,
                 tool_calls: vec![],
+                replay_state: None,
             }));
         }
         messages
@@ -575,6 +589,7 @@ mod tests {
             content: Some("the narrative summary".into()),
             reasoning_content: None,
             tool_calls: vec![],
+            replay_state: None,
         }]);
         let outcome = manager
             .summarize(
@@ -583,8 +598,9 @@ mod tests {
                 None,
                 &crate::tools::tool_schemas(),
                 &provider,
-                Model::DeepseekV4Flash,
-                ReasoningEffort::High,
+                reference_model(),
+                Some("high".into()),
+                None,
                 &CancellationToken::new(),
             )
             .await
@@ -662,6 +678,7 @@ mod tests {
                     "read_file",
                     r#"{"path":"big.rs"}"#,
                 )],
+                replay_state: None,
             }));
             messages.push(ChatMessage::Tool {
                 tool_call_id: format!("c{index}"),
@@ -673,6 +690,7 @@ mod tests {
             content: Some("summary".into()),
             reasoning_content: None,
             tool_calls: vec![],
+            replay_state: None,
         }]);
         let outcome = manager
             .summarize(
@@ -681,8 +699,9 @@ mod tests {
                 None,
                 &crate::tools::tool_schemas(),
                 &provider,
-                Model::DeepseekV4Flash,
-                ReasoningEffort::High,
+                reference_model(),
+                Some("high".into()),
+                None,
                 &CancellationToken::new(),
             )
             .await
@@ -720,6 +739,7 @@ mod tests {
                 content: Some("first answer".into()),
                 reasoning_content: None,
                 tool_calls: vec![],
+                replay_state: None,
             }),
         ];
         manager.ledger.rebase(&messages);
@@ -728,11 +748,13 @@ mod tests {
                 content: Some("narrative one".into()),
                 reasoning_content: None,
                 tool_calls: vec![],
+                replay_state: None,
             },
             AssistantMessage {
                 content: Some("narrative two".into()),
                 reasoning_content: None,
                 tool_calls: vec![],
+                replay_state: None,
             },
         ]);
         for _ in 0..2 {
@@ -743,8 +765,9 @@ mod tests {
                     None,
                     &crate::tools::tool_schemas(),
                     &provider,
-                    Model::DeepseekV4Flash,
-                    ReasoningEffort::High,
+                    reference_model(),
+                    Some("high".into()),
+                    None,
                     &CancellationToken::new(),
                 )
                 .await

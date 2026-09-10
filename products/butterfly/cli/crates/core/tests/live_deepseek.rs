@@ -1,15 +1,16 @@
-//! Opt-in live smoke test. Costs real money and needs network access, so it
-//! runs only when explicitly requested:
+//! Opt-in live smoke test against a real provider. Costs real money and needs
+//! network access, so it runs only when explicitly requested:
 //!
 //! ```bash
 //! BUTTERFLY_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p butterfly-core --test live_deepseek -- --nocapture
+//! # any registry model: BUTTERFLY_LIVE_MODEL=glm-5.3-flash ZAI_API_KEY=... (same command)
 //! ```
 
 use std::sync::Arc;
 
-use butterfly_core::domain::Model;
-use butterfly_core::provider::deepseek::DeepSeekProvider;
-use butterfly_core::provider::{NullSink, Provider, ProviderRequest, ReasoningEffort};
+use butterfly_core::model::Registry;
+use butterfly_core::provider::openai_compat::OpenAiCompatProvider;
+use butterfly_core::provider::{NullSink, Provider, ProviderRequest};
 use tokio_util::sync::CancellationToken;
 
 #[tokio::test]
@@ -18,11 +19,19 @@ async fn live_streaming_round_trip_reports_cache_counters() {
         eprintln!("skipped: set BUTTERFLY_LIVE_TEST=1 to run");
         return;
     }
-    let api_key = std::env::var("DEEPSEEK_API_KEY").expect("DEEPSEEK_API_KEY");
-    let base_url = std::env::var("DEEPSEEK_BASE_URL").ok();
-    let provider: Arc<dyn Provider> = Arc::new(DeepSeekProvider::new(api_key, base_url));
+    let registry = Registry::builtin();
+    let model_id =
+        std::env::var("BUTTERFLY_LIVE_MODEL").unwrap_or_else(|_| "deepseek-v4-flash".into());
+    let model = registry.resolve(&model_id).expect("registry model");
+    let descriptor = registry.provider_for(&model).expect("provider");
+    let api_key = std::env::var(&descriptor.api_key_env)
+        .unwrap_or_else(|_| panic!("{} is required", descriptor.api_key_env));
+    let provider: Arc<dyn Provider> = Arc::new(
+        OpenAiCompatProvider::from_descriptor(descriptor, api_key, None).expect("endpoint"),
+    );
     let request = ProviderRequest {
-        model: Model::DeepseekV4Flash,
+        effort: model.resolve_effort(None).unwrap(),
+        model,
         messages: vec![
             butterfly_core::domain::ChatMessage::System {
                 content: "You are a terse assistant.".into(),
@@ -33,7 +42,7 @@ async fn live_streaming_round_trip_reports_cache_counters() {
         ],
         tools: butterfly_core::tools::tool_schemas(),
         max_output_tokens: 512,
-        effort: ReasoningEffort::High,
+        routing: None,
     };
     let cancel = CancellationToken::new();
 
@@ -44,12 +53,14 @@ async fn live_streaming_round_trip_reports_cache_counters() {
     assert!(first.usage.input_tokens > 0);
     assert!(first.usage.output_tokens > 0);
     eprintln!(
-        "first: in={} hit={} miss={} out={} cost={}µ$",
+        "first: in={} hit={} miss={} out={} cost={}µ$ ({}ms, {} retries)",
         first.usage.input_tokens,
         first.usage.cache_hit_input_tokens,
         first.usage.cache_miss_input_tokens,
         first.usage.output_tokens,
-        first.cost.actual_microusd
+        first.cost.actual_microusd,
+        first.latency_ms,
+        first.retries
     );
 
     // Identical prefix + one appended message: the second request should see
@@ -76,8 +87,17 @@ async fn live_streaming_round_trip_reports_cache_counters() {
         second.usage.cache_miss_input_tokens,
         second.usage.output_tokens
     );
-    assert!(
-        second.usage.cache_hit_input_tokens > 0,
-        "expected prefix-cache hits on the second request"
-    );
+    // OpenAI caches only prefixes of 1,024+ tokens; smaller probes cannot
+    // prove caching, so the assertion applies when the prefix is big enough.
+    if first.usage.input_tokens >= 1_024 {
+        assert!(
+            second.usage.cache_hit_input_tokens > 0,
+            "expected prefix-cache hits on the second request"
+        );
+    } else {
+        eprintln!(
+            "note: prefix is {} tokens (<1024); cache assertion skipped for this provider",
+            first.usage.input_tokens
+        );
+    }
 }

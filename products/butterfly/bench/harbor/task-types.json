@@ -1,0 +1,15 @@
+{
+  "_comment": "Coarse Nimble task type per Terminal-Bench task (contract enum: debugging feature refactor test explain ops). Hand-assigned from the task statements; never inferred from prompts at runtime.",
+  "bun-sourcemap-leak": "debugging",
+  "data-anonymization": "feature",
+  "distributed-dedup": "feature",
+  "html-js-filter": "feature",
+  "interleaved-vigenere": "feature",
+  "legacy-utility-triage": "ops",
+  "music-harmony": "feature",
+  "payments-pipeline-fix": "debugging",
+  "react-lead-form": "debugging",
+  "session-window-debug": "debugging",
+  "sound-change-cascade": "feature",
+  "wal-recovery-ordering": "debugging"
+}

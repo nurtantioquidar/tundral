@@ -1,0 +1,9 @@
+# Fast iteration subset (2026-09-08): five dev-subset tasks with short median runtimes and
+# discriminating outcomes (GLM passes 3 of them; Muse near-missed 2). Use with N_CONCURRENT=5
+# and AGENT_TIMEOUT_MULT=0.125 (1h cap) for a ~40-minute cycle. The dev subset stays the
+# comparison set; this is for turning the crank on harness changes.
+react-lead-form
+sound-change-cascade
+session-window-debug
+wal-recovery-ordering
+bun-sourcemap-leak

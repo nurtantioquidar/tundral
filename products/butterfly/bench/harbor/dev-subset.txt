@@ -1,0 +1,15 @@
+# Fixed development subset of terminal-bench/terminal-bench@4.0.0 (66 tasks total, 2026-09-03).
+# Twelve CPU-only tasks (GPU tasks fp8-rmsnorm-gemm, jax-speedrun-gpu, math-eval-grader excluded) spanning debugging, data work, web, and algorithms, chosen for fast
+# iteration; the full set is the number that counts. One task name per line; '#' comments.
+bun-sourcemap-leak
+data-anonymization
+distributed-dedup
+html-js-filter
+interleaved-vigenere
+legacy-utility-triage
+music-harmony
+payments-pipeline-fix
+react-lead-form
+session-window-debug
+sound-change-cascade
+wal-recovery-ordering

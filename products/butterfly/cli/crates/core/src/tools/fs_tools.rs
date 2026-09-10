@@ -5,16 +5,19 @@ use std::path::Path;
 
 use serde::Deserialize;
 
-use super::policy::{confine_to_root, validate_relative_path, PolicyError};
+use super::policy::{resolve_path, PolicyError, PolicySettings};
 use super::{ToolError, ToolOutput};
 
 const READ_CAP_BYTES: usize = 24_000;
 const LIST_CAP_ENTRIES: usize = 500;
 const WRITE_CAP_BYTES: usize = 500_000;
 
-pub(crate) fn resolve(root: &Path, path: &str) -> Result<std::path::PathBuf, PolicyError> {
-    let relative = validate_relative_path(path)?;
-    confine_to_root(root, &relative)
+pub(crate) fn resolve(
+    root: &Path,
+    path: &str,
+    settings: &PolicySettings,
+) -> Result<std::path::PathBuf, PolicyError> {
+    resolve_path(root, path, settings)
 }
 
 #[derive(Deserialize)]
@@ -29,8 +32,18 @@ pub struct ReadFileArgs {
     pub limit: Option<usize>,
 }
 
+/// Test convenience: the default (confined) policy.
+#[cfg(test)]
 pub fn read_file(root: &Path, args: ReadFileArgs) -> Result<ToolOutput, ToolError> {
-    let path = resolve(root, &args.path)?;
+    read_file_with(root, args, &PolicySettings::default())
+}
+
+pub fn read_file_with(
+    root: &Path,
+    args: ReadFileArgs,
+    settings: &PolicySettings,
+) -> Result<ToolOutput, ToolError> {
+    let path = resolve(root, &args.path, settings)?;
     let bytes = std::fs::read(&path).map_err(|error| ToolError::Io(args.path.clone(), error))?;
     let text = String::from_utf8_lossy(&bytes);
     let start = args.offset.unwrap_or(1).max(1);
@@ -75,9 +88,13 @@ pub struct ListFilesArgs {
     pub path: Option<String>,
 }
 
-pub fn list_files(root: &Path, args: ListFilesArgs) -> Result<ToolOutput, ToolError> {
+pub fn list_files_with(
+    root: &Path,
+    args: ListFilesArgs,
+    settings: &PolicySettings,
+) -> Result<ToolOutput, ToolError> {
     let base = match args.path.as_deref().filter(|p| !p.is_empty()) {
-        Some(path) => resolve(root, path)?,
+        Some(path) => resolve(root, path, settings)?,
         None => root.to_path_buf(),
     };
     let mut entries = Vec::new();
@@ -128,7 +145,17 @@ pub struct EditArgs {
     pub replace_all: bool,
 }
 
+/// Test convenience: the default (confined) policy.
+#[cfg(test)]
 pub fn edit(root: &Path, args: EditArgs) -> Result<ToolOutput, ToolError> {
+    edit_with(root, args, &PolicySettings::default())
+}
+
+pub fn edit_with(
+    root: &Path,
+    args: EditArgs,
+    settings: &PolicySettings,
+) -> Result<ToolOutput, ToolError> {
     if args.old_string == args.new_string {
         return Err(ToolError::Failed(
             "old_string and new_string are identical".into(),
@@ -139,7 +166,7 @@ pub fn edit(root: &Path, args: EditArgs) -> Result<ToolOutput, ToolError> {
             "old_string must not be empty; use write_file to create files".into(),
         ));
     }
-    let path = resolve(root, &args.path)?;
+    let path = resolve(root, &args.path, settings)?;
     let original =
         std::fs::read_to_string(&path).map_err(|error| ToolError::Io(args.path.clone(), error))?;
     let occurrences = original.matches(&args.old_string).count();
@@ -179,13 +206,23 @@ pub struct WriteFileArgs {
     pub content: String,
 }
 
+/// Test convenience: the default (confined) policy.
+#[cfg(test)]
 pub fn write_file(root: &Path, args: WriteFileArgs) -> Result<ToolOutput, ToolError> {
+    write_file_with(root, args, &PolicySettings::default())
+}
+
+pub fn write_file_with(
+    root: &Path,
+    args: WriteFileArgs,
+    settings: &PolicySettings,
+) -> Result<ToolOutput, ToolError> {
     if args.content.len() > WRITE_CAP_BYTES {
         return Err(ToolError::Failed(format!(
             "content exceeds {WRITE_CAP_BYTES} byte cap"
         )));
     }
-    let path = resolve(root, &args.path)?;
+    let path = resolve(root, &args.path, settings)?;
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).map_err(|error| ToolError::Io(args.path.clone(), error))?;
     }
@@ -208,6 +245,18 @@ fn atomic_write(path: &Path, bytes: &[u8]) -> Result<(), ToolError> {
     ));
     std::fs::write(&temp, bytes)
         .map_err(|error| ToolError::Io(temp.display().to_string(), error))?;
+    // Replacing a file must not silently change what it is: keep the original
+    // mode (an edited script stays executable) and, when running as root in a
+    // container, the original owner (a privilege-dropped process must still
+    // read it). Observed on Terminal-Bench 2026-09-04.
+    if let Ok(existing) = std::fs::metadata(path) {
+        let _ = std::fs::set_permissions(&temp, existing.permissions());
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::MetadataExt as _;
+            let _ = std::os::unix::fs::chown(&temp, Some(existing.uid()), Some(existing.gid()));
+        }
+    }
     std::fs::rename(&temp, path).map_err(|error| {
         let _ = std::fs::remove_file(&temp);
         ToolError::Io(path.display().to_string(), error)
@@ -237,6 +286,44 @@ mod tests {
         )
         .unwrap();
         assert_eq!(output.content, "     2\tbeta");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn rewriting_a_file_preserves_its_mode() {
+        use std::os::unix::fs::PermissionsExt as _;
+        let dir = workspace();
+        let script = dir.path().join("run.sh");
+        std::fs::write(&script, "#!/bin/sh\necho old\n").unwrap();
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        edit(
+            dir.path(),
+            EditArgs {
+                path: "run.sh".into(),
+                old_string: "old".into(),
+                new_string: "new".into(),
+                replace_all: false,
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            std::fs::metadata(&script).unwrap().permissions().mode() & 0o777,
+            0o755,
+            "edit must keep the executable bit"
+        );
+        write_file(
+            dir.path(),
+            WriteFileArgs {
+                path: "run.sh".into(),
+                content: "#!/bin/sh\necho again\n".into(),
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            std::fs::metadata(&script).unwrap().permissions().mode() & 0o777,
+            0o755,
+            "write_file over an existing file must keep its mode"
+        );
     }
 
     #[test]

@@ -2,10 +2,11 @@
 //! dispatch. Argument validation happens locally regardless of what the
 //! provider claims to enforce.
 
-mod command;
+pub(crate) mod command;
 mod fs_tools;
 pub mod policy;
 pub(crate) mod search;
+mod shell;
 
 use std::path::{Path, PathBuf};
 
@@ -13,6 +14,7 @@ use serde_json::json;
 use tokio_util::sync::CancellationToken;
 
 use crate::provider::ToolSchema;
+use policy::PolicySettings;
 
 #[derive(Debug, thiserror::Error)]
 pub enum ToolError {
@@ -71,6 +73,15 @@ pub const TOOL_NAMES: &[(&str, ToolKind)] = &[
     // Atlas tools (sanctioned prefix change, operator-approved 2026-08-31).
     ("repo_map", ToolKind::ReadOnly),
     ("symbol_search", ToolKind::ReadOnly),
+    // Sandbox-only shell (2026-09-03). Advertised ONLY in sandboxed sessions,
+    // so default sessions keep the exact historical schema bytes.
+    ("shell", ToolKind::Command),
+    // Completion gate (2026-09-04). Advertised ONLY when the session runs with
+    // the gate on, so default sessions keep the exact historical schema bytes.
+    ("complete_task", ToolKind::ReadOnly),
+    // Independent verifier (2026-09-09). Advertised ONLY in the fresh-context
+    // verifier session that reviews a completion claim; never in a worker.
+    ("report_verdict", ToolKind::ReadOnly),
 ];
 
 pub fn tool_kind(name: &str) -> Option<ToolKind> {
@@ -214,20 +225,114 @@ pub fn tool_schemas() -> Vec<ToolSchema> {
                 "additionalProperties": false
             }),
         },
+        ToolSchema {
+            name: "shell".into(),
+            description: "Run a shell command line (bash -lc) inside the sandbox: pipelines, redirects, globbing, package installs. Output is bounded; long commands should set timeout_seconds.".into(),
+            parameters: json!({
+                "type": "object",
+                "properties": {
+                    "command": {"type": "string", "description": "Shell command line"},
+                    "timeout_seconds": {"type": "integer", "description": "1-1800, default 120"}
+                },
+                "required": ["command"],
+                "additionalProperties": false
+            }),
+        },
+        ToolSchema {
+            name: "complete_task".into(),
+            description: "Declare the task finished. Required to end an autonomous run: a reply without tool calls does not finish the task. List every deliverable the task statement asks for with the tool output that proves it. Optional checks are acceptance commands (argv vectors) the harness runs itself after you finish; a failing check fails the attempt. The first call returns a review of the task statement; call again to finish once every requirement is proven.".into(),
+            parameters: json!({
+                "type": "object",
+                "properties": {
+                    "summary": {"type": "string", "description": "What changed and how it was verified"},
+                    "deliverables": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "item": {"type": "string", "description": "A requirement from the task statement"},
+                                "evidence": {"type": "string", "description": "The tool output that proves it (file read back, command result, passing check)"}
+                            },
+                            "required": ["item", "evidence"],
+                            "additionalProperties": false
+                        }
+                    },
+                    "checks": {
+                        "type": "array",
+                        "items": {"type": "array", "items": {"type": "string"}},
+                        "description": "Acceptance commands as argv vectors, run by the harness after completion"
+                    },
+                    "requirements": {
+                        "type": "array",
+                        "description": "Every requirement stated in the task, in the statement's own terms, including any not yet met",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "requirement": {"type": "string", "description": "One requirement quoted or paraphrased from the task statement"},
+                                "status": {"type": "string", "enum": ["met", "unmet"], "description": "met only when a tool output proved it"},
+                                "evidence": {"type": "string", "description": "The command and output that proved it, or why it is unmet"}
+                            },
+                            "required": ["requirement", "status", "evidence"],
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "required": ["summary", "deliverables"],
+                "additionalProperties": false
+            }),
+        },
+        ToolSchema {
+            name: "report_verdict".into(),
+            description: "Record the verdict of an independent verification. Required to end a verification: a reply without this call records nothing. List every requirement of the task statement with a status and the command output that decided it. The verdict is fail when any requirement is unmet.".into(),
+            parameters: json!({
+                "type": "object",
+                "properties": {
+                    "verdict": {"type": "string", "enum": ["pass", "fail"]},
+                    "requirements": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "requirement": {"type": "string", "description": "One requirement from the task statement"},
+                                "status": {"type": "string", "enum": ["met", "unmet", "unverifiable"]},
+                                "evidence": {"type": "string", "description": "The command run and what its output showed"}
+                            },
+                            "required": ["requirement", "status", "evidence"],
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "required": ["verdict", "requirements"],
+                "additionalProperties": false
+            }),
+        },
     ]
 }
 
 pub struct ToolExecutor {
     root: PathBuf,
+    policy: PolicySettings,
 }
 
 impl ToolExecutor {
     pub fn new(root: PathBuf) -> Self {
-        Self { root }
+        Self {
+            root,
+            policy: PolicySettings::default(),
+        }
+    }
+
+    pub fn with_policy(mut self, policy: PolicySettings) -> Self {
+        self.policy = policy;
+        self
     }
 
     pub fn root(&self) -> &Path {
         &self.root
+    }
+
+    pub fn policy(&self) -> &PolicySettings {
+        &self.policy
     }
 
     /// Execute one tool call. Argument or policy failures become error outputs
@@ -255,13 +360,17 @@ impl ToolExecutor {
             serde_json::from_str(arguments)
                 .map_err(|error| ToolError::Failed(format!("invalid arguments: {error}")))
         }
+        let policy = &self.policy;
         match name {
-            "read_file" => fs_tools::read_file(&self.root, parse(arguments)?),
-            "list_files" => fs_tools::list_files(&self.root, parse(arguments)?),
-            "search_text" => search::search_text(&self.root, parse(arguments)?),
-            "edit" => fs_tools::edit(&self.root, parse(arguments)?),
-            "write_file" => fs_tools::write_file(&self.root, parse(arguments)?),
-            "run_command" => command::run_command(&self.root, parse(arguments)?, cancel).await,
+            "read_file" => fs_tools::read_file_with(&self.root, parse(arguments)?, policy),
+            "list_files" => fs_tools::list_files_with(&self.root, parse(arguments)?, policy),
+            "search_text" => search::search_text_with(&self.root, parse(arguments)?, policy),
+            "edit" => fs_tools::edit_with(&self.root, parse(arguments)?, policy),
+            "write_file" => fs_tools::write_file_with(&self.root, parse(arguments)?, policy),
+            "run_command" => {
+                command::run_command(&self.root, parse(arguments)?, policy, cancel).await
+            }
+            "shell" => shell::run_shell(&self.root, parse(arguments)?, cancel).await,
             _ => Err(ToolError::Failed(format!("unknown tool: {name}"))),
         }
     }
@@ -300,6 +409,21 @@ pub fn describe_call(name: &str, arguments: &str) -> String {
                 .and_then(extract_argv)
                 .map(|argv| argv.join(" "))
                 .unwrap_or_default(),
+            "shell" => value
+                .get("command")
+                .and_then(serde_json::Value::as_str)
+                .map(|line| line.chars().take(80).collect())
+                .unwrap_or_default(),
+            "complete_task" => value
+                .get("summary")
+                .and_then(serde_json::Value::as_str)
+                .map(|o| o.chars().take(60).collect())
+                .unwrap_or_else(|| "complete".to_string()),
+            "report_verdict" => value
+                .get("verdict")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("verdict")
+                .to_string(),
             "update_plan" => value
                 .get("objective")
                 .and_then(serde_json::Value::as_str)
@@ -327,7 +451,12 @@ const DIFF_CONTEXT_LINES: usize = 3;
 /// says yes. Returns None for calls where the one-line preview is enough or
 /// when the arguments cannot be interpreted (the executor will surface the
 /// real error after approval anyway).
-pub fn approval_detail(root: &Path, name: &str, arguments: &str) -> Option<String> {
+pub fn approval_detail(
+    root: &Path,
+    policy: &PolicySettings,
+    name: &str,
+    arguments: &str,
+) -> Option<String> {
     let args: serde_json::Value = serde_json::from_str(arguments).ok()?;
     let text = |key: &str| args.get(key).and_then(serde_json::Value::as_str);
     let detail = match name {
@@ -339,12 +468,12 @@ pub fn approval_detail(root: &Path, name: &str, arguments: &str) -> Option<Strin
                 .get("replace_all")
                 .and_then(serde_json::Value::as_bool)
                 .unwrap_or(false);
-            edit_diff(root, path, old_string, new_string, replace_all)?
+            edit_diff(root, policy, path, old_string, new_string, replace_all)?
         }
         "write_file" => {
             let path = text("path")?;
             let content = text("content")?;
-            let existing = fs_tools::resolve(root, path)
+            let existing = fs_tools::resolve(root, path, policy)
                 .ok()
                 .and_then(|resolved| std::fs::metadata(resolved).ok());
             let mut rendered = match existing {
@@ -365,6 +494,14 @@ pub fn approval_detail(root: &Path, name: &str, arguments: &str) -> Option<Strin
             }
             rendered
         }
+        "shell" => {
+            let line = text("command")?;
+            let timeout = args
+                .get("timeout_seconds")
+                .and_then(serde_json::Value::as_u64)
+                .unwrap_or(120);
+            format!("  $ {line}\n  (bash -lc in the sandbox root, {timeout}s timeout, credential-stripped env)\n")
+        }
         "run_command" => {
             let line = extract_argv(args.get("command")?)?.join(" ");
             let timeout = args
@@ -382,12 +519,13 @@ pub fn approval_detail(root: &Path, name: &str, arguments: &str) -> Option<Strin
 /// removed block, `+` for the replacement, anchored at the first match.
 fn edit_diff(
     root: &Path,
+    policy: &PolicySettings,
     path: &str,
     old_string: &str,
     new_string: &str,
     replace_all: bool,
 ) -> Option<String> {
-    let resolved = fs_tools::resolve(root, path).ok()?;
+    let resolved = fs_tools::resolve(root, path, policy).ok()?;
     let original = std::fs::read_to_string(resolved).ok()?;
     let occurrences = original.matches(old_string).count();
     if occurrences == 0 {
@@ -472,6 +610,7 @@ mod tests {
         .unwrap();
         let detail = approval_detail(
             dir.path(),
+            &PolicySettings::default(),
             "edit",
             r#"{"path":"f.rs","old_string":"    old_body();","new_string":"    new_body();\n    extra();"}"#,
         )
@@ -490,6 +629,7 @@ mod tests {
         std::fs::write(dir.path().join("dup.txt"), "x\nx\n").unwrap();
         let ambiguous = approval_detail(
             dir.path(),
+            &PolicySettings::default(),
             "edit",
             r#"{"path":"dup.txt","old_string":"x","new_string":"y"}"#,
         )
@@ -497,6 +637,7 @@ mod tests {
         assert!(ambiguous.contains("edit will fail without replace_all"));
         let missing = approval_detail(
             dir.path(),
+            &PolicySettings::default(),
             "edit",
             r#"{"path":"dup.txt","old_string":"absent","new_string":"y"}"#,
         )
@@ -510,6 +651,7 @@ mod tests {
         std::fs::write(dir.path().join("s.txt"), "hello world\nbye\n").unwrap();
         let detail = approval_detail(
             dir.path(),
+            &PolicySettings::default(),
             "edit",
             r#"{"path":"s.txt","old_string":"world","new_string":"rust"}"#,
         )
@@ -523,6 +665,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let write = approval_detail(
             dir.path(),
+            &PolicySettings::default(),
             "write_file",
             r#"{"path":"new.txt","content":"hello\nworld"}"#,
         )
@@ -531,6 +674,7 @@ mod tests {
         assert!(write.contains("  + hello"));
         let command = approval_detail(
             dir.path(),
+            &PolicySettings::default(),
             "run_command",
             r#"{"command":["cargo","test"],"timeout_seconds":120}"#,
         )
@@ -539,6 +683,7 @@ mod tests {
         assert!(command.contains("120s timeout"));
         let huge = approval_detail(
             dir.path(),
+            &PolicySettings::default(),
             "write_file",
             &format!(r#"{{"path":"big.txt","content":"{}"}}"#, "a".repeat(10_000)),
         )
@@ -624,6 +769,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let detail = approval_detail(
             dir.path(),
+            &PolicySettings::default(),
             "run_command",
             r#"{"command":"[\"cargo\",\"test\"]"}"#,
         )

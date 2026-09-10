@@ -39,3 +39,9 @@ DEEPSEEK_API_KEY=... bun longrun.ts [repo-root]   # default root: the monet repo
 ```
 
 Both scripts write JSON reports to `results/` (gitignored).
+
+## Terminal-Bench (`harbor/`)
+
+`harbor/` holds the Harbor adapter, Linux build script, fixed dev subset, matrix runner, and
+summarizer for running Butterfly on Terminal-Bench 4.0.0 against the same-model
+`mini-swe-agent` baseline. See `harbor/README.md`.

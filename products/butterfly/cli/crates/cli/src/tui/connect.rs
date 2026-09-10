@@ -12,8 +12,6 @@ const DIM: &str = "\x1b[2m";
 const RESET: &str = "\x1b[0m";
 const CYAN: &str = "\x1b[36m";
 
-pub const PROVIDERS: [(&str, &str); 1] = [("deepseek", "DeepSeek")];
-
 /// Mask a key for display: all bullets, fixed floor so length leaks little.
 pub fn masked(len: usize) -> String {
     "•".repeat(len.max(1))
@@ -53,7 +51,10 @@ fn draw(lines: &[String], previous_rows: usize, typing: bool) -> usize {
 
 /// Run the wizard; returns `Some((provider, api_key))` on submit, `None` if
 /// the user backed out (Esc / Ctrl+C / Ctrl+D).
-pub fn standalone_connect() -> Result<Option<(String, String)>> {
+pub fn standalone_connect(providers: &[(String, String)]) -> Result<Option<(String, String)>> {
+    if providers.is_empty() {
+        return Ok(None);
+    }
     let _guard = RawGuard::new()?;
     let mut selected = 0usize;
     let mut stage_key: Option<String> = None;
@@ -65,7 +66,7 @@ pub fn standalone_connect() -> Result<Option<(String, String)>> {
                     format!("{CYAN}butterfly{RESET} · connect a provider"),
                     String::new(),
                 ];
-                for (i, (_, label)) in PROVIDERS.iter().enumerate() {
+                for (i, (_, label)) in providers.iter().enumerate() {
                     if i == selected {
                         lines.push(format!("  {CYAN}▸ {label}{RESET}"));
                     } else {
@@ -79,7 +80,7 @@ pub fn standalone_connect() -> Result<Option<(String, String)>> {
             Some(key) => vec![
                 format!(
                     "{CYAN}butterfly{RESET} · paste your {} API key",
-                    PROVIDERS[selected].1
+                    providers[selected].1
                 ),
                 String::new(),
                 format!(
@@ -113,7 +114,7 @@ pub fn standalone_connect() -> Result<Option<(String, String)>> {
             (_, KeyCode::Char('d')) if control => return finish(rows, None),
             (None, KeyCode::Esc) => return finish(rows, None),
             (None, KeyCode::Up) => selected = selected.saturating_sub(1),
-            (None, KeyCode::Down) => selected = (selected + 1).min(PROVIDERS.len() - 1),
+            (None, KeyCode::Down) => selected = (selected + 1).min(providers.len() - 1),
             (None, KeyCode::Enter) => stage_key = Some(String::new()),
             (Some(_), KeyCode::Esc) => stage_key = None,
             (Some(key), KeyCode::Backspace) => {
@@ -122,7 +123,7 @@ pub fn standalone_connect() -> Result<Option<(String, String)>> {
             (Some(key), KeyCode::Enter) => {
                 let entered = key.trim().to_string();
                 if !entered.is_empty() {
-                    let provider = PROVIDERS[selected].0.to_string();
+                    let provider = providers[selected].0.clone();
                     return finish(rows, Some((provider, entered)));
                 }
             }

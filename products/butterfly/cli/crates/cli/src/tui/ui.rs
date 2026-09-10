@@ -87,6 +87,10 @@ enum ConnectStage {
 
 struct Connect {
     stage: ConnectStage,
+    /// `(provider id, label)` choices from the registry.
+    providers: Vec<(String, String)>,
+    /// Index confirmed at the provider stage (the key stage saves under it).
+    chosen: usize,
     responder: oneshot::Sender<Option<(String, String)>>,
 }
 
@@ -490,7 +494,7 @@ impl UiInner {
             match &connect.stage {
                 ConnectStage::Provider { selected } => {
                     lines.push("connect a provider".to_string());
-                    for (i, (_, label)) in super::connect::PROVIDERS.iter().enumerate() {
+                    for (i, (_, label)) in connect.providers.iter().enumerate() {
                         if i == *selected {
                             lines.push(format!("{CYAN}▸ {label}{RESET}"));
                         } else {
@@ -1281,16 +1285,21 @@ impl Ui {
     /// Open the /connect flow; resolves with Some((provider, api_key)) on
     /// submit or None if the user backs out. The key is never echoed,
     /// recorded, or persisted by the UI — the caller owns saving it.
-    pub fn open_connect(&self) -> oneshot::Receiver<Option<(String, String)>> {
+    pub fn open_connect(
+        &self,
+        providers: Vec<(String, String)>,
+    ) -> oneshot::Receiver<Option<(String, String)>> {
         let mut inner = self.lock();
         let (sender, receiver) = oneshot::channel();
-        if inner.connect.is_some() || inner.menu.is_some() {
+        if inner.connect.is_some() || inner.menu.is_some() || providers.is_empty() {
             // Already mid-flow: refuse a second concurrent one.
             let _ = sender.send(None);
             return receiver;
         }
         inner.connect = Some(Connect {
             stage: ConnectStage::Provider { selected: 0 },
+            providers,
+            chosen: 0,
             responder: sender,
         });
         inner.paint(None);
@@ -1474,9 +1483,10 @@ impl Ui {
                         *selected = selected.saturating_sub(1);
                     }
                     (ConnectStage::Provider { selected }, KeyCode::Down) => {
-                        *selected = (*selected + 1).min(super::connect::PROVIDERS.len() - 1);
+                        *selected = (*selected + 1).min(connect.providers.len().saturating_sub(1));
                     }
-                    (ConnectStage::Provider { .. }, KeyCode::Enter) => {
+                    (ConnectStage::Provider { selected }, KeyCode::Enter) => {
+                        connect.chosen = *selected;
                         connect.stage = ConnectStage::Key {
                             buffer: String::new(),
                         };
@@ -1490,7 +1500,11 @@ impl Ui {
                     (ConnectStage::Key { buffer }, KeyCode::Enter) => {
                         let entered = buffer.trim().to_string();
                         if !entered.is_empty() {
-                            let provider = super::connect::PROVIDERS[0].0.to_string();
+                            let provider = connect
+                                .providers
+                                .get(connect.chosen)
+                                .map(|(id, _)| id.clone())
+                                .unwrap_or_default();
                             resolve = Some(Some((provider, entered)));
                         }
                     }
