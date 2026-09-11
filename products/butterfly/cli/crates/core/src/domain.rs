@@ -286,11 +286,11 @@ mod tests {
         };
         let pricing = flash_pricing();
         let peak = price_usage_at(&pricing, usage, PriceTier::Peak);
-        // 0.9M * 14,000/M + 0.1M * 440,000/M + 0.01M * 1,320,000/M
-        assert_eq!(peak.actual_microusd, 12_600 + 44_000 + 13_200);
+        // V4.1 Flash peak card: 0.9M * 6,000/M + 0.1M * 300,000/M + 0.01M * 1,200,000/M
+        assert_eq!(peak.actual_microusd, 5_400 + 30_000 + 12_000);
         // normalized prices ALL input at the miss rate
-        assert_eq!(peak.normalized_cache_miss_microusd, 440_000 + 13_200);
-        assert_eq!(peak.price_version, "2026-08-31-usd");
+        assert_eq!(peak.normalized_cache_miss_microusd, 300_000 + 12_000);
+        assert_eq!(peak.price_version, "2026-09-10-usd");
         assert!(peak.price_verified);
         let off_peak = price_usage_at(&pricing, usage, PriceTier::OffPeak);
         assert_eq!(off_peak.actual_microusd, peak.actual_microusd / 2);

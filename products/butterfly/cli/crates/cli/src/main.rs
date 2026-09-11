@@ -37,7 +37,7 @@ struct Cli {
     #[arg(long)]
     root: Option<PathBuf>,
 
-    /// Model id: a built-in (deepseek-v4-flash | deepseek-v4-pro | glm-5.3-flash |
+    /// Model id: a built-in (deepseek-flash | deepseek-v4-flash | deepseek-v4-pro | glm-5.3-flash |
     /// gpt-5.6-luna | nimble) or a `[[models]]` entry from config. Default: config, else
     /// the last model used, else deepseek-v4-flash.
     #[arg(long)]

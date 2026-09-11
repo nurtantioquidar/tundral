@@ -498,7 +498,9 @@ pub mod builtin {
             ModelDescriptor {
                 id: "deepseek-v4-flash".into(),
                 provider: "deepseek".into(),
-                display_name: "DeepSeek V4 Flash".into(),
+                // Legacy id: since 2026-09 DeepSeek routes it to V4.1 Flash and
+                // bills at V4.1 Flash prices (api-docs.deepseek.com/quick_start/pricing).
+                display_name: "DeepSeek V4 Flash (served as V4.1 Flash)".into(),
                 capabilities: Capabilities {
                     tools: true,
                     parallel_tools: true,
@@ -508,13 +510,14 @@ pub mod builtin {
                     images: false,
                 },
                 pricing: Pricing {
+                    // Peak card (01–04 and 06–10 UTC weekdays); off-peak halves it.
                     card: PriceCard {
-                        cache_hit_input: 14_000,
-                        cache_miss_input: 440_000,
-                        output: 1_320_000,
+                        cache_hit_input: 6_000,
+                        cache_miss_input: 300_000,
+                        output: 1_200_000,
                     },
                     tiers: Some(deepseek_tiers()),
-                    version: "2026-08-31-usd".into(),
+                    version: "2026-09-10-usd".into(),
                     verified: true,
                 },
                 limits: Limits {
@@ -524,9 +527,44 @@ pub mod builtin {
                     max_output_tokens: 65_536,
                 },
             },
+            // DeepSeek V4.1 Flash: the current Flash model under its own id.
+            // Peak $0.30 miss / $0.006 hit / $1.20 out per 1M, half off-peak
+            // (api-docs.deepseek.com/quick_start/pricing, 2026-09-10). The API
+            // allows 384K output; the cap stays at 64K so a runaway reasoning
+            // call cannot run for hours (observed on GLM: 65K tokens ≈ 30 min).
+            ModelDescriptor {
+                id: "deepseek-flash".into(),
+                provider: "deepseek".into(),
+                display_name: "DeepSeek V4.1 Flash".into(),
+                capabilities: Capabilities {
+                    tools: true,
+                    parallel_tools: true,
+                    reasoning: Some(deepseek_reasoning()),
+                    structured_output: true,
+                    prompt_cache: PromptCache::Automatic,
+                    images: true,
+                },
+                pricing: Pricing {
+                    card: PriceCard {
+                        cache_hit_input: 6_000,
+                        cache_miss_input: 300_000,
+                        output: 1_200_000,
+                    },
+                    tiers: Some(deepseek_tiers()),
+                    version: "2026-09-10-usd".into(),
+                    verified: true,
+                },
+                limits: Limits {
+                    context_tokens: 1_000_000,
+                    max_output_tokens: 65_536,
+                },
+            },
             ModelDescriptor {
                 id: "deepseek-v4-pro".into(),
                 provider: "deepseek".into(),
+                // DeepSeek announced that from 2026-09-14 this id is routed to
+                // V4.1 Flash and billed at Flash prices; card left as Pro
+                // until then.
                 display_name: "DeepSeek V4 Pro".into(),
                 capabilities: Capabilities {
                     tools: true,
