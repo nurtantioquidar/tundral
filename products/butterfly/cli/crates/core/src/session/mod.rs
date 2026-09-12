@@ -234,6 +234,9 @@ pub struct SessionConfig {
     /// text-only replies, review the task statement before accepting the
     /// claim. Appends to the prefix only when on.
     pub completion_gate: bool,
+    /// Append the lean-turns rules (no read-back after a successful edit,
+    /// scoped orientation, batched reads). Appends to the prefix only when on.
+    pub lean: bool,
     /// Review every accepted claim in a fresh-context verifier session before
     /// the loop treats it as an ending; unmet requirements become the next
     /// attempt's evidence. Requires the completion gate.
@@ -273,6 +276,7 @@ impl Default for SessionConfig {
             sandboxed: false,
             task_type: None,
             completion_gate: false,
+            lean: false,
             independent_verifier: false,
             verifier: false,
         }
@@ -504,6 +508,7 @@ impl Agent {
             config.atlas_enabled,
             config.sandboxed,
             config.completion_gate,
+            config.lean,
             config.verifier,
         );
         let session_id = uuid::Uuid::new_v4().simple().to_string();
@@ -2075,6 +2080,7 @@ impl Agent {
     ) -> VerifierReport {
         let mut config = self.config.clone();
         config.completion_gate = false;
+        config.lean = false;
         config.independent_verifier = false;
         config.verifier = true;
         config.max_provider_calls_per_input = VERIFIER_CALL_CAP;

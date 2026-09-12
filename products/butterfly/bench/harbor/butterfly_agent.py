@@ -30,6 +30,11 @@ review). Off until an A/B on the dev subset shows it pays for itself. `verifier_
 (Harbor form, e.g. `zai/glm-5.3-flash`) runs the verifier on a different model so it does not
 share the worker's blind spots; the container gets that provider's key too.
 
+`lean` (default on; `--ak lean=false`): passes `--lean`, the lean-turns prompt block (no read-back
+after a successful edit, scoped orientation, batched reads). Private-suite A/B 2026-09-12, 12 tasks
+× 2 runs: GLM 21/24 vs 20/24 at 24 vs 28 calls and $0.060 vs $0.087 per success; DeepSeek 20/24 vs
+19/24 at 22 vs 28 calls and $0.028 vs $0.037. Wall clock on GLM is reasoning-latency noise.
+
 `max_calls` raises Butterfly's per-attempt provider-call budget (CLI default 50). Measured
 2026-09-08: 54% of GLM attempts and 67% of Muse Spark attempts hit the cap, so most "retries" were
 budget cut-offs rather than finished tries; chatty, cheap models need 200-400.
@@ -86,6 +91,7 @@ class Butterfly(BaseInstalledAgent):
         require_diff: bool = False,
         detect_checks: bool = False,
         completion_gate: bool = True,
+        lean: str | bool = True,
         independent_verifier: bool = False,
         verifier_model: str | None = None,
         max_cost_usd: str = "2.00",
@@ -102,8 +108,11 @@ class Butterfly(BaseInstalledAgent):
         self._require_diff = _truthy(require_diff)
         self._detect_checks = _truthy(detect_checks)
         self._completion_gate = _truthy(completion_gate)
+        self._lean = _truthy(lean)
         self._independent_verifier = _truthy(independent_verifier)
-        self._verifier_model = verifier_model  # Harbor form provider/model, e.g. zai/glm-5.3-flash
+        self._verifier_model = (
+            verifier_model  # Harbor form provider/model, e.g. zai/glm-5.3-flash
+        )
         self._max_cost_usd = str(max_cost_usd)
         self._effort = effort
         self._api_key_env = api_key_env
@@ -124,7 +133,8 @@ class Butterfly(BaseInstalledAgent):
         if self._binary is None or not self._binary.is_file():
             raise RuntimeError(
                 "Butterfly needs a prebuilt Linux binary: run bench/harbor/build-linux.sh "
-                "and pass --ak binary=<path> (got %r)" % (str(self._binary) if self._binary else None)
+                "and pass --ak binary=<path> (got %r)"
+                % (str(self._binary) if self._binary else None)
             )
         await environment.upload_file(self._binary, REMOTE_BINARY.as_posix())
         await self.exec_as_root(
@@ -221,6 +231,8 @@ class Butterfly(BaseInstalledAgent):
             argv.append("--require-diff")
         if self._detect_checks:
             argv.append("--detect-checks")
+        if self._lean:
+            argv.append("--lean")
         if self._completion_gate:
             argv.append("--completion-gate")
             if self._independent_verifier:
@@ -248,7 +260,9 @@ class Butterfly(BaseInstalledAgent):
         self, instruction: str, environment: BaseEnvironment, context: AgentContext
     ) -> None:
         env = self._runtime_env()
-        await self.exec_as_agent(environment, command=self._command(instruction), env=env)
+        await self.exec_as_agent(
+            environment, command=self._command(instruction), env=env
+        )
 
     # --- post-run ----------------------------------------------------------
 

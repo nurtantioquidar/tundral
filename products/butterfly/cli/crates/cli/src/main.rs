@@ -158,6 +158,14 @@ struct Cli {
     #[arg(long, requires = "completion_gate")]
     independent_verifier: bool,
 
+    /// Append the lean-turns rules to the prompt: no read-back after a
+    /// successful edit, orientation limited to the files the task involves,
+    /// independent reads issued together. Extends the prompt prefix only when
+    /// set (measured 2026-09-12: two re-reads per task and five minutes of
+    /// orientation before the first edit on GLM).
+    #[arg(long)]
+    lean: bool,
+
     /// With --independent-verifier: run the verifier on this model instead of
     /// the worker's (cross-model verification; needs that provider's key).
     #[arg(long, requires = "independent_verifier")]
@@ -333,6 +341,7 @@ async fn main() -> Result<()> {
         task_type: cli.task_type.clone(),
         max_provider_calls_per_input: cli.max_calls.max(1),
         completion_gate: cli.completion_gate,
+        lean: cli.lean,
         independent_verifier: cli.independent_verifier,
         ..SessionConfig::default()
     };

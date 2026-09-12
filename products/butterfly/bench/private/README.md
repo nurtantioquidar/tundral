@@ -9,6 +9,10 @@ commit's test changes are the hidden check, copied in only after the agent finis
 Nothing from the private repository lives in this directory. Task files hold commit hashes,
 paths, and statement text, and are kept outside the monorepo (default
 `~/.config/monet/private-suite/`, mode 700); the checkout is passed with `--repo` at run time.
+Run outputs (`--out`) contain diffs of private code and must also stay outside the monorepo and
+outside `/tmp` (macOS clears it on reboot; the 2026-09-12 round-one raw trials were lost that
+way, their summaries survive below). Use `~/.config/monet/private-suite/runs/<name>`. An
+interrupted run resumes with `--skip-done`.
 
 ## Rules
 
@@ -37,6 +41,7 @@ python3 run.py --tasks tasks.json --repo ~/src/private-repo --oracle --out runs/
 # 4. Run a harness. Keys come from bench/harbor/with-keys.sh; results land in <out>/results.jsonl.
 ../harbor/with-keys.sh python3 run.py --tasks tasks.json --repo ~/src/private-repo \
     --model zai/glm-5.3-flash --out runs/glm-baseline --runs 2 --concurrency 4 --timeout 2700
+# --lean is on by default (2026-09-12 A/B); --no-lean reproduces the round-one baseline.
 ```
 
 ## What a result row carries
@@ -85,3 +90,28 @@ still bills correctly). Speed: `wall_clock_s`, `provider_calls`, `time_to_first_
   Reading: tool-level levers (fuzzy edit matching, middle-out truncation, yield/poll exec) have
   no room here; round trips (re-reads, orientation before the first edit) and the completion
   gate on multi-requirement tasks do.
+- Lever check before building: the four residual false completions all listed every
+  requirement and marked each `met`, so a stricter checklist gate (count or enumerate) would
+  not have caught them; they are honest misjudgements of one requirement in multi-part
+  commits. Not built. The round-trip lever (`--lean`, appended prompt block) was built instead
+  and is measured as an A/B against the round-one baseline.
+- **Round one, DeepSeek V4.1 Flash baseline** (same 12 tasks × 2, peak pricing): 19/24 (79%),
+  5 false completions (the two hard tasks plus one-off misses on three others, e.g. mapping
+  `s`→`saham` in a derived key), 0 regressions, $0.70 total, $0.037 per success, median wall
+  clock 2.7 min (GLM 10 min), median 28 calls (same as GLM), median time to first edit 73 s
+  (GLM 300 s), cache hit 97%, model latency 81% of wall clock, worst single call 68 s (GLM 908 s),
+  3.2 re-reads of a just-edited file per trial (GLM 2.0). Same call count, four times faster:
+  GLM's wall clock is reasoning latency, not extra turns.
+- **`--lean` A/B, DeepSeek V4.1 Flash** (same 12 × 2): 20/24 vs 19/24, median calls 22 vs 28,
+  re-reads per trial 1.8 vs 3.2, time to first edit 46 s vs 73 s, $0.028 vs $0.037 per success,
+  median wall 146 s vs 164 s, 0 regressions. The 16 provider errors in the lean arm were one
+  63-second api.deepseek.com outage at 21:50 local hitting four concurrent trials (GLM arm saw
+  none); one of those trials also had network-bound pytest runs stall for 300 s, inflating its
+  wall clock to 19 min. Retries recovered every call.
+- **`--lean` A/B, GLM 5.3 Flash** (same 12 × 2, rerun in full after the reboot): 21/24 vs 20/24,
+  median calls 24 vs 28, re-reads per trial 0.6 vs 2.0, $0.060 vs $0.087 per success, 0
+  regressions, 0 provider errors. Median wall clock 681 s vs 606 s and time to first edit 431 s
+  vs 300 s went the other way: with model latency at 95% of wall clock and single calls ranging
+  from seconds to 1 008 s, wall clock on GLM is dominated by reasoning-latency variance, and
+  24 trials do not resolve a ±15% difference. Calls, re-reads and cost are the robust signals,
+  and all three improved on both models. The two hard tasks remain the only failures.

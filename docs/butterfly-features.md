@@ -111,6 +111,15 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   carry `requirements`: every requirement of the task statement in its own terms, each `met` or
   `unmet` with the deciding tool output (one refusal with guidance, then accepted regardless).
   The list is the independent verifier's input and is reported in `completion.requirements`.
+- **Lean turns** (2026-09-12, `--lean`) — appends one prompt block: a successful edit or
+  write_file result is proof, do not read the file back; orient only on the files the task
+  names and what a search shows is involved; issue independent reads together; run tests after
+  the change. Motivated by the private-suite GLM baseline (24 trials: 2.0 re-reads of a
+  just-edited file per trial, median 5 min before the first edit, model latency 95% of wall
+  clock). Opt-in on the CLI so default and gated prefixes keep their bytes; on by default in
+  both bench runners after the private-suite A/B (12 tasks × 2 runs): GLM 21/24 vs 20/24 at
+  24 vs 28 calls and $0.060 vs $0.087 per success, DeepSeek 20/24 vs 19/24 at 22 vs 28 calls
+  and $0.028 vs $0.037; re-reads per trial 0.6 vs 2.0 (GLM) and 1.8 vs 3.2 (DeepSeek).
 - **Self-authored checks are claims** (2026-09-09) — a declared check whose executed program
   (the binary, the script handed to an interpreter, the test files handed to a runner) is a file
   the task created or changed is flagged at claim time (`self_authored_checks` per attempt;

@@ -234,6 +234,8 @@ def butterfly_argv(
         argv.append("--completion-gate")
     if args.effort:
         argv += ["--effort", args.effort]
+    if args.lean:
+        argv.append("--lean")
     argv += args.extra_args
     argv += ["-p", statement]
     return argv
@@ -532,6 +534,13 @@ def main() -> int:
     p.add_argument("--max-cost-usd", default="1.00")
     p.add_argument("--effort")
     p.add_argument("--no-completion-gate", dest="completion_gate", action="store_false")
+    p.add_argument(
+        "--no-lean",
+        dest="lean",
+        action="store_false",
+        help="drop --lean (the lean-turns prompt block); on by default since the 2026-09-12 A/B",
+    )
+    p.set_defaults(lean=True)
     p.add_argument("--extra-args", nargs="*", default=[])
     p.add_argument(
         "--oracle",
@@ -539,6 +548,11 @@ def main() -> int:
         help="apply the reference fix instead of running the harness",
     )
     p.add_argument("--keep", action="store_true", help="keep workspaces after scoring")
+    p.add_argument(
+        "--skip-done",
+        action="store_true",
+        help="resume: skip (task, run) pairs already in <out>/results.jsonl",
+    )
     args = p.parse_args()
 
     data = json.loads(Path(args.tasks).read_text())
@@ -585,6 +599,14 @@ def main() -> int:
         f"{len(tasks)} tasks x {args.runs} runs, model {args.model}, concurrency {args.concurrency} -> {out}"
     )
     jobs = [(t, r) for r in range(1, args.runs + 1) for t in tasks]
+    if args.skip_done and (out / "results.jsonl").exists():
+        done = {
+            (json.loads(line)["task"], json.loads(line)["run"])
+            for line in (out / "results.jsonl").read_text().splitlines()
+            if line.strip()
+        }
+        jobs = [(t, r) for t, r in jobs if (t.id, r) not in done]
+        say(f"resuming: {len(done)} trials already recorded, {len(jobs)} to run")
     with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
         list(pool.map(lambda job: trial(args, repo, *job), jobs))
     summarize(out)
