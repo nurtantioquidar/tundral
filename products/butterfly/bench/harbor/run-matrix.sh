@@ -92,7 +92,10 @@ stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 for model in $MODELS; do
   safe_model="$(echo "$model" | tr '/.' '__')"
   for agent in $AGENTS; do
-    job="${agent}__${safe_model}__${stamp}"
+    # A custom agent (`module:Class`) must not put a colon in the job directory:
+    # Docker rejects bind-mount specs containing one (observed 2026-09-11).
+    safe_agent="$(echo "$agent" | tr ':/' '__')"
+    job="${safe_agent}__${safe_model}__${stamp}"
     echo "=== $job ($TB_DATASET, subset=$SUBSET)"
     agent_args=()
     if [[ "$agent" == "butterfly" ]]; then

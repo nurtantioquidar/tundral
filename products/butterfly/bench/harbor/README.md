@@ -138,6 +138,56 @@ provider calls (react's work passed the hidden tests anyway). The verifier hit i
 without a verdict on 3 of 4 GLM-verifier reviews; v17 raises the cap to 30 and warns at 3 calls
 left. Next: rerun the GLM control alone on v17, then a with/without-verifier A/B on the dev subset.
 
+**Three-arm comparison, 2026-09-10/12** (dev subset, 12 tasks × 2 repeats, local Docker, 4 concurrent,
+300-call budget, 3-hour cap; jobs `butterfly__zai_glm-5_3-flash__20260910T134134Z` (v17),
+`mini_swe_agent_py311_MiniSweAgentPy311__zai_glm-5_3-flash__20260911T141741Z` (mini-swe-agent
+installed under Python 3.11, see `mini_swe_agent_py311.py`), and
+`butterfly__meta_muse-spark-1_3-contributor__20260911T134535Z` (v18, `EFFORT=low`)). Spend includes
+timed-out trials, priced from telemetry.
+
+| Arm | Passes / 24 | Timeouts | Spend | Cost / success |
+|---|---|---|---|---|
+| Butterfly + GLM-5.3-Flash | 7 | 4 | $11.07 | $1.58 |
+| mini-swe-agent + GLM-5.3-Flash | 7 | 4 | $9.46 | $1.35 |
+| Butterfly + Muse Spark Contributor, low effort | 3 | 2 | $3.53 | $1.18 |
+
+| Task | Butterfly + GLM | mini-swe-agent + GLM | Butterfly + Muse low |
+|---|---|---|---|
+| bun-sourcemap-leak | f f | f f | f f |
+| data-anonymization | f f | f f | f f |
+| distributed-dedup | T T | T T | f f |
+| html-js-filter | f P | P T | f f |
+| interleaved-vigenere | P P | P P | f T |
+| legacy-utility-triage | f f | f f | f f |
+| music-harmony | T T | f T | f f |
+| payments-pipeline-fix | P P | f P | f f |
+| react-lead-form | f f | f P | P f |
+| session-window-debug | f f | f f | f f |
+| sound-change-cascade | P P | P P | T f |
+| wal-recovery-ordering | f f | f f | P P |
+
+Finding: **on GLM, Butterfly shows no pass-rate uplift over the minimal harness.** Same pass count,
+cost per success within noise, and the per-task view agrees: both pass sound-change-cascade and
+interleaved-vigenere every time, both fail the same seven tasks every time, and the splits go both
+ways. The 0/12 mini-swe-agent baseline of 2026-09-04 was measured on DeepSeek V4 Flash and now
+reads as a DeepSeek-and-mini-swe-agent mismatch, not harness quality. Butterfly's remaining
+differences are the truthful verdict (zero `verified: true` on a failed hidden suite across all
+runs), per-attempt cost accounting, and the recovery loop — not pass rate on this subset. Muse at
+low effort is the cheapest per success in raw dollars but at under half GLM's pass rate, and one
+Muse trial spent $1.12 over 904 tool calls without converging (a per-task cost cap is the missing
+guard). Distributed-dedup and music-harmony time out for every harness at 3 h and measure the
+machine, not the harness. Two repeats give a two-task error bar; nothing smaller than that here is
+a difference. DeepSeek V4.1 Flash (`deepseek-flash`) on the fast subset: 1/5 at $0.81 — not the
+cheaper worker.
+
+Infrastructure lessons from these runs, all fixed in the scripts: a 1-hour cap turns GLM's
+occasional 65K-token reasoning call (~1% of calls, ~30 min each) into timeouts, so the cap is 3 h;
+a custom Harbor agent's `module:Class` name must not reach the job directory (Docker rejects a
+colon in a bind mount); mini-swe-agent's current litellm needs Python 3.11 while most task images
+ship 3.10; its install takes ~6 min alone and needs `SETUP_TIMEOUT_MULT=8` under load; Modal
+sandboxes cost ~$0.43 per sandbox-hour here (100 sandbox-hours ≈ $43), not the $12 first
+estimated — measure a pilot before paying for concurrency.
+
 Earlier baselines (dev subset, single repeat, 2026-09-04): mini-swe-agent + DeepSeek 0/12 at
 $0.48/task; Butterfly v1–v4 + DeepSeek 1/20; Butterfly v2 + Nimble (Luna only, diff-only
 "verified") 1/12. Binaries: v5 `9f5499c6…` (completion gate, truthful verdict), v6 `945af467…`
