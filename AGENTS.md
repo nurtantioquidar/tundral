@@ -8,7 +8,8 @@ product is reached on its own subdomain, owns its own accounts and data, and shi
 schedule. `monet.sh` is only the index that routes a visitor to the right product.
 
 The active products are Inver (a prepaid OpenAI-compatible inference gateway, `inver.monet.sh`) and
-Regretz (an anti-portfolio, `regretz.monet.sh`, currently a placeholder surface).
+Regretz (an anti-portfolio of investment decisions not taken, scored against the IHSG,
+`regretz.monet.sh`). See `docs/regretz-entry-model.md` for Regretz's entry shape.
 
 Build new capabilities as features of an existing product, not as arbitrary packages. A capability
 becomes a new product only when it has its own audience and brand; it becomes a separate deployable

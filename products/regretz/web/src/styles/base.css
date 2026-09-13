@@ -1,0 +1,73 @@
+/* Two faces, self-hosted. Newsreader carries prose and nothing else; Commit Mono carries every
+ * figure, label, date and ticker.
+ *
+ * `font-synthesis: none` is load-bearing: Commit Mono ships 400 and 700 only, and the spec caps
+ * this project at 500. Without it a stray `font-weight: 500` on a mono run would be faked by the
+ * browser, which is exactly the heavier-than-500 type the ban list exists to prevent. */
+
+@import "./tokens.css";
+
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/Newsreader-roman.woff2") format("woff2");
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/Newsreader-italic.woff2") format("woff2");
+  font-weight: 400 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Commit Mono";
+  src: url("/fonts/CommitMono-400-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Newsreader", Georgia, serif;
+  font-size: var(--t-15);
+  line-height: 1.45;
+  font-weight: 400;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Every figure, label, date and ticker. Tabular by default so a column never has to ask. */
+.mono {
+  font-family: "Commit Mono", ui-monospace, "SF Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+/* Mono, 11px, tracked out. Not small-caps, not uppercase.
+ *
+ * Labels are authored lowercase rather than transformed. A `text-transform` here would also fold
+ * the tickers and serials that share this class — `BRPT` is not `brpt`. */
+.label {
+  font-family: "Commit Mono", ui-monospace, "SF Mono", monospace;
+  font-size: var(--t-11);
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  font-weight: 400;
+}

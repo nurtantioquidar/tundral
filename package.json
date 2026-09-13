@@ -17,7 +17,7 @@
     "start:inver": "bun run --filter @monet/inver-web start",
     "start:inver-gateway": "bun run --filter @monet/inver-gateway start",
     "start:regretz": "bun run --filter @monet/regretz-web start",
-    "test": "bun run --filter @monet/contracts test && bun run --filter @monet/inver-gateway test",
+    "test": "bun run --filter @monet/contracts test && bun run --filter @monet/inver-gateway test && bun run --filter @monet/regretz-web test",
     "typecheck": "bun run --filter @monet/contracts typecheck && bun run --filter @monet/inver-gateway typecheck && bun run --filter @monet/inver-web typecheck && bun run --filter @monet/hub typecheck && bun run --filter @monet/regretz-web typecheck",
     "check": "bun run --filter @monet/contracts check && bun run --filter @monet/inver-gateway check && bun run --filter @monet/inver-web check && bun run --filter @monet/hub check && bun run --filter @monet/regretz-web check"
   }

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "R-001",
+    "ticker": "BBCA",
+    "decidedOn": "2025-01-06",
+    "createdAt": "2025-01-06",
+    "thesis": "Bank paling bagus di bursa, tapi dihargai seperti tidak mungkin salah.",
+    "note": "Tidak ada yang salah dengan banknya. Yang saya ragukan harganya. PBV-nya ada di level yang cuma masuk akal kalau pertumbuhan kreditnya bertahan dua digit sampai kapan pun, dan saya tidak sanggup berjanji seperti itu ke diri sendiri. Saya pilih menunggu koreksi yang wajar dan siap dibilang terlalu hati-hati.",
+    "resolvedOn": "2025-11-05",
+    "priceAtDecision": 9800
+  },
+  {
+    "id": "R-002",
+    "ticker": "CUAN",
+    "decidedOn": "2025-01-06",
+    "createdAt": "2025-01-06",
+    "thesis": "Saya menolak beli sesuatu yang tidak bisa saya jelaskan ke orang lain.",
+    "note": "Saya coba tulis satu paragraf tentang bagaimana perusahaan ini menghasilkan uang dan saya tidak pernah bisa menyelesaikannya. Aturan saya jelas: kalau tidak bisa dijelaskan, tidak dibeli. Saya masih berpikir aturannya benar meskipun hasilnya begini, tapi menulis catatan ini tetap tidak enak.",
+    "resolvedOn": "2025-09-15",
+    "priceAtDecision": 8900
+  },
+  {
+    "id": "R-003",
+    "ticker": "BREN",
+    "decidedOn": "2025-02-04",
+    "createdAt": "2025-02-04",
+    "thesis": "Kapitalisasinya sudah lebih besar dari gabungan tiga emiten energi terbesar.",
+    "note": "Saya baca laporan keuangannya tiga kali dan tetap tidak ketemu angka yang membenarkan harga segini. Free float-nya tipis, jadi yang muncul di layar itu harga dari segelintir transaksi, bukan penilaian pasar. Teman-teman di grup sudah masuk semua dan saya sempat merasa bodoh sendiri.",
+    "resolvedOn": "2025-08-01",
+    "priceAtDecision": 7500
+  },
+  {
+    "id": "R-004",
+    "ticker": "ADRO",
+    "decidedOn": "2025-02-04",
+    "createdAt": "2025-02-04",
+    "thesis": "Dividen besar biasanya tanda bisnisnya sedang di puncak, bukan sedang murah.",
+    "note": "Yield-nya kelihatan luar biasa dan justru itu yang bikin saya curiga. Batu bara sedang di harga bagus dan perusahaan membagikan hampir semua labanya, yang artinya mereka sendiri tidak melihat tempat untuk menanam ulang uang itu. Saya lewati.",
+    "resolvedOn": "2026-01-15",
+    "priceAtDecision": 2380
+  },
+  {
+    "id": "R-005",
+    "ticker": "PTRO",
+    "decidedOn": "2025-03-11",
+    "createdAt": "2025-03-11",
+    "thesis": "Kontraktor tambang yang sudah lari terlalu jauh sebelum saya sempat lihat.",
+    "note": "Sudah naik dua kali lipat dari awal tahun waktu saya buka chart-nya, dan saya punya aturan sendiri untuk tidak mengejar sesuatu yang sudah lari. Aturan itu biasanya menyelamatkan saya. Kali ini aturan itu juga yang bikin saya ketinggalan, karena yang saya kira puncak ternyata baru setengah jalan.",
+    "resolvedOn": "2026-01-15",
+    "priceAtDecision": 2150
+  },
+  {
+    "id": "R-006",
+    "ticker": "AMMN",
+    "decidedOn": "2025-04-08",
+    "createdAt": "2025-04-08",
+    "thesis": "Beli waktu pasar panik itu benar, tapi saya tidak sanggup menekan tombolnya.",
+    "note": "Tanggal itu indeks jatuh dan hampir semua orang bilang ini kesempatan sekali seumur hidup. Secara analisis saya setuju. Yang tidak saya punya adalah nyali untuk memasukkan uang ke pasar yang sedang jatuh bebas. Jadi ini bukan kesalahan analisis, ini kesalahan karakter, dan itu yang lebih mahal untuk diperbaiki.",
+    "resolvedOn": "2026-03-03",
+    "priceAtDecision": 6400
+  },
+  {
+    "id": "R-007",
+    "ticker": "ANTM",
+    "decidedOn": "2025-06-10",
+    "createdAt": "2025-06-10",
+    "thesis": "Saya kira siklus emas sudah sampai di ujungnya.",
+    "note": "Harga emas sudah rekor berkali-kali dan saya pikir bagian yang gampang sudah lewat. Yang saya lupa, penggerak harga sahamnya bukan cuma harga emas, tapi juga orang yang baru sadar bahwa harga emas naik. Gelombang kedua itu yang saya lewatkan.",
+    "resolvedOn": "2026-05-12",
+    "priceAtDecision": 1610
+  },
+  {
+    "id": "R-008",
+    "ticker": "MDKA",
+    "decidedOn": "2025-09-15",
+    "createdAt": "2025-09-15",
+    "thesis": "Ceritanya bagus, arus kasnya belum.",
+    "note": "Saya suka tesis tembaganya dan saya percaya manajemennya. Tapi setiap kali saya buka laporannya, belanja modalnya selalu lebih besar dari perkiraan saya dan utangnya ikut naik. Saya putuskan menunggu satu kuartal dengan arus kas operasi positif. Selisihnya sampai sekarang tipis, jadi saya tidak menganggap ini kemenangan.",
+    "resolvedOn": "2026-06-22",
+    "priceAtDecision": 1885
+  },
+  {
+    "id": "R-009",
+    "ticker": "ARTO",
+    "decidedOn": "2026-05-12",
+    "createdAt": "2026-05-12",
+    "thesis": "Bank digital dengan cerita yang selalu satu tahun lagi.",
+    "note": "Sudah bertahun-tahun ceritanya sama: pertumbuhan pengguna, ekosistem, sinergi. Yang saya tunggu cuma laba yang tidak perlu dijelaskan pakai istilah baru. Saya lewati lagi dan saya catat di sini supaya tahun depan saya tidak pura-pura lupa pernah berpikir begini.",
+    "resolvedOn": null,
+    "priceAtDecision": 2400
+  },
+  {
+    "id": "R-010",
+    "ticker": "SIDO",
+    "decidedOn": "2026-06-22",
+    "createdAt": "2026-06-22",
+    "thesis": "Bisnisnya membosankan dan itu bukan alasan untuk melewatkannya.",
+    "note": "Saya lewati bukan karena perusahaannya jelek, tapi karena saya sedang mengejar yang lain dan tidak mau memecah modal. Ini alasan paling jujur yang bisa saya tulis, dan saya sadar alasan seperti ini yang biasanya paling mahal.",
+    "resolvedOn": null,
+    "priceAtDecision": 665
+  },
+  {
+    "id": "R-011",
+    "ticker": "BRPT",
+    "decidedOn": "2026-08-06",
+    "createdAt": "2026-08-06",
+    "thesis": "Terlalu banyak lapis induk usaha antara saya dan aset yang sebenarnya.",
+    "note": "Untuk sampai ke aset yang saya minati, uang saya harus lewat dua perusahaan induk, dan saya tidak punya cara mengukur berapa yang hilang di jalan. Selama strukturnya masih begini saya tidak masuk, berapa pun diskonnya kelihatan.",
+    "resolvedOn": null,
+    "priceAtDecision": 1145
+  }
+]
