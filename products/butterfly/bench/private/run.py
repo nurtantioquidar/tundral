@@ -31,6 +31,7 @@ import sys
 import tarfile
 import threading
 import time
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from io import BytesIO
@@ -49,9 +50,19 @@ PROVIDER_KEY_ENV = {
     "meta": "META_API_KEY",
 }
 
-STATEMENT_TEMPLATE = """{statement}
+STATEMENT_TEMPLATE = {
+    "python": """{statement}
 
-The change belongs in the `{service}/` service of this repository. Run its tests from inside that directory with `uv run pytest`; keep the existing tests passing."""
+The change belongs in the `{service}/` service of this repository. Run its tests from inside that directory with `uv run pytest`; keep the existing tests passing.""",
+    "maven": """{statement}
+
+The change belongs in the `{service}/` Maven module of this repository. Run its tests from inside that directory with `mvn -q test`; keep the existing tests passing.""",
+}
+
+
+def service_kind(service_dir: Path) -> str:
+    return "maven" if (service_dir / "pom.xml").exists() else "python"
+
 
 _print_lock = threading.Lock()
 
@@ -86,6 +97,12 @@ class Task:
     baseline_failing: list[str]
     source_files: list[str]
     other_files: list[str]
+    subject: str = ""
+    body: str = ""
+
+    @property
+    def raw_statement(self) -> str:
+        return self.subject + ("\n\n" + self.body.strip() if self.body.strip() else "")
 
 
 # ---------------------------------------------------------------- workspace
@@ -109,6 +126,16 @@ def build_workspace(repo: Path, task: Task, dest: Path) -> None:
 
 
 def sync_env(service_dir: Path, timeout: int) -> None:
+    """Warm the service's environment before the clock starts: the Python venv, or Maven's
+    dependency resolution and a test compile."""
+    if service_kind(service_dir) == "maven":
+        subprocess.run(
+            ["mvn", "-q", "-B", "test-compile"],
+            cwd=service_dir,
+            capture_output=True,
+            timeout=timeout,
+        )
+        return
     subprocess.run(
         ["uv", "sync", "--quiet", "--all-extras"],
         cwd=service_dir,
@@ -170,6 +197,56 @@ def apply_oracle(repo: Path, task: Task, workspace: Path) -> None:
             target.write_bytes(git(repo, "show", f"{task.commit}:{f}"))
         else:
             target.unlink(missing_ok=True)
+
+
+def run_tests(service_dir: Path, timeout: int) -> tuple[int, dict[str, str], str]:
+    return (
+        run_maven(service_dir, timeout)
+        if service_kind(service_dir) == "maven"
+        else run_pytest(service_dir, timeout)
+    )
+
+
+def run_maven(service_dir: Path, timeout: int) -> tuple[int, dict[str, str], str]:
+    """`mvn test`; statuses from surefire XML reports as `Class::method`."""
+    import xml.etree.ElementTree as ET
+
+    reports = service_dir / "target" / "surefire-reports"
+    shutil.rmtree(reports, ignore_errors=True)
+    try:
+        result = subprocess.run(
+            ["mvn", "-q", "-B", "test"],
+            cwd=service_dir,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return 124, {}, "timeout"
+    statuses: dict[str, str] = {}
+    for xml in reports.glob("TEST-*.xml") if reports.exists() else []:
+        try:
+            root = ET.parse(xml).getroot()
+        except ET.ParseError:
+            continue
+        for case in root.iter("testcase"):
+            node = f"{case.get('classname')}::{case.get('name')}"
+            if case.find("failure") is not None:
+                statuses[node] = "FAILED"
+            elif case.find("error") is not None:
+                statuses[node] = "ERROR"
+            elif case.find("skipped") is not None:
+                statuses[node] = "SKIPPED"
+            else:
+                statuses[node] = "PASSED"
+    return (0 if result.returncode == 0 else 1), statuses, result.stdout + result.stderr
+
+
+def test_file_of(node: str, kind: str) -> str:
+    if kind == "maven":
+        cls = node.split("::", 1)[0].split("$", 1)[0]
+        return "src/test/java/" + cls.replace(".", "/") + ".java"
+    return node.split("::", 1)[0]
 
 
 def run_pytest(service_dir: Path, timeout: int) -> tuple[int, dict[str, str], str]:
@@ -236,6 +313,26 @@ def butterfly_argv(
         argv += ["--effort", args.effort]
     if args.lean:
         argv.append("--lean")
+    if args.verifier:
+        argv += [
+            "--independent-verifier",
+            "--verifier-model",
+            args.verifier.split("/", 1)[-1],
+        ]
+    if args.clarify and args.clarify != "none":
+        argv.append("--clarify")
+        if args.clarify == "oracle":
+            answers_cmd = json.dumps(
+                [
+                    sys.executable,
+                    str(HERE / "clarify_oracle.py"),
+                    "--truth",
+                    str(telemetry.parent / "truth.txt"),
+                    "--log",
+                    str(telemetry.parent / "answers.log"),
+                ]
+            )
+            argv += ["--answers-cmd", answers_cmd]
     argv += args.extra_args
     argv += ["-p", statement]
     return argv
@@ -279,6 +376,204 @@ def run_harness(
     except json.JSONDecodeError:
         report = None
     return code, elapsed, report
+
+
+# Micro-USD per million tokens, copied from Butterfly's model registry (peak rate) so both
+# harnesses are billed on the same card: (cache-hit input, cache-miss input, output).
+PRICE_CARD = {
+    "zai/glm-5.3-flash": (30_000, 150_000, 500_000),
+    "deepseek/deepseek-flash": (6_000, 300_000, 1_200_000),
+}
+OPENCODE_PROVIDERS = {
+    "zai",
+    "deepseek",
+}  # must be registered in the operator's OpenCode
+OPENCODE_EDIT_TOOLS = {"edit", "write", "apply_patch"}
+
+
+def run_opencode(
+    args: argparse.Namespace, workspace: Path, run_dir: Path, statement: str
+) -> tuple[int, float, dict]:
+    """Drive `opencode run` headlessly in the operator's own OpenCode environment.
+
+    stdin must be closed: `opencode run` reads stdin to EOF whenever it is not a TTY (run.ts:416,
+    1.18.26) and blocks forever on an inherited open pipe, which looked like an init stall
+    (2026-09-13).
+
+    The provider must be registered there (`opencode auth login`, Z.ai or DeepSeek); a generated
+    provider config under a private XDG home stalls OpenCode 1.18 at init (observed 2026-09-13),
+    so no config, data or cache directory is overridden. `--pure` keeps external plugins out.
+    Metrics come from the NDJSON event stream; cost is recomputed from tokens on Butterfly's
+    price card so both harnesses are billed alike."""
+    argv = [
+        "opencode",
+        "run",
+        "--dir",
+        str(workspace),
+        "--pure",
+        "--auto",
+        "--title",
+        "bench",
+        "--print-logs",
+        "--log-level",
+        "INFO",
+        "-m",
+        args.model,
+        "--format",
+        "json",
+        *args.extra_args,
+        statement,
+    ]
+    (run_dir / "command.txt").write_text(" ".join(argv[:-1]) + " <statement>\n")
+    events_path = run_dir / "events.jsonl"
+    started = time.time()
+    code = _opencode_once(
+        argv, workspace, events_path, run_dir / "stderr.log", args.timeout
+    )
+    if code == 125:
+        # No events within the grace period: kill and retry once on the same workspace.
+        say(f"opencode stalled at init in {workspace.name}; retrying once")
+        code = _opencode_once(
+            argv, workspace, events_path, run_dir / "stderr.log", args.timeout
+        )
+    elapsed = time.time() - started
+    return code, elapsed, opencode_metrics(events_path, args.model)
+
+
+_OPENCODE_STARTUP = threading.Lock()
+OPENCODE_STARTUP_GRACE_S = 240
+
+
+def _opencode_once(
+    argv: list[str], workspace: Path, events_path: Path, stderr_path: Path, timeout: int
+) -> int:
+    """Start OpenCode, serialising startups until the first event arrives (cheap insurance
+    against shared-database contention); give up with exit 125 when nothing arrives in time."""
+    with open(events_path, "w") as out, open(stderr_path, "w") as err:
+        with _OPENCODE_STARTUP:
+            proc = subprocess.Popen(
+                argv,
+                cwd=workspace,
+                stdin=subprocess.DEVNULL,
+                stdout=out,
+                stderr=err,
+                start_new_session=True,
+            )
+            deadline = time.time() + OPENCODE_STARTUP_GRACE_S
+            while (
+                time.time() < deadline
+                and proc.poll() is None
+                and events_path.stat().st_size == 0
+            ):
+                time.sleep(1)
+            if proc.poll() is None and events_path.stat().st_size == 0:
+                os.killpg(proc.pid, 9)
+                proc.wait()
+                return 125
+        try:
+            return proc.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            os.killpg(proc.pid, 9)
+            proc.wait()
+            return 124
+
+
+def opencode_metrics(path: Path, model: str) -> dict:
+    hit, miss, out_price = PRICE_CARD.get(model, (0, 0, 0))
+    m = {
+        "provider_calls": 0,
+        "provider_errors": 0,
+        "retries": 0,
+        "tool_calls": 0,
+        "edit_failures": 0,
+        "command_timeouts": 0,
+        "compactions": 0,
+        "reread_after_edit": 0,
+        "time_to_first_edit_s": None,
+        "output_cap_hits": 0,
+        "model_latency_s": 0.0,
+        "tool_time_s": 0.0,
+        "errors_by_kind": {},
+        "cost_microusd": 0,
+        "tokens_in": 0,
+        "tokens_out": 0,
+        "tokens_cached": 0,
+        "cache_hit_rate": None,
+        "max_call_latency_s": 0.0,
+        "harness_error": None,
+        "finish_reasons": {},
+    }
+    if not path.exists():
+        return m
+    first_ts = None
+    step_started = None
+    last_edit_by_path: dict[str, int] = {}
+    for line in path.read_text().splitlines():
+        try:
+            ev = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        ts = ev.get("timestamp")
+        first_ts = first_ts or ts
+        kind = ev.get("type")
+        part = ev.get("part") or {}
+        if kind == "step_start":
+            step_started = ts
+        elif kind == "step_finish":
+            m["provider_calls"] += 1
+            if step_started and ts:
+                latency = (ts - step_started) / 1000
+                m["model_latency_s"] += latency
+                m["max_call_latency_s"] = max(m["max_call_latency_s"], latency)
+            tokens = part.get("tokens") or {}
+            cached = (tokens.get("cache") or {}).get("read", 0)
+            uncached = tokens.get("input", 0)
+            output = tokens.get("output", 0) + tokens.get("reasoning", 0)
+            m["tokens_in"] += uncached + cached
+            m["tokens_cached"] += cached
+            m["tokens_out"] += output
+            m["cost_microusd"] += (
+                cached * hit + uncached * miss + output * out_price
+            ) // 1_000_000
+            reason = str(part.get("reason"))
+            m["finish_reasons"][reason] = m["finish_reasons"].get(reason, 0) + 1
+            if reason == "length":
+                m["output_cap_hits"] += 1
+        elif kind == "tool_use":
+            m["tool_calls"] += 1
+            state = part.get("state") or {}
+            tool = part.get("tool")
+            t = state.get("time") or {}
+            if t.get("start") and t.get("end"):
+                m["tool_time_s"] += (t["end"] - t["start"]) / 1000
+            target = (state.get("input") or {}).get("filePath") or ""
+            if tool in OPENCODE_EDIT_TOOLS:
+                if m["time_to_first_edit_s"] is None and first_ts and ts:
+                    m["time_to_first_edit_s"] = round((ts - first_ts) / 1000, 1)
+                if state.get("status") == "error":
+                    m["edit_failures"] += 1
+                elif target:
+                    last_edit_by_path[target] = ts
+            elif tool == "read" and target in last_edit_by_path:
+                m["reread_after_edit"] += 1
+            if (
+                tool == "bash"
+                and state.get("status") == "error"
+                and "timed out" in str(state.get("error", "")).lower()
+            ):
+                m["command_timeouts"] += 1
+        elif kind == "error":
+            m["provider_errors"] += 1
+            name = str((ev.get("error") or {}).get("name"))
+            m["errors_by_kind"][name] = m["errors_by_kind"].get(name, 0) + 1
+            m["harness_error"] = json.dumps(ev.get("error"))[:300]
+    # A step spans one provider request plus its tool dispatch, which tracks Butterfly's
+    # per-call latency closely enough for a share-of-wall-clock comparison.
+    m["model_latency_s"] = round(m["model_latency_s"], 1)
+    m["tool_time_s"] = round(m["tool_time_s"], 1)
+    if m["tokens_in"]:
+        m["cache_hit_rate"] = round(m["tokens_cached"] / m["tokens_in"], 3)
+    return m
 
 
 def telemetry_metrics(path: Path, started_ms: int | None = None) -> dict:
@@ -348,6 +643,8 @@ def telemetry_metrics(path: Path, started_ms: int | None = None) -> dict:
                     last_edit_by_path[target] = ts
             elif name == "read_file" and target in last_edit_by_path:
                 m["reread_after_edit"] += 1
+            if name == "ask_user":
+                m["questions_asked"] = m.get("questions_asked", 0) + 1
             if name == "run_command" and str(ev.get("failure")) == "Timeout":
                 m["command_timeouts"] += 1
         elif kind == "compaction":
@@ -365,7 +662,9 @@ def telemetry_metrics(path: Path, started_ms: int | None = None) -> dict:
 def trial(args: argparse.Namespace, repo: Path, task: Task, run: int) -> dict:
     run_dir = Path(args.out) / task.id / f"run{run}"
     run_dir.mkdir(parents=True, exist_ok=True)
-    workspace = Path(args.work_dir) / f"{task.id}-run{run}"
+    # A never-before-used path: OpenCode keeps per-directory state outside the directory and
+    # stalls at init when a killed instance had that path open (observed 2026-09-13).
+    workspace = Path(args.work_dir) / f"{task.id}-run{run}-{uuid.uuid4().hex[:8]}"
     service_dir = workspace / task.service
     result: dict = {
         "task": task.id,
@@ -373,13 +672,20 @@ def trial(args: argparse.Namespace, repo: Path, task: Task, run: int) -> dict:
         "model": args.model,
         "service": task.service,
         "mode": "oracle" if args.oracle else "harness",
+        "harness": args.harness,
+        "statement_shown": "raw" if args.raw_statements else "rewritten",
+        "clarify": args.clarify or "none",
     }
     try:
         build_workspace(repo, task, workspace)
         sync_env(service_dir, args.check_timeout)
-        statement = STATEMENT_TEMPLATE.format(
-            statement=task.statement.strip(), service=task.service
+        kind = service_kind(service_dir)
+        shown = task.raw_statement if args.raw_statements else task.statement
+        statement = STATEMENT_TEMPLATE[kind].format(
+            statement=shown.strip(), service=task.service
         )
+        # Ground truth for the clarify oracle: what a well-informed user would know.
+        (run_dir / "truth.txt").write_text(task.statement.strip() + "\n")
         (run_dir / "statement.txt").write_text(statement + "\n")
 
         if args.oracle:
@@ -387,6 +693,9 @@ def trial(args: argparse.Namespace, repo: Path, task: Task, run: int) -> dict:
             apply_oracle(repo, task, workspace)
             code, elapsed, report = 0, time.time() - started, None
             metrics = telemetry_metrics(run_dir / "telemetry.jsonl")
+        elif args.harness == "opencode":
+            code, elapsed, metrics = run_opencode(args, workspace, run_dir, statement)
+            report = None
         else:
             code, elapsed, report = run_harness(args, workspace, run_dir, statement)
             metrics = telemetry_metrics(run_dir / "telemetry.jsonl")
@@ -408,20 +717,26 @@ def trial(args: argparse.Namespace, repo: Path, task: Task, run: int) -> dict:
         )
 
         apply_hidden_tests(repo, task, workspace)
-        pcode, statuses, output = run_pytest(service_dir, args.check_timeout)
+        pcode, statuses, output = run_tests(service_dir, args.check_timeout)
         (run_dir / "hidden-check.log").write_text(output)
         hidden = {t: statuses.get(t, "MISSING") for t in task.hidden_test_ids}
         hidden_pass = all(s == "PASSED" for s in hidden.values())
-        hidden_dirs = {f.split("/", 1)[1] for f in task.hidden_tests}
+        hidden_rel = {
+            f[len(task.service) + 1 :] if f.startswith(task.service + "/") else f
+            for f in task.hidden_tests
+        }
         regressions = sorted(
             t
-            for t, s in statuses.items()
-            if s != "PASSED"
+            for t, st in statuses.items()
+            if st not in ("PASSED", "SKIPPED")
             and t not in task.hidden_test_ids
             and t not in task.baseline_failing
-            and t.split("::", 1)[0] not in hidden_dirs
+            and test_file_of(t, kind) not in hidden_rel
         )
         claimed = None
+        if args.harness == "opencode":
+            # No completion gate: a run that ends by itself is the harness saying it is done.
+            claimed = code == 0 and not metrics.get("harness_error")
         if report is not None:
             # Butterfly's own verdict: the loop accepted a completion claim and its checks passed.
             claimed = bool(report.get("completed")) and bool(
@@ -452,6 +767,22 @@ def trial(args: argparse.Namespace, repo: Path, task: Task, run: int) -> dict:
             result["report_status"] = report.get("status")
             result["report_verified"] = report.get("verified")
             result["verification_source"] = report.get("verification_source")
+            verifiers = [
+                a.get("verifier")
+                for a in report.get("attempts", [])
+                if isinstance(a, dict) and a.get("verifier")
+            ]
+            if verifiers:
+                result["verifier_verdicts"] = [v.get("verdict") for v in verifiers]
+                result["verifier_cost_microusd"] = sum(
+                    v.get("cost_microusd") or 0 for v in verifiers
+                )
+                result["verifier_calls"] = sum(
+                    v.get("provider_calls") or 0 for v in verifiers
+                )
+                result["verifier_unmet"] = [
+                    u for v in verifiers for u in (v.get("unmet") or [])
+                ][:6]
             result["self_authored_checks"] = sum(
                 a.get("self_authored_checks", 0)
                 for a in report.get("attempts", [])
@@ -512,6 +843,7 @@ def main() -> int:
         default="oracle",
         help="Harbor form provider/model, e.g. zai/glm-5.3-flash",
     )
+    p.add_argument("--harness", choices=["butterfly", "opencode"], default="butterfly")
     p.add_argument("--out", required=True)
     p.add_argument(
         "--work-dir",
@@ -541,6 +873,21 @@ def main() -> int:
         help="drop --lean (the lean-turns prompt block); on by default since the 2026-09-12 A/B",
     )
     p.set_defaults(lean=True)
+    p.add_argument(
+        "--clarify",
+        choices=["none", "oracle", "unanswered"],
+        default=None,
+        help="Butterfly only: advertise ask_user; 'oracle' answers from the rewritten statement via clarify_oracle.py, 'unanswered' leaves questions unanswered",
+    )
+    p.add_argument(
+        "--raw-statements",
+        action="store_true",
+        help="show the commit title and body instead of the rewritten statement",
+    )
+    p.add_argument(
+        "--verifier",
+        help="Butterfly only: review every accepted claim in a fresh verifier session on this model (provider/model)",
+    )
     p.add_argument("--extra-args", nargs="*", default=[])
     p.add_argument(
         "--oracle",
@@ -573,14 +920,22 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 2
-        if not args.binary.is_file():
+        if args.harness == "butterfly" and not args.binary.is_file():
             print(f"binary not found: {args.binary}", file=sys.stderr)
+            return 2
+        if args.harness == "opencode" and (
+            shutil.which("opencode") is None or provider not in OPENCODE_PROVIDERS
+        ):
+            print(
+                "opencode harness needs the `opencode` CLI on PATH and a zai/ or deepseek/ model",
+                file=sys.stderr,
+            )
             return 2
 
     only = set(args.only.split(",")) if args.only else None
     tiers = set(args.tier.split(",")) if args.tier else None
     tasks = [
-        Task(**{k: t[k] for k in Task.__dataclass_fields__})
+        Task(**{k: t.get(k, "") for k in Task.__dataclass_fields__})
         for t in data["tasks"]
         if (not only or t["id"] in only) and (not tiers or t.get("tier") in tiers)
     ]

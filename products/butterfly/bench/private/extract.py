@@ -40,7 +40,7 @@ from pathlib import Path
 TEST_PATH = re.compile(
     r"(^|/)(tests?|__tests__)/|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$"
 )
-SOURCE_SUFFIXES = {".py"}
+SOURCE_SUFFIXES = {".py", ".java", ".kt", ".scala"}
 FORBIDDEN_MODELS = (
     "muse",
 )  # runner refuses these; kept here so tasks.json carries the rule
@@ -78,14 +78,37 @@ class Candidate:
     notes: str = ""
 
 
+def discover_services(repo: Path) -> set[str]:
+    """Directories (up to two levels deep) that own a build file: a Python project
+    (`pyproject.toml`) or a Maven module (`pom.xml`). Stored as repo-relative paths."""
+    found = set()
+    for pattern in (
+        "*/pyproject.toml",
+        "*/*/pyproject.toml",
+        "*/pom.xml",
+        "*/*/pom.xml",
+    ):
+        for f in repo.glob(pattern):
+            found.add(f.parent.relative_to(repo).as_posix())
+    return found
+
+
 def service_of(path: str, services: set[str]) -> str | None:
-    top = path.split("/", 1)[0]
-    return top if top in services else None
+    parts = path.split("/")
+    for depth in (2, 1):
+        candidate = "/".join(parts[:depth])
+        if candidate in services and len(parts) > depth:
+            return candidate
+    return None
+
+
+def service_kind(service_dir: Path) -> str:
+    return "maven" if (service_dir / "pom.xml").exists() else "python"
 
 
 def scan(args: argparse.Namespace) -> None:
     repo = Path(args.repo).resolve()
-    services = {p.parent.name for p in repo.glob("*/pyproject.toml")}
+    services = discover_services(repo)
     log = git(
         repo,
         "log",
@@ -164,6 +187,60 @@ PYTEST_ARGS = ["-q", "--no-header", "-p", "no:cacheprovider", "-rA", "--tb=no"]
 RESULT_LINE = re.compile(r"^(PASSED|FAILED|ERROR) (\S+)")
 
 
+def run_tests(service_dir: Path, timeout: int) -> tuple[int, dict[str, str], str]:
+    return (
+        run_maven(service_dir, timeout)
+        if service_kind(service_dir) == "maven"
+        else run_pytest(service_dir, timeout)
+    )
+
+
+def run_maven(service_dir: Path, timeout: int) -> tuple[int, dict[str, str], str]:
+    """`mvn test` with statuses read from surefire XML reports; ids are `Class::method`.
+    Exit 0 = all pass, 1 = test or compile failures (reports may be absent)."""
+    import xml.etree.ElementTree as ET
+
+    reports = service_dir / "target" / "surefire-reports"
+    shutil.rmtree(reports, ignore_errors=True)
+    try:
+        result = subprocess.run(
+            ["mvn", "-q", "-B", "test"],
+            cwd=service_dir,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return 124, {}, "timeout"
+    statuses: dict[str, str] = {}
+    for xml in reports.glob("TEST-*.xml") if reports.exists() else []:
+        try:
+            root = ET.parse(xml).getroot()
+        except ET.ParseError:
+            continue
+        for case in root.iter("testcase"):
+            node = f"{case.get('classname')}::{case.get('name')}"
+            if case.find("failure") is not None:
+                statuses[node] = "FAILED"
+            elif case.find("error") is not None:
+                statuses[node] = "ERROR"
+            elif case.find("skipped") is not None:
+                statuses[node] = "SKIPPED"
+            else:
+                statuses[node] = "PASSED"
+    tail = "\n".join((result.stdout + result.stderr).splitlines()[-15:])
+    code = 0 if result.returncode == 0 else 1
+    return code, statuses, tail
+
+
+def test_file_of(node: str, kind: str) -> str:
+    """Service-relative test file for a node id (pytest: path::name; maven: pkg.Class::method)."""
+    if kind == "maven":
+        cls = node.split("::", 1)[0].split("$", 1)[0]
+        return "src/test/java/" + cls.replace(".", "/") + ".java"
+    return node.split("::", 1)[0]
+
+
 def run_pytest(service_dir: Path, timeout: int) -> tuple[int, dict[str, str], str]:
     """Return (exit code, {node id: status}, tail of output)."""
     env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
@@ -219,11 +296,11 @@ def validate_one(
     wt = worktree(repo, work_dir, c.id, c.parent)
     svc = wt / c.service
     try:
-        if not (svc / "pyproject.toml").exists():
-            return False, "no pyproject at parent"
+        if not (svc / "pyproject.toml").exists() and not (svc / "pom.xml").exists():
+            return False, "no build file at parent"
         # Exit 5 = no tests collected: the commit may add the service's first tests.
         # Exit 1 = pre-existing failures: tolerated, recorded, excluded from regression checks.
-        code, base, tail = run_pytest(svc, timeout)
+        code, base, tail = run_tests(svc, timeout)
         if code not in (0, 1, 5):
             return (
                 False,
@@ -245,7 +322,7 @@ def validate_one(
                 git(wt, "checkout", c.commit, "--", f)
             else:
                 (wt / f).unlink(missing_ok=True)
-        code, with_tests, tail = run_pytest(svc, timeout)
+        code, with_tests, tail = run_tests(svc, timeout)
         if code == 0:
             return (
                 False,
@@ -265,7 +342,7 @@ def validate_one(
         ).split():
             if f.startswith(c.service + "/"):
                 (wt / f).unlink(missing_ok=True)
-        code, after, tail = run_pytest(svc, timeout)
+        code, after, tail = run_tests(svc, timeout)
         if code != 0:
             return (
                 False,
@@ -273,12 +350,16 @@ def validate_one(
             )
         # Hidden checks: tests in the hidden files that pass after the commit and did not
         # pass before it (failed, errored, or did not exist / could not be collected).
-        hidden_files = set(c.hidden_tests)
+        kind = service_kind(svc)
+        hidden_rel = {
+            f[len(c.service) + 1 :] if f.startswith(c.service + "/") else f
+            for f in c.hidden_tests
+        }
         flipped = sorted(
             t
-            for t, s in after.items()
-            if s == "PASSED"
-            and t.split("::", 1)[0] in {f.split("/", 1)[1] for f in hidden_files}
+            for t, st in after.items()
+            if st == "PASSED"
+            and test_file_of(t, kind) in hidden_rel
             and t not in passing_before
         )
         if not flipped:

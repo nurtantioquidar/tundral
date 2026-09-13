@@ -54,6 +54,15 @@ still bills correctly). Speed: `wall_clock_s`, `provider_calls`, `time_to_first_
 `retries`, `errors_by_kind`. Raw logs per trial: `statement.txt`, `command.txt`, `stdout.json`
 (Butterfly's report), `stderr.log`, `telemetry.jsonl`, `diff.txt`, `hidden-check.log`.
 
+## Maven modules (round two)
+
+`extract.py` and `run.py` treat any directory (up to two levels deep) with a `pom.xml` as a
+Maven service: tests run with `mvn -q -B test`, statuses come from `target/surefire-reports`
+as `Class::method`, hidden test files map to classes by path, and the workspace is warmed with
+`mvn test-compile` before the clock starts. Java hidden tests compile against exact signatures
+and assert exact messages, so a statement must carry the interface and the strings the tests
+expect; a vague statement guarantees a compile failure rather than a near miss.
+
 ## Findings log
 
 - 2026-09-12, de-services (17 Python/Go services, 344 squash commits): 29 candidates across
@@ -115,3 +124,66 @@ still bills correctly). Speed: `wall_clock_s`, `provider_calls`, `time_to_first_
   from seconds to 1 008 s, wall clock on GLM is dominated by reasoning-latency variance, and
   24 trials do not resolve a ±15% difference. Calls, re-reads and cost are the robust signals,
   and all three improved on both models. The two hard tasks remain the only failures.
+
+## Other harnesses
+
+`run.py --harness opencode` drives OpenCode (`opencode run --pure --auto --format json`) on the
+same tasks and hidden checks. The provider must be registered in the operator's own OpenCode
+(`opencode auth login`; Z.ai and DeepSeek are in its catalog); a generated provider config under a
+private XDG home errored at init on 1.18.26, so nothing is overridden. stdin is closed by the
+runner: `opencode run` reads stdin to EOF whenever it is not a TTY and blocks forever on an
+inherited open pipe, which cost a day of "init stalls" before the cause was found.
+Metrics come from the NDJSON events (`step_finish` tokens, `tool_use` parts);
+cost is recomputed from tokens on Butterfly's price card so both harnesses are billed alike.
+OpenCode has no completion gate, so every self-terminated run counts as a claim and a hidden-test
+failure is a false completion. Its prompt, tools and defaults are its own; only the task, model,
+workspace and verdict are shared.
+- **OpenCode 1.18.26 on GLM 5.3 Flash** (same 12 × 2, its own prompt and tools, `--pure`,
+  session titling disabled, cost on Butterfly's card): 19/24 (79%), 5 false completions, 0
+  regressions, $1.24, $0.065 per success, median 20 calls, median wall 509 s, model latency 79% of
+  wall clock, 0.3 re-reads per trial, 1 edit failure, 1 output-cap hit. Butterfly `--lean` on the
+  same model: 21/24, 3 false completions, $0.060 per success, 24 calls, 681 s. Both fail the same
+  two multi-part commits every time; OpenCode additionally missed the crawler boundary task once.
+  Reading: parity within the suite's resolution, Butterfly ahead by two passes and zero
+  regressions, OpenCode ahead on calls per task; GLM wall clock remains latency noise.
+- 2026-09-13, de-pipeline-hub (Flink, Java 11, Maven): 28 candidates since 2026-04 across three
+  modules, 25 validated (3 rejected as test-only), oracle 25/25 (85-test module runs in ~3 s
+  warm). Round-two set: nine tasks with rewritten statements (`round: 2`), seven small and two
+  medium, all bug fixes with exact-message assertions. Statement fidelity is the risk again.
+- **Cross-model verifier A/B** (GLM worker + DeepSeek V4.1 Flash verifier, `--verifier`, the two
+  hard de-services tasks plus three small controls, 2 runs each): 6/10 vs 7/10 for the same
+  tasks in the lean baseline. The verifier passed all four wrong claims on the hard tasks (11/14
+  and 3–4/5 hidden checks, verdict `pass` every time) and rejected two correct claims on easy
+  tasks ("negative requirement" objections), each costing a second attempt and 5–10 extra
+  minutes. Verifier cost $0.14 of $0.78; zero catches. Same conclusion as Terminal-Bench on
+  2026-09-09: a fresh-context reviewer with the same statement shares the worker's reading of
+  it. Not adopted; the misjudged-requirement failure class stays open.
+- **Round two, Flink (9 tasks × 2 runs)**: Butterfly DeepSeek 17/18 at $0.020 per success and
+  101 s median; Butterfly GLM 18/18 at $0.052 and 547 s; OpenCode DeepSeek 17/18 at $0.034 and
+  99 s. Zero regressions anywhere; one false completion per DeepSeek arm. Java with exact-message
+  assertions is tractable for flash models once the statement carries the interface; the suite
+  separates harnesses on cost and false completions, not pass rate. OpenCode GLM 17/18 at $0.048
+  and 332 s. Every miss across all four arms is the same task (aborted-writer recovery, 0/4 when
+  missed): a model coin flip, not a harness difference. Butterfly is cheaper per success on both
+  models (DeepSeek $0.020 vs $0.034, GLM $0.052 vs $0.048 with one more pass); OpenCode uses
+  fewer calls (20–22 vs 24) and re-reads less on GLM.
+
+## Clarify experiment
+
+The largest swing in the whole program was statement quality (0/5 → 5/5 on the same harness and
+model), so `--clarify` lets the model ask before its first edit. The experiment keeps the model
+blind: `--raw-statements` shows the commit title and body only; `--clarify oracle` answers its
+questions through `clarify_oracle.py`, which holds the rewritten statement (what a well-informed
+user knows) and answers strictly from it via DeepSeek; `--clarify unanswered` measures the
+prompt line alone. Compare against `--raw-statements` without clarify and against the rewritten
+statements: the gap the oracle closes is the value of asking; `questions_asked` and
+`answers.log` per trial show what was asked.
+- **Clarify experiment** (GLM, five small de-services tasks × 2, raw commit titles): with
+  `--clarify oracle` 1/10, without 0/10 (rewritten statements: 10/10). The model asked in 6 of 10
+  trials, and the oracle answered accurately, but it asked about the ambiguity it perceived
+  (which layout, which time zone, how far to scan) and not about the bindings the hidden tests
+  need (a helper's name, a new exception class, an exact error message). The one pass is the
+  trial whose question happened to name the helper. Asking recovers only known unknowns; the
+  interface names a test binds to are unknown unknowns to the model, so `--clarify` is a product
+  feature for interactive use (assumptions become visible and correctable) rather than a
+  pass-rate lever. Statement quality stays the dominant factor and lives with the user.
