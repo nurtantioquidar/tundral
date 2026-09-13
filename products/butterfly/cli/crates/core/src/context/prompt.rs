@@ -66,6 +66,20 @@ pub const LEAN_INSTRUCTIONS: &str = "\n\
   independent reads and searches together in one turn instead of one per turn.
   Run the relevant tests after your changes, not before every step.";
 
+/// Appended only in clarify mode (`--clarify`). Motivation, private suite
+/// 2026-09-12: the same harness and model went from 0/5 to 5/5 when the task
+/// statement named the interfaces the hidden tests expected; the loop cannot
+/// invent those names, but it can ask. Gated so other prefixes keep their bytes.
+pub const CLARIFY_INSTRUCTIONS: &str = "\n\
+- Clarify before you commit: when the task statement leaves open a name or
+  signature you must introduce, an exact message or format another party will
+  depend on, or behaviour in a case it does not mention, call ask_user once,
+  before your first edit, with every such question and the assumption you would
+  otherwise make. Read the relevant code first so the questions are concrete;
+  do not ask what the code or its tests already answer. An answer is
+  authoritative. Without one, proceed on your assumptions and state them in
+  the final summary.";
+
 /// Appended only in the fresh-context session that reviews a worker's
 /// completion claim (never in a worker session).
 pub const VERIFIER_INSTRUCTIONS: &str = "\n\
@@ -91,6 +105,9 @@ pub const VERIFIER_INSTRUCTIONS: &str = "\n\
 /// session — improve deliberately, not incidentally. (The workspace root path
 /// was considered and declined for this reason; the model can run the
 /// allowlisted `pwd` instead.)
+// One flag per gated block, in append order; a flags struct would read the
+// same at every call site and hide the order the bytes depend on.
+#[allow(clippy::too_many_arguments)]
 pub fn build_system_prompt(
     workspace_name: &str,
     instructions_snapshot: Option<&str>,
@@ -98,6 +115,7 @@ pub fn build_system_prompt(
     sandboxed: bool,
     completion_gate: bool,
     lean: bool,
+    clarify: bool,
     verifier: bool,
 ) -> String {
     let mut prompt = String::new();
@@ -113,6 +131,9 @@ pub fn build_system_prompt(
     }
     if lean {
         prompt.push_str(LEAN_INSTRUCTIONS);
+    }
+    if clarify {
+        prompt.push_str(CLARIFY_INSTRUCTIONS);
     }
     if verifier {
         prompt.push_str(VERIFIER_INSTRUCTIONS);
@@ -171,10 +192,12 @@ mod tests {
             false,
             false,
             false,
+            false,
         );
         let b = build_system_prompt(
             "monet",
             Some("Do the thing."),
+            false,
             false,
             false,
             false,
@@ -185,30 +208,37 @@ mod tests {
         assert!(a.contains("Workspace: monet"));
         assert!(a.contains("Do the thing."));
         assert!(!a.contains("repo_map"), "atlas line must be gated");
-        let with_atlas = build_system_prompt("monet", None, true, false, false, false, false);
+        let with_atlas =
+            build_system_prompt("monet", None, true, false, false, false, false, false);
         assert!(with_atlas.contains("repo_map"));
         assert!(with_atlas.contains("search_text"));
         assert!(!a.contains("`shell`"), "sandbox line must be gated");
-        let sandboxed = build_system_prompt("monet", None, false, true, false, false, false);
+        let sandboxed = build_system_prompt("monet", None, false, true, false, false, false, false);
         assert!(sandboxed.contains("`shell`"));
         assert!(
             !a.contains("complete_task"),
             "completion line must be gated"
         );
-        let gated = build_system_prompt("monet", None, false, false, true, false, false);
+        let gated = build_system_prompt("monet", None, false, false, true, false, false, false);
         assert!(gated.contains("complete_task"));
         assert!(!a.contains("report_verdict"), "verifier line must be gated");
-        let verifier = build_system_prompt("monet", None, false, true, false, false, true);
+        let verifier = build_system_prompt("monet", None, false, true, false, false, false, true);
         assert!(verifier.contains("report_verdict"));
         assert!(!verifier.contains("complete_task"));
         assert!(!a.contains("Lean turns"), "lean line must be gated");
-        let lean = build_system_prompt("monet", None, false, false, true, true, false);
+        let lean = build_system_prompt("monet", None, false, false, true, true, false, false);
         assert!(lean.contains("Lean turns"));
         let gated_head = gated.split("\n\nWorkspace:").next().unwrap();
         assert!(
             lean.starts_with(gated_head),
             "lean appends after the completion line so gated sessions keep their prefix"
         );
+        assert!(
+            !a.contains("Clarify before you commit"),
+            "clarify line must be gated"
+        );
+        let clarify = build_system_prompt("monet", None, false, false, true, false, true, false);
+        assert!(clarify.contains("ask_user"));
         // Default bytes are exactly the historical prompt: the gated lines
         // only ever APPEND after CORE_INSTRUCTIONS.
         assert!(a.starts_with(CORE_INSTRUCTIONS));
@@ -217,7 +247,7 @@ mod tests {
     #[test]
     fn oversized_instruction_snapshots_are_capped() {
         let big = "x".repeat(INSTRUCTIONS_SNAPSHOT_CAP * 2);
-        let prompt = build_system_prompt("w", Some(&big), false, false, false, false, false);
+        let prompt = build_system_prompt("w", Some(&big), false, false, false, false, false, false);
         assert!(prompt.len() < INSTRUCTIONS_SNAPSHOT_CAP + CORE_INSTRUCTIONS.len() + 200);
         assert!(prompt.contains("[instructions truncated]"));
     }

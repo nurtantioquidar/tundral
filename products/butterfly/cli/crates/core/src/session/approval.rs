@@ -43,6 +43,13 @@ pub enum Decision {
 #[async_trait]
 pub trait ApprovalGate: Send + Sync {
     async fn review(&self, request: &ApprovalRequest) -> Decision;
+
+    /// Answer a clarifying question the model asked through `ask_user`
+    /// (clarify mode only). `None` means nobody can answer in this context;
+    /// the model is then told to proceed on its stated assumptions.
+    async fn answer_question(&self, _question: &str) -> Option<String> {
+        None
+    }
 }
 
 /// Gate used by tests and --auto mode plumbing.

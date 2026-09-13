@@ -142,6 +142,31 @@ impl ApprovalGate for TerminalGate {
         .await
         .unwrap_or(Decision::Deny)
     }
+
+    async fn answer_question(&self, question: &str) -> Option<String> {
+        let question = question.to_string();
+        tokio::task::spawn_blocking(move || {
+            eprintln!("\n  {CYAN}The model has questions before it edits:{RESET}");
+            for line in question.lines() {
+                eprintln!("  {line}");
+            }
+            eprintln!("  {DIM}answer below; finish with an empty line (empty answer = proceed on its assumptions){RESET}");
+            let _ = std::io::stderr().flush();
+            let mut answer = String::new();
+            loop {
+                let mut line = String::new();
+                match std::io::stdin().read_line(&mut line) {
+                    Ok(0) => break,
+                    Ok(_) if line.trim().is_empty() => break,
+                    Ok(_) => answer.push_str(&line),
+                    Err(_) => break,
+                }
+            }
+            Some(answer)
+        })
+        .await
+        .unwrap_or(None)
+    }
 }
 
 /// One-line dim turn summary, shared by both loops.

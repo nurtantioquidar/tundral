@@ -65,6 +65,7 @@ async fn live_two_stage_compaction_and_continuation() {
         task_type: None,
         completion_gate: false,
         lean: false,
+        clarify: false,
         independent_verifier: false,
         verifier: false,
     };

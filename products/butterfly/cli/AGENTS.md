@@ -125,7 +125,7 @@ products/butterfly/bench/harbor/with-keys.sh <cmd>    # keys from 1Password (op)
    operator's explicit sign-off with the trade-off stated. Never change prefix bytes as a side
    effect of an unrelated fix. New capabilities extend the prefix only behind an explicit mode
    (Atlas line, sandbox line, `shell` schema, completion line + `complete_task` schema, lean
-   line; the
+   line, clarify line + `ask_user` schema; the
    verifier line + `report_verdict` schema exist only in the separate verifier session) and only
    by APPENDING, so a default session's bytes are exactly the historical ones.
 10. Model-agnosticism is a capability contract, not a lowest common denominator: the loop reads

@@ -166,6 +166,20 @@ struct Cli {
     #[arg(long)]
     lean: bool,
 
+    /// Clarify mode: advertise `ask_user` so the model can put the task
+    /// statement's open points (names, signatures, exact messages, unspecified
+    /// cases) to you once before its first edit. Interactive runs answer on the
+    /// terminal; headless runs need --answers-cmd or the model is told to
+    /// proceed on its stated assumptions. Extends the prompt prefix only when set.
+    #[arg(long)]
+    clarify: bool,
+
+    /// With --clarify in --json runs: a command that answers questions. It gets
+    /// the rendered questions on stdin and its stdout is the answer (e.g. a
+    /// script that consults a ticket or a spec). Split like a shell word list.
+    #[arg(long, requires = "clarify")]
+    answers_cmd: Option<String>,
+
     /// With --independent-verifier: run the verifier on this model instead of
     /// the worker's (cross-model verification; needs that provider's key).
     #[arg(long, requires = "independent_verifier")]
@@ -342,6 +356,7 @@ async fn main() -> Result<()> {
         max_provider_calls_per_input: cli.max_calls.max(1),
         completion_gate: cli.completion_gate,
         lean: cli.lean,
+        clarify: cli.clarify,
         independent_verifier: cli.independent_verifier,
         ..SessionConfig::default()
     };
@@ -411,7 +426,9 @@ async fn main() -> Result<()> {
             }
             // Headless: nobody can answer a forced review, so policy-warned
             // calls (e.g. non-allowlisted commands) are denied, not approved.
-            struct HeadlessGate;
+            struct HeadlessGate {
+                answers_cmd: Option<Vec<String>>,
+            }
             #[async_trait::async_trait]
             impl butterfly_core::session::approval::ApprovalGate for HeadlessGate {
                 async fn review(
@@ -424,12 +441,40 @@ async fn main() -> Result<()> {
                         butterfly_core::session::approval::Decision::Approve
                     }
                 }
+                async fn answer_question(&self, question: &str) -> Option<String> {
+                    let argv = self.answers_cmd.clone()?;
+                    let question = question.to_string();
+                    tokio::task::spawn_blocking(move || {
+                        use std::io::Write;
+                        let mut child = std::process::Command::new(&argv[0])
+                            .args(&argv[1..])
+                            .stdin(std::process::Stdio::piped())
+                            .stdout(std::process::Stdio::piped())
+                            .stderr(std::process::Stdio::inherit())
+                            .spawn()
+                            .ok()?;
+                        child.stdin.take()?.write_all(question.as_bytes()).ok()?;
+                        let output = child.wait_with_output().ok()?;
+                        output
+                            .status
+                            .success()
+                            .then(|| String::from_utf8_lossy(&output.stdout).into_owned())
+                    })
+                    .await
+                    .ok()
+                    .flatten()
+                }
             }
+            // Same shape as --verify-cmd: whitespace-split argv or a JSON array.
+            let answers_cmd = match cli.answers_cmd.as_deref() {
+                Some(text) => Some(parse_check(text)?),
+                None => None,
+            };
             let report = match agent
                 .run_task(
                     prompt,
                     &task_options,
-                    &HeadlessGate,
+                    &HeadlessGate { answers_cmd },
                     &mut butterfly_core::provider::NullSink,
                     &tokio_util::sync::CancellationToken::new(),
                 )
@@ -546,15 +591,10 @@ async fn main() -> Result<()> {
             show_reasoning,
         )
         .await?;
-        for attempt in &report.attempts {
-            if let Some(verification) = &attempt.verification {
-                eprintln!(
-                    "[attempt {}] verification: {}",
-                    attempt.attempt,
-                    verification.summary_line()
-                );
-            }
-        }
+        // The verification story in one block, the same one --json carries
+        // structurally: what backed the ending, what was checked and by whom,
+        // and what the model merely claimed.
+        eprintln!("\n{}", report.render_summary().trim_end());
         if report.cancelled {
             std::process::exit(130);
         }

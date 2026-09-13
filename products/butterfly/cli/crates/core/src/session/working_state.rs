@@ -65,6 +65,10 @@ pub struct WorkingState {
     /// One-line result of the last verification stage, if any ran.
     #[serde(default)]
     pub verification: Option<String>,
+    /// Questions put to the user in clarify mode and what came back; they are
+    /// authoritative and must survive compaction.
+    #[serde(default)]
+    pub clarifications: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -199,6 +203,15 @@ impl WorkingState {
     }
 
     /// Remember a classified failure (bounded, most recent last).
+    pub fn note_clarification(&mut self, questions: &str, answer: Option<&str>) {
+        let mut entry = format!("Q:\n{}", questions.trim_end());
+        match answer {
+            Some(a) if !a.trim().is_empty() => entry.push_str(&format!("\nA: {}", a.trim())),
+            _ => entry.push_str("\nA: (unanswered; proceeding on the stated assumptions)"),
+        }
+        self.clarifications.push(entry);
+    }
+
     pub fn record_failure(&mut self, kind: FailureKind, summary: &str) {
         self.failures.push(RecordedFailure {
             kind,
@@ -244,6 +257,13 @@ impl WorkingState {
                     if task.done { "x" } else { " " },
                     task.text
                 ));
+            }
+        }
+        if !self.clarifications.is_empty() {
+            out.push_str("Clarifications (user answers are authoritative):\n");
+            for c in &self.clarifications {
+                out.push_str(c);
+                out.push('\n');
             }
         }
         out.push_str(&format!(

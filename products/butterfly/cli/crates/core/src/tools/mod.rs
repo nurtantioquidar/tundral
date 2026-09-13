@@ -82,6 +82,9 @@ pub const TOOL_NAMES: &[(&str, ToolKind)] = &[
     // Independent verifier (2026-09-09). Advertised ONLY in the fresh-context
     // verifier session that reviews a completion claim; never in a worker.
     ("report_verdict", ToolKind::ReadOnly),
+    // Clarify mode (2026-09-13). Advertised ONLY when the session runs with
+    // --clarify, so default and gated sessions keep their schema bytes.
+    ("ask_user", ToolKind::ReadOnly),
 ];
 
 pub fn tool_kind(name: &str) -> Option<ToolKind> {
@@ -303,6 +306,30 @@ pub fn tool_schemas() -> Vec<ToolSchema> {
                     }
                 },
                 "required": ["verdict", "requirements"],
+                "additionalProperties": false
+            }),
+        },
+        ToolSchema {
+            name: "ask_user".into(),
+            description: "Ask the user to settle what the task statement leaves open before you commit to it: the name or signature of something you must introduce, an exact message or format another party will depend on, behaviour in a case the statement does not mention. Put every question in one call, each with the assumption you would otherwise make. An answer is authoritative; if nobody can answer, proceed on your stated assumptions.".into(),
+            parameters: json!({
+                "type": "object",
+                "properties": {
+                    "questions": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "question": {"type": "string", "description": "One concrete question"},
+                                "assumption": {"type": "string", "description": "What you will do if it goes unanswered"}
+                            },
+                            "required": ["question", "assumption"],
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "required": ["questions"],
                 "additionalProperties": false
             }),
         },

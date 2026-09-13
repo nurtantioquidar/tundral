@@ -32,9 +32,13 @@ fn session_tools(
     atlas_enabled: bool,
     sandboxed: bool,
     completion_gate: bool,
+    clarify: bool,
     verifier: bool,
 ) -> Vec<ToolSchema> {
     let mut tools = tool_schemas();
+    if !clarify {
+        tools.retain(|tool| tool.name != "ask_user");
+    }
     if !atlas_enabled {
         tools.retain(|tool| tool.name != "repo_map" && tool.name != "symbol_search");
     }
@@ -49,7 +53,7 @@ fn session_tools(
         tools.retain(|tool| {
             !matches!(
                 tool.name.as_str(),
-                "edit" | "write_file" | "update_plan" | "complete_task"
+                "edit" | "write_file" | "update_plan" | "complete_task" | "ask_user"
             )
         });
     } else {
@@ -72,6 +76,10 @@ const WEAK_CHECK_REJECTIONS: u32 = 2;
 /// Final claims rejected for lacking the requirement checklist (once: the
 /// list is the verifier's input, not a hoop).
 const REQUIREMENTS_REJECTIONS: u32 = 1;
+/// `ask_user` calls honoured per input in clarify mode; later ones are refused.
+const CLARIFY_CAP: u32 = 2;
+/// Longest user answer relayed to the model.
+const ANSWER_CAP: usize = 8_000;
 /// Provider calls the independent verifier may spend on one claim.
 /// Observed 2026-09-09: GLM verifying a Muse claim built a scratch copy and a
 /// harness, then spent its last calls debugging the harness and never
@@ -237,6 +245,10 @@ pub struct SessionConfig {
     /// Append the lean-turns rules (no read-back after a successful edit,
     /// scoped orientation, batched reads). Appends to the prefix only when on.
     pub lean: bool,
+    /// Advertise `ask_user` and the clarify line: the model may put the task
+    /// statement's open points to the user once before its first edit. Appends
+    /// to the prefix only when on.
+    pub clarify: bool,
     /// Review every accepted claim in a fresh-context verifier session before
     /// the loop treats it as an ending; unmet requirements become the next
     /// attempt's evidence. Requires the completion gate.
@@ -277,6 +289,7 @@ impl Default for SessionConfig {
             task_type: None,
             completion_gate: false,
             lean: false,
+            clarify: false,
             independent_verifier: false,
             verifier: false,
         }
@@ -379,6 +392,116 @@ pub struct AttemptReport {
     pub verifier: Option<VerifierReport>,
 }
 
+impl TaskReport {
+    /// The verification story of a run, for a human: what the loop decided,
+    /// what backed it, what was checked and by whom, what the model claimed
+    /// and what an independent verifier said. Never overstates: a claim is
+    /// shown as a claim, a self-authored check as the model's own word.
+    pub fn render_summary(&self) -> String {
+        let mut out = String::new();
+        let verdict = match (self.verified, self.success, self.completed) {
+            (Some(true), _, _) => "VERIFIED: an independent check the model did not write passed",
+            (Some(false), _, _) => "FAILED: a check failed on the last attempt",
+            (None, Some(false), _) => "FAILED: the loop could not finish within its attempts",
+            (None, _, true) => {
+                "CLAIMED: the model reported completion; no independent check backed it"
+            }
+            (None, _, false) => "UNRESOLVED: the run ended without a completion claim",
+        };
+        out.push_str(verdict);
+        out.push('\n');
+        out.push_str(&format!(
+            "backing: {}  attempts: {}  provider calls: {}  tool calls: {}  cost: ${:.4}\n",
+            self.verification_source,
+            self.attempts.len(),
+            self.provider_calls,
+            self.tool_calls,
+            self.actual_microusd as f64 / 1_000_000.0
+        ));
+        if self.cancelled {
+            out.push_str("cancelled by the user\n");
+        }
+        if self.budget_exhausted {
+            out.push_str("stopped by the cost cap\n");
+        }
+        for attempt in &self.attempts {
+            if let Some(verification) = &attempt.verification {
+                out.push_str(&format!(
+                    "attempt {}: {}\n",
+                    attempt.attempt,
+                    verification.summary_line()
+                ));
+                for check in &verification.checks {
+                    let source = match check.check.source {
+                        crate::verify::CheckSource::Explicit => "operator",
+                        crate::verify::CheckSource::Detected => "detected",
+                        crate::verify::CheckSource::ModelDeclared => "model-declared",
+                    };
+                    out.push_str(&format!(
+                        "  [{}] {} ({source}, {} ms)\n",
+                        if check.ok { "ok" } else { "FAIL" },
+                        check.check.label(),
+                        check.duration_ms
+                    ));
+                }
+            }
+            if attempt.turn.self_authored_checks > 0 {
+                out.push_str(&format!(
+                    "  {} declared check(s) run a file written in this session: the model's own claim, \
+                     not independent proof\n",
+                    attempt.turn.self_authored_checks
+                ));
+            }
+            if let Some(verifier) = &attempt.verifier {
+                match &verifier.verdict {
+                    Some(v) => {
+                        out.push_str(&format!(
+                            "  independent verifier ({}): {} ({} unmet of {})\n",
+                            verifier.model,
+                            v.verdict,
+                            v.unmet().len(),
+                            v.requirements.len()
+                        ));
+                        for r in v.unmet() {
+                            out.push_str(&format!("    unmet: {}\n", r.requirement.trim()));
+                        }
+                    }
+                    None => out.push_str(&format!(
+                        "  independent verifier ({}): no verdict{}\n",
+                        verifier.model,
+                        verifier
+                            .error
+                            .as_deref()
+                            .map(|e| format!(" ({e})"))
+                            .unwrap_or_default()
+                    )),
+                }
+            }
+        }
+        if let Some(claim) = &self.completion {
+            out.push_str("the model's claim:\n");
+            if !claim.summary.trim().is_empty() {
+                out.push_str(&format!("  {}\n", claim.summary.trim()));
+            }
+            for r in &claim.requirements {
+                out.push_str(&format!(
+                    "  [{}] {}\n",
+                    if r.status.is_empty() {
+                        "?"
+                    } else {
+                        r.status.as_str()
+                    },
+                    r.requirement.trim()
+                ));
+            }
+            for d in &claim.deliverables {
+                out.push_str(&format!("  - {} — {}\n", d.item.trim(), d.evidence.trim()));
+            }
+        }
+        out
+    }
+}
+
 /// The outcome of `run_task`: every attempt plus aggregate counters.
 #[derive(Debug, Clone, Default)]
 pub struct TaskReport {
@@ -475,6 +598,11 @@ pub struct Agent {
     weak_check_rejections: u32,
     /// Final claims rejected this attempt for lacking the requirement list.
     requirements_rejections: u32,
+    /// A reply produced from a silently truncated prompt was already discarded
+    /// and retried once this input; a second one is accepted as is.
+    silent_overflow_recovered: bool,
+    /// `ask_user` calls answered this input (clarify mode caps them).
+    questions_asked: u32,
     /// Workspace fingerprint taken when the gated task started, so a declared
     /// check can be recognised as running a file the model wrote.
     gate_baseline: Option<WorkspaceSnapshot>,
@@ -509,6 +637,7 @@ impl Agent {
             config.sandboxed,
             config.completion_gate,
             config.lean,
+            config.clarify,
             config.verifier,
         );
         let session_id = uuid::Uuid::new_v4().simple().to_string();
@@ -540,6 +669,7 @@ impl Agent {
                 config.atlas_enabled,
                 config.sandboxed,
                 config.completion_gate,
+                config.clarify,
                 config.verifier,
             ),
             messages,
@@ -565,6 +695,8 @@ impl Agent {
             completion_claim: None,
             weak_check_rejections: 0,
             requirements_rejections: 0,
+            silent_overflow_recovered: false,
+            questions_asked: 0,
             gate_baseline: None,
             self_authored_checks: Vec::new(),
             verdict: None,
@@ -600,6 +732,7 @@ impl Agent {
                 config.atlas_enabled,
                 config.sandboxed,
                 config.completion_gate,
+                config.clarify,
                 config.verifier,
             ),
             messages: replayed.messages,
@@ -625,6 +758,8 @@ impl Agent {
             completion_claim: None,
             weak_check_rejections: 0,
             requirements_rejections: 0,
+            silent_overflow_recovered: false,
+            questions_asked: 0,
             gate_baseline: None,
             self_authored_checks: Vec::new(),
             verdict: None,
@@ -1083,6 +1218,40 @@ impl Agent {
                 after_rewrite: self.rewrote_history,
             });
             self.rewrote_history = false;
+            // Z.ai answers a prompt larger than its window with HTTP 200 and a
+            // front-truncated context instead of an error (pi `overflow.ts`,
+            // read 2026-09-12), so the reply came from a history the model never
+            // saw whole. Bill it, discard it, compact, and ask once more.
+            if turn.usage.input_tokens > self.context.config.window_tokens
+                && !self.silent_overflow_recovered
+            {
+                self.silent_overflow_recovered = true;
+                report.usage.add(turn.usage);
+                report.actual_microusd += turn.cost.actual_microusd;
+                report.normalized_microusd += turn.cost.normalized_cache_miss_microusd;
+                self.total_usage.add(turn.usage);
+                self.total_actual_microusd += turn.cost.actual_microusd;
+                self.working_state.record_failure(
+                    crate::failure::FailureKind::MissingContext,
+                    &format!(
+                        "provider accepted {} input tokens against a {}-token window; the reply \
+                         was discarded and the history compacted",
+                        turn.usage.input_tokens, self.context.config.window_tokens
+                    ),
+                );
+                self.telemetry.record(TelemetryEvent::Compaction {
+                    at_epoch_ms: telemetry::epoch_ms_now(),
+                    stage: "silent_overflow".into(),
+                    before_tokens: turn.usage.input_tokens,
+                    after_tokens: 0,
+                });
+                self.compact_now(
+                    cancel,
+                    Some("the previous request exceeded the model's context window; its reply was discarded"),
+                )
+                .await?;
+                continue;
+            }
             if let Some(facts) = &turn.routing {
                 if facts.model_changed {
                     // Appended at the next provider-call boundary: the prefix
@@ -1485,6 +1654,85 @@ impl Agent {
         crate::tools::ToolOutput::text(format!("Verdict recorded ({unmet} unmet)."))
     }
 
+    /// Clarify mode: put the model's questions to whoever holds the gate. The
+    /// answer is relayed verbatim (capped); with nobody to answer, the model is
+    /// told to proceed on the assumptions it stated.
+    async fn ask_user(
+        &mut self,
+        arguments: &str,
+        gate: &dyn ApprovalGate,
+    ) -> crate::tools::ToolOutput {
+        if !self.config.clarify {
+            return crate::tools::ToolOutput::error(
+                "ask_user is not available in this session".to_string(),
+            );
+        }
+        #[derive(serde::Deserialize)]
+        struct Question {
+            question: String,
+            #[serde(default)]
+            assumption: String,
+        }
+        #[derive(serde::Deserialize)]
+        struct Ask {
+            questions: Vec<Question>,
+        }
+        let ask: Ask = match serde_json::from_str(arguments) {
+            Ok(ask) => ask,
+            Err(error) => {
+                return crate::tools::ToolOutput::error(format!(
+                    "invalid arguments for ask_user: {error}"
+                ))
+            }
+        };
+        if ask.questions.is_empty() {
+            return crate::tools::ToolOutput::error("ask_user needs at least one question".into());
+        }
+        if self.questions_asked >= CLARIFY_CAP {
+            return crate::tools::ToolOutput::error(format!(
+                "ask_user was already used {CLARIFY_CAP} time(s) for this input; proceed on your \
+                 stated assumptions"
+            ));
+        }
+        self.questions_asked += 1;
+        let mut rendered = String::new();
+        for (i, q) in ask.questions.iter().enumerate() {
+            let mut question = q.question.trim().to_string();
+            cap_string(&mut question, EVIDENCE_CAP);
+            let mut assumption = q.assumption.trim().to_string();
+            cap_string(&mut assumption, EVIDENCE_CAP);
+            rendered.push_str(&format!("{}. {question}\n", i + 1));
+            if !assumption.is_empty() {
+                rendered.push_str(&format!("   (otherwise: {assumption})\n"));
+            }
+        }
+        let reply = gate.answer_question(&rendered).await;
+        self.working_state
+            .note_clarification(&rendered, reply.as_deref());
+        match reply {
+            Some(mut answer) => {
+                cap_string(&mut answer, ANSWER_CAP);
+                let answer = answer.trim().to_string();
+                if answer.is_empty() {
+                    crate::tools::ToolOutput::text(
+                        "The user gave no answer. Proceed on your stated assumptions and list \
+                         them in your final summary."
+                            .to_string(),
+                    )
+                } else {
+                    crate::tools::ToolOutput::text(format!(
+                        "The user answered (authoritative):\n{answer}"
+                    ))
+                }
+            }
+            None => crate::tools::ToolOutput::text(
+                "Nobody can answer in this session. Proceed on your stated assumptions and \
+                 list them in your final summary."
+                    .to_string(),
+            ),
+        }
+    }
+
     /// Apply deterministic policy, consult the gate when required, execute.
     /// Returns None only when the user cancelled mid-execution.
     async fn execute_gated(
@@ -1510,6 +1758,9 @@ impl Agent {
         }
         if call.name == "complete_task" {
             return Some(self.complete_task(&call.arguments));
+        }
+        if call.name == "ask_user" {
+            return Some(self.ask_user(&call.arguments, gate).await);
         }
         if call.name == "report_verdict" {
             return Some(self.report_verdict(&call.arguments));
@@ -1739,6 +1990,8 @@ impl Agent {
             self.completion_claim = None;
             self.weak_check_rejections = 0;
             self.requirements_rejections = 0;
+            self.silent_overflow_recovered = false;
+            self.questions_asked = 0;
             self.self_authored_checks.clear();
             let turn = self.run_turn(next_input, gate, sink, cancel).await?;
             task.absorb(&turn);
@@ -2081,6 +2334,7 @@ impl Agent {
         let mut config = self.config.clone();
         config.completion_gate = false;
         config.lean = false;
+        config.clarify = false;
         config.independent_verifier = false;
         config.verifier = true;
         config.max_provider_calls_per_input = VERIFIER_CALL_CAP;
@@ -2907,6 +3161,172 @@ mod tests {
         assert!(report.budget_exhausted);
         assert!(report.assistant_text.contains("cost cap"));
         assert_eq!(report.provider_calls, 1);
+    }
+
+    #[tokio::test]
+    async fn a_reply_from_a_silently_truncated_prompt_is_discarded_compacted_and_retried_once() {
+        let dir = workspace();
+        // Every scripted reply reports more input tokens than the window: the
+        // first one is discarded, the summarizer reply is consumed by the
+        // compaction, and the retry is accepted because the guard fires once.
+        let provider = Arc::new(
+            ScriptedProvider::new(vec![
+                assistant_with_call("c1", "read_file", r#"{"path":"hello.txt"}"#),
+                final_text("the narrative summary"),
+                final_text("done after compaction"),
+            ])
+            .with_usage(Usage {
+                input_tokens: 250_000,
+                cache_hit_input_tokens: 0,
+                cache_miss_input_tokens: 250_000,
+                output_tokens: 10,
+            }),
+        );
+        let config = SessionConfig {
+            context: ContextConfig {
+                window_tokens: 200_000,
+                ..ContextConfig::default()
+            },
+            ..SessionConfig::default()
+        };
+        let mut agent = Agent::new(provider, dir.path().to_path_buf(), config, None).unwrap();
+        let report = agent
+            .run_turn(
+                "go".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert!(
+            report.assistant_text.contains("done after compaction"),
+            "{report:?}"
+        );
+        assert_eq!(
+            report.provider_calls, 2,
+            "discarded call plus the accepted retry"
+        );
+        assert_eq!(
+            report.tool_calls, 0,
+            "the discarded reply's tool call never ran"
+        );
+        assert!(
+            agent.telemetry_summary().compactions >= 1,
+            "the overflow forced a compaction"
+        );
+        // Usage of the discarded call is still billed.
+        assert!(report.usage.input_tokens >= 500_000);
+    }
+
+    #[tokio::test]
+    async fn clarify_mode_relays_the_users_answer_and_remembers_it() {
+        struct Answering;
+        #[async_trait::async_trait]
+        impl ApprovalGate for Answering {
+            async fn review(&self, _request: &ApprovalRequest) -> Decision {
+                Decision::Approve
+            }
+            async fn answer_question(&self, question: &str) -> Option<String> {
+                assert!(question.contains("What should the helper be called?"));
+                assert!(question.contains("otherwise: _is_retryable"));
+                Some("Call it _is_retryable_status(status_code: int) -> bool.".into())
+            }
+        }
+        let dir = workspace();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call(
+                "c1",
+                "ask_user",
+                r#"{"questions":[{"question":"What should the helper be called?","assumption":"_is_retryable"}]}"#,
+            ),
+            final_text("named it as you said"),
+        ]));
+        let mut agent = Agent::new(
+            provider.clone(),
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                clarify: true,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        let report = agent
+            .run_turn(
+                "Retry 422".into(),
+                &Answering,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert!(report.assistant_text.contains("named it as you said"));
+        let relayed = provider.recorded_requests()[1]
+            .iter()
+            .filter_map(|m| match m {
+                crate::domain::ChatMessage::Tool { content, .. } => Some(content.clone()),
+                _ => None,
+            })
+            .find(|t| t.contains("_is_retryable_status"))
+            .expect("the answer reached the model as the tool result");
+        assert!(
+            relayed.starts_with("The user answered (authoritative)"),
+            "{relayed}"
+        );
+        let checkpoint = agent.working_state().render();
+        assert!(checkpoint.contains("Clarifications"), "{checkpoint}");
+        assert!(checkpoint.contains("_is_retryable_status"));
+    }
+
+    #[tokio::test]
+    async fn clarify_mode_without_an_answerer_tells_the_model_to_proceed() {
+        let dir = workspace();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call(
+                "c1",
+                "ask_user",
+                r#"{"questions":[{"question":"Which name?","assumption":"foo"}]}"#,
+            ),
+            final_text("went with foo"),
+        ]));
+        let mut agent = Agent::new(
+            provider.clone(),
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                clarify: true,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        let report = agent
+            .run_turn(
+                "go".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert!(report.assistant_text.contains("went with foo"));
+        let relayed = provider.recorded_requests()[1]
+            .iter()
+            .filter_map(|m| match m {
+                crate::domain::ChatMessage::Tool { content, .. } => Some(content.clone()),
+                _ => None,
+            })
+            .find(|t| t.contains("Nobody can answer"))
+            .expect("the model was told nobody can answer");
+        assert!(relayed.contains("stated assumptions"));
+        // Not advertised, and refused, outside clarify mode.
+        let default_names: Vec<String> = session_tools(true, false, true, false, false)
+            .into_iter()
+            .map(|t| t.name)
+            .collect();
+        assert!(!default_names.iter().any(|n| n == "ask_user"));
     }
 
     #[tokio::test]
@@ -4057,21 +4477,21 @@ mod tests {
 
     #[test]
     fn complete_task_is_advertised_only_behind_the_gate() {
-        let default_names: Vec<String> = session_tools(false, false, false, false)
+        let default_names: Vec<String> = session_tools(false, false, false, false, false)
             .into_iter()
             .map(|t| t.name)
             .collect();
         assert!(!default_names.iter().any(|n| n == "complete_task"));
         assert!(!default_names.iter().any(|n| n == "shell"));
         assert!(!default_names.iter().any(|n| n == "report_verdict"));
-        let gated: Vec<String> = session_tools(false, false, true, false)
+        let gated: Vec<String> = session_tools(false, false, true, false, false)
             .into_iter()
             .map(|t| t.name)
             .collect();
         assert_eq!(gated.last().map(String::as_str), Some("complete_task"));
         assert_eq!(&gated[..gated.len() - 1], &default_names[..]);
         // The verifier: observe and run, never edit; its ending is a verdict.
-        let verifier: Vec<String> = session_tools(false, true, false, true)
+        let verifier: Vec<String> = session_tools(false, true, false, false, true)
             .into_iter()
             .map(|t| t.name)
             .collect();
@@ -4623,5 +5043,45 @@ mod tests {
         assert_eq!(requests.len(), 2);
         assert_eq!(requests[0], requests[1]);
         assert_eq!(agent.telemetry_summary().provider_errors, 1);
+    }
+
+    #[test]
+    fn the_run_summary_never_upgrades_a_claim_to_verified() {
+        let claim = CompletionClaim {
+            summary: "did the thing".into(),
+            deliverables: vec![Deliverable {
+                item: "out.txt".into(),
+                evidence: "written".into(),
+            }],
+            checks: vec![],
+            requirements: vec![Requirement {
+                requirement: "out.txt contains x".into(),
+                status: "met".into(),
+                evidence: "grep".into(),
+            }],
+        };
+        let claimed = TaskReport {
+            completed: true,
+            completion: Some(claim.clone()),
+            verification_source: "model_declared",
+            ..TaskReport::default()
+        };
+        let text = claimed.render_summary();
+        assert!(text.starts_with("CLAIMED:"), "{text}");
+        assert!(text.contains("[met] out.txt contains x"));
+        assert!(!text.contains("VERIFIED"));
+        let verified = TaskReport {
+            verified: Some(true),
+            completed: true,
+            completion: Some(claim),
+            verification_source: "explicit",
+            ..TaskReport::default()
+        };
+        assert!(verified.render_summary().starts_with("VERIFIED:"));
+        let failed = TaskReport {
+            success: Some(false),
+            ..TaskReport::default()
+        };
+        assert!(failed.render_summary().starts_with("FAILED:"));
     }
 }

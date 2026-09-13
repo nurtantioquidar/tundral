@@ -111,6 +111,28 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   carry `requirements`: every requirement of the task statement in its own terms, each `met` or
   `unmet` with the deciding tool output (one refusal with guidance, then accepted regardless).
   The list is the independent verifier's input and is reported in `completion.requirements`.
+- **Run summary** (2026-09-13) — every headless `-p` run ends with `TaskReport::render_summary`:
+  a one-line verdict that never overstates (VERIFIED only when an independent check passed;
+  CLAIMED when only the model's word backs the ending; FAILED; UNRESOLVED), what backed it, each
+  attempt's checks with their source (operator, detected, model-declared) and self-authored
+  flags, the independent verifier's verdict and unmet items when it ran, and the model's own
+  requirement checklist and deliverables. `--json` carries the same facts structurally.
+- **Clarify mode** (2026-09-13, `--clarify`) — advertises `ask_user {questions:[{question,
+  assumption}]}` and appends one prompt line: before the first edit, put the statement's open
+  points (names and signatures to introduce, exact messages, unspecified cases) to the user in one
+  call, each with the fallback assumption; at most two calls per input. Answers arrive through
+  `ApprovalGate::answer_question` (terminal: typed answer; `--json`: `--answers-cmd`, questions on
+  stdin, answer on stdout; nothing wired: the model is told to proceed on its assumptions) and are
+  kept in the working state so compaction preserves them. Motivation: the private suite went 0/5
+  to 5/5 on the same harness when the statement carried the interface names the hidden tests
+  expected; measured as raw-title vs raw-title-plus-oracle-answers in `bench/private`.
+- **Silent-overflow recovery** (2026-09-13) — when a successful reply reports more input tokens
+  than the model's context window (Z.ai truncates the prompt and answers 200 instead of erroring;
+  pi `overflow.ts`), the reply is billed but discarded, the history is compacted with that reason,
+  and the request is reissued once per input; a second occurrence is accepted. Telemetry records a
+  `silent_overflow` compaction stage. Per-call output caps were considered and declined: 11 of
+  1 495 GLM calls exceeded 16k output tokens, all ended in useful tool calls, and truncating them
+  would force a retry that costs more than the 18% of model time they take.
 - **Lean turns** (2026-09-12, `--lean`) — appends one prompt block: a successful edit or
   write_file result is proof, do not read the file back; orient only on the files the task
   names and what a search shows is involved; issue independent reads together; run tests after
