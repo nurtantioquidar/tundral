@@ -6,19 +6,18 @@
 use std::io::Write as _;
 
 use anyhow::Result;
-use butterfly_core::domain::format_microusd_as_usd;
 use butterfly_core::provider::StreamSink;
 use butterfly_core::session::approval::{ApprovalGate, ApprovalRequest, Decision, PermissionMode};
 use butterfly_core::session::{Agent, TaskOptions, TaskReport, TurnReport};
 use tokio_util::sync::CancellationToken;
 
 use crate::providers::ModelHub;
+use crate::tui::chrome;
+use crate::tui::theme::{ACCENT as CYAN, DANGER as RED, DIM, RESET};
 
-const DIM: &str = "\x1b[2m";
-const RESET: &str = "\x1b[0m";
-const CYAN: &str = "\x1b[36m";
-const RED: &str = "\x1b[31m";
-const GREEN: &str = "\x1b[32m";
+/// Width assumed when nothing else knows better (pipes, `-p` runs). The
+/// interactive loop passes the real terminal width instead.
+pub const DEFAULT_WIDTH: usize = 100;
 
 #[derive(PartialEq)]
 enum RenderMode {
@@ -97,19 +96,12 @@ impl StreamSink for TerminalSink {
 
 pub struct TerminalGate;
 
-/// Colorize a rich approval detail: `-` lines red, `+` lines green.
-pub(crate) fn render_detail(detail: &str) -> String {
-    let mut rendered = String::new();
-    for line in detail.lines() {
-        let trimmed = line.trim_start();
-        if trimmed.starts_with("- ") || trimmed == "-" {
-            rendered.push_str(&format!("  {RED}{line}{RESET}\n"));
-        } else if trimmed.starts_with("+ ") || trimmed == "+" {
-            rendered.push_str(&format!("  {GREEN}{line}{RESET}\n"));
-        } else {
-            rendered.push_str(&format!("  {DIM}{line}{RESET}\n"));
-        }
-    }
+/// Colorize a rich approval detail and clamp every row to `width`. The
+/// clamp is the point: an unclamped diff line wraps at column 0 and shreds
+/// the layout of the one prompt that has to stay readable.
+pub(crate) fn render_detail(detail: &str, width: usize) -> String {
+    let mut rendered = chrome::detail_rows(detail, width).join("\n");
+    rendered.push('\n');
     rendered
 }
 
@@ -125,7 +117,7 @@ impl ApprovalGate for TerminalGate {
                 eprintln!("  {RED}⚠ {warning}{RESET}");
             }
             if let Some(detail) = detail {
-                eprint!("{}", render_detail(&detail));
+                eprint!("{}", render_detail(&detail, DEFAULT_WIDTH));
             }
             eprint!("  allow? [y]es / [a]lways for session / [N]o: ");
             let _ = std::io::stderr().flush();
@@ -169,78 +161,46 @@ impl ApprovalGate for TerminalGate {
     }
 }
 
-/// One-line dim turn summary, shared by both loops.
+/// One-line dim turn receipt, shared by both loops. Session totals and
+/// context pressure live in the interactive footer, so this reports only
+/// what this turn did.
 pub(crate) fn turn_status_line(
     agent: &Agent,
     report: &TurnReport,
     elapsed: std::time::Duration,
 ) -> String {
-    let cache_rate = (report.usage.cache_hit_rate() * 100.0).round();
-    let utilization = (agent.utilization() * 100.0).round();
-    let mut extras = String::new();
-    if report.elisions > 0 || report.compactions > 0 {
-        extras = format!(
-            " · compacted ({} elision, {} summarize)",
-            report.elisions, report.compactions
-        );
-    }
-    if report.cancelled {
-        extras.push_str(" · cancelled");
-    }
-    format!(
-        "∴ done in {:.1}s · {} calls · in {} ({cache_rate:.0}% cached) · out {} · {} | session {} · ctx {utilization:.0}%{extras}",
-        elapsed.as_secs_f64(),
-        report.provider_calls,
-        format_tokens(report.usage.input_tokens),
-        format_tokens(report.usage.output_tokens),
-        format_microusd_as_usd(report.actual_microusd),
-        format_microusd_as_usd(agent.total_actual_microusd()),
-    )
+    chrome::turn_summary(&chrome::TurnFacts {
+        elapsed,
+        calls: report.provider_calls,
+        input_tokens: report.usage.input_tokens,
+        output_tokens: report.usage.output_tokens,
+        cache_rate: report.usage.cache_hit_rate(),
+        microusd: report.actual_microusd,
+        price_verified: agent.model().pricing.verified,
+        elisions: report.elisions,
+        compactions: report.compactions,
+        cancelled: report.cancelled,
+    })
 }
 
-fn format_tokens(tokens: u64) -> String {
-    if tokens >= 1_000 {
-        format!("{:.1}k", tokens as f64 / 1_000.0)
-    } else {
-        tokens.to_string()
-    }
-}
-
-fn usage_text(agent: &Agent) -> String {
+fn usage_text(agent: &Agent, width: usize) -> String {
     let usage = agent.total_usage();
-    format!(
-        "session {}\n  model            {}\n  input tokens     {}\n    cache hits     {}\n    cache misses   {}\n    hit rate       {:.1}%\n  output tokens    {}\n  actual cost      {}\n  context used     {:.0}%",
-        agent.session_id,
-        agent.model().id,
-        usage.input_tokens,
-        usage.cache_hit_input_tokens,
-        usage.cache_miss_input_tokens,
-        usage.cache_hit_rate() * 100.0,
-        usage.output_tokens,
-        format_microusd_as_usd(agent.total_actual_microusd()),
-        agent.utilization() * 100.0,
+    chrome::usage_card(
+        &chrome::UsageFacts {
+            session_id: &agent.session_id,
+            model_id: &agent.model().id,
+            input_tokens: usage.input_tokens,
+            cache_hits: usage.cache_hit_input_tokens,
+            cache_misses: usage.cache_miss_input_tokens,
+            cache_rate: usage.cache_hit_rate(),
+            output_tokens: usage.output_tokens,
+            microusd: agent.total_actual_microusd(),
+            price_verified: agent.model().pricing.verified,
+            ctx_used: agent.utilization(),
+        },
+        width,
     )
 }
-
-const HELP: &str = "\
-commands:
-  /connect  save a provider API key (persists across sessions)
-  /usage    tokens, cost, cache-hit rate, context utilization
-  /plan     show the tracked working state (objective, tasks, files, commands)
-  /task     run an autonomous, verified task (/task <statement>) and end with the verdict
-  /compact  force a compaction now; optional focus: /compact keep the auth details
-  /model    pick a model (arrow keys), or /model <name> to switch directly
-  /help     this help
-  /quit     exit (also Ctrl-D)
-input:
-  @path      mention a file (type @ for fuzzy completion; Tab/Enter accepts)
-  Shift+Tab  cycle permission mode: ask → auto → read-only
-  Ctrl-T     toggle the full-transcript overlay (includes hidden reasoning)
-  Ctrl-R     toggle the live reasoning stream (hidden by default)
-  Ctrl-J     insert a newline · Ctrl-C clears the line or cancels the turn
-  Esc        close the dropdown, or interrupt the running turn
-  paste      large pastes collapse to a placeholder and expand on submit
-  Type while a turn runs: messages are delivered at the next turn boundary.";
 
 /// What one interactive submission produced: a chat turn, or an autonomous
 /// task (`/task`) that ends with the run summary.
@@ -266,12 +226,17 @@ pub enum CommandResult {
 }
 
 /// Handle the shared slash commands (used by both the TUI and plain loops).
-pub async fn handle_command(agent: &mut Agent, input: &str, hub: &ModelHub) -> CommandResult {
+pub async fn handle_command(
+    agent: &mut Agent,
+    input: &str,
+    hub: &ModelHub,
+    width: usize,
+) -> CommandResult {
     match input {
         "/quit" | "/exit" => CommandResult::Quit,
         "/connect" => CommandResult::Connect,
-        "/help" => CommandResult::Output(HELP.to_string()),
-        "/usage" => CommandResult::Output(usage_text(agent)),
+        "/help" => CommandResult::Output(chrome::help_card(width)),
+        "/usage" => CommandResult::Output(usage_text(agent, width)),
         "/plan" => CommandResult::Output(agent.working_state().render()),
         _ if input == "/compact" || input.starts_with("/compact ") => {
             let focus = input.strip_prefix("/compact").unwrap_or("").trim();
@@ -394,7 +359,7 @@ impl ApprovalGate for ChannelGate {
             eprintln!("  {RED}⚠ {warning}{RESET}");
         }
         if let Some(detail) = &request.detail {
-            eprint!("{}", render_detail(detail));
+            eprint!("{}", render_detail(detail, DEFAULT_WIDTH));
         }
         eprintln!("  allow? [y]es / [a]lways for session / [N]o — answer on the input line");
         let (sender, receiver) = tokio::sync::oneshot::channel();
@@ -443,7 +408,7 @@ pub async fn plain_repl(
             }
         };
         let mut task_statement: Option<String> = None;
-        match handle_command(&mut agent, &input, hub).await {
+        match handle_command(&mut agent, &input, hub, DEFAULT_WIDTH).await {
             CommandResult::Quit => break,
             CommandResult::Task(statement) => task_statement = Some(statement),
             CommandResult::Connect => {

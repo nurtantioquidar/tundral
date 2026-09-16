@@ -676,7 +676,7 @@ fn connect_provider(
         // Genuine first run: connect once, never ask again. The wizard is
         // pre-selected on the provider the chosen model needs.
         let mut choices = hub.connect_choices();
-        if let Some(index) = choices.iter().position(|(id, _)| id == &descriptor.id) {
+        if let Some(index) = choices.iter().position(|(id, ..)| id == &descriptor.id) {
             let preferred = choices.remove(index);
             choices.insert(0, preferred);
         }

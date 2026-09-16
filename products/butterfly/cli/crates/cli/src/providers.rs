@@ -105,11 +105,19 @@ impl ModelHub {
         Ok(Arc::new(provider))
     }
 
-    /// `(provider id, display label)` pairs for connect pickers.
-    pub fn connect_choices(&self) -> Vec<(String, String)> {
+    /// `(provider id, display label, already has a key)` for connect
+    /// pickers. The flag is what stops a user from silently overwriting a
+    /// key they already saved.
+    pub fn connect_choices(&self) -> Vec<(String, String, bool)> {
         self.registry
             .providers()
-            .map(|p| (p.id.clone(), provider_label(p)))
+            .map(|p| {
+                (
+                    p.id.clone(),
+                    provider_label(p),
+                    Self::resolve_key(p).is_some(),
+                )
+            })
             .collect()
     }
 }
@@ -156,7 +164,7 @@ context_tokens = 32000
         );
         let error = hub.resolve("nope").unwrap_err().to_string();
         assert!(error.contains("deepseek-v4-flash"), "{error}");
-        assert!(hub.connect_choices().iter().any(|(id, _)| id == "local"));
+        assert!(hub.connect_choices().iter().any(|(id, ..)| id == "local"));
     }
 
     #[test]

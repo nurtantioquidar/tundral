@@ -1,6 +1,6 @@
 //! @-mention and slash-command completion: an ignore-aware file/dir list,
 //! session-recency boosts, Atlas symbols, all fuzzy-ranked with nucleo.
-//! Completion only shapes the text the user submits — it never touches the
+//! Completion only shapes the text the user submits ‒ it never touches the
 //! transcript or the cached prefix.
 
 use std::path::PathBuf;
@@ -33,7 +33,7 @@ pub struct Choice {
 /// The active completion context at the cursor, if any.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Trigger {
-    /// `@quer|y` — `start` is the byte offset of the `@`.
+    /// `@quer|y` ‒ `start` is the byte offset of the `@`.
     Mention { start: usize, query: String },
     /// `/comm|and` at the very start of the buffer.
     Command { start: usize, query: String },
@@ -165,32 +165,68 @@ impl CompletionIndex {
         self.built_at = Some(Instant::now());
     }
 
-    pub fn suggest(&mut self, trigger: &Trigger, limit: usize) -> Vec<Choice> {
+    /// Ranked choices plus how many candidates matched in total, so the
+    /// dropdown can say what it is not showing instead of appearing to be
+    /// the whole answer.
+    pub fn suggest(&mut self, trigger: &Trigger, limit: usize) -> (Vec<Choice>, usize) {
         match trigger {
             Trigger::Command { query, .. } => self.suggest_commands(query, limit),
             Trigger::Mention { query, .. } => self.suggest_mentions(query, limit),
         }
     }
 
-    fn suggest_commands(&self, query: &str, limit: usize) -> Vec<Choice> {
-        self.commands
+    fn suggest_commands(&self, query: &str, limit: usize) -> (Vec<Choice>, usize) {
+        let matched = self
+            .commands
             .iter()
-            .filter(|(name, _)| name.starts_with(query))
-            .take(limit)
-            .map(|(name, hint)| Choice {
-                insert: format!("/{name}"),
-                label: format!("/{name}"),
-                hint: hint.to_string(),
-                kind: ChoiceKind::Command,
-            })
-            .collect()
+            .filter(|(name, _)| name.starts_with(query));
+        let total = matched.clone().count();
+        (
+            matched
+                .take(limit)
+                .map(|(name, hint)| Choice {
+                    insert: format!("/{name}"),
+                    label: format!("/{name}"),
+                    hint: hint.to_string(),
+                    kind: ChoiceKind::Command,
+                })
+                .collect(),
+            total,
+        )
+    }
+
+    /// Split a workspace path into the part worth reading first (the file
+    /// name) and the part that only disambiguates (its directory). Six
+    /// candidates under one deep directory are otherwise six near-identical
+    /// strings that all have to be read to the end.
+    fn path_choice(path: &str, kind: ChoiceKind, hint: &str) -> Choice {
+        let trimmed = path.strip_suffix('/').unwrap_or(path);
+        let (parent, name) = match trimmed.rfind('/') {
+            Some(at) => (&trimmed[..at], &trimmed[at + 1..]),
+            None => ("", trimmed),
+        };
+        let label = match kind {
+            ChoiceKind::Dir => format!("{name}/"),
+            _ => name.to_string(),
+        };
+        let hint = if hint.is_empty() {
+            parent.to_string()
+        } else {
+            hint.to_string()
+        };
+        Choice {
+            insert: format!("@{path}"),
+            label,
+            hint,
+            kind,
+        }
     }
 
     fn recency_rank(&self, path: &str) -> Option<usize> {
         self.recency.iter().position(|p| p == path)
     }
 
-    fn suggest_mentions(&mut self, query: &str, limit: usize) -> Vec<Choice> {
+    fn suggest_mentions(&mut self, query: &str, limit: usize) -> (Vec<Choice>, usize) {
         self.ensure_fresh();
         if query.is_empty() {
             return self.default_mentions(limit);
@@ -204,29 +240,13 @@ impl CompletionIndex {
                     Some(rank) => RECENCY_BONUS + (64u32.saturating_sub(rank as u32)),
                     None => 0,
                 };
-                scored.push((
-                    score + bonus,
-                    Choice {
-                        insert: format!("@{path}"),
-                        label: path.clone(),
-                        hint: String::new(),
-                        kind: ChoiceKind::File,
-                    },
-                ));
+                scored.push((score + bonus, Self::path_choice(path, ChoiceKind::File, "")));
             }
         }
         for dir in &self.dirs {
             let haystack = Utf32String::from(dir.as_str());
             if let Some(score) = pattern.score(haystack.slice(..), &mut self.matcher) {
-                scored.push((
-                    score,
-                    Choice {
-                        insert: format!("@{dir}"),
-                        label: dir.clone(),
-                        hint: String::new(),
-                        kind: ChoiceKind::Dir,
-                    },
-                ));
+                scored.push((score, Self::path_choice(dir, ChoiceKind::Dir, "")));
             }
         }
         for (name, location, kind) in &self.symbols {
@@ -239,29 +259,28 @@ impl CompletionIndex {
                     Choice {
                         insert: format!("@{path}"),
                         label: name.clone(),
-                        hint: format!("{kind} · {location}"),
+                        hint: format!("{kind} ⋅ {location}"),
                         kind: ChoiceKind::Symbol,
                     },
                 ));
             }
         }
         scored.sort_by(|a, b| b.0.cmp(&a.0).then_with(|| a.1.label.cmp(&b.1.label)));
+        let total = scored.len();
         scored.truncate(limit);
-        scored.into_iter().map(|(_, choice)| choice).collect()
+        (
+            scored.into_iter().map(|(_, choice)| choice).collect(),
+            total,
+        )
     }
 
     /// Bare `@`: recent session files first, then shallow workspace paths.
-    fn default_mentions(&self, limit: usize) -> Vec<Choice> {
+    fn default_mentions(&self, limit: usize) -> (Vec<Choice>, usize) {
         let mut choices: Vec<Choice> = self
             .recency
             .iter()
             .take(limit)
-            .map(|path| Choice {
-                insert: format!("@{path}"),
-                label: path.clone(),
-                hint: "recent".to_string(),
-                kind: ChoiceKind::File,
-            })
+            .map(|path| Self::path_choice(path, ChoiceKind::File, "touched this session"))
             .collect();
         let mut shallow: Vec<&String> = self
             .files
@@ -273,14 +292,10 @@ impl CompletionIndex {
             if choices.len() >= limit {
                 break;
             }
-            choices.push(Choice {
-                insert: format!("@{path}"),
-                label: path.clone(),
-                hint: String::new(),
-                kind: ChoiceKind::File,
-            });
+            choices.push(Self::path_choice(path, ChoiceKind::File, ""));
         }
-        choices
+        let total = self.recency.len() + self.files.len();
+        (choices, total)
     }
 }
 
@@ -334,16 +349,16 @@ mod tests {
             start: 0,
             query: "sesmod".into(),
         };
-        let choices = index.suggest(&trigger, 8);
+        let (choices, _) = index.suggest(&trigger, 8);
         assert_eq!(choices[0].insert, "@src/session/mod.rs");
         let trigger = Trigger::Mention {
             start: 0,
             query: "session".into(),
         };
-        let choices = index.suggest(&trigger, 8);
-        assert!(choices
-            .iter()
-            .any(|c| c.kind == ChoiceKind::Dir && c.insert.ends_with('/')));
+        let (choices, _) = index.suggest(&trigger, 8);
+        assert!(choices.iter().any(|c| c.kind == ChoiceKind::Dir
+            && c.insert.ends_with('/')
+            && c.label == "session/"));
     }
 
     #[test]
@@ -357,8 +372,10 @@ mod tests {
             start: 0,
             query: "parse".into(),
         };
-        let choices = index.suggest(&trigger, 8);
-        assert_eq!(choices[0].label, "tests/parse_helpers.rs");
+        let (choices, _) = index.suggest(&trigger, 8);
+        // Labels are file names now; the path lives in the hint column.
+        assert_eq!(choices[0].label, "parse_helpers.rs");
+        assert_eq!(choices[0].insert, "@tests/parse_helpers.rs");
     }
 
     #[test]
@@ -376,7 +393,7 @@ mod tests {
             start: 0,
             query: "RateLim".into(),
         };
-        let choices = index.suggest(&trigger, 8);
+        let (choices, _) = index.suggest(&trigger, 8);
         assert_eq!(choices[0].kind, ChoiceKind::Symbol);
         assert_eq!(choices[0].insert, "@src/limiter.rs");
         assert!(choices[0].hint.contains("struct"));
@@ -393,10 +410,13 @@ mod tests {
             start: 0,
             query: String::new(),
         };
-        let choices = index.suggest(&trigger, 8);
-        assert_eq!(choices[0].label, "deep/nested/file.rs");
-        assert_eq!(choices[0].hint, "recent");
+        let (choices, _) = index.suggest(&trigger, 8);
+        assert_eq!(choices[0].label, "file.rs");
+        assert_eq!(choices[0].insert, "@deep/nested/file.rs");
+        assert_eq!(choices[0].hint, "touched this session");
         assert_eq!(choices[1].label, "top.rs");
+        // A file at the root has no directory to disambiguate it.
+        assert_eq!(choices[1].hint, "");
     }
 
     #[test]
@@ -409,8 +429,9 @@ mod tests {
             start: 0,
             query: "co".into(),
         };
-        let choices = index.suggest(&trigger, 8);
+        let (choices, total) = index.suggest(&trigger, 8);
         assert_eq!(choices.len(), 1);
+        assert_eq!(total, 1);
         assert_eq!(choices[0].insert, "/compact");
     }
 }

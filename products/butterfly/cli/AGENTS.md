@@ -42,17 +42,73 @@ crates/core   # butterfly-core: UI-free engine
   session     # deterministic agent loop, run_task (attempt → verify → classify → evidence → retry),
               # approval gating, typed working state, JSONL persistence/resume
 crates/cli    # butterfly: inline TUI (crossterm editor, @-mention fuzzy completion,
-              # status bar, arrow-key approvals, paste placeholders, markdown render);
+              # footer, arrow-key approvals, paste placeholders, markdown render);
               # plain line loop for non-TTY stdin; -p headless path
+  tui/theme   # the one palette + width-aware text primitives (no other module
+              # defines an escape sequence)
+  tui/chrome  # every composed surface as a pure width -> styled-rows function
+  tui/ui      # state, erase math, input handling
 ../bench      # fixture benchmark vs external harnesses + full-window compaction exercise
 ```
 
 ## TUI design
 
 The inline TUI is crossterm-only: it prints into the terminal scrollback, with no alternate screen,
-no full-frame diff, and no widget tree. `.claude/skills/tui-design` (skill `tui-design`) carries the
-design references — hierarchy, spacing, color restraint, states, keybinding conventions, review
-checklist — and its Ratatui guide is background reading for structure only. Adopting Ratatui or the
+no full-frame diff, and no widget tree. It is layered: `theme` owns color and width primitives,
+`chrome` composes each surface as a pure function of data and width, `ui` owns state, layout math
+and input. The load-bearing rule is `render_entry`'s contract: for every `Entry` variant, one
+returned string is exactly one screen row AND it fits the width it was rendered at. The repaint
+counts screen rows and draws with autowrap off, so a wider row overwrites the last column and an
+embedded newline strands text at the right edge — both have shipped as resize corruption. Keep
+entries as DATA (preview + outcome, parsed table, spans), never as pre-rendered strings.
+
+The screen is a projection of `(transcript, width, height)`, and a resize re-runs that
+projection. Text committed to scrollback is wrapped at the width in force when it was written, and
+those are real newlines in the terminal's grid: a wider window cannot re-join them (the text keeps
+its old narrow column) and a narrower one shears every row against the new edge. Redrawing only the
+block cannot repair either, because the damage is in the content above it. So a settled resize
+calls `full_frame`: erase the viewport absolutely, refill it from the transcript at the new width,
+pin the block to the bottom edge. Rows that scrolled ABOVE the viewport keep the wrapping they were
+committed with — they are the terminal's scrollback, not ours to rewrite — so scrolling far enough
+back crosses a seam. That is the accepted cost of staying inline and keeping native scrollback,
+copy-paste and mouse selection; ratatui's inline viewport (Codex) and Bubble Tea's `insertAbove`
+(OpenCode) both make the same trade and neither re-wraps history either.
+
+Two consequences worth keeping. `sync_size` re-reads `terminal::size()` (a `TIOCGWINSZ` ioctl, no
+round trip) before every paint, because a paint from the session thread can land between the
+terminal re-wrapping itself and the input thread handling the resize event; a paint that finds the
+size moved defers to the settle instead of drawing against geometry that no longer holds. And
+because the erase is absolute, the old "no block line above the cursor may exceed 20 columns" rule
+is retired along with the cursor-position (DSR) probe that used to anchor it — one fewer round trip
+and one fewer terminal capability to depend on. A drag still holds paints until the event stream
+goes quiet (`RESIZE_SETTLE`), so one drag costs one redraw; mid-drag the terminal's own reflow is
+visible and is healed by the settle rather than prevented.
+
+Every glyph the TUI draws must have ONE unambiguous column width. Unicode marks a large set —
+`·` `—` `…` `●` `∴` `•` `─` `↑↓→` — as East Asian Ambiguous, and a terminal is free to render them
+one column or two: xterm and pyte say one, Ghostty and iTerm2 say two. `unicode_width::width()`
+assumes one, so a row built from them is only accidentally the right size, and on a wide-ambiguous
+terminal it overflows and the terminal soft-wraps it mid-word. `·` alone appeared ~29 times, five
+in a single receipt row. Butterfly's own glyphs are therefore drawn from the unambiguous set
+(`◉ ▪ ‣ ⋅ ⋯ ⎯ ▮▯ ⇡⇣⇢`), pinned by `glyphs_have_one_unambiguous_width` and by the ambiguity check
+inside `chrome`'s `check` helper — add a glyph and those tests tell you whether it is safe. Model
+output is not ours to choose, so `theme::cell_width` budgets with `width_cjk` (ambiguous counts as
+two): a row can then come out a column short on a narrow-ambiguous terminal, which nobody sees,
+but never overflows, which shears the grid. Use `SEP`/`RULE`/`BULLET`/`ELLIPSIS`, never the literal.
+
+A harness note that cost a full round of "still broken": pyte counts ambiguous as ONE, so a
+pyte-based replay is structurally blind to this entire class of bug — it reported zero overflowing
+rows where a real Ghostty had 221. Measure rows under BOTH conventions, never just pyte's.
+
+To debug any of this, set `BUTTERFLY_TUI_TRACE=<path>`: every byte the TUI writes is teed there,
+with APC notes for each observed resize and settle. Do NOT reach for `script` — on macOS it does
+not propagate window resizes into the wrapped process, so the recording is silent about the one
+thing a resize bug needs. A new surface belongs in `chrome` with a width-budget test, not inline in `ui`; a new
+color belongs in `theme` or nowhere. Every marker sits in column 0 and every piece of content in
+column 2 — that shared grid is what lets the eye tell turns, answers, tools and receipts apart.
+`.claude/skills/tui-design` (skill `tui-design`) carries the design references — hierarchy,
+spacing, color restraint, states, keybinding conventions, review checklist — and its Ratatui
+guide is background reading for structure only. Adopting Ratatui or the
 alternate screen is a product decision, never a side effect of a design task. Visual changes stay in
 `crates/cli`, must not alter cached prefix bytes (invariant 9), and must not change what an approval
 prompt gates or how a keypress maps to consent (invariants 4-5).

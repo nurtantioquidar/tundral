@@ -3,10 +3,12 @@
 //! arrow-key approvals, paste placeholders. Active only when stdin and
 //! stdout are TTYs; pipes get the plain loop in `repl`.
 
+pub(crate) mod chrome;
 mod completion;
 pub mod connect;
 mod editor;
 mod markdown;
+pub(crate) mod theme;
 mod ui;
 
 use std::collections::VecDeque;
@@ -24,9 +26,7 @@ use completion::CompletionIndex;
 use editor::Editor;
 use ui::{Status, Ui, UiAction, UiGate, UiSink};
 
-const DIM: &str = "\x1b[2m";
-const RESET: &str = "\x1b[0m";
-const RED: &str = "\x1b[31m";
+use theme::{DANGER, RESET};
 
 const COMMANDS: [(&str, &str); 9] = [
     (
@@ -68,7 +68,40 @@ fn status_of(agent: &Agent) -> Status {
         model: agent.model().id.clone(),
         mode: mode_name(agent.permission_mode()),
         ctx_pct: agent.utilization(),
+        session_microusd: agent.total_actual_microusd(),
+        price_verified: agent.model().pricing.verified,
     }
+}
+
+/// Where the workspace sits and what is checked out, for the welcome card:
+/// the repository name plus the path inside it, and the branch read straight
+/// from `.git/HEAD`. One small file read, no subprocess, and no failure mode
+/// worth reporting ‒ a detached head, a linked worktree, or no repository at
+/// all simply means less to show. Purely cosmetic, and deliberately outside
+/// the prompt: nothing dynamic may reach the cached prefix (invariant 1).
+fn workspace_label(root: &std::path::Path) -> (String, Option<String>) {
+    let basename = |path: &std::path::Path| {
+        path.file_name()
+            .map(|name| name.to_string_lossy().into_owned())
+            .unwrap_or_else(|| path.display().to_string())
+    };
+    let Some(repo) = root.ancestors().find(|dir| dir.join(".git").exists()) else {
+        return (basename(root), None);
+    };
+    let label = match root.strip_prefix(repo) {
+        Ok(rest) if rest.as_os_str().is_empty() => basename(repo),
+        Ok(rest) => format!("{}/{}", basename(repo), rest.display()),
+        Err(_) => basename(root),
+    };
+    let branch = std::fs::read_to_string(repo.join(".git/HEAD"))
+        .ok()
+        .and_then(|head| {
+            head.trim()
+                .strip_prefix("ref: refs/heads/")
+                .map(str::to_string)
+        })
+        .filter(|branch| !branch.is_empty());
+    (label, branch)
 }
 
 fn next_mode(mode: butterfly_core::session::approval::PermissionMode) -> &'static str {
@@ -78,6 +111,24 @@ fn next_mode(mode: butterfly_core::session::approval::PermissionMode) -> &'stati
         PermissionMode::Auto => "read-only",
         PermissionMode::ReadOnly => "ask",
     }
+}
+
+/// The mode `times` Shift+Tab presses past `mode`. Pure, so the running
+/// turn ‒ which holds the agent borrow ‒ can still name the mode its queued
+/// presses will land on.
+fn cycled(mode: butterfly_core::session::approval::PermissionMode, times: usize) -> &'static str {
+    use butterfly_core::session::approval::PermissionMode;
+    let mut current = mode;
+    let mut name = mode_name(mode);
+    for _ in 0..times {
+        name = next_mode(current);
+        current = match name {
+            "auto" => PermissionMode::Auto,
+            "read-only" => PermissionMode::ReadOnly,
+            _ => PermissionMode::Ask,
+        };
+    }
+    name
 }
 
 fn set_mode(agent: &mut Agent, name: &str) {
@@ -166,17 +217,24 @@ pub async fn run(
     let symbols = collect_symbols(&mut agent);
     let history_path = SessionStore::state_root().join("repl-history");
     let editor = Editor::new(Some(history_path));
+    let (workspace, branch) = workspace_label(&root);
     let index = CompletionIndex::new(root, COMMANDS.to_vec());
 
     let guard = TerminalGuard::new()?;
     let ui = Ui::new(editor, index, status_of(&agent), show_reasoning);
     ui.enter_screen();
     ui.set_session_data(recency_of(&agent), symbols);
-    // Model and mode already live in the footer; the header stays lean.
-    ui.print_note(&format!(
-        "butterfly · session {} · /help for commands",
-        agent.session_id,
-    ));
+    // A session used to open on an empty screen above a one-line note whose
+    // only content was a session id nobody types. The card answers the
+    // questions a first keystroke actually depends on; the id stays
+    // available in /usage.
+    ui.print_welcome(&chrome::Welcome {
+        workspace: &workspace,
+        branch,
+        model_name: &agent.model().display_name,
+        context_tokens: agent.model().limits.context_tokens,
+        mode: mode_name(agent.permission_mode()),
+    });
 
     let (sender, mut events) = tokio::sync::mpsc::unbounded_channel();
     spawn_event_thread(ui.clone(), sender);
@@ -185,7 +243,7 @@ pub async fn run(
     let mut pending: VecDeque<String> = VecDeque::new();
     loop {
         let input = if let Some(queued) = pending.pop_front() {
-            ui.print(&format!("{DIM}[queued]{RESET} {queued}"));
+            ui.print_note(&format!("queued message ⋅ sending now: {queued}"));
             queued
         } else {
             match events.recv().await {
@@ -193,6 +251,9 @@ pub async fn run(
                 Some(UiAction::CycleMode) => {
                     let next = next_mode(agent.permission_mode());
                     set_mode(&mut agent, next);
+                    // The mode names do not say what they gate, and this is
+                    // the one setting where guessing wrong has consequences.
+                    ui.print_note(&format!("{next} ⋅ {}", chrome::mode_blurb(next)));
                     ui.set_status(status_of(&agent));
                     continue;
                 }
@@ -201,7 +262,7 @@ pub async fn run(
             }
         };
         let mut task_statement: Option<String> = None;
-        match handle_command(&mut agent, &input, hub).await {
+        match handle_command(&mut agent, &input, hub, ui.width()).await {
             CommandResult::Quit => break,
             CommandResult::Task(statement) => task_statement = Some(statement),
             CommandResult::Connect => {
@@ -211,7 +272,7 @@ pub async fn run(
                     match crate::credentials::save_key(&provider, &api_key) {
                         Ok(path) => {
                             let mut note = format!(
-                                "connected · {provider} key saved to {} · new sessions use it automatically",
+                                "connected ⋅ {provider} key saved to {} ⋅ new sessions use it automatically",
                                 path.display()
                             );
                             if let Some(env) = hub
@@ -227,7 +288,7 @@ pub async fn run(
                             ui.print_note(&note);
                         }
                         Err(error) => {
-                            ui.print(&format!("{RED}could not save the key: {error}{RESET}"));
+                            ui.print(&format!("{DANGER}could not save the key: {error}{RESET}"));
                         }
                     }
                 }
@@ -236,16 +297,22 @@ pub async fn run(
             CommandResult::PickModel => {
                 let models = hub.registry.models().to_vec();
                 let current = agent.model();
-                let items: Vec<String> = models
+                let rows: Vec<chrome::ModelRow> = models
                     .iter()
-                    .map(|model| {
-                        let mut label = format!("{} ({})", model.display_name, model.id);
-                        if model.id == current.id {
-                            label.push_str(" · current");
-                        }
-                        label
+                    .map(|model| chrome::ModelRow {
+                        display_name: &model.display_name,
+                        id: &model.id,
+                        context_tokens: model.limits.context_tokens,
+                        current: model.id == current.id,
+                        // A model you have no key for is one you cannot
+                        // pick; say so before the switch fails.
+                        has_key: hub
+                            .provider_descriptor(model)
+                            .ok()
+                            .is_some_and(|p| ModelHub::resolve_key(p).is_some()),
                     })
                     .collect();
+                let items = ui.render_model_rows(&rows);
                 let initial = models.iter().position(|m| m.id == current.id).unwrap_or(0);
                 match ui.open_select("switch model", items, initial).await {
                     Ok(Some(index)) if models[index].id != current.id => {
@@ -274,6 +341,7 @@ pub async fn run(
         // Shift+Tab presses during a turn apply once it ends (the running
         // turn's gate keeps the mode it started with).
         let mut mode_cycles = 0usize;
+        let mode_at_start = agent.permission_mode();
         let result = {
             let mut sink = UiSink::new(ui.clone());
             let turn: std::pin::Pin<
@@ -306,18 +374,17 @@ pub async fn run(
                     event = events.recv() => match event {
                         Some(UiAction::Submit(line)) => {
                             steer.lock().expect("steer lock").push_back(line);
-                            ui.print(&format!(
-                                "{DIM}[queued: delivered at the next turn boundary]{RESET}"
-                            ));
+                            ui.print_note("queued ⋅ delivered at the next turn boundary");
                         }
                         Some(UiAction::CycleMode) => {
                             mode_cycles += 1;
-                            ui.print(&format!(
-                                "{DIM}[mode change applies when the turn ends]{RESET}"
+                            ui.print_note(&format!(
+                                "{} mode ⋅ applies when this turn ends",
+                                cycled(mode_at_start, mode_cycles),
                             ));
                         }
                         Some(UiAction::Interrupt) => {
-                            ui.print(&format!("{DIM}[cancelling…]{RESET}"));
+                            ui.print_note("cancelling ‒ finishing the current tool call");
                             cancel.cancel();
                         }
                         Some(UiAction::Eof) | None => cancel.cancel(),
@@ -333,17 +400,20 @@ pub async fn run(
             Ok(Outcome::Turn(report)) => {
                 if report.hit_output_limit {
                     ui.print(&format!(
-                        "{RED}⚠ truncated: the response hit the output-token limit{RESET}"
+                        "{DANGER}⚠ truncated: the response hit the output-token limit{RESET}"
                     ));
                 }
                 if !report.cancelled && report.assistant_text.trim().is_empty() {
                     ui.print_note(
-                        "no answer text arrived — the model spent its output budget reasoning (ctrl+t shows it); try again or narrow the ask",
+                        "no answer text arrived ‒ the model spent its output budget reasoning (ctrl+t shows it); try again or narrow the ask",
                     );
                 }
-                ui.print_note(&turn_status_line(&agent, &report, turn_started.elapsed()));
+                ui.print_marked(
+                    Some(theme::MARK_SUMMARY),
+                    &turn_status_line(&agent, &report, turn_started.elapsed()),
+                );
             }
-            Err(error) => ui.print(&format!("{RED}error: {error}{RESET}")),
+            Err(error) => ui.print(&format!("{DANGER}error: {error}{RESET}")),
         }
         for _ in 0..mode_cycles {
             let next = next_mode(agent.permission_mode());

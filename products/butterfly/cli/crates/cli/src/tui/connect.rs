@@ -8,13 +8,12 @@ use std::io::Write as _;
 use anyhow::{Context, Result};
 use crossterm::event::{Event, KeyCode, KeyEventKind, KeyModifiers};
 
-const DIM: &str = "\x1b[2m";
-const RESET: &str = "\x1b[0m";
-const CYAN: &str = "\x1b[36m";
+use super::chrome::option_row;
+use super::theme::{self as th, ACCENT, ACCENT_BOLD, DIM, RESET};
 
 /// Mask a key for display: all bullets, fixed floor so length leaks little.
 pub fn masked(len: usize) -> String {
-    "•".repeat(len.max(1))
+    th::BULLET.repeat(len.max(1))
 }
 
 struct RawGuard;
@@ -51,40 +50,51 @@ fn draw(lines: &[String], previous_rows: usize, typing: bool) -> usize {
 
 /// Run the wizard; returns `Some((provider, api_key))` on submit, `None` if
 /// the user backed out (Esc / Ctrl+C / Ctrl+D).
-pub fn standalone_connect(providers: &[(String, String)]) -> Result<Option<(String, String)>> {
+pub fn standalone_connect(
+    providers: &[(String, String, bool)],
+) -> Result<Option<(String, String)>> {
     if providers.is_empty() {
         return Ok(None);
     }
     let _guard = RawGuard::new()?;
+    let width = crossterm::terminal::size()
+        .map(|(w, _)| w as usize)
+        .unwrap_or(80)
+        .max(20);
     let mut selected = 0usize;
     let mut stage_key: Option<String> = None;
     let mut rows = 0usize;
     loop {
         let lines: Vec<String> = match &stage_key {
             None => {
+                // The very first thing a new user sees. Say what is about
+                // to happen and where the key will live, then get out of
+                // the way.
                 let mut lines = vec![
-                    format!("{CYAN}butterfly{RESET} · connect a provider"),
+                    format!("{ACCENT_BOLD}{} butterfly{RESET}", th::MARK_BRAND),
+                    String::new(),
+                    format!("{DIM}  pick the provider you have a key for{RESET}"),
                     String::new(),
                 ];
-                for (i, (_, label)) in providers.iter().enumerate() {
-                    if i == selected {
-                        lines.push(format!("  {CYAN}▸ {label}{RESET}"));
-                    } else {
-                        lines.push(format!("  {DIM}  {label}{RESET}"));
-                    }
+                for (i, (_, label, connected)) in providers.iter().enumerate() {
+                    let hint = if *connected { "key already saved" } else { "" };
+                    lines.push(option_row(label, hint, i == selected, width));
                 }
                 lines.push(String::new());
-                lines.push(format!("{DIM}enter continue · esc quit{RESET}"));
+                lines.push(format!("{DIM}  ⇡⇣ move ⋅ enter continue ⋅ esc quit{RESET}"));
                 lines
             }
             Some(key) => vec![
+                format!("{ACCENT_BOLD}{} butterfly{RESET}", th::MARK_BRAND),
+                String::new(),
                 format!(
-                    "{CYAN}butterfly{RESET} · paste your {} API key",
+                    "{DIM}  paste your {} API key ‒ input is masked{RESET}",
                     providers[selected].1
                 ),
                 String::new(),
                 format!(
-                    "  ❯ {}",
+                    "  {ACCENT}{}{RESET} {}",
+                    th::MARK_USER,
                     if key.is_empty() {
                         String::new()
                     } else {
@@ -92,7 +102,8 @@ pub fn standalone_connect(providers: &[(String, String)]) -> Result<Option<(Stri
                     }
                 ),
                 String::new(),
-                format!("{DIM}enter save · esc back{RESET}"),
+                format!("{DIM}  stored 0600 in your config dir, never in shell history{RESET}"),
+                format!("{DIM}  enter save ⋅ esc back{RESET}"),
             ],
         };
         rows = draw(&lines, rows, stage_key.is_some());

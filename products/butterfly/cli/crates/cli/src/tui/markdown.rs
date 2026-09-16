@@ -1,9 +1,14 @@
-//! Line-buffered markdown → styled spans (streaming never rewrites
+//! Line-buffered markdown ⇢ styled spans (streaming never rewrites
 //! scrollback). Markers are hidden, Claude Code-style; prose comes back as
 //! spans plus a hanging indent so the caller can word-wrap it to the
-//! terminal — mid-word terminal wrapping at column 0 is what makes raw
+//! terminal ‒ mid-word terminal wrapping at column 0 is what makes raw
 //! transcripts unreadable. Deliberately small: headings, bold, inline code,
-//! bullet/numbered lists, tinted fences.
+//! bullet/numbered lists, tinted fences, pipe tables.
+//!
+//! Tables are the one construct that cannot be rendered a line at a time:
+//! column widths depend on every row. A table therefore buffers until it
+//! ends (a non-table line, or `flush` at the end of the stream) and comes
+//! back as one `Rendered::Table` the caller lays out at its own width.
 
 pub const BOLD: &str = "\x1b[1m";
 pub const CYAN: &str = "\x1b[36m";
@@ -48,6 +53,28 @@ fn span(style: SpanStyle, text: impl Into<String>) -> Span {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Align {
+    Left,
+    Center,
+    Right,
+}
+
+/// A parsed pipe table. Cells keep their inline styling, so the layout can
+/// re-wrap them at any width without re-parsing.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Table {
+    pub headers: Vec<Vec<Span>>,
+    pub aligns: Vec<Align>,
+    pub rows: Vec<Vec<Vec<Span>>>,
+}
+
+impl Table {
+    pub fn columns(&self) -> usize {
+        self.headers.len()
+    }
+}
+
 /// One rendered logical line.
 #[derive(Debug, PartialEq, Eq)]
 pub enum Rendered {
@@ -60,16 +87,99 @@ pub enum Rendered {
         spans: Vec<Span>,
         cont_indent: usize,
     },
+    /// A complete table, to be laid out by the caller at its width.
+    Table(Table),
+}
+
+/// Where a pipe table is in its two-line opening handshake. A pipe row is
+/// only a table once the delimiter row underneath confirms it ‒ otherwise
+/// prose that happens to contain a `|` would vanish into a table.
+#[derive(Default)]
+enum Pending {
+    #[default]
+    None,
+    Candidate(String),
+    Active(Table),
 }
 
 #[derive(Default)]
 pub struct MarkdownRenderer {
     in_fence: bool,
+    pending: Pending,
 }
 
 impl MarkdownRenderer {
-    /// Render one complete output line. Stateful across lines for fences.
-    pub fn render(&mut self, line: &str) -> Rendered {
+    /// Render one complete output line. Stateful across lines for fences and
+    /// tables, so a line may produce nothing (buffered into a table) or more
+    /// than one thing (the line that ends a table).
+    pub fn render(&mut self, line: &str) -> Vec<Rendered> {
+        if self.in_fence || line.trim_start().starts_with("```") {
+            // A fence always wins: a `|` inside code is code.
+            let mut out = self.flush();
+            out.push(self.render_line(line));
+            return out;
+        }
+        match std::mem::take(&mut self.pending) {
+            Pending::None => {
+                if is_pipe_row(line) {
+                    self.pending = Pending::Candidate(line.to_string());
+                    return Vec::new();
+                }
+            }
+            Pending::Candidate(header) => {
+                if let Some(aligns) = delimiter_aligns(line) {
+                    let mut headers = split_cells(&header);
+                    headers.resize(aligns.len(), Vec::new());
+                    self.pending = Pending::Active(Table {
+                        headers,
+                        aligns,
+                        rows: Vec::new(),
+                    });
+                    return Vec::new();
+                }
+                // Not a table after all: the buffered line was just prose.
+                let mut out = vec![self.render_line(&header)];
+                out.extend(self.render(line));
+                return out;
+            }
+            Pending::Active(mut table) => {
+                if is_pipe_row(line) {
+                    let mut cells = split_cells(line);
+                    cells.resize(table.columns(), Vec::new());
+                    table.rows.push(cells);
+                    self.pending = Pending::Active(table);
+                    return Vec::new();
+                }
+                let mut out = vec![Rendered::Table(table)];
+                out.extend(self.render(line));
+                return out;
+            }
+        }
+        vec![self.render_line(line)]
+    }
+
+    /// Emit whatever is still buffered. The caller MUST call this when the
+    /// text run ends (turn over, or a tool call interrupts it) or a table
+    /// that closes the response never reaches the screen.
+    pub fn flush(&mut self) -> Vec<Rendered> {
+        match std::mem::take(&mut self.pending) {
+            Pending::None => Vec::new(),
+            Pending::Candidate(line) => vec![self.render_line(&line)],
+            Pending::Active(table) => vec![Rendered::Table(table)],
+        }
+    }
+
+    /// The table currently accumulating, if any. Lets the caller show a
+    /// live preview instead of a blank gap: a table cannot be drawn a row
+    /// at a time, but it can be re-drawn in the block as it grows.
+    pub fn pending_table(&self) -> Option<&Table> {
+        match &self.pending {
+            Pending::Active(table) => Some(table),
+            _ => None,
+        }
+    }
+
+    fn render_line(&mut self, line: &str) -> Rendered {
         let trimmed = line.trim_start();
         let indent = line.len() - trimmed.len();
         if trimmed.starts_with("```") {
@@ -85,7 +195,7 @@ impl MarkdownRenderer {
             if level <= 6 && trimmed[level..].starts_with(' ') {
                 let text = trimmed[level..].trim_start();
                 // Headings run the inline parser too (`## \`mod.rs\``
-                // must not leak backticks), then restyle uniformly — a
+                // must not leak backticks), then restyle uniformly ‒ a
                 // heading is one visual unit.
                 let spans = inline_spans(text)
                     .into_iter()
@@ -106,7 +216,7 @@ impl MarkdownRenderer {
                 if indent > 0 {
                     spans.push(span(SpanStyle::Plain, " ".repeat(indent)));
                 }
-                spans.push(span(SpanStyle::Marker, "• "));
+                spans.push(span(SpanStyle::Marker, "‣ "));
                 spans.extend(inline_spans(rest));
                 return Rendered::Prose {
                     spans,
@@ -137,6 +247,176 @@ impl MarkdownRenderer {
     pub fn in_fence(&self) -> bool {
         self.in_fence
     }
+
+    /// Test helper: render a line expected to produce exactly one thing.
+    #[cfg(test)]
+    fn one(&mut self, line: &str) -> Rendered {
+        let mut rendered = self.render(line);
+        assert_eq!(rendered.len(), 1, "expected one item for {line:?}");
+        rendered.pop().expect("one item")
+    }
+}
+
+/// A row of a pipe table: contains a `|` outside inline code, and is not a
+/// bullet or a fence. Leading/trailing pipes are optional (GitHub style).
+fn is_pipe_row(line: &str) -> bool {
+    let trimmed = line.trim();
+    if trimmed.is_empty() || trimmed.starts_with("```") {
+        return false;
+    }
+    let mut in_code = false;
+    for ch in trimmed.chars() {
+        match ch {
+            '`' => in_code = !in_code,
+            '|' if !in_code => return true,
+            _ => {}
+        }
+    }
+    false
+}
+
+/// The `|---|:--:|---:|` row under a header, which both confirms the table
+/// and fixes its column count and alignments.
+fn delimiter_aligns(line: &str) -> Option<Vec<Align>> {
+    let trimmed = line.trim();
+    if !trimmed.contains('-') {
+        return None;
+    }
+    let cells = raw_cells(trimmed);
+    if cells.is_empty() {
+        return None;
+    }
+    let mut aligns = Vec::with_capacity(cells.len());
+    for cell in cells {
+        let cell = cell.trim();
+        let body = cell.trim_start_matches(':').trim_end_matches(':');
+        if body.is_empty() || !body.chars().all(|c| c == '-') {
+            return None;
+        }
+        aligns.push(match (cell.starts_with(':'), cell.ends_with(':')) {
+            (true, true) => Align::Center,
+            (false, true) => Align::Right,
+            _ => Align::Left,
+        });
+    }
+    Some(aligns)
+}
+
+/// Split a row on unescaped pipes that are not inside inline code, dropping
+/// the optional leading and trailing pipe.
+fn raw_cells(line: &str) -> Vec<String> {
+    let trimmed = line.trim();
+    let mut cells = Vec::new();
+    let mut current = String::new();
+    let mut in_code = false;
+    let mut escaped = false;
+    for ch in trimmed.chars() {
+        if escaped {
+            current.push(ch);
+            escaped = false;
+            continue;
+        }
+        match ch {
+            '\\' => escaped = true,
+            '`' => {
+                in_code = !in_code;
+                current.push(ch);
+            }
+            '|' if !in_code => cells.push(std::mem::take(&mut current)),
+            _ => current.push(ch),
+        }
+    }
+    cells.push(current);
+    // A leading `|` produces an empty first cell and a trailing one an empty
+    // last cell; neither is a column.
+    if cells.first().is_some_and(|c| c.trim().is_empty()) {
+        cells.remove(0);
+    }
+    if cells.len() > 1 && cells.last().is_some_and(|c| c.trim().is_empty()) {
+        cells.pop();
+    }
+    cells
+}
+
+fn split_cells(line: &str) -> Vec<Vec<Span>> {
+    raw_cells(line)
+        .iter()
+        .map(|cell| inline_spans(cell.trim()))
+        .collect()
+}
+
+/// Plain text of a span run, for measurement.
+pub fn spans_text(spans: &[Span]) -> String {
+    spans.iter().map(|s| s.text.as_str()).collect()
+}
+
+/// Word-wrap styled spans into rows of at most `first_budget` /
+/// `cont_budget` columns, breaking at spaces (hard-cutting single words
+/// longer than a row). Styles survive across row boundaries.
+pub fn styled_rows(spans: &[Span], first_budget: usize, cont_budget: usize) -> Vec<String> {
+    let chars: Vec<(char, SpanStyle)> = spans
+        .iter()
+        .flat_map(|s| s.text.chars().map(move |c| (c, s.style)))
+        .collect();
+    let mut rows: Vec<Vec<(char, SpanStyle)>> = Vec::new();
+    let mut row: Vec<(char, SpanStyle)> = Vec::new();
+    let mut cols = 0usize;
+    let mut budget = first_budget.max(4);
+    let mut last_space: Option<usize> = None;
+    for &(ch, style) in &chars {
+        let w = unicode_width::UnicodeWidthChar::width(ch).unwrap_or(0);
+        if cols + w > budget && !row.is_empty() {
+            if let Some(at) = last_space {
+                let carry = row.split_off(at + 1);
+                while row.last().is_some_and(|(c, _)| *c == ' ') {
+                    row.pop();
+                }
+                rows.push(std::mem::take(&mut row));
+                row = carry;
+            } else {
+                rows.push(std::mem::take(&mut row));
+            }
+            budget = cont_budget.max(4);
+            cols = row
+                .iter()
+                .map(|(c, _)| unicode_width::UnicodeWidthChar::width(*c).unwrap_or(0))
+                .sum();
+            last_space = row.iter().rposition(|(c, _)| *c == ' ');
+            if ch == ' ' && row.is_empty() {
+                continue;
+            }
+        }
+        if ch == ' ' {
+            last_space = Some(row.len());
+        }
+        row.push((ch, style));
+        cols += w;
+    }
+    if !row.is_empty() || rows.is_empty() {
+        rows.push(row);
+    }
+    rows.into_iter().map(paint_row).collect()
+}
+
+fn paint_row(row: Vec<(char, SpanStyle)>) -> String {
+    let mut out = String::new();
+    let mut current = SpanStyle::Plain;
+    for (ch, style) in row {
+        if style != current {
+            if current != SpanStyle::Plain {
+                out.push_str(RESET);
+            }
+            if style != SpanStyle::Plain {
+                out.push_str(style.escape());
+            }
+            current = style;
+        }
+        out.push(ch);
+    }
+    if current != SpanStyle::Plain {
+        out.push_str(RESET);
+    }
+    out
 }
 
 /// `1. text` / `12) text` list openers.
@@ -175,7 +455,7 @@ fn nested_spans(content: &str, outer: SpanStyle) -> Vec<Span> {
 
 /// A single-`*` emphasis closing at the FIRST `*` in `content` (the text
 /// after the opener). Valid only when the content neither starts nor ends
-/// with whitespace — so `2 * 3` stays arithmetic, `*effective*` italicizes.
+/// with whitespace ‒ so `2 * 3` stays arithmetic, `*effective*` italicizes.
 fn emphasis_end(content: &str) -> Option<usize> {
     let first = content.chars().next()?;
     if first.is_whitespace() || first == '*' {
@@ -240,13 +520,19 @@ mod tests {
         match rendered {
             Rendered::Raw(text) => text.clone(),
             Rendered::Prose { spans, .. } => spans.iter().map(|s| s.text.as_str()).collect(),
+            Rendered::Table(table) => table
+                .rows
+                .iter()
+                .flat_map(|row| row.iter().map(|cell| spans_text(cell)))
+                .collect::<Vec<_>>()
+                .join(" "),
         }
     }
 
     #[test]
     fn headings_hide_markers_and_style() {
         let mut md = MarkdownRenderer::default();
-        let rendered = md.render("## Plan");
+        let rendered = md.one("## Plan");
         match &rendered {
             Rendered::Prose { spans, .. } => {
                 assert_eq!(spans.len(), 1);
@@ -256,11 +542,11 @@ mod tests {
             other => panic!("expected prose, got {other:?}"),
         }
         // A bare #hashtag is not a heading.
-        assert_eq!(plain_text(&md.render("#hashtag")), "#hashtag");
+        assert_eq!(plain_text(&md.one("#hashtag")), "#hashtag");
         // Inline markers inside headings are parsed away too (dogfood:
         // "## `mod.rs` contents" leaked its backticks), and the heading
         // stays one uniform visual unit.
-        let rendered = md.render("## `mod.rs` contents");
+        let rendered = md.one("## `mod.rs` contents");
         match &rendered {
             Rendered::Prose { spans, .. } => {
                 assert_eq!(plain_text(&rendered), "mod.rs contents");
@@ -269,24 +555,24 @@ mod tests {
             }
             other => panic!("expected prose, got {other:?}"),
         }
-        assert_eq!(plain_text(&md.render("### **Key pieces:**")), "Key pieces:");
+        assert_eq!(plain_text(&md.one("### **Key pieces:**")), "Key pieces:");
     }
 
     #[test]
     fn bullets_and_numbered_items_hang_their_continuations() {
         let mut md = MarkdownRenderer::default();
-        match md.render("- do the thing") {
+        match md.one("- do the thing") {
             Rendered::Prose { spans, cont_indent } => {
-                assert_eq!(spans[0].text, "• ");
+                assert_eq!(spans[0].text, "‣ ");
                 assert_eq!(cont_indent, 2);
             }
             other => panic!("{other:?}"),
         }
-        match md.render("  * nested") {
+        match md.one("  * nested") {
             Rendered::Prose { cont_indent, .. } => assert_eq!(cont_indent, 4),
             other => panic!("{other:?}"),
         }
-        match md.render("12. numbered item") {
+        match md.one("12. numbered item") {
             Rendered::Prose { spans, cont_indent } => {
                 assert_eq!(spans[0].text, "12. ");
                 assert_eq!(cont_indent, 4);
@@ -294,20 +580,20 @@ mod tests {
             other => panic!("{other:?}"),
         }
         // A year is not a list item.
-        assert_eq!(plain_text(&md.render("2026 was a year")), "2026 was a year");
+        assert_eq!(plain_text(&md.one("2026 was a year")), "2026 was a year");
     }
 
     #[test]
     fn fences_toggle_state_hide_delimiters_and_never_wrap() {
         let mut md = MarkdownRenderer::default();
-        assert_eq!(md.render("```rust"), Rendered::Raw(String::new()));
+        assert_eq!(md.one("```rust"), Rendered::Raw(String::new()));
         assert!(md.in_fence());
-        match md.render("let **x** = 1;") {
+        match md.one("let **x** = 1;") {
             // Inside a fence, inline markers must NOT be interpreted.
             Rendered::Raw(styled) => assert!(styled.contains("**x**")),
             other => panic!("{other:?}"),
         }
-        assert_eq!(md.render("```"), Rendered::Raw(String::new()));
+        assert_eq!(md.one("```"), Rendered::Raw(String::new()));
         assert!(!md.in_fence());
     }
 
@@ -353,8 +639,8 @@ mod tests {
 
     #[test]
     fn code_nested_in_emphasis_keeps_the_code_style_and_drops_backticks() {
-        // The exact shape from the dogfood report: **`ContextConfig`** — ...
-        let spans = inline_spans("**`ContextConfig`** — tunable knobs");
+        // The exact shape from the dogfood report: **`ContextConfig`** ‒ ...
+        let spans = inline_spans("**`ContextConfig`** ‒ tunable knobs");
         assert_eq!(spans[0].style, SpanStyle::Code);
         assert_eq!(spans[0].text, "ContextConfig");
         assert!(spans.iter().all(|s| !s.text.contains('`')));

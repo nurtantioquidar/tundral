@@ -350,6 +350,57 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 - **State under `~/.local/state/butterfly/`**.
 
 ### CLI / TUI
+- **Markdown tables** (2026-09-16) — pipe tables render as aligned columns with a rule under the
+  header and no vertical rules (box drawing costs a third of a narrow terminal and buys nothing
+  the alignment does not). A table is the one construct that cannot stream a line at a time —
+  column widths depend on every row — so `MarkdownRenderer` buffers from the delimiter row until
+  the table ends and emits one `Rendered::Table`; `flush()` covers a table that closes the
+  response. Cells wrap inside their own column, alignment honours `:---`/`---:`/`:---:`, columns
+  shrink widest-first but never below the longest word they hold, and when columns cannot work at
+  all the rows stack as records (title + indented fields) instead of being chopped mid-word.
+  Previously the raw `| a | b |` syntax was passed through as prose. Because a table cannot be
+  drawn a row at a time, the block previews it as it accumulates (last 6 rows, `⋮` when there is
+  more above) and commits it once, laid out for real, when it closes — otherwise the screen sits
+  blank for as long as the model takes to stream one.
+- **Every transcript entry re-composes at the render width** (regression, dogfood 2026-09-16) —
+  `render_entry` owes the repaint two things for EVERY variant: one returned string is exactly one
+  screen row, and it fits the width. Both were violated. `Entry::Fixed` returned rows composed at
+  the OLD width, so resizing a terminal narrower re-emitted them verbatim — and because the
+  repaint draws with autowrap off, the overflow overwrote the last column with garbage instead of
+  wrapping. Table rows were returned joined by `\n`, moving the cursor down without a carriage
+  return and stranding text at the right edge. Fixed by making entries data rather than strings:
+  `Entry::Tool { preview, outcome }` re-renders through `chrome::tool_line`, `Entry::Table` re-lays
+  out, `Entry::Code` hard-wraps (`theme::wrap_styled`, style replayed per row) so code is never
+  truncated, and `Entry::Fixed` clamps. Guarded by a test that renders every variant at
+  1/2/5/12/16/19/20/21/24/31/40/68/80/120 columns asserting no embedded newline and no overflow of
+  the REAL width (not the 20-column layout floor).
+- **Theme + chrome layer** (2026-09-16) — terminal styling and the width-aware text primitives
+  live in one place (`crates/cli/src/tui/theme.rs`: one accent, three status colors, one elevated
+  band, plus `meter`/`justify`/`money`/`tokens`/`duration`), and every composed surface is a pure
+  width → styled-rows function in `crates/cli/src/tui/chrome.rs` (welcome card, footer, activity
+  row, tool rows, approval card, turn receipt, help card, usage card, picker and completion rows).
+  `ui.rs` keeps state, the erase math and input only. Each surface is unit-tested against exact
+  column budgets at 24/40/62/80/120 columns, so the block-width invariant is checked per surface
+  rather than only on the assembled block. Purely presentational: no prompt bytes, no approval
+  semantics, no new dependencies.
+- **Welcome card** (2026-09-16) — a session used to open on an empty screen above a note whose
+  only content was a 32-hex session id. It now opens with the brand mark plus the four facts a
+  first keystroke depends on: workspace (repository name + path inside it + branch, read from
+  `.git/HEAD` — display only, never the prompt), model and context window, permission mode with a
+  one-line statement of what it gates, and a row of key affordances. The session id moved to
+  `/usage`. Degrades to a label-free variant under 62 columns and sheds hints from the right.
+- **Footer with a context meter** (2026-09-16) — `model · ctx ███░░░░░ 38% · $0.029` on the left,
+  the permission mode in its own color on the right. The meter turns yellow at 60% and red at 85%,
+  the only ambient warning before compaction starts rewriting the window. Running totals moved
+  here so the per-turn receipt could shrink to what that turn did.
+- **Phase-aware activity row** (2026-09-16) — `⠹ thinking · 18s · ~1.2k out` / `⠹ edit README.md`
+  / `⠹ writing`, with `esc to interrupt` right-aligned. While an approval is open it reads
+  `⚠ waiting for you` and drops the interrupt hint, which previously misdescribed Esc (in the
+  menu Esc denies).
+- **Aligned tool rows** (2026-09-16) — `⚒ edit   README.md                         ✓ 12ms`:
+  a short verb in a fixed column (accent for mutating tools, dim for reads), the target, and the
+  outcome with its duration right-aligned. Replaces `read_file(path) ✓`, which put every call on
+  a different column and reported no timing.
 - **Inline TUI** (2026-09-01) — output streams into native terminal scrollback (no alternate
   screen: copy/paste, scrollback, and tmux keep working); a redrawn-in-place bottom block holds
   the input editor, completion dropdown, and status bar. Custom crossterm editor (rustyline
@@ -373,19 +424,21 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 - **Paste placeholders** — bracketed paste; multi-line or >200-char pastes collapse to
   `[pasted #N: X lines]` in the editor (backspace removes atomically) and expand verbatim on
   submit.
-- **One-line footer + live activity** — deliberately minimal, Codex-shaped: `model | Context n%
-  left` on the left with the permission mode right-aligned in its color (cost/cache/cwd removed
-  2026-09-02: the per-turn ✳ summary and /usage already carry them; narrow terminals join the
-  halves left-aligned); Shift+Tab is the ONLY way to cycle
-  ask → auto → read-only (`/mode` removed as redundant; mid-turn presses apply when the turn
-  ends — the running turn keeps the mode it started with). Dropdown hints start at one shared
-  column (Codex-style label padding). While a turn runs, a `✳ spinner · elapsed · ~tokens · tool` line sits
-  above the input rule; Esc interrupts.
+- **One-line footer + live activity** — the footer carries model, the context meter and session
+  cost on the left with the permission mode right-aligned in its color, shedding the optional
+  halves as the terminal narrows (2026-09-02 it was `model | Context n% left` with cost and cache
+  removed; 2026-09-16 the meter and session cost came back here so the per-turn receipt could
+  shrink). Shift+Tab is the ONLY way to cycle ask → auto → read-only (`/mode` removed as
+  redundant; mid-turn presses apply when the turn ends — the running turn keeps the mode it
+  started with, and the note names the mode it will land on). Dropdown hints start at one shared
+  column. While a turn runs the activity row sits above the input rule and names the phase
+  (`thinking` / `writing` / the tool); Esc interrupts, except while an approval is open, where the
+  row reads `waiting for you` and Esc denies.
 - **Distinct turn chrome** — submitted prompts echo as subtle elevated bands (Codex-style
   dark-gray, not harsh inverse video; the overlay footer shares the band, while dropdown and
-  picker selection use plain cyan `▸` rows); agent responses
-  carry a `●` block marker with aligned continuation lines; turns close with a dim
-  `✳ done in Ns · …` stats line.
+  picker selection use plain cyan `▸` rows); agent responses carry an accent `●` block marker with
+  aligned continuation lines; turns close with a dim `∴ 0.5s · 2 calls · 24.0k in (75% cached) ·
+  840 out · $0.0029` receipt — this turn only, since the footer holds the running totals.
 - **Markdown rendering, markers hidden, word-wrapped** (Codex-inspired, dogfood 2026-09-01) —
   headings/bold/*italic*/inline-code render styled with the `##`/`**`/`*`/backtick syntax
   stripped (single-`*` emphasis requires tight markers, so `2 * 3` stays arithmetic; code spans
@@ -402,17 +455,110 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   g/G), dismissed with q/Esc/Ctrl+T; the main screen underneath is untouched, and output that
   streams in while the overlay is open queues and flushes on close. 10k-entry ring buffer. The
   overlay is the one sanctioned alternate-screen use — the main flow never leaves scrollback.
-- **Logical transcript + resize re-wrap** (dogfood 2026-09-01) — the transcript ring stores
-  logical entries (re-wrappable prose spans, user-bar text, fixed lines), rendered to physical
-  rows at display time. On resize — where terminal reflow both invalidates the erase math
-  (previously stranding stale block frames, one rule line each) and re-wraps old-width lines
-  raggedly — the whole visible screen repaints from the transcript, re-wrapped to the new width,
-  with the block re-pinned at the bottom edge. The overlay wraps from the same source instead of
-  truncating. Scrollback above the visible screen keeps its original wrap (immutable by design).
+- **Logical transcript** (dogfood 2026-09-01) — the transcript ring stores logical entries
+  (re-wrappable prose spans, user-bar text, tool calls, parsed tables, code, fixed rows), rendered
+  to physical rows at display time. The Ctrl+T overlay re-wraps from this source at its own width
+  instead of truncating.
+- **A resize re-projects the visible screen from the transcript** (2026-09-16) — this REVERSES the
+  earlier "a resize redraws the block, never the content" rule, which was correct about duplication
+  and wrong about the user-visible defect. Text is wrapped at the width in force when it is
+  committed, and those become real newlines in the terminal's grid: widening cannot re-join them
+  (the answer keeps its old narrow column in a wide window) and narrowing shears every row against
+  the new edge, continuations landing in column 0 and tables tearing mid-cell. Redrawing only the
+  block repairs neither, because the damage is in the content above it. A settled resize now calls
+  `full_frame`: erase the viewport (`ESC[2J`), refill it from the transcript re-rendered at the new
+  width, pin the block to the bottom edge. Measured on the real binary through a reflowing PTY
+  harness — committed at 100 columns, then widened, the widest prose row was frozen at 99 columns
+  (50% fill at 200 wide); it is now 94% at 140 and 100% at 200. Narrowing no longer shears at all.
+
+  The earlier rule's evidence still stands and is what makes this safe: the duplication it fixed
+  came from repainting per resize EVENT (23-33 re-emissions of one sentence per drag), and paints
+  are still held until the drag goes quiet, so one drag is still one redraw. What changed is that
+  the one redraw is now a full projection rather than a block-only touch-up.
+
+  Accepted limit: rows that have scrolled ABOVE the viewport keep the wrapping they were committed
+  with — they belong to the terminal's scrollback and are not ours to rewrite — so scrolling far
+  enough back crosses a seam. Ratatui's inline viewport (Codex) and Bubble Tea's `insertAbove`
+  (OpenCode, read at source) make the same trade and re-wrap no history either; they simply keep
+  less of what you look at outside the redrawn region. Owning the whole screen (alternate screen)
+  would remove the seam at the cost of native scrollback, mouse-wheel history and terminal text
+  selection; that remains a product decision, deliberately not taken.
+- **The terminal is titled `butterfly`** (2026-09-16) — one OSC 0 sequence on entry. zellij and
+  tmux show it in the pane frame, which is how a user with Codex and OpenCode open beside it tells
+  the panes apart; both of those set theirs. Shells reset the title at their next prompt, so
+  nothing is restored on exit.
+- **Verified inside zellij, not only pyte** (2026-09-16) — the user's emulator is zellij 0.44.3
+  under Ghostty. The replay harness now also runs the real binary inside a headless zellij session
+  and reads back zellij's own grid (`zellij action dump-screen`), so what is asserted is what zellij
+  paints. At 116 and 95 columns, and across a 150→95 pane narrowing after an answer, the prose
+  re-wraps at word boundaries, the rule is exactly the pane width and the footer fits. The
+  ambiguous-width rule above stands on its own merits (a row must not depend on the terminal's
+  choice), but the zellij frame in the user's screenshot is drawn with `─` at one column, so
+  ambiguous glyphs were NOT what the user was seeing; a butterfly still running pre-fix code is.
+- **Every UI glyph has one unambiguous width** (regression, dogfood 2026-09-16) — Unicode marks
+  `·` `—` `…` `●` `∴` `•` `─` `↑↓→` East Asian *Ambiguous*: a terminal renders them one column or
+  two as it likes (xterm one, Ghostty/iTerm2 two) and `unicode_width::width()` assumes one. Every
+  row containing one was therefore wider on screen than the layout budgeted, and the terminal
+  soft-wrapped it MID-WORD — `…introspective acce` / `ss to` — shearing the column grid. `·` was
+  the separator in every footer, hint and receipt (~29 uses, five in one receipt row), and widening
+  the composer rule to full width turned `─` into a line of exactly double the terminal that split
+  in two. Butterfly's glyphs are now drawn from the unambiguous set (`◉ ▪ ‣ ⋅ ⋯ ⎯ ▮▯ ⇡⇣⇢`) and
+  model output is budgeted with `width_cjk` (ambiguous counts as two, so a row can be a column
+  short — invisible — but never overflows). Measured on the real binary: rows overflowing their
+  terminal went from 221-246 under wide-ambiguous accounting (0 under narrow) to **0 under both**,
+  at 60/100/116/160 columns. `truncate_cols`, `tail_cols` and the editor's row-wrap were all
+  budgeting with the narrow measure and are fixed with it.
+
+  Why it survived the whole resize investigation: the replay harness is pyte-based, and pyte counts
+  ambiguous as ONE. Every suite reported clean while the user's Ghostty sheared on every line. The
+  harness now counts ambiguous as two, and `glyphs_have_one_unambiguous_width` plus the ambiguity
+  arm of `chrome`'s `check` helper fail the build if an ambiguous glyph is reintroduced.
+- **The renderer never holds a stale width** (2026-09-16) — a resize reaches the input thread as an
+  event, but a paint issued from the session thread can land between the terminal re-wrapping
+  itself and that event being handled, appending output at a width that no longer holds. `sync_size`
+  re-reads `terminal::size()` (a `TIOCGWINSZ` ioctl — no round trip, nothing to wait for) before
+  every paint and defers to the settle when the size moved.
+- **The cursor-position (DSR) probe is removed** (2026-09-16) — settling a resize used to ask the
+  terminal where the cursor was and pick the reflow hypothesis its answer agreed with, to anchor a
+  relative erase. The projection erases absolutely, so there is nothing left to anchor: one fewer
+  terminal round trip, one fewer capability to depend on, and no two-second stall on terminals that
+  never answer. It was always insurance — no scenario in the closed-loop harness needed it.
+- **The 20-column cap above the cursor is retired** (2026-09-16) — lines above the cursor were
+  capped at 20 columns because the erase found the block by counting cursor-relative rows, so a
+  line the terminal reflowed into two stranded everything above it. With an absolute rebuild and
+  `sync_size`, the cap bought nothing but a stunted-looking rule; the rule above the input now
+  spans the width (capped at 120 so it stays a rule and not a horizon). Mid-drag the terminal's own
+  reflow can briefly show a doubled rule, which the settle heals — verified converging from resize
+  storms of 20 steps at 30ms, faster than the 180ms settle.
+- **Painting is held while a drag is in flight** (2026-09-16) — the block is redrawn on every
+  stream delta, so a drag used to redraw it once per pixel step, each time erasing with geometry
+  the terminal had already re-wrapped; the stale rows accumulated. Block repaints are skipped until
+  the resize stream goes quiet (180ms), so one drag costs one redraw. Measured on a
+  drag-while-streaming replay, redraws landing immediately after a width change: 7 → 1.
+- **Rows never exceed the real terminal width** (2026-09-16) — layout math has a 20-column floor,
+  and below it `render_entry` used to emit rows laid out against the floor: a 19-column row into a
+  16-column terminal. Autowrap-off clamped them so nothing corrupted, but it broke the module's
+  stated contract. Rows laid out against the floor are now clamped to the width that actually
+  exists, and the width-budget test runs from 1 column up.
 - **Arrow-key approvals** — the input block becomes a yes / always / no menu (↑↓ + Enter;
-  `y`/`a`/`n`/Esc shortcuts kept), with the colorized diff preview above it.
+  `y`/`a`/`n`/Esc shortcuts kept), with the diff preview above it.
+- **Approval card** (2026-09-16) — the preview above the menu is now a stated decision
+  (`⚠ edit README.md`) with a `+3 −1` diff stat, the policy warning in red, and the diff itself
+  gutter-marked and **clamped to the terminal width** (unclamped detail rows used to wrap at
+  column 0 and shred the layout of the one prompt that has to stay readable). The pending `⚒`
+  line is dropped rather than committed, so the call is stated once instead of three times, and
+  the menu restates the subject and shows its `y`/`a`/`n` access keys. Presentation only: the
+  options, their order, their decisions, the default selection and the key mapping are unchanged
+  (invariants 4-5).
 - **Slash commands** — `/usage`, `/plan`, `/compact [focus]` (optional guidance threaded into the
   summarizer), `/mode`, `/model`, `/help`; Ctrl-C clears the line or cancels the turn.
+- **Grouped help and usage cards** (2026-09-16) — `/help` is three aligned sections (commands,
+  writing a message, during a session) with the key column in the accent instead of one flat
+  block of twenty equally-weighted lines; `/usage` is a label column with a context meter. Both
+  compose at the live terminal width (`handle_command` takes a width).
+- **Mode changes explain themselves** (2026-09-16) — Shift+Tab prints what the new mode gates
+  (`auto · edits run unprompted; commands off the allowlist still ask`). Mid-turn presses name
+  the mode they will land on when the turn ends.
 - **Mid-turn steering (pi-style)** — the input thread owns stdin for the whole session; messages
   typed while a turn runs queue and enter the conversation at the next provider-call boundary;
   leftovers become the next turns.
@@ -425,6 +571,12 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   after that, sessions just start. `/connect` in-session replaces the stored key. Resolution:
   `DEEPSEEK_API_KEY` env > store > wizard; headless `-p/--json` still fails fast. The key is
   masked while typing and never enters history, transcript, or session logs.
+- **Picker and completion legibility** (2026-09-16) — the model picker aligns name / id / context
+  window into columns and flags models whose provider has no key (`no key`), the two facts that
+  decide the choice; `/connect` marks providers whose key is already saved, so overwriting one is
+  deliberate. `@` completion labels the file name with its directory as a dim hint (six
+  candidates under one deep directory were six near-identical strings), and both dropdowns report
+  `+N more` instead of silently stopping at six.
 - **Model stickiness + picker** — bare `/model` opens an arrow-key picker over the hardcoded
   model list (display names — DeepSeek V4 Flash / DeepSeek V4 Pro — current model marked;
   `/model <wire-name>` still switches directly). Bare `/model` and `/connect` are composer
