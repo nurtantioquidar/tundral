@@ -161,6 +161,13 @@ expect; a vague statement guarantees a compile failure rather than a near miss.
   input tokens −10%, pass rate intact, cost −4% on GLM where output tokens (~$0.012 of $0.042
   per trial) now rival the cache-hit prefix (~$0.021). Butterfly now matches OpenCode's call
   count (19.5 vs 21.5 on GLM) with the gate still on. Runs: `flink-{proven,lean2}-{glm,deepseek}`.
+- **Requirements up front** (2026-09-16, GLM, 9 Flink × 2, approved prefix change: `requirements`
+  required in the `complete_task` schema plus one completion-block clause). Against the lean-block
+  arm: 18/18 both, zero false completions; first claims accepted without review 18/18 vs 1/18;
+  claims per trial 1.28 vs 2.89; median calls 20 vs 19.5; output tokens 20.1k vs 25.4k per trial;
+  input tokens 10.3M vs 13.7M per 18 trials; $0.033 vs $0.042 per trial. Cumulative over the
+  three-day stretch on GLM: 26 → 20 median calls, 15.2M → 10.3M input tokens, $0.044 → $0.033
+  per trial (−25%), pass rate 18/18 throughout. Run: `flink-req-glm`.
 
 ## Other harnesses
 

@@ -133,6 +133,15 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   A/B 2026-09-16 (9 Flink × 2, vs the outline arms): GLM 18/18 at median 21.5 calls vs 26,
   DeepSeek 17/18 vs 18/18 (the miss is the coin-flip task and went through the full review);
   first claims qualified in 5/18 GLM and 14/18 DeepSeek trials. Kept on.
+- **Requirements up front** (2026-09-16, approved prefix change for gated sessions) —
+  `complete_task.requirements` is a required schema field and the completion block asks for
+  it, with "run your checks before you claim". Output-token anatomy on GLM: claims were 16% of
+  output tokens at 2.6 claims per trial, and in 29 of 36 trials the first claim had already
+  run its check but omitted `requirements`, which only the review had asked for. Model-agnostic:
+  a claim without requirements still gets the one-shot rejection underneath. A/B (GLM, 9 Flink
+  × 2, vs the lean-block arm): 18/18 both; first claims accepted without review 18/18 vs 1/18;
+  claims per trial 1.3 vs 2.9; output tokens 20.1k vs 25.4k per trial; input 10.3M vs 13.7M per
+  18 trials; $0.033 vs $0.042 per trial (control three days earlier: $0.044).
 - **Blind-edit note** (2026-09-15) — a successful `edit` (or `write_file` over an existing file)
   of a path the session never read gets a one-line note in its result and is counted
   (`blind_edits` per attempt in the summary and JSON). Decided by the loop from its own record

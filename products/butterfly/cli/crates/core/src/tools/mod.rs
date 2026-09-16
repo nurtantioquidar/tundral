@@ -286,7 +286,10 @@ pub fn tool_schemas() -> Vec<ToolSchema> {
                         }
                     }
                 },
-                "required": ["summary", "deliverables"],
+                // `requirements` required since 2026-09-16 (operator-approved
+                // prefix change for gated sessions): GLM's first claims omitted
+                // it in 29 of 36 Flink trials and paid a review round trip.
+                "required": ["summary", "deliverables", "requirements"],
                 "additionalProperties": false
             }),
         },

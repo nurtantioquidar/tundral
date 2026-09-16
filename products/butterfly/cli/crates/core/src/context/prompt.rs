@@ -48,7 +48,9 @@ pub const COMPLETION_INSTRUCTIONS: &str = "\n\
 - Autonomous run: the task ends only when you call complete_task. List every
   deliverable the task statement asks for, each with the tool output that
   proves it (a file read back, a command result, a passing check). A reply
-  without tool calls does not end the task. If the repository has no tests
+  without tool calls does not end the task. List every requirement of the
+  statement in `requirements` with status met or unmet and the output that
+  decided it; run your checks before you claim. If the repository has no tests
   covering the task, write concrete acceptance checks for the stated
   requirements, run them, and pass them as complete_task.checks so the harness
   can run them too.";
