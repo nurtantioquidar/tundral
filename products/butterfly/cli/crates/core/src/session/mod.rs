@@ -253,6 +253,17 @@ pub struct SessionConfig {
     /// the loop treats it as an ending; unmet requirements become the next
     /// attempt's evidence. Requires the completion gate.
     pub independent_verifier: bool,
+    /// Always answer the first `complete_task` with the statement review, even
+    /// when the claim already carries a behavioural check that ran and passed
+    /// in this session and a requirements list with every item met. Off by
+    /// default: measured 2026-09-16, the review round trip was a pure re-claim
+    /// in 54 of 72 Flink trials, one to two provider calls per task.
+    pub always_review_claim: bool,
+    /// Whole-file `read_file` calls on files with at least this many lines
+    /// return an Atlas outline (definitions with exact line ranges, imports)
+    /// instead of the text; the model reads ranges from there. Tool-result
+    /// only: the prompt prefix is untouched. 0 = always the text.
+    pub outline_min_lines: usize,
     /// This session IS the verifier: read-only tools plus `report_verdict`,
     /// verifier instructions in its own (separate) prefix. Internal; set by
     /// `run_task`, never by operators.
@@ -292,6 +303,11 @@ impl Default for SessionConfig {
             clarify: false,
             independent_verifier: false,
             verifier: false,
+            // 84% of read_file calls on the Flink suite were >350 lines and
+            // 98% of the lines read came from them (2026-09-14); a 400-line
+            // floor leaves small files whole.
+            outline_min_lines: 400,
+            always_review_claim: false,
         }
     }
 }
@@ -350,9 +366,30 @@ pub struct TurnReport {
     pub self_authored_checks: u32,
     /// Verifier sessions only: the verdict `report_verdict` recorded.
     pub verdict: Option<Verdict>,
+    /// Successful edits (or overwrites of existing files) to paths the
+    /// session never read: the edit applied, the model worked from a search
+    /// hit or memory. Counted, never blocked.
+    pub blind_edits: u32,
+    /// Whole-file reads answered with an Atlas outline instead of the text.
+    pub outline_reads: u32,
+    /// Input tokens the outlines kept out of the prompt, summed over every
+    /// later provider call in this turn (the prefix is re-sent each call).
+    pub avoided_input_tokens: u64,
+    /// The same, priced on this model's card: the first later call at the
+    /// cache-miss rate, the rest at the cache-hit rate. An estimate.
+    pub avoided_microusd: u64,
+    /// The first `complete_task` was accepted without the review round trip
+    /// because its behavioural check had already run and passed here.
+    pub first_claim_proven: bool,
 }
 
 const TURN_FAILURES_CAP: usize = 50;
+/// Identical-call counts that earn a reminder (DeepSeek Harness rule, 2026-09-13 study).
+const REPEAT_REMINDER_AT: [u32; 3] = [3, 5, 8];
+/// Appended to a successful edit of a file the session never read.
+const BLIND_EDIT_NOTE: &str =
+    "\n[note: this file was not read in this session; the edit applied, but check the surrounding \
+     code before relying on it]";
 /// Mid-stream transport failures (and upstream 5xx that survived the HTTP
 /// retries) re-issued per provider call, with a doubling backoff capped at
 /// `STREAM_TRANSPORT_MAX_BACKOFF_MS`: 1.5, 3, 6, 12, 24, 48s ≈ 95s of patience
@@ -418,6 +455,22 @@ impl TaskReport {
             self.tool_calls,
             self.actual_microusd as f64 / 1_000_000.0
         ));
+        if !self.model_id.is_empty() {
+            out.push_str(&format!(
+                "model: {}  price card: {}{}  cost cap: {}\n",
+                self.model_id,
+                self.price_version,
+                if self.price_verified {
+                    ""
+                } else {
+                    " (UNVERIFIED: costs are not real money)"
+                },
+                match self.cost_cap_microusd {
+                    Some(cap) => format!("${:.2}", cap as f64 / 1_000_000.0),
+                    None => "none".to_string(),
+                }
+            ));
+        }
         if self.cancelled {
             out.push_str("cancelled by the user\n");
         }
@@ -450,6 +503,18 @@ impl TaskReport {
                     "  {} declared check(s) run a file written in this session: the model's own claim, \
                      not independent proof\n",
                     attempt.turn.self_authored_checks
+                ));
+            }
+            if attempt.turn.first_claim_proven {
+                out.push_str(
+                    "  first claim accepted without review: its behavioural check had already run \
+                     and passed in this session\n",
+                );
+            }
+            if attempt.turn.blind_edits > 0 {
+                out.push_str(&format!(
+                    "  {} edit(s) to files never read in this session\n",
+                    attempt.turn.blind_edits
                 ));
             }
             if let Some(verifier) = &attempt.verifier {
@@ -498,6 +563,14 @@ impl TaskReport {
                 out.push_str(&format!("  - {} — {}\n", d.item.trim(), d.evidence.trim()));
             }
         }
+        if self.outline_reads > 0 {
+            out.push_str(&format!(
+                "outline reads: {}  input kept out of the prompt: ~{}k tokens (~${:.4} on this model's card, an estimate)\n",
+                self.outline_reads,
+                self.avoided_input_tokens / 1_000,
+                self.avoided_microusd as f64 / 1_000_000.0
+            ));
+        }
         out
     }
 }
@@ -534,10 +607,23 @@ pub struct TaskReport {
     pub elisions: u32,
     pub latency_ms: u64,
     pub retries: u32,
+    pub blind_edits: u32,
+    pub outline_reads: u32,
+    pub avoided_input_tokens: u64,
+    pub avoided_microusd: u64,
+    /// The session cost cap the run was held to, when one was set.
+    pub cost_cap_microusd: Option<u64>,
+    pub model_id: String,
+    pub price_version: String,
+    pub price_verified: bool,
 }
 
 impl TaskReport {
     fn absorb(&mut self, turn: &TurnReport) {
+        self.blind_edits += turn.blind_edits;
+        self.outline_reads += turn.outline_reads;
+        self.avoided_input_tokens += turn.avoided_input_tokens;
+        self.avoided_microusd += turn.avoided_microusd;
         self.assistant_text = turn.assistant_text.clone();
         self.completed = turn.completed;
         self.completion = turn.completion.clone();
@@ -603,6 +689,14 @@ pub struct Agent {
     silent_overflow_recovered: bool,
     /// `ask_user` calls answered this input (clarify mode caps them).
     questions_asked: u32,
+    /// Outline reads whose avoided bytes are still being re-billed on every
+    /// provider call: (tokens, already charged once at the miss rate).
+    outline_avoided: Vec<(u64, bool)>,
+    /// Identical tool calls (name + arguments) seen this input, for the
+    /// bounded repeat reminder at 3, 5 and 8.
+    identical_calls: HashMap<u64, u32>,
+    /// Set when the first claim of the current attempt skipped the review.
+    first_claim_proven: bool,
     /// Workspace fingerprint taken when the gated task started, so a declared
     /// check can be recognised as running a file the model wrote.
     gate_baseline: Option<WorkspaceSnapshot>,
@@ -664,7 +758,9 @@ impl Agent {
         Ok(Self {
             session_id,
             provider,
-            executor: ToolExecutor::new(root).with_policy(config.policy()),
+            executor: ToolExecutor::new(root)
+                .with_policy(config.policy())
+                .with_outline_min_lines(config.outline_min_lines),
             tools: session_tools(
                 config.atlas_enabled,
                 config.sandboxed,
@@ -697,6 +793,9 @@ impl Agent {
             requirements_rejections: 0,
             silent_overflow_recovered: false,
             questions_asked: 0,
+            outline_avoided: Vec::new(),
+            identical_calls: HashMap::new(),
+            first_claim_proven: false,
             gate_baseline: None,
             self_authored_checks: Vec::new(),
             verdict: None,
@@ -727,7 +826,9 @@ impl Agent {
         Ok(Self {
             session_id,
             provider,
-            executor: ToolExecutor::new(root).with_policy(config.policy()),
+            executor: ToolExecutor::new(root)
+                .with_policy(config.policy())
+                .with_outline_min_lines(config.outline_min_lines),
             tools: session_tools(
                 config.atlas_enabled,
                 config.sandboxed,
@@ -760,6 +861,9 @@ impl Agent {
             requirements_rejections: 0,
             silent_overflow_recovered: false,
             questions_asked: 0,
+            outline_avoided: Vec::new(),
+            identical_calls: HashMap::new(),
+            first_claim_proven: false,
             gate_baseline: None,
             self_authored_checks: Vec::new(),
             verdict: None,
@@ -1135,6 +1239,7 @@ impl Agent {
         cancel: &CancellationToken,
     ) -> Result<TurnReport, SessionError> {
         let mut report = TurnReport::default();
+        self.identical_calls.clear();
         self.push_user(input)?;
         loop {
             // Steering: deliver queued user messages at the turn boundary.
@@ -1202,6 +1307,7 @@ impl Agent {
                 }
             };
             report.provider_calls += 1;
+            self.bill_avoided_outline_bytes(&mut report);
             report.latency_ms += turn.latency_ms;
             report.retries += turn.retries;
             self.telemetry.record(TelemetryEvent::ProviderCall {
@@ -1344,6 +1450,7 @@ impl Agent {
                 }
                 sink.on_tool_start(&preview);
                 let started = std::time::Instant::now();
+                let blind_target = self.blind_edit_target(&call.name, &call.arguments);
                 let output = self.execute_gated(call, gate, cancel).await;
                 if output.is_none() {
                     cancelled_mid_tools = true;
@@ -1391,15 +1498,31 @@ impl Agent {
                         self.atlas.invalidate(&path);
                     }
                 }
-                let content = if output.is_error {
+                if !output.is_error && call.name == "read_file" && output.avoided_bytes > 0 {
+                    report.outline_reads += 1;
+                    let tokens = self.context.ledger.tokens_for_bytes(output.avoided_bytes);
+                    self.outline_avoided.push((tokens, false));
+                }
+                let mut content = if output.is_error {
                     format!("ERROR: {}", output.content)
                 } else {
                     output.content
                 };
+                if !output.is_error && blind_target.is_some() {
+                    report.blind_edits += 1;
+                    content.push_str(BLIND_EDIT_NOTE);
+                }
+                if let Some(times) = self.note_repeated_call(&call.name, &call.arguments) {
+                    content.push_str(&format!(
+                        "\n[this exact call has now been made {times} times this turn; its result \
+                         does not change — use what it already returned or take a different step]"
+                    ));
+                }
                 self.push_tool_result(call.id.clone(), content)?;
                 if call.name == "complete_task" && !output.is_error {
                     if let Some(claim) = &self.completion_claim {
                         report.completed = true;
+                        report.first_claim_proven = self.first_claim_proven;
                         report.completion = Some(claim.clone());
                         report.self_authored_checks = self.self_authored_checks.len() as u32;
                     }
@@ -1437,6 +1560,15 @@ impl Agent {
                 ))
             }
         };
+        if !self.completion_reviewed && self.first_claim_is_proven(&claim) {
+            // The review asks the model to prove each requirement with a tool
+            // output and to bring a behavioural check. A first claim that
+            // already lists every requirement as met and names a behavioural
+            // check this session ran and passed has nothing left to prove
+            // there; the harness still runs the check itself.
+            self.completion_reviewed = true;
+            self.first_claim_proven = true;
+        }
         if !self.completion_reviewed {
             self.completion_reviewed = true;
             let mut statement = self.task_statement.clone().unwrap_or_default();
@@ -1525,8 +1657,41 @@ impl Agent {
                 checks.len()
             ));
         }
+        if self.first_claim_proven {
+            summary.push_str(
+                " Accepted without the statement review: a behavioural check already ran and \
+                 passed in this session.",
+            );
+        }
         self.completion_claim = Some(claim);
         crate::tools::ToolOutput::text(summary)
+    }
+
+    /// A first claim needs no review when the loop itself has seen the proof:
+    /// every requirement listed as met, and at least one non-weak check that
+    /// this session ran (argv for argv) with exit 0. The model's word alone
+    /// never qualifies; a check it lists but did not run still gets the review.
+    fn first_claim_is_proven(&self, claim: &CompletionClaim) -> bool {
+        if self.config.always_review_claim {
+            return false;
+        }
+        if claim.requirements.is_empty()
+            || claim
+                .requirements
+                .iter()
+                .any(|r| !r.status.trim().eq_ignore_ascii_case("met"))
+        {
+            return false;
+        }
+        claim.checks.iter().any(|argv| {
+            !argv.is_empty()
+                && !is_weak_check(argv)
+                && self
+                    .working_state
+                    .commands
+                    .iter()
+                    .any(|record| record.ok && record.command == argv.join(" "))
+        })
     }
 
     /// A declared check is self-authored when the program it executes — the
@@ -1973,7 +2138,13 @@ impl Agent {
         cancel: &CancellationToken,
     ) -> Result<TaskReport, SessionError> {
         let max_attempts = options.max_attempts.max(1);
-        let mut task = TaskReport::default();
+        let mut task = TaskReport {
+            cost_cap_microusd: self.config.max_session_cost_microusd,
+            model_id: self.config.model.id.clone(),
+            price_version: self.config.model.pricing.version.clone(),
+            price_verified: self.config.model.pricing.verified,
+            ..TaskReport::default()
+        };
         let mut next_input = input;
         if options.verification.require_diff
             && verify::git_changed_paths(self.executor.root()).is_none()
@@ -1988,6 +2159,7 @@ impl Agent {
             self.attempt = attempt;
             self.completion_reviewed = false;
             self.completion_claim = None;
+            self.first_claim_proven = false;
             self.weak_check_rejections = 0;
             self.requirements_rejections = 0;
             self.silent_overflow_recovered = false;
@@ -2313,6 +2485,9 @@ impl Agent {
             success: task.verified,
         });
         self.task_statement = None;
+        self.record(&SessionEvent::RunSummary {
+            text: task.render_summary(),
+        })?;
         Ok(task)
     }
 }
@@ -2615,6 +2790,77 @@ impl Agent {
     /// search tool. A text search for a plain identifier gets the index's
     /// definitions prepended; a symbol lookup that misses the index falls
     /// back to a text search in the same result — no extra turn either way.
+    /// The path an `edit` (or a `write_file` over an existing file) targets
+    /// when this session never read it. Decided before the call runs, from
+    /// the loop's own record of reads — the model's claims play no part.
+    fn blind_edit_target(&self, tool: &str, arguments: &str) -> Option<String> {
+        if tool != "edit" && tool != "write_file" {
+            return None;
+        }
+        let path = serde_json::from_str::<serde_json::Value>(arguments)
+            .ok()?
+            .get("path")?
+            .as_str()?
+            .to_string();
+        let normalized = path.trim_start_matches("./");
+        let was_read = self
+            .working_state
+            .files_read
+            .iter()
+            .any(|read| read.trim_start_matches("./") == normalized);
+        if was_read {
+            return None;
+        }
+        if tool == "write_file" && !self.executor.root().join(normalized).is_file() {
+            return None; // a new file has nothing to have read
+        }
+        Some(path)
+    }
+
+    /// Count an identical call (name + arguments); Some(n) at the reminder
+    /// thresholds. `edit` is excluded: repeated failing edits already get the
+    /// repeated-patch guidance, and a repeated successful edit cannot happen.
+    fn note_repeated_call(&mut self, name: &str, arguments: &str) -> Option<u32> {
+        if name == "edit" {
+            return None;
+        }
+        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        std::hash::Hash::hash(name, &mut hasher);
+        std::hash::Hash::hash(arguments, &mut hasher);
+        let key = std::hash::Hasher::finish(&hasher);
+        let count = self.identical_calls.entry(key).or_insert(0);
+        *count += 1;
+        REPEAT_REMINDER_AT.contains(count).then_some(*count)
+    }
+
+    /// Every provider call re-sends the prefix, so each outline read's
+    /// avoided bytes are saved again on every call after it: once at the
+    /// cache-miss rate (new bytes), then at the cache-hit rate.
+    fn bill_avoided_outline_bytes(&mut self, report: &mut TurnReport) {
+        if self.outline_avoided.is_empty() {
+            return;
+        }
+        let pricing = &self.config.model.pricing;
+        for (tokens, charged_once) in &mut self.outline_avoided {
+            let usage = if *charged_once {
+                Usage {
+                    cache_hit_input_tokens: *tokens,
+                    input_tokens: *tokens,
+                    ..Usage::default()
+                }
+            } else {
+                Usage {
+                    cache_miss_input_tokens: *tokens,
+                    input_tokens: *tokens,
+                    ..Usage::default()
+                }
+            };
+            *charged_once = true;
+            report.avoided_input_tokens += *tokens;
+            report.avoided_microusd += crate::domain::price_usage(pricing, usage).actual_microusd;
+        }
+    }
+
     fn atlas_definitions_block(&mut self, name: &str) -> Option<String> {
         if !self.config.atlas_enabled || !is_plain_identifier(name) {
             return None;
@@ -3473,6 +3719,281 @@ mod tests {
             "{}",
             tool_contents[3]
         );
+    }
+
+    #[tokio::test]
+    async fn an_edit_to_a_file_never_read_is_noted_and_counted_but_still_applied() {
+        let dir = workspace();
+        std::fs::write(dir.path().join("a.txt"), "alpha\n").unwrap();
+        std::fs::write(dir.path().join("b.txt"), "beta\n").unwrap();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call(
+                "c1",
+                "edit",
+                r#"{"path":"a.txt","old_string":"alpha","new_string":"ALPHA"}"#,
+            ),
+            assistant_with_call("c2", "read_file", r#"{"path":"b.txt"}"#),
+            assistant_with_call(
+                "c3",
+                "edit",
+                r#"{"path":"./b.txt","old_string":"beta","new_string":"BETA"}"#,
+            ),
+            assistant_with_call(
+                "c4",
+                "write_file",
+                r#"{"path":"new.txt","content":"fresh\n"}"#,
+            ),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        let report = agent
+            .run_turn(
+                "edit things".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        let tool_contents: Vec<&str> = agent
+            .messages()
+            .iter()
+            .filter_map(|m| match m {
+                ChatMessage::Tool { content, .. } => Some(content.as_str()),
+                _ => None,
+            })
+            .collect();
+        assert!(
+            tool_contents[0].contains("replaced 1 occurrence"),
+            "{}",
+            tool_contents[0]
+        );
+        assert!(
+            tool_contents[0].contains("was not read in this session"),
+            "{}",
+            tool_contents[0]
+        );
+        assert!(
+            !tool_contents[2].contains("was not read"),
+            "read first: {}",
+            tool_contents[2]
+        );
+        assert!(
+            !tool_contents[3].contains("was not read"),
+            "new file: {}",
+            tool_contents[3]
+        );
+        assert_eq!(report.blind_edits, 1);
+        assert_eq!(
+            std::fs::read_to_string(dir.path().join("a.txt")).unwrap(),
+            "ALPHA\n"
+        );
+    }
+
+    #[tokio::test]
+    async fn outline_reads_are_counted_and_their_avoided_bytes_priced_per_later_call() {
+        let dir = workspace();
+        let mut big = String::from("import os\n");
+        for i in 0..450 {
+            big.push_str(&format!("def f{i}():\n    return {i}\n"));
+        }
+        std::fs::write(dir.path().join("big.py"), &big).unwrap();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call("c1", "read_file", r#"{"path":"big.py"}"#),
+            assistant_with_call("c2", "read_file", r#"{"path":"hello.txt"}"#),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        let report = agent
+            .run_turn(
+                "look".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        let first_result = agent
+            .messages()
+            .iter()
+            .find_map(|m| match m {
+                ChatMessage::Tool { content, .. } => Some(content.clone()),
+                _ => None,
+            })
+            .unwrap();
+        assert!(
+            first_result.starts_with("[outline] big.py"),
+            "{}",
+            &first_result[..first_result.len().min(300)]
+        );
+        assert_eq!(report.outline_reads, 1);
+        // Two provider calls followed the outline read (c2's and the final
+        // text's), so the avoided tokens count twice: once miss, once hit.
+        assert!(report.avoided_input_tokens > 0);
+        let per_call = report.avoided_input_tokens / 2;
+        assert_eq!(report.avoided_input_tokens, per_call * 2);
+        assert!(report.avoided_microusd > 0, "priced on the reference card");
+        let summary = {
+            let mut task = TaskReport::default();
+            task.absorb(&report);
+            task.render_summary()
+        };
+        assert!(summary.contains("outline reads: 1"), "{summary}");
+    }
+
+    #[tokio::test]
+    async fn the_third_identical_call_gets_a_bounded_reminder() {
+        let dir = workspace();
+        let same = || assistant_with_call("c", "read_file", r#"{"path":"hello.txt"}"#);
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            same(),
+            same(),
+            same(),
+            same(),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        agent
+            .run_turn(
+                "again".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        let results: Vec<&str> = agent
+            .messages()
+            .iter()
+            .filter_map(|m| match m {
+                ChatMessage::Tool { content, .. } => Some(content.as_str()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(results.len(), 4);
+        assert!(!results[1].contains("this exact call"), "{}", results[1]);
+        assert!(
+            results[2].contains("made 3 times this turn"),
+            "{}",
+            results[2]
+        );
+        assert!(
+            !results[3].contains("this exact call"),
+            "4 is not a threshold: {}",
+            results[3]
+        );
+    }
+
+    #[tokio::test]
+    async fn a_first_claim_whose_check_already_ran_and_passed_skips_the_review() {
+        let dir = workspace();
+        let claim = r#"{"summary":"wrote out.txt","deliverables":[{"item":"out.txt","evidence":"grep"}],"checks":[["grep","-q","x","out.txt"]],"requirements":[{"requirement":"out.txt contains x","status":"met","evidence":"grep exit 0"}]}"#;
+        // Proven: the model ran the very check it lists, and it passed.
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call("c1", "write_file", r#"{"path":"out.txt","content":"x"}"#),
+            assistant_with_call(
+                "c2",
+                "run_command",
+                r#"{"command":["grep","-q","x","out.txt"]}"#,
+            ),
+            assistant_with_call("c3", "complete_task", claim),
+        ]));
+        let mut agent = Agent::new(
+            provider.clone(),
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                sandboxed: true,
+                completion_gate: true,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        let report = agent
+            .run_task(
+                "Create out.txt containing x".into(),
+                &TaskOptions::default(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert!(report.completed);
+        assert_eq!(report.provider_calls, 3, "no review round trip");
+        assert!(report.attempts[0].turn.first_claim_proven);
+        let summary = report.render_summary();
+        assert!(
+            summary.contains("first claim accepted without review"),
+            "{summary}"
+        );
+        assert!(
+            summary.starts_with("CLAIMED"),
+            "a claim stays a claim: {summary}"
+        );
+
+        // Not proven: the same claim without having run the check gets the review.
+        let dir2 = workspace();
+        let provider2 = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call("d1", "write_file", r#"{"path":"out.txt","content":"x"}"#),
+            assistant_with_call("d2", "complete_task", claim),
+            assistant_with_call("d3", "complete_task", claim),
+        ]));
+        let mut agent2 = Agent::new(
+            provider2.clone(),
+            dir2.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                sandboxed: true,
+                completion_gate: true,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        let report2 = agent2
+            .run_task(
+                "Create out.txt containing x".into(),
+                &TaskOptions::default(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert!(!report2.attempts[0].turn.first_claim_proven);
+        assert!(provider2.recorded_requests()[2].iter().any(|m| matches!(
+            m,
+            ChatMessage::Tool { content, .. } if content.starts_with("REVIEW BEFORE COMPLETION")
+        )));
     }
 
     #[tokio::test]

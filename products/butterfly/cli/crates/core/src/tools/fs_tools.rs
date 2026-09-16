@@ -32,20 +32,39 @@ pub struct ReadFileArgs {
     pub limit: Option<usize>,
 }
 
-/// Test convenience: the default (confined) policy.
+/// Test convenience: the default (confined) policy, outline reads off.
 #[cfg(test)]
 pub fn read_file(root: &Path, args: ReadFileArgs) -> Result<ToolOutput, ToolError> {
-    read_file_with(root, args, &PolicySettings::default())
+    read_file_with(root, args, &PolicySettings::default(), 0)
 }
 
+/// `outline_min_lines`: a whole-file read (no offset, no limit) of a file with
+/// at least this many lines returns an Atlas outline — definitions with exact
+/// line ranges, imports — instead of the text, so a large file costs a few
+/// hundred tokens to orient in rather than the 24 KB cap. 0 disables. The
+/// model opts out per call with `offset: 1`. Files Atlas cannot parse fall
+/// back to the plain read.
 pub fn read_file_with(
     root: &Path,
     args: ReadFileArgs,
     settings: &PolicySettings,
+    outline_min_lines: usize,
 ) -> Result<ToolOutput, ToolError> {
     let path = resolve(root, &args.path, settings)?;
     let bytes = std::fs::read(&path).map_err(|error| ToolError::Io(args.path.clone(), error))?;
     let text = String::from_utf8_lossy(&bytes);
+    if outline_min_lines > 0
+        && args.offset.is_none()
+        && args.limit.is_none()
+        && text.lines().count() >= outline_min_lines
+    {
+        if let Some(outline) = butterfly_atlas::outline(&args.path, &text) {
+            let plain_bytes = plain_render_bytes(&text);
+            let mut output = ToolOutput::text(cap_body(outline));
+            output.avoided_bytes = plain_bytes.saturating_sub(output.content.len()) as u64;
+            return Ok(output);
+        }
+    }
     let start = args.offset.unwrap_or(1).max(1);
     let mut lines: Vec<String> = Vec::new();
     let mut total_lines = 0usize;
@@ -61,23 +80,37 @@ pub fn read_file_with(
         }
         lines.push(format!("{:>6}\t{line}", index + 1));
     }
-    let mut body = lines.join("\n");
-    let mut truncated = false;
+    let mut body = cap_body(lines.join("\n"));
+    if body.is_empty() {
+        body = format!("[empty file: {} lines total]", total_lines);
+    }
+    Ok(ToolOutput::text(body))
+}
+
+/// Size the plain numbered rendering would have had after the cap: what an
+/// outline read keeps out of the transcript.
+fn plain_render_bytes(text: &str) -> usize {
+    let mut total = 0usize;
+    for line in text.lines() {
+        // "{:>6}\t{line}\n"
+        total += 7 + line.len() + 1;
+        if total > READ_CAP_BYTES {
+            return READ_CAP_BYTES + "\n[output truncated: use offset/limit to read further]".len();
+        }
+    }
+    total.saturating_sub(1)
+}
+
+fn cap_body(mut body: String) -> String {
     if body.len() > READ_CAP_BYTES {
         let mut end = READ_CAP_BYTES;
         while !body.is_char_boundary(end) {
             end -= 1;
         }
         body.truncate(end);
-        truncated = true;
-    }
-    if truncated {
         body.push_str("\n[output truncated: use offset/limit to read further]");
     }
-    if body.is_empty() {
-        body = format!("[empty file: {} lines total]", total_lines);
-    }
-    Ok(ToolOutput::text(body))
+    body
 }
 
 #[derive(Deserialize)]
@@ -386,5 +419,79 @@ mod tests {
             },
         )
         .is_err());
+    }
+
+    #[test]
+    fn a_whole_file_read_of_a_large_java_file_returns_an_outline_with_ranges() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut source =
+            String::from("package a;\n\nimport java.util.List;\n\npublic class Job {\n");
+        for i in 0..200 {
+            source.push_str(&format!(
+                "    public void step{i}(List<String> in) {{\n        go(in);\n    }}\n"
+            ));
+        }
+        source.push_str("}\n");
+        std::fs::write(dir.path().join("Job.java"), &source).unwrap();
+        let args = || ReadFileArgs {
+            path: "Job.java".into(),
+            offset: None,
+            limit: None,
+        };
+        let outline = read_file_with(dir.path(), args(), &PolicySettings::default(), 400).unwrap();
+        assert!(
+            outline.content.starts_with("[outline] Job.java: 606 lines"),
+            "{}",
+            outline.content
+        );
+        assert!(outline
+            .content
+            .contains("[fn] public void step199(List<String> in) {"));
+        assert!(
+            !outline.content.contains("go(in);"),
+            "bodies stay out of the outline"
+        );
+        assert!(
+            outline.avoided_bytes > 3_000,
+            "the plain read is ~17 KB, the outline ~11 KB; avoided {}",
+            outline.avoided_bytes
+        );
+        // Below the threshold, or with an explicit range, the text comes back.
+        let plain = read_file_with(dir.path(), args(), &PolicySettings::default(), 1_000).unwrap();
+        assert!(plain.content.starts_with("     1\tpackage a;"));
+        let ranged = read_file_with(
+            dir.path(),
+            ReadFileArgs {
+                path: "Job.java".into(),
+                offset: Some(1),
+                limit: None,
+            },
+            &PolicySettings::default(),
+            400,
+        )
+        .unwrap();
+        assert!(ranged.content.starts_with("     1\tpackage a;"));
+        // 0 disables outlines entirely.
+        let off = read_file(dir.path(), args()).unwrap();
+        assert!(off.content.starts_with("     1\tpackage a;"));
+    }
+
+    #[test]
+    fn a_large_file_atlas_cannot_parse_falls_back_to_the_text() {
+        let dir = tempfile::tempdir().unwrap();
+        let source: String = (0..500).map(|i| format!("line {i}\n")).collect();
+        std::fs::write(dir.path().join("notes.txt"), &source).unwrap();
+        let out = read_file_with(
+            dir.path(),
+            ReadFileArgs {
+                path: "notes.txt".into(),
+                offset: None,
+                limit: None,
+            },
+            &PolicySettings::default(),
+            400,
+        )
+        .unwrap();
+        assert!(out.content.starts_with("     1\tline 0"));
     }
 }

@@ -53,6 +53,11 @@ pub enum SessionEvent {
     Error {
         detail: serde_json::Value,
     },
+    /// The plain run summary `run_task` rendered when it ended: the verdict
+    /// and what backed it. Written last; exports show it first.
+    RunSummary {
+        text: String,
+    },
 }
 
 pub struct SessionStore {
@@ -242,7 +247,7 @@ pub fn replay(events: &[SessionEvent]) -> ReplayedSession {
             } => {
                 messages = rebuilt.clone();
             }
-            SessionEvent::Error { .. } => {}
+            SessionEvent::Error { .. } | SessionEvent::RunSummary { .. } => {}
         }
     }
     ReplayedSession {

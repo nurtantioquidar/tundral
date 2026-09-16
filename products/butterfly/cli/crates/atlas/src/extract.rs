@@ -11,6 +11,7 @@ pub enum Lang {
     TypeScript,
     Tsx,
     JavaScript,
+    Java,
 }
 
 impl Lang {
@@ -21,6 +22,7 @@ impl Lang {
             "ts" | "mts" | "cts" => Some(Lang::TypeScript),
             "tsx" => Some(Lang::Tsx),
             "js" | "jsx" | "mjs" | "cjs" => Some(Lang::JavaScript),
+            "java" => Some(Lang::Java),
             _ => None,
         }
     }
@@ -32,6 +34,7 @@ impl Lang {
             Lang::TypeScript => tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
             Lang::Tsx => tree_sitter_typescript::LANGUAGE_TSX.into(),
             Lang::JavaScript => tree_sitter_javascript::LANGUAGE.into(),
+            Lang::Java => tree_sitter_java::LANGUAGE.into(),
         }
     }
 
@@ -41,6 +44,7 @@ impl Lang {
             Lang::Python => PYTHON_QUERY,
             Lang::TypeScript | Lang::Tsx => TYPESCRIPT_QUERY,
             Lang::JavaScript => JAVASCRIPT_QUERY,
+            Lang::Java => JAVA_QUERY,
         }
     }
 }
@@ -56,6 +60,7 @@ pub enum DefKind {
     TypeAlias,
     Const,
     Module,
+    Field,
 }
 
 impl DefKind {
@@ -70,6 +75,7 @@ impl DefKind {
             DefKind::TypeAlias => "type",
             DefKind::Const => "const",
             DefKind::Module => "mod",
+            DefKind::Field => "field",
         }
     }
 
@@ -84,6 +90,7 @@ impl DefKind {
             "type" => DefKind::TypeAlias,
             "const" => DefKind::Const,
             "module" => DefKind::Module,
+            "field" => DefKind::Field,
             _ => return None,
         })
     }
@@ -97,6 +104,10 @@ pub struct Definition {
     pub container: Option<String>,
     /// 1-based line of the definition.
     pub line: usize,
+    /// 1-based last line of the definition's node (its body included), so a
+    /// caller can read exactly the definition's range. Equals `line` when the
+    /// grammar gives no enclosing node.
+    pub end_line: usize,
     /// The definition's first source line, trimmed and capped.
     pub signature: String,
 }
@@ -152,6 +163,19 @@ const TYPESCRIPT_QUERY: &str = r#"
 (import_statement source: (string (string_fragment) @import))
 "#;
 
+const JAVA_QUERY: &str = r#"
+(class_declaration name: (identifier) @class)
+(interface_declaration name: (identifier) @interface)
+(enum_declaration name: (identifier) @enum)
+(record_declaration name: (identifier) @class)
+(method_declaration name: (identifier) @fn)
+(constructor_declaration name: (identifier) @fn)
+(field_declaration declarator: (variable_declarator name: (identifier) @field))
+(method_invocation name: (identifier) @ref)
+(object_creation_expression type: (type_identifier) @ref)
+(import_declaration (scoped_identifier) @import)
+"#;
+
 const JAVASCRIPT_QUERY: &str = r#"
 (function_declaration name: (identifier) @fn)
 (method_definition name: (property_identifier) @fn)
@@ -172,6 +196,8 @@ fn container_of(node: tree_sitter::Node, source: &[u8]) -> Option<String> {
             "class_definition"
             | "class_declaration"
             | "interface_declaration"
+            | "enum_declaration"
+            | "record_declaration"
             | "mod_item"
             | "trait_item" => ancestor.child_by_field_name("name"),
             _ => None,
@@ -237,11 +263,19 @@ pub fn extract(lang: Lang, source: &str) -> Extraction {
             } else if *capture_name == "import" {
                 extraction.imports.push(text.to_string());
             } else if let Some(kind) = DefKind::from_capture(capture_name) {
+                // The capture is the name; the enclosing node is the
+                // declaration whose extent the outline needs.
+                let end_line = node
+                    .parent()
+                    .map(|parent| parent.end_position().row + 1)
+                    .unwrap_or(line)
+                    .max(line);
                 extraction.definitions.push(Definition {
                     name: text.to_string(),
                     kind,
                     container: container_of(node, bytes),
                     line,
+                    end_line,
                     signature: signature_line(source, line),
                 });
             }
@@ -384,6 +418,62 @@ const run = () => new Repo().fetch();
         let refs: Vec<&str> = out.references.iter().map(|r| r.name.as_str()).collect();
         assert!(refs.contains(&"load") && refs.contains(&"Repo"));
         assert_eq!(out.imports, vec!["./load.js"]);
+    }
+
+    #[test]
+    fn extracts_java_shapes() {
+        let source = r#"
+package com.example;
+
+import java.util.List;
+import org.apache.flink.api.common.functions.MapFunction;
+
+public class Enricher implements MapFunction<String, String> {
+    private static final int CAP = 10;
+
+    public Enricher(List<String> names) {
+        validate(names);
+    }
+
+    @Override
+    public String map(String value) {
+        return new Helper().apply(value);
+    }
+}
+
+interface Helper { String apply(String value); }
+
+enum Mode { FAST, SLOW }
+
+record Pair(int left, int right) {}
+"#;
+        let out = extract(Lang::Java, source);
+        assert_eq!(
+            names(&out.definitions, DefKind::Class),
+            vec!["Enricher", "Pair"]
+        );
+        assert_eq!(names(&out.definitions, DefKind::Interface), vec!["Helper"]);
+        assert_eq!(names(&out.definitions, DefKind::Enum), vec!["Mode"]);
+        assert_eq!(names(&out.definitions, DefKind::Field), vec!["CAP"]);
+        let fns = names(&out.definitions, DefKind::Function);
+        assert!(fns.contains(&"Enricher") && fns.contains(&"map") && fns.contains(&"apply"));
+        let map = out
+            .definitions
+            .iter()
+            .find(|d| d.name == "map" && d.kind == DefKind::Function)
+            .unwrap();
+        assert_eq!(map.container.as_deref(), Some("Enricher"));
+        assert_eq!(map.line, 15);
+        assert_eq!(map.end_line, 17, "method extent covers its body");
+        let class = out
+            .definitions
+            .iter()
+            .find(|d| d.name == "Enricher")
+            .unwrap();
+        assert_eq!((class.line, class.end_line), (7, 18));
+        let refs: Vec<&str> = out.references.iter().map(|r| r.name.as_str()).collect();
+        assert!(refs.contains(&"validate") && refs.contains(&"apply") && refs.contains(&"Helper"));
+        assert!(out.imports.iter().any(|i| i == "java.util.List"));
     }
 
     #[test]

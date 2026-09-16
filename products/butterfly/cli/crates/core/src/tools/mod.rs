@@ -32,6 +32,10 @@ pub enum ToolError {
 pub struct ToolOutput {
     pub content: String,
     pub is_error: bool,
+    /// Bytes a plainer rendering of the same result would have added to the
+    /// transcript (an outline read versus the capped text). Accounting only;
+    /// 0 for every other result.
+    pub avoided_bytes: u64,
 }
 
 impl ToolOutput {
@@ -39,6 +43,7 @@ impl ToolOutput {
         Self {
             content,
             is_error: false,
+            avoided_bytes: 0,
         }
     }
 
@@ -46,6 +51,7 @@ impl ToolOutput {
         Self {
             content,
             is_error: true,
+            avoided_bytes: 0,
         }
     }
 }
@@ -339,6 +345,7 @@ pub fn tool_schemas() -> Vec<ToolSchema> {
 pub struct ToolExecutor {
     root: PathBuf,
     policy: PolicySettings,
+    outline_min_lines: usize,
 }
 
 impl ToolExecutor {
@@ -346,11 +353,19 @@ impl ToolExecutor {
         Self {
             root,
             policy: PolicySettings::default(),
+            outline_min_lines: 0,
         }
     }
 
     pub fn with_policy(mut self, policy: PolicySettings) -> Self {
         self.policy = policy;
+        self
+    }
+
+    /// Whole-file reads of files with at least this many lines return an
+    /// Atlas outline instead of the text (0 = always the text).
+    pub fn with_outline_min_lines(mut self, lines: usize) -> Self {
+        self.outline_min_lines = lines;
         self
     }
 
@@ -389,7 +404,12 @@ impl ToolExecutor {
         }
         let policy = &self.policy;
         match name {
-            "read_file" => fs_tools::read_file_with(&self.root, parse(arguments)?, policy),
+            "read_file" => fs_tools::read_file_with(
+                &self.root,
+                parse(arguments)?,
+                policy,
+                self.outline_min_lines,
+            ),
             "list_files" => fs_tools::list_files_with(&self.root, parse(arguments)?, policy),
             "search_text" => search::search_text_with(&self.root, parse(arguments)?, policy),
             "edit" => fs_tools::edit_with(&self.root, parse(arguments)?, policy),
@@ -456,6 +476,22 @@ pub fn describe_call(name: &str, arguments: &str) -> String {
                 .and_then(serde_json::Value::as_str)
                 .map(|o| o.chars().take(60).collect())
                 .unwrap_or_else(|| "plan".to_string()),
+            // A ranged read shows its range, so a transcript distinguishes
+            // an outline (whole-file) read from the ranged reads after it.
+            "read_file" => {
+                let path = value
+                    .get("path")
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or_default();
+                let offset = value.get("offset").and_then(serde_json::Value::as_u64);
+                let limit = value.get("limit").and_then(serde_json::Value::as_u64);
+                match (offset, limit) {
+                    (None, None) => path.to_string(),
+                    (Some(offset), Some(limit)) => format!("{path}:{offset}+{limit}"),
+                    (Some(offset), None) => format!("{path}:{offset}+"),
+                    (None, Some(limit)) => format!("{path}:1+{limit}"),
+                }
+            }
             _ => value
                 .get("path")
                 .or_else(|| value.get("pattern"))
@@ -761,6 +797,17 @@ mod tests {
         assert_eq!(
             describe_call("read_file", r#"{"path":"src/main.rs"}"#),
             "read_file(src/main.rs)"
+        );
+        assert_eq!(
+            describe_call(
+                "read_file",
+                r#"{"path":"src/main.rs","offset":120,"limit":40}"#
+            ),
+            "read_file(src/main.rs:120+40)"
+        );
+        assert_eq!(
+            describe_call("read_file", r#"{"path":"src/main.rs","offset":1}"#),
+            "read_file(src/main.rs:1+)"
         );
     }
 

@@ -5,13 +5,15 @@
 //! messages), never the cached prompt prefix.
 
 mod extract;
+mod outline;
 mod rank;
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
-pub use extract::{DefKind, Definition, Extraction, Lang, Reference};
+pub use extract::{extract, DefKind, Definition, Extraction, Lang, Reference};
+pub use outline::outline;
 
 /// Files larger than this are skipped (generated bundles, vendored blobs).
 const MAX_FILE_BYTES: u64 = 512 * 1024;

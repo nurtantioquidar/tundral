@@ -58,13 +58,19 @@ pub const COMPLETION_INSTRUCTIONS: &str = "\n\
 /// file per trial, a median 5 min of orientation before the first edit, and
 /// model latency at 95% of wall clock, so every avoided round trip is the
 /// whole speed lever. Gated so the default prefix bytes are untouched.
+/// Extended 2026-09-16 (operator-approved prefix change for lean sessions):
+/// 91 of 1,794 provider calls on the Flink suite carried only `update_plan`,
+/// and 330 carried a single edit.
 pub const LEAN_INSTRUCTIONS: &str = "\n\
 - Lean turns: a successful edit or write_file result proves the change landed;
   do not read the file back afterwards (a failed edit returns an error). Before
   the first edit, read only the files the task names and what a search shows is
   directly involved; do not survey other services, docs, or history. Issue
   independent reads and searches together in one turn instead of one per turn.
-  Run the relevant tests after your changes, not before every step.";
+  Run the relevant tests after your changes, not before every step. Send
+  update_plan in the same reply as the tool call that starts the step, never as
+  the only call in a reply. Edits that do not depend on each other's results go
+  in one reply.";
 
 /// Appended only in clarify mode (`--clarify`). Motivation, private suite
 /// 2026-09-12: the same harness and model went from 0/5 to 5/5 when the task

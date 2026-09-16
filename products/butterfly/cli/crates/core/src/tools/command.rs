@@ -99,9 +99,16 @@ pub async fn run_command(
     if output.status.success() {
         Ok(ToolOutput::text(rendered))
     } else {
+        rendered.push_str(EXIT_RULE);
         Ok(ToolOutput::error(rendered))
     }
 }
+
+/// Appended to every non-zero exit: the DeepSeek Harness rule that a failed
+/// command is evidence to read, not noise to step past.
+const EXIT_RULE: &str =
+    "[non-zero exit: read the error above and fix its cause before moving on; do not repeat the \
+     command unchanged or treat the task as done while it fails]\n";
 
 fn push_stream(rendered: &mut String, label: &str, bytes: &[u8]) {
     if bytes.is_empty() {
@@ -178,5 +185,10 @@ mod tests {
         .unwrap();
         assert!(output.is_error);
         assert!(output.content.contains("stderr"));
+        assert!(
+            output.content.contains("fix its cause before moving on"),
+            "{}",
+            output.content
+        );
     }
 }

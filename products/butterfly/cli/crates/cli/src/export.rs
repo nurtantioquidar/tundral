@@ -18,6 +18,7 @@ body{font-family:ui-monospace,Menlo,monospace;max-width:60rem;margin:2rem auto;p
 background:#111;color:#ddd;font-size:14px;line-height:1.5}\
 h1{font-size:1.1rem;color:#9cf}\
 .user{border-left:3px solid #9cf;padding:.4rem .8rem;margin:1rem 0;white-space:pre-wrap}\
+.summary{border:1px solid #fc6;background:#221c10;color:#ffe9b3;padding:.6rem .8rem;margin:1rem 0;white-space:pre-wrap}\
 .assistant{border-left:3px solid #6d6;padding:.4rem .8rem;margin:1rem 0;white-space:pre-wrap}\
 .meta{color:#888;font-size:12px;margin:.6rem 0}\
 details{margin:.4rem 0;color:#aaa}summary{cursor:pointer;color:#c9a}\
@@ -31,6 +32,7 @@ pub fn render_html(session_id: &str, events: &[SessionEvent]) -> String {
     let mut total_in: u64 = 0;
     let mut total_out: u64 = 0;
     let mut model = String::new();
+    let mut summary: Option<String> = None;
     for event in events {
         match event {
             SessionEvent::SessionStarted {
@@ -114,11 +116,17 @@ pub fn render_html(session_id: &str, events: &[SessionEvent]) -> String {
                     escape(&detail.to_string())
                 ));
             }
+            // The last task's summary; shown first so a reviewer reads the
+            // verdict before the transcript.
+            SessionEvent::RunSummary { text } => summary = Some(text.clone()),
         }
     }
+    let summary_block = summary
+        .map(|text| format!("<pre class=summary>{}</pre>", escape(&text)))
+        .unwrap_or_default();
     format!(
         "<!doctype html><meta charset=utf-8><title>butterfly session {sid}</title>\
-         <style>{STYLE}</style><h1>butterfly session {sid}</h1>{body}\
+         <style>{STYLE}</style><h1>butterfly session {sid}</h1>{summary_block}{body}\
          <div class=meta>totals: {tin} in · {tout} out · {cost} · model {model}</div>",
         sid = escape(session_id),
         body = body,
@@ -192,9 +200,21 @@ mod tests {
                 actual_microusd: 42,
                 normalized_cache_miss_microusd: 100,
             },
+            SessionEvent::RunSummary {
+                text: "CLAIMED: the model reported completion <unbacked>".into(),
+            },
         ];
         let html = render_html("abc", &events);
         assert!(!html.contains("<script>alert"), "must escape user content");
+        let summary_at = html
+            .find("<pre class=summary>CLAIMED")
+            .expect("summary block");
+        let first_user_at = html.find("<div class=user>").expect("user block");
+        assert!(
+            summary_at < first_user_at,
+            "summary precedes the transcript"
+        );
+        assert!(html.contains("&lt;unbacked&gt;"));
         assert!(html.contains("&lt;script&gt;alert(1)&lt;/script&gt;"));
         assert!(html.contains("done &amp; dusted"));
         assert!(html.contains("<details><summary>reasoning</summary>"));

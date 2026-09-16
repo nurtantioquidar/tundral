@@ -117,6 +117,32 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   attempt's checks with their source (operator, detected, model-declared) and self-authored
   flags, the independent verifier's verdict and unmet items when it ran, and the model's own
   requirement checklist and deliverables. `--json` carries the same facts structurally.
+  2026-09-15: the summary is also the `summary` field of the `--json` result, is recorded as a
+  `run_summary` session event and rendered as the top block of `butterfly export`, and now
+  states the model, the price-card version (flagged when unverified) and the session cost cap
+  the run was held to, so the cost guarantees are visible where the verdict is.
+- **Proven first claim** (2026-09-16) — the first `complete_task` skips the statement-review
+  round trip when the loop already holds the proof the review asks for: every requirement
+  listed as met and at least one non-weak check that this session ran, argv for argv, with
+  exit 0. The model's word alone never qualifies; a listed check it did not run still gets
+  the review, and the harness still runs the check itself. `--always-review-claim` restores
+  the unconditional review. Motivation: across 72 Flink trials every task paid the review
+  (2–4 `complete_task` calls each) and in 54 of them nothing but a re-claim followed, while
+  OpenCode, with no completion tool, finishes the same tasks in about four fewer calls.
+  Reported as `first_claim_proven` per attempt and a summary line.
+  A/B 2026-09-16 (9 Flink × 2, vs the outline arms): GLM 18/18 at median 21.5 calls vs 26,
+  DeepSeek 17/18 vs 18/18 (the miss is the coin-flip task and went through the full review);
+  first claims qualified in 5/18 GLM and 14/18 DeepSeek trials. Kept on.
+- **Blind-edit note** (2026-09-15) — a successful `edit` (or `write_file` over an existing file)
+  of a path the session never read gets a one-line note in its result and is counted
+  (`blind_edits` per attempt in the summary and JSON). Decided by the loop from its own record
+  of reads; the edit is never blocked. Purpose: measure whether edits made from a search hit or
+  memory correlate with the interface-mismatch failures seen on the private suite.
+- **Outline savings accounting** (2026-09-15) — each outline read records the bytes the capped
+  plain read would have added; every later provider call re-sends the prefix, so the avoided
+  tokens are counted per call (first at the cache-miss rate, then cache-hit) and priced on the
+  model's card. Reported as `outline_reads`, `avoided_input_tokens`, `avoided_microusd` and a
+  summary line marked as an estimate. Documented savings, checkable against the price card.
 - **Clarify mode** (2026-09-13, `--clarify`) — advertises `ask_user {questions:[{question,
   assumption}]}` and appends one prompt line: before the first edit, put the statement's open
   points (names and signatures to introduce, exact messages, unspecified cases) to the user in one
@@ -142,6 +168,14 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   both bench runners after the private-suite A/B (12 tasks × 2 runs): GLM 21/24 vs 20/24 at
   24 vs 28 calls and $0.060 vs $0.087 per success, DeepSeek 20/24 vs 19/24 at 22 vs 28 calls
   and $0.028 vs $0.037; re-reads per trial 0.6 vs 2.0 (GLM) and 1.8 vs 3.2 (DeepSeek).
+  Extended 2026-09-16 (approved prefix change for lean sessions): `update_plan` goes in the
+  same reply as the step's first tool call, never alone, and independent edits go in one reply.
+  Motivation: 91 of 1,794 provider calls on the Flink suite carried only `update_plan`, 330 a
+  single edit; each call re-sends a ~50k-token prefix.
+  Measured on top of the proven first claim: GLM 18/18 at median 19.5 calls (control 26),
+  input tokens 13.7M vs 15.2M per 18 trials; DeepSeek 18/18 at 17.5 calls (control 23.5),
+  11.8M vs 13.0M. Solo `update_plan` calls 25 → 11, solo edits 109 → 23 on GLM. Butterfly now
+  matches OpenCode's call count with the completion gate on.
 - **Self-authored checks are claims** (2026-09-09) — a declared check whose executed program
   (the binary, the script handed to an interpreter, the test files handed to a runner) is a file
   the task created or changed is flagged at claim time (`self_authored_checks` per attempt;
@@ -254,6 +288,13 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 - **Seven tools** — `read_file`, `list_files`, `search_text` (ripgrep library crates, no external
   binary), `edit` (exact-match), `write_file` (atomic), `run_command`, `update_plan`.
   `crates/core/src/tools/`
+- **Exit-code rule** (2026-09-15) — a non-zero `run_command`/`shell` exit appends one line to
+  the result: read the error and fix its cause before moving on, do not repeat the command
+  unchanged or treat the task as done while it fails (DeepSeek Harness rule; tool-result only).
+- **Repeat-call reminder** (2026-09-15) — the 3rd, 5th and 8th identical tool call (same name
+  and arguments) in one turn gets a one-line reminder that its result does not change; `edit`
+  is excluded (repeated failing edits already get the repeated-patch guidance). Bounded, never
+  a block; the call still runs.
 - **Clipped search lines** (2026-09-04) — `search_text` clips each matching line to 400 bytes; one
   hit in a minified bundle or one-line data file used to inject over a megabyte (a 375k-token
   request on Terminal-Bench). An in-stream `{"error":…}` chunk now fails the request instead of
@@ -380,6 +421,24 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   Atlas-on was slower and costlier on every small repo (worst case 43 turns vs 11). Default:
   enabled only when the repo has ≥100 indexable files; `--atlas` / `--no-atlas` / `.butterfly.toml
   atlas=` force either way; the prompt guidance line only exists when the tools do.
+- **Outline reads for large files** (2026-09-15) — a whole-file `read_file` (no offset/limit) of
+  a file with ≥400 lines returns an Atlas outline instead of the text: imports plus every
+  definition with its exact 1-based line range and first line, nested under its container. The
+  model reads ranges from there; `offset: 1` opts out per call; files Atlas cannot parse fall
+  back to the text. Tool-result only, so the prompt prefix is untouched. Java joined the grammar
+  set for this (class/interface/enum/record, methods, constructors, fields). Motivation: on the
+  Flink private suite 84% of reads were >350 lines and 98% of lines read came from them, each
+  capped at 24 KB and re-billed as cache-hit prefix on every later call. `--outline-min-lines N`
+  (0 disables) on the CLI, the private runner and the Harbor adapter. Chosen over Spotify
+  Portal's model-written summaries (2026-09): exact line numbers keep edits possible from the
+  outline, zero model cost, no subtle-bug blind spot. A/B on the Flink suite (2026-09-15, 9
+  tasks × 2 runs, on vs off, same binary): GLM 18/18 vs 17/18 at $0.044 vs $0.043 per success,
+  DeepSeek 18/18 vs 18/18 at $0.018 vs $0.018; input tokens level within noise. Cost-neutral,
+  because both models already read large files in ranges (DeepSeek triggered the outline in
+  only 4 of 18 trials) and plain reads were already capped at 24 KB. Kept on as the default:
+  same pass rate, and a whole-file structure map instead of a truncated first page. The
+  expected "large cut on Java" did not materialise; the remaining cost is the prefix re-sent
+  per call (95% of input tokens are cache hits), so the lever is call count, not read size.
 - **Deterministic search fusion** — the model never has to pick the right search: a `search_text`
   for a plain identifier gets Atlas definitions prepended, and a `symbol_search` index miss falls
   back to ripgrep in the same result. Behavior-only (no prompt/schema bytes changed).

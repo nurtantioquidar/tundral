@@ -174,6 +174,21 @@ struct Cli {
     #[arg(long)]
     clarify: bool,
 
+    /// Whole-file reads of files with at least this many lines return an
+    /// Atlas outline (definitions with exact line ranges, imports) instead of
+    /// the text, so the model orients in a large file for a few hundred tokens
+    /// and then reads the ranges it needs. 0 always returns the text. Changes
+    /// tool results only, never the prompt prefix.
+    #[arg(long, default_value_t = 400, value_name = "LINES")]
+    outline_min_lines: usize,
+
+    /// Always answer the first complete_task with the statement review, even
+    /// when the claim already names a behavioural check that ran and passed in
+    /// this session with every requirement listed as met (the default skips
+    /// that round trip; measured 2026-09-16 as a pure re-claim in 54 of 72 runs).
+    #[arg(long, requires = "completion_gate")]
+    always_review_claim: bool,
+
     /// With --clarify in --json runs: a command that answers questions. It gets
     /// the rendered questions on stdin and its stdout is the answer (e.g. a
     /// script that consults a ticket or a spec). Split like a shell word list.
@@ -358,6 +373,8 @@ async fn main() -> Result<()> {
         lean: cli.lean,
         clarify: cli.clarify,
         independent_verifier: cli.independent_verifier,
+        outline_min_lines: cli.outline_min_lines,
+        always_review_claim: cli.always_review_claim,
         ..SessionConfig::default()
     };
     let task_options = TaskOptions {
@@ -515,6 +532,9 @@ async fn main() -> Result<()> {
                         "completed": attempt.turn.completed,
                         "completion_nudges": attempt.turn.completion_nudges,
                         "self_authored_checks": attempt.turn.self_authored_checks,
+                        "first_claim_proven": attempt.turn.first_claim_proven,
+                        "blind_edits": attempt.turn.blind_edits,
+                        "outline_reads": attempt.turn.outline_reads,
                         "verifier": attempt.verifier.as_ref().map(|v| serde_json::json!({
                             "model": v.model,
                             "verdict": v.verdict.as_ref().map(|d| if d.passed() { "pass" } else { "fail" }),
@@ -573,6 +593,12 @@ async fn main() -> Result<()> {
                     "context_utilization_percent": (agent.utilization() * 1000.0).round() / 10.0,
                     "compactions": report.compactions,
                     "elisions": report.elisions,
+                    "summary": report.render_summary(),
+                    "cost_cap_microusd": report.cost_cap_microusd,
+                    "blind_edits": report.blind_edits,
+                    "outline_reads": report.outline_reads,
+                    "avoided_input_tokens": report.avoided_input_tokens,
+                    "avoided_microusd": report.avoided_microusd,
                     "cancelled": report.cancelled,
                     "budget_exhausted": report.budget_exhausted,
                     "hit_output_limit": report.hit_output_limit,

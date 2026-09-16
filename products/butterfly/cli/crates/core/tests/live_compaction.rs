@@ -68,6 +68,8 @@ async fn live_two_stage_compaction_and_continuation() {
         clarify: false,
         independent_verifier: false,
         verifier: false,
+        outline_min_lines: 400,
+        always_review_claim: false,
     };
     let mut agent = Agent::new(provider, root, config, None).expect("agent");
     let cancel = CancellationToken::new();

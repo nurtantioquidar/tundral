@@ -92,7 +92,9 @@ products/butterfly/bench/harbor/with-keys.sh <cmd>    # keys from 1Password (op)
    every verification check passes; failures are classified (`failure::FailureKind`) and each retry
    appends new evidence — never the same prompt twice. With `--completion-gate` a reply without
    tool calls is never an ending: the model must call `complete_task` (reviewed once, then
-   recorded as a claim). A claim, a diff, a model-declared check, a self-authored check, or an
+   recorded as a claim; the review is skipped only when the loop itself saw the proof — every
+   requirement listed as met and a behavioural check it ran with exit 0 — `--always-review-claim`
+   restores it). A claim, a diff, a model-declared check, a self-authored check, or an
    independent verifier's pass never yields `verified: true` or router `task_success: true`; only
    an explicit or detected check does. With `--independent-verifier` an accepted claim is reviewed
    by a fresh session (read-only tools, `report_verdict`, no memory of the work) and its unmet
