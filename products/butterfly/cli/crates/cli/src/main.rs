@@ -487,6 +487,7 @@ async fn main() -> Result<()> {
                 Some(text) => Some(parse_check(text)?),
                 None => None,
             };
+            note_thin_statement(&prompt);
             let report = match agent
                 .run_task(
                     prompt,
@@ -594,6 +595,7 @@ async fn main() -> Result<()> {
                     "compactions": report.compactions,
                     "elisions": report.elisions,
                     "summary": report.render_summary(),
+                    "statement_signals": report.statement,
                     "cost_cap_microusd": report.cost_cap_microusd,
                     "blind_edits": report.blind_edits,
                     "outline_reads": report.outline_reads,
@@ -609,6 +611,7 @@ async fn main() -> Result<()> {
             }
             return Ok(());
         }
+        note_thin_statement(&prompt);
         let report = repl::run_task_interruptible(
             &mut agent,
             prompt,
@@ -635,9 +638,20 @@ async fn main() -> Result<()> {
         // live; Ctrl+T shows the full transcript). Config can opt back in
         // with an explicit `quiet_reasoning = false`.
         let tui_reasoning = !cli.quiet_reasoning && file.quiet_reasoning == Some(false);
-        tui::run(agent, workspace_root, tui_reasoning, &hub).await
+        tui::run(agent, workspace_root, tui_reasoning, &hub, &task_options).await
     } else {
-        repl::plain_repl(agent, show_reasoning, &hub).await
+        repl::plain_repl(agent, show_reasoning, &hub, &task_options).await
+    }
+}
+
+/// Before money is spent: a deterministic read of the statement. A thin one
+/// (few identifiers, few words) predicted every miss on the private suites;
+/// the note goes to stderr so JSON output stays clean, and the run proceeds.
+fn note_thin_statement(prompt: &str) {
+    if let Some(line) =
+        butterfly_core::session::statement::StatementSignals::of(prompt).summary_line()
+    {
+        eprintln!("[butterfly] {line}");
     }
 }
 

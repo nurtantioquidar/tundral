@@ -227,6 +227,7 @@ commands:
   /connect  save a provider API key (persists across sessions)
   /usage    tokens, cost, cache-hit rate, context utilization
   /plan     show the tracked working state (objective, tasks, files, commands)
+  /task     run an autonomous, verified task (/task <statement>) and end with the verdict
   /compact  force a compaction now; optional focus: /compact keep the auth details
   /model    pick a model (arrow keys), or /model <name> to switch directly
   /help     this help
@@ -241,6 +242,13 @@ input:
   paste      large pastes collapse to a placeholder and expand on submit
   Type while a turn runs: messages are delivered at the next turn boundary.";
 
+/// What one interactive submission produced: a chat turn, or an autonomous
+/// task (`/task`) that ends with the run summary.
+pub enum Outcome {
+    Turn(TurnReport),
+    Task(TaskReport),
+}
+
 /// Outcome of trying `input` as a slash command.
 pub enum CommandResult {
     /// It was a command; show this text.
@@ -249,6 +257,9 @@ pub enum CommandResult {
     Connect,
     /// Open the interactive model picker (TUI; plain loops print instead).
     PickModel,
+    /// Run this statement as an autonomous task (`run_task`): the completion
+    /// gate and verification apply, and the run ends with the summary.
+    Task(String),
     Quit,
     /// Not a command — run it as a user turn.
     NotACommand,
@@ -273,6 +284,14 @@ pub async fn handle_command(agent: &mut Agent, input: &str, hub: &ModelHub) -> C
                 ),
                 Err(error) => format!("{RED}compaction failed: {error}{RESET}"),
             })
+        }
+        _ if input == "/task" || input.starts_with("/task ") => {
+            let statement = input.strip_prefix("/task").unwrap_or("").trim();
+            if statement.is_empty() {
+                CommandResult::Output("usage: /task <statement>".to_string())
+            } else {
+                CommandResult::Task(statement.to_string())
+            }
         }
         _ if input.starts_with("/model") => {
             CommandResult::Output(match input.trim_start_matches("/model").trim() {
@@ -392,7 +411,12 @@ impl ApprovalGate for ChannelGate {
 }
 
 /// Line-based session loop for non-TTY stdin.
-pub async fn plain_repl(mut agent: Agent, show_reasoning: bool, hub: &ModelHub) -> Result<()> {
+pub async fn plain_repl(
+    mut agent: Agent,
+    show_reasoning: bool,
+    hub: &ModelHub,
+    task_options: &TaskOptions,
+) -> Result<()> {
     let (sender, mut events) = tokio::sync::mpsc::unbounded_channel();
     spawn_line_thread(sender);
     let claim: std::sync::Arc<std::sync::Mutex<Option<tokio::sync::oneshot::Sender<String>>>> =
@@ -418,8 +442,10 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool, hub: &ModelHub) 
                 Some(InputEvent::Eof) | None => break,
             }
         };
+        let mut task_statement: Option<String> = None;
         match handle_command(&mut agent, &input, hub).await {
             CommandResult::Quit => break,
+            CommandResult::Task(statement) => task_statement = Some(statement),
             CommandResult::Connect => {
                 println!(
                     "/connect needs an interactive terminal; run butterfly in a TTY \
@@ -450,8 +476,30 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool, hub: &ModelHub) 
         let turn_started = std::time::Instant::now();
         let result = {
             let mut sink = TerminalSink::new(show_reasoning);
-            let turn = agent.run_turn(input, &gate, &mut sink, &cancel);
-            tokio::pin!(turn);
+            let turn: std::pin::Pin<
+                Box<
+                    dyn std::future::Future<
+                            Output = std::result::Result<
+                                Outcome,
+                                butterfly_core::session::SessionError,
+                            >,
+                        > + '_,
+                >,
+            > = match task_statement.take() {
+                Some(statement) => Box::pin(async {
+                    agent
+                        .run_task(statement, task_options, &gate, &mut sink, &cancel)
+                        .await
+                        .map(Outcome::Task)
+                }),
+                None => Box::pin(async {
+                    agent
+                        .run_turn(input, &gate, &mut sink, &cancel)
+                        .await
+                        .map(Outcome::Turn)
+                }),
+            };
+            let mut turn = turn;
             loop {
                 tokio::select! {
                     result = &mut turn => break result,
@@ -481,7 +529,10 @@ pub async fn plain_repl(mut agent: Agent, show_reasoning: bool, hub: &ModelHub) 
         };
         println!();
         match result {
-            Ok(report) => {
+            Ok(Outcome::Task(report)) => {
+                println!("{}", report.render_summary().trim_end());
+            }
+            Ok(Outcome::Turn(report)) => {
                 if report.hit_output_limit {
                     eprintln!("{RED}⚠ truncated: the response hit the output-token limit{RESET}");
                 }

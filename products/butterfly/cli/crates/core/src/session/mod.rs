@@ -3,6 +3,7 @@
 //! approval policy, context management, and termination.
 
 pub mod approval;
+pub mod statement;
 pub mod store;
 pub mod working_state;
 
@@ -471,6 +472,10 @@ impl TaskReport {
                 }
             ));
         }
+        if let Some(line) = self.statement.summary_line() {
+            out.push_str(&line);
+            out.push('\n');
+        }
         if self.cancelled {
             out.push_str("cancelled by the user\n");
         }
@@ -613,6 +618,8 @@ pub struct TaskReport {
     pub avoided_microusd: u64,
     /// The session cost cap the run was held to, when one was set.
     pub cost_cap_microusd: Option<u64>,
+    /// What the task statement gave the model to bind to (see `statement`).
+    pub statement: statement::StatementSignals,
     pub model_id: String,
     pub price_version: String,
     pub price_verified: bool,
@@ -2139,6 +2146,7 @@ impl Agent {
     ) -> Result<TaskReport, SessionError> {
         let max_attempts = options.max_attempts.max(1);
         let mut task = TaskReport {
+            statement: statement::StatementSignals::of(&input),
             cost_cap_microusd: self.config.max_session_cost_microusd,
             model_id: self.config.model.id.clone(),
             price_version: self.config.model.pricing.version.clone(),

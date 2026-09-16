@@ -142,6 +142,24 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   × 2, vs the lean-block arm): 18/18 both; first claims accepted without review 18/18 vs 1/18;
   claims per trial 1.3 vs 2.9; output tokens 20.1k vs 25.4k per trial; input 10.3M vs 13.7M per
   18 trials; $0.033 vs $0.042 per trial (control three days earlier: $0.044).
+- **Statement signals** (2026-09-16) — a deterministic read of the task statement before money
+  is spent: words, distinct identifier-like tokens (snake_case, camelCase, dotted, ALL_CAPS,
+  backticked), source paths, quoted spans. Thin when under 3 identifiers or under 40 words.
+  Calibrated on the 41 private tasks: every rewritten statement had ≥4 identifiers and ≥67
+  words, raw commit titles a median of 1 and 7; the same harness scored 0/10 on the former and
+  10/10 on the latter. The shipped rule flags 37 of 41 raw titles and 0 of 21 rewritten
+  statements. A thin statement prints one stderr line before a headless run, adds a
+  line to the run summary and a `statement_signals` object to `--json`. Never blocks.
+  `crates/core/src/session/statement.rs`
+- **`/task` in interactive sessions** (2026-09-16) — `/task <statement>` runs `run_task` inside
+  the TUI or plain loop with the session's task options (gate, verification, attempts) and
+  ends with the run summary, so the verified path is no longer headless-only.
+- **GLM effort levels** (2026-09-16) — Z.ai refuses `thinking.type` other than `enabled` on
+  GLM-5.3-Flash (code 1210) but honours `reasoning_effort`; `low` returned zero reasoning tokens
+  where the default spent 327 of 390 output tokens reasoning. The card now accepts
+  `--effort low|high|max` (default unchanged). A/B on the Flink suite (GLM, 9 × 2): `low` 16/18
+  vs 18/18 with two false completions, output tokens 5.3k vs 20.1k per trial, $0.015 vs $0.033,
+  wall 207 s vs 445 s. Opt-in only: reasoning is worth about two passes in 18 here.
 - **Blind-edit note** (2026-09-15) — a successful `edit` (or `write_file` over an existing file)
   of a path the session never read gets a one-line note in its result and is counted
   (`blind_edits` per attempt in the summary and JSON). Decided by the loop from its own record

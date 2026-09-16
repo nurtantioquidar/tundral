@@ -168,6 +168,22 @@ expect; a vague statement guarantees a compile failure rather than a near miss.
   input tokens 10.3M vs 13.7M per 18 trials; $0.033 vs $0.042 per trial. Cumulative over the
   three-day stretch on GLM: 26 → 20 median calls, 15.2M → 10.3M input tokens, $0.044 → $0.033
   per trial (−25%), pass rate 18/18 throughout. Run: `flink-req-glm`.
+- **Services refresh on the current binary** (2026-09-16, all 16 de-services tasks × 2, binary
+  72087f3). Like-for-like on the 12 rewritten-statement tasks against the 2026-09-12 lean arms:
+  GLM 20/24 vs 21/24 at $0.053 vs $0.060 per success, median calls 16 vs 24; DeepSeek 19/24 vs
+  20/24 at $0.033 (peak tier, arm started 05:45 UTC) vs $0.028, median calls 19.5 vs 22. Pass
+  rate level within noise; calls down a third on GLM. The four tasks whose statement is still
+  the commit message went 0/8 on both models (all `large`, 4–13 hidden tests); two of them are
+  thin by the statement check and two are long commit bodies that name identifiers but not the
+  interfaces the tests bind to — the check is a floor, not a predictor. Every miss on rewritten
+  tasks is a partial (e.g. 12/14, 4/5 hidden tests) on the multi-requirement tasks that were hard
+  before. Runs: `svc-cur-{glm,deepseek}`.
+- **GLM low effort** (2026-09-16, `--effort low`, 9 Flink × 2, vs `flink-req-glm`): 16/18 vs
+  18/18 with 2 false completions (the coin-flip task and one task that otherwise always passes);
+  output tokens 5.3k vs 20.1k per trial, input 4.95M vs 10.3M per 18 trials, $0.015 vs $0.033
+  per trial, median wall 207 s vs 445 s. Reasoning off halves cost and time but costs passes, so
+  it stays opt-in; the number to remember is that GLM Flash's reasoning is worth about two
+  passes in 18 on this suite. Run: `flink-effortlow-glm`.
 
 ## Other harnesses
 

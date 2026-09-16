@@ -15,11 +15,11 @@ use std::time::Duration;
 
 use anyhow::{Context, Result};
 use butterfly_core::session::store::SessionStore;
-use butterfly_core::session::Agent;
+use butterfly_core::session::{Agent, TaskOptions};
 use tokio_util::sync::CancellationToken;
 
 use crate::providers::ModelHub;
-use crate::repl::{handle_command, mode_name, turn_status_line, CommandResult};
+use crate::repl::{handle_command, mode_name, turn_status_line, CommandResult, Outcome};
 use completion::CompletionIndex;
 use editor::Editor;
 use ui::{Status, Ui, UiAction, UiGate, UiSink};
@@ -28,7 +28,11 @@ const DIM: &str = "\x1b[2m";
 const RESET: &str = "\x1b[0m";
 const RED: &str = "\x1b[31m";
 
-const COMMANDS: [(&str, &str); 8] = [
+const COMMANDS: [(&str, &str); 9] = [
+    (
+        "task",
+        "run an autonomous, verified task; ends with the verdict",
+    ),
     ("compact", "force a compaction now; optional focus text"),
     ("connect", "save a provider API key"),
     ("exit", "exit"),
@@ -154,6 +158,7 @@ pub async fn run(
     root: PathBuf,
     show_reasoning: bool,
     hub: &ModelHub,
+    task_options: &TaskOptions,
 ) -> Result<()> {
     if agent.atlas_enabled() {
         let _ = agent.atlas_mut().refresh();
@@ -195,8 +200,10 @@ pub async fn run(
                 Some(UiAction::Eof) | None => break,
             }
         };
+        let mut task_statement: Option<String> = None;
         match handle_command(&mut agent, &input, hub).await {
             CommandResult::Quit => break,
+            CommandResult::Task(statement) => task_statement = Some(statement),
             CommandResult::Connect => {
                 // Cancel resolves as None/Err: the composer returns silently.
                 if let Ok(Some((provider, api_key))) = ui.open_connect(hub.connect_choices()).await
@@ -269,8 +276,30 @@ pub async fn run(
         let mut mode_cycles = 0usize;
         let result = {
             let mut sink = UiSink::new(ui.clone());
-            let turn = agent.run_turn(input, &gate, &mut sink, &cancel);
-            tokio::pin!(turn);
+            let turn: std::pin::Pin<
+                Box<
+                    dyn std::future::Future<
+                            Output = std::result::Result<
+                                Outcome,
+                                butterfly_core::session::SessionError,
+                            >,
+                        > + '_,
+                >,
+            > = match task_statement.take() {
+                Some(statement) => Box::pin(async {
+                    agent
+                        .run_task(statement, task_options, &gate, &mut sink, &cancel)
+                        .await
+                        .map(Outcome::Task)
+                }),
+                None => Box::pin(async {
+                    agent
+                        .run_turn(input, &gate, &mut sink, &cancel)
+                        .await
+                        .map(Outcome::Turn)
+                }),
+            };
+            let mut turn = turn;
             loop {
                 tokio::select! {
                     result = &mut turn => break result,
@@ -298,7 +327,10 @@ pub async fn run(
         };
         ui.end_activity();
         match result {
-            Ok(report) => {
+            Ok(Outcome::Task(report)) => {
+                ui.print(report.render_summary().trim_end());
+            }
+            Ok(Outcome::Turn(report)) => {
                 if report.hit_output_limit {
                     ui.print(&format!(
                         "{RED}⚠ truncated: the response hit the output-token limit{RESET}"

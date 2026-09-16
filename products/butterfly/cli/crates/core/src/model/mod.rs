@@ -603,7 +603,11 @@ pub mod builtin {
                     tools: true,
                     parallel_tools: true,
                     reasoning: Some(Reasoning {
-                        effort_values: Vec::new(),
+                        // Probed 2026-09-16: thinking cannot be disabled (code 1210), but
+                        // `reasoning_effort` is honoured — "low" returned zero
+                        // reasoning tokens on a short prompt where the default
+                        // spent 327 of 390 output tokens on reasoning.
+                        effort_values: vec!["low".into(), "high".into(), "max".into()],
                         default_effort: None,
                         replay: ReasoningReplay::Optional,
                         streamed: true,
