@@ -158,13 +158,17 @@ struct Cli {
     #[arg(long, requires = "completion_gate")]
     independent_verifier: bool,
 
-    /// Append the lean-turns rules to the prompt: no read-back after a
-    /// successful edit, orientation limited to the files the task involves,
-    /// independent reads issued together. Extends the prompt prefix only when
-    /// set (measured 2026-09-12: two re-reads per task and five minutes of
-    /// orientation before the first edit on GLM).
-    #[arg(long)]
+    /// Lean turns (the default since 2026-09-16; accepted for compatibility):
+    /// no read-back after a successful edit, orientation limited to the files
+    /// the task involves, independent reads and edits issued together.
+    #[arg(long, conflicts_with = "no_lean")]
     lean: bool,
+
+    /// Drop the lean-turns block. Lean is the default since 2026-09-16 (private
+    /// suite: one more pass in 24 at 30% less cost on both models); this flag
+    /// reproduces the pre-lean prompt bytes.
+    #[arg(long)]
+    no_lean: bool,
 
     /// Clarify mode: advertise `ask_user` so the model can put the task
     /// statement's open points (names, signatures, exact messages, unspecified
@@ -370,7 +374,8 @@ async fn main() -> Result<()> {
         task_type: cli.task_type.clone(),
         max_provider_calls_per_input: cli.max_calls.max(1),
         completion_gate: cli.completion_gate,
-        lean: cli.lean,
+        // `--lean` is accepted for compatibility; the default is on.
+        lean: !cli.no_lean,
         clarify: cli.clarify,
         independent_verifier: cli.independent_verifier,
         outline_min_lines: cli.outline_min_lines,

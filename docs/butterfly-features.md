@@ -186,7 +186,7 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   `silent_overflow` compaction stage. Per-call output caps were considered and declined: 11 of
   1 495 GLM calls exceeded 16k output tokens, all ended in useful tool calls, and truncating them
   would force a retry that costs more than the 18% of model time they take.
-- **Lean turns** (2026-09-12, `--lean`) — appends one prompt block: a successful edit or
+- **Lean turns** (2026-09-12, `--lean`; CLI default since 2026-09-16, `--no-lean` opts out) — appends one prompt block: a successful edit or
   write_file result is proof, do not read the file back; orient only on the files the task
   names and what a search shows is involved; issue independent reads together; run tests after
   the change. Motivated by the private-suite GLM baseline (24 trials: 2.0 re-reads of a

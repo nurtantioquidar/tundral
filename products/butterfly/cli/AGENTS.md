@@ -129,7 +129,8 @@ products/butterfly/bench/harbor/with-keys.sh <cmd>    # keys from 1Password (op)
    (Atlas line, sandbox line, `shell` schema, completion line + `complete_task` schema, lean
    line, clarify line + `ask_user` schema; the
    verifier line + `report_verdict` schema exist only in the separate verifier session) and only
-   by APPENDING, so a default session's bytes are exactly the historical ones.
+   by APPENDING. The CLI turns the lean line on by default since 2026-09-16 (sanctioned,
+   measured on the private suite); `--no-lean` reproduces the earlier default bytes.
 10. Model-agnosticism is a capability contract, not a lowest common denominator: the loop reads
    `Capabilities` (tools, parallel_tools, reasoning + replay, prompt_cache, limits) and dialects
    own vendor syntax. Adding a model means a descriptor (built-in or `[[models]]`), never a branch
