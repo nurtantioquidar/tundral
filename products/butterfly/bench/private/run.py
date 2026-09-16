@@ -313,6 +313,10 @@ def butterfly_argv(
         argv += ["--effort", args.effort]
     if args.lean:
         argv.append("--lean")
+    if args.outline_min_lines is not None:
+        argv += ["--outline-min-lines", str(args.outline_min_lines)]
+    if args.always_review_claim:
+        argv.append("--always-review-claim")
     if args.verifier:
         argv += [
             "--independent-verifier",
@@ -873,6 +877,17 @@ def main() -> int:
         help="drop --lean (the lean-turns prompt block); on by default since the 2026-09-12 A/B",
     )
     p.set_defaults(lean=True)
+    p.add_argument(
+        "--outline-min-lines",
+        type=int,
+        default=None,
+        help="Butterfly only: whole-file reads of files with at least N lines return an Atlas outline instead of the text; 0 = always the text; omit for the binary's default (400)",
+    )
+    p.add_argument(
+        "--always-review-claim",
+        action="store_true",
+        help="Butterfly only: force the statement review on the first complete_task even when its check already ran and passed",
+    )
     p.add_argument(
         "--clarify",
         choices=["none", "oracle", "unanswered"],

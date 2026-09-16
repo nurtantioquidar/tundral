@@ -42,6 +42,8 @@ python3 run.py --tasks tasks.json --repo ~/src/private-repo --oracle --out runs/
 ../harbor/with-keys.sh python3 run.py --tasks tasks.json --repo ~/src/private-repo \
     --model zai/glm-5.3-flash --out runs/glm-baseline --runs 2 --concurrency 4 --timeout 2700
 # --lean is on by default (2026-09-12 A/B); --no-lean reproduces the round-one baseline.
+# Outline reads (whole-file read_file of a >=400-line file returns an Atlas outline) are the
+# binary's default; --outline-min-lines 0 reproduces plain reads for an A/B.
 ```
 
 ## What a result row carries
@@ -124,6 +126,41 @@ expect; a vague statement guarantees a compile failure rather than a near miss.
   from seconds to 1 008 s, wall clock on GLM is dominated by reasoning-latency variance, and
   24 trials do not resolve a ±15% difference. Calls, re-reads and cost are the robust signals,
   and all three improved on both models. The two hard tasks remain the only failures.
+- **Outline reads A/B** (2026-09-15, 9 Flink tasks × 2 runs, `--outline-min-lines 400` vs `0`,
+  same binary per model): GLM 18/18 vs 17/18 at $0.044 vs $0.043 per success, 15.2M vs 14.2M
+  input tokens, 205 vs 202 read calls, median cache-miss 53k vs 52k per trial; DeepSeek 18/18 vs
+  18/18 at $0.018 vs $0.018, 13.0M vs 13.6M input tokens, 195 vs 174 reads. Paired per-task
+  deltas are noise in both directions. Cost-neutral: both models already read large files in
+  ranges (DeepSeek's outline fired in 4 of 18 trials, 2 tasks) and plain reads were already
+  capped at 24 KB, so the outline replaced one capped page with a 10–21 KB structure map and the
+  ranged reads that followed were the same. Kept on as the default (same pass rate, whole-file
+  structure instead of a truncated first page). 95% of input tokens are cache hits: the prefix
+  re-sent per call is the cost, so the remaining lever is call count, not read size. The
+  savings estimate the binary now reports (`avoided_input_tokens`) came to ~130k tokens per
+  outline trial, inside the ±400k per-trial noise, so it is unverifiable at this n. Blind
+  edits (edits to files never read) on DeepSeek: 15 vs 10 across 18 passing trials — no signal.
+  Runs: `flink-{outline,plain}-{glm,deepseek}`.
+- **Call-count levers** (2026-09-16, 9 Flink tasks × 2 runs per arm, control = the outline arms
+  above). Where Butterfly's extra calls went, 72 trials: `complete_task` 2–4 per trial with the
+  review round trip a pure re-claim in 54 of 72; 91 of 1,794 provider calls carried only
+  `update_plan`; 330 carried a single edit. OpenCode (36 trials, median 21.5 steps) has no
+  completion tool and calls its plan tool a third as often — the ~4-call gap is structural.
+  Two changes, measured cumulatively: (1) *proven first claim* — the review is skipped when
+  every requirement is listed met and a non-weak check ran in-session with exit 0; (2) the lean
+  block gained "update_plan with the step's first call, never alone; independent edits in one
+  reply" (approved prefix change). Results (pass, median calls, input tokens per arm, output
+  tokens per trial, actual cost per trial): GLM control 18/18, 26, 15.2M, 23.9k, $0.044 →
+  proven 18/18, 21.5, 14.2M, 22.4k, $0.041 → proven+lean 18/18, 19.5, 13.7M, 25.4k, $0.042.
+  DeepSeek control 18/18, 23.5, 13.0M, 17.6k, $0.018 → proven 17/18, 24.5, 13.5M, 17.1k, $0.017
+  → proven+lean 18/18, 17.5, 11.8M, 17.9k, $0.034 **at the peak tier** (the arm started at 01:23
+  UTC, off-peak ends 00:30; the tier doubles every DeepSeek price, so compare tokens, not
+  dollars, across DeepSeek arms). Solo `update_plan` calls fell 25 → 11 (GLM) and 18 → 11
+  (DeepSeek); solo edits 109 → 23 on GLM. First claims qualified as proven in 5/18 GLM trials
+  (GLM claims before it has run a check) and 14–16/18 DeepSeek trials. The DeepSeek miss in the
+  proven arm is the coin-flip task and its claim went through the full review. Net: calls −25%,
+  input tokens −10%, pass rate intact, cost −4% on GLM where output tokens (~$0.012 of $0.042
+  per trial) now rival the cache-hit prefix (~$0.021). Butterfly now matches OpenCode's call
+  count (19.5 vs 21.5 on GLM) with the gate still on. Runs: `flink-{proven,lean2}-{glm,deepseek}`.
 
 ## Other harnesses
 

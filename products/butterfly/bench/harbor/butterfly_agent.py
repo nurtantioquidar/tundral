@@ -35,6 +35,10 @@ after a successful edit, scoped orientation, batched reads). Private-suite A/B 2
 × 2 runs: GLM 21/24 vs 20/24 at 24 vs 28 calls and $0.060 vs $0.087 per success; DeepSeek 20/24 vs
 19/24 at 22 vs 28 calls and $0.028 vs $0.037. Wall clock on GLM is reasoning-latency noise.
 
+`outline_min_lines` (`--ak outline_min_lines=0` to disable): whole-file reads of files with at
+least N lines return an Atlas outline (definitions with exact line ranges, imports) instead of
+the text; omitted, the binary's default (400) applies.
+
 `max_calls` raises Butterfly's per-attempt provider-call budget (CLI default 50). Measured
 2026-09-08: 54% of GLM attempts and 67% of Muse Spark attempts hit the cap, so most "retries" were
 budget cut-offs rather than finished tries; chatty, cheap models need 200-400.
@@ -92,6 +96,7 @@ class Butterfly(BaseInstalledAgent):
         detect_checks: bool = False,
         completion_gate: bool = True,
         lean: str | bool = True,
+        outline_min_lines: int | str | None = None,
         independent_verifier: bool = False,
         verifier_model: str | None = None,
         max_cost_usd: str = "2.00",
@@ -109,6 +114,9 @@ class Butterfly(BaseInstalledAgent):
         self._detect_checks = _truthy(detect_checks)
         self._completion_gate = _truthy(completion_gate)
         self._lean = _truthy(lean)
+        self._outline_min_lines = (
+            int(outline_min_lines) if outline_min_lines is not None else None
+        )
         self._independent_verifier = _truthy(independent_verifier)
         self._verifier_model = (
             verifier_model  # Harbor form provider/model, e.g. zai/glm-5.3-flash
@@ -233,6 +241,8 @@ class Butterfly(BaseInstalledAgent):
             argv.append("--detect-checks")
         if self._lean:
             argv.append("--lean")
+        if self._outline_min_lines is not None:
+            argv += ["--outline-min-lines", str(self._outline_min_lines)]
         if self._completion_gate:
             argv.append("--completion-gate")
             if self._independent_verifier:
