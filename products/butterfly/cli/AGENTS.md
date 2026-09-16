@@ -74,6 +74,16 @@ back crosses a seam. That is the accepted cost of staying inline and keeping nat
 copy-paste and mouse selection; ratatui's inline viewport (Codex) and Bubble Tea's `insertAbove`
 (OpenCode) both make the same trade and neither re-wraps history either.
 
+zellij (0.44.3) adds three constraints, all measured with a headless session and `dump-screen`:
+`ED 2` moves the viewport into scrollback before clearing (a full-screen erase per resize stacks
+copies of the screen into history), rows it re-wrapped keep a continuation mark that survives `EL`
+inside synchronized output (rows written there glue into one paragraph), and writing the last
+column then moving down joins two rows into one. So the settled frame writes every row with
+`put_row` (absolute CUP + `EL 2`), is not wrapped in `?2026`, and the layout width is
+`usable_width(columns)` = columns − 1. The frame also pins the block to the bottom edge only
+while no question has been asked; with a conversation on screen it sits directly under the
+content, never re-pinned to the bottom with a void above it.
+
 Two consequences worth keeping. `sync_size` re-reads `terminal::size()` (a `TIOCGWINSZ` ioctl, no
 round trip) before every paint, because a paint from the session thread can land between the
 terminal re-wrapping itself and the input thread handling the resize event; a paint that finds the

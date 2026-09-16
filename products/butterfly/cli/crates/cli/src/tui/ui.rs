@@ -407,6 +407,36 @@ pub struct Ui {
     inner: Mutex<UiInner>,
 }
 
+/// The width the layout may use: one column fewer than the terminal has.
+///
+/// Writing the last column is the one thing terminals disagree about. xterm
+/// parks the cursor in a "pending wrap" state; zellij goes further and, when
+/// the next output lands on the following row, records the two rows as ONE
+/// logical line — which it then re-wraps together on the next resize. That
+/// is how a full-width rule, the input line and the footer became a single
+/// paragraph after a second narrowing (measured against zellij 0.44.3: a
+/// 40-column row followed by CUP to the next row joins; a 39-column row does
+/// not). Never touching the last column sidesteps every variant of it.
+fn usable_width(columns: usize) -> usize {
+    columns.saturating_sub(1)
+}
+
+/// `CR` + `EL 2`: return to column 0 and clear the row before writing it.
+///
+/// This is not cosmetic. zellij re-wraps rows when a pane narrows and marks
+/// the continuation rows as part of one logical line; `ED` (erase display)
+/// clears their cells but keeps that mark, so a row later written there with
+/// `\r\n` is glued onto the row above and re-wrapped with it on the next
+/// resize — which is how the rule, the input line and the footer ended up as
+/// one paragraph. `EL` resets the mark. Measured against zellij 0.44.3.
+const CLEAR_ROW: &str = "\r\x1b[2K";
+
+/// Write `row` at absolute screen row `r` (1-based), clearing it first.
+fn put_row(buf: &mut String, r: usize, row: &str) {
+    buf.push_str(&format!("\x1b[{r};1H\x1b[2K"));
+    buf.push_str(row);
+}
+
 /// Physical terminal rows one committed output line occupies after wrapping.
 fn physical_rows(line: &str, width: usize) -> usize {
     let cols = visible_cols(line);
@@ -823,7 +853,7 @@ impl UiInner {
         let Ok((w, h)) = crossterm::terminal::size() else {
             return false;
         };
-        let (w, h) = (w as usize, h as usize);
+        let (w, h) = (usable_width(w as usize), h as usize);
         if w == self.width && h == self.height {
             return false;
         }
@@ -873,7 +903,7 @@ impl UiInner {
         self.overlay = Some(offset);
         let end = total - offset;
         let start = end.saturating_sub(rows);
-        let mut buf = format!("{SYNC_BEGIN}\x1b[2J\x1b[1;1H\x1b[?7l");
+        let mut buf = format!("{SYNC_BEGIN}\x1b[1;1H\x1b[J\x1b[?7l");
         for line in &lines[start..end] {
             buf.push_str(&truncate_styled(line, width));
             buf.push_str("\r\n");
@@ -967,7 +997,16 @@ impl UiInner {
     fn repaint_after_resize(&mut self) {
         // Anything committed mid-drag was recorded into the transcript
         // already; the projection below picks it up by construction.
-        self.repaint_all();
+        // Before the first question the screen is the welcome card with the
+        // input on the bottom edge, and a resize keeps that. Once there is a
+        // conversation, the input belongs directly under it: a terminal that
+        // grows gains empty rows BELOW the prompt, never a void between the
+        // last answer and the input with the text stranded at the top-left.
+        let pin = !self
+            .transcript
+            .iter()
+            .any(|(_, entry)| matches!(entry, Entry::UserBar(_)));
+        self.repaint_all(pin);
     }
 
     /// Draw a complete frame: erase the viewport and rebuild it from the
@@ -975,25 +1014,51 @@ impl UiInner {
     /// edge. Safe at any point in a session ‒ every committed entry is in
     /// the transcript (`commit_entries` records before it draws), so what is
     /// erased is exactly what is redrawn, re-wrapped to the width now.
-    fn repaint_all(&mut self) {
-        let buf = self.full_frame();
+    fn repaint_all(&mut self, pin: bool) {
+        let buf = self.full_frame(pin);
         self.emit(buf.as_bytes());
     }
 
     /// The bytes of a complete frame: viewport erased, transcript tail
     /// re-rendered at the current width, block pinned to the bottom edge.
-    fn full_frame(&mut self) -> String {
+    ///
+    /// Two zellij (0.44.3) behaviours shape how this frame is written, both
+    /// measured with a headless session and `dump-screen`:
+    ///
+    /// * `ED 2` is "move the viewport into scrollback, then clear", so an
+    ///   erase-the-screen redraw pushed a copy of the whole screen into
+    ///   history on every settled resize — three resizes, three stacked
+    ///   copies of the same paragraph. Rows are therefore cleared one by one
+    ///   with `EL` (`put_row`), which is a plain erase everywhere.
+    /// * Rows zellij re-wrapped during the resize keep a continuation mark,
+    ///   and INSIDE synchronized output (`?2026h`) that mark survives `EL`:
+    ///   rows written there are glued into one logical line and re-wrapped
+    ///   together on the next resize — the rule, the input line and the
+    ///   footer as one paragraph. Without the wrapper the same bytes stay
+    ///   separate. So this frame, the one written right after a reflow, is
+    ///   NOT synchronized; the block redraws that follow are, and they land
+    ///   on rows this frame has already cleaned.
+    ///
+    /// `pin` keeps the block on the bottom edge (the pre-conversation
+    /// screen). Otherwise, when the content is shorter than the screen, the
+    /// block sits directly under it — a taller window then gains empty rows
+    /// BELOW the input, like any shell, not a void between the answer and
+    /// the input.
+    fn full_frame(&mut self, pin: bool) -> String {
         let width = self.width.max(20);
         let height = self.height.max(4);
         let (block_lines, cursor_row, cursor_col) = self.compose_block();
         let block_height = block_lines.len();
         if block_height >= height {
             // Tiny terminal: clear and let the scrolling model take over.
-            let mut buf = format!("{SYNC_BEGIN}\x1b[2J\x1b[1;1H");
+            let mut buf = String::from("\x1b[?7l");
+            for r in 1..=height {
+                put_row(&mut buf, r, "");
+            }
+            buf.push_str("\x1b[?7h\x1b[1;1H");
             self.place = Place::Scrolling;
             self.cursor_row = 0;
             self.append_scrolling_block(&mut buf);
-            buf.push_str(SYNC_END);
             return buf;
         }
         let avail = height - block_height;
@@ -1017,11 +1082,36 @@ impl UiInner {
             rows.pop();
         }
         rows.reverse();
+        if !pin && rows.len() < avail {
+            let mut buf = String::from("\x1b[?7l");
+            for (i, row) in rows.iter().enumerate() {
+                put_row(&mut buf, i + 1, row);
+            }
+            for r in rows.len() + 1..=height {
+                put_row(&mut buf, r, "");
+            }
+            buf.push_str(&format!("\x1b[?7h\x1b[{};1H", rows.len() + 1));
+            self.place = Place::Scrolling;
+            self.cursor_row = 0;
+            self.append_scrolling_block(&mut buf);
+            return buf;
+        }
         let block_top = height - block_height + 1;
-        let mut buf = format!("{SYNC_BEGIN}\x1b[2J\x1b[1;1H\x1b[?7l");
-        buf.push_str(&rows.join("\r\n"));
-        buf.push_str(&format!("\x1b[{block_top};1H"));
-        buf.push_str(&block_lines.join("\r\n"));
+        // Every row of the screen is addressed absolutely and cleared with
+        // EL before it is written — including the empty ones between content
+        // and block. See `put_row`: an erase-to-end-of-display leaves
+        // zellij's wrap flags in place, and `\r\n` into such a row glues it
+        // onto the row above.
+        let mut buf = String::from("\x1b[?7l");
+        for (i, row) in rows.iter().enumerate() {
+            put_row(&mut buf, i + 1, row);
+        }
+        for r in rows.len() + 1..block_top {
+            put_row(&mut buf, r, "");
+        }
+        for (i, line) in block_lines.iter().enumerate() {
+            put_row(&mut buf, block_top + i, line);
+        }
         buf.push_str("\x1b[?7h");
         buf.push_str(&format!(
             "\x1b[{};{}H",
@@ -1029,7 +1119,6 @@ impl UiInner {
             cursor_col + 1
         ));
         buf.push_str(self.cursor_escape());
-        buf.push_str(SYNC_END);
         self.place = Place::Pinned {
             content_row: rows.len() + 1,
             prev_block_top: block_top,
@@ -1048,7 +1137,13 @@ impl UiInner {
         // wrapping here breaks the erase row math and strands stale frames
         // in scrollback. Committed output above keeps normal wrapping.
         buf.push_str("\x1b[?7l");
-        buf.push_str(&lines.join("\r\n"));
+        for (i, line) in lines.iter().enumerate() {
+            if i > 0 {
+                buf.push('\n');
+            }
+            buf.push_str(CLEAR_ROW);
+            buf.push_str(line);
+        }
         buf.push_str("\x1b[?7h");
         let up = lines.len().saturating_sub(1).saturating_sub(cursor_row);
         if up > 0 {
@@ -1073,6 +1168,7 @@ impl UiInner {
         buf.push_str("\x1b[J");
         if let Some(output) = output {
             for line in output.split('\n') {
+                buf.push_str(CLEAR_ROW);
                 buf.push_str(&line.replace('\t', "    "));
                 buf.push_str(RESET);
                 buf.push_str("\r\n");
@@ -1104,6 +1200,7 @@ impl UiInner {
             buf.push_str(&format!("\x1b[{content_row};1H"));
             for line in output.split('\n') {
                 let line = line.replace('\t', "    ");
+                buf.push_str(CLEAR_ROW);
                 buf.push_str(&line);
                 buf.push_str(RESET);
                 buf.push_str("\r\n");
@@ -1122,9 +1219,10 @@ impl UiInner {
             }
             self.append_scrolling_block(&mut buf);
         } else {
-            buf.push_str(&format!("\x1b[{block_top};1H"));
             buf.push_str("\x1b[?7l");
-            buf.push_str(&lines.join("\r\n"));
+            for (i, line) in lines.iter().enumerate() {
+                put_row(&mut buf, block_top + i, line);
+            }
             buf.push_str("\x1b[?7h");
             buf.push_str(&format!(
                 "\x1b[{};{}H",
@@ -1381,8 +1479,8 @@ impl Ui {
         show_reasoning: bool,
     ) -> Arc<Self> {
         let (width, height) = crossterm::terminal::size()
-            .map(|(w, h)| (w as usize, h as usize))
-            .unwrap_or((100, 30));
+            .map(|(w, h)| (usable_width(w as usize), h as usize))
+            .unwrap_or((99, 30));
         Arc::new(Self {
             inner: Mutex::new(UiInner {
                 width,
@@ -1431,7 +1529,7 @@ impl Ui {
         inner.emit(TITLE.as_bytes());
         let flood = "\n".repeat(inner.height.max(1));
         inner.emit(flood.as_bytes());
-        inner.repaint_all();
+        inner.repaint_all(true);
     }
 
     /// Commit styled lines into scrollback above the block.
@@ -1687,11 +1785,12 @@ impl Ui {
         let mut inner = self.lock();
         match event {
             Event::Resize(w, h) => {
-                let changed = inner.width != w as usize || inner.height != h as usize;
+                let w = usable_width(w as usize);
+                let changed = inner.width != w || inner.height != h as usize;
                 if let Some(trace) = &mut inner.trace {
                     trace.note(&format!("resize;{w}x{h};changed={changed}"));
                 }
-                inner.width = w as usize;
+                inner.width = w;
                 inner.height = h as usize;
                 if inner.overlay.is_some() {
                     // The overlay owns the alternate screen outright, so it
@@ -2780,9 +2879,9 @@ mod tests {
 
         // Narrow: every row must fit the new width, not shear against it.
         inner.width = 60;
-        let narrow = inner.full_frame();
+        let narrow = inner.full_frame(true);
         assert!(
-            narrow.contains("\x1b[2J"),
+            narrow.contains("\x1b[1;1H\x1b[2K"),
             "viewport not erased: {narrow:?}"
         );
         for row in plain(&narrow).lines() {
@@ -2805,7 +2904,7 @@ mod tests {
         );
 
         inner.width = 160;
-        let wide = inner.full_frame();
+        let wide = inner.full_frame(true);
         // And the widened frame really is using the extra columns, rather
         // than redrawing the old narrow shape into a bigger window.
         assert!(
@@ -2820,6 +2919,32 @@ mod tests {
     }
 
     #[test]
+    fn a_resize_keeps_the_block_where_it_was() {
+        let mut inner = inner_at_width(80);
+        inner.height = 40;
+        for i in 0..6 {
+            inner.record(true, Entry::Fixed(format!("line {i}")));
+        }
+        let block_height = inner.compose_block().0.len();
+        // A conversation is under way and the window grew: the block sits
+        // right under the content, spare rows below it, no void.
+        let frame = inner.full_frame(false);
+        assert!(
+            frame.contains("\x1b[7;1H"),
+            "block not placed right under the 6 content rows: {frame:?}"
+        );
+        assert!(matches!(inner.place, Place::Scrolling));
+        assert!(!frame.contains(&format!("\x1b[{};1H\x1b[2K{}", 41 - block_height, th::DIM)));
+        // Pre-conversation screen: the block keeps the bottom edge.
+        let frame = inner.full_frame(true);
+        assert!(
+            frame.contains(&format!("\x1b[{};1H", 41 - block_height)),
+            "pinned block not on the bottom edge: {frame:?}"
+        );
+        assert!(matches!(inner.place, Place::Pinned { .. }));
+    }
+
+    #[test]
     fn a_resize_rebuilds_the_frame_from_the_transcript_tail() {
         let mut inner = inner_at_width(80);
         inner.height = 24;
@@ -2828,11 +2953,11 @@ mod tests {
         }
         inner.editor.insert_str("a half-typed question");
         inner.width = 60;
-        let frame = inner.full_frame();
+        let frame = inner.full_frame(true);
         // The viewport is rebuilt absolutely: no relative cursor arithmetic
         // has to survive the terminal's own reflow.
         assert!(
-            frame.contains("\x1b[2J\x1b[1;1H"),
+            frame.contains("\x1b[1;1H\x1b[2K"),
             "no absolute erase: {frame:?}"
         );
         // It refills from the TAIL, so the newest lines are there and the

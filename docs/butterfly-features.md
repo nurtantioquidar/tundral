@@ -483,6 +483,25 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   less of what you look at outside the redrawn region. Owning the whole screen (alternate screen)
   would remove the seam at the cost of native scrollback, mouse-wheel history and terminal text
   selection; that remains a product decision, deliberately not taken.
+- **A settled resize puts the input under the conversation** (regression, dogfood 2026-09-16) —
+  the first reprojection always re-pinned the block to the bottom edge, so growing the window
+  mid-conversation left the last answer at the top-left and the input at the bottom with a void of
+  blank rows between. Now the pre-conversation screen (welcome card, no question yet) keeps the
+  pinned bottom edge, and once a `UserBar` is in the transcript the block sits directly under the
+  content with the spare rows BELOW the prompt, as a shell would. A transcript longer than the
+  screen fills it from the tail either way. Measured inside zellij at 100×40 → 100×20 → 100×40.
+  Open design question, deliberately not decided here: during normal (unresized) use before the
+  content reaches the block, the input still rides the bottom edge Codex-style with a gap above it.
+- **Rows are written one at a time, with `EL`, one column short of the edge** (2026-09-16) — three
+  zellij 0.44.3 behaviours, each measured with a headless session and `dump-screen`. `ED 2` there is
+  "move the viewport into scrollback, then clear", so an erase-the-screen redraw stacked a copy of
+  the whole screen into history on every settled resize. Rows zellij re-wrapped during a resize
+  keep a continuation mark that `ED` leaves in place and that survives `EL` inside synchronized
+  output, so rows later written there were glued into one logical line and re-wrapped together —
+  the rule, the input line and the footer as one paragraph. And writing the LAST column then
+  moving to the next row joins the two rows as one line. So the settled frame addresses every row
+  absolutely and clears it with `EL 2` before writing (`put_row`), is not wrapped in `?2026`, and
+  the layout width is `columns − 1` (`usable_width`) so the last column is never touched.
 - **The terminal is titled `butterfly`** (2026-09-16) — one OSC 0 sequence on entry. zellij and
   tmux show it in the pane frame, which is how a user with Codex and OpenCode open beside it tells
   the panes apart; both of those set theirs. Shells reset the title at their next prompt, so
