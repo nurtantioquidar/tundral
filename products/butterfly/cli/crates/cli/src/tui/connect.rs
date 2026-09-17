@@ -8,8 +8,9 @@ use std::io::Write as _;
 use anyhow::{Context, Result};
 use crossterm::event::{Event, KeyCode, KeyEventKind, KeyModifiers};
 
-use super::chrome::option_row;
-use super::theme::{self as th, ACCENT, ACCENT_BOLD, DIM, RESET};
+use super::chrome::option_text;
+use super::theme as th;
+use super::theme::ansi::{render, ACCENT, ACCENT_BOLD, DIM, RESET};
 
 /// Mask a key for display: all bullets, fixed floor so length leaks little.
 pub fn masked(len: usize) -> String {
@@ -78,10 +79,10 @@ pub fn standalone_connect(
                 ];
                 for (i, (_, label, connected)) in providers.iter().enumerate() {
                     let hint = if *connected { "key already saved" } else { "" };
-                    lines.push(option_row(label, hint, i == selected, width));
+                    lines.push(render(&option_text(label, hint, i == selected, width)));
                 }
                 lines.push(String::new());
-                lines.push(format!("{DIM}  ⇡⇣ move ⋅ enter continue ⋅ esc quit{RESET}"));
+                lines.push(format!("{DIM}  ⇡⇣ move · enter continue · esc quit{RESET}"));
                 lines
             }
             Some(key) => vec![
@@ -103,7 +104,7 @@ pub fn standalone_connect(
                 ),
                 String::new(),
                 format!("{DIM}  stored 0600 in your config dir, never in shell history{RESET}"),
-                format!("{DIM}  enter save ⋅ esc back{RESET}"),
+                format!("{DIM}  enter save · esc back{RESET}"),
             ],
         };
         rows = draw(&lines, rows, stage_key.is_some());

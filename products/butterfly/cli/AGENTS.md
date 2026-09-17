@@ -41,87 +41,126 @@ crates/core   # butterfly-core: UI-free engine
   telemetry   # per-session JSONL events + summary; key-based redaction
   session     # deterministic agent loop, run_task (attempt → verify → classify → evidence → retry),
               # approval gating, typed working state, JSONL persistence/resume
-crates/cli    # butterfly: inline TUI (crossterm editor, @-mention fuzzy completion,
+crates/cli    # butterfly: inline ratatui TUI (crossterm editor, @-mention fuzzy completion,
               # footer, arrow-key approvals, paste placeholders, markdown render);
               # plain line loop for non-TTY stdin; -p headless path
-  tui/theme   # the one palette + width-aware text primitives (no other module
-              # defines an escape sequence)
-  tui/chrome  # every composed surface as a pure width -> styled-rows function
-  tui/ui      # state, erase math, input handling
+  tui/theme   # the one palette (ratatui Styles) + width-aware Line primitives;
+              # `theme::ansi` is the ONLY place raw escapes are still written
+  tui/chrome  # every composed surface as a pure width -> Vec<Line> function
+  tui/term    # all terminal I/O: composer viewport (cell-diffed) + write-once
+              # scrollback history, on Codex's insert-history model
+  tui/ui      # state, projection/layout, input handling
 ../bench      # fixture benchmark vs external harnesses + full-window compaction exercise
 ```
 
 ## TUI design
 
-The inline TUI is crossterm-only: it prints into the terminal scrollback, with no alternate screen,
-no full-frame diff, and no widget tree. It is layered: `theme` owns color and width primitives,
-`chrome` composes each surface as a pure function of data and width, `ui` owns state, layout math
-and input. The load-bearing rule is `render_entry`'s contract: for every `Entry` variant, one
-returned string is exactly one screen row AND it fits the width it was rendered at. The repaint
-counts screen rows and draws with autowrap off, so a wider row overwrites the last column and an
-embedded newline strands text at the right edge — both have shipped as resize corruption. Keep
-entries as DATA (preview + outcome, parsed table, spans), never as pre-rendered strings.
+The inline TUI is **ratatui over crossterm, and it follows Codex's TUI in both rendering model and
+visual design** (read from `codex-rs/tui`, Apache-2.0; mechanism and shapes reimplemented, no code
+copied). It is layered: `theme` owns color, glyphs and the width-aware `Line` primitives, `chrome`
+composes each surface as a pure function of data and width, `term` owns every byte written to the
+terminal, `ui` owns state and input. Adopted 2026-09-17 at the operator's explicit request.
 
-The screen is a projection of `(transcript, width, height)`, and a resize re-runs that
-projection. Text committed to scrollback is wrapped at the width in force when it was written, and
-those are real newlines in the terminal's grid: a wider window cannot re-join them (the text keeps
-its old narrow column) and a narrower one shears every row against the new edge. Redrawing only the
-block cannot repair either, because the damage is in the content above it. So a settled resize
-calls `full_frame`: erase the viewport absolutely, refill it from the transcript at the new width,
-pin the block to the bottom edge. Rows that scrolled ABOVE the viewport keep the wrapping they were
-committed with — they are the terminal's scrollback, not ours to rewrite — so scrolling far enough
-back crosses a seam. That is the accepted cost of staying inline and keeping native scrollback,
-copy-paste and mouse selection; ratatui's inline viewport (Codex) and Bubble Tea's `insertAbove`
-(OpenCode) both make the same trade and neither re-wraps history either.
+The look, and what each piece corresponds to in Codex: a rounded box card on open
+(`╭─╮ │ ╰─╯`, `>_ butterfly`, `model:` / `directory:` / `mode:` rows, sized to content and never
+full width); `› ` as the composer caret and the marker on a user turn; `• ` opening every agent
+row — answers, tool rows, notices; tool rows reading `• Read    <path>` / `• Running <cmd>`; a
+decision rendered as a bold question, the subject on a `$`/`•` row, then numbered choices with `›`
+on the selected one; and a dim status line two columns in under the composer reading
+`model · Context N% left · <mode> mode`. There is **no rule above the composer** and **no filled
+band on a user turn** — Codex separates with air, and both of those were Butterfly's own devices.
+Session start is inline: nothing is flooded or erased, so the shell's own output stays above.
 
-zellij (0.44.3) adds three constraints, all measured with a headless session and `dump-screen`:
-`ED 2` moves the viewport into scrollback before clearing (a full-screen erase per resize stacks
-copies of the screen into history), rows it re-wrapped keep a continuation mark that survives `EL`
-inside synchronized output (rows written there glue into one paragraph), and writing the last
-column then moving down joins two rows into one. So the settled frame writes every row with
-`put_row` (absolute CUP + `EL 2`), is not wrapped in `?2026`, and the layout width is
-`usable_width(columns)` = columns − 1. The frame also pins the block to the bottom edge only
-while no question has been asked; with a conversation on screen it sits directly under the
-content, never re-pinned to the bottom with a void above it.
+**The screen has exactly two parts, and this is the whole design:**
 
-Two consequences worth keeping. `sync_size` re-reads `terminal::size()` (a `TIOCGWINSZ` ioctl, no
-round trip) before every paint, because a paint from the session thread can land between the
-terminal re-wrapping itself and the input thread handling the resize event; a paint that finds the
-size moved defers to the settle instead of drawing against geometry that no longer holds. And
-because the erase is absolute, the old "no block line above the cursor may exceed 20 columns" rule
-is retired along with the cursor-position (DSR) probe that used to anchor it — one fewer round trip
-and one fewer terminal capability to depend on. A drag still holds paints until the event stream
-goes quiet (`RESIZE_SETTLE`), so one drag costs one redraw; mid-drag the terminal's own reflow is
-visible and is healed by the settle rather than prevented.
+- **The viewport** — the composer block at the bottom. A ratatui `Buffer`, cell-diffed, and the
+  ONLY region the renderer ever redraws.
+- **History** — everything committed. Written into the terminal's own scrollback exactly once by
+  `Term::insert_history`, and never touched again.
 
-Every glyph the TUI draws must have ONE unambiguous column width. Unicode marks a large set —
-`·` `—` `…` `●` `∴` `•` `─` `↑↓→` — as East Asian Ambiguous, and a terminal is free to render them
-one column or two: xterm and pyte say one, Ghostty and iTerm2 say two. `unicode_width::width()`
-assumes one, so a row built from them is only accidentally the right size, and on a wide-ambiguous
-terminal it overflows and the terminal soft-wraps it mid-word. `·` alone appeared ~29 times, five
-in a single receipt row. Butterfly's own glyphs are therefore drawn from the unambiguous set
-(`◉ ▪ ‣ ⋅ ⋯ ⎯ ▮▯ ⇡⇣⇢`), pinned by `glyphs_have_one_unambiguous_width` and by the ambiguity check
-inside `chrome`'s `check` helper — add a glyph and those tests tell you whether it is safe. Model
-output is not ours to choose, so `theme::cell_width` budgets with `width_cjk` (ambiguous counts as
-two): a row can then come out a column short on a narrow-ambiguous terminal, which nobody sees,
-but never overflows, which shears the grid. Use `SEP`/`RULE`/`BULLET`/`ELLIPSIS`, never the literal.
+Two properties of that write are what make scrollback behave, both Codex's:
 
-A harness note that cost a full round of "still broken": pyte counts ambiguous as ONE, so a
-pyte-based replay is structurally blind to this entire class of bug — it reported zero overflowing
-rows where a real Ghostty had 221. Measure rows under BOTH conventions, never just pyte's.
+1. **Rows are pre-wrapped and hard-terminated.** Every line handed to `insert_history` already fits
+   one screen row, and rows are separated by a real `\r\n`. A later narrowing re-wraps each row on
+   its own; it cannot glue consecutive rows into one logical paragraph, which is what turned a
+   scrolled-back conversation into run-together text.
+2. **The write happens inside a scroll region above the viewport** (`CSI 1;top r`), with the cursor
+   on that region's last row. Each `\r\n` scrolls only that region, pushing its top row into native
+   scrollback and leaving the composer untouched.
 
-To debug any of this, set `BUTTERFLY_TUI_TRACE=<path>`: every byte the TUI writes is teed there,
-with APC notes for each observed resize and settle. Do NOT reach for `script` — on macOS it does
+**When the composer changes height it repaints the history region, bottom-aligned on the region it
+is ABOUT to leave.** The composer grows and shrinks constantly — the activity row arrives, the live
+line comes and goes, a dropdown opens — and each change hands rows to or takes them from the region
+above. `Term::fill_history` redraws that region in place from the transcript: at a fixed width those
+are exactly the rows already there, so nothing scrolls, nothing reaches scrollback twice, and no
+hole is left behind. Two rules make it correct and both were learned the hard way:
+
+- It takes the **new** region as an argument. Reading the current `viewport_top` aligns on the old
+  one, and the composer then draws over the newest rows of history or leaves a run of blanks where
+  they should be.
+- It clears the union of the old region and the new one and nothing else clears them again. The
+  composer must NOT separately clear the rows it gives back when it shrinks; that erases what the
+  repaint just wrote into them.
+
+**A resize REFLOWS, by owning the scrollback.** This is Codex's strategy
+(`app::resize_reflow` + `clear_scrollback_and_visible_screen_ansi`) and it is the only one that
+actually works. Once rows are written to scrollback the terminal owns them, and a renderer has
+three choices: leave them at their old wrapping (which is what "the UI does not resize" looks
+like), re-project over the top (which duplicates, because the terminal's own reflow has already
+moved some of them into scrollback), or take the whole scrollback over. Butterfly takes it over.
+`Term::reset_for_reflow` emits `CSI r` / `CSI 0m` / `CSI H` / `CSI 2J` / **`CSI 3J`** / `CSI H` —
+a shell `clear` plus a scrollback purge — and `settle_resize` then replays the transcript at the new
+width, capped at `REFLOW_ROW_CAP` rows so a drag does not get slower the longer the session runs.
+The in-memory transcript is the source of truth; the terminal's copy is a rendering of it that goes
+stale the instant the width changes.
+
+The cost is explicit and is Codex's too: anything on screen before the session started is purged by
+the first resize. The session already takes the screen over.
+
+Both earlier designs are recorded in `docs/butterfly-features.md` because they look reasonable and
+are not: an entry-counted window and a cursor-position (DSR) probe each tried to keep a projection
+and subtract the overlap, and each only reduced the duplication.
+
+The load-bearing composition rule is `render_entry`'s contract: for every `Entry` variant, one
+returned `Line` is exactly one screen row AND it fits the width it was rendered at. `insert_history`
+depends on it — a row that soft-wraps into two breaks the scroll arithmetic. Keep entries as DATA
+(preview + outcome, parsed table, spans), never pre-rendered rows.
+
+Glyph widths are **measured, not assumed**. `theme::CHROME_GLYPHS` lists the glyphs the chrome
+draws itself; each was measured in the reference terminal (a 3/4-width run occupies the same
+columns as the same run of ASCII, i.e. one column apiece) and `cell_width` returns 1 for them. That
+is what lets the box card line up — a border and its content must agree — and it is what Codex and
+ratatui assume throughout. Everything else, above all text the model wrote, keeps the conservative
+budget: Unicode marks a large set — `—` `●` `∴` `↑↓→` and more — as East Asian
+Ambiguous, and a terminal may render them one column or two. **`unicode_width::width()` assumes one, and so do ratatui's `Line::width` and its
+`Buffer` cell placement** — so layout must never measure with `Line::width`; use `theme::line_cols`
+/ `theme::cell_width`, which budget with `width_cjk`. A row can then come out a column short on a
+narrow-ambiguous terminal, which nobody sees, but never overflows, which shears the grid.
+Adding a glyph to the chrome means adding it to `CHROME_GLYPHS` **and measuring it in the reference
+terminal first**; `glyphs_have_one_unambiguous_width` and `chrome`'s `check` helper then hold the
+line. Use `SEP`/`MARK_*`/`BOX_*`, never the literal.
+
+The layout width is `columns - 1` (`term::usable_width`): writing the last column is the one thing
+terminals disagree about, and some multiplexers record the two rows as ONE logical line and re-wrap
+them together. A pyte-based replay counts ambiguous glyphs as ONE and is structurally blind to that
+whole class of bug — it reported zero overflowing rows where a real terminal had 221. Measure rows
+under BOTH conventions.
+
+The reference terminal is **herdr 0.8.0** — not zellij. `herdr pane read --source visible|recent`
+dumps the viewport and scrollback, `pane send-text`/`send-keys` drive it, and an outer PTY resize
+makes it reflow. Always test in a session of your own, never the running `default` one.
+
+To debug any of this, set `BUTTERFLY_TUI_TRACE=<path>`: every byte the TUI writes is tee'd there by
+`term::TracedOut`, which wraps the backend's writer. Do NOT reach for `script` — on macOS it does
 not propagate window resizes into the wrapped process, so the recording is silent about the one
-thing a resize bug needs. A new surface belongs in `chrome` with a width-budget test, not inline in `ui`; a new
-color belongs in `theme` or nowhere. Every marker sits in column 0 and every piece of content in
-column 2 — that shared grid is what lets the eye tell turns, answers, tools and receipts apart.
-`.claude/skills/tui-design` (skill `tui-design`) carries the design references — hierarchy,
-spacing, color restraint, states, keybinding conventions, review checklist — and its Ratatui
-guide is background reading for structure only. Adopting Ratatui or the
-alternate screen is a product decision, never a side effect of a design task. Visual changes stay in
-`crates/cli`, must not alter cached prefix bytes (invariant 9), and must not change what an approval
-prompt gates or how a keypress maps to consent (invariants 4-5).
+thing a resize bug needs.
+
+A new surface belongs in `chrome` with a width-budget test, not inline in `ui`; a new color belongs
+in `theme` or nowhere; a new escape sequence belongs in `term` or nowhere. Every marker sits in
+column 0 and every piece of content in column 2. Moving to the alternate screen for the session (as
+opposed to the Ctrl+T overlay, which already uses it) remains a product decision. Visual changes
+stay in `crates/cli`, must not alter cached prefix bytes (invariant 9), and must not change what an
+approval prompt gates or how a keypress maps to consent (invariants 4-5).
 
 ## Commands
 

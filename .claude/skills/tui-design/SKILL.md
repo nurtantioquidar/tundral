@@ -42,13 +42,19 @@ Everything in this skill is advice; the repository's own instructions are law. W
 `CLAUDE.md`/`AGENTS.md` at the repo root and the closest module `AGENTS.md` win, silently and
 always.
 
-- **Butterfly is the primary consumer, and it is not a Ratatui app.** `products/butterfly/cli`
-  renders an *inline* TUI directly on crossterm (`crates/cli/src/tui/`: `mod.rs`, `ui.rs`,
-  `editor.rs`, `completion.rs`, `markdown.rs`, `connect.rs`). It prints into the terminal
-  scrollback — no alternate screen, no full-frame diffing, no widget tree. Read
-  `frameworks/ratatui-rust.md` for architecture and idiom only. Never propose adopting Ratatui,
-  taking over the alternate screen, or moving to a full-frame redraw loop as part of a design
-  task; that is a product decision requiring the user's explicit sign-off.
+- **Butterfly is the primary consumer, and it is an INLINE Ratatui app.** `products/butterfly/cli`
+  renders an inline TUI with ratatui over crossterm (`crates/cli/src/tui/`: `mod.rs`, `theme.rs`,
+  `chrome.rs`, `term.rs`, `ui.rs`, `editor.rs`, `completion.rs`, `markdown.rs`, `connect.rs`).
+  Ratatui was adopted on 2026-09-17; `frameworks/ratatui-rust.md` now describes the framework
+  actually in use. Two things it is still NOT: it does not take over the alternate screen during a
+  session (it prints into native scrollback; the Ctrl+T transcript overlay is the one sanctioned
+  alternate-screen use), and it does not use ratatui's `Viewport::Inline` — `term.rs` owns the
+  viewport policy so a settled resize can re-project the visible screen from the transcript.
+  Never propose taking over the alternate screen for the session as part of a design task; that is
+  a product decision requiring the user's explicit sign-off.
+- **Measure width with `theme::line_cols`, never `Line::width`.** Ratatui counts East Asian
+  Ambiguous glyphs (`·` `—` `…` `●` `─`) as one column; Ghostty and iTerm2 render them as two.
+  Butterfly budgets with `width_cjk` so a row can come out short but never overflows.
 - **Read the code before designing.** Inline rendering means layout math, wrapping, and cursor
   accounting already exist in `ui.rs` and `editor.rs`. A mockup that assumes a bordered
   full-screen frame is not implementable there.

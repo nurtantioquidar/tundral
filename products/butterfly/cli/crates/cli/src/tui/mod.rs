@@ -8,6 +8,7 @@ mod completion;
 pub mod connect;
 mod editor;
 mod markdown;
+pub(crate) mod term;
 pub(crate) mod theme;
 mod ui;
 
@@ -25,8 +26,6 @@ use crate::repl::{handle_command, mode_name, turn_status_line, CommandResult, Ou
 use completion::CompletionIndex;
 use editor::Editor;
 use ui::{Status, Ui, UiAction, UiGate, UiSink};
-
-use theme::{DANGER, RESET};
 
 const COMMANDS: [(&str, &str); 9] = [
     (
@@ -228,12 +227,12 @@ pub async fn run(
     // only content was a session id nobody types. The card answers the
     // questions a first keystroke actually depends on; the id stays
     // available in /usage.
-    ui.print_welcome(&chrome::Welcome {
-        workspace: &workspace,
+    ui.print_welcome(chrome::Welcome {
+        workspace: workspace.clone(),
         branch,
-        model_name: &agent.model().display_name,
+        model_name: agent.model().display_name.clone(),
         context_tokens: agent.model().limits.context_tokens,
-        mode: mode_name(agent.permission_mode()),
+        mode: mode_name(agent.permission_mode()).to_string(),
     });
 
     let (sender, mut events) = tokio::sync::mpsc::unbounded_channel();
@@ -241,9 +240,14 @@ pub async fn run(
 
     // Steered messages left over when a turn ends become the next turns.
     let mut pending: VecDeque<String> = VecDeque::new();
+    // Modes whose blurb has already been shown. The footer always names the
+    // current mode, so the sentence explaining what it gates is worth one line
+    // the first time you reach that mode and is pure noise on every later
+    // Shift+Tab — six identical lines in the scrollback of one session.
+    let mut explained: std::collections::HashSet<&'static str> = std::collections::HashSet::new();
     loop {
         let input = if let Some(queued) = pending.pop_front() {
-            ui.print_note(&format!("queued message ⋅ sending now: {queued}"));
+            ui.print_note(&format!("queued message · sending now: {queued}"));
             queued
         } else {
             match events.recv().await {
@@ -252,8 +256,11 @@ pub async fn run(
                     let next = next_mode(agent.permission_mode());
                     set_mode(&mut agent, next);
                     // The mode names do not say what they gate, and this is
-                    // the one setting where guessing wrong has consequences.
-                    ui.print_note(&format!("{next} ⋅ {}", chrome::mode_blurb(next)));
+                    // the one setting where guessing wrong has consequences —
+                    // so it is said once per mode, not once per keypress.
+                    if explained.insert(next) {
+                        ui.print_note(&format!("{next} · {}", chrome::mode_blurb(next)));
+                    }
                     ui.set_status(status_of(&agent));
                     continue;
                 }
@@ -272,7 +279,7 @@ pub async fn run(
                     match crate::credentials::save_key(&provider, &api_key) {
                         Ok(path) => {
                             let mut note = format!(
-                                "connected ⋅ {provider} key saved to {} ⋅ new sessions use it automatically",
+                                "connected · {provider} key saved to {} · new sessions use it automatically",
                                 path.display()
                             );
                             if let Some(env) = hub
@@ -288,7 +295,7 @@ pub async fn run(
                             ui.print_note(&note);
                         }
                         Err(error) => {
-                            ui.print(&format!("{DANGER}could not save the key: {error}{RESET}"));
+                            ui.print_error(&format!("could not save the key: {error}"));
                         }
                     }
                 }
@@ -317,7 +324,7 @@ pub async fn run(
                 match ui.open_select("switch model", items, initial).await {
                     Ok(Some(index)) if models[index].id != current.id => {
                         let note = crate::repl::switch_model(&mut agent, &models[index].id, hub);
-                        ui.print_note(&note);
+                        ui.print_lines(vec![note]);
                     }
                     // Cancel / unchanged: the composer returns, no residue.
                     _ => {}
@@ -325,8 +332,8 @@ pub async fn run(
                 ui.set_status(status_of(&agent));
                 continue;
             }
-            CommandResult::Output(text) => {
-                ui.print(text.trim_end_matches('\n'));
+            CommandResult::Output(lines) => {
+                ui.print_lines(lines);
                 ui.set_status(status_of(&agent));
                 continue;
             }
@@ -374,12 +381,12 @@ pub async fn run(
                     event = events.recv() => match event {
                         Some(UiAction::Submit(line)) => {
                             steer.lock().expect("steer lock").push_back(line);
-                            ui.print_note("queued ⋅ delivered at the next turn boundary");
+                            ui.print_note("queued · delivered at the next turn boundary");
                         }
                         Some(UiAction::CycleMode) => {
                             mode_cycles += 1;
                             ui.print_note(&format!(
-                                "{} mode ⋅ applies when this turn ends",
+                                "{} mode · applies when this turn ends",
                                 cycled(mode_at_start, mode_cycles),
                             ));
                         }
@@ -399,9 +406,7 @@ pub async fn run(
             }
             Ok(Outcome::Turn(report)) => {
                 if report.hit_output_limit {
-                    ui.print(&format!(
-                        "{DANGER}⚠ truncated: the response hit the output-token limit{RESET}"
-                    ));
+                    ui.print_error("⚠ truncated: the response hit the output-token limit");
                 }
                 if !report.cancelled && report.assistant_text.trim().is_empty() {
                     ui.print_note(
@@ -413,7 +418,7 @@ pub async fn run(
                     &turn_status_line(&agent, &report, turn_started.elapsed()),
                 );
             }
-            Err(error) => ui.print(&format!("{DANGER}error: {error}{RESET}")),
+            Err(error) => ui.print_error(&format!("error: {error}")),
         }
         for _ in 0..mode_cycles {
             let next = next_mode(agent.permission_mode());

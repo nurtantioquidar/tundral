@@ -78,6 +78,10 @@ const WALK_CAP: usize = 30_000;
 const REBUILD_AFTER: Duration = Duration::from_secs(10);
 const SYMBOL_CAP: usize = 8_000;
 /// A recency hit outranks any pure fuzzy score difference.
+/// Score docked per path segment so a shallow directory outranks a deep one
+/// that matches as well.
+const DIR_DEPTH_PENALTY: u32 = 6;
+
 const RECENCY_BONUS: u32 = 4_096;
 
 pub struct CompletionIndex {
@@ -246,7 +250,14 @@ impl CompletionIndex {
         for dir in &self.dirs {
             let haystack = Utf32String::from(dir.as_str());
             if let Some(score) = pattern.score(haystack.slice(..), &mut self.matcher) {
-                scored.push((score, Self::path_choice(dir, ChoiceKind::Dir, "")));
+                // Prefer the shallower directory when two match comparably:
+                // you navigate downward, so `bench/` is a better answer than
+                // `bench/private/__pycache__/` for the same prefix.
+                let depth = dir.trim_end_matches('/').matches('/').count() as u32;
+                scored.push((
+                    score.saturating_sub(depth * DIR_DEPTH_PENALTY),
+                    Self::path_choice(dir, ChoiceKind::Dir, ""),
+                ));
             }
         }
         for (name, location, kind) in &self.symbols {
@@ -259,7 +270,7 @@ impl CompletionIndex {
                     Choice {
                         insert: format!("@{path}"),
                         label: name.clone(),
-                        hint: format!("{kind} ⋅ {location}"),
+                        hint: format!("{kind} · {location}"),
                         kind: ChoiceKind::Symbol,
                     },
                 ));
@@ -267,11 +278,34 @@ impl CompletionIndex {
         }
         scored.sort_by(|a, b| b.0.cmp(&a.0).then_with(|| a.1.label.cmp(&b.1.label)));
         let total = scored.len();
-        scored.truncate(limit);
-        (
-            scored.into_iter().map(|(_, choice)| choice).collect(),
-            total,
-        )
+        (Self::reserve_dir_slots(scored, limit), total)
+    }
+
+    /// Keep directories in the list instead of letting files crowd them out.
+    ///
+    /// Any real directory has more files under it than siblings beside it, and
+    /// files also carry the recency bonus, so a purely score-ordered list is
+    /// all files: typing `@products/butterfly` offered five files and not one
+    /// of the directories under it, which made drilling down impossible. Up to
+    /// half the list is therefore reserved for directories — they are the
+    /// navigational choice, so they also come first — and any slot they do not
+    /// use goes back to files.
+    fn reserve_dir_slots(scored: Vec<(u32, Choice)>, limit: usize) -> Vec<Choice> {
+        let (dirs, rest): (Vec<_>, Vec<_>) = scored
+            .into_iter()
+            .partition(|(_, choice)| choice.kind == ChoiceKind::Dir);
+        let dir_slots = (limit / 2).min(dirs.len());
+        let mut out: Vec<Choice> = dirs
+            .into_iter()
+            .take(dir_slots)
+            .map(|(_, choice)| choice)
+            .collect();
+        out.extend(
+            rest.into_iter()
+                .take(limit.saturating_sub(out.len()))
+                .map(|(_, choice)| choice),
+        );
+        out
     }
 
     /// Bare `@`: recent session files first, then shallow workspace paths.
@@ -282,6 +316,17 @@ impl CompletionIndex {
             .take(limit)
             .map(|path| Self::path_choice(path, ChoiceKind::File, "touched this session"))
             .collect();
+        // Shallow directories come before shallow files: a bare `@` is the
+        // start of navigating somewhere, and offering only files made the
+        // top level of the workspace unreachable.
+        let mut shallow_dirs: Vec<&String> = self.dirs.iter().collect();
+        shallow_dirs.sort_by_key(|path| (path.matches('/').count(), path.len()));
+        for dir in shallow_dirs.into_iter().take(limit / 2) {
+            if choices.len() >= limit {
+                break;
+            }
+            choices.push(Self::path_choice(dir, ChoiceKind::Dir, ""));
+        }
         let mut shallow: Vec<&String> = self
             .files
             .iter()
@@ -294,7 +339,7 @@ impl CompletionIndex {
             }
             choices.push(Self::path_choice(path, ChoiceKind::File, ""));
         }
-        let total = self.recency.len() + self.files.len();
+        let total = self.recency.len() + self.files.len() + self.dirs.len();
         (choices, total)
     }
 }
@@ -397,6 +442,60 @@ mod tests {
         assert_eq!(choices[0].kind, ChoiceKind::Symbol);
         assert_eq!(choices[0].insert, "@src/limiter.rs");
         assert!(choices[0].hint.contains("struct"));
+    }
+
+    /// Files outnumber their own directory and carry the recency bonus, so a
+    /// purely score-ordered list is all files — typing a directory prefix
+    /// offered five files under it and not one of the directories, which made
+    /// drilling down impossible.
+    #[test]
+    fn directories_keep_their_slots_against_a_crowd_of_files() {
+        let files: Vec<String> = (0..40)
+            .map(|i| format!("products/butterfly/cli/file{i}.rs"))
+            .collect();
+        let dirs = vec![
+            "products/butterfly/cli".to_string(),
+            "products/butterfly/bench".to_string(),
+        ];
+        let mut index = CompletionIndex::with_entries(files, dirs);
+        let trigger = Trigger::Mention {
+            start: 0,
+            query: "products/butterfly".into(),
+        };
+        let (choices, _) = index.suggest(&trigger, 6);
+        let dirs_offered: Vec<&Choice> = choices
+            .iter()
+            .filter(|c| c.kind == ChoiceKind::Dir)
+            .collect();
+        assert_eq!(
+            dirs_offered.len(),
+            2,
+            "both directories must survive: {choices:#?}"
+        );
+        // Navigational choices come first, and a directory reads as one.
+        assert_eq!(choices[0].kind, ChoiceKind::Dir);
+        assert!(choices[0].label.ends_with('/'), "{:?}", choices[0].label);
+        // The rest of the list is still files.
+        assert_eq!(choices.len(), 6);
+        assert!(choices[2..].iter().all(|c| c.kind == ChoiceKind::File));
+    }
+
+    /// A bare `@` must offer somewhere to go, not only files.
+    #[test]
+    fn bare_at_offers_directories_too() {
+        let mut index = CompletionIndex::with_entries(
+            vec!["top.rs".into(), "deep/nested/file.rs".into()],
+            vec!["deep".into(), "deep/nested".into()],
+        );
+        let trigger = Trigger::Mention {
+            start: 0,
+            query: String::new(),
+        };
+        let (choices, _) = index.suggest(&trigger, 6);
+        assert!(
+            choices.iter().any(|c| c.kind == ChoiceKind::Dir),
+            "a bare @ offered no directories: {choices:#?}"
+        );
     }
 
     #[test]

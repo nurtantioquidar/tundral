@@ -350,6 +350,308 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 - **State under `~/.local/state/butterfly/`**.
 
 ### CLI / TUI
+- **The TUI looks like Codex** (2026-09-17) — the operator asked for Codex's front end, twice; the
+  first pass delivered its rendering model while leaving Butterfly's own visual identity in place,
+  which is not what was asked for. The surfaces now follow Codex's, read from its source and its
+  snapshot tests and checked against the real `codex` binary running in herdr: a rounded box card on
+  open (sized to content, `>_ butterfly`, `model:` / `directory:` / `mode:` rows), `›` as the
+  composer caret and the user-turn marker, `•` opening every agent row, tool rows as
+  `• Read    <path>` / `• Running <cmd>`, decisions as a bold question plus numbered choices with
+  `›` on the selection, and a dim status line indented two columns reading
+  `model · Context N% left · <mode> mode`. Gone: the full-width rule above the composer, the filled
+  band on user turns, the `▮▯` context meter, the `✦ ◉ ⚒ ❯` glyph set, and the screenful of
+  newlines on startup — sessions now open inline, leaving the shell's output above.
+
+  Glyph widths became measured rather than assumed. Codex draws its card with box-drawing
+  characters, which are the East Asian Ambiguous class that previously corrupted Butterfly's layout,
+  so the widths were measured in the reference terminal first: a 3/4-width run of `─`, `•`, `·` and
+  `⎯` occupies exactly the columns an ASCII run does — one per glyph. `theme::CHROME_GLYPHS` now
+  lists the chrome's own glyphs and `cell_width` returns 1 for them, which is what lets a border and
+  its content line up; everything else, above all model-written text, keeps the conservative
+  `width_cjk` budget. Adding a chrome glyph means measuring it first.
+
+  Presentation only: no prompt bytes, no approval semantics, no engine changes.
+- **Readable prose: a wrapping fix and air around sections** (2026-09-17) — a reply
+  on a 160-column terminal was a 160-column wall of text with continuations landing in column 0.
+
+  The column-0 continuations were a real wrapping bug, not a style problem. `styled_lines` breaks a
+  row and at the same moment switches from the first row's budget to the (narrower) continuation
+  budget — but it only checked the budget ONCE per character, so text carried past the break could
+  already fill the narrower budget and the row came out a column over. The terminal then wrapped the
+  row itself, and a terminal wraps to column 0, so the continuation lost the content grid and read
+  as a new item. The check is now a loop, and
+  `model_prose_never_overflows_and_keeps_its_grid` renders a reply's worth of shapes (em dashes,
+  arrows, inline code, nested bullets, long paths, headings) at six widths and asserts no row
+  exceeds any of them.
+
+  Headings also get a blank row above them even when the model wrote none.
+
+  A typographic measure cap (`MAX_MEASURE`, 96 columns) shipped alongside this and was **removed
+  the same day** — see the entry below. It is recorded here because the reasoning behind it is
+  seductive and wrong for this surface.
+
+  The no-stacked-blanks rule now also applies to the history repaint, which renders the transcript
+  raw and could otherwise reintroduce runs the commit path had stripped.
+
+  Measured on a real reply at 160 columns: widest row 95, nested bullets hanging under their own
+  text, sections separated. One residual was left unexplained here — three blank rows between the
+  end of a reply and its turn receipt — and the entry below is its cause: the composer shrinks by
+  three rows when a turn ends (the live line and the activity row both go away) and the history
+  repaint left exactly that many blanks behind.
+- **The opening card spans the terminal and re-lays out on every resize** (2026-09-17) — the card
+  sized itself to its content and stopped there, so on a wide window it sat marooned in the corner.
+  Making it span the width exposed a second, older defect: it was committed as rows composed once
+  at the startup width and stored as `Entry::Fixed`, which a narrower screen can only CLAMP. A box
+  survives clamping badly — measured in herdr at a 44-column pane, the right border was gone and an
+  ellipsis stood in its place — and widening never got the space back, because clamping cannot undo
+  itself.
+
+  `chrome::Welcome` now owns its fields and is committed as `Entry::Welcome`, joining `Tool` and
+  `Table` as an entry kept as DATA rather than as rows. `render_entry` rebuilds the card at the
+  render width, so a resize (which replays the transcript) re-lays it out. Content still truncates
+  inside the box on a narrow terminal; the frame never does.
+  `the_welcome_card_is_rebuilt_at_every_width` asserts every row fills the width exactly and ends
+  on a border glyph, at seven widths from 44 to 200.
+
+  Verified in herdr across a boot at 160 and three drags: 132 → 72 → 152 → 44 columns, border
+  intact at each. The 152 is the proof it re-lays out — before the change it could not exceed the
+  132 it was born at.
+
+- **Prose uses the whole terminal; the measure cap is rejected** (2026-09-17) — a 96-column cap on
+  prose was added that morning on the standard typographic argument: long measures are hard to read
+  because the eye loses its place on the return sweep, which is why books and newspapers stop well
+  short of the page. The user rejected it on sight — on a wide window it leaves most of the screen
+  black, and the complaint was exactly that.
+
+  The argument does not transfer. A book's measure is chosen by the typesetter because the reader
+  cannot change it; a terminal's width is chosen by the reader, every time they size the window.
+  Capping it overrides a decision they already made, and the cost is visible on every line where
+  the book's is not. Codex does not cap either — its history cells wrap to the width they are
+  given.
+
+  `render_entry` now measures `Entry::Prose` and `Entry::UserBar` against the full width.
+  `entries_rewrap_at_the_width_they_are_rendered_at` asserts prose keeps widening past 96 columns,
+  so the cap cannot come back by accident. Verified in herdr at 160 columns (a 133-column pane): a
+  committed message wraps at 128-130 columns, and no row overflows.
+
+- **The history repaint aligns on the region the composer is about to leave** (regression, dogfood
+  2026-09-17) — a message vanished the instant it was sent and only came back once the reply had
+  scrolled it clear, the tail of the conversation was missing right after a resize, and a run of
+  blank rows opened up whenever the composer shrank. One bug, three faces.
+
+  `paint` repaints the history region and then draws the composer, in that order. `fill_history`
+  bottom-aligned on `self.viewport_top` — the region the composer *currently* occupies, which at
+  that moment is still the old one. Growing, the composer then drew over the bottom of what had
+  just been written, and the bottom is the newest rows: submitting a message brings the activity
+  row in, the composer grows one row, and the message just committed is covered. A resize is the
+  same thing with a bigger delta (`reset_for_reflow` parks the viewport on the last row, so the
+  first paint moves it by the whole composer height) and lost the tail of the conversation.
+  Shrinking, it left the rows it aligned past blank: measured, an eight-row dropdown closing left
+  eight blank rows between the conversation and the composer, and the three-blank-row residual
+  noted above is the same arithmetic at a turn boundary.
+
+  `fill_history` now takes the target region as an argument and clears the union of the old and the
+  new one. The composer's own clear-what-I-gave-back pass is gone with it: once the repaint fills
+  those rows correctly, clearing them afterwards erases the fix.
+  `history_is_bottom_aligned_on_the_region_it_is_given` covers all three directions.
+
+  Verified in herdr 0.8.0 at 120x40 against binaries built with and without the change — composer
+  growth, an eight-row dropdown, a shrink back, and a 20-column narrowing — using `/help` as the
+  history source so the check costs no upstream call. A headless `Term` now swallows its writes
+  instead of sending cursor-positioning escapes to whatever terminal `cargo test` was run from.
+
+- **The history region is cleared whole, not by a computed band** (regression, dogfood 2026-09-17)
+  — the opening card appeared two and three times during a single turn, in fragments. The composer
+  changes height constantly while a turn runs (the activity row appears, the live line comes and
+  goes), and each change repaints the history region above it from the transcript. The repaint was
+  clearing a band it computed, and every rule tried for that band was wrong in a different way: by
+  length (misses where the band moved to), by the union of the old and new positions (still off by
+  the rows the composer covered while it was tall), by only the rows about to be written. Each left
+  a fragment of the previous copy stranded above the redraw.
+
+  `fill_history` now clears the whole region above the composer before drawing. There is nothing to
+  protect by being cleverer — `reset_for_reflow` already purges the entire scrollback on a resize —
+  and unlike every computed band, "clear it all" cannot be wrong. The cost is that anything on
+  screen before the session started is cleared the first time the composer changes height, which is
+  the same trade the resize path already makes.
+
+  Verified on a real turn in herdr 0.8.0: one card, one box, one prompt, with a tool call and the
+  activity row cycling throughout.
+- **@-completion offers directories, and the composer stops duplicating itself** (regression,
+  dogfood 2026-09-17) — two separate faults reported off one screenshot.
+
+  Directories were scored but never survived the top six: a directory has far more files under it
+  than siblings beside it, and files also carry the recency bonus, so `@products/butterfly` returned
+  five files and no directory, which made drilling down impossible. Up to half the list is now
+  reserved for directories (`reserve_dir_slots`) and they come first, since a directory is the
+  navigational choice; unused slots go back to files. A bare `@` offers shallow directories too.
+  Directories also take a per-segment depth penalty so the shallow `bench/` outranks the deep
+  `bench/private/__pycache__/` that matches the same prefix. Pinned by
+  `directories_keep_their_slots_against_a_crowd_of_files` and `bare_at_offers_directories_too`.
+
+  The duplicated prompt was the composer, not the input: opening the dropdown grows the block, and
+  when it shrank again the rows it gave back still held its own text. `fill_history` only repaints
+  as many rows as it has transcript for, so on a short session the old input line survived above the
+  new one. `draw_viewport` now clears the rows the composer vacates.
+- **Vertical rhythm** (dogfood 2026-09-17) — a session's scrollback was full of holes: six blank
+  rows between a command's output and the next turn, and the mode blurb repeated once per Shift+Tab
+  (six identical lines in one session). Three causes, all fixed.
+
+  The holes were the composer, not the text. Typing `/` opens the command dropdown and the block
+  jumps from 4 rows to 11; the renderer scrolled the screen to make room, pushing seven rows of
+  conversation into scrollback, and when the list narrowed to one match it handed six rows back as
+  blanks. The composer now takes and returns rows without scrolling, and `Term::fill_history`
+  repaints the region above it in place from the transcript — at a fixed width those are exactly
+  the rows already there, so nothing scrolls, nothing reaches scrollback twice, and no hole is left.
+
+  Spacing itself is decided in one place now. Blank entries come from several independent paths (a
+  table's spacers, a prose block opening, a hidden fence delimiter, a marked note, a command whose
+  output carries its own leading newline) and each used to decide for itself using a flag that only
+  tracked the previous line. `collapse_blanks` enforces the rule on every commit — never two blanks
+  in a row, never one opening a commit, never a run trailing it — and `Term::insert_history`
+  enforces it again at the one point every row reaches the terminal. Blocks carry their separator
+  BEFORE them, since trailing blanks are dropped.
+
+  The mode blurb is now shown once per mode per session rather than once per keypress: the footer
+  always names the current mode, so the sentence explaining what it gates is worth one line the
+  first time you reach that mode and is noise after that.
+
+  Measured in herdr 0.8.0: the longest blank run between content went from 6 rows to 1 in a
+  conversation. One residual, not yet explained: `/plan` still shows two blank rows above its
+  output where `/usage` shows one.
+- **A resize reflows the session** (regression, dogfood 2026-09-17) — the operator's report was
+  blunt and correct: "the front-end is not responsive, it breaks when I try to resize the window".
+  After the move to write-once scrollback, resizing re-laid the composer and left every committed
+  row at its old wrapping, which is exactly what an unresponsive UI looks like.
+
+  The fix is Codex's, and it is the part of `codex-rs/tui` I had missed: `transcript_reflow.rs` and
+  `app::resize_reflow`. Codex treats its in-memory transcript as the source of truth, **purges the
+  screen AND the scrollback** (`clear_scrollback_and_visible_screen_ansi`, i.e.
+  `CSI r · 0m · H · 2J · 3J · H`), and replays the transcript at the new width, capped at a
+  per-terminal row budget. Owning the scrollback is what lets it reflow without ever duplicating:
+  there is no overlap to subtract because nothing survives the wipe.
+
+  Butterfly now does the same — `Term::reset_for_reflow` plus a replay capped at `REFLOW_ROW_CAP`
+  (4 000 rows). Measured in herdr 0.8.0 with a 13-event drag: narrowing 118→70 re-wraps every
+  committed row to the 42-column pane, dragging back to 120 re-expands the same rows to full width,
+  and the duplication regression still reports each item exactly once with a single composer.
+
+  Accepted cost, explicitly Codex's too: anything on screen before the session started is purged by
+  the first resize.
+
+  Recorded because they look reasonable and are not — the two designs this replaced both tried to
+  keep a screen projection and subtract the terminal's reflow from it (an entry-counted window,
+  then a cursor-position probe). Each reduced the duplication without removing it, and neither
+  reflowed committed rows at all.
+- **The renderer follows Codex's history model** (2026-09-17) — committed output is written into
+  the terminal's own scrollback exactly ONCE, as pre-wrapped hard-terminated rows inside a scroll
+  region above the composer (`Term::insert_history`), and is never redrawn. The composer is the only
+  region the renderer owns. This replaced a screen-projection renderer that rebuilt the visible
+  content from the transcript on every resize; because the terminal's own reflow had already pushed
+  some of those rows into scrollback, the projection put the same paragraph on screen AND in
+  history. Two earlier attempts to keep the projection and subtract the overlap (an entry-counted
+  window, then a cursor-position probe) each reduced the damage without removing it, which is what
+  made copying Codex's model the answer rather than a preference.
+
+  Mechanism, from `codex-rs/tui/src/insert_history.rs` (Apache-2.0, reimplemented): pre-wrap each
+  row so it occupies exactly one screen line, `CSI 1;top r` to confine scrolling to the region above
+  the composer, park the cursor on that region's last row, then `\r\n` + row for each line. Hard
+  termination is what stops a later narrowing gluing consecutive rows into one logical paragraph;
+  the scroll region is what keeps the composer still.
+
+  The composer reflows too, and `Term::sync_size` clears its reflowed footprint at the instant the
+  size changes — the last moment the previous frame's row widths still describe the screen. Two
+  measured corrections: clearing at the settle instead is wrong when a terminal emits several
+  resize events per drag (herdr does), and the footprint does not end on the last screen row,
+  because a reflow keeps the CARET visible and rows below it can be pushed past the bottom edge, so
+  the clear covers `reflowed + rows_below_caret`. Either mistake strands a ghost composer.
+
+  Measured in herdr 0.8.0: narrowing 110→64 with six long items duplicates nothing (the released
+  binary `1818021` duplicated two items), leaves one composer and one rule, and widening 64→120
+  duplicates nothing. Startup, `/help`, the `@` dropdown, the Ctrl+T overlay and a 44×8 terminal all
+  render correctly; three PTY scenarios show zero rows overflowing under either ambiguous-width
+  convention.
+
+  Accepted, and the same trade Codex makes: history keeps the wrapping it was committed with, so
+  narrowing shears rows that no longer fit and widening does not re-expand them. Nothing is ever
+  drawn twice.
+- **A settled resize asks the terminal how far its reflow pushed the frame** (regression, dogfood
+  2026-09-17) — scrolling up after narrowing the window showed the same paragraphs twice: once
+  sheared at the old wrapping, once correct. Reproduced in herdr 0.8.0 and, identically, in zellij
+  0.44.3; **present in the released binary `1818021`**, so it predates the ratatui migration rather
+  than being caused by it (the two binaries' scrollback dumps were byte-identical).
+
+  Cause, in two halves. The terminal re-wraps its own screen on a narrowing and pushes whatever no
+  longer fits up into scrollback — not ours, not preventable. Then the settled resize re-projected
+  the content area from a **row count**, and a row count means something different at every width,
+  so the projection reached further back into the transcript and redrew entries the terminal had
+  just retired. Both copies then existed at once.
+
+  Fixed in two steps. The on-screen window is now counted in ENTRIES (`visible_entries` +
+  `skip_rows`), which are width-independent, so a resize re-wraps the same entries instead of
+  pulling more down. And a settled resize makes the renderer's one round trip — a cursor-position
+  report — to learn how far the reflow actually pushed the frame: the cursor tracks its logical
+  position through a reflow, so comparing its reported row against the reflow predicted from the
+  last frame's row widths gives exactly the rows that left, and those entries are retired from the
+  window. Entries are costed the way the terminal re-wrapped them (rendered at the old width,
+  charged `ceil(row / new_width)`); costing them at the old width instead retired six items where
+  three had really left, blanking the screen. A partly-pushed entry is dropped whole — a missing
+  row beats a duplicated paragraph. No DSR answer means the probe is disabled after one 2-second
+  wait and behaviour degrades to the previous one.
+
+  Measured in herdr 0.8.0 (110→64 columns, six long items): released binary duplicates items 2 and
+  3, fixed binary duplicates none; widening 60→120 re-expands the text and duplicates nothing. The
+  probe's arithmetic was validated standalone first — herdr predicted row 21 / reported 21; zellij
+  predicted 23/22/24 across 100→60→40→100 and reported 23/22/24.
+
+  Accepted limits, both confirmed by measurement: rows the terminal re-wrapped stay sheared
+  mid-word and glued into single logical lines, because scrollback is the terminal's and no escape
+  sequence rewrites it; and reserving a second column (`columns - 2`) does nothing about the
+  gluing, so it was not adopted.
+- **Ratatui renderer** (2026-09-17) — the inline TUI moved from hand-assembled escape sequences to
+  ratatui 0.30 over crossterm 0.29. A frame is now a ratatui `Buffer` covering the screen, diffed
+  against what the terminal is believed to be showing, and only the differing cells are written
+  (`crates/cli/src/tui/term.rs`, the one module that touches the terminal). Style is carried by
+  ratatui `Style` on each `Span`, so wrapping, truncating and justifying no longer re-open escape
+  state by hand — `theme::wrap_styled`/`truncate_styled`/`visible_cols` and the SGR-replay logic
+  they needed are gone, replaced by `wrap_line`/`truncate_line`/`line_cols` over `Line`. `chrome`
+  surfaces return `Vec<Line<'static>>` instead of strings; `Entry` holds `Line`s and spans;
+  `CommandResult::Output` carries composed rows. The hand-written frame builders (`full_frame`,
+  `pinned_frame`, `scrolling_frame`, `append_scrolling_block`, `put_row`, `physical_rows`, the
+  `?2026` synchronized-output wrapper and the autowrap-off guards) collapse into one
+  `ui::paint` projection plus `Term::draw`. Net: `ui.rs` lost ~550 lines of erase arithmetic.
+
+  Raw escapes survive in exactly two places, both deliberate: `theme::ansi` for the non-TTY paths
+  (`-p` runs, piped stdin, the pre-session key prompt) where no ratatui terminal exists, and the
+  OSC-0 title plus alternate-screen toggles in `term`, which ratatui's backend has no API for.
+
+  What did NOT change: the `columns - 1` layout width, the never-erase-the-screen rule (a full
+  repaint clears row-by-row with `EL`, never `ED 2`), the resize re-projection and its settle
+  delay, the `width_cjk` ambiguous-width budget, and the marker/content column grid. Ratatui's own
+  `Line::width` measures ambiguous glyphs as ONE column, so layout must use `theme::line_cols` —
+  that is now the single most load-bearing rule in the layer.
+
+  Three bugs were found and fixed during this work, all by validation rather than by review:
+
+  1. A cell diff can never reach the last column (the layout never writes it), so after narrowing
+     100 → 60 the terminal's own reflow left a column of stray glyphs down the right edge. A full
+     repaint therefore clears each row with `EL` first.
+  2. Committed output is now the ONLY thing that scrolls rows into scrollback. A block that merely
+     grows — a completion dropdown opening, the composer gaining a line — CLIPS the content under
+     it instead. Scrolling on block growth is unrecoverable (rows handed to scrollback cannot be
+     pulled back down), so typing `@crates/cli/src/tui/te` — where the match list starts wide and
+     narrows to two — permanently ate five content rows and left the composer floating mid-screen
+     above a band of blank rows. Pinned by
+     `a_taller_block_clips_content_instead_of_scrolling_it_away`.
+  3. Pre-existing, surfaced when `usage_card` gained width-budget coverage: its `session <id>`
+     header was never clamped and overflowed at 24 columns.
+
+  Verified on the real binary through a reflowing PTY harness at 40×6, 44, 60, 70, 80, 90, 100 and
+  120 columns: welcome card, `/help` commit + scroll into scrollback, narrowing, widening, a
+  five-event simulated drag, the Ctrl+T overlay, the `/model` picker, the `@` completion dropdown,
+  the tiny-terminal fallback and the first-run connect wizard all render clean, with zero rows
+  overflowing under EITHER ambiguous-width convention. Ratatui is a dependency, not a vendored fork: no harness's
+  source is copied into this tree, and no new licence obligations are incurred.
 - **Markdown tables** (2026-09-16) — pipe tables render as aligned columns with a rule under the
   header and no vertical rules (box drawing costs a third of a narrow terminal and buys nothing
   the alignment does not). A table is the one construct that cannot stream a line at a time —
@@ -370,7 +672,8 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   wrapping. Table rows were returned joined by `\n`, moving the cursor down without a carriage
   return and stranding text at the right edge. Fixed by making entries data rather than strings:
   `Entry::Tool { preview, outcome }` re-renders through `chrome::tool_line`, `Entry::Table` re-lays
-  out, `Entry::Code` hard-wraps (`theme::wrap_styled`, style replayed per row) so code is never
+  out, `Entry::Code` hard-wraps (`theme::wrap_line`; before the ratatui move this was
+  `theme::wrap_styled`, which replayed SGR state per row) so code is never
   truncated, and `Entry::Fixed` clamps. Guarded by a test that renders every variant at
   1/2/5/12/16/19/20/21/24/31/40/68/80/120 columns asserting no embedded newline and no overflow of
   the REAL width (not the 20-column layout floor).
@@ -407,7 +710,8 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   removed): multi-line input (Ctrl-J), history, word ops. Non-TTY stdin falls back to a plain
   line loop. Block-width invariant (regression, dogfood 2026-09-01): no composed block line may
   exceed the terminal width or the erase math strands stale frames in scrollback — enforced by
-  per-line budgets, a unit test, and an autowrap-off guard around the block draw.
+  per-line budgets and a unit test (plus, until the 2026-09-17 ratatui move, an autowrap-off guard
+  around the block draw; the cell renderer needs no such guard).
   `crates/cli/src/tui/`
 - **Screen takeover with a bottom-pinned input** (dogfood 2026-09-01) — entering `butterfly`
   newline-floods the old shell screen into scrollback (never erased) and pins the input block to
@@ -465,9 +769,10 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   committed, and those become real newlines in the terminal's grid: widening cannot re-join them
   (the answer keeps its old narrow column in a wide window) and narrowing shears every row against
   the new edge, continuations landing in column 0 and tables tearing mid-cell. Redrawing only the
-  block repairs neither, because the damage is in the content above it. A settled resize now calls
-  `full_frame`: erase the viewport (`ESC[2J`), refill it from the transcript re-rendered at the new
-  width, pin the block to the bottom edge. Measured on the real binary through a reflowing PTY
+  block repairs neither, because the damage is in the content above it. A settled resize now re-projects the
+  viewport from the transcript at the new width (`full_frame`; since 2026-09-17 this is
+  `ui::settle_resize` + `Term::invalidate`, which discards the belief rather than erasing the
+  screen). Measured on the real binary through a reflowing PTY
   harness — committed at 100 columns, then widened, the widest prose row was frozen at 99 columns
   (50% fill at 200 wide); it is now 94% at 140 and 100% at 200. Narrowing no longer shears at all.
 

@@ -13,7 +13,9 @@ use tokio_util::sync::CancellationToken;
 
 use crate::providers::ModelHub;
 use crate::tui::chrome;
-use crate::tui::theme::{ACCENT as CYAN, DANGER as RED, DIM, RESET};
+use crate::tui::theme::ansi::{render_lines, ACCENT as CYAN, DANGER as RED, DIM, RESET};
+use crate::tui::theme::{self as th, span};
+use ratatui::text::Line;
 
 /// Width assumed when nothing else knows better (pipes, `-p` runs). The
 /// interactive loop passes the real terminal width instead.
@@ -100,7 +102,7 @@ pub struct TerminalGate;
 /// clamp is the point: an unclamped diff line wraps at column 0 and shreds
 /// the layout of the one prompt that has to stay readable.
 pub(crate) fn render_detail(detail: &str, width: usize) -> String {
-    let mut rendered = chrome::detail_rows(detail, width).join("\n");
+    let mut rendered = render_lines(&chrome::detail_rows(detail, width));
     rendered.push('\n');
     rendered
 }
@@ -183,7 +185,7 @@ pub(crate) fn turn_status_line(
     })
 }
 
-fn usage_text(agent: &Agent, width: usize) -> String {
+fn usage_text(agent: &Agent, width: usize) -> Vec<Line<'static>> {
     let usage = agent.total_usage();
     chrome::usage_card(
         &chrome::UsageFacts {
@@ -211,8 +213,8 @@ pub enum Outcome {
 
 /// Outcome of trying `input` as a slash command.
 pub enum CommandResult {
-    /// It was a command; show this text.
-    Output(String),
+    /// It was a command; show these composed rows.
+    Output(Vec<Line<'static>>),
     /// Run the interactive provider-connect flow (TUI only).
     Connect,
     /// Open the interactive model picker (TUI; plain loops print instead).
@@ -237,35 +239,38 @@ pub async fn handle_command(
         "/connect" => CommandResult::Connect,
         "/help" => CommandResult::Output(chrome::help_card(width)),
         "/usage" => CommandResult::Output(usage_text(agent, width)),
-        "/plan" => CommandResult::Output(agent.working_state().render()),
+        "/plan" => CommandResult::Output(plain_lines(&agent.working_state().render())),
         _ if input == "/compact" || input.starts_with("/compact ") => {
             let focus = input.strip_prefix("/compact").unwrap_or("").trim();
             let focus = (!focus.is_empty()).then_some(focus);
             let cancel = CancellationToken::new();
-            CommandResult::Output(match agent.compact_now(&cancel, focus).await {
-                Ok(()) => format!(
-                    "{DIM}[compacted; ctx now {:.0}%]{RESET}",
-                    agent.utilization() * 100.0
-                ),
-                Err(error) => format!("{RED}compaction failed: {error}{RESET}"),
-            })
+            CommandResult::Output(vec![match agent.compact_now(&cancel, focus).await {
+                Ok(()) => Line::from(vec![span(
+                    format!("[compacted; ctx now {:.0}%]", agent.utilization() * 100.0),
+                    th::dim(),
+                )]),
+                Err(error) => Line::from(vec![span(
+                    format!("compaction failed: {error}"),
+                    th::danger(),
+                )]),
+            }])
         }
         _ if input == "/task" || input.starts_with("/task ") => {
             let statement = input.strip_prefix("/task").unwrap_or("").trim();
             if statement.is_empty() {
-                CommandResult::Output("usage: /task <statement>".to_string())
+                CommandResult::Output(plain_lines("usage: /task <statement>"))
             } else {
                 CommandResult::Task(statement.to_string())
             }
         }
         _ if input.starts_with("/model") => {
-            CommandResult::Output(match input.trim_start_matches("/model").trim() {
+            CommandResult::Output(vec![match input.trim_start_matches("/model").trim() {
                 "" => return CommandResult::PickModel,
                 name => switch_model(agent, name, hub),
-            })
+            }])
         }
         _ if input.starts_with('/') => {
-            CommandResult::Output(format!("unknown command: {input} (/help)"))
+            CommandResult::Output(plain_lines(&format!("unknown command: {input} (/help)")))
         }
         _ => CommandResult::NotACommand,
     }
@@ -273,22 +278,32 @@ pub async fn handle_command(
 
 /// Resolve `name`, build its provider (key lookup included), and switch the
 /// agent. Any failure leaves the session on its current model.
-pub fn switch_model(agent: &mut Agent, name: &str, hub: &ModelHub) -> String {
+pub fn switch_model(agent: &mut Agent, name: &str, hub: &ModelHub) -> Line<'static> {
     let model = match hub.resolve(name) {
         Ok(model) => model,
-        Err(error) => return format!("{RED}{error}{RESET}"),
+        Err(error) => return Line::from(vec![span(error.to_string(), th::danger())]),
     };
     let provider = match hub.build_provider(&model) {
         Ok(provider) => provider,
-        Err(error) => return format!("{RED}{error}{RESET}"),
+        Err(error) => return Line::from(vec![span(error.to_string(), th::danger())]),
     };
     agent.set_model(model.clone(), provider);
     // Model choice sticks across sessions.
     crate::state::remember_model(&model.id);
-    format!(
-        "{DIM}[model set: {} ({}); next request re-caches the prefix]{RESET}",
-        model.display_name, model.id
-    )
+    Line::from(vec![span(
+        format!(
+            "[model set: {} ({}); next request re-caches the prefix]",
+            model.display_name, model.id
+        ),
+        th::dim(),
+    )])
+}
+
+/// Unstyled rows, for command output that is plain prose.
+fn plain_lines(text: &str) -> Vec<Line<'static>> {
+    text.split('\n')
+        .map(|line| Line::from(vec![th::text(line.to_string())]))
+        .collect()
 }
 
 /// Run an autonomous task (attempts + verification) with Ctrl-C wired to the
@@ -428,8 +443,8 @@ pub async fn plain_repl(
                 );
                 continue;
             }
-            CommandResult::Output(text) => {
-                println!("{text}");
+            CommandResult::Output(lines) => {
+                println!("{}", render_lines(&lines));
                 continue;
             }
             CommandResult::NotACommand => {}

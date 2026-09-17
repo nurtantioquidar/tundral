@@ -10,9 +10,10 @@
 //! ends (a non-table line, or `flush` at the end of the stream) and comes
 //! back as one `Rendered::Table` the caller lays out at its own width.
 
-pub const BOLD: &str = "\x1b[1m";
-pub const CYAN: &str = "\x1b[36m";
-pub const RESET: &str = "\x1b[0m";
+use ratatui::style::Style;
+use ratatui::text::Line;
+
+use super::theme as th;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SpanStyle {
@@ -27,15 +28,17 @@ pub enum SpanStyle {
 }
 
 impl SpanStyle {
-    pub fn escape(self) -> &'static str {
+    /// The one mapping from a parsed markdown role to a drawn style; every
+    /// color the renderer uses comes from `theme` through here.
+    pub fn style(self) -> Style {
         match self {
-            SpanStyle::Plain => "",
-            SpanStyle::Bold => BOLD,
-            SpanStyle::Italic => "\x1b[3m",
-            SpanStyle::Code => CYAN,
-            SpanStyle::Heading => "\x1b[1m\x1b[36m",
-            SpanStyle::Marker => CYAN,
-            SpanStyle::Dim => "\x1b[2m",
+            SpanStyle::Plain => th::plain(),
+            SpanStyle::Bold => th::bold(),
+            SpanStyle::Italic => th::italic(),
+            SpanStyle::Code => th::accent(),
+            SpanStyle::Heading => th::accent_bold(),
+            SpanStyle::Marker => th::accent(),
+            SpanStyle::Dim => th::dim(),
         }
     }
 }
@@ -80,7 +83,7 @@ impl Table {
 pub enum Rendered {
     /// Pre-styled verbatim content (code); never word-wrapped so it stays
     /// byte-identical for copy-paste. Empty for hidden fence delimiters.
-    Raw(String),
+    Raw(Line<'static>),
     /// Prose: styled spans; continuation rows indent by `cont_indent` so
     /// wrapped list items hang under their own text.
     Prose {
@@ -185,10 +188,10 @@ impl MarkdownRenderer {
         if trimmed.starts_with("```") {
             self.in_fence = !self.in_fence;
             // The delimiter itself renders as a blank spacer line.
-            return Rendered::Raw(String::new());
+            return Rendered::Raw(th::blank());
         }
         if self.in_fence {
-            return Rendered::Raw(format!("{CYAN}{line}{RESET}"));
+            return Rendered::Raw(Line::from(vec![th::span(line, th::accent())]));
         }
         if trimmed.starts_with('#') {
             let level = trimmed.chars().take_while(|&c| c == '#').count();
@@ -350,10 +353,15 @@ pub fn spans_text(spans: &[Span]) -> String {
     spans.iter().map(|s| s.text.as_str()).collect()
 }
 
-/// Word-wrap styled spans into rows of at most `first_budget` /
+/// Word-wrap styled spans into lines of at most `first_budget` /
 /// `cont_budget` columns, breaking at spaces (hard-cutting single words
-/// longer than a row). Styles survive across row boundaries.
-pub fn styled_rows(spans: &[Span], first_budget: usize, cont_budget: usize) -> Vec<String> {
+/// longer than a row). Spans carry their own style, so a style simply
+/// survives a row boundary instead of having to be re-opened.
+///
+/// Widths are measured with `theme::cell_width`, not ratatui's own
+/// `Line::width`: an ambiguous-width glyph must be budgeted at two columns
+/// or the row shears on terminals that render it wide.
+pub fn styled_lines(spans: &[Span], first_budget: usize, cont_budget: usize) -> Vec<Line<'static>> {
     let chars: Vec<(char, SpanStyle)> = spans
         .iter()
         .flat_map(|s| s.text.chars().map(move |c| (c, s.style)))
@@ -364,9 +372,16 @@ pub fn styled_rows(spans: &[Span], first_budget: usize, cont_budget: usize) -> V
     let mut budget = first_budget.max(4);
     let mut last_space: Option<usize> = None;
     for &(ch, style) in &chars {
-        let w = unicode_width::UnicodeWidthChar::width(ch).unwrap_or(0);
-        if cols + w > budget && !row.is_empty() {
-            if let Some(at) = last_space {
+        let w = th::cell_width(ch);
+        // A `while`, not an `if`. Breaking a row also switches the budget from
+        // the first row's to the (narrower) continuation's, and the text
+        // carried past the break can already fill that narrower budget — so
+        // one break is not always enough. With a single check the carry plus
+        // the next character overflowed by a column, the terminal wrapped the
+        // row itself, and the continuation landed in column 0 with the content
+        // grid lost.
+        while cols + w > budget && !row.is_empty() {
+            if let Some(at) = last_space.filter(|at| *at + 1 < row.len()) {
                 let carry = row.split_off(at + 1);
                 while row.last().is_some_and(|(c, _)| *c == ' ') {
                     row.pop();
@@ -377,14 +392,11 @@ pub fn styled_rows(spans: &[Span], first_budget: usize, cont_budget: usize) -> V
                 rows.push(std::mem::take(&mut row));
             }
             budget = cont_budget.max(4);
-            cols = row
-                .iter()
-                .map(|(c, _)| unicode_width::UnicodeWidthChar::width(*c).unwrap_or(0))
-                .sum();
+            cols = row.iter().map(|(c, _)| th::cell_width(*c)).sum();
             last_space = row.iter().rposition(|(c, _)| *c == ' ');
-            if ch == ' ' && row.is_empty() {
-                continue;
-            }
+        }
+        if ch == ' ' && row.is_empty() && !rows.is_empty() {
+            continue;
         }
         if ch == ' ' {
             last_space = Some(row.len());
@@ -398,25 +410,25 @@ pub fn styled_rows(spans: &[Span], first_budget: usize, cont_budget: usize) -> V
     rows.into_iter().map(paint_row).collect()
 }
 
-fn paint_row(row: Vec<(char, SpanStyle)>) -> String {
-    let mut out = String::new();
-    let mut current = SpanStyle::Plain;
+/// Collapse a run of `(char, style)` into one line of styled spans.
+fn paint_row(row: Vec<(char, SpanStyle)>) -> Line<'static> {
+    let mut out: Vec<ratatui::text::Span<'static>> = Vec::new();
+    let mut current: Option<(SpanStyle, String)> = None;
     for (ch, style) in row {
-        if style != current {
-            if current != SpanStyle::Plain {
-                out.push_str(RESET);
+        match &mut current {
+            Some((active, buffer)) if *active == style => buffer.push(ch),
+            Some(_) => {
+                let (active, buffer) = current.take().expect("active run");
+                out.push(th::span(buffer, active.style()));
+                current = Some((style, String::from(ch)));
             }
-            if style != SpanStyle::Plain {
-                out.push_str(style.escape());
-            }
-            current = style;
+            None => current = Some((style, String::from(ch))),
         }
-        out.push(ch);
     }
-    if current != SpanStyle::Plain {
-        out.push_str(RESET);
+    if let Some((active, buffer)) = current {
+        out.push(th::span(buffer, active.style()));
     }
-    out
+    Line::from(out)
 }
 
 /// `1. text` / `12) text` list openers.
@@ -518,7 +530,7 @@ mod tests {
 
     fn plain_text(rendered: &Rendered) -> String {
         match rendered {
-            Rendered::Raw(text) => text.clone(),
+            Rendered::Raw(line) => line.to_string(),
             Rendered::Prose { spans, .. } => spans.iter().map(|s| s.text.as_str()).collect(),
             Rendered::Table(table) => table
                 .rows
@@ -586,14 +598,14 @@ mod tests {
     #[test]
     fn fences_toggle_state_hide_delimiters_and_never_wrap() {
         let mut md = MarkdownRenderer::default();
-        assert_eq!(md.one("```rust"), Rendered::Raw(String::new()));
+        assert_eq!(md.one("```rust"), Rendered::Raw(th::blank()));
         assert!(md.in_fence());
         match md.one("let **x** = 1;") {
             // Inside a fence, inline markers must NOT be interpreted.
-            Rendered::Raw(styled) => assert!(styled.contains("**x**")),
+            Rendered::Raw(styled) => assert!(styled.to_string().contains("**x**")),
             other => panic!("{other:?}"),
         }
-        assert_eq!(md.one("```"), Rendered::Raw(String::new()));
+        assert_eq!(md.one("```"), Rendered::Raw(th::blank()));
         assert!(!md.in_fence());
     }
 

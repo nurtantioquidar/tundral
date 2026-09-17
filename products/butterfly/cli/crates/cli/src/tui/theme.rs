@@ -4,34 +4,84 @@
 //! inline TUI shares the user's scrollback with everything else they run:
 //! loud color reads as noise, not as product.
 //!
+//! Style is expressed as ratatui [`Style`] and text as ratatui [`Line`]:
+//! a span carries its own style, so wrapping, truncating and justifying a
+//! line never has to re-open an escape sequence by hand. The one place raw
+//! escapes still exist is [`ansi`], for the non-TTY paths (`-p` runs, piped
+//! stdin) where no ratatui terminal is running at all.
+//!
 //! Terminal styling stays local to this crate (`packages/ui` is the web
 //! token layer and never covers the terminal).
 
+use ratatui::style::{Color, Modifier, Style};
+use ratatui::text::{Line, Span};
 use unicode_width::UnicodeWidthChar;
 
-pub const RESET: &str = "\x1b[0m";
-pub const DIM: &str = "\x1b[2m";
-pub const BOLD: &str = "\x1b[1m";
 /// The single accent: markers, selection, the prompt caret, code spans.
-pub const ACCENT: &str = "\x1b[36m";
-pub const ACCENT_BOLD: &str = "\x1b[1m\x1b[36m";
-pub const OK: &str = "\x1b[32m";
-pub const WARN: &str = "\x1b[33m";
-pub const DANGER: &str = "\x1b[31m";
+pub const ACCENT_COLOR: Color = Color::Cyan;
+
+pub fn plain() -> Style {
+    Style::new()
+}
+
+pub fn dim() -> Style {
+    Style::new().add_modifier(Modifier::DIM)
+}
+
+pub fn bold() -> Style {
+    Style::new().add_modifier(Modifier::BOLD)
+}
+
+pub fn italic() -> Style {
+    Style::new().add_modifier(Modifier::ITALIC)
+}
+
+pub fn accent() -> Style {
+    Style::new().fg(ACCENT_COLOR)
+}
+
+pub fn accent_bold() -> Style {
+    accent().add_modifier(Modifier::BOLD)
+}
+
+pub fn ok() -> Style {
+    Style::new().fg(Color::Green)
+}
+
+pub fn warn() -> Style {
+    Style::new().fg(Color::Yellow)
+}
+
+pub fn danger() -> Style {
+    Style::new().fg(Color::Red)
+}
+
 /// Subtle elevated band: dark-gray background with soft light-gray text,
 /// both forced so the contrast is gentle on any theme — deliberately NOT
 /// inverse video, which reads as harsh black-on-white.
-pub const BAND: &str = "\x1b[48;5;236m\x1b[38;5;252m";
+pub fn band() -> Style {
+    Style::new().bg(Color::Indexed(236)).fg(Color::Indexed(252))
+}
 
 /// Markers. Every one of these sits in column 0 of the two-column grid the
 /// whole surface shares (marker, space, content) so the eye can run down a
 /// single edge and tell turns, answers, tools and summaries apart.
-pub const MARK_USER: &str = "❯";
-pub const MARK_ANSWER: &str = "◉";
-pub const MARK_TOOL: &str = "⚒";
-pub const MARK_SUMMARY: &str = "▪";
-pub const MARK_SELECT: &str = "▸";
-pub const MARK_BRAND: &str = "✦";
+/// The composer caret and the marker on a user turn, Codex-style.
+pub const MARK_USER: &str = "›";
+/// Everything the agent emits — answers, tool rows, notices — opens with this.
+pub const MARK_ANSWER: &str = "•";
+pub const MARK_TOOL: &str = "•";
+pub const MARK_SUMMARY: &str = "•";
+pub const MARK_SELECT: &str = "›";
+pub const MARK_BRAND: &str = ">_";
+
+/// Rounded box, for the opening card.
+pub const BOX_TL: &str = "╭";
+pub const BOX_TR: &str = "╮";
+pub const BOX_BL: &str = "╰";
+pub const BOX_BR: &str = "╯";
+pub const BOX_H: &str = "─";
+pub const BOX_V: &str = "│";
 pub const MARK_WARN: &str = "⚠";
 pub const MARK_OK: &str = "✓";
 pub const MARK_FAIL: &str = "✗";
@@ -42,7 +92,7 @@ pub const ELLIPSIS: &str = "⋯";
 /// The separator between fields in footers, hints and receipts. `·` (U+00B7)
 /// is ambiguous-width and appeared ~29 times, so a single hint row could
 /// overflow by five columns on a terminal that renders it wide.
-pub const SEP: &str = "⋅";
+pub const SEP: &str = "·";
 /// Horizontal rule glyph. Box-drawing `─` is ambiguous-width, which made a
 /// full-width rule render at DOUBLE the terminal width and split in two.
 pub const RULE: &str = "⎯";
@@ -53,49 +103,79 @@ pub const BULLET: &str = "‣";
 /// jitter a multi-glyph frame set causes at different widths.
 pub const SPINNER: [&str; 10] = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
+// ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ width ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
 /// Display columns one character occupies, counted CONSERVATIVELY.
 ///
 /// Unicode marks a large set of characters "East Asian Ambiguous" — `·`, `—`,
 /// `…`, `●`, `─`, the arrows — and a terminal is free to render them one
-/// column wide or two. `unicode_width::width()` assumes one; Ghostty, iTerm2
-/// and others render two. Guessing low is the dangerous direction: every row
-/// containing one is then wider on screen than the layout budgeted, the
-/// terminal soft-wraps it mid-word, and the whole column grid shears. Guessing
-/// high costs a column of unused space on terminals that render narrow, which
-/// nobody can see. So `width_cjk` it is — ambiguous counts as two.
+/// column wide or two. `unicode_width::width()` assumes one, and so does
+/// ratatui's own `Line::width` and its `Buffer` cell placement; Ghostty,
+/// iTerm2 and others render two. Guessing low is the dangerous direction:
+/// every row containing one is then wider on screen than the layout
+/// budgeted, the terminal soft-wraps it mid-word, and the whole column grid
+/// shears. Guessing high costs a column of unused space on terminals that
+/// render narrow, which nobody can see. So `width_cjk` it is — ambiguous
+/// counts as two, and **layout must always measure with [`line_cols`] rather
+/// than `Line::width`.**
 ///
 /// Butterfly's OWN glyphs avoid the ambiguous set entirely (see the marker
 /// constants above and `glyphs_have_one_unambiguous_width`), so this only ever
 /// applies to text the model wrote.
 pub fn cell_width(ch: char) -> usize {
+    if CHROME_GLYPHS.contains(ch) {
+        // Butterfly's own chrome, measured in the reference terminal (herdr
+        // 0.8.0): a 3/4-width run of each of these occupies exactly as many
+        // columns as the same run of ASCII, i.e. ONE column apiece, which is
+        // also what ratatui and Codex assume. The box card only lines up if
+        // its border and its content agree, so these are measured at their
+        // real width rather than budgeted at two.
+        return 1;
+    }
     ch.width_cjk().unwrap_or(0)
 }
+
+/// The glyphs the chrome draws itself. Text the model wrote is never in here,
+/// so unknown content keeps the conservative budget.
+const CHROME_GLYPHS: &str = "›•─│╭╮╰╯·⋅⋯▮▯⇡⇣⇢✓✗⚠‣⎯…";
 
 /// Display columns a plain string occupies.
 pub fn width_of(text: &str) -> usize {
     text.chars().map(cell_width).sum()
 }
 
-/// Display columns with ANSI escape sequences stripped.
-pub fn visible_cols(line: &str) -> usize {
-    let mut cols = 0usize;
-    let mut chars = line.chars().peekable();
-    while let Some(ch) = chars.next() {
-        if ch == '\x1b' {
-            if chars.peek() == Some(&'[') {
-                chars.next();
-                for esc in chars.by_ref() {
-                    if esc.is_ascii_alphabetic() {
-                        break;
-                    }
-                }
-            }
-            continue;
-        }
-        cols += cell_width(ch);
-    }
-    cols
+/// Display columns a styled line occupies, measured conservatively.
+///
+/// Never use `Line::width()` for layout: it counts ambiguous-width glyphs as
+/// one column, which is exactly the assumption that shears the grid.
+pub fn line_cols(line: &Line<'_>) -> usize {
+    line.spans.iter().map(|span| width_of(&span.content)).sum()
 }
+
+// ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ building ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+/// A styled span that owns its text, so every composed row is `'static` and
+/// can be stored in the transcript and re-rendered at any later width.
+pub fn span(text: impl Into<String>, style: Style) -> Span<'static> {
+    Span::styled(text.into(), style)
+}
+
+/// An unstyled span.
+pub fn text(text: impl Into<String>) -> Span<'static> {
+    Span::raw(text.into())
+}
+
+/// `n` spaces, unstyled — the shared content grid's indent.
+pub fn indent(cols: usize) -> Span<'static> {
+    Span::raw(" ".repeat(cols))
+}
+
+/// An empty row.
+pub fn blank() -> Line<'static> {
+    Line::default()
+}
+
+// ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ line ops ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
 
 /// Truncate plain text to `max` columns, appending `⋯` when cut.
 pub fn truncate_cols(text: &str, max: usize) -> String {
@@ -113,41 +193,6 @@ pub fn truncate_cols(text: &str, max: usize) -> String {
         out.push(ch);
     }
     out.push_str(ELLIPSIS);
-    out
-}
-
-/// Truncate a STYLED line to `max` visible columns (escapes pass through,
-/// visible chars are counted); always ends with a reset.
-pub fn truncate_styled(line: &str, max: usize) -> String {
-    if visible_cols(line) <= max {
-        return format!("{line}{RESET}");
-    }
-    let mut out = String::new();
-    let mut cols = 0usize;
-    let mut chars = line.chars().peekable();
-    while let Some(ch) = chars.next() {
-        if ch == '\x1b' {
-            out.push(ch);
-            if chars.peek() == Some(&'[') {
-                out.push(chars.next().expect("peeked"));
-                for esc in chars.by_ref() {
-                    out.push(esc);
-                    if esc.is_ascii_alphabetic() {
-                        break;
-                    }
-                }
-            }
-            continue;
-        }
-        let w = cell_width(ch);
-        if cols + w > max.saturating_sub(1) {
-            out.push_str(ELLIPSIS);
-            break;
-        }
-        cols += w;
-        out.push(ch);
-    }
-    out.push_str(RESET);
     out
 }
 
@@ -171,58 +216,71 @@ pub fn tail_cols(text: &str, max: usize) -> String {
     format!("{ELLIPSIS}{}", chars[start..].iter().collect::<String>())
 }
 
-/// Hard-wrap a STYLED line into rows of at most `width` visible columns,
-/// re-opening the active SGR state on each continuation row. Used for
-/// verbatim content (fenced code) where clamping would silently destroy
-/// what the user asked to see — every row still obeys the width, which is
-/// what keeps the repaint's row arithmetic honest.
-pub fn wrap_styled(line: &str, width: usize) -> Vec<String> {
-    let width = width.max(1);
-    if visible_cols(line) <= width {
-        return vec![line.to_string()];
+/// Truncate a styled line to `max` visible columns, keeping each surviving
+/// span's style and marking the cut with `⋯`.
+pub fn truncate_line(line: Line<'static>, max: usize) -> Line<'static> {
+    if line_cols(&line) <= max {
+        return line;
     }
-    let mut rows = Vec::new();
-    // SGR codes seen since the last reset, replayed after each break.
-    let mut active = String::new();
-    let mut current = String::new();
+    let mut spans: Vec<Span<'static>> = Vec::new();
     let mut cols = 0usize;
-    let mut chars = line.chars().peekable();
-    while let Some(ch) = chars.next() {
-        if ch == '\x1b' {
-            let mut escape = String::from(ch);
-            if chars.peek() == Some(&'[') {
-                escape.push(chars.next().expect("peeked"));
-                for esc in chars.by_ref() {
-                    escape.push(esc);
-                    if esc.is_ascii_alphabetic() {
-                        break;
-                    }
+    let budget = max.saturating_sub(1);
+    for source in line.spans {
+        if cols >= budget {
+            break;
+        }
+        let mut kept = String::new();
+        for ch in source.content.chars() {
+            let w = cell_width(ch);
+            if cols + w > budget {
+                break;
+            }
+            cols += w;
+            kept.push(ch);
+        }
+        let full = kept.len() == source.content.len();
+        if !kept.is_empty() {
+            spans.push(Span::styled(kept, source.style));
+        }
+        if !full {
+            break;
+        }
+    }
+    spans.push(Span::raw(ELLIPSIS));
+    Line::from(spans)
+}
+
+/// Hard-wrap a styled line into rows of at most `width` columns. Used for
+/// verbatim content (fenced code) where clamping would silently destroy what
+/// the user asked to see — every row still obeys the width, which is what
+/// keeps the frame's row arithmetic honest.
+pub fn wrap_line(line: &Line<'_>, width: usize) -> Vec<Line<'static>> {
+    let width = width.max(1);
+    if line_cols(line) <= width {
+        return vec![owned(line)];
+    }
+    let mut rows: Vec<Line<'static>> = Vec::new();
+    let mut current: Vec<Span<'static>> = Vec::new();
+    let mut cols = 0usize;
+    for source in &line.spans {
+        let mut chunk = String::new();
+        for ch in source.content.chars() {
+            let w = cell_width(ch);
+            if cols + w > width {
+                if !chunk.is_empty() {
+                    current.push(Span::styled(std::mem::take(&mut chunk), source.style));
                 }
+                rows.push(Line::from(std::mem::take(&mut current)));
+                cols = 0;
             }
-            if escape == RESET {
-                active.clear();
-            } else {
-                active.push_str(&escape);
-            }
-            current.push_str(&escape);
-            continue;
+            chunk.push(ch);
+            cols += w;
         }
-        let w = cell_width(ch);
-        if cols + w > width {
-            if !active.is_empty() {
-                current.push_str(RESET);
-            }
-            rows.push(std::mem::take(&mut current));
-            current.push_str(&active);
-            cols = 0;
+        if !chunk.is_empty() {
+            current.push(Span::styled(chunk, source.style));
         }
-        current.push(ch);
-        cols += w;
     }
-    if !active.is_empty() {
-        current.push_str(RESET);
-    }
-    rows.push(current);
+    rows.push(Line::from(current));
     rows
 }
 
@@ -236,19 +294,45 @@ pub fn pad_to(text: &str, cols: usize) -> String {
     }
 }
 
+/// Pad a styled line out to `cols` columns with `style`d spaces — used by
+/// the user bar, whose background must reach the right edge.
+pub fn pad_line(mut line: Line<'static>, cols: usize, style: Style) -> Line<'static> {
+    let width = line_cols(&line);
+    if width < cols {
+        line.spans
+            .push(Span::styled(" ".repeat(cols - width), style));
+    }
+    line
+}
+
 /// Lay a styled `left` and a styled `right` out on one row of `width`
 /// columns, right-aligning `right`. When they cannot both fit, `right` is
 /// dropped — the left side is always the more important half.
-pub fn justify(left: &str, right: &str, width: usize) -> String {
-    let (lw, rw) = (visible_cols(left), visible_cols(right));
+pub fn justify(left: Line<'static>, right: Line<'static>, width: usize) -> Line<'static> {
+    let (lw, rw) = (line_cols(&left), line_cols(&right));
     if rw > 0 && lw + rw + 2 <= width {
-        format!("{left}{}{right}", " ".repeat(width - lw - rw))
+        let mut spans = left.spans;
+        spans.push(Span::raw(" ".repeat(width - lw - rw)));
+        spans.extend(right.spans);
+        Line::from(spans)
     } else {
-        truncate_styled(left, width)
+        truncate_line(left, width)
     }
 }
 
-/// A compact fill meter, e.g. `███░░░░` at 3/7. Plain text: the caller
+/// Clone a borrowed line into an owned one.
+pub fn owned(line: &Line<'_>) -> Line<'static> {
+    Line::from(
+        line.spans
+            .iter()
+            .map(|span| Span::styled(span.content.to_string(), span.style))
+            .collect::<Vec<_>>(),
+    )
+}
+
+// ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ formatting ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+/// A compact fill meter, e.g. `▮▮▮▯▯▯▯` at 3/7. Plain text: the caller
 /// colors it, because the same meter means different things in different
 /// places.
 pub fn meter(fraction: f64, cells: usize) -> String {
@@ -304,16 +388,92 @@ pub fn money(microusd: u64) -> String {
     }
 }
 
+// ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ raw escapes ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+/// Escape sequences for the paths where no ratatui terminal exists: `-p`
+/// runs, piped stdin, and the pre-session key prompt. Everything drawn by
+/// the inline TUI goes through ratatui instead, so these are the ONLY
+/// escapes the CLI writes by hand.
+pub mod ansi {
+    use ratatui::style::{Color, Modifier};
+    use ratatui::text::Line;
+
+    pub const RESET: &str = "\x1b[0m";
+    pub const DIM: &str = "\x1b[2m";
+    pub const BOLD: &str = "\x1b[1m";
+    pub const ACCENT: &str = "\x1b[36m";
+    pub const ACCENT_BOLD: &str = "\x1b[1m\x1b[36m";
+    pub const DANGER: &str = "\x1b[31m";
+
+    /// Serialize one composed line to an escape-coded string, for the plain
+    /// loops that print with `println!` instead of drawing a frame.
+    pub fn render(line: &Line<'_>) -> String {
+        let mut out = String::new();
+        for span in &line.spans {
+            let mut prefix = String::new();
+            if span.style.add_modifier.contains(Modifier::BOLD) {
+                prefix.push_str(BOLD);
+            }
+            if span.style.add_modifier.contains(Modifier::DIM) {
+                prefix.push_str(DIM);
+            }
+            if span.style.add_modifier.contains(Modifier::ITALIC) {
+                prefix.push_str("\x1b[3m");
+            }
+            if let Some(color) = span.style.fg {
+                prefix.push_str(&fg(color));
+            }
+            if let Some(color) = span.style.bg {
+                prefix.push_str(&bg(color));
+            }
+            if prefix.is_empty() {
+                out.push_str(&span.content);
+            } else {
+                out.push_str(&prefix);
+                out.push_str(&span.content);
+                out.push_str(RESET);
+            }
+        }
+        out
+    }
+
+    /// Serialize composed lines to one printable block.
+    pub fn render_lines(lines: &[Line<'_>]) -> String {
+        lines.iter().map(render).collect::<Vec<_>>().join("\n")
+    }
+
+    fn fg(color: Color) -> String {
+        match color {
+            Color::Reset => String::new(),
+            Color::Red => "\x1b[31m".to_string(),
+            Color::Green => "\x1b[32m".to_string(),
+            Color::Yellow => "\x1b[33m".to_string(),
+            Color::Cyan => "\x1b[36m".to_string(),
+            Color::Indexed(i) => format!("\x1b[38;5;{i}m"),
+            _ => String::new(),
+        }
+    }
+
+    fn bg(color: Color) -> String {
+        match color {
+            Color::Indexed(i) => format!("\x1b[48;5;{i}m"),
+            _ => String::new(),
+        }
+    }
+}
+
 /// True when a terminal is free to render `ch` either one or two columns
 /// wide (Unicode "East Asian Ambiguous"). Layout cannot be exact for these,
 /// so none of Butterfly's own glyphs may be one.
 #[cfg(test)]
-fn is_ambiguous_width(ch: char) -> bool {
+pub fn is_ambiguous_width(ch: char) -> bool {
+    use unicode_width::UnicodeWidthChar as _;
     ch.width() != ch.width_cjk()
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
 
     #[test]
     fn glyphs_have_one_unambiguous_width() {
@@ -338,6 +498,11 @@ mod tests {
         ];
         for (name, glyph) in glyphs {
             for ch in glyph.chars() {
+                // Chrome glyphs are measured, not assumed — see CHROME_GLYPHS.
+                if CHROME_GLYPHS.contains(ch) {
+                    assert_eq!(cell_width(ch), 1, "{name} must measure one column");
+                    continue;
+                }
                 assert!(
                     !is_ambiguous_width(ch),
                     "{name} is ambiguous-width: {ch:?} (U+{:04X}) renders 1 or 2 \
@@ -364,34 +529,54 @@ mod tests {
         // Model output we do not control still has to be safe: an em dash or
         // a middle dot is counted as two so a row can only ever come out
         // SHORTER than the terminal, never wider.
+        // `—` is model text: nothing measured it, so it is budgeted wide.
         assert_eq!(width_of("—"), 2);
-        assert_eq!(width_of("·"), 2);
         assert_eq!(width_of("plain"), 5);
-        // And the clamp honours that budget.
+        // `·` is chrome: measured at one column in the reference terminal, so
+        // the box card and the status line line up instead of doubling.
+        assert_eq!(width_of("·"), 1);
         let cut = truncate_cols("a — b — c — d — e", 10);
         assert!(width_of(&cut) <= 10, "{cut:?} is {} cols", width_of(&cut));
     }
-    use super::*;
+
+    /// The whole reason `line_cols` exists: ratatui measures narrow.
+    #[test]
+    fn line_cols_budgets_wider_than_ratatui_does() {
+        let line = Line::from(vec![span("a — b — c", accent())]);
+        assert_eq!(line.width(), 9, "ratatui counts ambiguous as one");
+        assert_eq!(
+            line_cols(&line),
+            11,
+            "unmeasured ambiguous glyphs must count as two"
+        );
+    }
 
     #[test]
     fn meters_fill_proportionally_and_never_overflow() {
         assert_eq!(meter(0.0, 6), "▯▯▯▯▯▯");
         assert_eq!(meter(1.0, 6), "▮▮▮▮▮▮");
         assert_eq!(meter(0.5, 6), "▮▮▮▯▯▯");
-        // Out-of-range fractions clamp instead of panicking on repeat().
         assert_eq!(width_of(&meter(9.0, 6)), 6);
         assert_eq!(width_of(&meter(-3.0, 6)), 6);
     }
 
     #[test]
     fn justify_drops_the_right_half_rather_than_overflowing() {
-        let row = justify("left", "right", 20);
-        assert_eq!(visible_cols(&row), 20);
-        assert!(row.starts_with("left") && row.ends_with("right"));
+        let row = justify(
+            Line::from(vec![text("left")]),
+            Line::from(vec![text("right")]),
+            20,
+        );
+        assert_eq!(line_cols(&row), 20);
+        assert_eq!(row.to_string(), "left           right");
         // No room for both: the left half survives, clamped to the width.
-        let row = justify("a rather long left side", "right", 12);
-        assert!(visible_cols(&row) <= 12);
-        assert!(!row.contains("right"));
+        let row = justify(
+            Line::from(vec![text("a rather long left side")]),
+            Line::from(vec![text("right")]),
+            12,
+        );
+        assert!(line_cols(&row) <= 12);
+        assert!(!row.to_string().contains("right"));
     }
 
     #[test]
@@ -418,28 +603,33 @@ mod tests {
     }
 
     #[test]
-    fn wrap_styled_keeps_every_row_inside_the_width_and_loses_nothing() {
-        let line = format!("{ACCENT}{}{RESET}", "abcdefghij".repeat(5));
-        let rows = wrap_styled(&line, 12);
+    fn wrap_line_keeps_every_row_inside_the_width_and_loses_nothing() {
+        let line = Line::from(vec![span("abcdefghij".repeat(5), accent())]);
+        let rows = wrap_line(&line, 12);
         assert!(rows.len() >= 5);
-        assert!(rows.iter().all(|row| visible_cols(row) <= 12), "{rows:?}");
-        // Nothing is dropped, and the style survives every break.
-        let joined: String = rows
-            .iter()
-            .map(|row| row.replace(ACCENT, "").replace(RESET, ""))
-            .collect();
+        assert!(rows.iter().all(|row| line_cols(row) <= 12), "{rows:?}");
+        let joined: String = rows.iter().map(|row| row.to_string()).collect();
         assert_eq!(joined, "abcdefghij".repeat(5));
-        assert!(rows[1].starts_with(ACCENT), "style lost: {:?}", rows[1]);
-        // A line that already fits is returned untouched.
-        assert_eq!(wrap_styled("short", 20), vec!["short".to_string()]);
+        // The style survives every break — spans carry it, so there is no
+        // escape state to re-open.
+        assert!(rows[1].spans.iter().all(|s| s.style == accent()));
+        let short = Line::from(vec![text("short")]);
+        assert_eq!(wrap_line(&short, 20).len(), 1);
     }
 
     #[test]
-    fn truncate_styled_counts_visible_columns_only() {
-        let styled = format!("{ACCENT}0123456789{RESET}0123456789");
-        let cut = truncate_styled(&styled, 12);
-        assert!(visible_cols(&cut) <= 12);
-        assert!(cut.contains(ELLIPSIS));
-        assert!(cut.starts_with(ACCENT));
+    fn truncate_line_counts_visible_columns_only() {
+        let line = Line::from(vec![span("0123456789", accent()), text("0123456789")]);
+        let cut = truncate_line(line, 12);
+        assert!(line_cols(&cut) <= 12);
+        assert!(cut.to_string().contains(ELLIPSIS));
+        assert_eq!(cut.spans[0].style, accent());
+    }
+
+    #[test]
+    fn ansi_render_reopens_nothing_it_did_not_open() {
+        let line = Line::from(vec![span("hot", danger()), text(" cold")]);
+        let rendered = ansi::render(&line);
+        assert_eq!(rendered, "\x1b[31mhot\x1b[0m cold");
     }
 }

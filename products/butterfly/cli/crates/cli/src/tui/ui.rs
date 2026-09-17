@@ -1,33 +1,34 @@
-//! The shared inline-TUI surface. Committed output flows into native
-//! terminal scrollback; only a small block at the bottom (live stream line,
-//! activity row, input editor, completion dropdown, footer) is redrawn in
-//! place: erase block ⇢ append output ⇢ redraw block. No alternate screen,
-//! so scrollback, copy-paste, and tmux behave normally.
+//! The shared inline-TUI surface, on the same model Codex's TUI uses.
+//!
+//! Committed output is written into the terminal's own scrollback ONCE, as
+//! pre-wrapped hard-terminated rows (`Term::insert_history`), and is never
+//! redrawn. The renderer owns exactly one region — the composer block at the
+//! bottom of the screen — and a paint re-lays only that. No alternate screen
+//! during a session, so scrollback, copy-paste and mouse selection behave
+//! normally; the Ctrl+T transcript overlay is the one sanctioned use of it.
 //!
 //! Colors and width primitives live in `theme`; every composed surface
 //! (welcome card, footer, tool rows, approval card, help) lives in
-//! `chrome`. This module owns state, layout math and input.
+//! `chrome`; all terminal I/O lives in `term`. This module owns state,
+//! layout math and input.
 
-use std::io::Write as _;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use butterfly_core::provider::StreamSink;
 use butterfly_core::session::approval::{ApprovalGate, ApprovalRequest, Decision};
 use crossterm::event::{Event, KeyCode, KeyEventKind, KeyModifiers};
+use ratatui::text::{Line, Span};
 use tokio::sync::oneshot;
 
-use super::chrome::{self, hint_row, option_row, Phase, ToolOutcome, GRID};
+use super::chrome::{self, hint_row, option_row, option_text, Phase, ToolOutcome, GRID};
 use super::completion::{active_trigger, ChoiceKind, CompletionIndex};
 use super::editor::Editor;
 use super::markdown::{self as md, MarkdownRenderer};
+use super::term::Term;
 use super::theme::{
-    self as th, tail_cols, truncate_cols, truncate_styled, visible_cols, width_of, ACCENT,
-    ACCENT_BOLD, BAND, BOLD, DANGER, DIM, RESET,
+    self as th, blank, indent, line_cols, span, tail_cols, truncate_cols, truncate_line, width_of,
 };
-
-const SYNC_BEGIN: &str = "\x1b[?2026h";
-const SYNC_END: &str = "\x1b[?2026l";
 
 const MAX_INPUT_ROWS: usize = 8;
 const MAX_DROPDOWN_ROWS: usize = 6;
@@ -37,22 +38,23 @@ const MAX_SELECT_ROWS: usize = 8;
 /// How much of a still-streaming table the block previews. Bounded so a
 /// long table cannot push the composer off a short terminal.
 const MAX_LIVE_TABLE_ROWS: usize = 6;
-/// The rule above the input spans the full width. It was once capped at 20
-/// columns because the block was found by counting cursor-relative rows, so
-/// a line that reflowed into two stranded everything above it. The frame is
-/// rebuilt absolutely now (`full_frame`) and `sync_size` stops a relative
-/// erase from ever running against a width the terminal has abandoned, so
-/// the cap bought nothing but a stunted-looking rule.
-const RULE_MAX_COLS: usize = 120;
-/// How long the resize stream must be quiet before the block is redrawn.
+/// How long the resize stream must be quiet before the frame is rebuilt.
+///
+/// Cell diffing makes a repaint cheap, but the terminal's OWN reflow during
+/// a drag is not ours to race: a frame drawn mid-drag lays out against
+/// geometry the terminal is about to change again. One drag therefore costs
+/// one redraw.
 const RESIZE_SETTLE: std::time::Duration = std::time::Duration::from_millis(180);
 const TRANSCRIPT_CAP: usize = 10_000;
-const ALT_SCREEN_ENTER: &str = "\x1b[?1049h\x1b[?25l";
-const ALT_SCREEN_LEAVE: &str = "\x1b[?1049l\x1b[?25h";
-/// Terminal title, set once on entry. Shells reset it at their next prompt.
-const TITLE: &str = "\x1b]0;butterfly\x07";
+/// Rows replayed into scrollback when a resize reflows the session. Past this
+/// the terminal is dropping them anyway, and a window drag must not get slower
+/// the longer the session has run.
+const REFLOW_ROW_CAP: usize = 4_000;
+/// Below this there is no room for the marker grid and the layout
+/// arithmetic stops meaning anything; rows composed against the floor are
+/// clamped to the width that actually exists.
+const MIN_LAYOUT_COLS: usize = 20;
 
-/// What a handled input event means for the session loop.
 /// A finished tool call, kept beside its preview so the row can be
 /// re-composed at any width.
 #[derive(Clone, Debug, PartialEq)]
@@ -77,6 +79,7 @@ impl ToolRecord {
     }
 }
 
+/// What a handled input event means for the session loop.
 pub enum UiAction {
     Submit(String),
     /// Shift+Tab: advance the permission mode (ask ⇢ auto ⇢ read-only).
@@ -148,7 +151,7 @@ struct Connect {
 /// chosen index, or None on cancel.
 struct Select {
     title: String,
-    items: Vec<String>,
+    items: Vec<Line<'static>>,
     selected: usize,
     responder: oneshot::Sender<Option<usize>>,
 }
@@ -171,43 +174,29 @@ struct Activity {
     out_bytes: u64,
 }
 
-/// Where the block lives on screen. A session starts `Pinned`: the screen is
-/// taken over (old shell content scrolls into scrollback), content flows
-/// from the top, and the block sits at the bottom edge ‒ Claude Code style.
-/// Once content grows enough to meet the block, painting hands off to
-/// `Scrolling`: the block rides directly under the content and the terminal
-/// scrolls naturally, preserving scrollback. The handoff is one-way.
-#[derive(Clone, Copy, PartialEq, Debug)]
-enum Place {
-    Pinned {
-        /// Next free 1-based screen row for committed output.
-        content_row: usize,
-        /// Top row of the block at last draw (for erasing before redraw).
-        prev_block_top: usize,
-    },
-    Scrolling,
-}
-
 /// One logical transcript entry. Entries render to physical rows at a GIVEN
-/// width, so the visible screen can be re-wrapped from source on resize
-/// (Codex-tidy) and the Ctrl+T overlay wraps instead of truncating.
+/// width, so the visible screen can be re-wrapped from source on resize and
+/// the Ctrl+T overlay wraps instead of truncating.
 ///
-/// The contract every variant owes `render_entry`: **no returned row may be
-/// wider than the width it was rendered at**. The repaint counts one screen
-/// row per returned string and draws with autowrap off, so an overlong row
-/// does not wrap ‒ it overwrites the last column and strands garbage, which
-/// is exactly what a terminal resize used to produce.
+/// The contract every variant owes `render_entry`: **one returned `Line` is
+/// exactly one screen row, and it fits the width it was rendered at**. The
+/// frame places one line per screen row, so an overlong row would be
+/// silently cut by the buffer and a row carrying a newline would corrupt the
+/// grid. Entries are therefore kept as DATA (preview + outcome, parsed
+/// table, spans), never as pre-rendered rows — except `Fixed`, which is a
+/// row already composed at some width and is clamped when the screen is
+/// narrower.
 #[derive(Clone, Debug, PartialEq)]
 enum Entry {
     Blank,
-    /// A row already composed by `chrome` at some width (cards, notes,
-    /// decision echoes). Right-aligned content means re-wrapping would be
-    /// wrong, so a narrower screen clamps it.
-    Fixed(String),
+    /// A row already composed by `chrome` (cards, notes, decision echoes).
+    /// Right-aligned content means re-wrapping would be wrong, so a
+    /// narrower screen clamps it.
+    Fixed(Line<'static>),
     /// Verbatim content from a fence. Clamping would destroy code, so this
     /// hard-wraps instead ‒ nothing is lost at any width.
-    Code(String),
-    /// A tool call kept as DATA, not as a string, so it re-composes at
+    Code(Line<'static>),
+    /// A tool call kept as DATA, not as a row, so it re-composes at
     /// whatever width the screen is now.
     Tool {
         preview: String,
@@ -215,8 +204,12 @@ enum Entry {
     },
     /// A parsed table, laid out at the render width.
     Table(md::Table),
+    /// The opening card, kept as data for the same reason `Tool` is: it is a
+    /// box, and a box that can only be clamped loses its right border the
+    /// first time the window narrows.
+    Welcome(chrome::Welcome),
     /// The user's whole prompt (may span lines), drawn as a highlighted bar
-    /// with the ❯ marker on the first row only (Codex-style).
+    /// with the ❯ marker on the first row only.
     UserBar(String),
     /// Re-wrappable prose. `marker` is the glyph for column 0 of the first
     /// row ‒ `◉` opens an answer, `▪` closes a turn, `None` is a
@@ -229,36 +222,30 @@ enum Entry {
 }
 
 /// Render one entry to physical rows at `width` columns.
-///
-/// Layout math has a 20-column floor ‒ below that there is no room for the
-/// marker grid, and the arithmetic stops meaning anything. A terminal really
-/// can be narrower than that, though, and the contract above says no row may
-/// exceed the width it was rendered at, so rows laid out against the floor
-/// are clamped to the width that actually exists.
-fn render_entry(entry: &Entry, width: usize) -> Vec<String> {
-    let rows = render_entry_floored(entry, width.max(20));
-    if width >= 20 {
+fn render_entry(entry: &Entry, width: usize) -> Vec<Line<'static>> {
+    let rows = render_entry_floored(entry, width.max(MIN_LAYOUT_COLS));
+    if width >= MIN_LAYOUT_COLS {
         return rows;
     }
     rows.into_iter()
-        .map(|row| truncate_styled(&row, width))
+        .map(|row| truncate_line(row, width))
         .collect()
 }
 
-fn render_entry_floored(entry: &Entry, width: usize) -> Vec<String> {
+fn render_entry_floored(entry: &Entry, width: usize) -> Vec<Line<'static>> {
     match entry {
-        Entry::Blank => vec![String::new()],
-        Entry::Fixed(line) => vec![if visible_cols(line) <= width {
-            line.clone()
-        } else {
-            truncate_styled(line, width)
-        }],
+        Entry::Blank => vec![blank()],
+        Entry::Fixed(line) => vec![truncate_line(line.clone(), width)],
         // Code keeps the shared 2-column grid on every row, wrapped rows
         // included ‒ a continuation starting at column 0 reads as the
         // terminal having mangled the block.
-        Entry::Code(line) => th::wrap_styled(line, width.saturating_sub(GRID))
+        Entry::Code(line) => th::wrap_line(line, width.saturating_sub(GRID))
             .into_iter()
-            .map(|row| format!("{}{row}", " ".repeat(GRID)))
+            .map(|row| {
+                let mut spans = vec![indent(GRID)];
+                spans.extend(row.spans);
+                Line::from(spans)
+            })
             .collect(),
         Entry::Tool { preview, outcome } => vec![chrome::tool_line(
             preview,
@@ -266,32 +253,42 @@ fn render_entry_floored(entry: &Entry, width: usize) -> Vec<String> {
             width,
         )],
         Entry::Table(table) => chrome::table_rows(table, width),
+        Entry::Welcome(info) => chrome::welcome(info, width),
         Entry::UserBar(text) => {
-            let mut rendered = Vec::new();
+            let measure = width;
+            let mut rendered: Vec<Line<'static>> = Vec::new();
             for line in text.trim_end_matches('\n').split('\n') {
                 if line.is_empty() {
-                    rendered.push(String::new());
+                    rendered.push(blank());
                     continue;
                 }
                 let spans = vec![md::Span {
                     style: md::SpanStyle::Plain,
                     text: line.to_string(),
                 }];
-                rendered.extend(md::styled_rows(
+                rendered.extend(md::styled_lines(
                     &spans,
-                    width.saturating_sub(3),
-                    width.saturating_sub(3),
+                    measure.saturating_sub(GRID),
+                    measure.saturating_sub(GRID),
                 ));
             }
-            // Same vertical grid as every other element: marker in column 0,
-            // content in column 2 (❯/◉/⚒/▪ all line up).
+            // Codex marks a user turn with a dim caret and nothing else — no
+            // filled band. The marker sits in column 0, content in column 2,
+            // the same grid everything else uses.
             rendered
                 .into_iter()
                 .enumerate()
-                .map(|(i, row)| {
-                    let prefix = if i == 0 { "❯ " } else { "  " };
-                    let pad = width.saturating_sub(visible_cols(&row) + 2);
-                    format!("{BAND}{prefix}{row}{}{RESET}", " ".repeat(pad))
+                .map(|(i, line)| {
+                    let mut spans = if i == 0 {
+                        vec![span(
+                            format!("{} ", th::MARK_USER),
+                            th::dim().add_modifier(ratatui::style::Modifier::BOLD),
+                        )]
+                    } else {
+                        vec![indent(GRID)]
+                    };
+                    spans.extend(line.spans);
+                    Line::from(spans)
                 })
                 .collect()
         }
@@ -300,26 +297,35 @@ fn render_entry_floored(entry: &Entry, width: usize) -> Vec<String> {
             spans,
             cont_indent,
         } => {
-            let rows = md::styled_rows(
+            // Prose uses the WHOLE terminal, as Codex does. A typographic
+            // measure cap was tried here and the user rejected it on sight:
+            // on a wide window it leaves most of the screen black, and a
+            // terminal is not a book — the reader chose that width.
+            let measure = width;
+            let rows = md::styled_lines(
                 spans,
-                width.saturating_sub(GRID),
-                width.saturating_sub(GRID + cont_indent),
+                measure.saturating_sub(GRID),
+                measure.saturating_sub(GRID + cont_indent),
             );
-            let cont_prefix = format!("{}{}", " ".repeat(GRID), " ".repeat(*cont_indent));
-            let head = match marker {
+            let head: Vec<Span<'static>> = match marker {
                 // The answer marker carries the accent, the same one the
                 // prompt caret uses; everything else stays quiet.
                 Some(glyph) if *glyph == th::MARK_ANSWER => {
-                    format!("{ACCENT}{glyph}{RESET} ")
+                    vec![span(*glyph, th::accent()), indent(1)]
                 }
-                Some(glyph) => format!("{DIM}{glyph}{RESET} "),
-                None => " ".repeat(GRID),
+                Some(glyph) => vec![span(*glyph, th::dim()), indent(1)],
+                None => vec![indent(GRID)],
             };
             rows.into_iter()
                 .enumerate()
                 .map(|(i, row)| {
-                    let prefix = if i == 0 { &head } else { &cont_prefix };
-                    format!("{prefix}{row}")
+                    let mut out = if i == 0 {
+                        head.clone()
+                    } else {
+                        vec![indent(GRID + cont_indent)]
+                    };
+                    out.extend(row.spans);
+                    Line::from(out)
                 })
                 .collect()
         }
@@ -327,9 +333,7 @@ fn render_entry_floored(entry: &Entry, width: usize) -> Vec<String> {
 }
 
 struct UiInner {
-    width: usize,
-    height: usize,
-    place: Place,
+    term: Term,
     editor: Editor,
     index: CompletionIndex,
     dropdown: Option<Dropdown>,
@@ -346,112 +350,45 @@ struct UiInner {
     /// Whether the last committed scrollback line was blank (vertical
     /// rhythm: a new `◉` block inserts a spacer when it wasn't).
     last_blank: bool,
-    /// Stream reasoning to the screen. Off by default, Codex-style; Ctrl+R
-    /// toggles live. Hidden reasoning is still recorded in the transcript.
+    /// Stream reasoning to the screen. Off by default; Ctrl+R toggles live.
+    /// Hidden reasoning is still recorded in the transcript.
     show_reasoning: bool,
     /// Partial reasoning line buffered while reasoning is hidden.
     hidden_reasoning: String,
     /// Everything committed to scrollback (plus hidden reasoning), as
     /// logical entries re-renderable at any width: backs the Ctrl+T overlay
-    /// and the full-screen re-wrap on resize. The bool marks whether the
-    /// entry was drawn on the main screen (hidden reasoning is not ‒ the
-    /// resize repaint must not resurrect it). Capped ring.
-    transcript: std::collections::VecDeque<(bool, Entry)>,
+    /// and the re-wrap on resize. The bool marks whether the entry was drawn
+    /// on the main screen (hidden reasoning is not ‒ the resize repaint must
+    /// not resurrect it). Capped ring.
+    transcript: std::collections::VecDeque<Entry>,
     /// Ctrl+T transcript overlay: Some(scroll offset from the tail). While
     /// open, committed output is queued and flushed on close.
     overlay: Option<usize>,
     pending_output: Vec<Entry>,
-    /// Scrolling mode only: the cursor's row within the block at last draw ‒
-    /// MoveUp(cursor_row) reaches the block's top line for erase-and-redraw.
-    cursor_row: usize,
-    /// A resize arrived and has not been settled yet. Held until the event
-    /// stream goes quiet so one window drag costs one redraw.
+    /// A resize arrived and has not been settled yet.
     resize_pending: bool,
     /// When the most recent resize event arrived. A window drag emits one
-    /// per pixel step, so the redraw waits for the stream to go quiet ‒
-    /// each intermediate redraw would erase the block with geometry the
-    /// terminal has already re-wrapped, and those stale rows accumulate.
+    /// per pixel step, so the redraw waits for the stream to go quiet.
     resize_at: Option<Instant>,
-    trace: Option<Trace>,
-}
-
-/// Byte-level trace of everything the TUI writes, plus the size it believes
-/// the terminal to be at each resize. Enabled with `BUTTERFLY_TUI_TRACE=<path>`.
-///
-/// It exists because the obvious way to capture a session ‒ `script` ‒ does
-/// NOT propagate window resizes to the process it wraps (verified on macOS:
-/// the inner process keeps seeing the original size), so a `script` recording
-/// is silent about exactly the behaviour a resize bug lives in. Tracing from
-/// inside records the real byte stream AND what the CLI thought the geometry
-/// was, with no wrapper in the way.
-struct Trace(std::fs::File);
-
-impl Trace {
-    fn open() -> Option<Self> {
-        let path = std::env::var("BUTTERFLY_TUI_TRACE").ok()?;
-        std::fs::File::create(path).ok().map(Trace)
-    }
-
-    fn write(&mut self, bytes: &[u8]) {
-        let _ = std::io::Write::write_all(&mut self.0, bytes);
-    }
-
-    /// Side-channel note, as an APC string: ignorable by any terminal, so a
-    /// trace stays replayable byte-for-byte.
-    fn note(&mut self, note: &str) {
-        self.write(format!("\x1b_bf;{note}\x1b\\").as_bytes());
-    }
 }
 
 pub struct Ui {
     inner: Mutex<UiInner>,
 }
 
-/// The width the layout may use: one column fewer than the terminal has.
-///
-/// Writing the last column is the one thing terminals disagree about. xterm
-/// parks the cursor in a "pending wrap" state; zellij goes further and, when
-/// the next output lands on the following row, records the two rows as ONE
-/// logical line — which it then re-wraps together on the next resize. That
-/// is how a full-width rule, the input line and the footer became a single
-/// paragraph after a second narrowing (measured against zellij 0.44.3: a
-/// 40-column row followed by CUP to the next row joins; a 39-column row does
-/// not). Never touching the last column sidesteps every variant of it.
-fn usable_width(columns: usize) -> usize {
-    columns.saturating_sub(1)
-}
-
-/// `CR` + `EL 2`: return to column 0 and clear the row before writing it.
-///
-/// This is not cosmetic. zellij re-wraps rows when a pane narrows and marks
-/// the continuation rows as part of one logical line; `ED` (erase display)
-/// clears their cells but keeps that mark, so a row later written there with
-/// `\r\n` is glued onto the row above and re-wrapped with it on the next
-/// resize — which is how the rule, the input line and the footer ended up as
-/// one paragraph. `EL` resets the mark. Measured against zellij 0.44.3.
-const CLEAR_ROW: &str = "\r\x1b[2K";
-
-/// Write `row` at absolute screen row `r` (1-based), clearing it first.
-fn put_row(buf: &mut String, r: usize, row: &str) {
-    buf.push_str(&format!("\x1b[{r};1H\x1b[2K"));
-    buf.push_str(row);
-}
-
-/// Physical terminal rows one committed output line occupies after wrapping.
-fn physical_rows(line: &str, width: usize) -> usize {
-    let cols = visible_cols(line);
-    if width == 0 || cols == 0 {
-        1
-    } else {
-        cols.div_ceil(width)
-    }
-}
-
 impl UiInner {
+    fn width(&self) -> usize {
+        self.term.size().0.max(MIN_LAYOUT_COLS)
+    }
+
+    fn height(&self) -> usize {
+        self.term.size().1.max(4)
+    }
+
     /// The terminal cursor is hidden while a selector owns the block (there
     /// is nothing to type at); it shows for the editor and key entry.
-    fn cursor_escape(&self) -> &'static str {
-        let selecting = self.menu.is_some()
+    fn selecting(&self) -> bool {
+        self.menu.is_some()
             || self.select.is_some()
             || matches!(
                 &self.connect,
@@ -459,22 +396,17 @@ impl UiInner {
                     stage: ConnectStage::Provider { .. },
                     ..
                 })
-            );
-        if selecting {
-            "\x1b[?25l"
-        } else {
-            "\x1b[?25h"
-        }
+            )
     }
 
-    /// Compose the block: (styled lines, cursor row, cursor column).
+    /// Compose the block: (rows, cursor row, cursor column).
     ///
     /// Vertical order is fixed so the eye always finds the same thing in the
     /// same place: live stream, activity, rule, input (or whichever selector
     /// owns the block), dropdown, footer.
-    fn compose_block(&self) -> (Vec<String>, usize, usize) {
-        let width = self.width.max(20);
-        let mut lines: Vec<String> = Vec::new();
+    fn compose_block(&self) -> (Vec<Line<'static>>, usize, usize) {
+        let width = self.width();
+        let mut lines: Vec<Line<'static>> = Vec::new();
         // A table buffers until it ends, so without this the screen would
         // sit blank for however long the model takes to stream one. Show it
         // growing in the block ‒ the region that is redrawn in place ‒ and
@@ -483,23 +415,25 @@ impl UiInner {
             let rows = chrome::table_rows(table, width);
             let shown = rows.len().min(MAX_LIVE_TABLE_ROWS);
             if rows.len() > shown {
-                lines.push(format!("{DIM}  ⋮{RESET}"));
+                lines.push(Line::from(vec![indent(GRID), span("⋮", th::dim())]));
             }
             for row in &rows[rows.len() - shown..] {
-                lines.push(truncate_styled(row, width));
+                lines.push(truncate_line(row.clone(), width));
             }
         } else if let Some(live) = &self.live {
             // The 2-column block marker/indent counts against the width
-            // budget: a block line wider than the terminal wraps to two
-            // physical rows and corrupts the erase math (stranded frames).
+            // budget: a block line wider than the terminal would be cut by
+            // the frame instead of clamped where the layout intended.
             let plain = tail_cols(&live.text, width);
             let prefixed = tail_cols(&live.text, width.saturating_sub(GRID));
             lines.push(match live.kind {
-                LiveKind::Reasoning => format!("{DIM}{plain}{RESET}"),
-                LiveKind::Text if self.text_block_start => {
-                    format!("{ACCENT}{}{RESET} {prefixed}", th::MARK_ANSWER)
-                }
-                LiveKind::Text => format!("  {prefixed}"),
+                LiveKind::Reasoning => Line::from(vec![span(plain, th::dim())]),
+                LiveKind::Text if self.text_block_start => Line::from(vec![
+                    span(th::MARK_ANSWER, th::accent()),
+                    indent(1),
+                    th::text(prefixed),
+                ]),
+                LiveKind::Text => Line::from(vec![indent(GRID), th::text(prefixed)]),
                 LiveKind::Tool => chrome::tool_line(&live.text, None, width),
             });
         }
@@ -512,45 +446,45 @@ impl UiInner {
                 width,
             ));
         }
-        // Deliberately SHORT, and never wider than the narrowest terminal
-        // we clamp to. Every block line above the cursor must be unable to
-        // wrap: a resize erases the block by moving up the cursor row
-        // recorded at the last draw, and a terminal that reflows on resize
-        // (Ghostty, kitty, iTerm2, Terminal.app) turns a full-width line
-        // into two rows ‒ putting the block's top out of the erase's reach
-        // and stranding it on screen. A full-bleed rule was also the
-        // heaviest thing in the composer; a short one reads as the start of
-        // the input rather than a wall.
-        lines.push(format!(
-            "{DIM}{}{RESET}",
-            th::RULE.repeat(RULE_MAX_COLS.min(width))
-        ));
+        // No rule above the composer: Codex separates it with a blank row,
+        // which reads as air rather than as a wall.
+        lines.push(blank());
         let cursor_row;
         let cursor_col;
         if let Some(connect) = &self.connect {
             match &connect.stage {
                 ConnectStage::Provider { selected } => {
-                    lines.push(format!("{ACCENT_BOLD}connect a provider{RESET}"));
+                    lines.push(Line::from(vec![span(
+                        "connect a provider",
+                        th::accent_bold(),
+                    )]));
                     for (i, (_, label, connected)) in connect.providers.iter().enumerate() {
                         let hint = if *connected { "key already saved" } else { "" };
-                        lines.push(option_row(label, hint, i == *selected, width));
+                        lines.push(option_text(label, hint, i == *selected, width));
                     }
                     lines.push(hint_row("enter continue", "esc cancel", width));
                     cursor_row = lines.len().saturating_sub(1);
                     cursor_col = 0;
                 }
                 ConnectStage::Key { buffer } => {
-                    lines.push(format!("{ACCENT_BOLD}paste your API key{RESET}"));
+                    lines.push(Line::from(vec![span(
+                        "paste your API key",
+                        th::accent_bold(),
+                    )]));
                     let masked = if buffer.is_empty() {
                         String::new()
                     } else {
                         super::connect::masked(buffer.chars().count())
                     };
                     let masked = tail_cols(&masked, width.saturating_sub(4));
-                    lines.push(format!("{ACCENT}{}{RESET} {masked}", th::MARK_USER));
+                    lines.push(Line::from(vec![
+                        span(th::MARK_USER, th::accent()),
+                        indent(1),
+                        th::text(masked.clone()),
+                    ]));
                     lines.push(hint_row(
                         "input is masked and never stored in history",
-                        "enter save ⋅ esc back",
+                        &format!("enter save {} esc back", th::SEP),
                         width,
                     ));
                     cursor_row = lines.len().saturating_sub(2);
@@ -558,14 +492,17 @@ impl UiInner {
                 }
             }
         } else if let Some(select) = &self.select {
-            lines.push(format!("{ACCENT_BOLD}{}{RESET}", select.title));
+            lines.push(Line::from(vec![span(
+                select.title.clone(),
+                th::accent_bold(),
+            )]));
             let rows = MAX_SELECT_ROWS.min(select.items.len());
             let first = select
                 .selected
                 .saturating_sub(rows.saturating_sub(1))
                 .min(select.items.len().saturating_sub(rows));
             for (i, item) in select.items.iter().enumerate().skip(first).take(rows) {
-                lines.push(option_row(item, "", i == select.selected, width));
+                lines.push(option_row(item.clone(), "", i == select.selected, width));
             }
             let left = if select.items.len() > rows {
                 format!("{} of {}", select.selected + 1, select.items.len())
@@ -574,24 +511,26 @@ impl UiInner {
             };
             lines.push(hint_row(
                 &left,
-                "⇡⇣ move ⋅ enter select ⋅ esc cancel",
+                &format!("⇡⇣ move {} enter select {} esc cancel", th::SEP, th::SEP),
                 width,
             ));
             cursor_row = lines.len().saturating_sub(1);
             cursor_col = 0;
         } else if let Some(menu) = &self.menu {
-            lines.push(truncate_styled(
-                &format!("{}{BOLD}{}?{RESET}", " ".repeat(GRID), menu.subject),
+            lines.push(truncate_line(
+                Line::from(vec![indent(GRID), span(menu.subject.clone(), th::bold())]),
                 width,
             ));
             for (i, (label, key, _)) in MENU.iter().enumerate() {
-                lines.push(option_row(
+                lines.push(chrome::numbered_row(
+                    i,
                     label,
                     &key.to_string(),
                     i == menu.selected,
                     width,
                 ));
             }
+            lines.push(hint_row("", "enter to confirm · esc to cancel", width));
             cursor_row = lines.len().saturating_sub(1);
             cursor_col = 0;
         } else {
@@ -603,12 +542,13 @@ impl UiInner {
         if let Some(dropdown) = &self.dropdown {
             lines.extend(self.compose_dropdown(dropdown, width));
         }
+        lines.push(blank());
         lines.push(self.compose_status(width));
         (lines, cursor_row, cursor_col)
     }
 
     /// Completion rows plus, when the list is cut short, what it left out.
-    fn compose_dropdown(&self, dropdown: &Dropdown, width: usize) -> Vec<String> {
+    fn compose_dropdown(&self, dropdown: &Dropdown, width: usize) -> Vec<Line<'static>> {
         // Row budget: 2 prefix cols + label + 2 + hint ≤ width. Wide
         // terminals reserve ~24 cols for the hint; narrow ones give the
         // label everything and drop the hint.
@@ -626,7 +566,7 @@ impl UiInner {
             .collect();
         // Hints start at one shared column so the eye reads two columns.
         let label_col = labels.iter().map(|l| width_of(l)).max().unwrap_or(0);
-        let mut rows: Vec<String> = Vec::new();
+        let mut rows: Vec<Line<'static>> = Vec::new();
         for (i, choice) in dropdown.choices.iter().take(shown).enumerate() {
             let hint_budget = width.saturating_sub(GRID + label_col + 2);
             let hint = if choice.hint.is_empty() || hint_budget < 4 {
@@ -642,12 +582,18 @@ impl UiInner {
             ));
         }
         if dropdown.total > shown {
-            rows.push(truncate_styled(
-                &format!(
-                    "{}{DIM}+{} more ⋅ keep typing to narrow{RESET}",
-                    " ".repeat(GRID),
-                    dropdown.total - shown,
-                ),
+            rows.push(truncate_line(
+                Line::from(vec![
+                    indent(GRID),
+                    span(
+                        format!(
+                            "+{} more {} keep typing to narrow",
+                            dropdown.total - shown,
+                            th::SEP
+                        ),
+                        th::dim(),
+                    ),
+                ]),
                 width,
             ));
         }
@@ -655,9 +601,8 @@ impl UiInner {
     }
 
     /// Wrapped input rows plus the cursor's (row, column) within them.
-    fn compose_input(&self, width: usize) -> (Vec<String>, usize, usize) {
-        let prompt = format!("{ACCENT}{}{RESET} ", th::MARK_USER);
-        let continuation = "  ";
+    fn compose_input(&self, width: usize) -> (Vec<Line<'static>>, usize, usize) {
+        let prompt = || vec![span(th::MARK_USER, th::accent()), indent(1)];
         let avail = width.saturating_sub(2).max(10);
         let text = self.editor.text();
         if text.is_empty() {
@@ -672,27 +617,17 @@ impl UiInner {
                     "steer ‒ your message lands at the next turn boundary",
                     "steer the turn",
                 ),
-                None => (
-                    "ask anything ⋅ @ for a file ⋅ / for commands",
-                    "ask anything",
-                ),
+                None => ("Ask Butterfly to do anything", "Ask Butterfly"),
             };
-            // The placeholder is a block line like any other: an unclamped
-            // one is what the width invariant exists to prevent.
             let budget = width.saturating_sub(GRID);
             let hint = if width_of(hint) <= budget {
                 hint
             } else {
                 short
             };
-            return (
-                vec![format!(
-                    "{prompt}{DIM}{}{RESET}",
-                    truncate_cols(hint, budget)
-                )],
-                0,
-                2,
-            );
+            let mut spans = prompt();
+            spans.push(span(truncate_cols(hint, budget), th::dim()));
+            return (vec![Line::from(spans)], 0, 2);
         }
         // Wrap each logical line to `avail` columns, tracking byte offsets so
         // the cursor lands on the right visual cell.
@@ -731,17 +666,19 @@ impl UiInner {
         } else {
             0
         };
-        let visible: Vec<String> = rows
+        let visible: Vec<Line<'static>> = rows
             .iter()
             .skip(start)
             .take(MAX_INPUT_ROWS)
             .enumerate()
             .map(|(i, row)| {
-                if start + i == 0 {
-                    format!("{prompt}{row}")
+                let mut spans = if start + i == 0 {
+                    prompt()
                 } else {
-                    format!("{continuation}{row}")
-                }
+                    vec![indent(GRID)]
+                };
+                spans.push(th::text(row.clone()));
+                Line::from(spans)
             })
             .collect();
         (visible, cursor_row - start, cursor_col)
@@ -750,7 +687,7 @@ impl UiInner {
     /// The footer: identity, context pressure and spend on the left, the
     /// permission mode on the right. It carries the running totals so the
     /// per-turn summary above can stay short.
-    fn compose_status(&self, width: usize) -> String {
+    fn compose_status(&self, width: usize) -> Line<'static> {
         chrome::footer(
             &chrome::Footer {
                 model_id: &self.status.model,
@@ -763,139 +700,206 @@ impl UiInner {
         )
     }
 
-    /// Commit pre-styled output lines (recorded as Fixed/Blank entries) and
-    /// redraw.
-    fn paint(&mut self, output: Option<&str>) {
-        match output {
-            Some(output) => {
-                let entries: Vec<Entry> = output
-                    .split('\n')
-                    .map(|line| {
-                        if visible_cols(line) == 0 {
-                            Entry::Blank
-                        } else {
-                            Entry::Fixed(line.to_string())
-                        }
-                    })
-                    .collect();
-                self.commit_entries(entries);
-            }
-            None => {
-                if self.overlay.is_some() {
-                    self.draw_overlay();
-                } else if !self.resize_pending {
-                    // Mid-drag: the screen is about to be re-wrapped again,
-                    // and redrawing now would erase the block using
-                    // geometry that no longer holds. `tick` settles it once
-                    // the drag stops.
-                    self.paint_screen(None);
-                }
-            }
+    /// Append an entry to the transcript ring.
+    ///
+    /// The ring backs the Ctrl+T overlay and nothing else: what is on screen
+    /// belongs to the terminal's scrollback the moment it is committed, so
+    /// there is no projection for this to feed. Reasoning the stream hides is
+    /// recorded here too, which is why the overlay can show it.
+    fn record(&mut self, entry: Entry) {
+        if self.transcript.len() >= TRANSCRIPT_CAP {
+            self.transcript.pop_front();
         }
+        self.transcript.push_back(entry);
     }
 
-    /// Commit logical entries: record them into the transcript ring, then
-    /// render at the current width and draw. While the Ctrl+T overlay is
-    /// open, entries queue and the overlay refreshes instead of touching the
-    /// main screen.
+    /// Enforce the vertical rhythm in ONE place: never two blank rows in a
+    /// row, never a blank row opening a commit, never a run of them trailing
+    /// it.
+    ///
+    /// Blank entries are produced by several independent paths — a table's own
+    /// spacers, a prose block opening, a hidden fence delimiter, a marked note
+    /// — and each used to decide for itself whether one was needed, using a
+    /// `last_blank` flag that only tracked the previous line. A reply that put
+    /// a table next to a heading therefore stacked up a hole. Deciding here
+    /// instead means no path can get it wrong.
+    ///
+    /// Trailing blanks are dropped rather than kept: the next block opens with
+    /// its own spacer, so keeping them would double the gap, and at the end of
+    /// a turn they leave a hole above the composer.
+    fn collapse_blanks(&mut self, entries: Vec<Entry>) -> Vec<Entry> {
+        let mut out: Vec<Entry> = Vec::with_capacity(entries.len());
+        // At the very start of a session there is nothing to separate from.
+        let mut previous_blank = self.last_blank;
+        for entry in entries {
+            let blank = matches!(entry, Entry::Blank);
+            if blank && previous_blank {
+                continue;
+            }
+            previous_blank = blank;
+            out.push(entry);
+        }
+        while matches!(out.last(), Some(Entry::Blank)) {
+            out.pop();
+        }
+        out
+    }
+
+    /// Commit logical entries: record them into the transcript ring, make
+    /// room on screen for the rows they add, then redraw.
     fn commit_entries(&mut self, entries: Vec<Entry>) {
         if entries.is_empty() {
             return;
         }
-        if let Some(last) = entries.last() {
-            self.last_blank = matches!(last, Entry::Blank);
+        let entries = self.collapse_blanks(entries);
+        if entries.is_empty() {
+            return;
         }
-        for entry in &entries {
-            self.record(true, entry.clone());
-        }
+        // Trailing blanks are gone, so the next block always opens its own
+        // separator.
+        self.last_blank = false;
         if self.overlay.is_some() {
-            self.pending_output.extend(entries);
+            // The overlay owns the alternate screen; committed rows wait in
+            // the transcript and are written to history when it closes.
+            for entry in entries {
+                self.record(entry);
+            }
             self.draw_overlay();
             return;
         }
-        if self.resize_pending {
-            // Recorded above; the settle reprojects the whole viewport from
-            // the transcript, so this reaches the screen re-wrapped rather
-            // than appended at a width that is about to change again.
+        let width = self.width();
+        let mut lines: Vec<Line<'static>> = Vec::new();
+        for entry in entries {
+            lines.extend(render_entry(&entry, width));
+            self.record(entry);
+        }
+        // Committed rows go into the terminal's own scrollback, once, and are
+        // never redrawn. Everything the renderer does after this touches only
+        // the composer.
+        self.term.insert_history(&lines);
+        self.paint();
+    }
+
+    /// Redraw the composer.
+    ///
+    /// This is the whole of the render loop. The composer is the only region
+    /// the renderer owns; everything above it was handed to the terminal's
+    /// scrollback when it was committed and is not ours to redraw.
+    fn paint(&mut self) {
+        if self.overlay.is_some() {
+            self.draw_overlay();
             return;
         }
-        let width = self.width;
-        let text: Vec<String> = entries
-            .iter()
-            .flat_map(|entry| render_entry(entry, width))
-            .collect();
-        self.paint_screen(Some(&text.join("\n")));
-    }
-
-    /// Append an entry to the transcript ring. `on_screen` entries take part
-    /// in the resize repaint; transcript-only entries (hidden reasoning)
-    /// appear solely in the Ctrl+T overlay.
-    fn record(&mut self, on_screen: bool, entry: Entry) {
-        if self.transcript.len() >= TRANSCRIPT_CAP {
-            self.transcript.pop_front();
-        }
-        self.transcript.push_back((on_screen, entry));
-    }
-
-    /// Re-read the terminal's real size before drawing.
-    ///
-    /// A resize reaches the input thread as an event, but a paint can be
-    /// issued from the session thread in the window between the terminal
-    /// re-wrapping itself and that event being handled. Drawing then would
-    /// append output wrapped to a width that no longer holds, and erase
-    /// relative to a block the terminal has already moved. `terminal::size`
-    /// is a `TIOCGWINSZ` ioctl ‒ no round trip, nothing to wait for ‒ so the
-    /// renderer can simply never treat its width as current without asking.
-    ///
-    /// Returns true when the size moved, meaning the caller must rebuild the
-    /// frame rather than draw against the old one.
-    fn sync_size(&mut self) -> bool {
-        let Ok((w, h)) = crossterm::terminal::size() else {
-            return false;
-        };
-        let (w, h) = (usable_width(w as usize), h as usize);
-        if w == self.width && h == self.height {
-            return false;
-        }
-        self.width = w;
-        self.height = h;
-        true
-    }
-
-    /// Erase the block, optionally append committed output, redraw the main
-    /// screen. Bypasses transcript recording (callers already recorded).
-    fn paint_screen(&mut self, output: Option<&str>) {
-        if self.sync_size() {
-            // The terminal changed shape under us. `output` is already in
-            // the transcript (every caller records before it draws), so the
-            // settled reprojection will render it at the width that now
-            // actually holds ‒ drawing it here would only strand it.
-            self.place = Place::Scrolling;
+        if self.term.sync_size() {
+            // The terminal changed shape under us. Re-laying the composer
+            // against geometry that is about to change again is wasted work,
+            // so the settle does it once the drag stops.
             self.resize_pending = true;
             self.resize_at = Some(Instant::now());
             return;
         }
-        let buf = match self.place {
-            Place::Pinned { .. } => self.pinned_frame(output),
-            Place::Scrolling => self.scrolling_frame(output),
+        if self.resize_pending {
+            return;
+        }
+        let (block, cursor_row, cursor_col) = self.compose_block();
+        let height = self.height();
+        let block_height = block.len();
+        // A terminal barely taller than the composer: show the block's tail so
+        // the input and footer stay reachable.
+        let rows: Vec<Line<'static>> = if block_height > height {
+            block[block_height - height..].to_vec()
+        } else {
+            block
         };
-        self.emit(buf.as_bytes());
+        let top = height.saturating_sub(rows.len());
+        // The composer changed height, so it has taken rows from the history
+        // region or handed some back. Repaint that region in place from the
+        // transcript: at a fixed width those are exactly the rows already
+        // there, so nothing scrolls, nothing reaches scrollback twice, and the
+        // composer never leaves a hole behind it.
+        if self.term.viewport_top_for(rows.len()) != self.term.viewport_top() {
+            let width = self.width();
+            let region = self.term.viewport_top_for(rows.len());
+            let mut history: Vec<Line<'static>> = Vec::new();
+            'fill: for entry in self.transcript.iter().rev() {
+                for line in render_entry(entry, width).into_iter().rev() {
+                    // Same rhythm as `insert_history`: this path renders the
+                    // transcript raw, so without the rule a repaint could
+                    // reintroduce the stacked blanks the commit path strips.
+                    let blank = line_cols(&line) == 0;
+                    if blank && history.last().is_some_and(|l| line_cols(l) == 0) {
+                        continue;
+                    }
+                    history.push(line);
+                    if history.len() >= region {
+                        break 'fill;
+                    }
+                }
+            }
+            while history.last().is_some_and(|l| line_cols(l) == 0) {
+                history.pop();
+            }
+            history.reverse();
+            self.term.fill_history(&history, region);
+        }
+        let cursor = (!self.selecting()).then(|| {
+            let row = (top + cursor_row).min(height.saturating_sub(1));
+            (cursor_col as u16, row as u16)
+        });
+        self.term.draw_viewport(&rows, cursor);
     }
 
-    /// Draw the transcript overlay on the alternate screen: full session
+    /// Settle a resize.
+    ///
+    /// The composer is re-laid at the new width and nothing else happens.
+    /// History belongs to the terminal's scrollback the moment it is written
+    /// (`Term::insert_history`), and it is never re-projected: rows keep the
+    /// wrapping they were committed with, so narrowing shears an over-long
+    /// row — the same trade Codex makes — but no text is ever drawn twice.
+    /// Re-projecting is what put the same paragraph on screen and in history
+    /// at once.
+    /// Settle a resize by REFLOWING: wipe the screen and the scrollback, then
+    /// replay the transcript at the new width.
+    ///
+    /// This is what makes the UI actually responsive to a resize, and it is
+    /// Codex's strategy (`app::resize_reflow` + `clear_scrollback_and_visible_screen_ansi`).
+    /// The in-memory transcript is the source of truth; the terminal's copy is
+    /// a rendering of it that goes stale the moment the width changes. Leaving
+    /// that copy alone is what "the UI does not resize" looks like, and
+    /// re-projecting over the top of it is what duplicates text — the terminal
+    /// has already reflowed some of those rows into scrollback. Owning the
+    /// scrollback and rewriting it is the only option that does neither.
+    ///
+    /// Replay is capped: past a few thousand rows the terminal is discarding
+    /// them anyway, and a drag should not get slower the longer the session
+    /// runs.
+    fn settle_resize(&mut self) {
+        let width = self.width();
+        self.term.reset_for_reflow();
+        let mut lines: Vec<Line<'static>> = Vec::new();
+        for entry in self.transcript.iter() {
+            lines.extend(render_entry(entry, width));
+        }
+        if lines.len() > REFLOW_ROW_CAP {
+            lines.drain(..lines.len() - REFLOW_ROW_CAP);
+        }
+        self.term.insert_history(&lines);
+        self.paint();
+    }
+
+    /// Draw the transcript overlay on the alternate screen: the full session
     /// including reasoning that streaming keeps hidden.
     fn draw_overlay(&mut self) {
         let Some(offset) = self.overlay else {
             return;
         };
-        let width = self.width.max(20);
-        let height = self.height.max(4);
+        let (width, height) = (self.width(), self.height());
         let rows = height - 1;
         // Entries re-wrap to the overlay's width at draw time.
-        let lines: Vec<String> = self
+        let lines: Vec<Line<'static>> = self
             .transcript
             .iter()
-            .flat_map(|(_, entry)| render_entry(entry, width))
+            .flat_map(|entry| render_entry(entry, width))
             .collect();
         let total = lines.len();
         let max_offset = total.saturating_sub(rows);
@@ -903,13 +907,9 @@ impl UiInner {
         self.overlay = Some(offset);
         let end = total - offset;
         let start = end.saturating_sub(rows);
-        let mut buf = format!("{SYNC_BEGIN}\x1b[1;1H\x1b[J\x1b[?7l");
-        for line in &lines[start..end] {
-            buf.push_str(&truncate_styled(line, width));
-            buf.push_str("\r\n");
-        }
-        for _ in end - start..rows {
-            buf.push_str("\r\n");
+        let mut frame: Vec<Line<'static>> = lines[start..end].to_vec();
+        while frame.len() < rows {
+            frame.push(blank());
         }
         // Where you are in the scroll matters as much as the keys do: a
         // transcript with no position indicator feels bottomless.
@@ -919,21 +919,29 @@ impl UiInner {
             format!("{}‒{} of {total}", start + 1, end)
         };
         let footer = th::justify(
-            &format!(" transcript ⋅ {position}"),
-            "⇡⇣ pgup/pgdn scroll ⋅ q closes ",
+            Line::from(vec![span(
+                format!(" transcript {} {position}", th::SEP),
+                th::band(),
+            )]),
+            Line::from(vec![span(
+                format!("⇡⇣ pgup/pgdn scroll {} q closes ", th::SEP),
+                th::band(),
+            )]),
             width,
         );
-        buf.push_str(&format!("{BAND}{}{RESET}", truncate_styled(&footer, width)));
-        buf.push_str("\x1b[?7h");
-        buf.push_str(SYNC_END);
-        self.emit(buf.as_bytes());
+        frame.push(th::pad_line(
+            truncate_line(footer, width),
+            width,
+            th::band(),
+        ));
+        self.term.draw_full(&frame);
     }
 
     fn open_overlay(&mut self) {
         if self.overlay.is_some() || self.menu.is_some() {
             return;
         }
-        self.emit(ALT_SCREEN_ENTER.as_bytes());
+        self.term.enter_alt_screen();
         self.overlay = Some(0);
         self.draw_overlay();
     }
@@ -942,311 +950,22 @@ impl UiInner {
         if self.overlay.take().is_none() {
             return;
         }
-        {
-            self.emit(ALT_SCREEN_LEAVE.as_bytes());
-        }
-        // Flush output that arrived while the overlay was open onto the
-        // main screen (it is already in the transcript).
+        self.term.leave_alt_screen();
+        // Output that arrived while the overlay was open is already in the
+        // transcript; account for the rows it added and redraw.
+        // Rows that arrived while the overlay was open are already in the
+        // transcript; write them to history now, in order, then redraw.
         let pending = std::mem::take(&mut self.pending_output);
-        if pending.is_empty() {
-            self.paint_screen(None);
-        } else {
-            let width = self.width;
-            let text: Vec<String> = pending
-                .iter()
-                .flat_map(|entry| render_entry(entry, width))
-                .collect();
-            self.paint_screen(Some(&text.join("\n")));
-        }
-    }
-
-    /// Settle a resize by redrawing ONLY the block.
-    ///
-    /// Committed output belongs to the terminal the moment it is printed ‒
-    /// that is the whole inline contract. Repainting it from the transcript
-    /// looks tempting (old lines keep their old wrap points) but duplicates
-    /// content: narrowing a window makes the terminal reflow its screen
-    /// buffer, pushing the overflow up into scrollback, and the repaint then
-    /// writes those same rows again. A window drag fires dozens of resize
-    /// events, so the same paragraphs pile up over and over ‒ the bug this
-    /// replaces. Old lines keep whatever wrap the terminal gives them, which
-    /// is how every other inline CLI behaves.
-    ///
-    /// Settle a resize by RE-PROJECTING the visible screen from the
-    /// transcript at the new width, rather than redrawing only the block.
-    ///
-    /// This is the load-bearing rule of the whole module. Text committed to
-    /// scrollback is wrapped at the width in force when it was written, and
-    /// those are real newlines in the terminal's grid: a wider window cannot
-    /// re-join them (the text keeps its old, narrow column) and a narrower
-    /// one shears every row in half against the new edge. Neither is
-    /// recoverable by touching the block alone, because the damage is in the
-    /// content above it.
-    ///
-    /// So the screen is redrawn as what it always should have been ‒ a pure
-    /// projection of `(transcript, width, height)`. `repaint_all` erases the
-    /// viewport absolutely and refills it from the transcript tail, so no
-    /// relative cursor arithmetic has to survive the terminal's own reflow
-    /// and nothing that is on screen keeps a stale wrap.
-    ///
-    /// Rows that scrolled ABOVE the viewport keep the wrapping they were
-    /// committed with: they belong to the terminal's scrollback and are not
-    /// ours to rewrite. Scrolling far enough back therefore crosses a seam.
-    /// That is the accepted cost of staying inline and keeping native
-    /// scrollback, copy-paste and mouse selection.
-    fn repaint_after_resize(&mut self) {
-        // Anything committed mid-drag was recorded into the transcript
-        // already; the projection below picks it up by construction.
-        // Before the first question the screen is the welcome card with the
-        // input on the bottom edge, and a resize keeps that. Once there is a
-        // conversation, the input belongs directly under it: a terminal that
-        // grows gains empty rows BELOW the prompt, never a void between the
-        // last answer and the input with the text stranded at the top-left.
-        let pin = !self
-            .transcript
+        let width = self.width();
+        let lines: Vec<Line<'static>> = pending
             .iter()
-            .any(|(_, entry)| matches!(entry, Entry::UserBar(_)));
-        self.repaint_all(pin);
+            .flat_map(|entry| render_entry(entry, width))
+            .collect();
+        self.term.insert_history(&lines);
+        self.paint();
     }
 
-    /// Draw a complete frame: erase the viewport and rebuild it from the
-    /// transcript at the current width, with the block pinned to the bottom
-    /// edge. Safe at any point in a session ‒ every committed entry is in
-    /// the transcript (`commit_entries` records before it draws), so what is
-    /// erased is exactly what is redrawn, re-wrapped to the width now.
-    fn repaint_all(&mut self, pin: bool) {
-        let buf = self.full_frame(pin);
-        self.emit(buf.as_bytes());
-    }
-
-    /// The bytes of a complete frame: viewport erased, transcript tail
-    /// re-rendered at the current width, block pinned to the bottom edge.
-    ///
-    /// Two zellij (0.44.3) behaviours shape how this frame is written, both
-    /// measured with a headless session and `dump-screen`:
-    ///
-    /// * `ED 2` is "move the viewport into scrollback, then clear", so an
-    ///   erase-the-screen redraw pushed a copy of the whole screen into
-    ///   history on every settled resize — three resizes, three stacked
-    ///   copies of the same paragraph. Rows are therefore cleared one by one
-    ///   with `EL` (`put_row`), which is a plain erase everywhere.
-    /// * Rows zellij re-wrapped during the resize keep a continuation mark,
-    ///   and INSIDE synchronized output (`?2026h`) that mark survives `EL`:
-    ///   rows written there are glued into one logical line and re-wrapped
-    ///   together on the next resize — the rule, the input line and the
-    ///   footer as one paragraph. Without the wrapper the same bytes stay
-    ///   separate. So this frame, the one written right after a reflow, is
-    ///   NOT synchronized; the block redraws that follow are, and they land
-    ///   on rows this frame has already cleaned.
-    ///
-    /// `pin` keeps the block on the bottom edge (the pre-conversation
-    /// screen). Otherwise, when the content is shorter than the screen, the
-    /// block sits directly under it — a taller window then gains empty rows
-    /// BELOW the input, like any shell, not a void between the answer and
-    /// the input.
-    fn full_frame(&mut self, pin: bool) -> String {
-        let width = self.width.max(20);
-        let height = self.height.max(4);
-        let (block_lines, cursor_row, cursor_col) = self.compose_block();
-        let block_height = block_lines.len();
-        if block_height >= height {
-            // Tiny terminal: clear and let the scrolling model take over.
-            let mut buf = String::from("\x1b[?7l");
-            for r in 1..=height {
-                put_row(&mut buf, r, "");
-            }
-            buf.push_str("\x1b[?7h\x1b[1;1H");
-            self.place = Place::Scrolling;
-            self.cursor_row = 0;
-            self.append_scrolling_block(&mut buf);
-            return buf;
-        }
-        let avail = height - block_height;
-        let mut rows: Vec<String> = Vec::new();
-        'fill: for entry in self
-            .transcript
-            .iter()
-            .rev()
-            .filter_map(|(on_screen, entry)| on_screen.then_some(entry))
-        {
-            let rendered = render_entry(entry, width);
-            for line in rendered.into_iter().rev() {
-                rows.push(line);
-                if rows.len() >= avail {
-                    break 'fill;
-                }
-            }
-        }
-        // Drop leading blank rows so the tail sits snug under real content.
-        while rows.last().is_some_and(|line| visible_cols(line) == 0) {
-            rows.pop();
-        }
-        rows.reverse();
-        if !pin && rows.len() < avail {
-            let mut buf = String::from("\x1b[?7l");
-            for (i, row) in rows.iter().enumerate() {
-                put_row(&mut buf, i + 1, row);
-            }
-            for r in rows.len() + 1..=height {
-                put_row(&mut buf, r, "");
-            }
-            buf.push_str(&format!("\x1b[?7h\x1b[{};1H", rows.len() + 1));
-            self.place = Place::Scrolling;
-            self.cursor_row = 0;
-            self.append_scrolling_block(&mut buf);
-            return buf;
-        }
-        let block_top = height - block_height + 1;
-        // Every row of the screen is addressed absolutely and cleared with
-        // EL before it is written — including the empty ones between content
-        // and block. See `put_row`: an erase-to-end-of-display leaves
-        // zellij's wrap flags in place, and `\r\n` into such a row glues it
-        // onto the row above.
-        let mut buf = String::from("\x1b[?7l");
-        for (i, row) in rows.iter().enumerate() {
-            put_row(&mut buf, i + 1, row);
-        }
-        for r in rows.len() + 1..block_top {
-            put_row(&mut buf, r, "");
-        }
-        for (i, line) in block_lines.iter().enumerate() {
-            put_row(&mut buf, block_top + i, line);
-        }
-        buf.push_str("\x1b[?7h");
-        buf.push_str(&format!(
-            "\x1b[{};{}H",
-            block_top + cursor_row,
-            cursor_col + 1
-        ));
-        buf.push_str(self.cursor_escape());
-        self.place = Place::Pinned {
-            content_row: rows.len() + 1,
-            prev_block_top: block_top,
-        };
-        self.cursor_row = cursor_row;
-        buf
-    }
-
-    /// Append the block draw (wrapped in autowrap-off) and cursor placement
-    /// for scrolling mode, where positions are cursor-relative.
-    fn append_scrolling_block(&mut self, buf: &mut String) {
-        let (lines, cursor_row, cursor_col) = self.compose_block();
-        // Autowrap is disabled while the block draws: even if a glyph the
-        // width tables call narrow renders wide (◉, ⚒, ▸ on some terminals),
-        // an overlong line clamps at the right edge instead of wrapping ‒
-        // wrapping here breaks the erase row math and strands stale frames
-        // in scrollback. Committed output above keeps normal wrapping.
-        buf.push_str("\x1b[?7l");
-        for (i, line) in lines.iter().enumerate() {
-            if i > 0 {
-                buf.push('\n');
-            }
-            buf.push_str(CLEAR_ROW);
-            buf.push_str(line);
-        }
-        buf.push_str("\x1b[?7h");
-        let up = lines.len().saturating_sub(1).saturating_sub(cursor_row);
-        if up > 0 {
-            buf.push_str(&format!("\x1b[{up}A"));
-        }
-        buf.push('\r');
-        if cursor_col > 0 {
-            buf.push_str(&format!("\x1b[{cursor_col}C"));
-        }
-        buf.push_str(self.cursor_escape());
-        self.cursor_row = cursor_row;
-    }
-
-    /// Scrolling mode: the block rides directly under committed content and
-    /// the terminal scrolls naturally.
-    fn scrolling_frame(&mut self, output: Option<&str>) -> String {
-        let mut buf = String::from(SYNC_BEGIN);
-        if self.cursor_row > 0 {
-            buf.push_str(&format!("\x1b[{}A", self.cursor_row));
-        }
-        buf.push('\r');
-        buf.push_str("\x1b[J");
-        if let Some(output) = output {
-            for line in output.split('\n') {
-                buf.push_str(CLEAR_ROW);
-                buf.push_str(&line.replace('\t', "    "));
-                buf.push_str(RESET);
-                buf.push_str("\r\n");
-            }
-        }
-        self.append_scrolling_block(&mut buf);
-        buf.push_str(SYNC_END);
-        buf
-    }
-
-    /// Pinned mode: content is written at `content_row` (top-down) while the
-    /// block sits at the bottom edge of the screen. When content reaches the
-    /// block region ‒ or the terminal is too small ‒ hand off to scrolling.
-    fn pinned_frame(&mut self, output: Option<&str>) -> String {
-        let width = self.width.max(20);
-        let height = self.height.max(4);
-        let Place::Pinned {
-            mut content_row,
-            prev_block_top,
-        } = self.place
-        else {
-            unreachable!("pinned_frame outside pinned mode");
-        };
-        let mut buf = String::from(SYNC_BEGIN);
-        // Erase the old block area first so overflowing output can never
-        // interleave with a stale block.
-        buf.push_str(&format!("\x1b[{};1H\x1b[J", prev_block_top.min(height)));
-        if let Some(output) = output {
-            buf.push_str(&format!("\x1b[{content_row};1H"));
-            for line in output.split('\n') {
-                let line = line.replace('\t', "    ");
-                buf.push_str(CLEAR_ROW);
-                buf.push_str(&line);
-                buf.push_str(RESET);
-                buf.push_str("\r\n");
-                content_row += physical_rows(&line, width);
-            }
-        }
-        let (lines, cursor_row, cursor_col) = self.compose_block();
-        let block_height = lines.len();
-        let block_top = (height.saturating_sub(block_height) + 1).max(1);
-        if content_row > block_top || block_height >= height {
-            // Content met the block (or the terminal is tiny): one-way
-            // handoff to the scrolling model, drawing from the content edge.
-            self.place = Place::Scrolling;
-            if output.is_none() {
-                buf.push_str(&format!("\x1b[{};1H", content_row.min(height)));
-            }
-            self.append_scrolling_block(&mut buf);
-        } else {
-            buf.push_str("\x1b[?7l");
-            for (i, line) in lines.iter().enumerate() {
-                put_row(&mut buf, block_top + i, line);
-            }
-            buf.push_str("\x1b[?7h");
-            buf.push_str(&format!(
-                "\x1b[{};{}H",
-                block_top + cursor_row,
-                cursor_col + 1
-            ));
-            buf.push_str(self.cursor_escape());
-            self.place = Place::Pinned {
-                content_row,
-                prev_block_top: block_top,
-            };
-            // Tracked in both modes: a resize hands off to the scrolling
-            // model, which reaches the block's top by moving up this many
-            // rows from the cursor.
-            self.cursor_row = cursor_row;
-        }
-        buf.push_str(SYNC_END);
-        buf
-    }
-
-    /// Markdown-render one assistant text line into logical entries:
-    /// re-wrappable prose with the `◉` block marker on the first line of a
-    /// response block (plus a spacer entry before a new block), code kept
-    /// verbatim.
+    /// Markdown-render one assistant text line into logical entries.
     fn render_text_entries(&mut self, line: &str) -> Vec<Entry> {
         let rendered = self.renderer.render(line);
         self.entries_of(rendered, line)
@@ -1274,7 +993,7 @@ impl UiInner {
         for item in rendered {
             match item {
                 md::Rendered::Raw(styled) => {
-                    if styled.is_empty() {
+                    if line_cols(&styled) == 0 {
                         push_blank(&mut entries, self.last_blank);
                     } else {
                         entries.push(Entry::Code(styled));
@@ -1295,6 +1014,16 @@ impl UiInner {
                     if line.trim().is_empty() && spans.iter().all(|s| s.text.trim().is_empty()) {
                         push_blank(&mut entries, self.last_blank);
                         continue;
+                    }
+                    // A heading opens a section, so it gets a blank row above
+                    // it even when the model wrote none. `collapse_blanks`
+                    // drops it if there is already one.
+                    if spans
+                        .iter()
+                        .all(|span| span.style == md::SpanStyle::Heading)
+                        && !spans.is_empty()
+                    {
+                        entries.push(Entry::Blank);
                     }
                     let starting = self.text_block_start;
                     self.text_block_start = false;
@@ -1339,17 +1068,6 @@ impl UiInner {
                 }]
             }
         }
-    }
-
-    /// Everything the TUI writes goes through here, so a trace is a
-    /// complete record of what the terminal was told.
-    fn emit(&mut self, bytes: &[u8]) {
-        if let Some(trace) = &mut self.trace {
-            trace.write(bytes);
-        }
-        let mut out = std::io::stdout().lock();
-        let _ = out.write_all(bytes);
-        let _ = out.flush();
     }
 
     /// Drop a pending tool live line without committing it. Used when the
@@ -1410,7 +1128,7 @@ impl UiInner {
             committed.extend(entries);
         }
         if committed.is_empty() {
-            self.paint(None);
+            self.paint();
         } else {
             self.commit_entries(committed);
         }
@@ -1454,18 +1172,18 @@ impl UiInner {
     fn resolve_menu(&mut self, choice: usize) {
         if let Some(menu) = self.menu.take() {
             let (label, _, decision) = MENU[choice];
-            let color = if decision == Decision::Deny {
-                DANGER
+            let style = if decision == Decision::Deny {
+                th::danger()
             } else {
-                DIM
+                th::dim()
             };
             if let Some(activity) = &mut self.activity {
                 activity.phase = Phase::Starting;
             }
-            self.paint(Some(&format!(
-                "{}{color}↳ {label}{RESET}",
-                " ".repeat(GRID)
-            )));
+            self.commit_entries(vec![Entry::Fixed(Line::from(vec![
+                indent(GRID),
+                span(format!("↳ {label}"), style),
+            ]))]);
             let _ = menu.responder.send(decision);
         }
     }
@@ -1478,17 +1196,9 @@ impl Ui {
         status: Status,
         show_reasoning: bool,
     ) -> Arc<Self> {
-        let (width, height) = crossterm::terminal::size()
-            .map(|(w, h)| (usable_width(w as usize), h as usize))
-            .unwrap_or((99, 30));
         Arc::new(Self {
             inner: Mutex::new(UiInner {
-                width,
-                height,
-                place: Place::Pinned {
-                    content_row: 1,
-                    prev_block_top: height.max(1),
-                },
+                term: Term::new(),
                 editor,
                 index,
                 dropdown: None,
@@ -1506,10 +1216,8 @@ impl Ui {
                 transcript: std::collections::VecDeque::new(),
                 overlay: None,
                 pending_output: Vec::new(),
-                cursor_row: 0,
                 resize_pending: false,
                 resize_at: None,
-                trace: Trace::open(),
             }),
         })
     }
@@ -1518,25 +1226,55 @@ impl Ui {
         self.inner.lock().expect("ui lock")
     }
 
-    /// Take over the visible screen, Claude Code-style: newline-flood the
-    /// old shell content into scrollback (NOT erased ‒ no alternate screen,
-    /// history stays reachable), then draw the block at the bottom edge.
+    /// Take over the visible screen: the old shell content is flooded into
+    /// scrollback (NOT erased ‒ no alternate screen, history stays
+    /// reachable), then the block draws at the bottom edge.
     pub fn enter_screen(&self) {
         let mut inner = self.lock();
-        // Name the terminal (OSC 0). Multiplexers put it in the pane frame,
-        // which is how a zellij or tmux user tells this pane from the shell
-        // next to it — Codex and OpenCode both do it.
-        inner.emit(TITLE.as_bytes());
-        let flood = "\n".repeat(inner.height.max(1));
-        inner.emit(flood.as_bytes());
-        inner.repaint_all(true);
+        inner.term.set_title();
+        inner.term.take_over();
+        inner.paint();
     }
 
-    /// Commit styled lines into scrollback above the block.
-    pub fn print(&self, text: &str) {
+    /// Commit composed rows into scrollback above the block.
+    pub fn print_lines(&self, lines: Vec<Line<'static>>) {
         let mut inner = self.lock();
         inner.commit_live();
-        inner.paint(Some(text));
+        // Every committed block opens with one blank row. `collapse_blanks`
+        // drops it at the very start of a session and wherever it would
+        // double, so this is "give this block air" rather than "add a line".
+        let mut entries: Vec<Entry> = vec![Entry::Blank];
+        entries.extend(lines.into_iter().map(|line| {
+            // Whitespace-only counts as blank, or a source that indents its
+            // empty lines slips a row past `collapse_blanks` and the gap
+            // doubles.
+            if line.to_string().trim().is_empty() {
+                Entry::Blank
+            } else {
+                Entry::Fixed(line)
+            }
+        }));
+        inner.commit_entries(entries);
+    }
+
+    /// Commit plain (unstyled) text into scrollback, one row per line.
+    pub fn print(&self, text: &str) {
+        self.print_lines(
+            text.split('\n')
+                .map(|line| {
+                    if line.is_empty() {
+                        blank()
+                    } else {
+                        Line::from(vec![th::text(line.to_string())])
+                    }
+                })
+                .collect(),
+        );
+    }
+
+    /// Commit an error, in the one color reserved for things that failed.
+    pub fn print_error(&self, text: &str) {
+        self.print_lines(vec![Line::from(vec![span(text.to_string(), th::danger())])]);
     }
 
     /// Commit plain text as dim, word-wrapped, re-wrappable prose (turn
@@ -1568,32 +1306,31 @@ impl Ui {
         inner.commit_entries(entries);
     }
 
-    /// Draw the opening card at the current width.
-    pub fn print_welcome(&self, info: &chrome::Welcome<'_>) {
+    /// Commit the opening card. It is stored as data, so it re-lays out at the
+    /// width of whatever screen it is next drawn on.
+    pub fn print_welcome(&self, info: chrome::Welcome) {
         let mut inner = self.lock();
-        let width = inner.width.max(20);
-        let rows = chrome::welcome(info, width);
-        inner.paint(Some(&rows.join("\n")));
+        inner.commit_entries(vec![Entry::Blank, Entry::Welcome(info)]);
     }
 
     /// Lay out model-picker rows at the current width (the picker itself is
-    /// the generic selector, which takes ready-made strings).
-    pub fn render_model_rows(&self, rows: &[chrome::ModelRow<'_>]) -> Vec<String> {
-        let width = self.lock().width.max(20);
+    /// the generic selector, which takes ready-made rows).
+    pub fn render_model_rows(&self, rows: &[chrome::ModelRow<'_>]) -> Vec<Line<'static>> {
+        let width = self.lock().width();
         // The selector prefixes a marker and a space, and reserves the same
         // on the right, so rows compose at the width they will be drawn at.
-        chrome::model_rows(rows, width.saturating_sub(chrome::GRID * 2))
+        chrome::model_rows(rows, width.saturating_sub(GRID * 2))
     }
 
     /// Current terminal width, for surfaces composed outside this module.
     pub fn width(&self) -> usize {
-        self.lock().width.max(20)
+        self.lock().width()
     }
 
     pub fn set_status(&self, status: Status) {
         let mut inner = self.lock();
         inner.status = status;
-        inner.paint(None);
+        inner.paint();
     }
 
     pub fn set_session_data(&self, recency: Vec<String>, symbols: Vec<(String, String, String)>) {
@@ -1611,7 +1348,7 @@ impl Ui {
             tool_started: None,
             out_bytes: 0,
         });
-        inner.paint(None);
+        inner.paint();
     }
 
     pub fn end_activity(&self) {
@@ -1628,10 +1365,10 @@ impl Ui {
                 }],
                 cont_indent: 0,
             };
-            inner.record(false, entry);
+            inner.record(entry);
         }
         inner.activity = None;
-        inner.paint(None);
+        inner.paint();
     }
 
     /// Called on the input thread's poll timeout ‒ i.e. whenever the event
@@ -1645,11 +1382,7 @@ impl Ui {
         if inner.resize_pending && settled {
             inner.resize_pending = false;
             inner.resize_at = None;
-            let (w, h) = (inner.width, inner.height);
-            if let Some(trace) = &mut inner.trace {
-                trace.note(&format!("settle;{w}x{h};reproject"));
-            }
-            inner.repaint_after_resize();
+            inner.settle_resize();
             return;
         }
         if inner.resize_pending {
@@ -1659,7 +1392,7 @@ impl Ui {
         }
         if let Some(activity) = &mut inner.activity {
             activity.spinner += 1;
-            inner.paint(None);
+            inner.paint();
         }
     }
 
@@ -1683,7 +1416,7 @@ impl Ui {
             chosen: 0,
             responder: sender,
         });
-        inner.paint(None);
+        inner.paint();
         receiver
     }
 
@@ -1692,7 +1425,7 @@ impl Ui {
     pub fn open_select(
         &self,
         title: &str,
-        items: Vec<String>,
+        items: Vec<Line<'static>>,
         initial: usize,
     ) -> oneshot::Receiver<Option<usize>> {
         let mut inner = self.lock();
@@ -1712,7 +1445,7 @@ impl Ui {
             selected: initial,
             responder: sender,
         });
-        inner.paint(None);
+        inner.paint();
         receiver
     }
 
@@ -1726,11 +1459,8 @@ impl Ui {
         // noise. `on_tool_result` re-prints the row once the call runs.
         inner.discard_live_tool();
         inner.commit_live();
-        let width = inner.width.max(20);
-        let mut card = chrome::approval_card(request, request.detail.as_deref(), width);
-        if !inner.last_blank {
-            card.insert(0, String::new());
-        }
+        let width = inner.width();
+        let card = chrome::approval_card(request, request.detail.as_deref(), width);
         let (tool, target) = chrome::split_preview(&request.preview);
         let (sender, receiver) = oneshot::channel();
         inner.menu = Some(Menu {
@@ -1743,7 +1473,18 @@ impl Ui {
         if let Some(activity) = &mut inner.activity {
             activity.phase = Phase::Deciding;
         }
-        inner.paint(Some(&card.join("\n")));
+        let mut entries: Vec<Entry> = Vec::new();
+        if !inner.last_blank {
+            entries.push(Entry::Blank);
+        }
+        entries.extend(card.into_iter().map(|line| {
+            if line_cols(&line) == 0 {
+                Entry::Blank
+            } else {
+                Entry::Fixed(line)
+            }
+        }));
+        inner.commit_entries(entries);
         receiver
     }
 
@@ -1757,25 +1498,11 @@ impl Ui {
         inner.connect = None;
         inner.select = None;
         inner.dropdown = None;
-        let mut buf = String::new();
-        match inner.place {
-            Place::Pinned {
-                content_row,
-                prev_block_top,
-            } => {
-                let height = inner.height.max(1);
-                buf.push_str(&format!("\x1b[{};1H\x1b[J", prev_block_top.min(height)));
-                buf.push_str(&format!("\x1b[{};1H", content_row.min(height)));
-            }
-            Place::Scrolling => {
-                if inner.cursor_row > 0 {
-                    buf.push_str(&format!("\x1b[{}A", inner.cursor_row));
-                }
-                buf.push('\r');
-                buf.push_str("\x1b[J");
-            }
-        }
-        inner.emit(buf.as_bytes());
+        inner.activity = None;
+        inner.live = None;
+        // Clear the composer and leave the shell prompt directly under the
+        // conversation; history stays exactly where the terminal has it.
+        inner.term.teardown();
         inner.editor.save_history();
     }
 
@@ -1784,33 +1511,21 @@ impl Ui {
     pub fn handle_event(&self, event: Event) -> Option<UiAction> {
         let mut inner = self.lock();
         match event {
-            Event::Resize(w, h) => {
-                let w = usable_width(w as usize);
-                let changed = inner.width != w || inner.height != h as usize;
-                if let Some(trace) = &mut inner.trace {
-                    trace.note(&format!("resize;{w}x{h};changed={changed}"));
-                }
-                inner.width = w;
-                inner.height = h as usize;
-                if inner.overlay.is_some() {
-                    // The overlay owns the alternate screen outright, so it
-                    // can safely re-wrap its whole view from the transcript.
-                    inner.draw_overlay();
-                } else {
-                    // Absolute row arithmetic cannot survive a resize, so
-                    // hand off to the cursor-relative model immediately ‒
-                    // any paint arriving before the redraw settles (a
-                    // stream delta, say) must not use the old geometry.
-                    inner.place = Place::Scrolling;
-                    // A width change re-wraps the content; a height change
-                    // moves the bottom edge the block is pinned to. Both
-                    // invalidate the frame, so both are settled.
-                    //
-                    // Dragging a window edge emits a resize per pixel step.
-                    // Redrawing on each one is both wasteful and visibly
-                    // jumpy, so the work is deferred to `tick`, which runs
-                    // when the event stream goes quiet ‒ once per drag.
-                    if changed {
+            Event::Resize(..) => {
+                // A width change re-wraps the content; a height change moves
+                // the bottom edge the block is pinned to. Both invalidate
+                // the frame, so both are settled.
+                //
+                // Dragging a window edge emits a resize per pixel step.
+                // Redrawing on each one is both wasteful and visibly jumpy,
+                // so the work is deferred to `tick`, which runs when the
+                // event stream goes quiet ‒ once per drag.
+                if inner.term.sync_size() {
+                    if inner.overlay.is_some() {
+                        // The overlay owns the alternate screen outright, so
+                        // it can safely re-wrap its whole view right away.
+                        inner.draw_overlay();
+                    } else {
                         inner.resize_pending = true;
                         inner.resize_at = Some(Instant::now());
                     }
@@ -1824,11 +1539,11 @@ impl Ui {
                 }) = &mut inner.connect
                 {
                     buffer.push_str(content.trim());
-                    inner.paint(None);
+                    inner.paint();
                 } else if inner.menu.is_none() && inner.connect.is_none() {
                     inner.editor.insert_paste(&content);
                     inner.update_dropdown();
-                    inner.paint(None);
+                    inner.paint();
                 }
                 None
             }
@@ -1849,7 +1564,7 @@ impl Ui {
     ) -> Option<UiAction> {
         // The transcript overlay captures everything until closed.
         if let Some(offset) = inner.overlay {
-            let page = inner.height.max(4) - 1;
+            let page = inner.height() - 1;
             match code {
                 KeyCode::Up | KeyCode::Char('k') => inner.overlay = Some(offset + 1),
                 KeyCode::Down | KeyCode::Char('j') => {
@@ -1925,7 +1640,7 @@ impl Ui {
                     let _ = connect.responder.send(result);
                 }
             }
-            inner.paint(None);
+            inner.paint();
             return None;
         }
         // A generic selector captures everything until resolved.
@@ -1952,7 +1667,7 @@ impl Ui {
                     let _ = select.responder.send(result);
                 }
             }
-            inner.paint(None);
+            inner.paint();
             return None;
         }
         // Approval menu captures everything until resolved.
@@ -1962,13 +1677,13 @@ impl Ui {
                     if let Some(menu) = &mut inner.menu {
                         menu.selected = (menu.selected + MENU.len() - 1) % MENU.len();
                     }
-                    inner.paint(None);
+                    inner.paint();
                 }
                 KeyCode::Down => {
                     if let Some(menu) = &mut inner.menu {
                         menu.selected = (menu.selected + 1) % MENU.len();
                     }
-                    inner.paint(None);
+                    inner.paint();
                 }
                 KeyCode::Enter => {
                     let selected = inner.menu.as_ref().map(|m| m.selected).unwrap_or(2);
@@ -1993,7 +1708,7 @@ impl Ui {
                 }
                 inner.editor.clear();
                 inner.dropdown = None;
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Char('d') if control && inner.editor.is_empty() => {
                 return Some(UiAction::Eof);
@@ -2008,46 +1723,49 @@ impl Ui {
                 } else {
                     "[reasoning stream off; ctrl+t shows the full transcript]"
                 };
-                inner.paint(Some(&format!("{DIM}{notice}{RESET}")));
+                inner.commit_entries(vec![Entry::Fixed(Line::from(vec![span(
+                    notice,
+                    th::dim(),
+                )]))]);
             }
             KeyCode::Char('j') if control => {
                 inner.editor.insert('\n');
                 inner.dropdown = None;
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Char('a') if control => {
                 inner.editor.move_home();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Char('e') if control => {
                 inner.editor.move_end();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Char('u') if control => {
                 inner.editor.clear();
                 inner.dropdown = None;
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Char('k') if control => {
                 let (start, end) = (inner.editor.cursor(), inner.editor.line_end());
                 inner.editor.replace_range(start, end, "");
                 inner.update_dropdown();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Char('w') if control => {
                 inner.editor.delete_word_back();
                 inner.update_dropdown();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Char(ch) if !control => {
                 inner.editor.insert(ch);
                 inner.update_dropdown();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Enter if modifiers.contains(KeyModifiers::ALT) => {
                 inner.editor.insert('\n');
                 inner.dropdown = None;
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Enter => {
                 if let Some(dropdown) = &inner.dropdown {
@@ -2056,7 +1774,7 @@ impl Ui {
                     let token = &inner.editor.text()[dropdown.token_start..inner.editor.cursor()];
                     if dropdown.choices[dropdown.selected].insert != token {
                         inner.accept_selected();
-                        inner.paint(None);
+                        inner.paint();
                         return None;
                     }
                     inner.dropdown = None;
@@ -2065,50 +1783,52 @@ impl Ui {
                 let submitted = inner.editor.submit();
                 inner.dropdown = None;
                 if submitted.is_empty() {
-                    inner.paint(None);
+                    inner.paint();
                     return None;
                 }
                 // Bare picker commands are composer interactions, not
                 // conversation turns: the picker opens in place of the
-                // input and nothing echoes into the transcript
-                // (Codex-style).
+                // input and nothing echoes into the transcript.
                 if matches!(submitted.as_str(), "/model" | "/connect") {
-                    inner.paint(None);
+                    inner.paint();
                     return Some(UiAction::Submit(submitted));
                 }
                 // Echo the prompt as a highlighted bar so user turns stand
                 // apart from agent output in scrollback. One entry for the
                 // whole message: the marker draws on the first row only.
-                inner.commit_entries(vec![Entry::UserBar(visible.to_string()), Entry::Blank]);
+                // The separator goes BEFORE the turn: `collapse_blanks` drops
+                // trailing blanks, so a turn that carried its spacer behind it
+                // ended up flush against whatever came next.
+                inner.commit_entries(vec![Entry::Blank, Entry::UserBar(visible.to_string())]);
                 return Some(UiAction::Submit(submitted));
             }
             KeyCode::Backspace => {
                 inner.editor.backspace();
                 inner.update_dropdown();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Delete => {
                 inner.editor.delete_forward();
                 inner.update_dropdown();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Left => {
                 inner.editor.move_left();
                 inner.dropdown = None;
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Right => {
                 inner.editor.move_right();
                 inner.dropdown = None;
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Home => {
                 inner.editor.move_home();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::End => {
                 inner.editor.move_end();
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::BackTab => {
                 return Some(UiAction::CycleMode);
@@ -2116,13 +1836,13 @@ impl Ui {
             KeyCode::Tab => {
                 if inner.dropdown.is_some() {
                     inner.accept_selected();
-                    inner.paint(None);
+                    inner.paint();
                 }
             }
             KeyCode::Esc => {
                 if inner.dropdown.is_some() {
                     inner.dropdown = None;
-                    inner.paint(None);
+                    inner.paint();
                 } else if inner.activity.is_some() {
                     return Some(UiAction::Interrupt);
                 }
@@ -2136,7 +1856,7 @@ impl Ui {
                 } else {
                     inner.editor.history_prev();
                 }
-                inner.paint(None);
+                inner.paint();
             }
             KeyCode::Down => {
                 if let Some(dropdown) = &mut inner.dropdown {
@@ -2147,7 +1867,7 @@ impl Ui {
                 } else {
                     inner.editor.history_next();
                 }
-                inner.paint(None);
+                inner.paint();
             }
             _ => {}
         }
@@ -2205,7 +1925,7 @@ impl StreamSink for UiSink {
                     }],
                     cont_indent: 0,
                 };
-                inner.record(false, entry);
+                inner.record(entry);
             }
         }
     }
@@ -2223,7 +1943,7 @@ impl StreamSink for UiSink {
             kind: LiveKind::Tool,
             text: preview.to_string(),
         });
-        inner.paint(None);
+        inner.paint();
     }
 
     fn on_tool_result(&mut self, preview: &str, is_error: bool, error: Option<&str>) {
@@ -2234,15 +1954,6 @@ impl StreamSink for UiSink {
             .and_then(|activity| activity.tool_started)
             .map(|started| started.elapsed())
             .unwrap_or_default();
-        let outcome = if is_error {
-            ToolOutcome::Failed {
-                reason: error.unwrap_or_default().to_string(),
-                elapsed,
-            }
-        } else {
-            ToolOutcome::Ok { elapsed }
-        };
-        let width = inner.width.max(20);
         // Prefer the live line's own preview; fall back to the result's when
         // an approval prompt consumed it.
         let text = match inner
@@ -2253,13 +1964,20 @@ impl StreamSink for UiSink {
             Some(_) => inner.live.take().expect("tool live line").text,
             None => preview.to_string(),
         };
-        inner.paint(Some(&chrome::tool_line(&text, Some(outcome), width)));
+        inner.commit_entries(vec![Entry::Tool {
+            preview: text,
+            outcome: Some(ToolRecord {
+                failed: is_error,
+                reason: error.unwrap_or_default().to_string(),
+                elapsed,
+            }),
+        }]);
         inner.text_block_start = true;
         if let Some(activity) = &mut inner.activity {
             activity.phase = Phase::Thinking;
             activity.tool_started = None;
         }
-        inner.paint(None);
+        inner.paint();
     }
 }
 
@@ -2287,39 +2005,12 @@ impl ApprovalGate for UiGate {
 mod tests {
     use super::*;
 
-    /// A frame's visible text: escapes stripped, `\r\n` folded to rows.
-    fn plain(frame: &str) -> String {
-        let mut out = String::new();
-        let mut chars = frame.chars().peekable();
-        while let Some(ch) = chars.next() {
-            match ch {
-                '\x1b' => {
-                    if chars.peek() == Some(&'[') {
-                        chars.next();
-                        for esc in chars.by_ref() {
-                            if esc.is_ascii_alphabetic() {
-                                // A cursor jump starts a new screen row just
-                                // as surely as a newline does.
-                                if esc == 'H' {
-                                    out.push('\n');
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-                '\r' => {}
-                other => out.push(other),
-            }
-        }
-        out
-    }
-
-    fn inner_at_width(width: usize) -> UiInner {
-        UiInner {
-            width,
-            height: 30,
-            place: Place::Scrolling,
+    /// A headless `UiInner` at a fixed geometry. `Term` never touches the
+    /// terminal until something is drawn, so composition and layout are
+    /// testable without a tty.
+    fn inner_at(width: usize, height: usize) -> UiInner {
+        let mut inner = UiInner {
+            term: Term::new(),
             editor: Editor::new(None),
             index: CompletionIndex::with_entries(vec![], vec![]),
             dropdown: None,
@@ -2343,20 +2034,21 @@ mod tests {
             transcript: std::collections::VecDeque::new(),
             overlay: None,
             pending_output: Vec::new(),
-            cursor_row: 0,
             resize_pending: false,
             resize_at: None,
-            trace: None,
-        }
+        };
+        inner.term.set_test_size(width as u16, height as u16);
+        inner
     }
 
-    /// The invariant behind the erase math: no composed block line may be
-    /// wider than the terminal, or it wraps to two physical rows and every
-    /// later repaint strands a stale frame in scrollback (user-reported).
+    /// The invariant behind the whole layout: no composed block row may be
+    /// wider than the terminal. An overlong row is silently cut by the
+    /// frame, so the composer would lose its right-hand half rather than
+    /// clamping where the layout intended.
     #[test]
     fn no_block_line_exceeds_terminal_width() {
         for width in [24usize, 40, 60, 80] {
-            let mut inner = inner_at_width(width);
+            let mut inner = inner_at(width, 30);
             // Long streaming text line WITH the ◉ prefix budget in play.
             inner.live = Some(LiveLine {
                 kind: LiveKind::Text,
@@ -2373,7 +2065,7 @@ mod tests {
                 choices: vec![super::super::completion::Choice {
                     insert: "@x".into(),
                     label: "a/very/long/path/that/goes/on/forever/and/ever/mod.rs".into(),
-                    hint: "struct ⋅ a/very/long/location.rs:1234".into(),
+                    hint: "struct · a/very/long/location.rs:1234".into(),
                     kind: ChoiceKind::Symbol,
                 }],
                 selected: 0,
@@ -2401,9 +2093,10 @@ mod tests {
                 let (lines, _, _) = inner.compose_block();
                 for line in &lines {
                     assert!(
-                        visible_cols(line) <= width,
-                        "line exceeds {width} cols ({}): {line:?}",
-                        visible_cols(line),
+                        line_cols(line) <= width,
+                        "line exceeds {width} cols ({}): {:?}",
+                        line_cols(line),
+                        line.to_string(),
                     );
                 }
             }
@@ -2413,24 +2106,46 @@ mod tests {
     /// Tool and reasoning live lines (no prefix) must also fit exactly.
     #[test]
     fn unprefixed_live_lines_fit_too() {
-        let mut inner = inner_at_width(50);
+        let mut inner = inner_at(50, 30);
         inner.live = Some(LiveLine {
             kind: LiveKind::Tool,
             text: format!("⚒ read_file({})", "y".repeat(200)),
         });
         let (lines, _, _) = inner.compose_block();
-        assert!(lines.iter().all(|line| visible_cols(line) <= 50));
+        assert!(lines.iter().all(|line| line_cols(line) <= 50));
     }
 
-    /// The contract `render_entry` owes the repaint, for EVERY variant:
-    /// one returned string is exactly one screen row, and it fits.
-    ///
-    /// Both halves have been violated in production. An over-wide row
-    /// overwrites the last column with garbage when autowrap is off (a
-    /// terminal resize re-rendered pre-composed rows at the old width); a
-    /// row carrying an embedded newline moves the cursor down WITHOUT a
-    /// carriage return, stranding text at the right edge (table rows were
-    /// returned joined by newlines).
+    /// Nothing the composer draws may carry a glyph whose width the terminal
+    /// gets to choose: the block is the rule, the input, the hint row and
+    /// the footer, every one of them width-critical.
+    #[test]
+    fn the_block_draws_no_ambiguous_width_glyph() {
+        for width in [24usize, 40, 80, 100, 120, 160] {
+            let mut inner = inner_at(width, 30);
+            inner.editor.insert_str("a half-typed question");
+            let (lines, _, _) = inner.compose_block();
+            for line in &lines {
+                for ch in line.to_string().chars() {
+                    // Chrome glyphs are measured, not assumed — see
+                    // `theme::CHROME_GLYPHS`. Anything else the block draws
+                    // must have one unambiguous width.
+                    if th::cell_width(ch) == 1 && th::is_ambiguous_width(ch) {
+                        continue;
+                    }
+                    assert!(
+                        !th::is_ambiguous_width(ch),
+                        "ambiguous glyph {ch:?} (U+{:04X}) in a block line at \
+                         {width} cols: {:?}",
+                        ch as u32,
+                        line.to_string(),
+                    );
+                }
+            }
+        }
+    }
+
+    /// The contract `render_entry` owes the frame, for EVERY variant: one
+    /// returned line is exactly one screen row, and it fits.
     #[test]
     fn every_entry_renders_to_single_rows_that_fit() {
         let long = "supercalifragilistic ".repeat(12);
@@ -2473,7 +2188,7 @@ mod tests {
             Entry::Blank,
             // Composed for a 200-column screen, rendered on a narrow one.
             Entry::Fixed(chrome::tool_line(&format!("read_file({long})"), None, 200)),
-            Entry::Code(format!("{ACCENT}{long}{RESET}")),
+            Entry::Code(Line::from(vec![span(long.clone(), th::accent())])),
             Entry::Tool {
                 preview: format!("run_command(cargo test {long})"),
                 outcome: Some(ToolRecord {
@@ -2495,54 +2210,120 @@ mod tests {
         ];
         for width in [1usize, 2, 5, 12, 16, 19, 20, 21, 24, 31, 40, 68, 80, 120] {
             for entry in &entries {
-                for row in render_entry(entry, width) {
+                for line in render_entry(entry, width) {
+                    let plain = line.to_string();
                     assert!(
-                        !row.contains('\n') && !row.contains('\r'),
-                        "embedded newline at {width}: {row:?}"
+                        !plain.contains('\n') && !plain.contains('\r'),
+                        "embedded newline at {width}: {plain:?}"
                     );
                     // The real width, not the layout floor: a terminal
                     // narrower than 20 columns still must not be overflowed.
                     assert!(
-                        visible_cols(&row) <= width,
-                        "row exceeds {width} cols ({}): {row:?}",
-                        visible_cols(&row),
+                        line_cols(&line) <= width,
+                        "row exceeds {width} cols ({}): {plain:?}",
+                        line_cols(&line),
                     );
                 }
             }
         }
     }
 
-    /// Nothing the composer draws ABOVE the cursor may be wide enough to
-    /// reflow.
-    ///
-    /// A resize erases the block by moving up the cursor row recorded at
-    /// the last draw. Terminals that reflow on resize (Ghostty, kitty,
-    /// iTerm2, Terminal.app) re-wrap their own screen buffer first, so a
-    /// full-width line above the cursor becomes TWO rows and the block's top
-    /// moves out of the erase's reach ‒ it survives on screen as a ghost
-    /// composer. That is what a full-width composer rule did: measured with
-    /// a reflow-faithful replay, one resize left two rules and two footers.
-    ///
-    /// Keeping these lines inside the 20-column floor `compose_block` clamps
-    /// to makes them unwrappable at ANY terminal size, so the recorded
-    /// cursor row is exact on reflowing and non-reflowing terminals alike.
+    /// Vertical rhythm: never two blank rows in a row, and never a blank row
+    /// opening a commit. Blank entries are produced by several independent
+    /// paths — a table's own spacers, a prose block opening, a fence
+    /// delimiter, a marked note — and each used to decide for itself, so a
+    /// model reply that put a table next to a heading stacked up a hole.
     #[test]
-    fn the_block_draws_no_ambiguous_width_glyph() {
-        use unicode_width::UnicodeWidthChar as _;
-        // The block is the rule, the input, the hint row and the footer --
-        // every one of them width-critical. A glyph the terminal may render
-        // two columns wide turns "exactly the width" into "double it".
-        for width in [24usize, 40, 80, 100, 120, 160] {
-            let mut inner = inner_at_width(width);
-            inner.editor.insert_str("a half-typed question");
-            let (lines, _, _) = inner.compose_block();
-            for line in &lines {
-                for ch in line.chars() {
+    fn committed_rows_never_stack_blank_lines() {
+        let mut inner = inner_at(100, 40);
+        let reply = "\
+Here are the kinds.
+
+| Kind | Trigger |
+|---|---|
+| syntax_failure | SyntaxError |
+| test_failure | panicked at |
+
+
+## Payload
+
+
+| Field | Shape |
+|---|---|
+| source | tool{name} |
+
+Done.
+";
+        let mut entries: Vec<Entry> = Vec::new();
+        for line in reply.lines() {
+            entries.extend(inner.render_text_entries(line));
+        }
+        entries.extend(inner.flush_markdown());
+        let kept = inner.collapse_blanks(entries);
+        assert!(
+            !matches!(kept.first(), Some(Entry::Blank)),
+            "a commit must not open with a blank row"
+        );
+        let mut previous_blank = false;
+        for (i, entry) in kept.iter().enumerate() {
+            let blank = matches!(entry, Entry::Blank);
+            assert!(
+                !(blank && previous_blank),
+                "two blank rows in a row at {i}: {kept:#?}"
+            );
+            previous_blank = blank;
+        }
+        // And the content survived the collapse.
+        let text: String = kept
+            .iter()
+            .flat_map(|entry| render_entry(entry, 100))
+            .map(|line| line.to_string())
+            .collect::<Vec<_>>()
+            .join("\n");
+        assert!(text.contains("syntax_failure") && text.contains("Payload"));
+        assert!(text.contains("source") && text.contains("Done."));
+    }
+
+    /// Model prose must never overflow the width: a row that does is wrapped
+    /// by the TERMINAL instead of by us, and a terminal wraps to column 0 —
+    /// so the continuation loses the content grid and reads as a new item.
+    #[test]
+    fn model_prose_never_overflows_and_keeps_its_grid() {
+        // Shapes taken from a real reply: em dashes, arrows, inline code,
+        // nested bullets, long paths, and a heading.
+        let reply = "\
+**Purpose (1-9):** Maps tool errors, command output, provider errors and \
+verification results onto one closed vocabulary so recovery can choose a \
+response, telemetry can aggregate, and Nimble can learn from `previous_failure` \
+without parsing prose — rule-based and conservative.
+
+`classify_tool_output(tool, output)` **(148-211):** Order: Timeout → \
+ModelFormatFailure (invalid arguments, must be json array) → ToolFailure.
+
+- edit: `old_string`/match + not found or occurrence/matches/ambiguous → \
+  IncorrectAssumption; bare not found → MissingContext; else ToolFailure.
+  - read_file/list_files/search_text/symbol_search/repo_map: missing-file → \
+    MissingContext; invalid pattern → ModelFormatFailure.
+
+## Constructors (333-347)
+products/butterfly/cli/crates/core/src/failure.rs (477 lines) — structured \
+failure classification for Butterfly's recovery loop:
+";
+        for width in [40usize, 60, 80, 100, 120, 160] {
+            let mut inner = inner_at(width, 40);
+            let mut entries: Vec<Entry> = Vec::new();
+            for line in reply.lines() {
+                entries.extend(inner.render_text_entries(line));
+            }
+            entries.extend(inner.flush_markdown());
+            for entry in &entries {
+                for line in render_entry(entry, width) {
+                    let plain = line.to_string();
                     assert!(
-                        ch.width() == ch.width_cjk(),
-                        "ambiguous glyph {ch:?} (U+{:04X}) in a block line at \
-                         {width} cols: {line:?}",
-                        ch as u32
+                        line_cols(&line) <= width,
+                        "row overflows {width} cols ({}) and the terminal will \
+                         wrap it to column 0: {plain:?}",
+                        line_cols(&line),
                     );
                 }
             }
@@ -2550,212 +2331,24 @@ mod tests {
     }
 
     #[test]
-    fn no_block_line_can_reflow_at_any_width() {
-        // The 20-column cap on lines above the cursor is retired: the frame
-        // is rebuilt absolutely after a resize and `sync_size` keeps the
-        // relative erase from running against a stale width. What still has
-        // to hold is that no block line exceeds the width it was composed
-        // at ‒ the block draws with autowrap off, so an overlong line
-        // overwrites the last column instead of wrapping.
-        for width in [20usize, 21, 40, 80, 119, 120, 121, 200] {
-            let mut inner = inner_at_width(width);
-            inner.editor.insert_str("a half-typed question");
-            let (lines, _, _) = inner.compose_block();
-            for line in &lines {
-                assert!(
-                    visible_cols(line) <= width.max(20),
-                    "composed at {width}, a {}-col block line would overflow: {line:?}",
-                    visible_cols(line),
-                );
-            }
-        }
-    }
-
-    #[test]
-    fn physical_rows_counts_wrapping_and_ignores_ansi() {
-        assert_eq!(physical_rows("", 20), 1);
-        assert_eq!(physical_rows("short", 20), 1);
-        assert_eq!(physical_rows(&"x".repeat(20), 20), 1);
-        assert_eq!(physical_rows(&"x".repeat(45), 20), 3);
-        assert_eq!(physical_rows("\x1b[36mstyled\x1b[0m", 20), 1);
-    }
-
-    #[test]
-    fn pinned_block_sits_at_the_bottom_edge() {
-        let mut inner = inner_at_width(80);
-        inner.height = 30;
-        inner.place = Place::Pinned {
-            content_row: 1,
-            prev_block_top: 30,
-        };
-        let block_height = inner.compose_block().0.len();
-        let frame = inner.pinned_frame(None);
-        let expected_top = 30 - block_height + 1;
-        assert!(
-            frame.contains(&format!("\x1b[{expected_top};1H")),
-            "block must draw at the bottom edge (row {expected_top}): {frame:?}"
-        );
-        assert_eq!(
-            inner.place,
-            Place::Pinned {
-                content_row: 1,
-                prev_block_top: expected_top,
-            }
-        );
-    }
-
-    #[test]
-    fn pinned_output_advances_content_row_by_physical_rows() {
-        let mut inner = inner_at_width(20);
-        inner.height = 30;
-        inner.place = Place::Pinned {
-            content_row: 1,
-            prev_block_top: 30,
-        };
-        // One short line (1 row) + one 45-col line (3 rows at width 20).
-        let output = format!("short\n{}", "y".repeat(45));
-        inner.pinned_frame(Some(&output));
-        match inner.place {
-            Place::Pinned { content_row, .. } => assert_eq!(content_row, 5),
-            other => panic!("expected pinned, got {other:?}"),
-        }
-    }
-
-    #[test]
-    fn pinned_hands_off_to_scrolling_when_content_meets_the_block() {
-        let mut inner = inner_at_width(80);
-        inner.height = 10;
-        let block_height = inner.compose_block().0.len();
-        let block_top = 10 - block_height + 1;
-        inner.place = Place::Pinned {
-            content_row: block_top, // the next output row collides
-            prev_block_top: block_top,
-        };
-        inner.pinned_frame(Some("one more line"));
-        assert_eq!(inner.place, Place::Scrolling);
-    }
-
-    #[test]
-    fn tiny_terminals_go_straight_to_scrolling() {
-        let mut inner = inner_at_width(80);
-        inner.height = 3;
-        // A live line and activity row grow the block past the (clamped)
-        // terminal height, forcing the scrolling fallback.
-        inner.live = Some(LiveLine {
-            kind: LiveKind::Text,
-            text: "streaming".into(),
-        });
-        inner.activity = Some(Activity {
-            started: Instant::now(),
-            spinner: 0,
-            phase: Phase::Thinking,
-            tool_started: None,
-            out_bytes: 0,
-        });
-        inner.place = Place::Pinned {
-            content_row: 1,
-            prev_block_top: 1,
-        };
-        inner.pinned_frame(None);
-        assert_eq!(inner.place, Place::Scrolling);
-    }
-
-    #[test]
-    fn prose_word_wraps_at_word_boundaries_with_block_prefixes() {
-        let mut inner = inner_at_width(30);
-        inner.last_blank = false;
-        inner.text_block_start = true;
-        let entries = inner
-            .render_text_entries("The quick brown fox jumps over the lazy dog near the riverbank");
-        let out: Vec<String> = entries
-            .iter()
-            .flat_map(|entry| render_entry(entry, 30))
-            .collect();
-        let lines: Vec<&str> = out.iter().map(String::as_str).collect();
-        // Spacer first (previous line was not blank), then ◉ + indented rows.
-        assert_eq!(lines[0], "");
-        assert!(
-            lines[1].starts_with(&format!("{ACCENT}◉{RESET} ")),
-            "{:?}",
-            lines[1]
-        );
-        assert!(lines[2].starts_with("  "));
-        for line in &lines[1..] {
-            assert!(visible_cols(line) <= 30, "row too wide: {line:?}");
-            // No mid-word cuts: each row ends at a word boundary.
-            assert!(!line.ends_with(' '));
-        }
-        assert!(lines[1].ends_with("fox") || !lines[1].contains("jumps over the lazy"));
-        // Markers are styled but occupy the same two columns as before, so
-        // the grid survives: content starts at column 2 on every row.
-        assert_eq!(
-            visible_cols(&lines[1][..lines[1].find('T').expect("prose")]),
-            2
-        );
-    }
-
-    #[test]
-    fn bullets_hang_wrapped_rows_under_their_text() {
-        let mut inner = inner_at_width(30);
-        inner.last_blank = true;
-        inner.text_block_start = false;
-        let entries = inner.render_text_entries("- a bullet item with enough words to wrap around");
-        let out: Vec<String> = entries
-            .iter()
-            .flat_map(|entry| render_entry(entry, 30))
-            .collect();
-        let lines: Vec<&str> = out.iter().map(String::as_str).collect();
-        assert!(lines.len() >= 2);
-        assert!(lines[0].contains('‣'));
-        // Continuations indent 2 (block) + 2 (bullet hang) = 4 columns.
-        assert!(
-            lines[1].starts_with("    "),
-            "hanging indent lost: {:?}",
-            lines[1]
-        );
-    }
-
-    #[test]
-    fn bold_spans_survive_row_wrapping() {
-        let spans = vec![
-            md::Span {
-                style: md::SpanStyle::Plain,
-                text: "start ".into(),
-            },
-            md::Span {
-                style: md::SpanStyle::Bold,
-                text: "a bold run that is long enough to cross rows".into(),
-            },
-        ];
-        let rows = md::styled_rows(&spans, 20, 20);
-        assert!(rows.len() >= 2);
-        // Every row that contains bold text re-opens the style.
-        for row in &rows[1..] {
-            assert!(row.contains(md::BOLD), "style dropped on wrap: {row:?}");
-        }
-    }
-
-    #[test]
-    fn long_words_hard_cut_instead_of_overflowing() {
-        let spans = vec![md::Span {
-            style: md::SpanStyle::Plain,
-            text: "x".repeat(50),
-        }];
-        let rows = md::styled_rows(&spans, 20, 20);
-        assert_eq!(rows.len(), 3);
-        assert!(rows.iter().all(|r| visible_cols(r) <= 20));
-    }
-
-    #[test]
-    fn transcript_records_commits_and_overlay_math_clamps() {
-        let mut inner = inner_at_width(40);
-        inner.height = 10;
-        // paint() would write to the terminal; exercise record() directly.
+    fn the_transcript_ring_keeps_everything_for_the_overlay() {
+        let mut inner = inner_at(40, 10);
         for i in 0..20 {
-            inner.record(true, Entry::Fixed(format!("line {i}")));
+            inner.record(Entry::Fixed(Line::from(vec![th::text(format!(
+                "line {i}"
+            ))])));
         }
-        assert_eq!(inner.transcript.len(), 20);
-        assert_eq!(inner.transcript[0], (true, Entry::Fixed("line 0".into())));
+        // Reasoning the stream hides is recorded too — that is what lets the
+        // Ctrl+T overlay show it.
+        inner.record(Entry::Fixed(Line::from(vec![th::text("hidden reasoning")])));
+        assert_eq!(inner.transcript.len(), 21);
+        let rendered: Vec<String> = inner
+            .transcript
+            .iter()
+            .flat_map(|entry| render_entry(entry, 40))
+            .map(|line| line.to_string())
+            .collect();
+        assert_eq!(rendered.last().expect("tail"), "hidden reasoning");
     }
 
     #[test]
@@ -2771,18 +2364,17 @@ mod tests {
         let narrow = render_entry(&entry, 24);
         let wide = render_entry(&entry, 80);
         assert!(narrow.len() > wide.len(), "narrow must produce more rows");
-        assert!(narrow.iter().all(|row| visible_cols(row) <= 24));
+        assert!(narrow.iter().all(|line| line_cols(line) <= 24));
         assert_eq!(wide.len(), 1);
-        assert!(
-            wide[0].starts_with(&format!("{ACCENT}◉{RESET} ")),
-            "{:?}",
-            wide[0]
-        );
-        // User bars re-pad to the width they are rendered at.
+        assert_eq!(wide[0].spans[0].content, th::MARK_ANSWER);
+        assert_eq!(wide[0].spans[0].style, th::accent());
+        // A user turn is a dim caret plus the text — no filled band, so it
+        // no longer spans the width.
         let bar = Entry::UserBar("fix the bug".into());
         for width in [24usize, 60] {
             let rows = render_entry(&bar, width);
-            assert_eq!(visible_cols(&rows[0]), width, "bar must span the width");
+            assert!(rows[0].to_string().starts_with("› fix the bug"));
+            assert!(line_cols(&rows[0]) < width);
         }
     }
 
@@ -2791,198 +2383,185 @@ mod tests {
         let bar = Entry::UserBar("hi tell me\n\n@crates/core/src/provider/mod.rs".into());
         let rows = render_entry(&bar, 60);
         assert_eq!(rows.len(), 3);
-        assert_eq!(rows.iter().filter(|row| row.contains('❯')).count(), 1);
-        assert!(rows[0].contains("❯ hi tell me"), "{}", rows[0]);
-        // The blank interior line and the continuation stay on the band,
-        // indented under the marker.
-        for row in &rows {
-            assert!(row.starts_with(BAND), "{row}");
-            assert_eq!(visible_cols(row), 60, "{row}");
+        let plain: Vec<String> = rows.iter().map(|line| line.to_string()).collect();
+        assert_eq!(plain.iter().filter(|row| row.contains('›')).count(), 1);
+        assert!(plain[0].starts_with("› hi tell me"), "{}", plain[0]);
+        // Continuations sit on the content column, under the marker.
+        for line in &rows[1..] {
+            assert!(line.to_string().starts_with("  ") || line_cols(line) == 0);
         }
-        assert!(rows[2].contains("  @crates"), "{}", rows[2]);
-        // Content column matches assistant prose: marker col 0, text col 2.
-        assert!(rows[0].starts_with(&format!("{BAND}❯ hi")), "{}", rows[0]);
+        assert!(plain[2].contains("  @crates"), "{}", plain[2]);
         // A trailing newline adds no extra band row.
         let trailing = Entry::UserBar("done\n".into());
         assert_eq!(render_entry(&trailing, 60).len(), 1);
     }
 
     #[test]
-    fn repaint_math_refills_from_the_transcript_tail() {
-        let mut inner = inner_at_width(40);
-        inner.height = 12;
-        for i in 0..30 {
-            inner.record(true, Entry::Fixed(format!("line {i}")));
-        }
-        // Hidden reasoning must NOT surface in the repaint fill.
-        inner.record(false, Entry::Fixed("secret reasoning line".into()));
-        // Mirror repaint_all's fill loop (the drawing itself needs a tty).
-        let block_height = inner.compose_block().0.len();
-        let avail = inner.height - block_height;
-        let mut rows: Vec<String> = Vec::new();
-        'fill: for entry in inner
-            .transcript
+    fn prose_word_wraps_at_word_boundaries_with_block_prefixes() {
+        let mut inner = inner_at(30, 30);
+        inner.last_blank = false;
+        inner.text_block_start = true;
+        let entries = inner
+            .render_text_entries("The quick brown fox jumps over the lazy dog near the riverbank");
+        let out: Vec<Line<'static>> = entries
             .iter()
-            .rev()
-            .filter_map(|(on_screen, entry)| on_screen.then_some(entry))
-        {
-            for line in render_entry(entry, inner.width).into_iter().rev() {
-                rows.push(line);
-                if rows.len() >= avail {
-                    break 'fill;
-                }
-            }
+            .flat_map(|entry| render_entry(entry, 30))
+            .collect();
+        // Spacer first (previous line was not blank), then ◉ + indented rows.
+        assert_eq!(line_cols(&out[0]), 0);
+        assert_eq!(out[1].spans[0].content, th::MARK_ANSWER);
+        assert_eq!(out[1].spans[0].style, th::accent());
+        assert!(out[2].to_string().starts_with("  "));
+        for line in &out[1..] {
+            let plain = line.to_string();
+            assert!(line_cols(line) <= 30, "row too wide: {plain:?}");
+            // No mid-word cuts: each row ends at a word boundary.
+            assert!(!plain.ends_with(' '));
         }
-        rows.reverse();
-        assert_eq!(rows.len(), avail);
-        assert_eq!(rows.last().expect("tail"), "line 29");
-        assert!(rows.iter().all(|row| !row.contains("secret")));
+        // Markers are styled but occupy the same two columns as before, so
+        // the grid survives: content starts at column 2 on every row.
+        assert_eq!(
+            width_of(&out[1].to_string()[..out[1].to_string().find('T').expect("prose")]),
+            2
+        );
     }
 
-    /// A resize must never re-emit committed output.
-    ///
-    /// It used to repaint the visible screen from the transcript, which
-    /// reads as reasonable until you remember that narrowing a window makes
-    /// the terminal reflow its own screen buffer and push the overflow into
-    /// scrollback ‒ the repaint then writes those rows a second time. One
-    /// window drag fires dozens of resize events, so whole paragraphs piled
-    /// up over and over (measured: the same sentence emitted 29 times in a
-    /// single drag). Committed output belongs to the terminal.
-    /// The whole point of the cursor-position report: it tells us whether
-    /// the terminal re-wrapped its screen buffer, which decides how far up
-    /// the block's top actually is.
-    ///
-    /// A block drawn at 300 columns whose above-cursor lines are wide
-    /// occupies more rows once a reflowing terminal re-wraps it at 150. Both
-    /// hypotheses predict a different cursor row ‒ the block's last row sits
-    /// on the screen's last row ‒ so the reported row picks the right one.
     #[test]
-    fn a_resize_reprojects_committed_content_at_the_new_width() {
-        // The bug this whole path exists for: text committed at one width
-        // keeps that wrap forever, because the terminal owns those newlines.
-        // A settled resize must redraw it from the transcript instead.
-        let sentence = "the screen is a deterministic projection of application \
-             state and the current terminal dimensions, never a pile of mutations";
-        let mut inner = inner_at_width(100);
-        inner.height = 24;
-        inner.record(
-            true,
-            Entry::Prose {
-                marker: Some(th::MARK_ANSWER),
-                spans: vec![md::Span {
-                    style: md::SpanStyle::Plain,
-                    text: sentence.to_string(),
-                }],
-                cont_indent: 0,
-            },
-        );
-
-        // Narrow: every row must fit the new width, not shear against it.
-        inner.width = 60;
-        let narrow = inner.full_frame(true);
+    fn bullets_hang_wrapped_rows_under_their_text() {
+        let mut inner = inner_at(30, 30);
+        inner.last_blank = true;
+        inner.text_block_start = false;
+        let entries = inner.render_text_entries("- a bullet item with enough words to wrap around");
+        let out: Vec<String> = entries
+            .iter()
+            .flat_map(|entry| render_entry(entry, 30))
+            .map(|line| line.to_string())
+            .collect();
+        assert!(out.len() >= 2);
+        assert!(out[0].contains('‣'));
+        // Continuations indent 2 (block) + 2 (bullet hang) = 4 columns.
         assert!(
-            narrow.contains("\x1b[1;1H\x1b[2K"),
-            "viewport not erased: {narrow:?}"
+            out[1].starts_with("    "),
+            "hanging indent lost: {:?}",
+            out[1]
         );
-        for row in plain(&narrow).lines() {
+    }
+
+    #[test]
+    fn styled_spans_survive_row_wrapping() {
+        let spans = vec![
+            md::Span {
+                style: md::SpanStyle::Plain,
+                text: "start ".into(),
+            },
+            md::Span {
+                style: md::SpanStyle::Bold,
+                text: "a bold run that is long enough to cross rows".into(),
+            },
+        ];
+        let rows = md::styled_lines(&spans, 20, 20);
+        assert!(rows.len() >= 2);
+        // Every row that contains bold text carries the style on its spans.
+        for row in &rows[1..] {
             assert!(
-                visible_cols(row) <= 60,
-                "row overflows the narrowed screen: {row:?}"
+                row.spans.iter().any(|s| s.style == th::bold()),
+                "style dropped on wrap: {row:?}"
             );
         }
-        // Wide: the SAME entry now occupies fewer rows ‒ it re-expanded
-        // instead of keeping the wrap it was committed with.
-        let entry = &inner.transcript.back().expect("recorded").1;
-        let (at60, at100, at160) = (
-            render_entry(entry, 60).len(),
-            render_entry(entry, 100).len(),
-            render_entry(entry, 160).len(),
-        );
-        assert!(
-            at60 > at100 && at100 > at160,
-            "entry did not re-wrap with width: 60->{at60} 100->{at100} 160->{at160}"
-        );
-
-        inner.width = 160;
-        let wide = inner.full_frame(true);
-        // And the widened frame really is using the extra columns, rather
-        // than redrawing the old narrow shape into a bigger window.
-        assert!(
-            plain(&wide)
-                .lines()
-                .any(|row| visible_cols(row) > 100 && row.contains("projection")),
-            "widened frame never exceeds the old width"
-        );
-        for row in plain(&wide).lines() {
-            assert!(visible_cols(row) <= 160, "row overflows: {row:?}");
-        }
     }
 
     #[test]
-    fn a_resize_keeps_the_block_where_it_was() {
-        let mut inner = inner_at_width(80);
-        inner.height = 40;
-        for i in 0..6 {
-            inner.record(true, Entry::Fixed(format!("line {i}")));
-        }
-        let block_height = inner.compose_block().0.len();
-        // A conversation is under way and the window grew: the block sits
-        // right under the content, spare rows below it, no void.
-        let frame = inner.full_frame(false);
-        assert!(
-            frame.contains("\x1b[7;1H"),
-            "block not placed right under the 6 content rows: {frame:?}"
-        );
-        assert!(matches!(inner.place, Place::Scrolling));
-        assert!(!frame.contains(&format!("\x1b[{};1H\x1b[2K{}", 41 - block_height, th::DIM)));
-        // Pre-conversation screen: the block keeps the bottom edge.
-        let frame = inner.full_frame(true);
-        assert!(
-            frame.contains(&format!("\x1b[{};1H", 41 - block_height)),
-            "pinned block not on the bottom edge: {frame:?}"
-        );
-        assert!(matches!(inner.place, Place::Pinned { .. }));
+    fn long_words_hard_cut_instead_of_overflowing() {
+        let spans = vec![md::Span {
+            style: md::SpanStyle::Plain,
+            text: "x".repeat(50),
+        }];
+        let rows = md::styled_lines(&spans, 20, 20);
+        assert_eq!(rows.len(), 3);
+        assert!(rows.iter().all(|r| line_cols(r) <= 20));
     }
 
+    /// The opening card is a BOX, so it has to be re-composed at the render
+    /// width rather than clamped to it.
+    ///
+    /// It used to be committed as rows composed once at the startup width.
+    /// Widening then left it marooned in the corner, and narrowing ran it
+    /// through `truncate_line`, which cut the right-hand border off and put an
+    /// ellipsis where it had been — measured in herdr at a 44-column pane.
     #[test]
-    fn a_resize_rebuilds_the_frame_from_the_transcript_tail() {
-        let mut inner = inner_at_width(80);
-        inner.height = 24;
-        for i in 0..40 {
-            inner.record(true, Entry::Fixed(format!("committed line {i}")));
+    fn the_welcome_card_is_rebuilt_at_every_width() {
+        let entry = Entry::Welcome(chrome::Welcome {
+            workspace: "monet/products/butterfly".into(),
+            branch: Some("feature/a-fairly-long-branch-name".into()),
+            model_name: "DeepSeek V4 Flash (served as V4.1 Flash)".into(),
+            context_tokens: 1_000_000,
+            mode: "ask".into(),
+        });
+        for width in [44usize, 60, 80, 100, 132, 160, 200] {
+            let rows = render_entry(&entry, width);
+            assert_eq!(rows.len(), 7, "card shape changed at {width}");
+            for row in &rows {
+                assert_eq!(
+                    line_cols(row),
+                    width,
+                    "card did not fill {width} columns: {:?}",
+                    row.to_string()
+                );
+                let last = row.to_string().chars().last().unwrap();
+                assert!(
+                    [th::BOX_TR, th::BOX_BR, th::BOX_V]
+                        .iter()
+                        .any(|edge| edge.starts_with(last)),
+                    "card lost its right border at {width}: {:?}",
+                    row.to_string()
+                );
+            }
         }
-        inner.editor.insert_str("a half-typed question");
-        inner.width = 60;
-        let frame = inner.full_frame(true);
-        // The viewport is rebuilt absolutely: no relative cursor arithmetic
-        // has to survive the terminal's own reflow.
-        assert!(
-            frame.contains("\x1b[1;1H\x1b[2K"),
-            "no absolute erase: {frame:?}"
-        );
-        // It refills from the TAIL, so the newest lines are there and the
-        // ones that scrolled away stay in scrollback where they belong.
-        let text = plain(&frame);
-        assert!(text.contains("committed line 39"), "tail missing: {text:?}");
-        assert!(
-            !text.contains("committed line 0\n"),
-            "refilled too far back"
-        );
-        // Editor state survives the resize untouched.
-        assert!(text.contains("a half-typed question"), "input lost");
-        assert!(text.contains("read-only"), "footer lost");
-        // Block pinned to the bottom edge, content above it.
-        assert!(matches!(inner.place, Place::Pinned { .. }));
     }
 
+    /// Entries re-wrap at whatever width they are rendered at. That still
+    /// matters after the move to Codex's model — not for a resize, which no
+    /// longer redraws history, but for every fresh commit and for the Ctrl+T
+    /// overlay, which re-wraps the whole session at its own width.
     #[test]
-    fn truncate_styled_counts_visible_columns_only() {
-        let styled = format!("{}0123456789{}0123456789", md::CYAN, md::RESET);
-        let cut = truncate_styled(&styled, 12);
-        assert!(visible_cols(&cut) <= 12);
-        assert!(cut.contains('⋯'));
-        assert!(cut.starts_with(md::CYAN));
-        let fits = truncate_styled("short", 12);
-        assert!(fits.starts_with("short"));
+    fn entries_rewrap_at_the_width_they_are_rendered_at() {
+        let sentence = "the composer is the only region this renderer owns, and everything \
+             above it belongs to the terminal the moment it is committed";
+        let entry = Entry::Prose {
+            marker: Some(th::MARK_ANSWER),
+            spans: vec![md::Span {
+                style: md::SpanStyle::Plain,
+                text: sentence.to_string(),
+            }],
+            cont_indent: 0,
+        };
+        let (at40, at60, at96) = (
+            render_entry(&entry, 40).len(),
+            render_entry(&entry, 60).len(),
+            render_entry(&entry, 96).len(),
+        );
+        assert!(
+            at40 > at60 && at60 > at96,
+            "entry did not re-wrap with the width: 40->{at40} 60->{at60} 96->{at96}"
+        );
+        // And it keeps widening: prose uses the whole terminal, with no
+        // measure cap. One was tried and removed — it left most of a wide
+        // window black.
+        let widest = render_entry(&entry, 200);
+        assert_eq!(
+            widest.len(),
+            1,
+            "prose stopped using the width it was given"
+        );
+        assert!(
+            line_cols(&widest[0]) > 96,
+            "prose is capped short of the terminal: {:?}",
+            widest[0].to_string()
+        );
+        for width in [40usize, 60, 100, 160] {
+            for line in render_entry(&entry, width) {
+                assert!(line_cols(&line) <= width, "{:?}", line.to_string());
+            }
+        }
     }
 }

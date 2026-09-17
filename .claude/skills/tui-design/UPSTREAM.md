@@ -32,8 +32,11 @@ git clone --depth 1 https://github.com/pageton/tui-design-skill /tmp/tui-design-
 
 1. Added Claude Code skill frontmatter (`name`, `description`, `version`) to `SKILL.md`; upstream
    ships it without frontmatter, so it is not discoverable as a skill unmodified.
-2. Added the **Monet Constraints** section to `SKILL.md` — Butterfly's inline crossterm TUI (not
-   Ratatui), the cached-prefix and engine/UI boundaries, and the required verification command.
+2. Added the **Monet Constraints** section to `SKILL.md` — Butterfly's inline ratatui TUI, the
+   ambiguous-width measurement rule, and the cached-prefix and engine/UI boundaries, plus the
+   required verification command. (Until 2026-09-17 this section said Butterfly was *not* a
+   Ratatui app and forbade adopting it; the migration landed that day, so the constraint now
+   covers what remains off-limits — the alternate screen for the session — instead.)
 3. Replaced the `projects/` bullet in the reference list with a pointer to upstream.
 
 ## Re-syncing
