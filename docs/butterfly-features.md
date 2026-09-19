@@ -169,7 +169,20 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   a turn it has to save one turn to pay for itself. The risk is cutting an attempt that would
   have landed: mitigated by acting only above the floor, by ending the attempt rather than the
   task, and by `attempt_stalled` escalating in Nimble (being stuck is a capability signal, unlike
-  a budget exhaustion). Unmeasured against a real model; the trigger rate is what to watch first.
+  a budget exhaustion).
+  **Offline replay, 2026-09-19 ($0.012, no model spend):** the check consumes tool-call previews,
+  which telemetry already records, so it was replayed against 143 recorded trials (37 passed, 106
+  failed) at 422 checkpoints through the production code path. **Zero false cuts: 0 of 37 passing
+  trials would have been cut.** The floor earned its keep — 12 `stalled` opinions landed on
+  trials that passed and *none* reached 0.9 (of 63 stalled verdicts overall: 42 under 0.7, 15 in
+  0.7-0.9, 6 at or above 0.9). All 6 confident cuts were on trials that failed anyway, saving 671
+  provider calls (median 134 per cut; largest 214 of 239 on sound-change-cascade), 5.5% of every
+  provider call in the corpus. Median latency 358 ms. Recall is deliberately low — 6 of 106
+  doomed trials, 5.7% — but the ones it catches are the expensive ones.
+  Two caveats. The replay's objective line is the task name, not the full statement telemetry does
+  not store, so production sees MORE context than this and these numbers should be a floor. And
+  671 calls saved is gross, not net: a cut attempt triggers a retry that costs calls of its own,
+  which a replay cannot model. Safety is settled; net saving needs a real paired run.
 - **Output-starvation retry** (Terminal-Bench finding, 2026-09-04) — a turn that ends at the
   output-token limit with no visible answer is treated as a failed attempt even with no
   verification plan: the next attempt starts with an "OUTPUT LIMIT" evidence message. Observed
