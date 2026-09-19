@@ -139,7 +139,21 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   The floor is doing the work it was put there to do; 0.85 would also have been safe on this
   sample, but n=17 does not justify moving it. This settles the safety question (is a confident
   answer ever wrong?) without a bench run; it does NOT measure whether better guidance converts
-  retries into passes, which still needs #9 below. Enabling it sends the failing command line and a bounded output tail to
+  retries into passes.
+  **Bench arm, Muse Spark 1.3 Contributor, fast subset, 2026-09-19** (`--ak triage=true`, low
+  effort, 300 calls, 1h cap): 2/5 passed (react-lead-form, wal-recovery-ordering) at $0.191 total
+  in 36 minutes — the same 2/5 Muse scores at low effort, a different two tasks, i.e. the
+  documented run-to-run variance. Triage fired **once**, on the only failing verification in the
+  run, and correctly declined (confidence 0.33, 1017 ms; the rule verdict stood). The integration
+  is proven end to end — key into the container, question asked, answer discarded below the floor,
+  telemetry recorded — and it remains untested as a pass-rate lever, because **the trigger is
+  rare**: failing verification events run 1-2 per 24-task job (GLM 2026-09-10: 2 of 22; Muse
+  2026-09-11: 2 of 23; this run: 1 of 6), and all 34 historical jobs together hold only 23. A
+  pass-rate A/B is therefore underpowered by BASE RATE, not merely by variance — one or two
+  events per 24 tasks cannot move 7/24 whichever way they are decided. Judge triage on the
+  offline corpus above, or first raise the base rate (`detect_checks` / `require_diff`, which run
+  real build and test checks that can fail); do not buy more of the same arm expecting a signal.
+  Enabling it sends the failing command line and a bounded output tail to
   a third party, which is why it is opt-in. `crates/core/src/triage/mod.rs`
 - **Output-starvation retry** (Terminal-Bench finding, 2026-09-04) — a turn that ends at the
   output-token limit with no visible answer is treated as a failed attempt even with no

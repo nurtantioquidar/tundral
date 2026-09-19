@@ -18,6 +18,9 @@
 #   VERIFIER     independent verifier on accepted claims (default off; VERIFIER=true to enable)
 #   VERIFIER_MODEL  run the verifier on another model (Harbor form, e.g. zai/glm-5.3-flash)
 #   AGENT_TIMEOUT_MULT  Harbor agent wall-clock multiplier (tasks allow 8h; 0.125 = 1h cap)
+#   TRIAGE=true  optional System One triage (needs TYPESAFE_API_KEY; the adapter
+#                refuses rather than silently running as the control arm)
+#   MAX_COST     per-trial Butterfly cost cap in USD (adapter default "2.00")
 #   SUBSET=fast-subset.txt  five quick, discriminating tasks for iteration
 #   SETUP_TIMEOUT_MULT  Harbor agent-setup timeout multiplier (mini-swe-agent installs from the
 #                network inside the container; 3 when many containers share the link)
@@ -108,6 +111,8 @@ for model in $MODELS; do
       if [[ -n "${EFFORT:-}" ]]; then agent_args+=(--ak "effort=$EFFORT"); fi
       if [[ -n "${MAX_CALLS:-}" ]]; then agent_args+=(--ak "max_calls=$MAX_CALLS"); fi
       if [[ -n "${VERIFIER:-}" ]]; then agent_args+=(--ak "independent_verifier=$VERIFIER"); fi
+      if [[ -n "${TRIAGE:-}" ]]; then agent_args+=(--ak "triage=$TRIAGE"); fi
+      if [[ -n "${MAX_COST:-}" ]]; then agent_args+=(--ak "max_cost_usd=$MAX_COST"); fi
       if [[ -n "${VERIFIER_MODEL:-}" ]]; then
         agent_args+=(--ak "verifier_model=$VERIFIER_MODEL")
         vvar="$(key_for "$VERIFIER_MODEL")"

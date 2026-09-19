@@ -30,6 +30,14 @@ review). Off until an A/B on the dev subset shows it pays for itself. `verifier_
 (Harbor form, e.g. `zai/glm-5.3-flash`) runs the verifier on a different model so it does not
 share the worker's blind spots; the container gets that provider's key too.
 
+`triage` (default off; `--ak triage=true`): passes `--triage` and forwards `TYPESAFE_API_KEY`
+into the container, so failures the rule-based classifier leaves as `uncertain_result` get a
+System One second opinion before the next attempt's evidence is written. A missing key raises
+rather than falling back to off: Butterfly treats an absent key as "triage disabled" and carries
+on, which would make a triage arm silently run as the control. The control arm is the same binary
+with the flag omitted — the rule verdict is deterministic, so both arms' classifications are in
+the same telemetry (`triage_calls` / `triage_refined`, and each event's `from`/`to`).
+
 `lean` (default on; `--ak lean=false`): passes `--lean`, the lean-turns prompt block (no read-back
 after a successful edit, scoped orientation, batched reads). Private-suite A/B 2026-09-12, 12 tasks
 × 2 runs: GLM 21/24 vs 20/24 at 24 vs 28 calls and $0.060 vs $0.087 per success; DeepSeek 20/24 vs
@@ -103,6 +111,7 @@ class Butterfly(BaseInstalledAgent):
         effort: str | None = None,
         api_key_env: str | None = None,
         base_url: str | None = None,
+        triage: bool = False,
         extra_args: str = "",
         **kwargs: Any,
     ) -> None:
@@ -125,6 +134,7 @@ class Butterfly(BaseInstalledAgent):
         self._effort = effort
         self._api_key_env = api_key_env
         self._base_url = base_url
+        self._triage = _truthy(triage)
         self._extra_args = shlex.split(extra_args) if extra_args else []
         self._version: str | None = None
 
@@ -198,6 +208,18 @@ class Butterfly(BaseInstalledAgent):
                 v_url = self._get_env(v_url_var)
                 if v_url:
                     env[v_url_var] = v_url
+        # Optional System One triage needs its own key inside the container.
+        # Butterfly treats a missing key as "triage off" and carries on, which
+        # is right for a user and wrong for a measurement: the run would look
+        # like a triage arm and silently be the control. Fail loudly instead.
+        if self._triage:
+            triage_key = self._get_env("TYPESAFE_API_KEY")
+            if not triage_key:
+                raise ValueError(
+                    "triage=true needs TYPESAFE_API_KEY on the host, or the run "
+                    "would silently measure the control arm"
+                )
+            env["TYPESAFE_API_KEY"] = triage_key
         return env
 
     def _task_type(self) -> str | None:
@@ -249,6 +271,8 @@ class Butterfly(BaseInstalledAgent):
                 argv.append("--independent-verifier")
                 if self._verifier_model:
                     argv += ["--verifier-model", self._verifier_model.split("/", 1)[-1]]
+        if self._triage:
+            argv.append("--triage")
         if self._effort:
             argv += ["--effort", self._effort]
         task_type = self._task_type()

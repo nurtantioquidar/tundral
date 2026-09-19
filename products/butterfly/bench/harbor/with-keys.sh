@@ -7,7 +7,9 @@
 #   bench/harbor/with-keys.sh cargo test -p butterfly-core --test live_deepseek -- --nocapture
 #
 # Items (vault Personal): api_key_deepseek__monet.harness, api_key_zai__monet.harness,
-# api_key_openai__monet.harness. Override with OP_VAULT / OP_ITEM_<PROVIDER>.
+# api_key_openai__monet.harness, api_key_meta__monet.harness, and — not a model
+# provider, used only by optional failure triage —
+# api_key_typesafeai__butterfly.harness. Override with OP_VAULT / OP_ITEM_<PROVIDER>.
 #
 # Unattended runs: the macOS login Keychain is consulted FIRST (no Touch ID per
 # read while the user is logged in; encrypted at rest). Add a key once, typing
@@ -52,10 +54,15 @@ DEEPSEEK_API_KEY="${DEEPSEEK_API_KEY:-$(read_key "${OP_ITEM_DEEPSEEK:-api_key_de
 ZAI_API_KEY="${ZAI_API_KEY:-$(read_key "${OP_ITEM_ZAI:-api_key_zai__monet.harness}")}"
 OPENAI_API_KEY="${OPENAI_API_KEY:-$(read_key "${OP_ITEM_OPENAI:-api_key_openai__monet.harness}")}"
 META_API_KEY="${META_API_KEY:-$(read_key "${OP_ITEM_META:-api_key_meta__monet.harness}")}"
+# Not a model provider: TypeSafe's System One endpoint, used only by optional
+# failure triage (`--ak triage=true`). Absent is normal, so it is not warned
+# about here — but the Butterfly adapter refuses a triage run without it
+# rather than silently measuring the control arm.
+TYPESAFE_API_KEY="${TYPESAFE_API_KEY:-$(read_key "${OP_ITEM_TYPESAFE:-api_key_typesafeai__butterfly.harness}")}"
 for name in DEEPSEEK_API_KEY ZAI_API_KEY OPENAI_API_KEY META_API_KEY; do
   if [[ -z "${!name}" ]]; then echo "with-keys: $name not found in the login Keychain or 1Password (item missing or op not signed in)" >&2; fi
 done
-export DEEPSEEK_API_KEY ZAI_API_KEY OPENAI_API_KEY META_API_KEY
+export DEEPSEEK_API_KEY ZAI_API_KEY OPENAI_API_KEY META_API_KEY TYPESAFE_API_KEY
 # Sandbox-backend credentials ride along when the env file provides them (never printed).
 [[ -n "${MODAL_TOKEN_ID:-}" ]] && export MODAL_TOKEN_ID MODAL_TOKEN_SECRET
 exec "$@"
