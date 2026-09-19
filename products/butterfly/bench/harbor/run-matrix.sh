@@ -21,6 +21,8 @@
 #   TRIAGE=true  optional System One triage (needs TYPESAFE_API_KEY; the adapter
 #                refuses rather than silently running as the control arm)
 #   MAX_COST     per-trial Butterfly cost cap in USD (adapter default "2.00")
+#   DETECT_CHECKS=true  run build/test checks detected from manifests
+#   REQUIRE_DIFF=true   fail verification when the workspace shows no change
 #   SUBSET=fast-subset.txt  five quick, discriminating tasks for iteration
 #   SETUP_TIMEOUT_MULT  Harbor agent-setup timeout multiplier (mini-swe-agent installs from the
 #                network inside the container; 3 when many containers share the link)
@@ -112,6 +114,12 @@ for model in $MODELS; do
       if [[ -n "${MAX_CALLS:-}" ]]; then agent_args+=(--ak "max_calls=$MAX_CALLS"); fi
       if [[ -n "${VERIFIER:-}" ]]; then agent_args+=(--ak "independent_verifier=$VERIFIER"); fi
       if [[ -n "${TRIAGE:-}" ]]; then agent_args+=(--ak "triage=$TRIAGE"); fi
+      # The two check sources Butterfly actually trusts. Measured
+      # 2026-09-19: across 200 trials every verification came from
+      # model-declared or self-authored checks and `verified` was never
+      # true, because neither of these was ever passed.
+      if [[ -n "${DETECT_CHECKS:-}" ]]; then agent_args+=(--ak "detect_checks=$DETECT_CHECKS"); fi
+      if [[ -n "${REQUIRE_DIFF:-}" ]]; then agent_args+=(--ak "require_diff=$REQUIRE_DIFF"); fi
       if [[ -n "${MAX_COST:-}" ]]; then agent_args+=(--ak "max_cost_usd=$MAX_COST"); fi
       if [[ -n "${VERIFIER_MODEL:-}" ]]; then
         agent_args+=(--ak "verifier_model=$VERIFIER_MODEL")
