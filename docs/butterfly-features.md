@@ -211,6 +211,20 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   that test before reaching for it again. Strictly, what was disproved is that *600 bytes* of real
   statement helps; a larger cap is untested, but the name→statement effect was so small that
   context does not look like the lever.
+  **`is_weak_check` tested too, and rejected (2026-09-19, $0.003, 259 claimed checks from 107
+  real claims).** It looked like the best remaining candidate: a local textual judgement on a
+  command string, closed vocabulary, on the hot path (every claim), tightening-only. Jev flags
+  more checks weak than the rule does (36 vs 28 of 259) and its individual judgements are
+  defensible. At the CLAIM level it adds nothing: the rule accepts 71 of 74 claims whose trial
+  then failed, and rule-plus-Jev still accepts **71 of 74 — zero additional catches** — while
+  wrongly rejecting 2 of 33 claims whose trial passed. Pure harm.
+  Why: the false-completion mode is not "the proof is trivially weak" — the allowlist already
+  catches those. It is "the proof looks behavioural (`npm test`, `python3 verify.py`) but
+  exercises the wrong thing", which cannot be judged from the command string; it needs to know
+  what the task required. That is the same global/counterfactual category the progress check
+  failed at. **Conclusion for Jev in Butterfly: no site found where it is both frequent enough to
+  matter and local enough to trust.** Failure triage stays shipped and off by default because it
+  is correct and cheap, not because it moves anything.
 - **Output-starvation retry** (Terminal-Bench finding, 2026-09-04) — a turn that ends at the
   output-token limit with no visible answer is treated as a failed attempt even with no
   verification plan: the next attempt starts with an "OUTPUT LIMIT" evidence message. Observed
