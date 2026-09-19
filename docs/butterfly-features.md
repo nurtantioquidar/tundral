@@ -196,9 +196,21 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   "what kind of failure is this output?" (13/13 at the floor — a local, textual judgement) and
   poorly calibrated on "is this agent making progress?" (0.99 and wrong — a global judgement
   needing knowledge of what success looks like). The replay cannot separate "Jev is miscalibrated
-  here" from "the replay's objective was too thin"; production carries the full statement and may
-  do better. Until that is distinguished, the progress check stays OFF by default: current
-  settings sit on the safe frontier by sampling luck, not by demonstrated calibration.
+  here" from "the replay's objective was too thin".
+  **Third replay, same day ($0.083, 2,311 checkpoints over 157 trials), settles it: the objective
+  was not the problem.** Real task statements (recovered from each trial's `trial.log` `-p`
+  argument, median 1,706 chars, capped to 600 bytes by `progress_state` exactly as in production)
+  moved high-confidence wrong stalls only from 12 across 6 trials to **10 across 5**, and false
+  cuts at every-5/0.9 from 6 to 5 — inside noise, on a slightly different trial set. Giving Jev
+  the real objective does not make it reliable at this question.
+  **Conclusion: the miscalibration is Jev's, not the harness's, and the progress check stays OFF
+  by default.** The durable lesson is where System One earns trust: it is excellent at local,
+  textual, closed-vocabulary judgements ("what kind of failure is this output?" — 13/13 at the
+  floor) and unreliable at global, counterfactual ones ("is this agent getting closer?" — 0.99 and
+  wrong), which need a model of what success would look like that no state blob carries. Apply
+  that test before reaching for it again. Strictly, what was disproved is that *600 bytes* of real
+  statement helps; a larger cap is untested, but the name→statement effect was so small that
+  context does not look like the lever.
 - **Output-starvation retry** (Terminal-Bench finding, 2026-09-04) — a turn that ends at the
   output-token limit with no visible answer is treated as a failed attempt even with no
   verification plan: the next attempt starts with an "OUTPUT LIMIT" evidence message. Observed
