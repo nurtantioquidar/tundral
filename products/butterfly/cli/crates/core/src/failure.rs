@@ -25,6 +25,22 @@ pub enum FailureKind {
     Timeout,
     ModelFormatFailure,
     RepeatedPatchFailure,
+    /// The attempt wrote nothing: no file was created or edited, so there is
+    /// no work to verify. Distinct from `UncertainResult` because nothing
+    /// about it is uncertain — it is the clearest signal the loop gets, and
+    /// telling the model the outcome is "unclear" sent it to verify work that
+    /// does not exist (10 of 14 unclassified bench failures, 2026-09-19).
+    WorkspaceUnchanged,
+    /// The attempt stopped without calling `complete_task` under the
+    /// completion gate.
+    CompletionNotClaimed,
+    /// The attempt used its per-attempt provider-call budget before finishing.
+    CallBudgetExhausted,
+    /// The response hit the output-token limit with no visible answer.
+    OutputTruncated,
+    /// A completion claim whose acceptance checks cannot fail on wrong
+    /// behaviour (compile-only, existence-only).
+    UnprovenClaim,
     UncertainResult,
 }
 
@@ -41,6 +57,11 @@ impl FailureKind {
             FailureKind::Timeout => "timeout",
             FailureKind::ModelFormatFailure => "model_format_failure",
             FailureKind::RepeatedPatchFailure => "repeated_patch_failure",
+            FailureKind::WorkspaceUnchanged => "workspace_unchanged",
+            FailureKind::CompletionNotClaimed => "completion_not_claimed",
+            FailureKind::CallBudgetExhausted => "call_budget_exhausted",
+            FailureKind::OutputTruncated => "output_truncated",
+            FailureKind::UnprovenClaim => "unproven_claim",
             FailureKind::UncertainResult => "uncertain_result",
         }
     }
@@ -78,6 +99,21 @@ impl FailureKind {
             }
             FailureKind::RepeatedPatchFailure => {
                 "The same edit has failed repeatedly; re-read the file and choose a different anchor or approach."
+            }
+            FailureKind::WorkspaceUnchanged => {
+                "No file was created or edited, so there is nothing to verify; make the change itself before running any check."
+            }
+            FailureKind::CompletionNotClaimed => {
+                "The attempt stopped without declaring completion; finish the remaining deliverables and call complete_task with the evidence for each."
+            }
+            FailureKind::CallBudgetExhausted => {
+                "The attempt ran out of provider calls before finishing; continue from the current state instead of re-exploring, and write the remaining deliverables first."
+            }
+            FailureKind::OutputTruncated => {
+                "The previous response was cut off by the output limit before any answer; keep the response short and make the changes with tools instead of narrating them."
+            }
+            FailureKind::UnprovenClaim => {
+                "The claimed checks cannot fail on wrong behaviour; run one that actually exercises the requirement before claiming completion again."
             }
             FailureKind::UncertainResult => {
                 "The outcome is unclear; run the most targeted check that would prove the change works."
@@ -314,9 +350,13 @@ pub fn classify_command_output(output: &str) -> FailureKind {
     FailureKind::UncertainResult
 }
 
-pub fn classify_provider_error(error: &ProviderError) -> FailureKind {
-    match error {
-        ProviderError::Cancelled => FailureKind::UncertainResult,
+/// `None` for a cancellation: the operator stopping a turn is an outcome, not
+/// a failure, and recording it as one puts an imaginary problem in front of
+/// both the model (the working-state checkpoint) and the router
+/// (`previous_failure`). Callers must skip recording when this is `None`.
+pub fn classify_provider_error(error: &ProviderError) -> Option<FailureKind> {
+    Some(match error {
+        ProviderError::Cancelled => return None,
         ProviderError::Status { status, .. } if *status >= 500 => FailureKind::EnvironmentFailure,
         ProviderError::Status { .. } => FailureKind::ToolFailure,
         ProviderError::RateLimited { .. } => FailureKind::EnvironmentFailure,
@@ -326,7 +366,7 @@ pub fn classify_provider_error(error: &ProviderError) -> FailureKind {
         }
         ProviderError::Transport(_) => FailureKind::EnvironmentFailure,
         ProviderError::Malformed(_) => FailureKind::ModelFormatFailure,
-    }
+    })
 }
 
 impl Failure {
@@ -443,20 +483,29 @@ mod tests {
                 status: 429,
                 body: String::new()
             }),
-            FailureKind::EnvironmentFailure
+            Some(FailureKind::EnvironmentFailure)
         );
         assert_eq!(
             classify_provider_error(&ProviderError::Malformed("x".into())),
-            FailureKind::ModelFormatFailure
+            Some(FailureKind::ModelFormatFailure)
         );
         assert_eq!(
             classify_provider_error(&ProviderError::Transport("operation timed out".into())),
-            FailureKind::Timeout
+            Some(FailureKind::Timeout)
         );
         assert_eq!(
             classify_provider_error(&ProviderError::ContextLengthExceeded),
-            FailureKind::MissingContext
+            Some(FailureKind::MissingContext)
         );
+    }
+
+    /// Stopping a turn is the operator's decision, not a fault. It used to be
+    /// filed as `uncertain_result`, which put an imaginary problem in front of
+    /// the model (the working-state checkpoint) and the router
+    /// (`previous_failure`). `None` means "record nothing".
+    #[test]
+    fn a_cancelled_turn_is_not_a_failure() {
+        assert_eq!(classify_provider_error(&ProviderError::Cancelled), None);
     }
 
     #[test]

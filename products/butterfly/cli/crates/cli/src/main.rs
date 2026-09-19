@@ -97,6 +97,18 @@ struct Cli {
     #[arg(long)]
     atlas: bool,
 
+    /// Ask TypeSafe's System One model to name verification failures the
+    /// rule-based classifier could not (`uncertain_result` only — it never
+    /// overrides a kind the rules decided). Needs TYPESAFE_API_KEY or a
+    /// `typesafe` credential-store entry. Sends the failing command line and a
+    /// bounded tail of its output to a third party; off unless asked for.
+    #[arg(long)]
+    triage: bool,
+
+    /// Disable triage even when the config file enables it.
+    #[arg(long)]
+    no_triage: bool,
+
     /// With --prompt: attempts per task. After each attempt the verification
     /// stage runs; on failure its evidence is fed back and the model tries
     /// again. 1 = a single turn with no retry.
@@ -441,6 +453,11 @@ async fn main() -> Result<()> {
     if let Some(path) = cli.telemetry.clone() {
         agent.set_telemetry_path(path);
     }
+    if triage_requested(cli.triage, cli.no_triage, &file.triage) {
+        if let Some(triage) = connect_triage(&file.triage) {
+            agent.set_triage(triage);
+        }
+    }
     if let Some(prompt) = cli.prompt {
         if cli.json {
             if agent.permission_mode() == PermissionMode::Ask {
@@ -662,6 +679,54 @@ fn note_thin_statement(prompt: &str) {
 
 /// Key resolution: environment > credential store > first-run wizard (TTY
 /// only). Headless runs fail fast with the variable name to set.
+/// The key for the System One endpoint: the environment first, then the
+/// credential store, exactly as provider keys resolve (invariant 6). `typesafe`
+/// is a credential-store id only — System One is not an OpenAI-compatible chat
+/// endpoint and never appears in the model registry or serves a turn.
+fn triage_key() -> Option<String> {
+    match std::env::var(butterfly_core::triage::API_KEY_ENV) {
+        Ok(key) if !key.trim().is_empty() => Some(key),
+        _ => credentials::load_key(butterfly_core::triage::CREDENTIAL_ID),
+    }
+}
+
+/// Did the operator ask for triage? `--no-triage` wins over everything, then
+/// `--triage`, then the config file; absent everywhere it stays off.
+fn triage_requested(flag_on: bool, flag_off: bool, file: &config::TriageFileConfig) -> bool {
+    !flag_off && (flag_on || file.enabled.unwrap_or(false))
+}
+
+/// Build the optional triage handle for an operator who asked for it.
+///
+/// Two more things must line up — a key resolves, and the client builds.
+/// Either one missing is a notice on stderr and `None`, never a hard error:
+/// triage off means failures classify exactly as they always have, and no run
+/// should die for want of an optional second opinion.
+fn connect_triage(file: &config::TriageFileConfig) -> Option<butterfly_core::triage::Triage> {
+    use butterfly_core::triage::{JevClient, Triage, API_KEY_ENV, CREDENTIAL_ID};
+    let Some(key) = triage_key() else {
+        eprintln!(
+            "triage: no key — export {API_KEY_ENV} or add [providers.{CREDENTIAL_ID}] to the \
+             credential store; continuing without triage"
+        );
+        return None;
+    };
+    let timeout = file
+        .timeout_seconds
+        .map(|seconds| std::time::Duration::from_secs(seconds.max(1)))
+        .unwrap_or(butterfly_core::triage::DEFAULT_TIMEOUT);
+    let min_confidence = file
+        .min_confidence
+        .unwrap_or(butterfly_core::triage::DEFAULT_MIN_CONFIDENCE);
+    match JevClient::new(key, file.endpoint.clone(), file.model.clone(), timeout) {
+        Ok(client) => Some(Triage::new(Arc::new(client), min_confidence)),
+        Err(error) => {
+            eprintln!("triage: unavailable ({error}); continuing without triage");
+            None
+        }
+    }
+}
+
 fn connect_provider(
     hub: &ModelHub,
     model: &ModelDescriptor,
@@ -707,4 +772,37 @@ fn connect_provider(
         descriptor.api_key_env,
         model.id
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use config::TriageFileConfig;
+
+    fn file(enabled: Option<bool>) -> TriageFileConfig {
+        TriageFileConfig {
+            enabled,
+            ..TriageFileConfig::default()
+        }
+    }
+
+    #[test]
+    fn triage_is_off_unless_asked_for() {
+        assert!(!triage_requested(false, false, &file(None)));
+        assert!(!triage_requested(false, false, &file(Some(false))));
+    }
+
+    #[test]
+    fn either_the_flag_or_the_config_turns_triage_on() {
+        assert!(triage_requested(true, false, &file(None)));
+        assert!(triage_requested(false, false, &file(Some(true))));
+    }
+
+    /// `--no-triage` is the kill switch: it beats both the flag and the file,
+    /// so an operator can always get the deterministic-only behaviour back.
+    #[test]
+    fn no_triage_beats_everything() {
+        assert!(!triage_requested(true, true, &file(Some(true))));
+        assert!(!triage_requested(false, true, &file(Some(true))));
+    }
 }

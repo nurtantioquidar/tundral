@@ -82,9 +82,52 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   the schema), and `--require-diff` (git shows a change). `crates/core/src/verify.rs`
 - **Failure classification** — closed `FailureKind` vocabulary (syntax, compile, test, missing
   context, incorrect assumption, tool, environment, timeout, model format, repeated patch,
-  uncertain) from tool errors, command output signatures, and provider errors; repeated identical
+  workspace unchanged, completion not claimed, call budget exhausted, output truncated,
+  unproven claim, uncertain) from tool errors, command output signatures, and provider errors; repeated identical
   failing `edit`s are upgraded to `repeated_patch_failure` with corrective guidance appended to the
   tool result. `crates/core/src/failure.rs`
+- **`workspace_unchanged` split out of `uncertain_result`** (2026-09-19) — an attempt that wrote
+  no file was classified `uncertain_result`, so the retry was told "the outcome is unclear; run the
+  most targeted check that would prove the change works" and "do not repeat the previous patch" —
+  both false, and pointing the attempt at verifying work that did not exist. Telemetry across 34
+  bench runs: **10 of the 14** unclassified verification failures were this case (43% of all
+  failing verifications), making it the single largest bucket and larger than everything triage
+  can address. Now its own kind with its own guidance ("No file was created or edited, so there is
+  nothing to verify; make the change itself before running any check"), and `render_evidence`
+  drops the re-run/do-not-repeat tail when there was no failing check to re-run. Deterministic,
+  free, and needs no network. Cross-module: `previous_failure` is a free-form string in
+  `@monet/contracts`, so no schema change, but `workspace_unchanged` was added to Nimble's default
+  `escalation_failures` to preserve the escalation these attempts already had under the old name.
+  `crates/core/src/verify.rs`, `crates/core/src/failure.rs`, `products/nimble/router/src/config.ts`
+- **Loop-detected stops are named** (2026-09-19) — the four remaining `uncertain_result` sites in
+  `run_task` all described stops the loop had positively detected, not ambiguity: an attempt that
+  ended without calling `complete_task` (`completion_not_claimed`), one that exhausted its
+  provider-call budget (`call_budget_exhausted`), one truncated by the output limit with no
+  visible answer (`output_truncated`), and a claim whose acceptance checks cannot fail on wrong
+  behaviour (`unproven_claim`). Each reaches two consumers that were both being misinformed:
+  Nimble's `previous_failure`, and the model itself via the working-state checkpoint, which
+  rendered lines like `- uncertain_result: attempt used its provider-call budget before
+  finishing`. Their bespoke evidence blocks (COMPLETION GATE / CALL BUDGET / OUTPUT LIMIT) are
+  unchanged — this fixes the label, the telemetry bucket, and the routing signal. All four were
+  added to Nimble's `escalation_failures` to preserve the escalation they already had; whether
+  the two budget exhaustions *should* escalate is now a separable, measurable question.
+  `crates/core/src/session/mod.rs`
+- **Optional System One triage** (2026-09-19, off by default) — `--triage` / `[triage] enabled`
+  asks TypeSafe's Jev (`https://api.typesafe.ai/v1/systemone`, a typed non-generative model) to
+  name a verification failure the rules returned `uncertain_result` for — the one kind
+  `FailureKind::guidance` has no advice for, so the retry re-reads the same output with no steer.
+  Strictly tightening: consulted only on `uncertain_result`, never overriding a kind the rules
+  decided, never touching approval, budgets, termination or `verified` (invariant 11). One
+  request, a 5s timeout, no retries; a 0.9 confidence floor; any error, decline or unconfident
+  answer leaves the rule verdict standing. Key from `TYPESAFE_API_KEY` or the `typesafe`
+  credential-store entry — never a model-registry provider. Telemetry records every attempt
+  (`triage_calls` / `triage_refined`) so the refinement rate is measurable before the idea is
+  extended anywhere else. Measured 2026-09-19 (`--test live_triage`, Jakarta → the US endpoint):
+  one round trip 856 ms, `test_failure` at confidence 1.0 on real `cargo test` output stripped of
+  every signature the rules key on. The latency is dominated by RTT, not by the model; at ~300
+  state tokens and $0.042/Mtok input the call is effectively free, and it is bought against a
+  wasted attempt — a whole model turn — so the trade is not close. Enabling it sends the failing command line and a bounded output tail to
+  a third party, which is why it is opt-in. `crates/core/src/triage/mod.rs`
 - **Output-starvation retry** (Terminal-Bench finding, 2026-09-04) — a turn that ends at the
   output-token limit with no visible answer is treated as a failed attempt even with no
   verification plan: the next attempt starts with an "OUTPUT LIMIT" evidence message. Observed
@@ -991,6 +1034,22 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
    + `deploy/` route; after distribution exists.
 7. **Long-horizon bench tier** — multi-hour refactors, where model quality dominates.
 8. **Billing reconciliation** — check tier-priced `/usage` totals against a real DeepSeek invoice.
+9. **Further triage sites, gated on the pilot's numbers** — the shipped `uncertain_result`
+   refinement is deliberately the smallest possible first site, chosen because it is pure upside:
+   the rules had already given up. Extend only if its measured refinement rate and round-trip
+   latency justify it, in this order, each obeying invariant 11 (tighten only):
+   (a) **verifier-pass elision** — when `first_claim_is_proven` says no, the loop pays a whole
+   second LLM context plus nudges; score each requirement's evidence and skip the verifier at the
+   confident ends of the band, keeping it for the middle. Biggest win, because it removes model
+   turns rather than milliseconds;
+   (b) **`is_weak_check` / `is_self_authored` long tail** — both are allowlists grown reactively
+   from observed misses (`compileall` 2026-09-04, `check_acceptance.py` 2026-09-08); keep the
+   rules as a hard floor and let triage only ever add a rejection;
+   (c) **compaction elision selection** — score which tool results are still load-bearing, so a
+   rewrite reclaims more per cache invalidation. The trigger threshold stays deterministic; only
+   the choice of what to drop is a judgement.
+   Not a candidate: putting a network call in front of the main tool-decision loop. Jev emits no
+   tool calls, so a pre-screen there adds a round trip to every turn and removes none.
 
 ## Deliberately rejected (with reasons)
 

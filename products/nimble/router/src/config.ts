@@ -258,7 +258,32 @@ export function parseConfig(raw: unknown): NimbleConfig {
       escalation_after_attempts: expectNumber(routingRaw.escalation_after_attempts, "routing.escalation_after_attempts", 2),
       escalation_failures: Array.isArray(routingRaw.escalation_failures)
         ? routingRaw.escalation_failures.map((f, i) => expectString(f, `routing.escalation_failures[${i}]`))
-        : ["test_failure", "compile_failure", "repeated_patch_failure", "incorrect_assumption", "uncertain_result"],
+        // NOTE: this array is only the fallback for a config that omits the
+        // key. `nimble.config.json` sets it explicitly and is what actually
+        // runs — change both, and keep them in step.
+        //
+        // `workspace_unchanged`, `completion_not_claimed` and `unproven_claim`
+        // were carved out of `uncertain_result` on 2026-09-19 and are listed
+        // to preserve the escalation those attempts already had; each is a
+        // judgement or protocol failure a stronger model plausibly fixes.
+        //
+        // `call_budget_exhausted` and `output_truncated` came out of the same
+        // catch-all and are deliberately NOT listed (operator decision,
+        // 2026-09-19). Both are budget exhaustions rather than capability
+        // failures: the attempt ran out of calls or of room to answer, and
+        // moving to a larger, dearer model does not buy either back — on the
+        // output-truncation case (Muse, 66k reasoning tokens and no edits)
+        // a heavier reasoner is the more likely way to repeat it.
+        : [
+            "test_failure",
+            "compile_failure",
+            "repeated_patch_failure",
+            "incorrect_assumption",
+            "workspace_unchanged",
+            "completion_not_claimed",
+            "unproven_claim",
+            "uncertain_result",
+          ],
       default_output_tokens: expectNumber(routingRaw.default_output_tokens, "routing.default_output_tokens", 2_000),
       max_failovers: expectNumber(routingRaw.max_failovers, "routing.max_failovers", 2),
     },

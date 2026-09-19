@@ -89,6 +89,16 @@ impl VerificationOutcome {
         self.checks.iter().all(|c| c.ok) && !(self.require_diff && self.changed_paths == Some(0))
     }
 
+    /// The failing check `failure()` reports on, mutably.
+    ///
+    /// The one seam optional triage is allowed through: the session may
+    /// replace this check's `failure` when — and only when — the rules left
+    /// it `UncertainResult`. Classification itself stays deterministic and
+    /// offline; nothing in this module ever calls out.
+    pub fn first_failing_check_mut(&mut self) -> Option<&mut CheckResult> {
+        self.checks.iter_mut().find(|check| !check.ok)
+    }
+
     /// The first failure, classified, with evidence for the next attempt.
     pub fn failure(&self) -> Option<Failure> {
         if let Some(result) = self.checks.iter().find(|c| !c.ok) {
@@ -103,7 +113,7 @@ impl VerificationOutcome {
         }
         if self.require_diff && self.changed_paths == Some(0) {
             return Some(Failure {
-                kind: FailureKind::UncertainResult,
+                kind: FailureKind::WorkspaceUnchanged,
                 source: FailureSource::Task,
                 summary: "no files changed in the workspace".into(),
                 evidence: String::new(),
@@ -132,10 +142,16 @@ impl VerificationOutcome {
         if self.require_diff && self.changed_paths == Some(0) {
             out.push_str("\nNo files changed in the workspace, but the task requires a change.\n");
         }
-        out.push_str(&format!(
-            "\n{}\nRe-run the failing check yourself before finishing. Do not repeat the previous patch verbatim.",
-            kind.guidance()
-        ));
+        // The re-run/do-not-repeat tail assumes there was a check that failed
+        // and a patch that produced it. When nothing was written, both halves
+        // are false and point the attempt at verifying work that does not
+        // exist; the guidance line alone is the whole instruction.
+        let tail = if kind == FailureKind::WorkspaceUnchanged {
+            ""
+        } else {
+            "\nRe-run the failing check yourself before finishing. Do not repeat the previous patch verbatim."
+        };
+        out.push_str(&format!("\n{}{tail}", kind.guidance()));
         out
     }
 
@@ -516,6 +532,77 @@ mod tests {
         assert!(evidence.contains("$ cat missing.txt"));
         assert!(evidence.contains("Do not repeat the previous patch verbatim"));
         assert!(outcome.summary_line().contains("1/2 checks passed"));
+    }
+
+    /// An attempt that wrote nothing is the clearest signal the loop gets, not
+    /// an ambiguous one. Observed across 34 bench runs (2026-09-19): 10 of 14
+    /// unclassified verification failures were this case, and each retry was
+    /// told the outcome was "unclear" and to run a check that would prove a
+    /// change that did not exist.
+    #[tokio::test]
+    async fn an_unchanged_workspace_is_named_not_called_uncertain() {
+        let dir = tempfile::tempdir().unwrap();
+        // A git-less workspace with a snapshot that sees no change: no checks
+        // run, so the diff requirement is the only thing that can fail.
+        let snapshot = WorkspaceSnapshot::capture(dir.path());
+        let outcome = run_verification(
+            dir.path(),
+            &VerificationPlan {
+                require_diff: true,
+                check_timeout_seconds: 10,
+                ..VerificationPlan::default()
+            },
+            &BTreeSet::new(),
+            &[],
+            &PolicySettings::default(),
+            Some(&snapshot),
+            &CancellationToken::new(),
+        )
+        .await;
+        assert!(outcome.checks.is_empty());
+        assert!(!outcome.passed());
+
+        let failure = outcome.failure().unwrap();
+        assert_eq!(failure.kind, FailureKind::WorkspaceUnchanged);
+        assert!(matches!(failure.source, FailureSource::Task));
+
+        let evidence = outcome.render_evidence(2, 3);
+        assert!(evidence.contains("workspace_unchanged"));
+        assert!(evidence.contains("No files changed in the workspace"));
+        assert!(evidence.contains("nothing to verify"));
+        // The two sentences that contradicted the evidence above them: there
+        // was no failing check to re-run and no previous patch to avoid.
+        assert!(!evidence.contains("Do not repeat the previous patch"));
+        assert!(!evidence.contains("Re-run the failing check"));
+        assert!(!evidence.contains("outcome is unclear"));
+    }
+
+    /// The tail still belongs on a real check failure — removing it there
+    /// would drop the anti-repetition instruction the recovery loop relies on.
+    #[tokio::test]
+    async fn a_failing_check_keeps_the_rerun_instruction() {
+        let dir = tempfile::tempdir().unwrap();
+        let outcome = run_verification(
+            dir.path(),
+            &VerificationPlan {
+                explicit: vec![vec!["cat".into(), "missing.txt".into()]],
+                require_diff: true,
+                check_timeout_seconds: 10,
+                ..VerificationPlan::default()
+            },
+            &BTreeSet::new(),
+            &[],
+            &PolicySettings::default(),
+            Some(&WorkspaceSnapshot::capture(dir.path())),
+            &CancellationToken::new(),
+        )
+        .await;
+        let evidence = outcome.render_evidence(1, 3);
+        assert_ne!(
+            outcome.failure().unwrap().kind,
+            FailureKind::WorkspaceUnchanged
+        );
+        assert!(evidence.contains("Do not repeat the previous patch verbatim"));
     }
 
     #[tokio::test]

@@ -24,6 +24,14 @@ environment variable per provider, e.g. `DEEPSEEK_API_KEY`, `ZAI_API_KEY`, `OPEN
 `NIMBLE_API_KEY`); it never imports source from another Monet application. Nimble is optional: a
 session never needs it, and `products/nimble` never links Butterfly.
 
+One more optional, off-by-default outbound dependency exists: **triage** (`crates/core/src/triage`)
+asks TypeSafe's System One model (Jev) to name a verification failure the rule-based classifier
+returned `uncertain_result` for. Its key resolves from `TYPESAFE_API_KEY`, else the `typesafe`
+credential-store entry — a credential-store id only, never a model-registry provider, because
+System One is not an OpenAI-compatible chat endpoint and never serves a turn. Enabling it sends the
+failing command line and a bounded tail of its output to a third party; that egress is the reason
+it is opt-in. See invariant 11.
+
 ## Layout
 
 ```text
@@ -37,6 +45,8 @@ crates/core   # butterfly-core: UI-free engine
               # argv-only commands, sandbox-only `shell`
   context     # prompt layout (gated appendices only), anchor+drift token ledger, compaction
   failure     # closed FailureKind vocabulary + rule-based classifiers
+  triage      # OPTIONAL, off by default: TypeSafe System One (Jev) second opinion,
+              # consulted only on `uncertain_result`; scripted fake for tests
   verify      # acceptance/detected/model-declared checks, git-diff check, evidence rendering
   telemetry   # per-session JSONL events + summary; key-based redaction
   session     # deterministic agent loop, run_task (attempt → verify → classify → evidence → retry),
@@ -172,6 +182,7 @@ bun run dev:butterfly                                 # REPL via the repo root
 butterfly models                                      # registry: built-ins + config
 BUTTERFLY_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p butterfly-core --test live_deepseek  # paid smoke test
 BUTTERFLY_LIVE_TEST=1 BUTTERFLY_LIVE_MODEL=glm-5.3-flash ZAI_API_KEY=... cargo test -p butterfly-core --test live_deepseek
+BUTTERFLY_LIVE_TEST=1 TYPESAFE_API_KEY=... cargo test -p butterfly-core --test live_triage -- --nocapture  # triage round trip + latency
 products/butterfly/bench/harbor/with-keys.sh <cmd>    # keys from 1Password (op) into the env, never printed
 ```
 
@@ -240,6 +251,20 @@ products/butterfly/bench/harbor/with-keys.sh <cmd>    # keys from 1Password (op)
    `Capabilities` (tools, parallel_tools, reasoning + replay, prompt_cache, limits) and dialects
    own vendor syntax. Adding a model means a descriptor (built-in or `[[models]]`), never a branch
    in the loop.
+11. **Triage may tighten, never open.** The optional System One second opinion
+   (`--triage` / `[triage] enabled`, off by default) is consulted ONLY where a rule-based
+   classifier already returned `uncertain_result`, and its answer may only replace that one
+   verdict. It never overrides a kind the rules decided, never gates approval, termination, a
+   budget, or completion, and no triage answer can make `verified: true` or `task_success: true`
+   — invariant 4 owns those and is unaffected. A confidence floor (default 0.9) discards
+   unconfident answers, and any error, timeout, decline, or out-of-vocabulary reply leaves the
+   rule verdict standing: one request, no retries, a task never fails because triage did. With
+   no key and no flag the loop classifies exactly as it did before the feature existed, so
+   Butterfly stays local, offline and model-agnostic by default. Telemetry records every attempt
+   (`triage_calls` / `triage_refined`) precisely so the refinement rate stays auditable. Adding a
+   second triage site is a product decision, not a refactor: it needs a new entry point that
+   obeys this rule, and it must never put a network call in front of a decision the loop can
+   already make locally.
 
 ## Feature map
 

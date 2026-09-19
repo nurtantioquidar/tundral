@@ -110,6 +110,50 @@ describe("router", () => {
     expect(twice.decisive).toBe(true);
   });
 
+  test("the kinds carved out of uncertain_result escalate exactly as it did", () => {
+    // Butterfly split five kinds off uncertain_result on 2026-09-19. Each was
+    // already an escalation trigger under the old catch-all name, so leaving
+    // any of them out of the defaults would have silently stopped escalating
+    // failures that escalate today — including the most common one in the
+    // bench history (workspace_unchanged).
+    for (const previous_failure of ["workspace_unchanged", "completion_not_claimed", "unproven_claim"]) {
+      const { router, store } = setup();
+      store.observeCache({ provider: "deepseek", model: "deepseek-v4-flash", prefix_hash: "sha256:p", last_served_at: 999_000, prefix_tokens_seen: 40_000 });
+      const session = { ...fresh(), current_model: "deepseek-v4-flash", prefix_hash: "sha256:p", stable_tokens: 40_000 };
+      const decision = router.decide(request({ session, attempt: 2, previous_failure, verification_failed: true }));
+      expect(decision.escalated, previous_failure).toBe(true);
+      expect(decision.chosen.id, previous_failure).toBe("glm-5.3-flash");
+    }
+  });
+
+  test("a budget exhaustion is not itself an escalation trigger", () => {
+    // Operator decision 2026-09-19: call-budget and output-token exhaustion
+    // are budget failures, not capability failures, so the failure kind must
+    // not on its own buy a dearer model. Both did while they were lumped into
+    // `uncertain_result`.
+    //
+    // Scope, deliberately asserted at attempt 1 with no verification failure:
+    // `escalationTriggered` fires on `attempt >= 2` and `verification_failed`
+    // as well, and either alone still escalates. Dropping these kinds from
+    // `escalation_failures` removes the kind as a trigger and nothing more —
+    // see the note in config.ts.
+    const budgetish = ["call_budget_exhausted", "output_truncated"];
+    const capability = ["unproven_claim", "completion_not_claimed"];
+    const bonuses = (previous_failure: string) => {
+      const { router, store } = setup();
+      store.observeCache({ provider: "deepseek", model: "deepseek-v4-flash", prefix_hash: "sha256:p", last_served_at: 999_000, prefix_tokens_seen: 40_000 });
+      const session = { ...fresh(), current_model: "deepseek-v4-flash", prefix_hash: "sha256:p", stable_tokens: 40_000 };
+      const decision = router.decide(request({ session, attempt: 1, previous_failure, verification_failed: false }));
+      return decision.components.map((c) => c.escalation_bonus);
+    };
+    for (const kind of budgetish) {
+      expect(bonuses(kind).every((b) => b === 0), kind).toBe(true);
+    }
+    for (const kind of capability) {
+      expect(bonuses(kind).some((b) => b > 0), kind).toBe(true);
+    }
+  });
+
   test("a decisive escalation fires once per attempt: the escalated model stays sticky, no ping-pong", () => {
     const { router, store } = setup();
     // The session already escalated to GLM on attempt 2; every later request

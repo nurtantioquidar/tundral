@@ -70,6 +70,35 @@ max_cost_usd = "0.50"
 quiet_reasoning = false
 ```
 
+### Optional: failure triage (off by default)
+
+In autonomous runs some verification failures defeat every rule-based signature and land as
+`uncertain_result` — the one classification that gives the next attempt no steer. `--triage` (or
+`[triage] enabled = true`) asks TypeSafe's System One model, Jev, to name those, and only those: a
+kind the rules decided is never sent for a second opinion, so triage can fill a gap but never
+contradict a verdict, gate approval, or end a task. One request, a 5s timeout, no retries, and a
+0.9 confidence floor — any error, decline or unconfident answer leaves the rule verdict standing.
+
+It needs a key, from `TYPESAFE_API_KEY` or the credential store, and it is off until you ask for it:
+
+```toml
+[triage]
+enabled = true
+min_confidence = 0.9     # answers below this are discarded
+timeout_seconds = 5
+```
+
+```toml
+# ~/.config/butterfly/credentials.toml
+[providers.typesafe]
+api_key = "..."
+```
+
+**This sends data off your machine.** Enabling triage transmits the failing command line and a
+bounded tail of its output to TypeSafe. Nothing else goes — no prompts, no file contents, no
+transcript — but build output can quote your source, so treat it as an egress decision. With no key
+and no flag, Butterfly classifies failures exactly as it always has, entirely locally.
+
 Interactive TTY sessions take over the screen Claude Code-style: your shell scrolls into
 scrollback (never erased), content flows from the top, and the input stays pinned to the bottom
 edge. Sessions get the inline TUI: type `@` for fuzzy file/dir/symbol completion

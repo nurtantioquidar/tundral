@@ -167,6 +167,9 @@
       "compile_failure",
       "repeated_patch_failure",
       "incorrect_assumption",
+      "workspace_unchanged",
+      "completion_not_claimed",
+      "unproven_claim",
       "uncertain_result"
     ],
     "default_output_tokens": 2000,

@@ -715,6 +715,9 @@ pub struct Agent {
     /// A different provider and model for the independent verifier, so it
     /// does not share the worker's blind spots. None = the worker's own.
     verifier_backend: Option<(Arc<dyn Provider>, Arc<ModelDescriptor>)>,
+    /// Optional System One triage. Disabled by default; when disabled every
+    /// call through it is a no-op and classification is exactly as it was.
+    triage: crate::triage::Triage,
 }
 
 impl Agent {
@@ -808,6 +811,7 @@ impl Agent {
             verdict: None,
             verdict_nudges: 0,
             verifier_backend: None,
+            triage: crate::triage::Triage::disabled(),
         })
     }
 
@@ -876,6 +880,7 @@ impl Agent {
             verdict: None,
             verdict_nudges: 0,
             verifier_backend: None,
+            triage: crate::triage::Triage::disabled(),
         })
     }
 
@@ -889,6 +894,65 @@ impl Agent {
         model: Arc<ModelDescriptor>,
     ) {
         self.verifier_backend = Some((provider, model));
+    }
+
+    /// Enable optional System One triage. Off unless the operator configures
+    /// it and a key resolves; see `crate::triage` for why it can only tighten
+    /// a verdict, never open one.
+    pub fn set_triage(&mut self, triage: crate::triage::Triage) {
+        self.triage = triage;
+    }
+
+    pub fn triage_enabled(&self) -> bool {
+        self.triage.is_enabled()
+    }
+
+    /// Give an `uncertain_result` verification failure a second opinion.
+    ///
+    /// `UncertainResult` is the one verdict that teaches the next attempt
+    /// nothing: `FailureKind::guidance` has no advice to offer for it, so the
+    /// retry re-reads the same output with no steer. Everything else the rules
+    /// decided is left exactly as it was, and any triage error, timeout, or
+    /// low-confidence answer leaves this a no-op.
+    async fn refine_verification(&mut self, outcome: &mut VerificationOutcome, attempt: u32) {
+        if !self.triage.is_enabled() {
+            return;
+        }
+        let Some(check) = outcome.first_failing_check_mut() else {
+            return;
+        };
+        let rules = check.failure.unwrap_or(FailureKind::UncertainResult);
+        let command = check.check.argv.join(" ");
+        let output = check.output_tail.clone();
+        let started = std::time::Instant::now();
+        let Some(result) = self
+            .triage
+            .refine_command_failure(rules, &command, &output)
+            .await
+        else {
+            return;
+        };
+        let latency_ms = started.elapsed().as_millis() as u64;
+        let (refined, confidence, error) = match result {
+            crate::triage::TriageOutcome::Refined { kind, confidence } => {
+                check.failure = Some(kind);
+                (Some(kind), Some(confidence), None)
+            }
+            crate::triage::TriageOutcome::Declined { confidence }
+            | crate::triage::TriageOutcome::BelowFloor { confidence, .. } => {
+                (None, Some(confidence), None)
+            }
+            crate::triage::TriageOutcome::Failed { error } => (None, None, Some(error)),
+        };
+        self.telemetry.record(TelemetryEvent::Triage {
+            at_epoch_ms: telemetry::epoch_ms_now(),
+            site: format!("verification:attempt-{attempt}"),
+            from: rules,
+            to: refined,
+            confidence,
+            latency_ms,
+            error,
+        });
     }
 
     pub fn working_state(&self) -> &working_state::WorkingState {
@@ -1210,9 +1274,12 @@ impl Agent {
                         at_epoch_ms: telemetry::epoch_ms_now(),
                         model: self.config.model.id.clone(),
                         provider: self.config.model.provider.clone(),
+                        // A transport error always classifies; only a
+                        // cancellation yields `None`, and this is not one.
                         kind: crate::failure::classify_provider_error(&ProviderError::Transport(
                             text.clone(),
-                        )),
+                        ))
+                        .unwrap_or(FailureKind::EnvironmentFailure),
                         summary: format!(
                             "stream interrupted, retry {transport_retries}/{STREAM_TRANSPORT_RETRIES}: {}",
                             crate::failure::first_line(&text)
@@ -1298,17 +1365,22 @@ impl Agent {
                     return Ok(report);
                 }
                 Err(error) => {
+                    // `None` is a cancellation, which is not a failure and is
+                    // recorded nowhere. (The `Cancelled` arm above already
+                    // returns early; this keeps that true if it ever stops.)
                     if let SessionError::Provider(provider_error) = &error {
-                        let kind = crate::failure::classify_provider_error(provider_error);
-                        self.working_state
-                            .record_failure(kind, &provider_error.to_string());
-                        self.telemetry.record(TelemetryEvent::ProviderError {
-                            at_epoch_ms: telemetry::epoch_ms_now(),
-                            model: self.config.model.id.clone(),
-                            provider: self.config.model.provider.clone(),
-                            kind,
-                            summary: crate::failure::first_line(&provider_error.to_string()),
-                        });
+                        if let Some(kind) = crate::failure::classify_provider_error(provider_error)
+                        {
+                            self.working_state
+                                .record_failure(kind, &provider_error.to_string());
+                            self.telemetry.record(TelemetryEvent::ProviderError {
+                                at_epoch_ms: telemetry::epoch_ms_now(),
+                                model: self.config.model.id.clone(),
+                                provider: self.config.model.provider.clone(),
+                                kind,
+                                summary: crate::failure::first_line(&provider_error.to_string()),
+                            });
+                        }
                     }
                     return Err(error);
                 }
@@ -1609,7 +1681,7 @@ impl Agent {
         if strong == 0 && self.weak_check_rejections < WEAK_CHECK_REJECTIONS {
             self.weak_check_rejections += 1;
             self.working_state.record_failure(
-                FailureKind::UncertainResult,
+                FailureKind::UnprovenClaim,
                 "completion claimed without a behavioural acceptance check",
             );
             let listed = if checks.is_empty() {
@@ -2183,7 +2255,7 @@ impl Agent {
             let verification = if options.verification.is_empty() && declared.is_empty() {
                 None
             } else {
-                let outcome = verify::run_verification(
+                let mut outcome = verify::run_verification(
                     self.executor.root(),
                     &options.verification,
                     &self.working_state.files_changed,
@@ -2193,6 +2265,9 @@ impl Agent {
                     cancel,
                 )
                 .await;
+                // Optional, off by default, and only ever fills in an
+                // `uncertain_result` the rules could not name.
+                self.refine_verification(&mut outcome, attempt).await;
                 let failure = outcome.failure();
                 self.working_state.verification = Some(outcome.summary_line());
                 if let Some(failure) = &failure {
@@ -2311,7 +2386,7 @@ impl Agent {
             {
                 passed = Some(false);
                 self.working_state.record_failure(
-                    FailureKind::UncertainResult,
+                    FailureKind::CompletionNotClaimed,
                     "attempt ended without a completion claim",
                 );
                 let extra = evidence
@@ -2328,7 +2403,7 @@ impl Agent {
             if turn.turn_limit_reached && !real_checks_passed && attempt < max_attempts {
                 passed = Some(false);
                 self.working_state.record_failure(
-                    FailureKind::UncertainResult,
+                    FailureKind::CallBudgetExhausted,
                     "attempt used its provider-call budget before finishing",
                 );
                 let extra = evidence
@@ -2344,7 +2419,7 @@ impl Agent {
             if starved && passed != Some(true) {
                 passed = Some(false);
                 self.working_state.record_failure(
-                    FailureKind::UncertainResult,
+                    FailureKind::OutputTruncated,
                     "response truncated by the output limit with no visible answer",
                 );
                 let extra = evidence.map(|e| format!("\n\n{e}")).unwrap_or_default();
@@ -4555,6 +4630,117 @@ mod tests {
         assert_eq!(feedback[0].failure_type, None);
     }
 
+    /// `false` exits non-zero with no output at all, so every rule-based
+    /// signature misses and the verdict is `uncertain_result` — the one kind
+    /// `FailureKind::guidance` has no advice for. Exactly the gap triage is
+    /// allowed to fill.
+    fn uncertain_check_task() -> TaskOptions {
+        TaskOptions {
+            max_attempts: 1,
+            verification: VerificationPlan {
+                explicit: vec![vec!["false".into()]],
+                check_timeout_seconds: 10,
+                ..VerificationPlan::default()
+            },
+        }
+    }
+
+    async fn run_with_triage(
+        dir: &tempfile::TempDir,
+        triage: Option<crate::triage::Triage>,
+    ) -> (Agent, TaskReport) {
+        let provider = Arc::new(ScriptedProvider::new(vec![final_text("done")]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        if let Some(triage) = triage {
+            agent.set_triage(triage);
+        }
+        let report = agent
+            .run_task(
+                "go".into(),
+                &uncertain_check_task(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        (agent, report)
+    }
+
+    /// The control: with no triage configured the loop classifies exactly as
+    /// it always has, and nothing reaches out.
+    #[tokio::test]
+    async fn without_triage_an_unnameable_failure_stays_uncertain() {
+        let dir = workspace();
+        let (agent, report) = run_with_triage(&dir, None).await;
+        assert_eq!(report.success, Some(false));
+        assert!(!agent.triage_enabled());
+        assert_eq!(
+            agent.working_state.failures.last().map(|f| f.kind),
+            Some(FailureKind::UncertainResult)
+        );
+        assert_eq!(agent.telemetry_summary().triage_calls, 0);
+    }
+
+    #[tokio::test]
+    async fn a_confident_triage_answer_names_an_uncertain_verification_failure() {
+        let dir = workspace();
+        let triage = crate::triage::testing::answering("test_failure", 0.97);
+        let (agent, report) = run_with_triage(&dir, Some(triage)).await;
+        // Triage names the failure; it never turns one into a pass.
+        assert_eq!(report.success, Some(false));
+        assert_eq!(
+            agent.working_state.failures.last().map(|f| f.kind),
+            Some(FailureKind::TestFailure)
+        );
+        let summary = agent.telemetry_summary();
+        assert_eq!(summary.triage_calls, 1);
+        assert_eq!(summary.triage_refined, 1);
+    }
+
+    /// A low-confidence answer is recorded but never applied.
+    #[tokio::test]
+    async fn an_unconfident_triage_answer_changes_nothing() {
+        let dir = workspace();
+        let triage = crate::triage::testing::answering("test_failure", 0.4);
+        let (agent, _) = run_with_triage(&dir, Some(triage)).await;
+        assert_eq!(
+            agent.working_state.failures.last().map(|f| f.kind),
+            Some(FailureKind::UncertainResult)
+        );
+        let summary = agent.telemetry_summary();
+        assert_eq!(summary.triage_calls, 1);
+        assert_eq!(summary.triage_refined, 0);
+    }
+
+    /// A dead endpoint costs one timeout's worth of latency and nothing else:
+    /// the task still completes, classified as it would have been anyway.
+    #[tokio::test]
+    async fn a_failing_triage_endpoint_never_fails_the_task() {
+        use std::sync::Arc as StdArc;
+        let dir = workspace();
+        let triage = crate::triage::Triage::new(
+            StdArc::new(crate::triage::testing::Scripted(Err("connection refused"))),
+            0.9,
+        );
+        let (agent, report) = run_with_triage(&dir, Some(triage)).await;
+        assert_eq!(report.success, Some(false));
+        assert_eq!(
+            agent.working_state.failures.last().map(|f| f.kind),
+            Some(FailureKind::UncertainResult)
+        );
+        assert_eq!(agent.telemetry_summary().triage_refined, 0);
+    }
+
     #[tokio::test]
     async fn output_starved_turns_retry_with_evidence_even_without_a_plan() {
         let dir = workspace();
@@ -4605,10 +4791,35 @@ mod tests {
             m,
             ChatMessage::User { content } if content.starts_with("OUTPUT LIMIT (attempt 1 of 3)")
         )));
+        // Named, not filed under "uncertain": the loop knows exactly what
+        // happened, and both the router and the checkpoint the model reads
+        // get that name rather than a shrug.
         assert_eq!(
             agent.working_state().last_failure().unwrap().kind,
-            FailureKind::UncertainResult
+            FailureKind::OutputTruncated
         );
+    }
+
+    /// Every loop-detected stop reports the reason it detected, so
+    /// `failures_by_kind` and the router's `previous_failure` stay honest.
+    /// All four of these were `uncertain_result` until 2026-09-19.
+    #[test]
+    fn loop_detected_stops_are_named_not_called_uncertain() {
+        for kind in [
+            FailureKind::CompletionNotClaimed,
+            FailureKind::CallBudgetExhausted,
+            FailureKind::OutputTruncated,
+            FailureKind::UnprovenClaim,
+            FailureKind::WorkspaceUnchanged,
+        ] {
+            assert_ne!(kind, FailureKind::UncertainResult);
+            // Each carries real recovery advice; the generic "outcome is
+            // unclear" line was the thing being replaced.
+            assert!(!kind.guidance().is_empty());
+            assert!(!kind.guidance().contains("outcome is unclear"));
+            // The wire spelling is what Nimble matches on.
+            assert!(!kind.as_str().is_empty());
+        }
     }
 
     #[tokio::test]

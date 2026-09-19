@@ -13,4 +13,5 @@ pub mod provider;
 pub mod session;
 pub mod telemetry;
 pub mod tools;
+pub mod triage;
 pub mod verify;

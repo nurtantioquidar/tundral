@@ -65,6 +65,20 @@ pub enum TelemetryEvent {
         failure: Option<FailureKind>,
         summary: String,
     },
+    /// One System One triage attempt. Recorded whether or not it changed
+    /// anything, so the refinement rate and the decline rate are both
+    /// measurable: `to: null` means the rule verdict stood.
+    Triage {
+        at_epoch_ms: u64,
+        /// Where in the loop the question was asked, e.g. `verification`.
+        site: String,
+        from: FailureKind,
+        to: Option<FailureKind>,
+        confidence: Option<f64>,
+        latency_ms: u64,
+        /// One line; absent when the endpoint answered.
+        error: Option<String>,
+    },
     TaskFinished {
         at_epoch_ms: u64,
         attempts: u32,
@@ -96,6 +110,11 @@ pub struct Summary {
     /// Requests that saw a cache-hit ratio below 50% without a preceding
     /// rewrite: a byte-stability regression signal worth alarming on.
     pub suspicious_cache_misses: u32,
+    /// System One triage attempts, and how many of them actually replaced an
+    /// `uncertain_result`. The ratio is the whole case for having it on.
+    pub triage_calls: u32,
+    pub triage_refined: u32,
+    pub triage_latency_ms: u64,
 }
 
 impl Summary {
@@ -121,6 +140,9 @@ impl Summary {
         self.normalized_microusd += other.normalized_microusd;
         self.price_verified &= other.price_verified;
         self.suspicious_cache_misses += other.suspicious_cache_misses;
+        self.triage_calls += other.triage_calls;
+        self.triage_refined += other.triage_refined;
+        self.triage_latency_ms += other.triage_latency_ms;
         for (kind, count) in &other.failures_by_kind {
             *self.failures_by_kind.entry(kind.clone()).or_default() += count;
         }
@@ -248,6 +270,13 @@ impl Recorder {
                         .failures_by_kind
                         .entry(kind.as_str().to_string())
                         .or_default() += 1;
+                }
+            }
+            TelemetryEvent::Triage { to, latency_ms, .. } => {
+                summary.triage_calls += 1;
+                summary.triage_latency_ms += latency_ms;
+                if to.is_some() {
+                    summary.triage_refined += 1;
                 }
             }
             TelemetryEvent::TaskFinished {

@@ -10,6 +10,36 @@ use std::path::Path;
 use butterfly_core::model::{ModelConfig, ProviderConfig};
 use serde::Deserialize;
 
+/// `[triage]`: the optional System One second opinion on failures the
+/// rule-based classifier could not name. Off unless `enabled = true` AND a key
+/// resolves (`TYPESAFE_API_KEY`, else the `typesafe` credential-store entry).
+/// Still not a credential home — only the knobs live here.
+#[derive(Debug, Default, Clone, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct TriageFileConfig {
+    pub enabled: Option<bool>,
+    /// Endpoint override; defaults to TypeSafe's hosted System One.
+    pub endpoint: Option<String>,
+    /// System One model id (default `jev-latest`).
+    pub model: Option<String>,
+    /// Answers below this confidence are discarded (default 0.9).
+    pub min_confidence: Option<f64>,
+    /// Per-call budget; one request, no retries (default 5).
+    pub timeout_seconds: Option<u64>,
+}
+
+impl TriageFileConfig {
+    fn overlay(self, over: TriageFileConfig) -> TriageFileConfig {
+        TriageFileConfig {
+            enabled: over.enabled.or(self.enabled),
+            endpoint: over.endpoint.or(self.endpoint),
+            model: over.model.or(self.model),
+            min_confidence: over.min_confidence.or(self.min_confidence),
+            timeout_seconds: over.timeout_seconds.or(self.timeout_seconds),
+        }
+    }
+}
+
 #[derive(Debug, Default, Clone, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct FileConfig {
@@ -28,6 +58,8 @@ pub struct FileConfig {
     pub window_tokens: Option<u64>,
     /// Enable the Atlas code-graph tools (default true).
     pub atlas: Option<bool>,
+    #[serde(default)]
+    pub triage: TriageFileConfig,
     #[serde(default)]
     pub providers: Vec<ProviderConfig>,
     #[serde(default)]
@@ -49,6 +81,7 @@ impl FileConfig {
             quiet_reasoning: over.quiet_reasoning.or(self.quiet_reasoning),
             window_tokens: over.window_tokens.or(self.window_tokens),
             atlas: over.atlas.or(self.atlas),
+            triage: self.triage.overlay(over.triage),
             providers,
             models,
         }
@@ -100,6 +133,29 @@ mod tests {
         // Global entry first, repo entry second: applied in that order.
         assert_eq!(merged.models.len(), 2);
         assert_eq!(merged.models[1].default_effort.as_deref(), Some("max"));
+    }
+
+    #[test]
+    fn triage_is_absent_by_default_and_overlays_field_by_field() {
+        let empty = toml::from_str::<FileConfig>("model = \"deepseek-v4-pro\"\n").unwrap();
+        assert_eq!(empty.triage, TriageFileConfig::default());
+        assert_eq!(empty.triage.enabled, None);
+
+        let base = toml::from_str::<FileConfig>(
+            "[triage]\nenabled = true\nmin_confidence = 0.95\ntimeout_seconds = 3\n",
+        )
+        .unwrap();
+        let repo = toml::from_str::<FileConfig>("[triage]\nmin_confidence = 0.8\n").unwrap();
+        let merged = base.overlay(repo);
+        // The repo narrows one knob and inherits the rest.
+        assert_eq!(merged.triage.enabled, Some(true));
+        assert_eq!(merged.triage.min_confidence, Some(0.8));
+        assert_eq!(merged.triage.timeout_seconds, Some(3));
+    }
+
+    #[test]
+    fn a_key_in_the_triage_table_is_rejected_it_is_not_a_credential_home() {
+        assert!(toml::from_str::<FileConfig>("[triage]\napi_key = \"sk-nope\"\n").is_err());
     }
 
     #[test]
