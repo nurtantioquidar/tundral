@@ -64,6 +64,7 @@ runs and its telemetry carries no secrets.
 from __future__ import annotations
 
 import json
+import os
 import shlex
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -76,6 +77,34 @@ REMOTE_BINARY = PurePosixPath("/installed-agent/butterfly")
 # Task name -> coarse Nimble task type (bench/harbor/task-types.json). Forwarded as
 # --task-type so a router keeps per-type history; absent entries send nothing.
 TASK_TYPES_FILE = Path(__file__).with_name("task-types.json")
+CLI_CRATES = Path(__file__).resolve().parents[2] / "cli" / "crates"
+
+
+def _stale_against_sources(binary: Path) -> str | None:
+    """The newest Rust source newer than `binary`, if any.
+
+    A stale binary is the one bench failure mode that looks like a result:
+    2026-09-19 a run measured a progress check that was not in the uploaded
+    binary and reported a confident zero. Silence from a feature is only
+    evidence when the feature was actually shipped.
+    """
+    if os.environ.get("BUTTERFLY_ALLOW_STALE_BINARY") == "1":
+        return None
+    if not CLI_CRATES.is_dir():
+        return None  # running from a copy without the sources; nothing to compare
+    try:
+        built = binary.stat().st_mtime
+    except OSError:
+        return None
+    newest: tuple[float, Path] | None = None
+    for path in CLI_CRATES.rglob("*.rs"):
+        try:
+            mtime = path.stat().st_mtime
+        except OSError:
+            continue
+        if mtime > built and (newest is None or mtime > newest[0]):
+            newest = (mtime, path)
+    return str(newest[1]) if newest else None
 
 # Harbor provider prefix -> (API key variable, optional base-URL variable).
 PROVIDER_ENV: dict[str, tuple[str, str | None]] = {
@@ -153,6 +182,13 @@ class Butterfly(BaseInstalledAgent):
                 "Butterfly needs a prebuilt Linux binary: run bench/harbor/build-linux.sh "
                 "and pass --ak binary=<path> (got %r)"
                 % (str(self._binary) if self._binary else None)
+            )
+        stale = _stale_against_sources(self._binary)
+        if stale:
+            raise RuntimeError(
+                f"{self._binary} is older than {stale}: the run would measure a binary "
+                "that predates the code under test. Run bench/harbor/build-linux.sh. "
+                "(Set BUTTERFLY_ALLOW_STALE_BINARY=1 to override deliberately.)"
             )
         await environment.upload_file(self._binary, REMOTE_BINARY.as_posix())
         await self.exec_as_root(
