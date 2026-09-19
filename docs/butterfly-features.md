@@ -180,9 +180,25 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   provider call in the corpus. Median latency 358 ms. Recall is deliberately low — 6 of 106
   doomed trials, 5.7% — but the ones it catches are the expensive ones.
   Two caveats. The replay's objective line is the task name, not the full statement telemetry does
-  not store, so production sees MORE context than this and these numbers should be a floor. And
-  671 calls saved is gross, not net: a cut attempt triggers a retry that costs calls of its own,
-  which a replay cannot model. Safety is settled; net saving needs a real paired run.
+  not store, so production sees MORE context than this. And 671 calls saved is gross, not net: a
+  cut attempt triggers a retry that costs calls of its own, which a replay cannot model.
+  **Correction, cadence/floor sweep the same day ($0.072, 2,446 checkpoints at every 5 calls over
+  169 trials): the zero-false-cut result above is an artifact of sparse sampling, not a safety
+  property.** Sampling every 5 calls reveals **12 high-confidence (>=0.9) `stalled` verdicts on
+  trials that went on to PASS**, affecting 6 of the 37 winners, with confidences up to 0.99 —
+  and *none* of them happens to land on a multiple of 25, which is the only reason the every-25
+  replay showed zero. They cluster early (calls 5, 10, 15, 20, plus 40 and 45), mostly on
+  `interleaved-vigenere`, where legitimate cryptanalytic search looks exactly like repeating
+  equivalent work. Every denser or looser setting trades false cuts for recall with no free
+  lunch: every-5 at floor 0.9 reaches 14.4% recall and 3,221 calls but kills 6 of 37 winners;
+  only every-25 at floor >=0.85 stays at zero false cuts, for 6.1% recall and 708 calls.
+  The important reading is about calibration, not tuning: Jev is well calibrated on
+  "what kind of failure is this output?" (13/13 at the floor — a local, textual judgement) and
+  poorly calibrated on "is this agent making progress?" (0.99 and wrong — a global judgement
+  needing knowledge of what success looks like). The replay cannot separate "Jev is miscalibrated
+  here" from "the replay's objective was too thin"; production carries the full statement and may
+  do better. Until that is distinguished, the progress check stays OFF by default: current
+  settings sit on the safe frontier by sampling luck, not by demonstrated calibration.
 - **Output-starvation retry** (Terminal-Bench finding, 2026-09-04) — a turn that ends at the
   output-token limit with no visible answer is treated as a failed attempt even with no
   verification plan: the next attempt starts with an "OUTPUT LIMIT" evidence message. Observed
