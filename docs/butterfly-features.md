@@ -126,7 +126,20 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   one round trip 856 ms, `test_failure` at confidence 1.0 on real `cargo test` output stripped of
   every signature the rules key on. The latency is dominated by RTT, not by the model; at ~300
   state tokens and $0.042/Mtok input the call is effectively free, and it is bought against a
-  wasted attempt — a whole model turn — so the trade is not close. Enabling it sends the failing command line and a bounded output tail to
+  wasted attempt — a whole model turn — so the trade is not close.
+  **Accuracy, measured 2026-09-19 (no model spend, ~1 cent of Jev tokens):** 17 real failing
+  outputs generated from cargo, rustc, python, unittest, go, bun, node, jq and shell scripts, each
+  with ground truth known by construction, run through the production client and criteria.
+  Answers at or above the 0.9 floor: **13 of 13 correct — zero confident errors.** Every
+  disagreement fell below the floor and would be discarded: `no_signal` (empty output → `timeout`,
+  0.52), a missing ES module (`missing_context` vs the rules' `environment_failure`, 0.76), a
+  prose value-mismatch (`incorrect_assumption` vs `test_failure`, 0.53), and one correct answer
+  narrowly rejected (`compile_failure` at 0.89). On the four cases where the rules genuinely gave
+  up — the production population — Jev named 3 confidently and correctly and declined the fourth.
+  The floor is doing the work it was put there to do; 0.85 would also have been safe on this
+  sample, but n=17 does not justify moving it. This settles the safety question (is a confident
+  answer ever wrong?) without a bench run; it does NOT measure whether better guidance converts
+  retries into passes, which still needs #9 below. Enabling it sends the failing command line and a bounded output tail to
   a third party, which is why it is opt-in. `crates/core/src/triage/mod.rs`
 - **Output-starvation retry** (Terminal-Bench finding, 2026-09-04) — a turn that ends at the
   output-token limit with no visible answer is treated as a failed attempt even with no
