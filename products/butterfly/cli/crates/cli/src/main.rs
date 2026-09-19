@@ -734,7 +734,12 @@ fn connect_triage(file: &config::TriageFileConfig) -> Option<butterfly_core::tri
         .min_confidence
         .unwrap_or(butterfly_core::triage::DEFAULT_MIN_CONFIDENCE);
     match JevClient::new(key, file.endpoint.clone(), file.model.clone(), timeout) {
-        Ok(client) => Some(Triage::new(Arc::new(client), min_confidence)),
+        Ok(client) => Some(
+            Triage::new(Arc::new(client), min_confidence).with_progress_every(
+                file.progress_every
+                    .unwrap_or(butterfly_core::triage::DEFAULT_PROGRESS_EVERY),
+            ),
+        ),
         Err(error) => {
             eprintln!("triage: unavailable ({error}); continuing without triage");
             None

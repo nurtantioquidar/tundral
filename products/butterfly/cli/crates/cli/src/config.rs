@@ -26,6 +26,9 @@ pub struct TriageFileConfig {
     pub min_confidence: Option<f64>,
     /// Per-call budget; one request, no retries (default 5).
     pub timeout_seconds: Option<u64>,
+    /// Provider calls between progress checks (default 25); 0 disables the
+    /// progress check while leaving failure triage on.
+    pub progress_every: Option<u32>,
 }
 
 impl TriageFileConfig {
@@ -36,6 +39,7 @@ impl TriageFileConfig {
             model: over.model.or(self.model),
             min_confidence: over.min_confidence.or(self.min_confidence),
             timeout_seconds: over.timeout_seconds.or(self.timeout_seconds),
+            progress_every: over.progress_every.or(self.progress_every),
         }
     }
 }

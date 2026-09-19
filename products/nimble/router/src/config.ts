@@ -282,6 +282,7 @@ export function parseConfig(raw: unknown): NimbleConfig {
             "workspace_unchanged",
             "completion_not_claimed",
             "unproven_claim",
+            "attempt_stalled",
             "uncertain_result",
           ],
       default_output_tokens: expectNumber(routingRaw.default_output_tokens, "routing.default_output_tokens", 2_000),

@@ -70,9 +70,12 @@ pub enum TelemetryEvent {
     /// measurable: `to: null` means the rule verdict stood.
     Triage {
         at_epoch_ms: u64,
-        /// Where in the loop the question was asked, e.g. `verification`.
+        /// Where in the loop the question was asked, e.g. `verification` or
+        /// `progress`.
         site: String,
-        from: FailureKind,
+        /// The verdict being reconsidered; None for a progress check, which
+        /// reconsiders nothing and only ever adds one.
+        from: Option<FailureKind>,
         to: Option<FailureKind>,
         confidence: Option<f64>,
         latency_ms: u64,

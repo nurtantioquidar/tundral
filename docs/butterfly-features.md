@@ -155,6 +155,21 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   real build and test checks that can fail); do not buy more of the same arm expecting a signal.
   Enabling it sends the failing command line and a bounded output tail to
   a third party, which is why it is opt-in. `crates/core/src/triage/mod.rs`
+- **Progress check** (2026-09-19, with `--triage`; `[triage] progress_every`, default 25, 0 to
+  disable) — every 25 provider calls the attempt's objective, its last 40 tool-call previews and
+  its recent failures go to System One as one `choice`: progressing / stalled / unclear. A
+  confident `stalled` cuts the ATTEMPT — never the task — and the existing recovery path retries
+  with "STALLED" evidence telling the model to change route, exactly as a call-budget cut-off
+  does. Anything else (progressing, unclear, a stall below the 0.9 floor, an error, a timeout)
+  changes nothing. Motivation, measured across the 2026-09-1x jobs: the worst trial spent **900
+  provider calls and 95 minutes on one task**, 147 edits deep into a single file, and two more ran
+  121 and 159 minutes; `note_repeated_call` hashes name+arguments and cannot see 147 *different*
+  edits that keep failing the same test. Unlike failure triage this is on the hot path — every
+  task, not the 1-2 failing verifications per 24-task job — and at ~1s per 25 turns against 6-16s
+  a turn it has to save one turn to pay for itself. The risk is cutting an attempt that would
+  have landed: mitigated by acting only above the floor, by ending the attempt rather than the
+  task, and by `attempt_stalled` escalating in Nimble (being stuck is a capability signal, unlike
+  a budget exhaustion). Unmeasured against a real model; the trigger rate is what to watch first.
 - **Output-starvation retry** (Terminal-Bench finding, 2026-09-04) — a turn that ends at the
   output-token limit with no visible answer is treated as a failed attempt even with no
   verification plan: the next attempt starts with an "OUTPUT LIMIT" evidence message. Observed

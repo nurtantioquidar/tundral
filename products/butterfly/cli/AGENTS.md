@@ -258,7 +258,10 @@ products/butterfly/bench/harbor/with-keys.sh <cmd>    # keys from 1Password (op)
    budget, or completion, and no triage answer can make `verified: true` or `task_success: true`
    — invariant 4 owns those and is unaffected. A confidence floor (default 0.9) discards
    unconfident answers, and any error, timeout, decline, or out-of-vocabulary reply leaves the
-   rule verdict standing: one request, no retries, a task never fails because triage did. With
+   rule verdict standing: one request, no retries, a task never fails because triage did. The
+   progress check obeys the same rule from the other direction: a confident `stalled` may end an
+   ATTEMPT early (the recovery path then retries with evidence, as it does for a call-budget
+   cut-off) and may never end, pass, or complete a task. With
    no key and no flag the loop classifies exactly as it did before the feature existed, so
    Butterfly stays local, offline and model-agnostic by default. Telemetry records every attempt
    (`triage_calls` / `triage_refined`) precisely so the refinement rate stays auditable. Adding a

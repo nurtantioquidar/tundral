@@ -116,7 +116,7 @@ describe("router", () => {
     // any of them out of the defaults would have silently stopped escalating
     // failures that escalate today — including the most common one in the
     // bench history (workspace_unchanged).
-    for (const previous_failure of ["workspace_unchanged", "completion_not_claimed", "unproven_claim"]) {
+    for (const previous_failure of ["workspace_unchanged", "completion_not_claimed", "unproven_claim", "attempt_stalled"]) {
       const { router, store } = setup();
       store.observeCache({ provider: "deepseek", model: "deepseek-v4-flash", prefix_hash: "sha256:p", last_served_at: 999_000, prefix_tokens_seen: 40_000 });
       const session = { ...fresh(), current_model: "deepseek-v4-flash", prefix_hash: "sha256:p", stable_tokens: 40_000 };

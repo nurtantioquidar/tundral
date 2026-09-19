@@ -41,6 +41,10 @@ pub enum FailureKind {
     /// A completion claim whose acceptance checks cannot fail on wrong
     /// behaviour (compile-only, existence-only).
     UnprovenClaim,
+    /// The attempt was cut short because it had stopped advancing — repeating
+    /// equivalent work rather than getting closer. Judged, not counted, so it
+    /// catches what the identical-call guard cannot.
+    AttemptStalled,
     UncertainResult,
 }
 
@@ -62,6 +66,7 @@ impl FailureKind {
             FailureKind::CallBudgetExhausted => "call_budget_exhausted",
             FailureKind::OutputTruncated => "output_truncated",
             FailureKind::UnprovenClaim => "unproven_claim",
+            FailureKind::AttemptStalled => "attempt_stalled",
             FailureKind::UncertainResult => "uncertain_result",
         }
     }
@@ -114,6 +119,9 @@ impl FailureKind {
             }
             FailureKind::UnprovenClaim => {
                 "The claimed checks cannot fail on wrong behaviour; run one that actually exercises the requirement before claiming completion again."
+            }
+            FailureKind::AttemptStalled => {
+                "The previous attempt stopped advancing and was cut short; change approach rather than resuming the same edit-and-retry cycle."
             }
             FailureKind::UncertainResult => {
                 "The outcome is unclear; run the most targeted check that would prove the change works."

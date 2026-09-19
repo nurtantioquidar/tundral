@@ -341,6 +341,10 @@ pub struct TurnReport {
     /// The turn ended because it used its provider-call budget, not because
     /// the model finished.
     pub turn_limit_reached: bool,
+    /// The turn was cut short by the optional progress check: it had stopped
+    /// advancing. Handled exactly like a call-budget cut-off — the attempt
+    /// ends, the task does not.
+    pub stalled: bool,
     pub provider_calls: u32,
     pub tool_calls: u32,
     pub usage: Usage,
@@ -702,6 +706,10 @@ pub struct Agent {
     /// Identical tool calls (name + arguments) seen this input, for the
     /// bounded repeat reminder at 3, 5 and 8.
     identical_calls: HashMap<u64, u32>,
+    /// Bounded ring of recent tool calls (`name preview -> ok`) for the
+    /// optional progress check. Previews only — the same bounded text
+    /// telemetry records, never arguments (invariant 6).
+    recent_calls: VecDeque<String>,
     /// Set when the first claim of the current attempt skipped the review.
     first_claim_proven: bool,
     /// Workspace fingerprint taken when the gated task started, so a declared
@@ -805,6 +813,7 @@ impl Agent {
             questions_asked: 0,
             outline_avoided: Vec::new(),
             identical_calls: HashMap::new(),
+            recent_calls: VecDeque::new(),
             first_claim_proven: false,
             gate_baseline: None,
             self_authored_checks: Vec::new(),
@@ -874,6 +883,7 @@ impl Agent {
             questions_asked: 0,
             outline_avoided: Vec::new(),
             identical_calls: HashMap::new(),
+            recent_calls: VecDeque::new(),
             first_claim_proven: false,
             gate_baseline: None,
             self_authored_checks: Vec::new(),
@@ -947,12 +957,63 @@ impl Agent {
         self.telemetry.record(TelemetryEvent::Triage {
             at_epoch_ms: telemetry::epoch_ms_now(),
             site: format!("verification:attempt-{attempt}"),
-            from: rules,
+            from: Some(rules),
             to: refined,
             confidence,
             latency_ms,
             error,
         });
+    }
+
+    /// Ask the progress check whether this attempt is still getting anywhere.
+    /// True means cut it short. Any error, decline, or below-floor answer is
+    /// false — the attempt runs on exactly as it would have.
+    async fn assess_progress(&mut self, provider_calls: u32) -> bool {
+        let objective = self
+            .working_state
+            .objective
+            .clone()
+            .or_else(|| self.task_statement.clone())
+            .unwrap_or_default();
+        let recent: Vec<String> = self.recent_calls.iter().cloned().collect();
+        let failures: Vec<String> = self
+            .working_state
+            .failures
+            .iter()
+            .rev()
+            .take(5)
+            .rev()
+            .map(|f| format!("{}: {}", f.kind, f.summary))
+            .collect();
+        let started = std::time::Instant::now();
+        let Some(verdict) = self
+            .triage
+            .assess_progress(&objective, &recent, &failures)
+            .await
+        else {
+            return false;
+        };
+        let latency_ms = started.elapsed().as_millis() as u64;
+        let (stalled, confidence, error) = match verdict {
+            crate::triage::ProgressVerdict::Stalled { confidence } => {
+                (true, Some(confidence), None)
+            }
+            crate::triage::ProgressVerdict::Progressing { confidence }
+            | crate::triage::ProgressVerdict::Inconclusive { confidence } => {
+                (false, Some(confidence), None)
+            }
+            crate::triage::ProgressVerdict::Failed { error } => (false, None, Some(error)),
+        };
+        self.telemetry.record(TelemetryEvent::Triage {
+            at_epoch_ms: telemetry::epoch_ms_now(),
+            site: format!("progress:call-{provider_calls}"),
+            from: None,
+            to: stalled.then_some(FailureKind::AttemptStalled),
+            confidence,
+            latency_ms,
+            error,
+        });
+        stalled
     }
 
     pub fn working_state(&self) -> &working_state::WorkingState {
@@ -1357,6 +1418,18 @@ impl Agent {
                      could not test as unverifiable.]"
                 ))?;
             }
+            // Optional, off by default. Ends the ATTEMPT, never the task: the
+            // recovery path then retries with evidence, exactly as it does for
+            // a call-budget cut-off.
+            if self.triage.progress_check_due(report.provider_calls)
+                && self.assess_progress(report.provider_calls).await
+            {
+                report.stalled = true;
+                report.assistant_text.push_str(
+                    "\n[attempt cut short: it had stopped advancing; retrying with evidence]",
+                );
+                return Ok(report);
+            }
             if report.provider_calls >= self.config.max_provider_calls_per_input {
                 report.turn_limit_reached = true;
                 report.assistant_text.push_str(
@@ -1601,6 +1674,15 @@ impl Agent {
                 if !output.is_error && blind_target.is_some() {
                     report.blind_edits += 1;
                     content.push_str(BLIND_EDIT_NOTE);
+                }
+                if self.triage.is_enabled() {
+                    self.recent_calls.push_back(format!(
+                        "{preview} -> {}",
+                        if output.is_error { "error" } else { "ok" }
+                    ));
+                    while self.recent_calls.len() > crate::triage::RECENT_ACTIONS {
+                        self.recent_calls.pop_front();
+                    }
                 }
                 if let Some(times) = self.note_repeated_call(&call.name, &call.arguments) {
                     content.push_str(&format!(
@@ -2409,6 +2491,23 @@ impl Agent {
                      ended without calling complete_task, so the task is not finished. Continue \
                      from the current state: produce the remaining deliverables, verify them, and \
                      call complete_task with the evidence.{extra}"
+                ));
+            }
+            if turn.stalled && !real_checks_passed && attempt < max_attempts {
+                passed = Some(false);
+                self.working_state.record_failure(
+                    FailureKind::AttemptStalled,
+                    "attempt stopped advancing and was cut short",
+                );
+                let extra = evidence
+                    .take()
+                    .map(|e| format!("\n\n{e}"))
+                    .unwrap_or_default();
+                evidence = Some(format!(
+                    "STALLED (attempt {attempt} of {max_attempts}): the previous attempt stopped \
+                     making progress — it repeated equivalent work without getting closer — and \
+                     was cut short. Do not resume that approach. State in one line what you now \
+                     believe is wrong, then take a different route to the objective.{extra}"
                 ));
             }
             if turn.turn_limit_reached && !real_checks_passed && attempt < max_attempts {
@@ -4809,6 +4908,112 @@ mod tests {
             agent.working_state().last_failure().unwrap().kind,
             FailureKind::OutputTruncated
         );
+    }
+
+    /// The progress check cuts a turn that has stopped advancing, and the
+    /// loop recovers exactly as it does from a call-budget cut-off: the
+    /// ATTEMPT ends, the task does not, and the next attempt gets evidence
+    /// telling it to change route.
+    #[tokio::test]
+    async fn a_stalled_attempt_is_cut_short_and_retried_with_evidence() {
+        let dir = workspace();
+        // Enough scripted turns that the run would otherwise keep looping.
+        let mut script = Vec::new();
+        for i in 0..8 {
+            script.push(assistant_with_call(
+                &format!("c{i}"),
+                "read_file",
+                r#"{"path":"hello.txt"}"#,
+            ));
+        }
+        script.push(final_text("done"));
+        let provider = Arc::new(ScriptedProvider::new(script));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        agent.set_triage(
+            crate::triage::testing::answering_progress("stalled", 0.98).with_progress_every(2),
+        );
+        let report = agent
+            .run_task(
+                "go".into(),
+                &TaskOptions {
+                    max_attempts: 2,
+                    verification: VerificationPlan::default(),
+                },
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+
+        assert!(report.attempts[0].turn.stalled, "attempt 1 should be cut");
+        // Cut early: nowhere near the 50-call default budget.
+        assert!(report.attempts[0].turn.provider_calls <= 3);
+        assert!(!report.attempts[0].turn.turn_limit_reached);
+        assert_eq!(
+            agent
+                .working_state()
+                .failures
+                .iter()
+                .filter(|f| f.kind == FailureKind::AttemptStalled)
+                .count(),
+            1
+        );
+        // The task retried rather than ending.
+        assert_eq!(report.attempts.len(), 2);
+        let summary = agent.telemetry_summary();
+        assert!(summary.triage_calls >= 1);
+        assert_eq!(summary.triage_refined, summary.triage_calls);
+    }
+
+    /// The safety property that matters most: an unsure verdict must never cut
+    /// an attempt that might still land.
+    #[tokio::test]
+    async fn an_unsure_progress_verdict_never_cuts_the_attempt() {
+        let dir = workspace();
+        let provider = Arc::new(ScriptedProvider::new(vec![
+            assistant_with_call("c1", "read_file", r#"{"path":"hello.txt"}"#),
+            assistant_with_call("c2", "read_file", r#"{"path":"hello.txt"}"#),
+            final_text("done"),
+        ]));
+        let mut agent = Agent::new(
+            provider,
+            dir.path().to_path_buf(),
+            SessionConfig {
+                permission_mode: PermissionMode::Auto,
+                ..SessionConfig::default()
+            },
+            None,
+        )
+        .unwrap();
+        // A stall the classifier is not confident about.
+        agent.set_triage(
+            crate::triage::testing::answering_progress("stalled", 0.40).with_progress_every(1),
+        );
+        let report = agent
+            .run_turn(
+                "go".into(),
+                &approval::AutoApprove,
+                &mut NullSink,
+                &CancellationToken::new(),
+            )
+            .await
+            .unwrap();
+        assert!(!report.stalled);
+        assert_eq!(report.assistant_text, "done");
+        // It was asked, and it declined to act.
+        let summary = agent.telemetry_summary();
+        assert!(summary.triage_calls >= 1);
+        assert_eq!(summary.triage_refined, 0);
     }
 
     /// Every loop-detected stop reports the reason it detected, so

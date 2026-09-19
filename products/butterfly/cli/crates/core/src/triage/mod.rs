@@ -52,6 +52,17 @@ pub const DEFAULT_TIMEOUT: Duration = Duration::from_secs(5);
 /// same evidence.
 const STATE_CAP_BYTES: usize = 3_000;
 
+/// Provider calls between progress checks. Measured 2026-09-19: the worst
+/// bench trial spent 900 provider calls and 95 minutes on one task, 147 edits
+/// deep into a single file — the existing guard hashes identical calls and
+/// cannot see that. At ~1s a check against 6-16s a turn, one check per 25
+/// turns costs well under 1% and only has to save a single turn to pay.
+pub const DEFAULT_PROGRESS_EVERY: u32 = 25;
+/// Recent actions shown to the progress check, newest last.
+pub const RECENT_ACTIONS: usize = 40;
+/// Bytes of objective text included in the progress state.
+const OBJECTIVE_CAP_BYTES: usize = 600;
+
 /// The provider id this module's key is stored under in the credential store
 /// (`~/.config/butterfly/credentials.toml`), and the stem of its environment
 /// variable. Not a model-registry provider: System One is not an
@@ -232,6 +243,29 @@ impl SystemOne for JevClient {
 pub struct Triage {
     client: Option<Arc<dyn SystemOne>>,
     min_confidence: f64,
+    progress_every: u32,
+}
+
+/// What the progress check concluded. Only `Stalled` is actionable, and it is
+/// only ever returned above the confidence floor — a stall the model is not
+/// sure about comes back `Inconclusive`, so the caller cannot accidentally cut
+/// an attempt on a weak signal.
+#[derive(Debug, Clone, PartialEq)]
+pub enum ProgressVerdict {
+    /// Confidently repeating equivalent work: the caller may end the ATTEMPT.
+    Stalled {
+        confidence: f64,
+    },
+    Progressing {
+        confidence: f64,
+    },
+    /// Unclear, or a stall below the floor.
+    Inconclusive {
+        confidence: f64,
+    },
+    Failed {
+        error: String,
+    },
 }
 
 impl std::fmt::Debug for Triage {
@@ -268,6 +302,7 @@ impl Triage {
         Self {
             client: None,
             min_confidence: DEFAULT_MIN_CONFIDENCE,
+            progress_every: DEFAULT_PROGRESS_EVERY,
         }
     }
 
@@ -275,7 +310,15 @@ impl Triage {
         Self {
             client: Some(client),
             min_confidence: min_confidence.clamp(0.0, 1.0),
+            progress_every: DEFAULT_PROGRESS_EVERY,
         }
+    }
+
+    /// Provider calls between progress checks; 0 turns the check off while
+    /// leaving failure triage on.
+    pub fn with_progress_every(mut self, every: u32) -> Self {
+        self.progress_every = every;
+        self
     }
 
     pub fn is_enabled(&self) -> bool {
@@ -284,6 +327,73 @@ impl Triage {
 
     pub fn min_confidence(&self) -> f64 {
         self.min_confidence
+    }
+
+    /// True when a turn that has made `provider_calls` calls is due a check.
+    pub fn progress_check_due(&self, provider_calls: u32) -> bool {
+        self.client.is_some()
+            && self.progress_every > 0
+            && provider_calls > 0
+            && provider_calls.is_multiple_of(self.progress_every)
+    }
+
+    /// Is this attempt still getting somewhere?
+    ///
+    /// A judgement no hash can make: 147 *different* edits to one file that
+    /// keep failing the same test are invisible to `note_repeated_call`, which
+    /// compares name and arguments. Returns `None` when triage is disabled.
+    ///
+    /// Acting on `Stalled` ends the ATTEMPT, never the task — the loop's
+    /// existing recovery path then retries with evidence, exactly as it does
+    /// for a call-budget cut-off. That keeps this a tightening move under
+    /// invariant 11: it can end an attempt early, never let one through.
+    pub async fn assess_progress(
+        &self,
+        objective: &str,
+        recent_actions: &[String],
+        recent_failures: &[String],
+    ) -> Option<ProgressVerdict> {
+        let client = self.client.as_ref()?;
+        // With nothing to look at the honest answer is "no idea", and asking
+        // would spend a round trip to be told so.
+        if recent_actions.is_empty() {
+            return Some(ProgressVerdict::Inconclusive { confidence: 0.0 });
+        }
+        let questions = BTreeMap::from([("progress".to_string(), progress_question())]);
+        let state = progress_state(objective, recent_actions, recent_failures);
+        let verdict = match client.ask(&state, &questions).await {
+            Err(error) => ProgressVerdict::Failed {
+                error: error.to_string(),
+            },
+            Ok(answers) => match answers.answers.get("progress") {
+                None => ProgressVerdict::Failed {
+                    error: "no answer for progress".to_string(),
+                },
+                Some(answer) => self.read_progress(answer),
+            },
+        };
+        Some(verdict)
+    }
+
+    fn read_progress(&self, answer: &Answer) -> ProgressVerdict {
+        let confidence = answer.confidence.unwrap_or(0.0);
+        let Some(chosen) = answer.choice.as_deref() else {
+            return ProgressVerdict::Failed {
+                error: "answer carried no choice".to_string(),
+            };
+        };
+        match chosen {
+            "stalled" if confidence >= self.min_confidence => {
+                ProgressVerdict::Stalled { confidence }
+            }
+            // A stall it is not sure about is not a reason to cut an attempt
+            // that might still land.
+            "stalled" | "unclear" => ProgressVerdict::Inconclusive { confidence },
+            "progressing" => ProgressVerdict::Progressing { confidence },
+            other => ProgressVerdict::Failed {
+                error: format!("unknown progress answer: {other}"),
+            },
+        }
     }
 
     /// Ask what kind of failure a command's output describes.
@@ -400,6 +510,84 @@ fn failure_kind_question() -> Question {
     }
 }
 
+/// `text` truncated to at most `cap` bytes, never mid-character. Short text is
+/// returned whole — an off-by-one here silently clips the last character of
+/// every objective, which is exactly the kind of thing nobody notices.
+fn clip_on_char_boundary(text: &str, cap: usize) -> &str {
+    if text.len() <= cap {
+        return text;
+    }
+    let mut end = cap;
+    while end > 0 && !text.is_char_boundary(end) {
+        end -= 1;
+    }
+    &text[..end]
+}
+
+/// The progress question. `unclear` is offered so the classifier can decline
+/// rather than be forced into a guess that would cut a live attempt.
+fn progress_question() -> Question {
+    Question::Choice {
+        instructions: "A coding agent is working on the objective below; its recent actions are \
+             listed oldest first. Is it still advancing toward the objective, or repeating \
+             equivalent work without getting closer? Judge only the actions shown."
+            .to_string(),
+        criteria: BTreeMap::from([
+            (
+                "progressing".to_string(),
+                Some(
+                    "Recent actions change something new, or test something not yet tested; the \
+                     agent is moving forward even if it has not finished."
+                        .to_string(),
+                ),
+            ),
+            (
+                "stalled".to_string(),
+                Some(
+                    "Recent actions repeat equivalent edits, commands or reads, or hit the same \
+                     failure again, without getting closer to the objective."
+                        .to_string(),
+                ),
+            ),
+            (
+                "unclear".to_string(),
+                Some(
+                    "The actions shown do not say either way. Choose this rather than guessing."
+                        .to_string(),
+                ),
+            ),
+        ]),
+    }
+}
+
+/// The state blob: what the agent set out to do, what it has just been doing,
+/// and what has been failing. Tool *arguments* are never included — previews
+/// only, the same bounded text telemetry already records.
+fn progress_state(
+    objective: &str,
+    recent_actions: &[String],
+    recent_failures: &[String],
+) -> String {
+    let mut out = String::from("OBJECTIVE\n");
+    let objective = objective.trim();
+    out.push_str(if objective.is_empty() {
+        "(not stated)"
+    } else {
+        clip_on_char_boundary(objective, OBJECTIVE_CAP_BYTES)
+    });
+    out.push_str("\n\nRECENT ACTIONS (oldest first)\n");
+    for (i, action) in recent_actions.iter().enumerate() {
+        out.push_str(&format!("{}. {action}\n", i + 1));
+    }
+    if !recent_failures.is_empty() {
+        out.push_str("\nRECENT FAILURES\n");
+        for failure in recent_failures {
+            out.push_str(&format!("- {failure}\n"));
+        }
+    }
+    out
+}
+
 /// `FailureKind` from its wire spelling, via the same snake_case mapping the
 /// enum already serializes with — so the option keys we send and the answer we
 /// read can never drift apart.
@@ -436,6 +624,23 @@ pub(crate) mod testing {
                 Err(message) => Err(TriageError::Transport(message.to_string())),
             }
         }
+    }
+
+    /// A triage whose endpoint always answers the progress question with
+    /// `choice` at `confidence`.
+    pub(crate) fn answering_progress(choice: &str, confidence: f64) -> Triage {
+        let answers = Answers {
+            answers: BTreeMap::from([(
+                "progress".to_string(),
+                Answer {
+                    choice: Some(choice.to_string()),
+                    confidence: Some(confidence),
+                    ..Answer::default()
+                },
+            )]),
+            usage: TriageUsage::default(),
+        };
+        Triage::new(Arc::new(Scripted(Ok(answers))), DEFAULT_MIN_CONFIDENCE)
     }
 
     /// A triage whose endpoint always answers `choice` at `confidence`.
@@ -557,6 +762,106 @@ mod tests {
         // Nor is an unchanged workspace: that verdict comes from the diff, not
         // from a command, and the loop decides it without asking anyone.
         assert!(!criteria.contains_key("workspace_unchanged"));
+    }
+
+    // --- progress check ---------------------------------------------------
+
+    const ACTIONS: [&str; 2] = ["edit(/app/x.py) -> ok", "shell(pytest) -> error"];
+
+    async fn progress(choice: &str, confidence: f64) -> Option<ProgressVerdict> {
+        let actions: Vec<String> = ACTIONS.iter().map(|s| s.to_string()).collect();
+        super::testing::answering_progress(choice, confidence)
+            .assess_progress("make the tests pass", &actions, &[])
+            .await
+    }
+
+    #[tokio::test]
+    async fn a_confident_stall_is_actionable() {
+        assert_eq!(
+            progress("stalled", 0.96).await,
+            Some(ProgressVerdict::Stalled { confidence: 0.96 })
+        );
+    }
+
+    /// The safety property: an unsure stall must never cut an attempt that
+    /// might still land, so it comes back inconclusive, not stalled.
+    #[tokio::test]
+    async fn an_unsure_stall_is_not_actionable() {
+        assert_eq!(
+            progress("stalled", 0.55).await,
+            Some(ProgressVerdict::Inconclusive { confidence: 0.55 })
+        );
+        assert_eq!(
+            progress("unclear", 0.99).await,
+            Some(ProgressVerdict::Inconclusive { confidence: 0.99 })
+        );
+        assert!(matches!(
+            progress("progressing", 1.0).await,
+            Some(ProgressVerdict::Progressing { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn progress_is_never_asked_when_triage_is_off_or_there_is_nothing_to_see() {
+        assert!(Triage::disabled()
+            .assess_progress("o", &["a".into()], &[])
+            .await
+            .is_none());
+        // No actions yet: answer without spending a round trip.
+        assert_eq!(
+            super::testing::answering_progress("stalled", 1.0)
+                .assess_progress("o", &[], &[])
+                .await,
+            Some(ProgressVerdict::Inconclusive { confidence: 0.0 })
+        );
+    }
+
+    #[test]
+    fn progress_checks_fire_on_the_configured_cadence_only() {
+        let t = super::testing::answering_progress("stalled", 1.0).with_progress_every(25);
+        assert!(!t.progress_check_due(0));
+        assert!(!t.progress_check_due(24));
+        assert!(t.progress_check_due(25));
+        assert!(t.progress_check_due(50));
+        // 0 turns the progress check off without touching failure triage.
+        let off = super::testing::answering_progress("stalled", 1.0).with_progress_every(0);
+        assert!(!off.progress_check_due(25));
+        assert!(off.is_enabled());
+        // Disabled triage never schedules one.
+        assert!(!Triage::disabled().progress_check_due(25));
+    }
+
+    #[test]
+    fn the_progress_state_carries_objective_actions_and_failures() {
+        let s = progress_state(
+            "make the tests pass",
+            &["edit(/app/x.py) -> ok".into()],
+            &["test_failure: 1 of 3 wrong".into()],
+        );
+        assert!(s.contains("OBJECTIVE\nmake the tests pass"));
+        assert!(s.contains("1. edit(/app/x.py) -> ok"));
+        assert!(s.contains("test_failure: 1 of 3 wrong"));
+        // A long objective is capped, not sent whole.
+        let long = progress_state(&"x".repeat(5_000), &["a".into()], &[]);
+        assert!(long.len() < OBJECTIVE_CAP_BYTES + 400);
+        // Short text survives intact — the clip must not eat its last char,
+        // and it must never split a multi-byte character.
+        assert_eq!(
+            clip_on_char_boundary("make the tests pass", 600),
+            "make the tests pass"
+        );
+        assert_eq!(clip_on_char_boundary("héllo", 2), "h");
+    }
+
+    #[test]
+    fn the_progress_question_offers_a_way_to_decline() {
+        let Question::Choice { criteria, .. } = progress_question() else {
+            panic!("progress must be a choice");
+        };
+        assert_eq!(criteria.len(), 3);
+        assert!(criteria.contains_key("unclear"));
+        assert!(criteria.contains_key("stalled"));
+        assert!(criteria.contains_key("progressing"));
     }
 
     #[test]
