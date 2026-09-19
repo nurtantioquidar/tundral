@@ -142,6 +142,13 @@ impl ModelDescriptor {
                 self.id
             )),
             (Some(reasoning), None) => Ok(reasoning.default_effort.clone()),
+            // Reasoning, but no vocabulary to ask in: a router whose pool
+            // picks the effort. Saying "accepted: " with an empty list would
+            // read as a bug rather than as the answer.
+            (Some(reasoning), Some(value)) if reasoning.effort_values.is_empty() => Err(format!(
+                "model {} takes no effort setting; remove effort '{value}'",
+                self.id
+            )),
             (Some(reasoning), Some(value)) => {
                 if reasoning.effort_values.iter().any(|v| v == value) {
                     Ok(Some(value.to_string()))
@@ -876,6 +883,27 @@ mod tests {
         let plain = builtin::generic_openai_compatible("m", "deepseek");
         assert_eq!(plain.resolve_effort(None).unwrap(), None);
         assert!(plain.resolve_effort(Some("high")).is_err());
+
+        // The three "nothing to set" states must not read alike: no
+        // reasoning at all, a router that owns the choice, and a model whose
+        // default is the provider's own.
+        let router = registry.resolve("nimble").unwrap();
+        assert_eq!(router.resolve_effort(None).unwrap(), None);
+        let refusal = router.resolve_effort(Some("high")).unwrap_err();
+        assert!(
+            refusal.contains("takes no effort setting") && !refusal.contains("accepted"),
+            "empty vocabulary must not offer an empty list: {refusal}"
+        );
+        assert!(plain
+            .resolve_effort(Some("high"))
+            .unwrap_err()
+            .contains("no reasoning control"));
+        let glm = registry.resolve("glm-5.3-flash").unwrap();
+        assert_eq!(glm.resolve_effort(None).unwrap(), None);
+        assert_eq!(
+            glm.resolve_effort(Some("low")).unwrap().as_deref(),
+            Some("low")
+        );
     }
 
     #[test]

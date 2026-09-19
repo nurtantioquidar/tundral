@@ -1017,6 +1017,17 @@ impl Agent {
         self.config.effort.as_deref()
     }
 
+    /// Change the reasoning effort mid-session. `None` restores the model's
+    /// own default. A value the model does not accept is rejected and the
+    /// session keeps the effort it had.
+    ///
+    /// Unlike `set_model` this costs nothing: effort is a request parameter,
+    /// not prompt bytes, so the provider's prefix cache is untouched.
+    pub fn set_effort(&mut self, requested: Option<&str>) -> Result<(), String> {
+        self.config.effort = self.config.model.resolve_effort(requested)?;
+        Ok(())
+    }
+
     pub fn permission_mode(&self) -> PermissionMode {
         self.config.permission_mode
     }

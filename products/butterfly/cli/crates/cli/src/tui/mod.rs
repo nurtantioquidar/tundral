@@ -27,13 +27,14 @@ use completion::CompletionIndex;
 use editor::Editor;
 use ui::{Status, Ui, UiAction, UiGate, UiSink};
 
-const COMMANDS: [(&str, &str); 9] = [
+const COMMANDS: [(&str, &str); 10] = [
     (
         "task",
         "run an autonomous, verified task; ends with the verdict",
     ),
     ("compact", "force a compaction now; optional focus text"),
     ("connect", "save a provider API key"),
+    ("effort", "show or set this model's reasoning effort"),
     ("exit", "exit"),
     ("help", "show commands"),
     ("model", "show or switch model"),
@@ -65,10 +66,61 @@ impl Drop for TerminalGuard {
 fn status_of(agent: &Agent) -> Status {
     Status {
         model: agent.model().id.clone(),
+        effort: agent.effort().map(str::to_string),
         mode: mode_name(agent.permission_mode()),
         ctx_pct: agent.utilization(),
         session_microusd: agent.total_actual_microusd(),
         price_verified: agent.model().pricing.verified,
+    }
+}
+
+/// A command note, in the same dim prose as the mode blurb, or its refusal.
+fn print_note(ui: &Ui, result: Result<String, String>) {
+    match result {
+        Ok(text) => ui.print_note(&text),
+        Err(text) => ui.print_error(&text),
+    }
+}
+
+/// Offer the current model's effort vocabulary and apply the choice. Silent
+/// for a model with nothing to choose, so it can be chained after the model
+/// picker without a dead end.
+async fn pick_effort(ui: &Ui, agent: &mut Agent) {
+    let choices = crate::repl::effort_choices(&agent.model());
+    if choices.is_empty() {
+        return;
+    }
+    let model = agent.model();
+    let model_default = model
+        .capabilities
+        .reasoning
+        .as_ref()
+        .and_then(|r| r.default_effort.as_deref());
+    let current = agent.effort();
+    let rows: Vec<chrome::EffortRow> = choices
+        .iter()
+        .map(|value| chrome::EffortRow {
+            value,
+            // The `default` row is the only one whose name does not say what
+            // it does.
+            note: if value == "default" {
+                "the provider chooses"
+            } else {
+                ""
+            },
+            current: match current {
+                Some(effort) => effort == value,
+                // Nothing set and no named default: the pseudo-row is where
+                // the session actually is.
+                None => value == "default",
+            },
+            default: model_default == Some(value.as_str()),
+        })
+        .collect();
+    let items = ui.render_effort_rows(&rows);
+    let initial = rows.iter().position(|r| r.current).unwrap_or(0);
+    if let Ok(Some(index)) = ui.open_select("reasoning effort", items, initial).await {
+        print_note(ui, crate::repl::set_effort(agent, &choices[index]));
     }
 }
 
@@ -321,19 +373,42 @@ pub async fn run(
                     .collect();
                 let items = ui.render_model_rows(&rows);
                 let initial = models.iter().position(|m| m.id == current.id).unwrap_or(0);
-                match ui.open_select("switch model", items, initial).await {
-                    Ok(Some(index)) if models[index].id != current.id => {
-                        let note = crate::repl::switch_model(&mut agent, &models[index].id, hub);
-                        ui.print_lines(vec![note]);
+                if let Ok(Some(index)) = ui.open_select("switch model", items, initial).await {
+                    if models[index].id != current.id {
+                        print_note(
+                            &ui,
+                            crate::repl::switch_model(&mut agent, &models[index].id, hub),
+                        );
                     }
-                    // Cancel / unchanged: the composer returns, no residue.
-                    _ => {}
+                    // Confirming a model leads straight into its effort, which
+                    // is the second half of the same decision. Esc out of the
+                    // model list skips it: nothing was chosen.
+                    pick_effort(&ui, &mut agent).await;
+                }
+                ui.set_status(status_of(&agent));
+                continue;
+            }
+            CommandResult::PickEffort => {
+                if crate::repl::effort_choices(&agent.model()).is_empty() {
+                    ui.print_note(&format!("{} takes no effort setting", agent.model().id));
+                } else {
+                    pick_effort(&ui, &mut agent).await;
                 }
                 ui.set_status(status_of(&agent));
                 continue;
             }
             CommandResult::Output(lines) => {
                 ui.print_lines(lines);
+                ui.set_status(status_of(&agent));
+                continue;
+            }
+            CommandResult::Note(text) => {
+                ui.print_note(&text);
+                ui.set_status(status_of(&agent));
+                continue;
+            }
+            CommandResult::Failed(text) => {
+                ui.print_error(&text);
                 ui.set_status(status_of(&agent));
                 continue;
             }
@@ -435,4 +510,23 @@ pub async fn run(
     ui.teardown();
     drop(guard);
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A command the help card documents but the completion index does not
+    /// carry is invisible: typing `/` never offers it. `/effort` shipped that
+    /// way once.
+    #[test]
+    fn every_documented_command_is_completable() {
+        let completable: Vec<&str> = COMMANDS.iter().map(|(name, _)| *name).collect();
+        for command in chrome::documented_commands() {
+            assert!(
+                completable.contains(&command),
+                "/{command} is documented but missing from the completion menu"
+            );
+        }
+    }
 }

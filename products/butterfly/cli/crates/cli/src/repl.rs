@@ -6,6 +6,7 @@
 use std::io::Write as _;
 
 use anyhow::Result;
+use butterfly_core::model::ModelDescriptor;
 use butterfly_core::provider::StreamSink;
 use butterfly_core::session::approval::{ApprovalGate, ApprovalRequest, Decision, PermissionMode};
 use butterfly_core::session::{Agent, TaskOptions, TaskReport, TurnReport};
@@ -215,10 +216,17 @@ pub enum Outcome {
 pub enum CommandResult {
     /// It was a command; show these composed rows.
     Output(Vec<Line<'static>>),
+    /// It was a command; show this as ordinary prose. Notes go through the
+    /// same path as the mode blurb so they share its indentation and voice.
+    Note(String),
+    /// The command was understood and refused; nothing changed.
+    Failed(String),
     /// Run the interactive provider-connect flow (TUI only).
     Connect,
     /// Open the interactive model picker (TUI; plain loops print instead).
     PickModel,
+    /// Open the effort picker for the current model (TUI; plain loops print).
+    PickEffort,
     /// Run this statement as an autonomous task (`run_task`): the completion
     /// gate and verification apply, and the run ends with the summary.
     Task(String),
@@ -263,12 +271,14 @@ pub async fn handle_command(
                 CommandResult::Task(statement.to_string())
             }
         }
-        _ if input.starts_with("/model") => {
-            CommandResult::Output(vec![match input.trim_start_matches("/model").trim() {
-                "" => return CommandResult::PickModel,
-                name => switch_model(agent, name, hub),
-            }])
-        }
+        _ if input.starts_with("/model") => match input.trim_start_matches("/model").trim() {
+            "" => CommandResult::PickModel,
+            name => note_of(switch_model(agent, name, hub)),
+        },
+        _ if input.starts_with("/effort") => match input.trim_start_matches("/effort").trim() {
+            "" => CommandResult::PickEffort,
+            value => note_of(set_effort(agent, value)),
+        },
         _ if input.starts_with('/') => {
             CommandResult::Output(plain_lines(&format!("unknown command: {input} (/help)")))
         }
@@ -276,27 +286,73 @@ pub async fn handle_command(
     }
 }
 
+fn note_of(result: Result<String, String>) -> CommandResult {
+    match result {
+        Ok(text) => CommandResult::Note(text),
+        Err(text) => CommandResult::Failed(text),
+    }
+}
+
 /// Resolve `name`, build its provider (key lookup included), and switch the
 /// agent. Any failure leaves the session on its current model.
-pub fn switch_model(agent: &mut Agent, name: &str, hub: &ModelHub) -> Line<'static> {
-    let model = match hub.resolve(name) {
-        Ok(model) => model,
-        Err(error) => return Line::from(vec![span(error.to_string(), th::danger())]),
-    };
-    let provider = match hub.build_provider(&model) {
-        Ok(provider) => provider,
-        Err(error) => return Line::from(vec![span(error.to_string(), th::danger())]),
-    };
+pub fn switch_model(agent: &mut Agent, name: &str, hub: &ModelHub) -> Result<String, String> {
+    let model = hub.resolve(name).map_err(|error| error.to_string())?;
+    let provider = hub
+        .build_provider(&model)
+        .map_err(|error| error.to_string())?;
     agent.set_model(model.clone(), provider);
+    // The effort this model was last left on, not the one in force on the
+    // model being left: `set_model` would otherwise carry over a value that
+    // means something different here, or silently drop it.
+    let remembered = crate::state::effort_for(&model.id);
+    let _ = agent.set_effort(remembered.as_deref());
     // Model choice sticks across sessions.
     crate::state::remember_model(&model.id);
-    Line::from(vec![span(
-        format!(
-            "[model set: {} ({}); next request re-caches the prefix]",
-            model.display_name, model.id
-        ),
-        th::dim(),
-    )])
+    Ok(format!(
+        "{} ({}){} · next request re-caches the prefix",
+        model.display_name,
+        model.id,
+        match agent.effort() {
+            Some(effort) => format!(" · effort {effort}"),
+            None => String::new(),
+        }
+    ))
+}
+
+/// The efforts this model accepts, in provider vocabulary, with `default`
+/// first when the model's own default is the provider's choice rather than a
+/// named rung. Empty when there is nothing to choose.
+pub fn effort_choices(model: &ModelDescriptor) -> Vec<String> {
+    let Some(reasoning) = model.capabilities.reasoning.as_ref() else {
+        return Vec::new();
+    };
+    if reasoning.effort_values.is_empty() {
+        return Vec::new();
+    }
+    let mut choices: Vec<String> = Vec::new();
+    // Without this row a model whose default is `None` (the provider decides)
+    // could be moved off that default but never back onto it.
+    if reasoning.default_effort.is_none() {
+        choices.push("default".into());
+    }
+    choices.extend(reasoning.effort_values.iter().cloned());
+    choices
+}
+
+/// Set the session's effort and remember it for this model. `default`
+/// restores the model's own default. Any failure leaves the effort alone.
+pub fn set_effort(agent: &mut Agent, value: &str) -> Result<String, String> {
+    let requested = (value != "default").then_some(value);
+    agent.set_effort(requested)?;
+    // What the user asked for, not what it resolved to: remembering the
+    // resolved value would pin today's default forever.
+    crate::state::remember_effort(&agent.model().id, requested);
+    // Effort rides on the request, not the cached prefix, so unlike a model
+    // switch this costs nothing.
+    Ok(match agent.effort() {
+        Some(effort) => format!("{effort} · effort rides on the request, so nothing re-caches"),
+        None => "default · the provider chooses, and nothing re-caches".to_string(),
+    })
 }
 
 /// Unstyled rows, for command output that is plain prose.
@@ -443,8 +499,34 @@ pub async fn plain_repl(
                 );
                 continue;
             }
+            CommandResult::PickEffort => {
+                let choices = effort_choices(&agent.model());
+                match agent.effort() {
+                    _ if choices.is_empty() => {
+                        println!("{} takes no effort setting", agent.model().id)
+                    }
+                    Some(effort) => println!(
+                        "effort: {effort} — set with /effort <value>; accepted: {}",
+                        choices.join(" | ")
+                    ),
+                    None => println!(
+                        "effort: the provider's own default — set with /effort <value>; \
+                         accepted: {}",
+                        choices.join(" | ")
+                    ),
+                }
+                continue;
+            }
             CommandResult::Output(lines) => {
                 println!("{}", render_lines(&lines));
+                continue;
+            }
+            CommandResult::Note(text) => {
+                println!("{DIM}{text}{RESET}");
+                continue;
+            }
+            CommandResult::Failed(text) => {
+                println!("{RED}{text}{RESET}");
                 continue;
             }
             CommandResult::NotACommand => {}
@@ -533,5 +615,30 @@ pub fn mode_name(mode: PermissionMode) -> &'static str {
         PermissionMode::Ask => "ask",
         PermissionMode::Auto => "auto",
         PermissionMode::ReadOnly => "read-only",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use butterfly_core::model::Registry;
+
+    /// The picker lists the model's own vocabulary, and offers a way back to
+    /// the provider's default only where that default is not itself a named
+    /// rung — otherwise the named rung already is the way back.
+    #[test]
+    fn effort_choices_follow_the_model() {
+        let registry = Registry::builtin();
+        let deepseek = registry.resolve("deepseek-v4-flash").unwrap();
+        assert_eq!(effort_choices(&deepseek), ["high", "max"]);
+
+        // GLM's default is whatever Z.ai picks, so `default` has to be
+        // offered or the user could leave it and never get back.
+        let glm = registry.resolve("glm-5.3-flash").unwrap();
+        assert_eq!(effort_choices(&glm), ["default", "low", "high", "max"]);
+
+        // Nothing to choose: the router owns the decision.
+        let nimble = registry.resolve("nimble").unwrap();
+        assert!(effort_choices(&nimble).is_empty());
     }
 }

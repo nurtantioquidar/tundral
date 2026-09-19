@@ -44,6 +44,8 @@ struct Cli {
     model: Option<String>,
 
     /// Reasoning effort in the model's vocabulary (DeepSeek: high | max).
+    /// Each model has its own; `/effort` changes it mid-session and the
+    /// choice is remembered per model. Default: the model's own.
     #[arg(long)]
     effort: Option<String>,
 
@@ -336,9 +338,22 @@ async fn main() -> Result<()> {
         .unwrap_or_else(|| butterfly_core::model::builtin::REFERENCE_MODEL_ID.to_string());
     let model = hub.resolve(&model_name)?;
     state::remember_model(&model.id);
-    let effort = model
-        .resolve_effort(cli.effort.as_deref().or(file.effort.as_deref()))
-        .map_err(|error| anyhow::anyhow!(error))?;
+    // Effort resolution mirrors the model's: an explicit pin wins, then the
+    // effort this model was last left on, then the model's own default.
+    let pinned = cli.effort.as_deref().or(file.effort.as_deref());
+    let effort = match pinned {
+        Some(value) => model
+            .resolve_effort(Some(value))
+            .map_err(|error| anyhow::anyhow!(error))?,
+        // A remembered value the model no longer accepts is stale state, not
+        // a reason to refuse to start.
+        None => state::effort_for(&model.id)
+            .and_then(|remembered| model.resolve_effort(Some(&remembered)).ok().flatten())
+            .or_else(|| model.resolve_effort(None).unwrap_or(None)),
+    };
+    if pinned.is_some() {
+        state::remember_effort(&model.id, pinned);
+    }
     // A sandbox implies auto-approval (nothing there needs protecting from
     // the model) unless the caller explicitly asked for read-only.
     let permission_mode = match (cli.auto || (cli.sandboxed && !cli.read_only), cli.read_only) {

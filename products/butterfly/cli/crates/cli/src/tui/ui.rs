@@ -158,6 +158,8 @@ struct Select {
 
 pub struct Status {
     pub model: String,
+    /// Effort in force, shown joined to the model id in the footer.
+    pub effort: Option<String>,
     pub mode: &'static str,
     pub ctx_pct: f64,
     pub session_microusd: u64,
@@ -691,6 +693,7 @@ impl UiInner {
         chrome::footer(
             &chrome::Footer {
                 model_id: &self.status.model,
+                effort: self.status.effort.as_deref(),
                 mode: self.status.mode,
                 ctx_used: self.status.ctx_pct,
                 session_microusd: self.status.session_microusd,
@@ -1320,6 +1323,12 @@ impl Ui {
         // The selector prefixes a marker and a space, and reserves the same
         // on the right, so rows compose at the width they will be drawn at.
         chrome::model_rows(rows, width.saturating_sub(GRID * 2))
+    }
+
+    /// Lay out effort-picker rows, on the same terms as the model rows.
+    pub fn render_effort_rows(&self, rows: &[chrome::EffortRow<'_>]) -> Vec<Line<'static>> {
+        let width = self.lock().width();
+        chrome::effort_rows(rows, width.saturating_sub(GRID * 2))
     }
 
     /// Current terminal width, for surfaces composed outside this module.
@@ -2019,6 +2028,7 @@ mod tests {
             select: None,
             status: Status {
                 model: "deepseek-v4-flash".into(),
+                effort: Some("high".into()),
                 mode: "read-only",
                 ctx_pct: 0.42,
                 session_microusd: 2_916,

@@ -204,6 +204,10 @@ pub fn activity_line(
 /// cost" and nothing else.
 pub struct Footer<'a> {
     pub model_id: &'a str,
+    /// Effort in force, shown after the model id (`deepseek-flash max`).
+    /// `None` when the model has no effort knob, or the provider's own
+    /// default is in force — in both cases there is nothing to report.
+    pub effort: Option<&'a str>,
     pub mode: &'a str,
     /// Fraction of the context window in use.
     pub ctx_used: f64,
@@ -238,9 +242,13 @@ pub fn mode_style(mode: &str) -> ratatui::style::Style {
 /// the one setting here with real consequences.
 pub fn footer(state: &Footer<'_>, width: usize) -> Line<'static> {
     let left = (1.0 - state.ctx_used.clamp(0.0, 1.0)) * 100.0;
+    let model = match state.effort {
+        Some(effort) => format!("{} {effort}", state.model_id),
+        None => state.model_id.to_string(),
+    };
     let mut spans = vec![
         indent(GRID),
-        span(state.model_id.to_string(), th::dim()),
+        span(model, th::dim()),
         span(format!(" {} ", th::SEP), th::dim()),
         span(
             format!("Context {left:.0}% left"),
@@ -907,6 +915,7 @@ const HELP_SECTIONS: [(&str, &[(&str, &str)]); 3] = [
             ("/compact [focus]", "force a compaction now"),
             ("/usage", "tokens, cost, cache-hit rate, session id"),
             ("/model [name]", "pick a model, or switch directly"),
+            ("/effort [value]", "set this model's reasoning effort"),
             ("/connect", "save a provider API key"),
             ("/help", "this card"),
             ("/quit", "exit"),
@@ -939,6 +948,18 @@ const HELP_SECTIONS: [(&str, &[(&str, &str)]); 3] = [
 /// The help card: grouped, aligned, and styled so the eye lands on the key
 /// column. The old help was one flat block of twenty lines in which every
 /// line looked equally important.
+/// The slash commands the help card documents, bare and without arguments.
+/// The completion menu is built from a separate list, and a command missing
+/// from it does not exist as far as the user can tell.
+#[cfg(test)]
+pub fn documented_commands() -> impl Iterator<Item = &'static str> {
+    HELP_SECTIONS[0]
+        .1
+        .iter()
+        .filter_map(|(key, _)| key.strip_prefix('/'))
+        .map(|key| key.split_whitespace().next().unwrap_or(key))
+}
+
 pub fn help_card(width: usize) -> Vec<Line<'static>> {
     let key_col = HELP_SECTIONS
         .iter()
@@ -1092,6 +1113,43 @@ pub fn model_rows(models: &[ModelRow<'_>], width: usize) -> Vec<Line<'static>> {
         .collect()
 }
 
+// ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ effort picker ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+pub struct EffortRow<'a> {
+    /// Provider vocabulary, not a portable scale: `high` is DeepSeek's floor
+    /// and Luna's fourth rung, so the list is only meaningful per model.
+    pub value: &'a str,
+    /// Why this row exists, when the value alone does not say it.
+    pub note: &'a str,
+    pub current: bool,
+    /// Where the model lands when nothing is set.
+    pub default: bool,
+}
+
+/// Aligned effort rows for the current model. Which one is in force and
+/// which one the model falls back to are the two facts that decide the
+/// choice.
+pub fn effort_rows(rows: &[EffortRow<'_>], width: usize) -> Vec<Line<'static>> {
+    let value_col = rows.iter().map(|r| width_of(r.value)).max().unwrap_or(0);
+    rows.iter()
+        .map(|effort| {
+            let mut spans = vec![raw(pad_to(effort.value, value_col))];
+            if !effort.note.is_empty() {
+                spans.push(indent(2));
+                spans.push(span(effort.note.to_string(), th::dim()));
+            }
+            if effort.current {
+                spans.push(indent(2));
+                spans.push(span("current", th::accent()));
+            } else if effort.default {
+                spans.push(indent(2));
+                spans.push(span("default", th::dim()));
+            }
+            truncate_line(row(spans), width)
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -1144,12 +1202,30 @@ mod tests {
             }
             let state = Footer {
                 model_id: "deepseek-v4-flash",
+                effort: Some("max"),
                 mode: "read-only",
                 ctx_used: 0.93,
                 session_microusd: 2_916,
                 price_verified: true,
             };
             check(&footer(&state, width), width, "footer");
+            let efforts = [
+                EffortRow {
+                    value: "default",
+                    note: "the provider chooses",
+                    current: true,
+                    default: false,
+                },
+                EffortRow {
+                    value: "minimal",
+                    note: "",
+                    current: false,
+                    default: true,
+                },
+            ];
+            for line in effort_rows(&efforts, width) {
+                check(&line, width, "effort rows");
+            }
             let line = tool_line(
                 "read_file(a/very/deeply/nested/path/that/keeps/going/mod.rs)",
                 Some(ToolOutcome::Failed {
@@ -1296,12 +1372,19 @@ mod tests {
         assert!(turn_summary(&facts).contains("unverified"));
         let state = Footer {
             model_id: "m",
+            effort: None,
             mode: "ask",
             ctx_used: 0.1,
             session_microusd: 2_916,
             price_verified: false,
         };
         assert!(footer(&state, 120).to_string().contains("unverified"));
+        assert!(footer(&state, 120).to_string().contains(" m "));
+        let state = Footer {
+            effort: Some("max"),
+            ..state
+        };
+        assert!(footer(&state, 120).to_string().contains("m max"));
     }
 
     fn cell(text: &str) -> Vec<md::Span> {

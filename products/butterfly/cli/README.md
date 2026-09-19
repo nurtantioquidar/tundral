@@ -58,7 +58,9 @@ butterfly() { DEEPSEEK_API_KEY=$(op read "op://<vault>/<item>/password") command
 ```
 
 The model sticks: whatever you last ran with (`--model` or `/model`) is what new sessions start
-on, until an explicit flag or config pin says otherwise.
+on, until an explicit flag or config pin says otherwise. Reasoning effort sticks the same way but
+*per model*, because the vocabularies are not comparable — `high` is DeepSeek's floor and Luna's
+fourth rung — so leaving DeepSeek on `max` does not drag `max` onto the next model you switch to.
 
 Config is layered: defaults ← `~/.config/butterfly/config.toml` ← `<repo>/.butterfly.toml` ← flags:
 
@@ -113,7 +115,10 @@ included) that leaves the main screen untouched. Approvals are an arrow-key yes/
 (`y`/`a`/`n` still work). `Ctrl-J` inserts a newline; `Ctrl-C` clears the line or cancels the
 turn; `Esc` interrupts a running turn. Type while a turn runs — messages are delivered at the next turn boundary (pi-style
 steering). `/compact [focus]` compacts with optional guidance; `/model` switches models
-mid-session, `/mode` switches permissions, `/plan` shows the tracked working state (objective,
+mid-session and `/effort` sets the current model's reasoning effort (bare opens a picker of the
+values that model accepts; unlike a model switch it costs no prefix re-cache, because effort
+rides on the request rather than the cached prefix), `/mode` switches permissions, `/plan` shows
+the tracked working state (objective,
 tasks, files touched, command outcomes — maintained by the loop and the model's `update_plan`
 tool; it survives compaction and resume by construction). Piped (non-TTY) stdin gets a plain
 line-based loop with the same commands.
