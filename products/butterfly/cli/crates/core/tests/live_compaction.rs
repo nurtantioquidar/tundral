@@ -42,7 +42,14 @@ async fn live_two_stage_compaction_and_continuation() {
         .expect("workspace root")
         .to_path_buf();
 
-    // Tiny window so a few file reads cross the compact threshold.
+    // Small window so a few file reads cross the compact threshold — but not
+    // so small that compaction cannot win. The rebuilt history has a floor of
+    // system prompt + tool schemas (~3.5k) + checkpoint (max_summary_tokens
+    // plus the working state, ~1.1k) + the tail budget. At the original 9k
+    // window that floor was ~94% of the 6.5k effective window, so summarizing
+    // RAISED utilization and the assertion below fired on correct behaviour.
+    // 16k leaves 13.5k effective: the floor is ~7.3k (54%), comfortably under
+    // the 0.80 compact threshold, while two turns of reads still cross it.
     let config = SessionConfig {
         effort: model.resolve_effort(None).unwrap(),
         model,
@@ -51,12 +58,16 @@ async fn live_two_stage_compaction_and_continuation() {
         max_session_cost_microusd: Some(100_000), // $0.10 hard stop
         max_provider_calls_per_input: 10,
         context: ContextConfig {
-            window_tokens: 9_000,
+            window_tokens: 16_000,
             output_reserve_tokens: 2_000,
             safety_margin_tokens: 500,
             min_savings_fraction: 0.05,
             protected_tail_tokens: 1_500,
             keep_last_turns: 1,
+            // Tighter than the 0.35 default: the tail is the one term of the
+            // rebuilt floor that scales with the window, so capping it is what
+            // keeps compaction able to reduce utilization at this size.
+            tail_budget_fraction: 0.20,
             max_summary_tokens: 700,
             ..ContextConfig::default()
         },
@@ -80,12 +91,14 @@ async fn live_two_stage_compaction_and_continuation() {
         "Use the read_file tool to read crates/core/src/session/approval.rs, then answer with one sentence about it.",
     ];
     let mut elisions = 0u32;
+    let mut peak_utilization = 0.0f64;
     for (index, input) in turns.iter().enumerate() {
         let report = agent
             .run_turn(input.to_string(), &AutoApprove, &mut NullSink, &cancel)
             .await
             .expect("turn");
         elisions += report.elisions;
+        peak_utilization = peak_utilization.max(agent.utilization());
         eprintln!(
             "turn {}: calls={} tools={} in={} (hit {:.0}%) out={} elisions={} summarize={} util={:.0}% cost={}",
             index + 1,
@@ -130,6 +143,14 @@ async fn live_two_stage_compaction_and_continuation() {
         elisions >= 1,
         "expected stage-1 elision to trigger under the tiny window"
     );
+    // Compaction across the turn sequence must bring the window down: this is
+    // the reduction that matters, measured where the loop actually invokes it.
+    assert!(
+        agent.utilization() < peak_utilization,
+        "turn-driven compaction never reduced the window: peak {:.0}%, now {:.0}%",
+        peak_utilization * 100.0,
+        agent.utilization() * 100.0
+    );
 
     // Stage 2, forced (the /compact path), against the live API.
     let before_utilization = agent.utilization();
@@ -164,7 +185,28 @@ async fn live_two_stage_compaction_and_continuation() {
         )
         .count();
     assert_eq!(checkpoints, 1, "checkpoints must supersede, never stack");
-    assert!(agent.utilization() < before_utilization);
+    // NOT "compaction always lowers utilization" — that is false, and it is
+    // arithmetic rather than a bug. The rebuilt history has a floor of system
+    // prompt + checkpoint + tail budget; forced from below that floor, as
+    // /compact on an already-compacted session is, a rebuild legitimately
+    // raises utilization. What `tail_budget_fraction` guarantees, and what
+    // keeps the loop from thrashing, is that the rebuild lands under the
+    // compact threshold so the next turn does not immediately summarize again.
+    let compact_threshold = ContextConfig::default().compact_threshold;
+    assert!(
+        agent.utilization() < compact_threshold,
+        "rebuild must land below the compact threshold: {:.0}% >= {:.0}%",
+        agent.utilization() * 100.0,
+        compact_threshold * 100.0
+    );
+    if before_utilization >= compact_threshold {
+        assert!(
+            agent.utilization() < before_utilization,
+            "compaction above the threshold must reduce the window: {:.0}% -> {:.0}%",
+            before_utilization * 100.0,
+            agent.utilization() * 100.0
+        );
+    }
 
     // Continuation on the rebuilt history must be accepted and coherent.
     let report = agent
