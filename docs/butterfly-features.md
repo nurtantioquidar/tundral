@@ -490,6 +490,55 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 - **State under `~/.local/state/butterfly/`**.
 
 ### CLI / TUI
+- **Quiet tool rows, loud exceptions** (2026-09-20) — the operator rejected the right-aligned
+  receipt column on sight: `✓ 8ms` sat eighty columns from the path it described, fourteen of
+  fifteen calls in one turn took under a second so the one `4.9s` that mattered drowned among
+  `1ms`/`3ms`/`8ms`, fifteen `✓` marks said "success" fifteen times, and `cargo clippy --workspace
+  --lo⋯` was cut to make room for `708ms`. `chrome::tool_rows` (replacing `tool_line`) now renders
+  a call as the verb and the target and nothing else. Success shows nothing. A call at or over
+  `SLOW_TOOL` (one second) shows its duration dim, two columns after the target
+  (`• Ran     cargo test --workspace --locked  4.9s`). A failure adds a second row on the content
+  column — `  ✗ no such file or directory in this workspace` — so the reason is never truncated to
+  fit beside the path and the path never yields to the reason. Full timings stay in telemetry.
+  Presentation only.
+- **Approval prompt says its subject once, and other dogfood polish** (2026-09-19) — a herdr
+  session against the real binary showed the same command printed three times in the ten rows of
+  an approval: the card's subject row (`$ python3 -c print(42)`), core's detail (`$ python3 -c
+  print(42)` plus its settings), and the menu subject (`Running python3 -c print(42)`), with a
+  turn clock ticking under it (`⚠ waiting for you · 7s`). `chrome::approval_card` now folds the
+  detail's opener into the subject: a command's `$` row IS the subject, an edit's `path:line`
+  anchor joins the subject row with the `+n −m` stat, and the policy warning (now under a `⚠`)
+  follows the thing it warns about, nearest the decision. The menu subject is imperative (`run
+  python3 -c print(42)`, `edit README.md`) — `Running` describes a call in flight, and nothing is
+  in flight while the question is open — and the activity row shows no clock while deciding. Once a
+  command returns its row reads `• Ran`, as Codex's does; the access key in a numbered choice is
+  dimmed (`› 1. yes, run it (y)`); a failed row gives its reason half the width instead of a third.
+
+  Timing: a tool row used to report the seconds the human spent deciding as the tool's own
+  duration (`✗ denied … 8.0s` for a command that never ran). The clock restarts when the menu
+  resolves.
+
+  Rhythm: the first thing the agent commits after a user turn opens with a blank row whether it
+  is prose or a tool row — before, `› Read Cargo.toml…` had `• Read` glued to its underside while
+  a turn that opened with words had air (`UiInner::spaced_after_user`, one rule for both). A shown
+  reasoning block (Ctrl+R) opens with a blank row too, so a dim thought no longer runs straight on
+  from the tool row or the answer before it. `/effort` joins `/model` and `/connect` as a picker
+  command that does not echo into the transcript.
+
+  Two transcript-ring bugs surfaced by the same session, both from the ratatui migration. The
+  ring's doc comment promised a per-entry "drawn on the main screen" flag and the ring had none, so
+  hidden reasoning (the default, Ctrl+R off) was recorded like everything else and the history
+  repaint — which redraws the region above the composer from the ring and relies on reproducing
+  exactly the rows already there — painted the hidden thoughts onto the main screen and shifted the
+  real rows above them; a resize replay did the same. Seen as dim planning lines appearing after
+  each turn with the stream off. `Recorded { entry, shown }` restores the flag: the repaint and the
+  replay iterate `shown_entries()`, the Ctrl+T overlay still shows everything. And rows committed
+  while the overlay was open were recorded but never queued, so `close_overlay` wrote an empty
+  `pending_output` and they reached scrollback only when a later resize replayed the transcript;
+  they are queued now.
+
+  Presentation only: no prompt bytes, no approval semantics (the options, their order, the keys
+  and the decisions they map to are untouched), no engine changes.
 - **The TUI looks like Codex** (2026-09-17) — the operator asked for Codex's front end, twice; the
   first pass delivered its rendering model while leaving Butterfly's own visual identity in place,
   which is not what was asked for. The surfaces now follow Codex's, read from its source and its

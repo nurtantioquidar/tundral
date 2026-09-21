@@ -72,64 +72,96 @@ pub fn split_preview(preview: &str) -> (&str, &str) {
     }
 }
 
-/// One committed tool row: `⚒ edit   README.md            ✓ 12ms`.
-pub fn tool_line(preview: &str, outcome: Option<ToolOutcome>, width: usize) -> Line<'static> {
+/// The verb once the call has finished. `Running` is true of a command in
+/// flight and false of one that has returned — the row with a `✓` beside it
+/// says `Ran`, as Codex's does. Every other verb reads the same either way.
+fn done_verb_of(tool: &str) -> &str {
+    match tool {
+        "run_command" | "shell" => "Ran",
+        other => verb_of(other),
+    }
+}
+
+/// A call that took at least this long says so. Below it the duration is
+/// noise: `1ms` beside a read tells the user nothing they would act on, and
+/// fifteen of them drown the one `4.9s` that matters.
+pub const SLOW_TOOL: Duration = Duration::from_secs(1);
+
+/// A tool call as rows: `• Ran     cargo test --workspace --locked  4.9s`,
+/// with a failure on its own row beneath.
+///
+/// Quiet rows, loud exceptions. A row is the verb and the target and
+/// nothing else; a receipt appears only when it carries information, and it
+/// sits beside the target rather than at the far edge. Success shows
+/// nothing — success is the default, and a `✓` on every row said it fifteen
+/// times. A slow call shows its duration, dim, two columns after the target.
+/// A failure adds a second row on the content column, so the reason is never
+/// truncated to fit beside the path and the path never yields to the reason.
+/// The right-aligned `✓ 8ms` column this replaces put the receipt eighty
+/// columns from what it described and cut `cargo clippy --workspace --lo⋯`
+/// to make room for `708ms`.
+pub fn tool_rows(preview: &str, outcome: Option<ToolOutcome>, width: usize) -> Vec<Line<'static>> {
     let (tool, target) = split_preview(preview);
     let verb_style = if is_mutating(tool) {
         th::accent()
     } else {
         th::dim()
     };
-    let head = vec![
+    let verb = if outcome.is_some() {
+        done_verb_of(tool)
+    } else {
+        verb_of(tool)
+    };
+    let mut head = vec![
         span(format!("{} ", th::MARK_TOOL), th::dim()),
-        span(pad_to(verb_of(tool), VERB_COL), verb_style),
+        span(pad_to(verb, VERB_COL), verb_style),
         raw(" "),
     ];
-    let right: Vec<Span<'static>> = match &outcome {
-        Some(ToolOutcome::Ok { elapsed }) => vec![
-            span(th::MARK_OK, th::ok()),
-            raw(" "),
-            span(short_elapsed(*elapsed), th::dim()),
-        ],
-        Some(ToolOutcome::Failed { reason, elapsed }) => {
-            let timing = short_elapsed(*elapsed);
-            // Tool errors often lead with the path the row already shows.
-            let reason = reason
-                .strip_prefix(&format!("{target}: "))
-                .unwrap_or(reason)
-                .trim();
-            if reason.is_empty() {
-                vec![
-                    span(th::MARK_FAIL, th::danger()),
-                    raw(" "),
-                    span(timing, th::dim()),
-                ]
-            } else {
-                vec![
-                    span(
-                        format!("{} {}", th::MARK_FAIL, truncate_cols(reason, width / 3)),
-                        th::danger(),
-                    ),
-                    raw(" "),
-                    span(timing, th::dim()),
-                ]
-            }
+    let elapsed = match &outcome {
+        Some(ToolOutcome::Ok { elapsed }) | Some(ToolOutcome::Failed { elapsed, .. }) => {
+            Some(*elapsed)
         }
-        None => Vec::new(),
+        None => None,
     };
+    let slow = elapsed.filter(|elapsed| *elapsed >= SLOW_TOOL);
+    let duration = slow.map(short_elapsed).unwrap_or_default();
     let head_cols: usize = head.iter().map(|s| width_of(&s.content)).sum();
-    let right_cols: usize = right.iter().map(|s| width_of(&s.content)).sum();
-    // The target gets whatever the markers and the outcome leave behind.
     let budget = width
         .saturating_sub(head_cols)
-        .saturating_sub(right_cols)
-        .saturating_sub(if right.is_empty() { 0 } else { 2 });
-    let mut body = head;
-    body.push(raw(truncate_cols(target, budget.max(8))));
-    justify(row(body), row(right), width)
+        .saturating_sub(if duration.is_empty() {
+            0
+        } else {
+            width_of(&duration) + 2
+        });
+    head.push(raw(truncate_cols(target, budget.max(8))));
+    if !duration.is_empty() {
+        head.push(indent(2));
+        head.push(span(duration, th::dim()));
+    }
+    let mut rows = vec![truncate_line(row(head), width)];
+    if let Some(ToolOutcome::Failed { reason, .. }) = &outcome {
+        // Tool errors often lead with the path the row already shows.
+        let reason = reason
+            .strip_prefix(&format!("{target}: "))
+            .unwrap_or(reason)
+            .trim();
+        let reason = if reason.is_empty() { "failed" } else { reason };
+        rows.push(row(vec![
+            indent(GRID),
+            span(
+                format!(
+                    "{} {}",
+                    th::MARK_FAIL,
+                    truncate_cols(reason, width.saturating_sub(GRID + 2).max(8))
+                ),
+                th::danger(),
+            ),
+        ]));
+    }
+    rows
 }
 
-/// How a tool call ended, for the right-hand side of its row.
+/// How a tool call ended.
 pub enum ToolOutcome {
     Ok { elapsed: Duration },
     Failed { reason: String, elapsed: Duration },
@@ -183,7 +215,14 @@ pub fn activity_line(
     } else {
         span(th::SPINNER[spinner_frame % th::SPINNER.len()], th::accent())
     };
-    let mut body = format!(" {} {} {}", phase.label(), th::SEP, th::duration(elapsed));
+    // While a decision is pending nothing is running, so there is nothing to
+    // time: a counter ticking under an approval prompt only hurries the one
+    // person who must not be hurried.
+    let mut body = if deciding {
+        format!(" {}", phase.label())
+    } else {
+        format!(" {} {} {}", phase.label(), th::SEP, th::duration(elapsed))
+    };
     if out_tokens > 0 && !deciding {
         body.push_str(&format!(" {} ~{} out", th::SEP, tokens(out_tokens)));
     }
@@ -664,10 +703,10 @@ pub fn numbered_row(
     let marker = if selected { th::MARK_SELECT } else { " " };
     let style = if selected { th::accent() } else { th::dim() };
     truncate_line(
-        row(vec![span(
-            format!("{marker} {}. {label} ({key})", index + 1),
-            style,
-        )]),
+        row(vec![
+            span(format!("{marker} {}. {label}", index + 1), style),
+            span(format!(" ({key})"), th::dim()),
+        ]),
         width,
     )
 }
@@ -701,6 +740,15 @@ pub fn hint_row(left: &str, right: &str, width: usize) -> Line<'static> {
 /// What the decision is about, said plainly, plus the change itself.
 /// Presentation only: this never alters which calls are gated, the options
 /// offered, their order, or what a keypress consents to.
+///
+/// The subject is said ONCE. Core's detail restates it — `$ cmd` plus its
+/// settings for a command, `path:line` anchoring the diff for an edit — and
+/// the card used to print the command three times in ten rows (subject,
+/// detail, then the menu below), at the one moment that needs a clear head.
+/// A command's `$` row IS the subject, so the separate subject row is dropped;
+/// an edit's `path:line` anchor is folded into the subject row along with the
+/// `+n −m` stat, and the detail loses its copy. The policy warning sits after
+/// the thing it warns about, nearest the decision.
 pub fn approval_card(
     request: &ApprovalRequest,
     detail: Option<&str>,
@@ -715,35 +763,53 @@ pub fn approval_card(
         ]),
         blank(),
     ];
-    if !target.is_empty() {
-        rows.push(row(vec![
+    let mut detail_lines: Vec<&str> = detail.map(|d| d.lines().collect()).unwrap_or_default();
+    let mut subject = target.to_string();
+    let mut show_subject = !target.is_empty();
+    match detail_lines.first().map(|line| classify(line)) {
+        // The detail opens with the command itself: that row is the subject.
+        Some(Row::Command(_)) => show_subject = false,
+        // The detail opens with `path:line`: fold the anchor into the subject.
+        Some(Row::Note(note)) if !target.is_empty() && note.starts_with(target) => {
+            subject = note.to_string();
+            detail_lines.remove(0);
+        }
+        _ => {}
+    }
+    if show_subject {
+        let stat = detail.map(diff_stat).unwrap_or_default();
+        let stat_cols: usize = stat.iter().map(|s| width_of(&s.content)).sum();
+        let budget = width
+            .saturating_sub(GRID + 2)
+            .saturating_sub(if stat.is_empty() { 0 } else { stat_cols + 2 });
+        let mut spans = vec![
             indent(GRID),
             span(format!("{} ", approval_sigil(tool)), th::dim()),
-            raw(truncate_cols(target, width.saturating_sub(GRID + 2))),
-        ]));
+            raw(truncate_cols(&subject, budget.max(8))),
+        ];
+        if !stat.is_empty() {
+            spans.push(indent(2));
+            spans.extend(stat);
+        }
+        rows.push(truncate_line(row(spans), width));
+        rows.push(blank());
+    }
+    if !detail_lines.is_empty() {
+        rows.extend(detail_lines_rows(&detail_lines, width));
         rows.push(blank());
     }
     if let Some(warning) = &request.policy_warning {
         rows.push(truncate_line(
             row(vec![
                 indent(GRID),
+                span(format!("{} ", th::MARK_WARN), th::danger()),
                 span(
-                    truncate_cols(warning, width.saturating_sub(GRID)),
+                    truncate_cols(warning, width.saturating_sub(GRID + 2)),
                     th::danger(),
                 ),
             ]),
             width,
         ));
-        rows.push(blank());
-    }
-    if let Some(detail) = detail {
-        let stat = diff_stat(detail);
-        if !stat.is_empty() {
-            let mut spans = vec![indent(GRID)];
-            spans.extend(stat);
-            rows.push(row(spans));
-        }
-        rows.extend(detail_rows(detail, width));
         rows.push(blank());
     }
     rows
@@ -767,12 +833,20 @@ fn approval_sigil(tool: &str) -> &'static str {
 }
 
 /// `edit README.md`, `run cargo test`, `write src/new.rs` ‒ the sentence a
-/// user is actually being asked to approve.
+/// user is actually being asked to approve. Imperative on purpose: the tool
+/// row's `Running` describes a call in flight, and nothing is in flight
+/// while the question is open.
 pub fn approval_subject(tool: &str, target: &str) -> String {
+    let verb = match tool {
+        "run_command" | "shell" => "run",
+        "edit" => "edit",
+        "write_file" => "write",
+        other => verb_of(other),
+    };
     if target.is_empty() {
-        verb_of(tool).to_string()
+        verb.to_string()
     } else {
-        format!("{} {target}", verb_of(tool))
+        format!("{verb} {target}")
     }
 }
 
@@ -825,9 +899,13 @@ fn classify(line: &str) -> Row<'_> {
 
 /// Render an approval detail as clamped, gutter-marked rows.
 pub fn detail_rows(detail: &str, width: usize) -> Vec<Line<'static>> {
+    detail_lines_rows(&detail.lines().collect::<Vec<_>>(), width)
+}
+
+fn detail_lines_rows(lines: &[&str], width: usize) -> Vec<Line<'static>> {
     let budget = width.saturating_sub(GRID + 2).max(12);
-    detail
-        .lines()
+    lines
+        .iter()
         .map(|line| {
             let (body, style) = match classify(line) {
                 Row::Removed(text) => (
@@ -1226,15 +1304,16 @@ mod tests {
             for line in effort_rows(&efforts, width) {
                 check(&line, width, "effort rows");
             }
-            let line = tool_line(
+            for line in tool_rows(
                 "read_file(a/very/deeply/nested/path/that/keeps/going/mod.rs)",
                 Some(ToolOutcome::Failed {
                     reason: "no such file or directory in this workspace".into(),
-                    elapsed: Duration::from_millis(12),
+                    elapsed: Duration::from_millis(1_200),
                 }),
                 width,
-            );
-            check(&line, width, "tool");
+            ) {
+                check(&line, width, "tool");
+            }
             let line = activity_line(
                 &Phase::Running("run_command(cargo test --workspace --locked)".into()),
                 3,
@@ -1270,49 +1349,236 @@ mod tests {
         }
     }
 
+    fn joined(rows: &[Line<'_>]) -> String {
+        rows.iter()
+            .map(|line| line.to_string())
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+
+    /// A failure gets its own row on the content column: the reason is never
+    /// truncated to fit beside the path, and it does not repeat the path.
     #[test]
-    fn failed_rows_do_not_repeat_the_path_they_already_show() {
-        let line = tool_line(
+    fn failed_calls_explain_themselves_on_a_second_row() {
+        let rows = tool_rows(
             "read_file(src/nope.rs)",
             Some(ToolOutcome::Failed {
                 reason: "src/nope.rs: no such file".into(),
                 elapsed: Duration::from_millis(1),
             }),
             80,
-        )
-        .to_string();
-        assert!(line.contains("no such file"));
-        assert_eq!(line.matches("src/nope.rs").count(), 1, "{line:?}");
+        );
+        assert_eq!(rows.len(), 2, "{rows:?}");
+        let text = joined(&rows);
+        assert_eq!(text.matches("src/nope.rs").count(), 1, "{text:?}");
+        let reason = rows[1].to_string();
+        assert!(
+            reason.starts_with(&format!("  {} no such file", th::MARK_FAIL)),
+            "{reason:?}"
+        );
+        assert!(rows[1].spans.iter().any(|s| s.style == th::danger()));
+        // No reason given: the row still says it failed.
+        let rows = tool_rows(
+            "edit(README.md)",
+            Some(ToolOutcome::Failed {
+                reason: String::new(),
+                elapsed: Duration::from_millis(1),
+            }),
+            80,
+        );
+        assert!(rows[1].to_string().contains("failed"), "{rows:?}");
+        // The reason is clamped to the width on its own row, never the path.
+        let rows = tool_rows(
+            "read_file(a/rather/long/path/to/a/file/that/is/missing.rs)",
+            Some(ToolOutcome::Failed {
+                reason: "x".repeat(200),
+                elapsed: Duration::from_millis(1),
+            }),
+            70,
+        );
+        assert!(rows[0].to_string().contains("missing.rs"), "{rows:?}");
+        assert!(rows.iter().all(|line| line_cols(line) <= 70));
     }
 
+    /// Quiet rows: success shows nothing, a slow call shows its duration
+    /// beside the target, and the verb column holds either way.
     #[test]
-    fn tool_rows_align_verbs_and_carry_their_outcome() {
-        let line = tool_line(
+    fn successful_rows_are_silent_unless_slow() {
+        let rows = tool_rows(
             "read_file(Cargo.toml)",
             Some(ToolOutcome::Ok {
                 elapsed: Duration::from_millis(8),
             }),
             60,
         );
-        let plain = line.to_string();
+        assert_eq!(rows.len(), 1);
+        let plain = rows[0].to_string();
         assert!(plain.contains("Read   "), "verb column lost: {plain:?}");
-        assert!(plain.contains("Cargo.toml") && plain.contains("8ms"));
-        assert_eq!(line_cols(&line), 60, "outcome must right-align");
+        assert_eq!(plain.trim_end(), "• Read    Cargo.toml", "{plain:?}");
+        assert!(!plain.contains('✓') && !plain.contains("ms"));
+        let rows = tool_rows(
+            "run_command(cargo test --workspace --locked)",
+            Some(ToolOutcome::Ok {
+                elapsed: Duration::from_millis(4_900),
+            }),
+            80,
+        );
+        let plain = rows[0].to_string();
+        assert_eq!(
+            plain.trim_end(),
+            "• Ran     cargo test --workspace --locked  4.9s",
+            "{plain:?}"
+        );
+        assert!(
+            line_cols(&rows[0]) < 80,
+            "the receipt is adjacent, not justified"
+        );
+        // The duration takes the hint weight.
+        let duration = rows[0].spans.last().expect("duration span");
+        assert_eq!(duration.content, "4.9s");
+        assert_eq!(duration.style, th::dim());
+        // A long target yields to the duration and the row still fits.
+        let rows = tool_rows(
+            &format!("run_command({})", "cargo ".repeat(20)),
+            Some(ToolOutcome::Ok { elapsed: SLOW_TOOL }),
+            50,
+        );
+        assert!(line_cols(&rows[0]) <= 50);
+        assert!(rows[0].to_string().ends_with("1.0s"), "{rows:?}");
+    }
+
+    #[test]
+    fn tool_rows_style_the_verb_by_what_it_does() {
         // A mutating verb takes the accent; a read stays dim.
-        let mutating = tool_line("edit(README.md)", None, 60);
+        let mutating = tool_rows("edit(README.md)", None, 60).remove(0);
         assert!(mutating
             .spans
             .iter()
             .any(|s| s.content.starts_with("Edit") && s.style == th::accent()));
-        let reading = tool_line("read_file(README.md)", None, 60);
+        let reading = tool_rows("read_file(README.md)", None, 60).remove(0);
         assert!(reading
             .spans
             .iter()
             .any(|s| s.content.starts_with("Read") && s.style == th::dim()));
         // A bare tool name (no arguments) still renders.
-        assert!(tool_line("update_plan", None, 40)
+        assert!(tool_rows("update_plan", None, 40)[0]
             .to_string()
             .contains("Plan"));
+    }
+
+    /// The subject is said once. A command's detail opens with `$ cmd`, so
+    /// the card has no separate subject row; an edit's `path:line` anchor is
+    /// folded into the subject row with the diff stat. Measured before the
+    /// fix: the same command three times in ten rows.
+    #[test]
+    fn approval_cards_say_the_subject_once() {
+        let request = ApprovalRequest {
+            tool_name: "run_command".into(),
+            preview: "run_command(python3 -c print(42))".into(),
+            detail: None,
+            policy_warning: Some("inline code evaluation (-c) bypasses file review".into()),
+            scope_key: "run_command:python3".into(),
+        };
+        let detail =
+            "  $ python3 -c print(42)\n  (workspace root, 60s timeout, credential-stripped env)\n";
+        let rows = approval_card(&request, Some(detail), 80);
+        let text: Vec<String> = rows.iter().map(|line| line.to_string()).collect();
+        let joined = text.join("\n");
+        assert_eq!(
+            joined.matches("python3 -c print(42)").count(),
+            1,
+            "command repeated: {joined}"
+        );
+        assert!(joined.contains("$ python3 -c print(42)"), "{joined}");
+        // The warning carries its glyph and follows the thing it warns about.
+        let warning_at = text
+            .iter()
+            .position(|row| row.contains("bypasses file review"))
+            .expect("warning row");
+        let command_at = text
+            .iter()
+            .position(|row| row.contains("$ python3"))
+            .expect("command row");
+        assert!(warning_at > command_at, "{joined}");
+        assert!(text[warning_at].trim_start().starts_with(th::MARK_WARN));
+        assert!(rows.iter().all(|line| line_cols(line) <= 80));
+
+        // An edit: the anchor and the stat share the subject row, and the
+        // detail no longer repeats the anchor.
+        let request = ApprovalRequest {
+            tool_name: "edit".into(),
+            preview: "edit(README.md)".into(),
+            detail: None,
+            policy_warning: None,
+            scope_key: "edit".into(),
+        };
+        let detail = "README.md:1\n  - old line\n  + new line\n  + another new line\n";
+        let rows = approval_card(&request, Some(detail), 80);
+        let text: Vec<String> = rows.iter().map(|line| line.to_string()).collect();
+        let joined = text.join("\n");
+        assert_eq!(joined.matches("README.md").count(), 1, "{joined}");
+        let subject = text
+            .iter()
+            .find(|row| row.contains("README.md:1"))
+            .expect("subject row");
+        assert!(
+            subject.contains("+2") && subject.contains("−1"),
+            "{subject}"
+        );
+        assert!(joined.contains("- old line") && joined.contains("+ another new line"));
+    }
+
+    #[test]
+    fn approval_subjects_are_imperative() {
+        // `Running x` describes a call in flight; nothing is in flight while
+        // the question is open.
+        assert_eq!(
+            approval_subject("run_command", "cargo test"),
+            "run cargo test"
+        );
+        assert_eq!(approval_subject("edit", "README.md"), "edit README.md");
+        assert_eq!(
+            approval_subject("write_file", "src/new.rs"),
+            "write src/new.rs"
+        );
+    }
+
+    #[test]
+    fn finished_commands_read_as_ran() {
+        let live = tool_rows("run_command(cargo test)", None, 60)[0].to_string();
+        assert!(live.contains("Running"), "{live}");
+        let done = tool_rows(
+            "run_command(cargo test)",
+            Some(ToolOutcome::Ok {
+                elapsed: Duration::from_millis(8),
+            }),
+            60,
+        )[0]
+        .to_string();
+        assert!(
+            done.contains("Ran    ") && !done.contains("Running"),
+            "{done}"
+        );
+        // Reads keep the same verb either way.
+        let read = tool_rows(
+            "read_file(Cargo.toml)",
+            Some(ToolOutcome::Ok {
+                elapsed: Duration::from_millis(8),
+            }),
+            60,
+        )[0]
+        .to_string();
+        assert!(read.contains("Read   "), "{read}");
+    }
+
+    #[test]
+    fn numbered_rows_dim_the_access_key() {
+        let row = numbered_row(0, "yes, run it", "y", true, 60);
+        assert_eq!(row.to_string().trim_end(), "› 1. yes, run it (y)");
+        let key = row.spans.last().expect("key span");
+        assert_eq!(key.content, " (y)");
+        assert_eq!(key.style, th::dim());
+        assert_eq!(row.spans[0].style, th::accent());
     }
 
     #[test]
@@ -1351,6 +1617,9 @@ mod tests {
         let line = activity_line(&Phase::Deciding, 0, Duration::from_secs(4), 900, 80).to_string();
         assert!(!line.contains("interrupt"), "{line:?}");
         assert!(line.contains("waiting for you"));
+        // And no clock: nothing is running, and a ticking counter under an
+        // approval prompt only hurries the person who must not be hurried.
+        assert!(!line.contains("4s") && !line.contains("out"), "{line:?}");
         let line = activity_line(&Phase::Thinking, 0, Duration::from_secs(4), 900, 80).to_string();
         assert!(line.contains("interrupt") && line.contains("thinking"));
     }

@@ -83,7 +83,7 @@ pub const BOX_BR: &str = "╯";
 pub const BOX_H: &str = "─";
 pub const BOX_V: &str = "│";
 pub const MARK_WARN: &str = "⚠";
-pub const MARK_OK: &str = "✓";
+/// A failed tool call and nothing else: success is the default and draws no mark.
 pub const MARK_FAIL: &str = "✗";
 
 /// Cut marker for truncated text. `…` (U+2026) is ambiguous-width; this is
@@ -137,7 +137,7 @@ pub fn cell_width(ch: char) -> usize {
 
 /// The glyphs the chrome draws itself. Text the model wrote is never in here,
 /// so unknown content keeps the conservative budget.
-const CHROME_GLYPHS: &str = "›•─│╭╮╰╯·⋅⋯▮▯⇡⇣⇢✓✗⚠‣⎯…";
+const CHROME_GLYPHS: &str = "›•─│╭╮╰╯·⋅⋯▮▯⇡⇣⇢✗⚠‣⎯…";
 
 /// Display columns a plain string occupies.
 pub fn width_of(text: &str) -> usize {
@@ -489,7 +489,6 @@ mod tests {
             ("MARK_SELECT", MARK_SELECT),
             ("MARK_BRAND", MARK_BRAND),
             ("MARK_WARN", MARK_WARN),
-            ("MARK_OK", MARK_OK),
             ("MARK_FAIL", MARK_FAIL),
             ("ELLIPSIS", ELLIPSIS),
             ("SEP", SEP),

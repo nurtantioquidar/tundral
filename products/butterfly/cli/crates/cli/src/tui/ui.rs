@@ -249,11 +249,9 @@ fn render_entry_floored(entry: &Entry, width: usize) -> Vec<Line<'static>> {
                 Line::from(spans)
             })
             .collect(),
-        Entry::Tool { preview, outcome } => vec![chrome::tool_line(
-            preview,
-            outcome.as_ref().map(ToolRecord::as_outcome),
-            width,
-        )],
+        Entry::Tool { preview, outcome } => {
+            chrome::tool_rows(preview, outcome.as_ref().map(ToolRecord::as_outcome), width)
+        }
         Entry::Table(table) => chrome::table_rows(table, width),
         Entry::Welcome(info) => chrome::welcome(info, width),
         Entry::UserBar(text) => {
@@ -350,8 +348,17 @@ struct UiInner {
     /// gets the `◉` marker; continuation lines are indented under it.
     text_block_start: bool,
     /// Whether the last committed scrollback line was blank (vertical
-    /// rhythm: a new `◉` block inserts a spacer when it wasn't).
+    /// rhythm: a new `•` block inserts a spacer when it wasn't).
     last_blank: bool,
+    /// The last commit was the user's turn. Whatever the agent commits first
+    /// — a tool row as much as prose — opens with a blank row, so the turn
+    /// reads as question, air, answer instead of a prompt with a tool call
+    /// glued to its underside.
+    after_user: bool,
+    /// The next reasoning line opens a reasoning block. Shown reasoning is
+    /// dim prose with no marker, so without a blank row above it a thought
+    /// runs straight on from the tool row or the answer before it.
+    reasoning_block_start: bool,
     /// Stream reasoning to the screen. Off by default; Ctrl+R toggles live.
     /// Hidden reasoning is still recorded in the transcript.
     show_reasoning: bool,
@@ -436,10 +443,17 @@ impl UiInner {
                     th::text(prefixed),
                 ]),
                 LiveKind::Text => Line::from(vec![indent(GRID), th::text(prefixed)]),
-                LiveKind::Tool => chrome::tool_line(&live.text, None, width),
+                LiveKind::Tool => chrome::tool_rows(&live.text, None, width).remove(0),
             });
         }
         if let Some(activity) = &self.activity {
+            // A stream's live line abuts the rows above it on purpose: it is
+            // their continuation. A pending decision is not — the card has
+            // been committed, and the `waiting for you` row wants the same air
+            // between it and the card that the menu gets below.
+            if activity.phase == Phase::Deciding && self.live.is_none() {
+                lines.push(blank());
+            }
             lines.push(chrome::activity_line(
                 &activity.phase,
                 activity.spinner,
@@ -748,12 +762,28 @@ impl UiInner {
         out
     }
 
+    /// The first commit after a user turn opens with a blank row. Prose
+    /// brought its own spacer; a tool row did not, so a turn that started with
+    /// a call sat flush under the prompt while one that started with words
+    /// had air. One rule, decided here, for both.
+    fn spaced_after_user(&mut self, mut entries: Vec<Entry>) -> Vec<Entry> {
+        if !self.after_user {
+            return entries;
+        }
+        self.after_user = false;
+        if !matches!(entries.first(), Some(Entry::Blank)) {
+            entries.insert(0, Entry::Blank);
+        }
+        entries
+    }
+
     /// Commit logical entries: record them into the transcript ring, make
     /// room on screen for the rows they add, then redraw.
     fn commit_entries(&mut self, entries: Vec<Entry>) {
         if entries.is_empty() {
             return;
         }
+        let entries = self.spaced_after_user(entries);
         let entries = self.collapse_blanks(entries);
         if entries.is_empty() {
             return;
@@ -1050,18 +1080,28 @@ impl UiInner {
         match kind {
             LiveKind::Reasoning => {
                 self.text_block_start = true;
-                vec![Entry::Prose {
+                let mut entries = Vec::new();
+                if self.reasoning_block_start {
+                    self.reasoning_block_start = false;
+                    entries.push(Entry::Blank);
+                }
+                entries.push(Entry::Prose {
                     marker: None,
                     spans: vec![md::Span {
                         style: md::SpanStyle::Dim,
                         text: line.to_string(),
                     }],
                     cont_indent: 0,
-                }]
+                });
+                entries
             }
-            LiveKind::Text => self.render_text_entries(line),
+            LiveKind::Text => {
+                self.reasoning_block_start = true;
+                self.render_text_entries(line)
+            }
             LiveKind::Tool => {
                 self.text_block_start = true;
+                self.reasoning_block_start = true;
                 // A tool live line only reaches here when the call never
                 // reported a result (an interrupt): record the row without
                 // an outcome rather than dropping the evidence that it ran.
@@ -1182,6 +1222,11 @@ impl UiInner {
             };
             if let Some(activity) = &mut self.activity {
                 activity.phase = Phase::Starting;
+                // The row's timing is the call's, not the human's: a command
+                // that took 8ms used to report the 8s spent deciding on it.
+                if activity.tool_started.is_some() {
+                    activity.tool_started = Some(Instant::now());
+                }
             }
             self.commit_entries(vec![Entry::Fixed(Line::from(vec![
                 indent(GRID),
@@ -1214,6 +1259,8 @@ impl Ui {
                 renderer: MarkdownRenderer::default(),
                 text_block_start: true,
                 last_blank: true,
+                after_user: false,
+                reasoning_block_start: true,
                 show_reasoning,
                 hidden_reasoning: String::new(),
                 transcript: std::collections::VecDeque::new(),
@@ -1350,6 +1397,7 @@ impl Ui {
         let mut inner = self.lock();
         inner.renderer = MarkdownRenderer::default();
         inner.text_block_start = true;
+        inner.reasoning_block_start = true;
         inner.activity = Some(Activity {
             started: Instant::now(),
             spinner: 0,
@@ -1798,7 +1846,7 @@ impl Ui {
                 // Bare picker commands are composer interactions, not
                 // conversation turns: the picker opens in place of the
                 // input and nothing echoes into the transcript.
-                if matches!(submitted.as_str(), "/model" | "/connect") {
+                if matches!(submitted.as_str(), "/model" | "/connect" | "/effort") {
                     inner.paint();
                     return Some(UiAction::Submit(submitted));
                 }
@@ -1809,6 +1857,7 @@ impl Ui {
                 // trailing blanks, so a turn that carried its spacer behind it
                 // ended up flush against whatever came next.
                 inner.commit_entries(vec![Entry::Blank, Entry::UserBar(visible.to_string())]);
+                inner.after_user = true;
                 return Some(UiAction::Submit(submitted));
             }
             KeyCode::Backspace => {
@@ -1946,7 +1995,7 @@ impl StreamSink for UiSink {
             activity.phase = Phase::Running(preview.to_string());
             activity.tool_started = Some(Instant::now());
         }
-        // The live line holds the raw core preview; `chrome::tool_line`
+        // The live line holds the raw core preview; `chrome::tool_rows`
         // turns it into the aligned row at paint time, at the current width.
         inner.live = Some(LiveLine {
             kind: LiveKind::Tool,
@@ -1982,6 +2031,7 @@ impl StreamSink for UiSink {
             }),
         }]);
         inner.text_block_start = true;
+        inner.reasoning_block_start = true;
         if let Some(activity) = &mut inner.activity {
             activity.phase = Phase::Thinking;
             activity.tool_started = None;
@@ -2039,6 +2089,8 @@ mod tests {
             renderer: MarkdownRenderer::default(),
             text_block_start: true,
             last_blank: true,
+            after_user: false,
+            reasoning_block_start: true,
             show_reasoning: false,
             hidden_reasoning: String::new(),
             transcript: std::collections::VecDeque::new(),
@@ -2197,7 +2249,7 @@ mod tests {
         let entries = vec![
             Entry::Blank,
             // Composed for a 200-column screen, rendered on a narrow one.
-            Entry::Fixed(chrome::tool_line(&format!("read_file({long})"), None, 200)),
+            Entry::Fixed(chrome::tool_rows(&format!("read_file({long})"), None, 200).remove(0)),
             Entry::Code(Line::from(vec![span(long.clone(), th::accent())])),
             Entry::Tool {
                 preview: format!("run_command(cargo test {long})"),
@@ -2340,6 +2392,53 @@ failure classification for Butterfly's recovery loop:
         }
     }
 
+    /// The first thing the agent commits after a user turn gets a blank row
+    /// above it, tool row or prose alike. Prose brought its own spacer; a
+    /// tool row did not, so a turn opening with a call sat flush under the
+    /// prompt (seen in herdr: `› Read Cargo.toml…` with `• Read` glued on).
+    #[test]
+    fn the_first_agent_commit_after_a_user_turn_gets_air() {
+        let mut inner = inner_at(80, 30);
+        inner.after_user = true;
+        let tool = Entry::Tool {
+            preview: "read_file(Cargo.toml)".into(),
+            outcome: None,
+        };
+        let spaced = inner.spaced_after_user(vec![tool.clone()]);
+        assert!(matches!(spaced.first(), Some(Entry::Blank)), "{spaced:?}");
+        assert_eq!(spaced.len(), 2);
+        // Consumed: the next commit is not spaced again.
+        assert!(!inner.after_user);
+        let again = inner.spaced_after_user(vec![tool.clone()]);
+        assert_eq!(again.len(), 1);
+        // A commit that already opens with air is not doubled.
+        inner.after_user = true;
+        let already = inner.spaced_after_user(vec![Entry::Blank, tool]);
+        assert_eq!(already.len(), 2);
+    }
+
+    /// Shown reasoning is dim prose with no marker; the first line of a
+    /// reasoning block opens with a blank row so it does not run on from the
+    /// answer or tool row before it, and later lines of the same block do not.
+    #[test]
+    fn a_reasoning_block_opens_with_air_once() {
+        let mut inner = inner_at(80, 30);
+        inner.reasoning_block_start = true;
+        let first = inner.line_entries(LiveKind::Reasoning, "let me check the outline");
+        assert!(matches!(first.first(), Some(Entry::Blank)), "{first:?}");
+        assert_eq!(first.len(), 2);
+        let second = inner.line_entries(LiveKind::Reasoning, "then answer");
+        assert_eq!(second.len(), 1, "{second:?}");
+        // A tool row in between re-opens the block.
+        let _ = inner.line_entries(LiveKind::Tool, "read_file(x)");
+        let third = inner.line_entries(LiveKind::Reasoning, "back to thinking");
+        assert!(matches!(third.first(), Some(Entry::Blank)), "{third:?}");
+    }
+
+    /// Block spacing belongs to the renderer. A compact reply with no blank
+    /// lines at all still comes out with air between a heading, its
+    /// paragraph, a list, a code fence and a table — and a reply that DID
+    /// write blank lines gets exactly the same rows, never a doubled gap.
     #[test]
     fn the_transcript_ring_keeps_everything_for_the_overlay() {
         let mut inner = inner_at(40, 10);

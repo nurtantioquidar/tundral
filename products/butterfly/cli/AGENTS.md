@@ -74,9 +74,11 @@ terminal, `ui` owns state and input. Adopted 2026-09-17 at the operator's explic
 The look, and what each piece corresponds to in Codex: a rounded box card on open
 (`╭─╮ │ ╰─╯`, `>_ butterfly`, `model:` / `directory:` / `mode:` rows, sized to content and never
 full width); `› ` as the composer caret and the marker on a user turn; `• ` opening every agent
-row — answers, tool rows, notices; tool rows reading `• Read    <path>` / `• Running <cmd>`; a
-decision rendered as a bold question, the subject on a `$`/`•` row, then numbered choices with `›`
-on the selected one; and a dim status line two columns in under the composer reading
+row — answers, tool rows, notices; tool rows reading `• Read    <path>` / `• Running <cmd>`
+(`• Ran <cmd>` once it has returned, a dim duration beside the target only when the call took a
+second or more, and a failure on its own `✗` row beneath); a decision rendered as a bold question, the subject on a
+`$`/`•` row, then numbered choices with `›` on the selected one; and a dim status line two columns
+in under the composer reading
 `model · Context N% left · <mode> mode`. There is **no rule above the composer** and **no filled
 band on a user turn** — Codex separates with air, and both of those were Butterfly's own devices.
 Session start is inline: nothing is flooded or erased, so the shell's own output stays above.
