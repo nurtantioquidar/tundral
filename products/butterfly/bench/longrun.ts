@@ -15,8 +15,19 @@ import { join, relative } from "node:path";
 const BENCH_DIR = import.meta.dir;
 const BUTTERFLY_BIN = process.env.BUTTERFLY_BIN ?? join(BENCH_DIR, "../cli/target/debug/butterfly");
 const ROOT = process.argv[2] ?? join(BENCH_DIR, "../../..");
-const MAX_TURNS = 30;
-const FILES_PER_TURN = 3;
+// Defaults reproduce the original 128k exercise. The env overrides exist for
+// controlled A/B runs: at a pinned 128k the output reserve (65,536) and the
+// 40k protected tail leave elision almost no room, so measuring stage 1 needs
+// the real window and a turn count fixed across both arms.
+const MAX_TURNS = Number(process.env.LONGRUN_MAX_TURNS ?? 30);
+const FILES_PER_TURN = Number(process.env.LONGRUN_FILES_PER_TURN ?? 3);
+const WINDOW_TOKENS = process.env.LONGRUN_WINDOW_TOKENS ?? "131072";
+const MAX_COST_USD = process.env.LONGRUN_MAX_COST_USD ?? "1.00";
+// Fixed-turn mode: run exactly MAX_TURNS so both arms read the same files in
+// the same order. The adaptive stop would end each arm at whatever turn its
+// own elision happened to fire, making recall incomparable.
+const NO_EARLY_STOP = process.env.LONGRUN_NO_EARLY_STOP === "1";
+const TAG = process.env.LONGRUN_TAG ?? "";
 
 // Candidate reading material: tracked-ish text files between 8KB and 80KB.
 function candidateFiles(root: string): string[] {
@@ -45,9 +56,9 @@ async function butterflyTurn(prompt: string, sessionId?: string): Promise<Record
     "--json",
     "--quiet-reasoning",
     "--max-cost-usd",
-    "1.00",
+    MAX_COST_USD,
     "--window-tokens",
-    "131072",
+    WINDOW_TOKENS,
     "--root",
     ROOT,
     "-p",
@@ -70,7 +81,11 @@ if (!process.env.DEEPSEEK_API_KEY) {
 }
 
 const files = candidateFiles(ROOT);
-console.error(`found ${files.length} candidate files under ${ROOT}`);
+console.error(
+  `found ${files.length} candidate files under ${ROOT}; window=${WINDOW_TOKENS} ` +
+    `turns=${MAX_TURNS}x${FILES_PER_TURN} cap=$${MAX_COST_USD}` +
+    `${NO_EARLY_STOP ? " fixed-turns" : ""}${TAG ? ` tag=${TAG}` : ""}`,
+);
 
 const turns: Record<string, any>[] = [];
 const readFiles: string[] = [];
@@ -98,7 +113,7 @@ for (let turn = 0; turn < MAX_TURNS; turn++) {
   }
   if (report.compactions > 0 || report.elisions > 0) compacted = true;
   // Stop once we have compacted AND run at least one post-compaction turn.
-  if (compacted && report.compactions === 0 && report.elisions === 0) break;
+  if (!NO_EARLY_STOP && compacted && report.compactions === 0 && report.elisions === 0) break;
 }
 
 console.error("\nprobing continuity…");
@@ -129,7 +144,11 @@ const summary = {
 };
 
 mkdirSync(join(BENCH_DIR, "results"), { recursive: true });
-const outPath = join(BENCH_DIR, "results", `longrun-${Date.now()}.json`);
+const outPath = join(
+  BENCH_DIR,
+  "results",
+  `longrun-${TAG ? `${TAG}-` : ""}${Date.now()}.json`,
+);
 await Bun.write(outPath, JSON.stringify(summary, null, 2));
 
 console.log(
