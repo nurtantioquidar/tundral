@@ -490,7 +490,7 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 - **State under `~/.local/state/butterfly/`**.
 
 ### CLI / TUI
-- **Scrollback that matches the transcript** (2026-09-21) — the operator ran
+- **Scrollback that matches the transcript, and Codex's table** (2026-09-21) — the operator ran
   `explain me @AGENTS.md eli5` then `give me table` in Codex and in Butterfly, same repo, same
   pane, and Butterfly's scrollback came out garbled: the model's `Hub` row was missing from the
   architecture table and its header row appeared twice, with the same pattern repeated down the
@@ -504,6 +504,34 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   reads the cursor once (`take_over`) so the opening card lands directly under the shell prompt
   instead of at the bottom of a blank screen. Byte-level tests cover each move.
 
+  The same trace showed why streamed replies still felt tight after the block-spacing change:
+  streaming commits one line at a time, so a blank line the model wrote between two paragraphs
+  arrived as a commit of its own — trailing by definition — and the no-trailing-blanks rule dropped
+  it, leaving `last_blank` claiming it had been written. Every paragraph break in a streamed reply
+  was lost that way, and so was the blank before an answer that followed a tool row. A stripped
+  trailing blank is now owed to the next commit (`pending_blank`), which keeps the rule (no hole
+  above the composer at the end of a turn) and the break. A tool row that follows the model's words
+  also gets a blank above it, as every other change of block does; a run of tool rows stays tight.
+
+  Alongside, what the side-by-side showed Codex doing more tidily: list markers are a plain `- `
+  (the cyan `‣` put the loudest color on the least informative glyph); `---` renders as the section
+  break it is, not a literal row; and tables take Codex's shape — one column of air inside each
+  column, a heavy `━` rule under the header, a light `─` rule between body rows, no bars. The light
+  grid from the day before is gone. `━` joined the measured chrome glyphs.
+- **Block spacing is the renderer's, headings are bold, tables are a light grid** (2026-09-20) —
+  the operator found replies too tight and tables ugly. The cause of the first was that block
+  spacing was left to the model: when it wrote blank lines the reply read well, and DeepSeek Flash
+  writes none, so a heading, its paragraph, a list and the next paragraph landed flush. Every
+  rendered prose line now carries an `md::Block` (heading, paragraph, list item) and `ui.rs`
+  inserts a blank row wherever the kind changes — code and tables count as kinds of their own, a
+  heading is separated on both sides, the lines of one paragraph and the items of one (nested,
+  mixed) list stay together — and `collapse_blanks` folds it into any blank the model did write, so
+  a spaced reply and a compact one render to the same rows. Headings are bold, not accent-bold:
+  heading, inline code and the `•` marker shared one cyan, and the air now does what the color did.
+  Tables lose the two-space gap and the `⎯` rule (a broken, gappy line in most fonts) for a light
+  grid: ` │ ` between columns, one `─┼─` rule under the header, no outer frame, bars kept on the
+  continuation rows of a wrapped cell. `─` `│` `┼` are measured chrome glyphs (one column in
+  herdr), which is what made box drawing usable here at all. Presentation only.
 - **Quiet tool rows, loud exceptions** (2026-09-20) — the operator rejected the right-aligned
   receipt column on sight: `✓ 8ms` sat eighty columns from the path it described, fourteen of
   fifteen calls in one turn took under a second so the one `4.9s` that mattered drowned among

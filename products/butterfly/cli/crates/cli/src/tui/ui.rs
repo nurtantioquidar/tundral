@@ -332,6 +332,27 @@ fn render_entry_floored(entry: &Entry, width: usize) -> Vec<Line<'static>> {
     }
 }
 
+/// The spacing kinds, one level above `md::Block`: code and tables count as
+/// blocks of their own, and a heading is separated from whatever follows it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum BlockKind {
+    Heading,
+    Paragraph,
+    List,
+    Code,
+    Table,
+}
+
+impl From<md::Block> for BlockKind {
+    fn from(block: md::Block) -> Self {
+        match block {
+            md::Block::Heading => BlockKind::Heading,
+            md::Block::Paragraph => BlockKind::Paragraph,
+            md::Block::ListItem => BlockKind::List,
+        }
+    }
+}
+
 /// One transcript entry and whether the main screen ever showed it.
 #[derive(Clone, Debug, PartialEq)]
 struct Recorded {
@@ -357,11 +378,24 @@ struct UiInner {
     /// Whether the last committed scrollback line was blank (vertical
     /// rhythm: a new `•` block inserts a spacer when it wasn't).
     last_blank: bool,
+    /// A blank row is owed before the next row with content. Streaming
+    /// commits one line at a time, so a blank line the model wrote between
+    /// two paragraphs arrives as a commit of its own — trailing, by
+    /// definition — and used to be dropped by the no-trailing-blanks rule,
+    /// with `last_blank` left claiming it had been written. Every paragraph
+    /// break in a streamed reply was lost that way. Deferring the blank to
+    /// the next commit keeps the rule (a turn never ends on a hole above the
+    /// composer) and the break.
+    pending_blank: bool,
     /// The last commit was the user's turn. Whatever the agent commits first
     /// — a tool row as much as prose — opens with a blank row, so the turn
     /// reads as question, air, answer instead of a prompt with a tool call
     /// glued to its underside.
     after_user: bool,
+    /// The block kind of the last prose or code line committed in this text
+    /// run, so a change of kind can be given a blank row (`md::Block`). A
+    /// table or a tool row resets it.
+    prev_block: Option<BlockKind>,
     /// The next reasoning line opens a reasoning block. Shown reasoning is
     /// dim prose with no marker, so without a blank row above it a thought
     /// runs straight on from the tool row or the answer before it.
@@ -772,7 +806,10 @@ impl UiInner {
     /// Trailing blanks are dropped rather than kept: the next block opens with
     /// its own spacer, so keeping them would double the gap, and at the end of
     /// a turn they leave a hole above the composer.
-    fn collapse_blanks(&mut self, entries: Vec<Entry>) -> Vec<Entry> {
+    ///
+    /// Returns the entries to write and whether a trailing blank was
+    /// stripped — the caller owes that blank to the next commit.
+    fn collapse_blanks(&mut self, entries: Vec<Entry>) -> (Vec<Entry>, bool) {
         let mut out: Vec<Entry> = Vec::with_capacity(entries.len());
         // At the very start of a session there is nothing to separate from.
         let mut previous_blank = self.last_blank;
@@ -784,10 +821,11 @@ impl UiInner {
             previous_blank = blank;
             out.push(entry);
         }
+        let trailing = matches!(out.last(), Some(Entry::Blank));
         while matches!(out.last(), Some(Entry::Blank)) {
             out.pop();
         }
-        out
+        (out, trailing)
     }
 
     /// The first commit after a user turn opens with a blank row. Prose
@@ -811,13 +849,18 @@ impl UiInner {
         if entries.is_empty() {
             return;
         }
-        let entries = self.spaced_after_user(entries);
-        let entries = self.collapse_blanks(entries);
+        let mut entries = self.spaced_after_user(entries);
+        if self.pending_blank && !matches!(entries.first(), Some(Entry::Blank)) {
+            entries.insert(0, Entry::Blank);
+        }
+        let (entries, trailing) = self.collapse_blanks(entries);
+        // A stripped trailing blank is owed to the next commit; a batch that
+        // was nothing but blanks keeps the debt without writing anything.
+        self.pending_blank = trailing;
         if entries.is_empty() {
             return;
         }
-        // Trailing blanks are gone, so the next block always opens its own
-        // separator.
+        // Trailing blanks are gone, so the last row written has content.
         self.last_blank = false;
         if self.overlay.is_some() {
             // The overlay owns the alternate screen; committed rows wait in
@@ -1031,35 +1074,29 @@ impl UiInner {
                     if line_cols(&styled) == 0 {
                         push_blank(&mut entries, self.last_blank);
                     } else {
+                        self.open_block(&mut entries, BlockKind::Code);
                         entries.push(Entry::Code(styled));
                     }
                 }
                 md::Rendered::Table(table) => {
                     // A table is a block: give it the same air as one.
-                    if !self.last_blank && !matches!(entries.last(), Some(Entry::Blank)) {
-                        entries.push(Entry::Blank);
-                    }
+                    self.open_block(&mut entries, BlockKind::Table);
                     entries.push(Entry::Table(table));
                     entries.push(Entry::Blank);
                     // The trailing spacer above is the table's own; a blank
                     // line following it in the source must not double it.
                     self.text_block_start = false;
                 }
-                md::Rendered::Prose { spans, cont_indent } => {
+                md::Rendered::Prose {
+                    spans,
+                    cont_indent,
+                    block,
+                } => {
                     if line.trim().is_empty() && spans.iter().all(|s| s.text.trim().is_empty()) {
                         push_blank(&mut entries, self.last_blank);
                         continue;
                     }
-                    // A heading opens a section, so it gets a blank row above
-                    // it even when the model wrote none. `collapse_blanks`
-                    // drops it if there is already one.
-                    if spans
-                        .iter()
-                        .all(|span| span.style == md::SpanStyle::Heading)
-                        && !spans.is_empty()
-                    {
-                        entries.push(Entry::Blank);
-                    }
+                    self.open_block(&mut entries, block.into());
                     let starting = self.text_block_start;
                     self.text_block_start = false;
                     if starting && !self.last_blank && !matches!(entries.last(), Some(Entry::Blank))
@@ -1075,6 +1112,37 @@ impl UiInner {
             }
         }
         entries
+    }
+
+    /// Separate this line from the block before it when the kind changes.
+    ///
+    /// The renderer owns block spacing, not the model: a heading, its
+    /// paragraph, a list and the next paragraph get a blank row between them
+    /// whether or not the source had one, and `collapse_blanks` folds it into
+    /// any blank the model did write. Lines of one kind stay together — the
+    /// soft-wrapped lines of a paragraph, the items of a list — and a heading
+    /// is separated on both sides, since the air is what marks it as one.
+    fn open_block(&mut self, entries: &mut Vec<Entry>, kind: BlockKind) {
+        let separate = match self.prev_block {
+            None => false,
+            Some(previous) => previous != kind || kind == BlockKind::Heading,
+        };
+        if separate && !matches!(entries.last(), Some(Entry::Blank)) {
+            entries.push(Entry::Blank);
+        }
+        self.prev_block = Some(kind);
+    }
+
+    /// The blank row that separates a tool row from prose above it. Tool rows
+    /// in a run stay tight; a call that follows the model's words gets the
+    /// same air every other change of block gets.
+    fn tool_spacer(&mut self) -> Vec<Entry> {
+        let after_prose = self.prev_block.take().is_some();
+        if after_prose {
+            vec![Entry::Blank]
+        } else {
+            Vec::new()
+        }
     }
 
     /// One committed line of `kind` as logical entries.
@@ -1107,10 +1175,12 @@ impl UiInner {
                 // A tool live line only reaches here when the call never
                 // reported a result (an interrupt): record the row without
                 // an outcome rather than dropping the evidence that it ran.
-                vec![Entry::Tool {
+                let mut entries = self.tool_spacer();
+                entries.push(Entry::Tool {
                     preview: line.to_string(),
                     outcome: None,
-                }]
+                });
+                entries
             }
         }
     }
@@ -1165,12 +1235,7 @@ impl UiInner {
                 live.text.drain(..=at).collect()
             };
             let line = line.trim_end_matches('\n');
-            let entries = self.line_entries(kind, line);
-            // Track spacing across lines within one batch.
-            if let Some(last) = entries.last() {
-                self.last_blank = matches!(last, Entry::Blank);
-            }
-            committed.extend(entries);
+            committed.extend(self.line_entries(kind, line));
         }
         if committed.is_empty() {
             self.paint();
@@ -1262,6 +1327,8 @@ impl Ui {
                 text_block_start: true,
                 last_blank: true,
                 after_user: false,
+                pending_blank: false,
+                prev_block: None,
                 reasoning_block_start: true,
                 show_reasoning,
                 hidden_reasoning: String::new(),
@@ -1400,6 +1467,7 @@ impl Ui {
         inner.renderer = MarkdownRenderer::default();
         inner.text_block_start = true;
         inner.reasoning_block_start = true;
+        inner.prev_block = None;
         inner.activity = Some(Activity {
             started: Instant::now(),
             spinner: 0,
@@ -2024,14 +2092,16 @@ impl StreamSink for UiSink {
             Some(_) => inner.live.take().expect("tool live line").text,
             None => preview.to_string(),
         };
-        inner.commit_entries(vec![Entry::Tool {
+        let mut entries = inner.tool_spacer();
+        entries.push(Entry::Tool {
             preview: text,
             outcome: Some(ToolRecord {
                 failed: is_error,
                 reason: error.unwrap_or_default().to_string(),
                 elapsed,
             }),
-        }]);
+        });
+        inner.commit_entries(entries);
         inner.text_block_start = true;
         inner.reasoning_block_start = true;
         if let Some(activity) = &mut inner.activity {
@@ -2092,6 +2162,8 @@ mod tests {
             text_block_start: true,
             last_blank: true,
             after_user: false,
+            pending_blank: false,
+            prev_block: None,
             reasoning_block_start: true,
             show_reasoning: false,
             hidden_reasoning: String::new(),
@@ -2323,7 +2395,7 @@ Done.
             entries.extend(inner.render_text_entries(line));
         }
         entries.extend(inner.flush_markdown());
-        let kept = inner.collapse_blanks(entries);
+        let (kept, _) = inner.collapse_blanks(entries);
         assert!(
             !matches!(kept.first(), Some(Entry::Blank)),
             "a commit must not open with a blank row"
@@ -2441,6 +2513,132 @@ failure classification for Butterfly's recovery loop:
     /// lines at all still comes out with air between a heading, its
     /// paragraph, a list, a code fence and a table — and a reply that DID
     /// write blank lines gets exactly the same rows, never a doubled gap.
+    #[test]
+    fn blocks_are_separated_whether_or_not_the_model_wrote_blank_lines() {
+        let compact = "\
+## Heading
+First paragraph line.
+Second line of the same paragraph.
+- one
+- two
+  - nested
+1. step
+Closing paragraph.
+```
+code
+```
+Intro to the table:
+| A | B |
+|---|---|
+| 1 | 2 |
+After the table.
+### Verdict
+Fine.
+";
+        let spaced = compact
+            .lines()
+            .flat_map(|line| {
+                let is_item =
+                    line.starts_with("- ") || line.starts_with("  - ") || line.starts_with("1.");
+                let is_second = line.starts_with("Second");
+                if is_item && !line.starts_with("- one")
+                    || is_second
+                    || line.starts_with('|') && !line.starts_with("| A")
+                {
+                    vec![line.to_string()]
+                } else {
+                    vec![String::new(), line.to_string()]
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("\n");
+        let render = |source: &str| {
+            let mut inner = inner_at(80, 40);
+            inner.last_blank = true;
+            inner.text_block_start = true;
+            let mut entries: Vec<Entry> = Vec::new();
+            for line in source.lines() {
+                entries.extend(inner.render_text_entries(line));
+            }
+            entries.extend(inner.flush_markdown());
+            inner
+                .collapse_blanks(entries)
+                .0
+                .iter()
+                .flat_map(|entry| render_entry(entry, 80))
+                .map(|line| line.to_string().trim_end().to_string())
+                .collect::<Vec<_>>()
+        };
+        let rows = render(compact);
+        let text = rows.join("\n");
+        let gap = |before: &str, after: &str| {
+            let a = rows.iter().position(|r| r.contains(before)).expect(before);
+            let b = rows.iter().position(|r| r.contains(after)).expect(after);
+            assert_eq!(
+                b,
+                a + 2,
+                "no single blank row between {before:?} and {after:?}:\n{text}"
+            );
+        };
+        gap("Heading", "First paragraph");
+        gap("same paragraph", "one");
+        gap("step", "Closing");
+        gap("Closing", "code");
+        let cells = rows
+            .iter()
+            .find(|r| r.split_whitespace().collect::<Vec<_>>() == ["1", "2"])
+            .expect("table body row")
+            .clone();
+        gap("Intro to the table", "A");
+        gap(&cells, "After the table");
+        gap("After the table", "Verdict");
+        gap("Verdict", "Fine");
+        // Lines of one block stay together.
+        let adjacent = |before: &str, after: &str| {
+            let a = rows.iter().position(|r| r.contains(before)).expect(before);
+            let b = rows.iter().position(|r| r.contains(after)).expect(after);
+            assert_eq!(b, a + 1, "{before:?} and {after:?} were separated:\n{text}");
+        };
+        adjacent("First paragraph", "same paragraph");
+        adjacent("one", "two");
+        adjacent("two", "nested");
+        adjacent("nested", "step");
+        // The model's own blank lines change nothing.
+        assert_eq!(render(&spaced), rows, "model blank lines doubled a gap");
+    }
+
+    /// Streaming commits one line at a time, so a blank line between two
+    /// paragraphs arrives alone and trailing. It is owed to the next commit,
+    /// not dropped — and never written twice.
+    #[test]
+    fn a_streamed_blank_line_is_deferred_to_the_next_commit() {
+        let mut inner = inner_at(80, 30);
+        inner.last_blank = false;
+        let (first, trailing) = inner.collapse_blanks(vec![Entry::Blank]);
+        assert!(first.is_empty() && trailing);
+        inner.pending_blank = trailing;
+        // The next commit opens with the blank it was owed, once.
+        let mut next = vec![Entry::Prose {
+            marker: None,
+            spans: vec![md::Span {
+                style: md::SpanStyle::Plain,
+                text: "second paragraph".into(),
+            }],
+            cont_indent: 0,
+        }];
+        if inner.pending_blank && !matches!(next.first(), Some(Entry::Blank)) {
+            next.insert(0, Entry::Blank);
+        }
+        let (written, trailing) = inner.collapse_blanks(next);
+        assert_eq!(written.len(), 2);
+        assert!(matches!(written[0], Entry::Blank));
+        assert!(!trailing);
+        // A tool row after prose gets air; a tool row after a tool row does not.
+        inner.prev_block = Some(BlockKind::Paragraph);
+        assert_eq!(inner.tool_spacer(), vec![Entry::Blank]);
+        assert!(inner.tool_spacer().is_empty());
+    }
+
     #[test]
     fn the_transcript_ring_keeps_everything_for_the_overlay() {
         let mut inner = inner_at(40, 10);
@@ -2583,7 +2781,7 @@ failure classification for Butterfly's recovery loop:
             .map(|line| line.to_string())
             .collect();
         assert!(out.len() >= 2);
-        assert!(out[0].contains('‣'));
+        assert!(out[0].contains("- a bullet"), "{:?}", out[0]);
         // Continuations indent 2 (block) + 2 (bullet hang) = 4 columns.
         assert!(
             out[1].starts_with("    "),

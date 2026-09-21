@@ -36,8 +36,13 @@ impl SpanStyle {
             SpanStyle::Bold => th::bold(),
             SpanStyle::Italic => th::italic(),
             SpanStyle::Code => th::accent(),
-            SpanStyle::Heading => th::accent_bold(),
-            SpanStyle::Marker => th::accent(),
+            // Bold alone. A heading used to share the accent with inline code
+            // and the `•` marker, so one color carried three meanings; the air
+            // around a heading (see `Block`) does the work color used to.
+            SpanStyle::Heading => th::bold(),
+            // List markers are plain, as Codex draws them: a cyan `‣` on every
+            // item put the loudest color on the least informative glyph.
+            SpanStyle::Marker => th::plain(),
             SpanStyle::Dim => th::dim(),
         }
     }
@@ -78,6 +83,19 @@ impl Table {
     }
 }
 
+/// What kind of block a prose line belongs to. The caller separates blocks
+/// of different kinds with a blank row whether or not the model wrote one:
+/// spacing is the renderer's to own, and a compact model (DeepSeek Flash
+/// writes no blank lines at all) otherwise lands a heading, its paragraph,
+/// a list and the next paragraph flush against one another. Bullet and
+/// numbered items share one kind so a mixed, nested list stays tight.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Block {
+    Heading,
+    Paragraph,
+    ListItem,
+}
+
 /// One rendered logical line.
 #[derive(Debug, PartialEq, Eq)]
 pub enum Rendered {
@@ -89,6 +107,7 @@ pub enum Rendered {
     Prose {
         spans: Vec<Span>,
         cont_indent: usize,
+        block: Block,
     },
     /// A complete table, to be laid out by the caller at its width.
     Table(Table),
@@ -193,6 +212,12 @@ impl MarkdownRenderer {
         if self.in_fence {
             return Rendered::Raw(Line::from(vec![th::span(line, th::accent())]));
         }
+        if is_thematic_break(trimmed) {
+            // `---` / `***` / `___`: a section break. The block spacing owned
+            // by the caller already separates sections, so the break renders
+            // as the air it asks for rather than as a literal `---` row.
+            return Rendered::Raw(th::blank());
+        }
         if trimmed.starts_with('#') {
             let level = trimmed.chars().take_while(|&c| c == '#').count();
             if level <= 6 && trimmed[level..].starts_with(' ') {
@@ -210,6 +235,7 @@ impl MarkdownRenderer {
                 return Rendered::Prose {
                     spans,
                     cont_indent: 0,
+                    block: Block::Heading,
                 };
             }
         }
@@ -219,11 +245,12 @@ impl MarkdownRenderer {
                 if indent > 0 {
                     spans.push(span(SpanStyle::Plain, " ".repeat(indent)));
                 }
-                spans.push(span(SpanStyle::Marker, "‣ "));
+                spans.push(span(SpanStyle::Marker, "- "));
                 spans.extend(inline_spans(rest));
                 return Rendered::Prose {
                     spans,
                     cont_indent: indent + 2,
+                    block: Block::ListItem,
                 };
             }
         }
@@ -238,11 +265,13 @@ impl MarkdownRenderer {
             return Rendered::Prose {
                 spans,
                 cont_indent: hang,
+                block: Block::ListItem,
             };
         }
         Rendered::Prose {
             spans: inline_spans(line),
             cont_indent: 0,
+            block: Block::Paragraph,
         }
     }
 
@@ -258,6 +287,15 @@ impl MarkdownRenderer {
         assert_eq!(rendered.len(), 1, "expected one item for {line:?}");
         rendered.pop().expect("one item")
     }
+}
+
+/// `---`, `***`, `___` (three or more, spaces allowed): a thematic break.
+fn is_thematic_break(trimmed: &str) -> bool {
+    let compact: String = trimmed.chars().filter(|c| !c.is_whitespace()).collect();
+    compact.len() >= 3
+        && ['-', '*', '_']
+            .iter()
+            .any(|glyph| compact.chars().all(|c| c == *glyph))
 }
 
 /// A row of a pipe table: contains a `|` outside inline code, and is not a
@@ -574,8 +612,10 @@ mod tests {
     fn bullets_and_numbered_items_hang_their_continuations() {
         let mut md = MarkdownRenderer::default();
         match md.one("- do the thing") {
-            Rendered::Prose { spans, cont_indent } => {
-                assert_eq!(spans[0].text, "‣ ");
+            Rendered::Prose {
+                spans, cont_indent, ..
+            } => {
+                assert_eq!(spans[0].text, "- ");
                 assert_eq!(cont_indent, 2);
             }
             other => panic!("{other:?}"),
@@ -585,7 +625,9 @@ mod tests {
             other => panic!("{other:?}"),
         }
         match md.one("12. numbered item") {
-            Rendered::Prose { spans, cont_indent } => {
+            Rendered::Prose {
+                spans, cont_indent, ..
+            } => {
                 assert_eq!(spans[0].text, "12. ");
                 assert_eq!(cont_indent, 4);
             }

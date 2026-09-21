@@ -93,9 +93,13 @@ pub const ELLIPSIS: &str = "⋯";
 /// is ambiguous-width and appeared ~29 times, so a single hint row could
 /// overflow by five columns on a terminal that renders it wide.
 pub const SEP: &str = "·";
-/// Horizontal rule glyph. Box-drawing `─` is ambiguous-width, which made a
-/// full-width rule render at DOUBLE the terminal width and split in two.
-pub const RULE: &str = "⎯";
+/// Table rules: heavy under the header, light between rows — Codex's table.
+/// Box drawing is East Asian Ambiguous, so these are measured chrome glyphs
+/// (`CHROME_GLYPHS`), not budgeted at two; the card borders already rely on
+/// that. `⎯` (U+23AF) served as the rule while `─` was still budgeted wide,
+/// and rendered as a broken, gappy line in most fonts.
+pub const RULE: &str = "─";
+pub const RULE_HEAVY: &str = "━";
 /// List bullet (`•` is ambiguous-width).
 pub const BULLET: &str = "‣";
 
@@ -137,7 +141,7 @@ pub fn cell_width(ch: char) -> usize {
 
 /// The glyphs the chrome draws itself. Text the model wrote is never in here,
 /// so unknown content keeps the conservative budget.
-const CHROME_GLYPHS: &str = "›•─│╭╮╰╯·⋅⋯▮▯⇡⇣⇢✗⚠‣⎯…";
+const CHROME_GLYPHS: &str = "›•─━│╭╮╰╯·⋅⋯▮▯⇡⇣⇢✗⚠‣⎯…";
 
 /// Display columns a plain string occupies.
 pub fn width_of(text: &str) -> usize {
@@ -493,6 +497,7 @@ mod tests {
             ("ELLIPSIS", ELLIPSIS),
             ("SEP", SEP),
             ("RULE", RULE),
+            ("RULE_HEAVY", RULE_HEAVY),
             ("BULLET", BULLET),
         ];
         for (name, glyph) in glyphs {

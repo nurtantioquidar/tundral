@@ -409,35 +409,45 @@ pub fn welcome(info: &Welcome, width: usize) -> Vec<Line<'static>> {
 /// being a table and becomes stacked records instead.
 const MIN_COL: usize = 8;
 const COL_GAP: usize = 2;
+/// One column of air at the left of every cell, under the rule.
+const CELL_PAD: usize = 1;
 
-/// Lay a parsed table out as aligned columns with a rule under the header
-/// and no vertical lines ‒ box drawing around every cell costs a third of a
-/// narrow terminal's width and buys nothing the alignment does not already
-/// give. Cells wrap inside their own column, so a long value grows the row
-/// downward instead of pushing the table off-screen.
+/// Lay a parsed table out the way Codex does: each column one space of air
+/// then its text, a heavy `━` rule under the header, a light `─` rule between
+/// body rows, no bars and no frame. The rules do the separating, so a cell
+/// that wraps stays inside its row instead of blurring into the next one, and
+/// every rule is dim so the text stays the loudest thing on the row. Cells
+/// wrap inside their own column, so a long value grows the row downward
+/// instead of pushing the table off-screen.
 pub fn table_rows(table: &md::Table, width: usize) -> Vec<Line<'static>> {
     let columns = table.columns();
     if columns == 0 {
         return Vec::new();
     }
-    let avail = width.saturating_sub(GRID);
+    let avail = width.saturating_sub(GRID + columns * CELL_PAD);
     let Some(widths) = column_widths(table, avail) else {
         return record_rows(table, width);
     };
+    let rule = |glyph: &str| {
+        row(vec![
+            indent(GRID),
+            span(
+                widths
+                    .iter()
+                    .map(|w| glyph.repeat(*w + CELL_PAD))
+                    .collect::<Vec<_>>()
+                    .join(&" ".repeat(COL_GAP)),
+                th::dim(),
+            ),
+        ])
+    };
     let mut out = Vec::new();
     out.extend(row_of(&table.headers, &widths, &table.aligns, true));
-    out.push(row(vec![
-        indent(GRID),
-        span(
-            widths
-                .iter()
-                .map(|w| th::RULE.repeat(*w))
-                .collect::<Vec<_>>()
-                .join(&" ".repeat(COL_GAP)),
-            th::dim(),
-        ),
-    ]));
-    for line in &table.rows {
+    out.push(rule(th::RULE_HEAVY));
+    for (i, line) in table.rows.iter().enumerate() {
+        if i > 0 {
+            out.push(rule(th::RULE));
+        }
         out.extend(row_of(line, &widths, &table.aligns, false));
     }
     out
@@ -549,6 +559,7 @@ fn row_of(
             if i > 0 {
                 spans.push(indent(COL_GAP));
             }
+            spans.push(indent(CELL_PAD));
             let content = cell.get(index).cloned().unwrap_or_default();
             let align = aligns.get(i).copied().unwrap_or(Align::Left);
             // The last column needs no trailing pad; trailing spaces make a
@@ -1692,23 +1703,41 @@ mod tests {
     #[test]
     fn tables_align_columns_and_respect_alignment() {
         let rows = table_rows(&services_table(), 90);
-        // Header, rule, two body rows.
-        assert_eq!(rows.len(), 4, "{rows:#?}");
+        // Header, heavy rule, row, light rule, row — Codex's shape.
+        assert_eq!(rows.len(), 5, "{rows:#?}");
+        let plain: Vec<String> = rows.iter().map(|line| line.to_string()).collect();
         assert!(
-            rows[1].to_string().contains('⎯'),
-            "rule missing: {:?}",
-            rows[1].to_string()
+            plain[1].contains(th::RULE_HEAVY) && !plain[1].contains(th::RULE),
+            "{plain:#?}"
+        );
+        assert!(
+            plain[3].contains(th::RULE) && !plain[3].contains(th::RULE_HEAVY),
+            "{plain:#?}"
+        );
+        assert!(
+            !plain.iter().any(|row| row.contains('│')),
+            "no bars: {plain:#?}"
+        );
+        // Every cell sits one column in from its rule.
+        assert!(plain[0].starts_with("   Service"), "{:?}", plain[0]);
+        assert!(
+            plain[1].starts_with(&format!("  {}", th::RULE_HEAVY)),
+            "{:?}",
+            plain[1]
         );
         // Ids line up under one another.
-        let rows: Vec<String> = rows.iter().map(|line| line.to_string()).collect();
         assert_eq!(
-            rows[2].find("payments-platform"),
-            rows[0].find("Owner"),
-            "columns drifted: {rows:#?}"
+            plain[2].find("payments-platform"),
+            plain[0].find("Owner"),
+            "columns drifted: {plain:#?}"
         );
         // The right-aligned column ends on a shared edge.
         let end = |row: &String, text: &str| row.find(text).map(|at| at + text.len());
-        assert_eq!(end(&rows[2], "Go"), end(&rows[3], "Python"));
+        assert_eq!(end(&plain[2], "Go"), end(&plain[4], "Python"));
+        // The rules span exactly their columns, no wider than the table.
+        let width = |row: &String| row.trim_end().chars().count();
+        assert_eq!(width(&plain[1]), width(&plain[3]));
+        assert!(width(&plain[1]) >= width(&plain[0]), "{plain:#?}");
     }
 
     #[test]
