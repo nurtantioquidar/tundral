@@ -32,7 +32,18 @@ const TAG = process.env.LONGRUN_TAG ?? "";
 // Candidate reading material: tracked-ish text files between 8KB and 80KB.
 function candidateFiles(root: string): string[] {
   const out: string[] = [];
-  const skip = new Set(["node_modules", ".git", "target", "dist", "results", "fonts"]);
+  // .claude holds agent worktrees — whole duplicate copies of the repository.
+  // Without it a working-tree run reads the same file several times over and
+  // the recall probe is scored against near-duplicate paths.
+  const skip = new Set([
+    "node_modules",
+    ".git",
+    ".claude",
+    "target",
+    "dist",
+    "results",
+    "fonts",
+  ]);
   const walk = (dir: string) => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       if (entry.isDirectory()) {
