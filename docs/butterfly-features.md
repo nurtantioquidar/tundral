@@ -68,7 +68,12 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 - **Two-stage compaction** — mechanical tool-result elision first (protected tail, 25% savings
   floor), cache-riding LLM summarization second; token-budget-capped tails (thrash-proof, fixed
   after a live full-window exercise); checkpoints supersede, never stack. Live-validated at 128k
-  scale: 100% file recall, 5.4× cost reduction vs pre-fix.
+  scale: 100% file recall over a 39-file corpus, 5.4× cost reduction vs pre-fix.
+  **Re-measured 2026-09-21 (`longrun-1789981860266.json`): 92% recall, 99.7% post-compaction cache
+  hit, 76% final utilization, $0.60 over 25 turns — on a 75-file corpus.** Not a controlled
+  comparison with the 39-file figure: the probe asks the model to list every path it read, so
+  recall falls with corpus size, and the older run predates the butterfly rename. Treat the recall
+  number as corpus-relative and re-measure rather than citing 100% flatly.
   **Elided results keep a 300-byte verbatim head (2026-09-21).** An elision used to keep only a
   note, so the error a command printed or the top of a file could be recovered only by re-running
   the tool. The note stays first — `plan_elision` and `live_compaction` both key off the `[elided`
@@ -77,6 +82,9 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   cache invalidation. On a 7.5 kB result the placeholder is 429 bytes: 94% reclaimed against the
   old 98%. Idea taken from `tamaratran/fast-jev-compaction` (`truncateHeadChars`); its actual
   proposal — Jev scoring which results to drop — is candidate 9(c) and was not adopted.
+  `longrun` does not exercise this: at 128k it spent 3 elisions against 25 summarize compactions,
+  so stage 1 is near-noise at full-window scale and stage 2 owns the numbers above. The tiny-window
+  `live_compaction` exercise is where elision actually fires.
 - **Typed working state** — loop-observed files/commands/outcomes + model-declared plan via the
   `update_plan` tool; lives outside the transcript, survives elision/compaction/resume; serialized
   into compaction checkpoints. `crates/core/src/session/working_state.rs`
