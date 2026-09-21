@@ -74,6 +74,16 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   comparison with the 39-file figure: the probe asks the model to list every path it read, so
   recall falls with corpus size, and the older run predates the butterfly rename. Treat the recall
   number as corpus-relative and re-measure rather than citing 100% flatly.
+  **Elision is window-sensitive (2026-09-21).** `effective_window = window − output_reserve
+  (65,536) − safety (4,000)`, and `--window-tokens` is the only context knob the CLI exposes, so a
+  128k pin leaves 61.5k effective — where the 40k `protected_tail_tokens` protects 65% of the
+  window and starves stage 1: 25 turns produced 25 summarize compactions against 3 elisions. At a
+  400k window the tail is 12% and stage 1 does the whole job: 16 turns, 2 elisions, **zero**
+  summarizations, 100% recall, $0.14. A benchmark that pins a small window measures compaction in
+  the one regime where the cheap mechanism is disabled. Cache economics compound this — DeepSeek
+  prices a miss at 50× a hit (300,000 vs 6,000 µUSD/1M), so a compaction's cold prefix re-read was
+  80% of every turn's cost in the 128k run, and carrying 400k of cached context costs less per
+  turn than compacting once does every ~19 turns.
   **Elided results keep a 300-byte verbatim head (2026-09-21).** An elision used to keep only a
   note, so the error a command printed or the top of a file could be recovered only by re-running
   the tool. The note stays first — `plan_elision` and `live_compaction` both key off the `[elided`
@@ -82,9 +92,19 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   cache invalidation. On a 7.5 kB result the placeholder is 429 bytes: 94% reclaimed against the
   old 98%. Idea taken from `tamaratran/fast-jev-compaction` (`truncateHeadChars`); its actual
   proposal — Jev scoring which results to drop — is candidate 9(c) and was not adopted.
-  `longrun` does not exercise this: at 128k it spent 3 elisions against 25 summarize compactions,
-  so stage 1 is near-noise at full-window scale and stage 2 owns the numbers above. The tiny-window
-  `live_compaction` exercise is where elision actually fires.
+  **Measured 2026-09-21 and kept.** A/B over 16 turns and 96 files on a frozen worktree corpus at a
+  400k window, the arms differing only in the binary (`longrun-armA-head-*`,
+  `longrun-armB-baseline-*`). Both elided twice with no summarization and both scored 100% file
+  recall: the recall probe asks for paths, which survive in the checkpoint, so it cannot see this
+  change at all — a saturated metric, not a null result. Resuming both sessions and asking for the
+  *content* of three reads elided in both arms separates them completely: the head arm reproduced
+  lines 401-405 of all three files character-perfect (3/3, fidelity 1.000), the baseline answered
+  UNKNOWN three times (0/3, 0.000). Cost of the head: +5.0% session cost ($0.1361 vs $0.1296),
+  +8% cache-miss tokens, one fewer turn between elisions. Break-even is ~4.3 avoided cold re-reads
+  per session (a 20 kB re-read is ~5k tokens at miss price, 1,500 µUSD); whether a real session
+  avoids that many is still unmeasured. The baseline arm also disclaimed its own earlier file
+  summaries as ungrounded — factually wrong, since elision fired after they were written, but it
+  shows the model cannot tell it ever saw the content. Unconfirmed on a second session.
 - **Typed working state** — loop-observed files/commands/outcomes + model-declared plan via the
   `update_plan` tool; lives outside the transcript, survives elision/compaction/resume; serialized
   into compaction checkpoints. `crates/core/src/session/working_state.rs`
