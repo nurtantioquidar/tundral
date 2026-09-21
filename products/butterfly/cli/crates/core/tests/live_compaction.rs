@@ -109,12 +109,21 @@ async fn live_two_stage_compaction_and_continuation() {
             "empty answer on turn {}",
             index + 1
         );
-        if report.elisions > 0 {
-            // Placeholders must be live in the accepted history right now (a
-            // LATER summarize may legitimately drop them with their turns).
-            assert!(agent.messages().iter().any(
-                |m| matches!(m, ChatMessage::Tool { content, .. } if content.starts_with("[elided"))
-            ));
+        if report.elisions > 0 && report.compactions == 0 {
+            // Placeholders must be live in the accepted history right now.
+            // Gated on no summarization in THIS turn: stage 2 rebuilds the
+            // history from the checkpoint plus a short tail, which correctly
+            // drops placeholders along with the turns that held them. Under a
+            // window this small a single large read can push one turn through
+            // both stages, and the placeholder is then legitimately gone.
+            assert!(
+                agent.messages().iter().any(
+                    |m| matches!(m, ChatMessage::Tool { content, .. } if content.starts_with("[elided"))
+                ),
+                "turn {}: elided {} result(s) but no placeholder survived",
+                index + 1,
+                report.elisions
+            );
         }
     }
     assert!(
