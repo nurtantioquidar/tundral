@@ -69,6 +69,14 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   floor), cache-riding LLM summarization second; token-budget-capped tails (thrash-proof, fixed
   after a live full-window exercise); checkpoints supersede, never stack. Live-validated at 128k
   scale: 100% file recall, 5.4× cost reduction vs pre-fix.
+  **Elided results keep a 300-byte verbatim head (2026-09-21).** An elision used to keep only a
+  note, so the error a command printed or the top of a file could be recovered only by re-running
+  the tool. The note stays first — `plan_elision` and `live_compaction` both key off the `[elided`
+  sentinel at byte zero — and a bounded head follows. Candidacy rises from 200 to 760 bytes
+  (head + note) so small results stop being rewritten at all, which also moves fewer positions per
+  cache invalidation. On a 7.5 kB result the placeholder is 429 bytes: 94% reclaimed against the
+  old 98%. Idea taken from `tamaratran/fast-jev-compaction` (`truncateHeadChars`); its actual
+  proposal — Jev scoring which results to drop — is candidate 9(c) and was not adopted.
 - **Typed working state** — loop-observed files/commands/outcomes + model-declared plan via the
   `update_plan` tool; lives outside the transcript, survives elision/compaction/resume; serialized
   into compaction checkpoints. `crates/core/src/session/working_state.rs`

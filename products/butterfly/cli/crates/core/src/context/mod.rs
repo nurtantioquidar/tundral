@@ -225,8 +225,8 @@ impl ContextManager {
         let mut saved_bytes: u64 = 0;
         for (index, message) in messages.iter().enumerate().take(protected_from) {
             if let ChatMessage::Tool { content, .. } = message {
-                if content.len() > 200 && !content.starts_with("[elided") {
-                    saved_bytes += (content.len() - 80) as u64;
+                if content.len() > ELIDE_MIN_BYTES && !content.starts_with("[elided") {
+                    saved_bytes += (content.len() - ELIDED_PLACEHOLDER_BYTES) as u64;
                     indices.push(index);
                 }
             }
@@ -418,16 +418,54 @@ fn is_checkpoint(message: &ChatMessage) -> bool {
     matches!(message, ChatMessage::User { content } if content.starts_with(CHECKPOINT_PREFIX))
 }
 
-/// Placeholder text for an elided tool result: names the originating call so
-/// the model can re-run it if the output matters again.
+/// Bytes of an elided tool result kept verbatim, after the note. An elision
+/// used to keep nothing, so the one thing that usually made the output worth
+/// reading — the error a command printed, the head of a file — could only be
+/// recovered by re-running the tool. A failing command prints its diagnostic
+/// first and a read starts at the top, so a bounded prefix recovers most of
+/// that value. On the multi-kilobyte outputs that actually clear the savings
+/// floor the head costs a few percent of the reclaim; smaller results stop
+/// being candidates at all, which also moves fewer positions per rewrite.
+const ELIDED_HEAD_BYTES: usize = 300;
+
+/// Assumed size of the note itself. Only the savings accounting uses it; the
+/// rendered note varies with the call description.
+const ELIDED_NOTE_BYTES: usize = 80;
+
+/// What an elided tool result is assumed to cost after rewriting.
+const ELIDED_PLACEHOLDER_BYTES: usize = ELIDED_HEAD_BYTES + ELIDED_NOTE_BYTES;
+
+/// Smallest tool result worth eliding. Below this the placeholder is not
+/// enough smaller than the original to be worth moving the message's bytes.
+const ELIDE_MIN_BYTES: usize = ELIDED_PLACEHOLDER_BYTES * 2;
+
+/// The longest prefix of `content` that is at most `limit` bytes and ends on a
+/// UTF-8 character boundary.
+fn head_bytes(content: &str, limit: usize) -> &str {
+    if content.len() <= limit {
+        return content;
+    }
+    let mut end = limit;
+    while end > 0 && !content.is_char_boundary(end) {
+        end -= 1;
+    }
+    &content[..end]
+}
+
+/// Placeholder text for an elided tool result: the note first — so the
+/// `[elided` sentinel that `plan_elision` uses to skip already-elided results
+/// stays at byte zero — naming the originating call so the model can re-run
+/// it, then a bounded verbatim head of the output it replaced.
 fn describe_elided(messages: &[ChatMessage], tool_index: usize) -> String {
-    let (id, size) = match &messages[tool_index] {
+    let (id, content) = match &messages[tool_index] {
         ChatMessage::Tool {
             tool_call_id,
             content,
-        } => (tool_call_id.clone(), content.len()),
+        } => (tool_call_id.clone(), content.as_str()),
         _ => return "[elided tool output]".to_string(),
     };
+    let size = content.len();
+    let head = head_bytes(content, ELIDED_HEAD_BYTES);
     let call = messages[..tool_index].iter().rev().find_map(|message| {
         if let ChatMessage::Assistant(assistant) = message {
             assistant.tool_calls.iter().find(|call| call.id == id)
@@ -435,13 +473,19 @@ fn describe_elided(messages: &[ChatMessage], tool_index: usize) -> String {
             None
         }
     });
-    match call {
+    let note = match call {
         Some(call) => format!(
-            "[elided: output of {} ({size} bytes). Re-run the tool if this output is needed.]",
-            crate::tools::describe_call(&call.name, &call.arguments)
+            "[elided: output of {} ({size} bytes); the first {} bytes are kept below. \
+             Re-run the tool if you need the rest.]",
+            crate::tools::describe_call(&call.name, &call.arguments),
+            head.len()
         ),
-        None => format!("[elided tool output ({size} bytes)]"),
-    }
+        None => format!(
+            "[elided tool output ({size} bytes); the first {} bytes are kept below.]",
+            head.len()
+        ),
+    };
+    format!("{note}\n{head}")
 }
 
 #[cfg(test)]
@@ -556,6 +600,137 @@ mod tests {
         )));
         // A second plan over the same transcript finds nothing big enough.
         assert!(manager.plan_elision(&messages).is_none());
+    }
+
+    #[test]
+    fn elided_results_keep_a_bounded_verbatim_head() {
+        let mut manager = ContextManager::new(ContextConfig {
+            protected_tail_tokens: 2_000,
+            keep_last_turns: 2,
+            min_savings_fraction: 0.01,
+            ..ContextConfig::default()
+        });
+        let mut messages = long_transcript();
+        let original: Vec<String> = messages
+            .iter()
+            .map(|message| match message {
+                ChatMessage::Tool { content, .. } => content.clone(),
+                _ => String::new(),
+            })
+            .collect();
+        let plan = manager.plan_elision(&messages).expect("plan");
+        manager.apply_elision(&mut messages, &plan);
+
+        for &index in &plan.message_indices {
+            let ChatMessage::Tool { content, .. } = &messages[index] else {
+                panic!("expected tool message at {index}");
+            };
+            // The sentinel stays at byte zero so an elided result is never a
+            // candidate again, and the note still names the originating call.
+            assert!(content.starts_with("[elided"), "index {index}: {content}");
+            assert!(content.contains("read_file"), "index {index}: {content}");
+            // The head of the replaced output survives verbatim.
+            let head = &original[index][..ELIDED_HEAD_BYTES];
+            assert!(
+                content.ends_with(head),
+                "index {index} lost its head: {content}"
+            );
+            // And the placeholder is still far smaller than what it replaced.
+            assert!(content.len() < ELIDE_MIN_BYTES, "index {index}: {content}");
+            assert!(content.len() < original[index].len() / 4);
+        }
+        // Still idempotent: the placeholders are not candidates themselves.
+        assert!(manager.plan_elision(&messages).is_none());
+    }
+
+    #[test]
+    fn elision_savings_account_for_the_retained_head() {
+        let manager = ContextManager::new(ContextConfig {
+            protected_tail_tokens: 2_000,
+            keep_last_turns: 2,
+            min_savings_fraction: 0.01,
+            ..ContextConfig::default()
+        });
+        let messages = long_transcript();
+        let plan = manager.plan_elision(&messages).expect("plan");
+        let reclaimed: u64 = plan
+            .message_indices
+            .iter()
+            .map(|&index| match &messages[index] {
+                ChatMessage::Tool { content, .. } => {
+                    (content.len() - ELIDED_PLACEHOLDER_BYTES) as u64
+                }
+                other => panic!("expected tool message, got {other:?}"),
+            })
+            .sum();
+        assert_eq!(
+            plan.estimated_savings_tokens,
+            manager.ledger.tokens_for_bytes(reclaimed)
+        );
+    }
+
+    #[test]
+    fn results_too_small_to_beat_the_placeholder_are_not_elided() {
+        let manager = ContextManager::new(ContextConfig {
+            protected_tail_tokens: 0,
+            min_savings_fraction: 0.0,
+            ..ContextConfig::default()
+        });
+        let mut messages = vec![
+            ChatMessage::System {
+                content: "system".into(),
+            },
+            ChatMessage::User {
+                content: "hi".into(),
+            },
+        ];
+        // Above the old 200-byte threshold, below what the placeholder costs.
+        for (index, size) in [ELIDE_MIN_BYTES - 1, ELIDE_MIN_BYTES + 1]
+            .into_iter()
+            .enumerate()
+        {
+            messages.push(ChatMessage::Assistant(AssistantMessage {
+                content: None,
+                reasoning_content: None,
+                tool_calls: vec![tool_call(
+                    &format!("c{index}"),
+                    "read_file",
+                    r#"{"path":"a.rs"}"#,
+                )],
+                replay_state: None,
+            }));
+            messages.push(ChatMessage::Tool {
+                tool_call_id: format!("c{index}"),
+                content: "x".repeat(size),
+            });
+        }
+        messages.push(ChatMessage::User {
+            content: "next".into(),
+        });
+        let plan = manager.plan_elision(&messages).expect("plan");
+        assert_eq!(
+            plan.message_indices,
+            vec![5],
+            "only the result larger than the placeholder is worth eliding"
+        );
+    }
+
+    #[test]
+    fn the_retained_head_never_splits_a_character() {
+        // A 3-byte character straddling the head boundary must be dropped
+        // whole: a split would make the placeholder invalid UTF-8 to build.
+        for offset in 0..3 {
+            let content = format!(
+                "{}{}",
+                "a".repeat(ELIDED_HEAD_BYTES - offset),
+                "√".repeat(400)
+            );
+            let head = head_bytes(&content, ELIDED_HEAD_BYTES);
+            assert!(head.len() <= ELIDED_HEAD_BYTES);
+            assert!(content.starts_with(head));
+            assert!(head.len() >= ELIDED_HEAD_BYTES - 2, "head shrank too far");
+        }
+        assert_eq!(head_bytes("short", ELIDED_HEAD_BYTES), "short");
     }
 
     #[test]
