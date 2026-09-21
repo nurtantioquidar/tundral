@@ -490,6 +490,20 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 - **State under `~/.local/state/butterfly/`**.
 
 ### CLI / TUI
+- **Scrollback that matches the transcript** (2026-09-21) — the operator ran
+  `explain me @AGENTS.md eli5` then `give me table` in Codex and in Butterfly, same repo, same
+  pane, and Butterfly's scrollback came out garbled: the model's `Hub` row was missing from the
+  architecture table and its header row appeared twice, with the same pattern repeated down the
+  reply. Not a style problem — the history repaint. Composer growth clipped rows off the top of the
+  visible band without scrolling them, the next commit scrolled the region, and the shrink
+  repainted, bottom-aligned, rows that were already in scrollback. A streaming table's live preview
+  changes the composer height on every row, so one table did it a dozen times. `Term` now keeps a
+  content band and moves it like a shell would (fill blank rows under it, `DL` blank rows above it,
+  scroll only when full; growth scrolls only what it must; shrink pulls the band down with `IL`),
+  and never redraws a row that may already be in scrollback. `fill_history` is gone. Session start
+  reads the cursor once (`take_over`) so the opening card lands directly under the shell prompt
+  instead of at the bottom of a blank screen. Byte-level tests cover each move.
+
 - **Quiet tool rows, loud exceptions** (2026-09-20) — the operator rejected the right-aligned
   receipt column on sight: `✓ 8ms` sat eighty columns from the path it described, fourteen of
   fifteen calls in one turn took under a second so the one `4.9s` that mattered drowned among

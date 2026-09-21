@@ -100,19 +100,31 @@ Two properties of that write are what make scrollback behave, both Codex's:
    on that region's last row. Each `\r\n` scrolls only that region, pushing its top row into native
    scrollback and leaving the composer untouched.
 
-**When the composer changes height it repaints the history region, bottom-aligned on the region it
-is ABOUT to leave.** The composer grows and shrinks constantly — the activity row arrives, the live
-line comes and goes, a dropdown opens — and each change hands rows to or takes them from the region
-above. `Term::fill_history` redraws that region in place from the transcript: at a fixed width those
-are exactly the rows already there, so nothing scrolls, nothing reaches scrollback twice, and no
-hole is left behind. Two rules make it correct and both were learned the hard way:
+**When the composer changes height, the content above it MOVES; it is never redrawn.** `Term`
+tracks the band of screen rows that hold content (`content_start..content_end`; the shell's own
+rows count, and are only ever scrolled away). The invariant is: the terminal's scrollback plus that
+band is the transcript, in order, each row exactly once. Three operations keep it, and all three
+are what a shell would do:
 
-- It takes the **new** region as an argument. Reading the current `viewport_top` aligns on the old
-  one, and the composer then draws over the newest rows of history or leaves a run of blanks where
-  they should be.
-- It clears the union of the old region and the new one and nothing else clears them again. The
-  composer must NOT separately clear the rows it gives back when it shrinks; that erases what the
-  repaint just wrote into them.
+- **A commit** (`insert_history`) fills the blank rows under the band first, then deletes blank
+  rows above the band (`DL` at the top of the region — discarded, never saved) so the band moves
+  up and frees rows, and only when the band fills the region does it scroll, one `\r\n` per row
+  on the region's last row, so the top row leaves into native scrollback.
+- **Growth** deletes blank rows above the band first and scrolls only the remainder into
+  scrollback. Nothing is clipped: every row is on screen or in scrollback.
+- **Shrink** pulls a band that touched the composer down to keep touching it (`IL` at the top of
+  the region; the old composer rows fall off the bottom, blank rows appear at the top, and the next
+  commit or growth consumes them). No gap opens above the input.
+
+The design this replaced (2026-09-17 to 2026-09-21) repainted the region from the transcript on
+every height change, bottom-aligned on the region the composer was about to leave. It looked right
+at a glance and broke the invariant: growth clipped rows off the top of the band without scrolling
+them, the next commit scrolled the region, and the shrink repainted rows that were already in
+scrollback. A streaming table, whose live preview changes the composer height on every row, lost
+rows and duplicated others in the same turn (measured in herdr against the model's raw reply). The
+rule that came out of it: **never redraw a row that may already be in scrollback.** The only
+redraw of history is the resize reflow below, which first purges the scrollback it is about to
+rewrite.
 
 **A resize REFLOWS, by owning the scrollback.** This is Codex's strategy
 (`app::resize_reflow` + `clear_scrollback_and_visible_screen_ansi`) and it is the only one that

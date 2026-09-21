@@ -332,6 +332,13 @@ fn render_entry_floored(entry: &Entry, width: usize) -> Vec<Line<'static>> {
     }
 }
 
+/// One transcript entry and whether the main screen ever showed it.
+#[derive(Clone, Debug, PartialEq)]
+struct Recorded {
+    entry: Entry,
+    shown: bool,
+}
+
 struct UiInner {
     term: Term,
     editor: Editor,
@@ -366,10 +373,12 @@ struct UiInner {
     hidden_reasoning: String,
     /// Everything committed to scrollback (plus hidden reasoning), as
     /// logical entries re-renderable at any width: backs the Ctrl+T overlay
-    /// and the re-wrap on resize. The bool marks whether the entry was drawn
-    /// on the main screen (hidden reasoning is not ‒ the resize repaint must
-    /// not resurrect it). Capped ring.
-    transcript: std::collections::VecDeque<Entry>,
+    /// and the re-wrap on resize. `shown` marks whether the entry was drawn
+    /// on the main screen: hidden reasoning is not, and neither the history
+    /// repaint nor the resize replay may resurrect it — the repaint in
+    /// particular redraws the region from this ring and relies on producing
+    /// exactly the rows already there. Capped ring.
+    transcript: std::collections::VecDeque<Recorded>,
     /// Ctrl+T transcript overlay: Some(scroll offset from the tail). While
     /// open, committed output is queued and flushed on close.
     overlay: Option<usize>,
@@ -724,10 +733,29 @@ impl UiInner {
     /// there is no projection for this to feed. Reasoning the stream hides is
     /// recorded here too, which is why the overlay can show it.
     fn record(&mut self, entry: Entry) {
+        self.record_as(entry, true);
+    }
+
+    /// Record an entry the main screen never draws (hidden reasoning): the
+    /// overlay shows it, the history repaint and the resize replay skip it.
+    fn record_hidden(&mut self, entry: Entry) {
+        self.record_as(entry, false);
+    }
+
+    fn record_as(&mut self, entry: Entry, shown: bool) {
         if self.transcript.len() >= TRANSCRIPT_CAP {
             self.transcript.pop_front();
         }
-        self.transcript.push_back(entry);
+        self.transcript.push_back(Recorded { entry, shown });
+    }
+
+    /// The entries the main screen has drawn, in order: what a history
+    /// repaint or a resize replay reproduces.
+    fn shown_entries(&self) -> impl DoubleEndedIterator<Item = &Entry> {
+        self.transcript
+            .iter()
+            .filter(|recorded| recorded.shown)
+            .map(|recorded| &recorded.entry)
     }
 
     /// Enforce the vertical rhythm in ONE place: never two blank rows in a
@@ -793,8 +821,12 @@ impl UiInner {
         self.last_blank = false;
         if self.overlay.is_some() {
             // The overlay owns the alternate screen; committed rows wait in
-            // the transcript and are written to history when it closes.
+            // `pending_output` and are written to history when it closes.
+            // (They used to be recorded only, and the queue stayed empty, so
+            // anything that arrived under the overlay never reached
+            // scrollback until a resize replayed the whole transcript.)
             for entry in entries {
+                self.pending_output.push(entry.clone());
                 self.record(entry);
             }
             self.draw_overlay();
@@ -845,36 +877,6 @@ impl UiInner {
             block
         };
         let top = height.saturating_sub(rows.len());
-        // The composer changed height, so it has taken rows from the history
-        // region or handed some back. Repaint that region in place from the
-        // transcript: at a fixed width those are exactly the rows already
-        // there, so nothing scrolls, nothing reaches scrollback twice, and the
-        // composer never leaves a hole behind it.
-        if self.term.viewport_top_for(rows.len()) != self.term.viewport_top() {
-            let width = self.width();
-            let region = self.term.viewport_top_for(rows.len());
-            let mut history: Vec<Line<'static>> = Vec::new();
-            'fill: for entry in self.transcript.iter().rev() {
-                for line in render_entry(entry, width).into_iter().rev() {
-                    // Same rhythm as `insert_history`: this path renders the
-                    // transcript raw, so without the rule a repaint could
-                    // reintroduce the stacked blanks the commit path strips.
-                    let blank = line_cols(&line) == 0;
-                    if blank && history.last().is_some_and(|l| line_cols(l) == 0) {
-                        continue;
-                    }
-                    history.push(line);
-                    if history.len() >= region {
-                        break 'fill;
-                    }
-                }
-            }
-            while history.last().is_some_and(|l| line_cols(l) == 0) {
-                history.pop();
-            }
-            history.reverse();
-            self.term.fill_history(&history, region);
-        }
         let cursor = (!self.selecting()).then(|| {
             let row = (top + cursor_row).min(height.saturating_sub(1));
             (cursor_col as u16, row as u16)
@@ -910,7 +912,7 @@ impl UiInner {
         let width = self.width();
         self.term.reset_for_reflow();
         let mut lines: Vec<Line<'static>> = Vec::new();
-        for entry in self.transcript.iter() {
+        for entry in self.shown_entries() {
             lines.extend(render_entry(entry, width));
         }
         if lines.len() > REFLOW_ROW_CAP {
@@ -932,7 +934,7 @@ impl UiInner {
         let lines: Vec<Line<'static>> = self
             .transcript
             .iter()
-            .flat_map(|entry| render_entry(entry, width))
+            .flat_map(|recorded| render_entry(&recorded.entry, width))
             .collect();
         let total = lines.len();
         let max_offset = total.saturating_sub(rows);
@@ -1422,7 +1424,7 @@ impl Ui {
                 }],
                 cont_indent: 0,
             };
-            inner.record(entry);
+            inner.record_hidden(entry);
         }
         inner.activity = None;
         inner.paint();
@@ -1983,7 +1985,7 @@ impl StreamSink for UiSink {
                     }],
                     cont_indent: 0,
                 };
-                inner.record(entry);
+                inner.record_hidden(entry);
             }
         }
     }
@@ -2454,10 +2456,44 @@ failure classification for Butterfly's recovery loop:
         let rendered: Vec<String> = inner
             .transcript
             .iter()
-            .flat_map(|entry| render_entry(entry, 40))
+            .flat_map(|recorded| render_entry(&recorded.entry, 40))
             .map(|line| line.to_string())
             .collect();
         assert_eq!(rendered.last().expect("tail"), "hidden reasoning");
+    }
+
+    /// Hidden reasoning is for the overlay only. The history repaint and the
+    /// resize replay both redraw from the ring, and the repaint relies on
+    /// reproducing exactly the rows already on screen — an entry the screen
+    /// never showed would shift everything above the composer and put the
+    /// hidden thought on the main screen (seen in herdr: dim planning lines
+    /// appearing after the turn with the stream off).
+    #[test]
+    fn hidden_reasoning_never_reaches_the_main_screen_replay() {
+        let mut inner = inner_at(60, 20);
+        inner.record(Entry::Fixed(Line::from(vec![th::text("shown")])));
+        inner.record_hidden(Entry::Prose {
+            marker: None,
+            spans: vec![md::Span {
+                style: md::SpanStyle::Dim,
+                text: "hidden thought".into(),
+            }],
+            cont_indent: 0,
+        });
+        inner.record(Entry::Fixed(Line::from(vec![th::text("also shown")])));
+        let shown: Vec<String> = inner
+            .shown_entries()
+            .flat_map(|entry| render_entry(entry, 60))
+            .map(|line| line.to_string())
+            .collect();
+        assert_eq!(shown, vec!["shown", "also shown"]);
+        let all: Vec<String> = inner
+            .transcript
+            .iter()
+            .flat_map(|recorded| render_entry(&recorded.entry, 60))
+            .map(|line| line.to_string())
+            .collect();
+        assert_eq!(all, vec!["shown", "  hidden thought", "also shown"]);
     }
 
     #[test]
