@@ -1,7 +1,7 @@
 # Monet edge routing — the single source of truth for which host reaches which process.
 #
-# Hosts and local dev ports:
-#   monet.sh            -> hub          127.0.0.1:3000
+# monet.sh (the hub) is a static export served by Cloudflare Pages, not by this file; see
+# apps/hub/AGENTS.md. Hosts and local dev ports:
 #   inver.monet.sh      -> inver web    127.0.0.1:3001
 #   regretz.monet.sh    -> regretz web  127.0.0.1:3002
 #   {$GATEWAY_DOMAIN}   -> inver gateway 127.0.0.1:8080   (public OpenAI-compatible API)
@@ -19,11 +19,6 @@
 		Referrer-Policy "no-referrer"
 		-Server
 	}
-}
-
-{$HUB_DOMAIN:monet.sh} {
-	import monet_common
-	reverse_proxy 127.0.0.1:3000
 }
 
 {$INVER_WEB_DOMAIN:inver.monet.sh} {

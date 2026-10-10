@@ -1,0 +1,89 @@
+/* monet.sh tokens — a pixel-art Giverny. The single source for every colour, size, and font in the
+ * hub; see ../../DESIGN.md. Page colours are the --color-* group; the --px-* group is the pixel
+ * palette shared by the pond scene and the tool icons. */
+
+:root {
+  color-scheme: light;
+
+  /* Page */
+  --color-sky: #d4e3e1;
+  --color-paper: #eef3f1;
+  --color-ink: #1d2b2b;
+  --color-ink-soft: #4b5c5b;
+  --color-rule: #c3d3d0;
+  --color-cta: #c64e3e;
+  --color-cta-hover: #ad4233;
+  --color-cta-ink: #ffffff;
+  --color-chip: #f5f7f4;
+
+  /* Pixel palette */
+  --px-outline: #4a2e2e;
+  --px-cloud: #f6f4ed;
+  --px-cloud-shade: #e0e6df;
+  --px-pine-l: #d3ddc4;
+  --px-pine-m: #a5bca6;
+  --px-pine-d: #6f8e85;
+  --px-trunk: #7b5352;
+  --px-tuft: #5d7e72;
+  --px-bank-top: #cfcfba;
+  --px-bank: #a87472;
+  --px-bank-d: #8a5a59;
+  --px-water: #a3c0be;
+  --px-water-l: #d0e1de;
+  --px-water-d: #8aabaa;
+  --px-pad: #7fa36e;
+  --px-pad-d: #5c8455;
+  --px-pink: #f0a6b4;
+  --px-coral: #e06a5e;
+  --px-coral-l: #f0948a;
+  --px-bridge: #6f9a73;
+  --px-bridge-l: #9cc19c;
+  --px-white: #f7f6f0;
+  --px-grey: #c6d0d3;
+  --px-screen: #8fb0c8;
+
+  /* Icon tones: light / mid / dark */
+  --px-lilac-l: #ddd0ee;
+  --px-lilac-m: #b9a5d6;
+  --px-lilac-d: #8d79ad;
+  --px-sage-l: #d6e2c6;
+  --px-sage-m: #a6bfa3;
+  --px-sage-d: #718f80;
+  --px-blue-l: #cfe0ee;
+  --px-blue-m: #92b2cb;
+  --px-blue-d: #66879f;
+  --px-green-l: #b6d5b2;
+  --px-green-m: #7fa784;
+  --px-green-d: #557b5d;
+  --px-sand-l: #ece2c8;
+  --px-sand-m: #cdbb92;
+  --px-sand-d: #9c8a64;
+  --px-pink-l: #fbdbe1;
+  --px-pink-m: #f0a6b4;
+  --px-pink-d: #c97b8c;
+  --px-grey-l: #f1f3f4;
+  --px-grey-m: #c6d0d3;
+  --px-grey-d: #8e9aa0;
+
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
+
+  --text-small: 0.8125rem;
+  --text-body: 0.9375rem;
+  --text-lede: 1rem;
+  --text-h3: 1.0625rem;
+  --text-h2: clamp(1.5rem, 1.5vw + 1rem, 2rem);
+  --text-title: clamp(1.625rem, 4.4vw + 0.4rem, 4rem);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --radius-pill: 999px;
+}

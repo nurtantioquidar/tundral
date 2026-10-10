@@ -1,78 +1,146 @@
-/* monet.sh is the product-line index, not a marketing site. Its only job is to say what Monet is
- * and route a visitor to the right product subdomain in one click. Product detail, pricing, and
- * sign-in belong to each product's own surface — never duplicated here, where they would drift. */
+/* monet.sh is the studio's front door, not a product surface. A pixel-art pond with a small robot
+ * painting at an easel says what Monet is; the instruments follow, each with its own pixel icon;
+ * the page asks for one thing: an email. Product detail, pricing, and sign-in belong to each
+ * product's own surface. Design law: DESIGN.md. */
 
-type ProductStatus = "live" | "building";
+import { PixelIcon } from "./icons";
+import { PondScene } from "./pond";
 
 interface Product {
+  id: "butterfly" | "cocoon" | "nimble" | "inver" | "cicada";
   name: string;
-  host: string;
-  href: string;
+  role: string;
   summary: string;
-  status: ProductStatus;
+  shipsAs: string;
+  /* Maturity as each product's own README states it. */
+  stage: string;
+  /* Only set once the product's public surface is served, so the page never links to a dead host. */
+  href?: string;
 }
 
-/* Hosts are configurable so a local checkout can point at the dev ports (3001/3002) without
- * editing source. Production defaults are the real subdomains. */
+/* In the order a request meets them. */
 const PRODUCTS: Product[] = [
   {
-    name: "Inver",
-    host: "inver.monet.sh",
-    href: process.env.NEXT_PUBLIC_INVER_URL || "https://inver.monet.sh",
-    summary:
-      "A prepaid, OpenAI-compatible inference gateway. Point any coding harness at one endpoint, give each workload its own key, and read the settled cost of every request.",
-    status: "live",
+    id: "butterfly",
+    name: "Butterfly",
+    role: "Coding harness",
+    summary: "A coding agent built around the prompt cache. Keeps hits high, compacts rarely, checks its own work.",
+    shipsAs: "Rust CLI",
+    stage: "Alpha",
   },
   {
-    name: "Regretz",
-    host: "regretz.monet.sh",
-    href: process.env.NEXT_PUBLIC_REGRETZ_URL || "https://regretz.monet.sh",
-    summary:
-      "An anti-portfolio: the things that were built and did not work, and what each one actually cost to learn.",
-    status: "building",
+    id: "cocoon",
+    name: "Cocoon",
+    role: "Credential firewall",
+    summary: "The agent holds a session token. The real key is added only after the request passes policy.",
+    shipsAs: "Rust CLI",
+    stage: "Prototype",
+  },
+  {
+    id: "nimble",
+    name: "Nimble",
+    role: "Model router",
+    summary: "One OpenAI-compatible endpoint that picks the model for each request and keeps caches warm.",
+    shipsAs: "Local service",
+    stage: "In development",
+  },
+  {
+    id: "inver",
+    name: "Inver",
+    role: "LLM gateway",
+    summary: "A prepaid gateway. Every workload gets its own key; every request settles to an exact cost.",
+    shipsAs: "Hosted API",
+    stage: "Pilot",
+    href: process.env.NEXT_PUBLIC_INVER_URL || undefined,
+  },
+  {
+    id: "cicada",
+    name: "Cicada",
+    role: "Token ledger",
+    summary: "One command that reads what is left on every model API account you use, all at once.",
+    shipsAs: "Rust CLI",
+    stage: "Alpha",
   },
 ];
 
-const STATUS_LABEL: Record<ProductStatus, string> = {
-  live: "Live",
-  building: "In progress",
-};
+const MAILTO = "mailto:tio@monet.sh";
 
 export default function HubPage() {
   return (
-    <main className="shell">
-      <header className="masthead">
-        <p className="wordmark">Monet</p>
-        <h1 className="statement">Small products that meter what they cost.</h1>
-        <p className="lede">
-          Each product runs on its own subdomain with its own account and its own balance. Nothing here is a
-          suite — pick the one you came for.
-        </p>
-      </header>
+    <>
+      <section className="hero">
+        <header className="bar">
+          <a className="bar__brand" href="/">
+            <PixelIcon id="lily" className="bar__icon" />
+            Monet
+          </a>
+          <nav className="bar__nav" aria-label="Sections">
+            <a href="#instruments">Instruments</a>
+            <a href="#canvas">The canvas</a>
+          </nav>
+        </header>
 
-      {/* role="list" keeps list semantics in Safari, which drops them when list-style is none. */}
-      <ul className="products" role="list">
-        {PRODUCTS.map((product) => (
-          <li key={product.name}>
-            <a className="product" href={product.href}>
-              <span className="product__head">
-                <span className="product__name">{product.name}</span>
-                <span className={`badge badge--${product.status}`}>{STATUS_LABEL[product.status]}</span>
-              </span>
-              <span className="product__summary">{product.summary}</span>
-              <span className="product__host" aria-hidden="true">
-                {product.host}
-                <span className="product__arrow">→</span>
-              </span>
+        <div className="hero__copy">
+          <h1 className="hero__title">
+            <span className="hero__line">Instruments for AI,</span>
+            <span className="hero__line">then the art.</span>
+          </h1>
+          <p className="hero__lede">
+            Monet is a small studio named for the painter. We build the tools between developers and models, and next,
+            the art made with them.
+          </p>
+          <div className="hero__actions">
+            <a className="pill pill--primary" href={MAILTO}>
+              Write to the studio →
             </a>
-          </li>
-        ))}
-      </ul>
+            <a className="pill pill--quiet" href="#instruments">
+              See the instruments
+            </a>
+          </div>
+        </div>
 
-      <footer className="foot">
-        <span>Monet</span>
-        <span className="foot__host">monet.sh</span>
-      </footer>
-    </main>
+        <PondScene />
+      </section>
+
+      <main>
+        <section id="instruments" className="tools" aria-labelledby="tools-title">
+          <h2 id="tools-title" className="section-title">
+            Instruments
+          </h2>
+          <p className="section-lede">
+            Five tools on the path of one model call, in the order a request meets them. The coral pixels in each icon
+            are the one thing that tool decides or protects.
+          </p>
+          <ol className="tools__grid">
+            {PRODUCTS.map((product) => (
+              <li key={product.id} className="tool">
+                <PixelIcon id={product.id} label={`${product.name} icon`} className="tool__icon" />
+                <h3 className="tool__name">
+                  {product.href ? <a href={product.href}>{product.name}</a> : product.name}
+                </h3>
+                <p className="tool__role">{product.role}</p>
+                <p className="tool__summary">{product.summary}</p>
+                <p className="tool__meta">
+                  {product.shipsAs} · {product.stage}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section id="canvas" className="canvas" aria-labelledby="canvas-title">
+          <h2 id="canvas-title" className="section-title">
+            The canvas
+          </h2>
+          <p className="section-lede">
+            The robot at the easel is the point. The instruments come first so the art can follow: work where the model
+            holds the brush. Nothing is hung yet.
+          </p>
+          <a className="pill pill--primary" href={MAILTO}>
+            Write to the studio →
+          </a>
+        </section>
+      </main>
+    </>
   );
 }
