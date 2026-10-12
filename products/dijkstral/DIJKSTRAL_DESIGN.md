@@ -56,8 +56,11 @@ discover ─► extract ─► cache ─► resolve ─► graph store ─► cl
   Graphify's provenance tiers: `EXTRACTED`, `INFERRED`, `AMBIGUOUS`.
 - **Graph store**: a CSR multigraph that keeps every relation, written to `dijkstral-out/graph.dij`
   as an mmap-able index with a trigram name index and precomputed degree, community and IDF tables.
-- **Cluster and analyze**: Leiden with Graphify's parameters (resolution 1.0, seed 42, oversize
-  re-split, hub-based labels); Tarjan SCC cycles; sampled parallel betweenness.
+- **Cluster and analyze**: Leiden through Graphify's own engine (graspologic-native's
+  `network_partitions`) with its parameters and input order (resolution 1.0, seed 42, oversize and
+  low-cohesion re-splits, hub-based labels), so communities match Graphify's for the same graph;
+  god nodes, surprising connections, short import cycles and sampled parallel betweenness for
+  `.graphify_analysis.json` and `GRAPH_REPORT.md` (`cli/docs/graphify-format.md` §17).
 - **Serve**: `query`, `path`, `explain` and an MCP server with Graphify's tool names and exit codes
   (0 answer, 3 ambiguous, 4 no match); a native `hook-guard` targeting under 5 ms.
 - **Semantic pass**: skill-driven (the host assistant writes validated JSON fragments, no key
