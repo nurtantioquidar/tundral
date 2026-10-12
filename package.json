@@ -12,13 +12,17 @@
     "dev:hub": "bun run --filter @monet/hub dev",
     "dev:inver": "bun run --filter @monet/inver-web dev",
     "dev:inver-gateway": "bun run --filter @monet/inver-gateway dev",
-    "dev:regretz": "bun run --filter @monet/regretz-web dev",
+    "dev:butterfly": "./products/butterfly/cli/scripts/dev.sh",
+    "dev:cicada": "bun run --filter @monet/cicada-cli dev",
+    "dev:cocoon": "bun run --filter @monet/cocoon-cli dev",
+    "dev:dijkstral": "bun run --filter @monet/dijkstral-cli dev",
+    "dev:nimble": "bun run --filter @monet/nimble-router dev",
+    "start:nimble": "bun run --filter @monet/nimble-router start",
     "start:hub": "bun run --filter @monet/hub start",
     "start:inver": "bun run --filter @monet/inver-web start",
     "start:inver-gateway": "bun run --filter @monet/inver-gateway start",
-    "start:regretz": "bun run --filter @monet/regretz-web start",
-    "test": "bun run --filter @monet/contracts test && bun run --filter @monet/inver-gateway test && bun run --filter @monet/regretz-web test",
-    "typecheck": "bun run --filter @monet/contracts typecheck && bun run --filter @monet/inver-gateway typecheck && bun run --filter @monet/inver-web typecheck && bun run --filter @monet/hub typecheck && bun run --filter @monet/regretz-web typecheck",
-    "check": "bun run --filter @monet/contracts check && bun run --filter @monet/inver-gateway check && bun run --filter @monet/inver-web check && bun run --filter @monet/hub check && bun run --filter @monet/regretz-web check"
+    "test": "bun run --filter @monet/contracts test && bun run --filter @monet/inver-gateway test && bun run --filter @monet/butterfly-cli test && bun run --filter @monet/cicada-cli test && bun run --filter @monet/cocoon-cli test && bun run --filter @monet/dijkstral-cli test && bun run --filter @monet/nimble-router test",
+    "typecheck": "bun run --filter @monet/contracts typecheck && bun run --filter @monet/inver-gateway typecheck && bun run --filter @monet/inver-web typecheck && bun run --filter @monet/hub typecheck && bun run --filter @monet/butterfly-cli typecheck && bun run --filter @monet/cicada-cli typecheck && bun run --filter @monet/cocoon-cli typecheck && bun run --filter @monet/dijkstral-cli typecheck && bun run --filter @monet/nimble-router typecheck",
+    "check": "bun run --filter @monet/contracts check && bun run --filter @monet/inver-gateway check && bun run --filter @monet/inver-web check && bun run --filter @monet/hub check && bun run --filter @monet/butterfly-cli check && bun run --filter @monet/cicada-cli check && bun run --filter @monet/cocoon-cli check && bun run --filter @monet/dijkstral-cli check && bun run --filter @monet/nimble-router check"
   }
 }

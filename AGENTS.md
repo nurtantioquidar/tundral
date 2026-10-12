@@ -4,12 +4,25 @@
 
 Monet is a monorepo for a line of small, metered products. It contains independently deployable
 applications and the small set of packages that genuinely need to be shared between them. Each
-product is reached on its own subdomain, owns its own accounts and data, and ships on its own
-schedule. `monet.sh` is only the index that routes a visitor to the right product.
+product owns its own runtime, accounts and data when present, and release schedule. Web products
+are reached on their own subdomains; a developer product may first ship as a local CLI. `monet.sh`
+is only the index that routes a visitor to a product's public surface.
 
-The active products are Inver (a prepaid OpenAI-compatible inference gateway, `inver.monet.sh`) and
-Regretz (an anti-portfolio of investment decisions not taken, scored against the IHSG,
-`regretz.monet.sh`). See `docs/regretz-entry-model.md` for Regretz's entry shape.
+The active products are Inver (a prepaid OpenAI-compatible inference gateway, `inver.monet.sh`),
+Butterfly (a model-agnostic, cache-first coding agent with deterministic verification, shipped as a
+local Rust CLI; DeepSeek is its reference direct model), Nimble (an intelligent model router exposed
+as one OpenAI-compatible endpoint, shipped as a local Bun service), Cicada (a fast local Rust CLI
+that checks balances across model API providers without requiring separate browser consoles), Cocoon
+(a local Rust credential firewall that lets AI agents use provider APIs without receiving durable
+upstream secrets), and Dijkstral (a local Rust CLI that turns a repository into a queryable code
+knowledge graph for AI agents, benchmarked head-to-head against Graphify; see
+`products/dijkstral/DIJKSTRAL_DESIGN.md`). Butterfly and Nimble are independent products that are
+deliberately co-designed: each works alone with any model or client, and together they form the
+reference configuration through the optional, versioned contract in
+`docs/butterfly-nimble-contract.md`. Neither may import the other. See
+`docs/harness-implementation-comparison.md` for how Butterfly was selected,
+`products/butterfly/BUTTERFLY_ARCHITECTURE_REVIEW.md` for the audit that made it model-agnostic, and
+`products/nimble/NIMBLE_DESIGN.md` for the router's design.
 
 Build new capabilities as features of an existing product, not as arbitrary packages. A capability
 becomes a new product only when it has its own audience and brand; it becomes a separate deployable
@@ -26,6 +39,9 @@ ownership, or scaling profile.
   symlink to it; never maintain copied instruction files.
 - Update instructions only for durable knowledge. Do not add task history, temporary status, or
   speculative implementation details.
+- `.claude/skills/` holds vendored or repo-local agent skills, checked in so every contributor
+  gets the same guidance. A skill is advice; `AGENTS.md` is law. Each vendored skill records its
+  source, exclusions, and local modifications in its own `UPSTREAM.md`.
 
 ## Repository layout
 
@@ -37,11 +53,21 @@ monet/
 │   ├── inver/
 │   │   ├── gateway/            # Customer model API, pilot ledger, and upstream routing
 │   │   └── web/                # inver.monet.sh — landing, customer console, operator BFF
-│   └── regretz/
-│       └── web/                # regretz.monet.sh — anti-portfolio placeholder
+│   ├── butterfly/
+│   │   ├── cli/                # butterfly: model-agnostic cache-first coding agent (Rust)
+│   │   └── bench/              # fixture bench + Terminal-Bench (Harbor) adapter and matrix
+│   ├── cicada/
+│   │   └── cli/                # cicada: concurrent model API balance checker (Rust)
+│   ├── cocoon/
+│   │   └── cli/                # cocoon: local agent credential firewall (Rust)
+│   ├── dijkstral/
+│   │   ├── cli/                # dijkstral: code knowledge graph for AI agents (Rust)
+│   │   └── bench/              # head-to-head benchmark against Graphify
+│   └── nimble/
+│       └── router/             # nimble: intelligent model router, OpenAI-compatible (Bun)
 ├── packages/
 │   ├── contracts/              # Versioned JSON transport contracts shared across deployables
-│   └── ui/                     # Monet design-token layer shared by every frontend
+│   └── ui/                     # Monet design-token layer shared by the hub and Inver frontends
 ├── deploy/                     # Edge routing for every host
 └── docs/                       # Cross-product architecture and operating decisions
 ```
@@ -67,8 +93,8 @@ when at least two frontends genuinely render it.
 
 ## Product and frontend architecture
 
-- Each product has exactly one web application, on its own subdomain. Users should experience a
-  product as one coherent thing even when its features are backed by different services.
+- A product with a web surface has exactly one web application, on its own subdomain. Users should
+  experience a product as one coherent thing even when its features are backed by different services.
 - Do not build a separate frontend for every backend service. A new frontend is justified only by a
   new product — a separate brand, audience, and release lifecycle — not by a new service.
 - `apps/hub` is an index, not a shell. It links to products and must never acquire accounts,
@@ -79,8 +105,9 @@ when at least two frontends genuinely render it.
   and BFF contract for `products/inver/web`. Frontend agents must read it before redesigning Inver's
   product surfaces.
 - Organize each web app by feature routes and feature-local components.
-- Every frontend consumes design tokens from `packages/ui`. Do not fork the token layer per product;
-  if a product needs its own identity, extend the shared layer deliberately.
+- Every frontend consumes design tokens from `packages/ui`, except where the closest `AGENTS.md`
+  explicitly overrides it. Do not fork the token layer per product; if a product needs its own
+  identity, extend the shared layer deliberately.
 - Browser clients must never call internal gateway administration routes. They call the web backend
   or control plane, which performs authorization and invokes private service APIs.
 - Coding harnesses call the inference gateway's public OpenAI-compatible endpoints directly using
@@ -133,8 +160,12 @@ bun run check
 bun run test
 bun run dev:hub            # monet.sh          :3000
 bun run dev:inver          # inver.monet.sh    :3001
-bun run dev:regretz        # regretz.monet.sh  :3002
-bun run dev:inver-gateway  # Inver public API  :8091
+bun run dev:inver-gateway  # Inver public API  :8080
+bun run dev:nimble         # Nimble router     :8092
+bun run dev:butterfly -- --help
+bun run dev:cicada -- --help
+bun run dev:cocoon -- --help
+bun run dev:dijkstral -- --help
 ```
 
 Root commands orchestrate module commands; module `AGENTS.md` files define any additional required

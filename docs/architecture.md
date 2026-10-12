@@ -3,10 +3,11 @@
 ## Shape of the product
 
 Monet is a line of independent products, not one product with multiple capabilities. Each product
-has its own subdomain, brand, accounts, and release schedule. `monet.sh` is an index that routes a
-visitor to the right one; it holds no state. The codebase is a monorepo so contracts, product
-changes, and migrations can be reviewed together, but deployables retain clear runtime and data
-boundaries.
+has its own brand, runtime and release schedule, plus its own accounts and data when present. Web
+products use their own subdomains; a developer product may initially ship as a local CLI.
+`monet.sh` is an index that routes a visitor to public product surfaces and holds no state. The
+codebase is a monorepo so contracts, product changes, and migrations can be reviewed together, but
+deployables retain clear runtime and data boundaries.
 
 ```text
                     monet.sh (hub) ── links only ──► product subdomains
@@ -20,11 +21,41 @@ Browser ─► inver.monet.sh ─► Control plane ─────────�
    │              └► onboarding, usage, keys, feature UIs
    └► never calls /internal service routes directly
 
-Browser ─► regretz.monet.sh (placeholder; no backend, no accounts)
+Developer ─► Butterfly local CLI ─┬─ direct ─► DeepSeek · GLM · Luna · any OpenAI-compatible model
+                    │             └─ routed ─► Nimble ─► pool (GLM · DeepSeek · Luna …)
+                    └► local tools, typed sessions, verification, checkpoints, and patches
+
+Any OpenAI-compatible client ─► Nimble (model: "nimble") ─► economically chosen model
+
+Developer ─► Cicada local CLI ─► read-only balance/usage APIs (OpenAI · Meta · Z.ai · DeepSeek)
+
+AI agent ─► Dijkstral local CLI / MCP ─► repository knowledge graph (local; optional model pass)
 ```
 
 Products share the design-token layer in `packages/ui` and nothing else at runtime. They do not
-share sessions, accounts, or databases. A signed-in Inver customer is not signed in to Regretz.
+share sessions, accounts, or databases. A signed-in Inver customer is not signed in anywhere else.
+
+Butterfly is a local product runtime rather than a web application. It uses operator-supplied
+provider keys directly, keeps orchestration, verification, and repository execution local, and
+neither borrows an Inver account nor imports Inver gateway code. Nimble is a second local
+runtime: a single-process router that any OpenAI-compatible client can target. Butterfly and
+Nimble share nothing at runtime but the optional `nimble/v1` JSON contract
+([contract](butterfly-nimble-contract.md)); Butterfly works with every direct model without
+Nimble, and Nimble routes for every client without Butterfly. See the
+[Butterfly architecture review](../products/butterfly/BUTTERFLY_ARCHITECTURE_REVIEW.md) and the
+[Nimble design](../products/nimble/NIMBLE_DESIGN.md).
+
+Cicada is an independent local runtime that reads operator-supplied provider credentials from the
+environment and performs concurrent, read-only balance checks. It does not own a wallet, persist
+credentials, scrape browser sessions, or act as a billing source of truth. A provider without a
+public balance endpoint is represented as unavailable or as an explicitly labeled computation from
+documented usage data; Cicada never guesses a monetary value.
+
+Dijkstral is an independent local runtime that builds a code knowledge graph from a repository and
+serves it to AI agents through a CLI, an MCP server, and assistant hooks. Code extraction is local
+and deterministic; an optional semantic pass for documents uses an operator-chosen model. It is a
+clean-room alternative to Graphify, measured against it in `products/dijkstral/bench`, and imports
+no other Monet product. See the [Dijkstral design](../products/dijkstral/DIJKSTRAL_DESIGN.md).
 
 The control plane is a target boundary, not a requirement for the current pilot. Today the inference
 gateway remains the source of truth for its customer password accounts, keys, credits, reservations,
@@ -54,7 +85,7 @@ failures must remain isolated.
 
 ## Frontend direction
 
-Use one web application per product, on that product's own subdomain, with feature-oriented routes.
+A product with a web surface uses one web application on its own subdomain, with feature-oriented routes.
 Inver's, for example:
 
 ```text
@@ -93,8 +124,7 @@ the same canonical model identity.
 
 A feature may contribute pages, components, and backend calls inside its product's web app. Create a
 separate frontend only when the work is genuinely a separate product — its own brand, audience,
-security boundary, and release lifecycle. That test is what makes Regretz a product rather than a
-route inside Inver.
+security boundary, and release lifecycle.
 
 ## Evolution stages
 
