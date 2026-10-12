@@ -431,6 +431,45 @@ class Interval:
         return hits
 
 
+def python_submodule_imports(doc: Doc, files: set[str]) -> set[str]:
+    """In-repo files bound by `from pkg import name` when `pkg.name` is a module.
+
+    scip-python records such a name (`from erpnext.x import y as z`) as a local symbol, so the
+    occurrence pass cannot see the file it imports. Python's own rule settles it: if `pkg/name.py`
+    or `pkg/name/__init__.py` exists, the statement imports that file.
+    """
+    try:
+        tree = ast.parse(doc.text)
+    except (SyntaxError, ValueError):
+        return set()
+    here = doc.path.rsplit("/", 1)[0] if "/" in doc.path else ""
+    out: set[str] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        if node.level:
+            parts = here.split("/") if here else []
+            if node.level - 1 > len(parts):
+                continue
+            base = parts[: len(parts) - (node.level - 1)]
+            pkg = "/".join(base + (node.module.split(".") if node.module else []))
+            bases = [pkg]
+        elif node.module:
+            pkg = node.module.replace(".", "/")
+            bases = [pkg, f"src/{pkg}"]
+        else:
+            continue
+        for alias in node.names:
+            if alias.name == "*":
+                continue
+            for b in bases:
+                stem = f"{b}/{alias.name}" if b else alias.name
+                for cand in (f"{stem}.py", f"{stem}/__init__.py"):
+                    if cand in files:
+                        out.add(cand)
+    return out
+
+
 def python_spans(doc: Doc, defs_at: dict, sp: Spans) -> bool:
     try:
         tree = ast.parse(doc.text)
@@ -847,7 +886,12 @@ def build(repo: str) -> dict:
     imports: set[tuple[str, str]] = set()
     mentions: set[tuple] = set()
     py_fallback = 0
+    py_files = {p for p, (d, _o) in docs.items() if d.lang == "py"}
     for path, (doc, occs) in docs.items():
+        if doc.lang == "py":
+            for tdoc in python_submodule_imports(doc, py_files):
+                if tdoc != path:
+                    imports.add((path, tdoc))
         sp = Spans()
         m = doc.text if doc.lang == "py" else mask(doc.text, doc.lang, doc.path)
         dd = doc_defs.get(path, [])

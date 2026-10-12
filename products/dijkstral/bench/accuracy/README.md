@@ -121,46 +121,30 @@ or more families is small: 1.3% of pairs on fastapi, ≤0.2% elsewhere.
 
 ## Results — 2026-10-13
 
-dijkstral at `4d1f648a5320` (release build), Graphify 0.9.86 frozen references. P / R in %; tier
-columns are precision with the judged edge count in parentheses.
+Precision / recall in %, Graphify → dijkstral, on the merged stage-2 build (`9a47257`). The full
+table with confidence tiers, collapse accounting and unjudged counts is written by `score.py` to
+`results/accuracy-<date>.md`.
 
-| repo | family | oracle pairs | Graphify P | Graphify R | dijkstral P | dijkstral R | G EXTRACTED P | G INFERRED P | D EXTRACTED P | D INFERRED P | collapsed G / D |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| fastapi | calls | 2,511 | 97.1 | 88.0 | **99.1** | **90.2** | 97.0 (1,852) | 97.6 (423) | 99.9 (1,850) | 95.6 (434) | 57 / 37 |
-| fastapi | references | 2,842 | 52.3 | 26.7 | **99.6** | **34.5** | 52.3 (1,453) | — | 99.6 (985) | — | 130 / 135 |
-| fastapi | inherits | 98 | 98.0 | 99.0 | **100.0** | **100.0** | | | | | 0 / 0 |
-| fastapi | imports | 2,756 | 98.4 | 98.4 | **99.3** | **99.0** | | | | | |
-| graphify | calls | 15,318 | 99.2 | 94.5 | **100.0** | **97.0** | 99.2 (13,985) | 99.0 (614) | 100.0 (14,795) | 98.6 (74) | 434 / 432 |
-| graphify | references | 135 | 97.8 | **67.4** | **100.0** | 31.1 | 97.8 (93) | — | 100.0 (42) | — | 28 / 35 |
-| graphify | inherits | 27 | 100.0 | 100.0 | 100.0 | 100.0 | | | | | 0 / 0 |
-| graphify | imports | 1,057 | 99.1 | 88.3 | **99.4** | **93.1** | | | | | |
-| erpnext | calls | 20,952 | 96.7 | 92.5 | **98.4** | **97.0** | 97.8 (19,380) | 65.2 (650) | 99.1 (20,308) | 57.5 (334) | 355 / 307 |
-| erpnext | references | 205 | 31.8 | 65.4 | **100.0** | **65.9** | 31.8 (422) | — | 100.0 (135) | — | 39 / 39 |
-| erpnext | inherits | 513 | 99.4 | 99.4 | 99.4 | 99.4 | | | | | 0 / 0 |
-| erpnext | imports | 3,219 | **99.9** | 96.7 | 99.8 | **98.9** | | | | | |
-| excalidraw | calls | 5,389 | 95.1 | 92.5 | **97.8** | **93.6** | 94.8 (4,999) | 100.0 (247) | 97.7 (4,949) | 99.2 (254) | 2 / 0 |
-| excalidraw | references | 2,932 | 92.5 | 14.8 | 92.5 | 14.8 | 92.5 (469) | — | 92.5 (468) | — | 38 / 39 |
-| excalidraw | inherits | 9 | 100.0 | 100.0 | 100.0 | 100.0 | | | | | 0 / 0 |
-| excalidraw | imports | 3,312 | 99.8 | 99.9 | 99.8 | 99.9 | | | | | |
-| ripgrep | calls | 4,835 | 80.2 | 40.0 | **80.3** | **40.1** | 79.3 (2,282) | 97.6 (126) | 79.4 (2,291) | 97.6 (126) | 0 / 0 |
-| ripgrep | references | 2,070 | 94.0 | 58.4 | **96.0** | **59.5** | 94.0 (1,285) | 100.0 (1) | 96.0 (1,282) | 100.0 (1) | 350 / 350 |
-| ripgrep | inherits | 122 | 99.1 | 93.4 | 99.1 | 93.4 | | | | | 0 / 0 |
-| ripgrep | imports | 194 | 76.8 | **61.3** | **94.5** | 53.1 | | | | | |
-| monet | calls | 3,116 | 95.5 | 61.6 | **96.3** | **61.7** | 95.8 (1,819) | 92.7 (193) | 96.7 (1,799) | 92.7 (193) | 9 / 8 |
-| monet | references | 1,200 | 91.0 | 64.2 | **91.4** | **66.6** | 91.0 (846) | — | 91.4 (874) | — | 17 / 20 |
-| monet | inherits | 13 | 91.7 | 84.6 | 91.7 | 84.6 | | | | | 0 / 0 |
-| monet | imports | 356 | 97.9 | 90.4 | **99.1** | 90.4 | | | | | |
-| kubernetes ‡ | calls | 18,680 | 88.1 | 51.2 | **88.3** | **51.7** | 86.5 (8,946) | 95.7 (1,910) | 86.5 (8,948) | 96.3 (1,992) | 0 / 0 |
-| kubernetes ‡ | references | 5,854 | 99.0 | 72.9 | **99.1** | **73.0** | 99.0 (4,311) | — | 99.1 (4,309) | — | 617 / 619 |
-| kubernetes ‡ | imports | 21,771 | 91.3 | 100.0 | 91.3 | 100.0 | | | | | |
+| repo | calls (G → D) | references (G → D) | inherits (G → D) | imports (G → D) |
+|---|---|---|---|---|
+| fastapi | 97.1/88.0 → **100.0/90.9** | 52.3/26.7 → **99.8/39.6** | 98.0/99.0 → **100.0/100.0** | 98.8/98.4 → **99.6/99.0** |
+| graphify | 99.2/94.5 → **100.0/97.1** | 97.8/67.4 → **100.0/74.1** | 100.0/100.0 → **100.0/100.0** | 100.0/88.4 → **100.0/94.6** |
+| erpnext | 96.7/92.5 → **99.7/97.5** | 31.8/65.4 → **100.0/81.0** | 99.4/99.4 → **99.4/99.4** | 100.0/96.6 → **100.0/98.8** |
+| excalidraw | 95.1/92.5 → **97.8/93.6** | 92.5/14.8 → **92.5/14.8** | 100.0/100.0 → **100.0/100.0** | 99.8/99.9 → **99.8/99.9** |
+| ripgrep | 80.2/40.0 → **80.3/40.1** | 94.0/58.4 → **96.6/62.5** | 99.1/93.4 → **100.0/93.4** | 76.8/61.3 → **99.5/98.5** |
+| monet | 95.5/61.6 → **96.3/61.7** | 91.0/64.2 → **98.2/67.2** | 91.7/84.6 → **92.9/100.0** | 97.9/90.4 → **100.0/100.0** |
+| kubernetes | 88.1/51.2 → **88.3/51.7** | 99.0/72.9 → **99.1/73.0** | — | 91.3/100.0 → **91.3/100.0** |
 
-‡ `pkg/scheduler` + `staging/src/k8s.io/apimachinery` only. Import edges carry no confidence other
-than EXTRACTED and `inherits` has no INFERRED edges, so those tier cells are empty.
+**Stage-2 criterion** (dijkstral precision ≥ Graphify's and recall ≥ Graphify's, per repo and
+relation family): **met in all 27 rows.** The first scoring run met it in 24; the accuracy fixes
+(Python `uses` rule and sibling imports, Rust module-path `use` resolution, no unique-name binding
+of externally imported names, typed receivers) closed three, and one apparent miss (erpnext
+imports) was an oracle gap: scip-python records `from pkg import submodule as alias` as a local
+symbol, so `oracle.py` now confirms such imports from the filesystem — which raised both tools'
+erpnext import precision to 100.
 
-Against the stage-2 exit criterion (precision ≥ Graphify at recall ≥ Graphify, per relation),
-dijkstral meets it in 24 of the 27 rows. The exceptions: graphify-repo `references` (recall 31.1
-vs 67.4), ripgrep `imports` (recall 53.1 vs 61.3), and erpnext `imports` (precision 99.8 vs 99.9,
-5 false pairs against 4).
+INFERRED call precision, the clearest single difference: erpnext Graphify 65.2 → dijkstral 98.5;
+fastapi 97.6 → 100.0; Kubernetes 95.7 → 96.3.
 
 ### What the disagreements are
 
