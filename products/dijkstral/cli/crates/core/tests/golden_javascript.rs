@@ -15,7 +15,13 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn javascript_fixture_matches_graphify() {
-    common::assert_fixture("javascript", ALLOWED, 1.0, true, false);
+    common::assert_fixture(
+        "javascript",
+        ALLOWED,
+        common::Communities::Exact,
+        true,
+        false,
+    );
 }
 
 fn build_project(files: &[(&str, &str)]) -> (BTreeSet<String>, BTreeSet<String>) {

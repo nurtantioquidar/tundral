@@ -45,8 +45,14 @@ const ALLOWED: &[&str] = &[
 
 #[test]
 fn rust_fixture_matches_graphify() {
-    // Community ids move with the ALLOWED differences (NMI 0.88, graphify-format.md §17.7).
-    common::assert_fixture("rust", ALLOWED, 0.25, false, false);
+    // Community ids move with the ALLOWED differences (graphify-format.md §17.7).
+    common::assert_fixture(
+        "rust",
+        ALLOWED,
+        common::Communities::MinNmi(0.80),
+        false,
+        false,
+    );
 }
 
 /// Build a probe repository and return its links as `source -relation-> target`.
@@ -62,6 +68,7 @@ fn links(files: &[(&str, &str)]) -> BTreeSet<String> {
         root: root.clone(),
         out: None,
         threads: 1,
+        cluster: false,
     })
     .unwrap();
     let g: Value =

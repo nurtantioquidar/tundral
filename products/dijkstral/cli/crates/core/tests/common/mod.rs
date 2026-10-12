@@ -559,22 +559,38 @@ pub fn assert_golden(
     (built, agreement)
 }
 
-/// The full golden check for one fixture: node/link parity, community agreement (exact on at
-/// least `min_community` of the shared nodes), Graphify's own graph re-clustered exactly, and the
+/// How a fixture's communities must agree with Graphify's on a full build.
+pub enum Communities {
+    /// Identical graphs: identical community ids (and so Graphify's array order).
+    Exact,
+    /// The graph differs by `ALLOWED` entries, which reshuffle Leiden's size-ranked ids even when
+    /// the partition barely moves; gate on normalised mutual information instead.
+    MinNmi(f64),
+}
+
+/// The full golden check for one fixture: node/link parity, community agreement (see
+/// `Communities`), Graphify's own graph re-clustered exactly, and the
 /// report goldens (byte-exact when `exact_report`).
 pub fn assert_fixture(
     name: &str,
     allowed: &[&str],
-    min_community: f64,
+    communities: Communities,
     exact_report: bool,
     unordered_surprises: bool,
 ) {
     let (built, agreement) = assert_golden(name, 1.0, 1.0, allowed);
-    assert!(
-        agreement.exact() >= min_community,
-        "{name}: community agreement {:.3} below {min_community}",
-        agreement.exact()
-    );
+    match communities {
+        Communities::Exact => assert!(
+            agreement.exact() == 1.0,
+            "{name}: community ids differ on {:.3} of shared nodes",
+            1.0 - agreement.exact()
+        ),
+        Communities::MinNmi(min) => assert!(
+            agreement.nmi >= min,
+            "{name}: community NMI {:.3} below {min}",
+            agreement.nmi
+        ),
+    }
     if agreement.exact() == 1.0 {
         // Same communities and node set: the arrays must come out in Graphify's order too.
         let order = |g: &Value| -> Vec<String> {

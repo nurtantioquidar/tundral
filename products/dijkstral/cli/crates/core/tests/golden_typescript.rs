@@ -39,8 +39,14 @@ const ALLOWED: &[&str] = &[
 
 #[test]
 fn typescript_fixture_matches_graphify() {
-    // Community ids move with the ALLOWED differences (NMI 0.95, graphify-format.md §17.7).
-    common::assert_fixture("typescript", ALLOWED, 0.2, false, false);
+    // Community ids move with the ALLOWED differences (graphify-format.md §17.7).
+    common::assert_fixture(
+        "typescript",
+        ALLOWED,
+        common::Communities::MinNmi(0.85),
+        false,
+        false,
+    );
 }
 
 /// Build a throwaway project and return its node ids and `source -relation-> target` links.
