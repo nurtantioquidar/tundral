@@ -5,10 +5,14 @@
     uv run --no-project bench/parity.py OURS.json THEIRS.json --json summary.json
 
 Nodes are matched by id and links by (source, target, relation). `community` and
-`community_name` are ignored (clustering is compared separately); Graphify's markdown
-`document` nodes (present in `update` graphs) are dropped from both sides. `--ext` restricts
-both graphs to nodes and links whose `source_file` has one of the extensions, plus the
-source-less nodes (stubs, externals) those links touch.
+`community_name` are left out of the field comparison and compared on their own: the share of
+shared nodes with the same community id, NMI and ARI of the two partitions over the shared nodes
+(both independent of how communities are numbered), and whether the shared nodes and links come
+in the same array order (clustered `graph.json` arrays are sorted by a key that includes
+`community`, docs/graphify-format.md §2.2). Graphify's markdown `document` nodes (present in
+`update` graphs) are dropped from both sides. `--ext` restricts both graphs to nodes and links
+whose `source_file` has one of the extensions, plus the source-less nodes (stubs, externals)
+those links touch.
 
 Exit status: 0 always; read the numbers. Stdlib only.
 """
@@ -17,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -68,6 +73,57 @@ def kind(n: dict) -> str:
 
 def pct(a: int, b: int) -> str:
     return f"{100 * a / b:5.1f}%" if b else "   — "
+
+
+def partition_similarity(pairs: list[tuple[int, int]]) -> tuple[float, float]:
+    """NMI (arithmetic-mean normalisation) and adjusted Rand index of two labelings."""
+    n = len(pairs)
+    if n == 0:
+        return 1.0, 1.0
+    joint = Counter(pairs)
+    ca = Counter(a for a, _ in pairs)
+    cb = Counter(b for _, b in pairs)
+
+    def entropy(c: Counter) -> float:
+        return -sum((v / n) * math.log(v / n) for v in c.values())
+
+    mi = sum((v / n) * math.log(v * n / (ca[a] * cb[b])) for (a, b), v in joint.items())
+    ha, hb = entropy(ca), entropy(cb)
+    nmi = 1.0 if ha + hb == 0 else 2 * mi / (ha + hb)
+
+    def comb(x: int) -> float:
+        return x * (x - 1) / 2
+
+    index = sum(comb(v) for v in joint.values())
+    sa, sb = sum(comb(v) for v in ca.values()), sum(comb(v) for v in cb.values())
+    expected = sa * sb / comb(n) if n > 1 else 0.0
+    top = (sa + sb) / 2
+    ari = 1.0 if top == expected else (index - expected) / (top - expected)
+    return nmi, ari
+
+
+def community_agreement(on: dict, tn: dict) -> dict | None:
+    pairs = [
+        (on[i]["community"], tn[i]["community"])
+        for i in on.keys() & tn.keys()
+        if on[i].get("community") is not None and tn[i].get("community") is not None
+    ]
+    if not pairs:
+        return None
+    equal = sum(a == b for a, b in pairs)
+    nmi, ari = partition_similarity(pairs)
+    return {"shared": len(pairs), "equal": equal, "nmi": nmi, "ari": ari}
+
+
+def same_order(ours: list, theirs: list) -> tuple[bool, int]:
+    """Whether the common items appear in the same relative order; first diverging position."""
+    o, t = set(ours), set(theirs)
+    a = [x for x in ours if x in t]
+    b = [x for x in theirs if x in o]
+    for i, (x, y) in enumerate(zip(a, b)):
+        if x != y:
+            return False, i
+    return True, -1
 
 
 def compare(ours_path: str, theirs_path: str, exts: set[str] | None, samples: int) -> dict:
@@ -147,6 +203,35 @@ def compare(ours_path: str, theirs_path: str, exts: set[str] | None, samples: in
         for key, n in link_diff.most_common():
             print(f"  {key:22} {n:6}   e.g. {link_examples[key][:2]}")
     report["link_field_mismatches"] = dict(link_diff)
+
+    # Communities and array order (clustered graphs only).
+    agreement = community_agreement(on, tn)
+    report["communities"] = agreement
+    if agreement:
+        print(
+            f"\ncommunities (shared nodes): same id {agreement['equal']}/{agreement['shared']}"
+            f" {pct(agreement['equal'], agreement['shared'])}  NMI {agreement['nmi']:.4f}  ARI {agreement['ari']:.4f}"
+        )
+        ours_raw = json.loads(Path(ours_path).read_text())
+        theirs_raw = json.loads(Path(theirs_path).read_text())
+        node_ok, node_at = same_order(
+            [n["id"] for n in ours_raw["nodes"] if n["id"] in on],
+            [n["id"] for n in theirs_raw["nodes"] if n["id"] in tn],
+        )
+        link_key = lambda e: (e["source"], e["target"], e["relation"])  # noqa: E731
+        link_ok, link_at = same_order(
+            [link_key(e) for e in ours_raw.get("links", []) if link_key(e) in ol],
+            [link_key(e) for e in theirs_raw.get("links", []) if link_key(e) in tl],
+        )
+        print(
+            "array order (shared items): nodes "
+            + ("same" if node_ok else f"differ from position {node_at}")
+            + ", links "
+            + ("same" if link_ok else f"differ from position {link_at}")
+        )
+        report["array_order"] = {"nodes_same": node_ok, "links_same": link_ok}
+    else:
+        print("\ncommunities: not compared (a graph has no `community`)")
 
     if samples:
         print(f"\nsamples (up to {samples} per bucket):")
