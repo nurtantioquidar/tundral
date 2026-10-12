@@ -9,3 +9,4 @@ publish.workspace = true
 [dependencies]
 clap.workspace = true
 dijkstral-core.workspace = true
+mimalloc.workspace = true

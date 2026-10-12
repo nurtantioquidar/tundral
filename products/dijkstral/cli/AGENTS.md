@@ -11,8 +11,16 @@ stages are in `../DIJKSTRAL_DESIGN.md`; the head-to-head benchmark is in `../ben
 A Cargo workspace. Crates are added when their stage begins, never ahead of an implementation:
 
 - `crates/cli`: the `dijkstral` binary and command surface.
-- `crates/core` (stage 1): discovery, extraction, cache, resolution, graph store, clustering.
+- `crates/core`: discovery (`discover.rs`), per-file extraction (`extract/<lang>.rs`), the
+  content-addressed cache (`cache.rs`), the cross-file build stage (`resolve/mod.rs` plus
+  `resolve/<lang>.rs`), and the graph fold and `graph.json` writer (`graph.rs`). Clustering
+  joins it in stage 2.
 - `crates/serve`, `crates/export`, `crates/semantic`: later stages.
+
+Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's
+output, and enforced by `crates/core/tests/golden_<lang>.rs` against the goldens in
+`tests/fixtures/`. Each golden test's `ALLOWED` list names the Graphify quirks dijkstral does not
+reproduce; a new entry needs a comment with the quirk id or reason.
 
 ## Ownership boundaries
 
@@ -52,6 +60,8 @@ bun run --filter @monet/dijkstral-cli check
 ## Verification
 
 Every change must pass the module `check` command. Tests are offline and use small fixture
-repositories. A change that affects build speed, memory, graph shape or query behaviour must also be
-measured with `../bench/run.py` against the pinned Graphify baseline, and the result recorded in
-`../bench/README.md` with its date and pins.
+repositories. An extraction change must keep every golden test at its threshold and should be
+checked against the frozen Graphify references with `../bench/parity.py` (see
+`../bench/README.md`). A change that affects build speed, memory, graph shape or query behaviour
+must also be measured with `../bench/run.py` against the pinned Graphify baseline, and the result
+recorded in `../bench/README.md` with its date and pins.

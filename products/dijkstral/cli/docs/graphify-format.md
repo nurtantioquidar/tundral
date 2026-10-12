@@ -33,6 +33,7 @@ Status labels used below:
 13. Java
 14. JSON, TOML, shell and markdown in a code-only build
 15. Quirks summary and open questions
+16. Addenda from implementation
 
 ---
 
@@ -1815,3 +1816,54 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 12. **`update` versus `extract`.** `update` adds markdown nodes (§14.4) and `community_name`. Its
     warm path was reported to lose nodes on the graphify and excalidraw repos. For extract, Q3
     explains it; for `update`, this was not re-measured.
+
+---
+
+## 16. Addenda from implementation (2026-10-12)
+
+The language implementations probed Graphify further while reaching golden parity. Where this
+section disagrees with an earlier one, this section wins; the module docs of each
+`crates/core/src/{extract,resolve}/<lang>.rs` carry the full detail.
+
+- **Rust (§11).**
+  - `recv.m()` binds to the **last** same-file method named `m`, not a unique one. Inside an `impl`,
+    `self.m()` prefers that impl's own method.
+  - Cross-file bare calls are resolved by **path proximity** (longest shared directory prefix,
+    then same directory), not by global uniqueness; a tie resolves nothing.
+  - `self.m()` with no `m` in the file resolves EXTRACTED 1.0 to the same type's method in another
+    file when the type is declared exactly once (this is what `_rust_impl_key` serves).
+  - A struct/enum/trait wins stub resolution over other same-label nodes. A type the file declares
+    overrides the type denylist (`struct Error`). References, `implements` and `inherits` never
+    point at their own source. Tuple-struct constructors bind to the last node with that label and
+    have their own denylist. The three Rust denylists are now complete in the module.
+- **Python (§9).** Same-file clashes between plain functions or methods get `_sha1(name)[:6]`;
+  `indirect_call` is skipped when the function was already called; module-level collections and
+  assignments use the file node as the source; `uses` also counts class-body and function-level
+  imports. Excluded type and decorator names are listed in the module.
+- **TS/JS (§10).** Module resolution also follows the nearest `tsconfig`/`jsconfig` `extends`,
+  workspace packages by `package.json` name and `exports`/`main`; `@/` resolves relative to the
+  importing directory. Class-expression methods, object-literal methods passed to module-level
+  calls, and declarations inside top-level `describe`/`it` callbacks become module-level
+  functions (needed for frappe-style codebases).
+- **Go (§12).** Type-parameter and unresolved stubs are per file, not global. Same-file names that
+  differ only in case get `_sha1(name)[:6]`. Stubs bind globally by label (unique type, else unique
+  function). In-file calls bind against all of the file's nodes, last wins, skipping a builtin
+  denylist; bare cross-file calls bind by path proximity. Generic receivers create a node for any
+  receiver type not declared earlier in the file.
+- **Java (§13).** Scoped stubs use the last identifier as their label, except annotations, which
+  keep the full name. Graphify counts external import nodes as emitters in the §4.5 collision
+  rename; dijkstral exempts externals in every language (a few Java stub ids differ).
+- **JSON (§14.1).** The allowlist also has `nest-cli.json` and `now.json` (case-insensitive);
+  `$schema`, `bundledDependencies` and `bundleDependencies` also trigger manifests; `$schema` plus
+  `definitions`/`$defs`/`$id` marks a JSON Schema document and yields nothing; at most 500 key
+  nodes per file in pre-order; a `dependencies` object at any depth creates refs; array `extends`
+  edges come from the `extends` key node. Cross-file `ref_*` nodes with the same label (case
+  folded) merge into the shortest id when the label's Shannon entropy is at least 2.5 bits per
+  character.
+- **TOML (§14.2).** Cargo dependencies also come from `[dependencies.x]` and
+  `[target.*.dependencies]`; in pyproject, `[project]` wins over `[tool.poetry]` field by field;
+  dependency names match package names in any ecosystem; self-dependencies are skipped.
+- **Shell (§14.3).** Top-level `export`/`declare`/`readonly`/`local`/`typeset` assignments become
+  `kind:"code"` nodes (the "unexplained" quirk). Sourcing resolves `./`/`../` paths EXTRACTED,
+  existing bare paths INFERRED, missing bare paths to an external, script-directory variables
+  INFERRED; running another script creates `calls` with context `script_invocation`.

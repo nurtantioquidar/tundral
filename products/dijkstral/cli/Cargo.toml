@@ -16,6 +16,7 @@ blake3 = "1"
 bincode = "1.3"
 clap = { version = "4", features = ["derive"] }
 ignore = "0.4"
+mimalloc = { version = "0.1", default-features = false }
 rayon = "1"
 redb = "2"
 serde = { version = "1", features = ["derive"] }

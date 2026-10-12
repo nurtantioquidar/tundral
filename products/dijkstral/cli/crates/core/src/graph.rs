@@ -6,6 +6,7 @@
 //! §8.2. Direction is kept as written by the surviving edge.
 
 use std::collections::{BTreeMap, HashMap, HashSet};
+use std::io::{self, BufWriter, Write};
 
 use rayon::prelude::*;
 use serde_json::{Map, Value};
@@ -96,83 +97,153 @@ impl Graph {
     /// Merge duplicate node ids (first wins), drop dangling edges, and fold parallel edges to one
     /// link per unordered pair in the given order.
     pub fn assemble(nodes: Vec<Node>, edges: Vec<Edge>) -> Graph {
-        let mut seen = HashSet::with_capacity(nodes.len());
-        let nodes: Vec<Node> = nodes
-            .into_iter()
-            .filter(|n| seen.insert(n.id.clone()))
-            .collect();
+        Graph::assemble_batches(nodes, vec![edges])
+    }
 
-        let mut slot: HashMap<(String, String), usize> = HashMap::with_capacity(edges.len());
-        let mut kept: Vec<Edge> = Vec::with_capacity(edges.len());
-        let mut dangling = 0;
-        for e in edges {
-            if !seen.contains(&e.source) || !seen.contains(&e.target) {
-                dangling += 1;
-                continue;
-            }
-            let pair = if e.source <= e.target {
-                (e.source.clone(), e.target.clone())
-            } else {
-                (e.target.clone(), e.source.clone())
-            };
-            match slot.get(&pair) {
-                None => {
-                    slot.insert(pair, kept.len());
-                    kept.push(e);
-                }
-                Some(&i) => fold(&mut kept[i], e),
+    /// `assemble` over edge batches (one per file, then the cross-file passes), folded in order.
+    /// A counting pass sizes the result exactly and each batch is freed once folded, so a large
+    /// build never holds every raw edge next to a doubling result vector.
+    pub fn assemble_batches(nodes: Vec<Node>, batches: Vec<Vec<Edge>>) -> Graph {
+        let nodes: Vec<Node> = {
+            let mut seen = HashSet::with_capacity(nodes.len());
+            let keep: Vec<bool> = nodes.iter().map(|n| seen.insert(n.id.as_str())).collect();
+            drop(seen);
+            nodes
+                .into_iter()
+                .zip(keep)
+                .filter_map(|(n, k)| k.then_some(n))
+                .collect()
+        };
+
+        // Fold on integer node indices: no per-edge key strings are allocated.
+        let index: HashMap<&str, u32> = nodes
+            .iter()
+            .enumerate()
+            .map(|(i, n)| (n.id.as_str(), i as u32))
+            .collect();
+        let pair_of = |e: &Edge| -> Option<(u32, u32)> {
+            let s = *index.get(e.source.as_str())?;
+            let t = *index.get(e.target.as_str())?;
+            Some(if s <= t { (s, t) } else { (t, s) })
+        };
+
+        let mut slot: HashMap<(u32, u32), u32> = HashMap::new();
+        for e in batches.iter().flatten() {
+            if let Some(pair) = pair_of(e) {
+                let next = slot.len() as u32;
+                slot.entry(pair).or_insert(next);
             }
         }
+        let mut kept: Vec<Option<Edge>> = Vec::with_capacity(slot.len());
+        kept.resize_with(slot.len(), || None);
+        let mut dangling = 0;
+        for batch in batches {
+            for e in batch {
+                let Some(pair) = pair_of(&e) else {
+                    dangling += 1;
+                    continue;
+                };
+                let i = slot[&pair] as usize;
+                match &mut kept[i] {
+                    None => kept[i] = Some(e),
+                    Some(old) => fold(old, e),
+                }
+            }
+        }
+        drop(slot);
+        drop(index);
         Graph {
             nodes,
-            edges: kept,
+            // Every counted pair received at least one edge; `map` collects in place.
+            edges: kept
+                .into_iter()
+                .map(|e| e.expect("every counted pair has an edge"))
+                .collect(),
             dangling,
         }
     }
 
     /// Clustered-shape `graph.json` (§2.1): compact, ASCII-escaped, no trailing newline, arrays in
     /// Graphify's sort order. `community` is written once clustering exists.
-    pub fn to_graphify_json(&self, built_at_commit: Option<&str>) -> String {
-        let mut nodes: Vec<(String, String)> =
-            self.nodes.par_iter().map(|n| encode(node_map(n))).collect();
-        let mut links: Vec<(String, String)> =
-            self.edges.par_iter().map(|e| encode(edge_map(e))).collect();
-        nodes.par_sort_unstable_by(|a, b| a.0.cmp(&b.0));
-        links.par_sort_unstable_by(|a, b| a.0.cmp(&b.0));
+    ///
+    /// Memory stays bounded on large graphs: only the per-item sort keys are held while sorting,
+    /// and items are rendered and written in batches rather than built into one document.
+    pub fn write_graphify_json<W: Write>(
+        &self,
+        w: W,
+        built_at_commit: Option<&str>,
+    ) -> io::Result<()> {
+        let node_order = sorted_order(&self.nodes, |n| sort_key(node_map(n)));
+        let link_order = sorted_order(&self.edges, |e| sort_key(edge_map(e)));
 
-        let mut out = String::with_capacity(
-            nodes
-                .iter()
-                .chain(&links)
-                .map(|(_, s)| s.len() + 1)
-                .sum::<usize>()
-                + 256,
-        );
-        out.push_str("{\"directed\":false,\"multigraph\":false,\"graph\":{\"schema_version\":");
-        out.push_str(&SCHEMA_VERSION.to_string());
-        out.push_str(",\"graphify_version\":\"");
-        out.push_str(COMPAT_VERSION);
-        out.push_str("\"},\"nodes\":[");
-        push_joined(&mut out, &nodes);
-        out.push_str("],\"links\":[");
-        push_joined(&mut out, &links);
-        out.push_str("],\"hyperedges\":[]");
+        let mut w = BufWriter::with_capacity(1 << 20, w);
+        w.write_all(b"{\"directed\":false,\"multigraph\":false,\"graph\":{\"schema_version\":")?;
+        w.write_all(SCHEMA_VERSION.to_string().as_bytes())?;
+        w.write_all(b",\"graphify_version\":\"")?;
+        w.write_all(COMPAT_VERSION.as_bytes())?;
+        w.write_all(b"\"},\"nodes\":[")?;
+        write_items(&mut w, &self.nodes, &node_order, |n| compact(node_map(n)))?;
+        w.write_all(b"],\"links\":[")?;
+        write_items(&mut w, &self.edges, &link_order, |e| compact(edge_map(e)))?;
+        w.write_all(b"],\"hyperedges\":[]")?;
         if let Some(c) = built_at_commit {
-            out.push_str(",\"built_at_commit\":");
-            out.push_str(&serde_json::to_string(c).unwrap());
+            w.write_all(b",\"built_at_commit\":")?;
+            w.write_all(ascii_escape(serde_json::to_string(c).unwrap()).as_bytes())?;
         }
-        out.push('}');
-        ascii_escape(out)
+        w.write_all(b"}")?;
+        w.flush()
+    }
+
+    /// The whole document as a string (tests and small graphs).
+    pub fn to_graphify_json(&self, built_at_commit: Option<&str>) -> String {
+        let mut out = Vec::new();
+        self.write_graphify_json(&mut out, built_at_commit).unwrap();
+        String::from_utf8(out).unwrap()
     }
 }
 
-fn push_joined(out: &mut String, items: &[(String, String)]) {
-    for (i, (_, s)) in items.iter().enumerate() {
-        if i > 0 {
-            out.push(',');
+/// Indices of `items` ordered by `key`, ties broken by position (keys are unique in practice).
+fn sorted_order<T: Sync>(items: &[T], key: impl Fn(&T) -> String + Sync) -> Vec<u32> {
+    let mut keyed: Vec<(Box<str>, u32)> = items
+        .par_iter()
+        .enumerate()
+        .map(|(i, x)| (key(x).into_boxed_str(), i as u32))
+        .collect();
+    keyed.par_sort_unstable();
+    keyed.into_iter().map(|(_, i)| i).collect()
+}
+
+/// Render items in `order`, comma-separated and ASCII-escaped, a bounded batch at a time.
+fn write_items<T: Sync, W: Write>(
+    w: &mut W,
+    items: &[T],
+    order: &[u32],
+    render: impl Fn(&T) -> String + Sync,
+) -> io::Result<()> {
+    const BATCH: usize = 1 << 16;
+    const CHUNK: usize = 1 << 10;
+    for (b, batch) in order.chunks(BATCH).enumerate() {
+        let parts: Vec<String> = batch
+            .par_chunks(CHUNK)
+            .map(|chunk| {
+                let mut s = String::new();
+                for (i, &idx) in chunk.iter().enumerate() {
+                    if i > 0 {
+                        s.push(',');
+                    }
+                    s.push_str(&render(&items[idx as usize]));
+                }
+                ascii_escape(s)
+            })
+            .collect();
+        for (i, part) in parts.iter().enumerate() {
+            if b > 0 || i > 0 {
+                w.write_all(b",")?;
+            }
+            w.write_all(part.as_bytes())?;
         }
-        out.push_str(s);
     }
+    Ok(())
 }
 
 /// `lower(strip_combining(NFKD(label)))` (§5.4).
@@ -202,7 +273,7 @@ fn loc_value(loc: Loc) -> Option<Value> {
 }
 
 /// Fields in Graphify's key order: `id`, `label`, then the rest sorted.
-fn node_map(n: &Node) -> (Vec<(&'static str, Value)>, BTreeMap<String, Value>) {
+fn node_map(n: &Node) -> Fields {
     let head = vec![
         ("id", Value::String(n.id.clone())),
         ("label", Value::String(n.label.clone())),
@@ -221,7 +292,7 @@ fn node_map(n: &Node) -> (Vec<(&'static str, Value)>, BTreeMap<String, Value>) {
 }
 
 /// Fields in Graphify's key order: `source`, `target`, `relation`, then the rest sorted.
-fn edge_map(e: &Edge) -> (Vec<(&'static str, Value)>, BTreeMap<String, Value>) {
+fn edge_map(e: &Edge) -> Fields {
     let head = vec![
         ("source", Value::String(e.source.clone())),
         ("target", Value::String(e.target.clone())),
@@ -250,16 +321,20 @@ fn edge_map(e: &Edge) -> (Vec<(&'static str, Value)>, BTreeMap<String, Value>) {
     (head, rest)
 }
 
-/// Returns (sort key, output text). The sort key is Python's
-/// `json.dumps(obj, sort_keys=True, ensure_ascii=False)` with default separators (§2.2); the
-/// output keeps the head keys first and is compact.
-fn encode((head, rest): (Vec<(&'static str, Value)>, BTreeMap<String, Value>)) -> (String, String) {
-    let mut sorted: BTreeMap<String, Value> = rest.clone();
-    for (k, v) in &head {
-        sorted.insert((*k).to_string(), v.clone());
-    }
-    let key = python_dumps(&Value::Object(sorted.into_iter().collect()));
+type Fields = (Vec<(&'static str, Value)>, BTreeMap<String, Value>);
 
+/// Python's `json.dumps(obj, sort_keys=True, ensure_ascii=False)` with default separators: the
+/// string Graphify sorts arrays by (§2.2).
+fn sort_key((head, rest): Fields) -> String {
+    let mut sorted: Map<String, Value> = rest.into_iter().collect();
+    for (k, v) in head {
+        sorted.insert(k.to_string(), v);
+    }
+    python_dumps(&Value::Object(sorted))
+}
+
+/// The compact output object: head keys first, then the rest sorted (§2.3). Not yet escaped.
+fn compact((head, rest): Fields) -> String {
     let mut map = Map::new();
     for (k, v) in head {
         map.insert(k.to_string(), v);
@@ -267,7 +342,7 @@ fn encode((head, rest): (Vec<(&'static str, Value)>, BTreeMap<String, Value>)) -
     for (k, v) in rest {
         map.insert(k, v);
     }
-    (key, serde_json::to_string(&Value::Object(map)).unwrap())
+    serde_json::to_string(&Value::Object(map)).unwrap()
 }
 
 /// `json.dumps(v, sort_keys=True, ensure_ascii=False)`: `", "` and `": "` separators.

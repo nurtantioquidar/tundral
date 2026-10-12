@@ -35,7 +35,7 @@ Measured or documented in Graphify itself (issue numbers refer to Graphify-Labs/
 ```text
 discover ─► extract ─► cache ─► resolve ─► graph store ─► cluster ─► analyze ─► export
  ignore      tree-sitter  blake3    import-scoped  CSR multigraph   Leiden     cycles,     graph.json (Graphify v1)
- parallel    .scm queries redb      per-language   rkyv index       seed 42    god nodes,  GRAPH_REPORT.md, html,
+ parallel    one walk     redb      per-language   rkyv index       seed 42    god nodes,  GRAPH_REPORT.md, html,
  walker      rayon        stat path module rules   mmap queries                betweenness wiki, graphml, cypher…
                                                         │
                                        serve: query / path / explain / MCP / hook-guard
@@ -45,9 +45,10 @@ discover ─► extract ─► cache ─► resolve ─► graph store ─► cl
 - **Discover**: the `ignore` crate's parallel walker with per-directory `.gitignore` scoping, plus
   `.dijkstralignore` and `.graphifyignore`. Default skip directories, lockfiles and the sensitive
   file filter match Graphify's so both tools index the same corpus.
-- **Extract**: tree-sitter 0.25 in parallel; each language is a set of `.scm` queries for
-  definitions, imports, calls, references and inheritance. Trees are dropped as soon as facts are
-  extracted, bounding memory regardless of language.
+- **Extract**: tree-sitter 0.25 in parallel, one parser per thread and language; each language is
+  a single walk over the tree (`crates/core/src/extract/<lang>.rs`) that emits nodes, in-file edges
+  and the facts the cross-file pass needs. Trees are dropped as soon as facts are extracted,
+  bounding memory regardless of language. JSON, TOML and shell use their own small parsers.
 - **Cache**: per-file facts keyed by blake3 of content and relative path plus a grammar and query
   fingerprint, in one redb file, behind an mtime+size stat fast path with a racy-clean guard.
   Every language is cached.

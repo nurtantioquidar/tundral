@@ -39,8 +39,9 @@ pub struct BuildReport {
 enum Probe {
     /// Stat matched the cache index; content not read.
     Known(Key, Stat),
-    /// Read and hashed.
-    Read(Key, Stat, Vec<u8>),
+    /// Read and hashed. The content is not kept: extraction re-reads the (rare) misses, so a
+    /// cold build never holds the whole corpus in memory.
+    Read(Key, Stat),
     /// Unreadable (removed mid-walk, permissions…).
     Failed,
 }
@@ -84,7 +85,7 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
     let file_keys: Vec<Option<Key>> = probes
         .iter()
         .map(|p| match p {
-            Probe::Known(k, _) | Probe::Read(k, _, _) => Some(*k),
+            Probe::Known(k, _) | Probe::Read(k, _) => Some(*k),
             Probe::Failed => None,
         })
         .collect();
@@ -97,12 +98,14 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
         .par_iter()
         .enumerate()
         .filter_map(|(i, p)| {
-            let (key, content) = match p {
-                Probe::Known(k, _) if !hits.contains_key(k) => (*k, fs::read(&files[i].abs).ok()?),
-                Probe::Read(k, _, c) if !hits.contains_key(k) => (*k, c.clone()),
+            match p {
+                Probe::Known(k, _) | Probe::Read(k, _) if !hits.contains_key(k) => {}
                 _ => return None,
-            };
+            }
             let f = &files[i];
+            let content = fs::read(&f.abs).ok()?;
+            // Key what was actually parsed, in case the file changed since the probe.
+            let key = content_key(f.lang, &f.rel, &content);
             Some((i, key, extract_file(f.lang, &f.rel, &content)))
         })
         .collect();
@@ -111,7 +114,7 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
 
     let mut stats = HashMap::with_capacity(files.len());
     for (f, p) in files.iter().zip(&probes) {
-        if let Probe::Known(k, s) | Probe::Read(k, s, _) = p {
+        if let Probe::Known(k, s) | Probe::Read(k, s) = p {
             stats.insert(f.rel.clone(), (*s, *k));
         }
     }
@@ -141,8 +144,10 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
 
     report.nodes = graph.nodes.len();
     report.edges = graph.edges.len();
-    let json = graph.to_graphify_json(git_head(&root).as_deref());
-    write_atomic(&out_dir.join("graph.json"), json.as_bytes())?;
+    let target = out_dir.join("graph.json");
+    let tmp = target.with_extension("json.tmp");
+    graph.write_graphify_json(fs::File::create(&tmp)?, git_head(&root).as_deref())?;
+    fs::rename(&tmp, &target)?;
     phase(&mut report, "write");
     Ok(report)
 }
@@ -155,7 +160,7 @@ fn probe(cache: &Cache, f: &SourceFile) -> Probe {
         return Probe::Known(key, stat);
     }
     match fs::read(&f.abs) {
-        Ok(content) => Probe::Read(content_key(f.lang, &f.rel, &content), stat, content),
+        Ok(content) => Probe::Read(content_key(f.lang, &f.rel, &content), stat),
         Err(_) => Probe::Failed,
     }
 }
@@ -190,11 +195,4 @@ fn git_head(root: &Path) -> Option<String> {
     out.status
         .success()
         .then(|| String::from_utf8_lossy(&out.stdout).trim().to_string())
-}
-
-fn write_atomic(path: &Path, bytes: &[u8]) -> Result<()> {
-    let tmp = path.with_extension("json.tmp");
-    fs::write(&tmp, bytes)?;
-    fs::rename(&tmp, path)?;
-    Ok(())
 }

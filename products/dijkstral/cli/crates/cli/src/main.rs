@@ -5,6 +5,11 @@ use std::time::Instant;
 use clap::{Args, Parser, Subcommand};
 use dijkstral_core::{build, BuildOptions, BuildReport};
 
+// mimalloc keeps fragmentation and the retained high-water mark well below the system allocator's
+// on large builds (Kubernetes: measured in bench/README.md).
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 /// Dijkstral turns a repository into a queryable knowledge graph for AI coding agents.
 #[derive(Parser, Debug)]
 #[command(name = "dijkstral", version, about, long_about = None)]

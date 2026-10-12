@@ -111,17 +111,23 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
             .collect()
     });
 
-    let mut nodes: Vec<Node> = Vec::new();
-    let mut edges: Vec<Edge> = Vec::new();
+    drop(index);
+
+    // Keep each file's edges in its own batch and fold them in order: the build never holds
+    // one vector of every raw edge next to the folded result. Language facts are dropped here.
+    let node_count = views.iter().map(|v| v.facts.nodes.len()).sum::<usize>()
+        + results.iter().map(|r| r.nodes.len()).sum::<usize>();
+    let mut nodes: Vec<Node> = Vec::with_capacity(node_count);
+    let mut batches: Vec<Vec<Edge>> = Vec::with_capacity(views.len() + results.len());
     for v in views {
         nodes.extend(v.facts.nodes);
-        edges.extend(v.facts.edges);
+        batches.push(v.facts.edges);
     }
     let mut redirects: HashMap<String, String> = HashMap::new();
     let mut attrs: HashMap<String, Vec<(String, Attr)>> = HashMap::new();
     for r in results {
         nodes.extend(r.nodes);
-        edges.extend(r.edges);
+        batches.push(r.edges);
         redirects.extend(r.redirects);
         for (id, key, value) in r.attrs {
             attrs.entry(id).or_default().push((key, value));
@@ -139,19 +145,23 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
     redirects.extend(merge_rationale(&nodes));
 
     if !redirects.is_empty() {
-        let target = |id: &str| -> Option<String> {
-            // Follow chains (a stub redirected to a node that was itself redirected).
-            let mut cur = redirects.get(id)?;
-            for _ in 0..8 {
-                match redirects.get(cur) {
-                    Some(next) => cur = next,
-                    None => break,
-                }
-            }
-            Some(cur.clone())
-        };
         nodes.retain(|n| !redirects.contains_key(&n.id));
-        for e in &mut edges {
+    }
+    assign_file_labels(&mut nodes);
+
+    let target = |id: &str| -> Option<String> {
+        // Follow chains (a stub redirected to a node that was itself redirected).
+        let mut cur = redirects.get(id)?;
+        for _ in 0..8 {
+            match redirects.get(cur) {
+                Some(next) => cur = next,
+                None => break,
+            }
+        }
+        Some(cur.clone())
+    };
+    if !redirects.is_empty() {
+        for e in batches.iter_mut().flatten() {
             if let Some(t) = target(&e.source) {
                 e.source = t;
             }
@@ -160,9 +170,7 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
             }
         }
     }
-
-    assign_file_labels(&mut nodes);
-    Graph::assemble(nodes, edges)
+    Graph::assemble_batches(nodes, batches)
 }
 
 /// §4.5: an id emitted by two or more files is rewritten for every emitter to

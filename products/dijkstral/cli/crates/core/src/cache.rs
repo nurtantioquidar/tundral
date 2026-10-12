@@ -9,7 +9,7 @@ use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 use anyhow::{Context, Result};
-use redb::{Database, ReadableTable, TableDefinition};
+use redb::{Builder, Database, Durability, ReadableTable, TableDefinition};
 
 use crate::facts::FileFacts;
 use crate::lang::Lang;
@@ -21,6 +21,10 @@ const FACTS: TableDefinition<&[u8; 32], &[u8]> = TableDefinition::new("facts");
 const STATS: TableDefinition<&str, &[u8]> = TableDefinition::new("stats");
 const META: TableDefinition<&str, u64> = TableDefinition::new("meta");
 const RACY_WINDOW_NS: u64 = 2_000_000_000;
+/// Files encoded and inserted per transaction during a commit.
+const COMMIT_CHUNK: usize = 2048;
+/// redb page cache; the default (1 GiB) dominated peak memory on large cold builds.
+const CACHE_BYTES: usize = 64 << 20;
 
 pub type Key = [u8; 32];
 
@@ -51,12 +55,13 @@ impl Cache {
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent)?;
         }
-        let db = match Database::create(path) {
+        let create = || Builder::new().set_cache_size(CACHE_BYTES).create(path);
+        let db = match create() {
             Ok(db) => db,
             // A corrupt or incompatible cache is disposable: start over.
             Err(_) => {
                 std::fs::remove_file(path).ok();
-                Database::create(path).context("creating cache")?
+                create().context("creating cache")?
             }
         };
         let tx = db.begin_write()?;
@@ -114,20 +119,31 @@ impl Cache {
         stats: HashMap<String, (Stat, Key)>,
         now_ns: u64,
     ) -> Result<()> {
-        let encoded: Vec<(Key, Vec<u8>)> = {
-            use rayon::prelude::*;
-            new_facts
-                .par_iter()
-                .map(|(k, f)| Ok((*k, bincode::serialize(f)?)))
-                .collect::<Result<_>>()?
-        };
+        // Encode and insert a bounded chunk per transaction so neither the encoded bytes nor
+        // redb's dirty pages for a whole cold build are held at once. Intermediate commits are
+        // non-durable; the final commit below makes them durable together.
+        for chunk in new_facts.chunks(COMMIT_CHUNK) {
+            let encoded: Vec<(Key, Vec<u8>)> = {
+                use rayon::prelude::*;
+                chunk
+                    .par_iter()
+                    .map(|(k, f)| Ok((*k, bincode::serialize(f)?)))
+                    .collect::<Result<_>>()?
+            };
+            let mut tx = self.db.begin_write()?;
+            tx.set_durability(Durability::None);
+            {
+                let mut facts = tx.open_table(FACTS)?;
+                for (k, bytes) in &encoded {
+                    facts.insert(k, bytes.as_slice())?;
+                }
+            }
+            tx.commit()?;
+        }
         let live: HashSet<Key> = stats.values().map(|(_, k)| *k).collect();
         let tx = self.db.begin_write()?;
         {
             let mut facts = tx.open_table(FACTS)?;
-            for (k, bytes) in &encoded {
-                facts.insert(k, bytes.as_slice())?;
-            }
             let stale: Vec<Key> = facts
                 .iter()?
                 .filter_map(|row| row.ok().map(|(k, _)| *k.value()))
