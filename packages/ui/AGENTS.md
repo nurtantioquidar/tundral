@@ -2,8 +2,8 @@
 
 ## Purpose
 
-`@monet/ui` is the Monet design-token layer. It exists because three frontends — `apps/hub`,
-`products/inver/web`, and `products/regretz/web` — must not each carry their own copy of the brand.
+`@monet/ui` is the Monet design-token layer. It exists because two frontends — `apps/hub` and
+`products/inver/web` — must not each carry their own copy of the brand.
 
 Follow the repository-root `AGENTS.md` first. `CLAUDE.md` must remain a relative symlink to this
 file.
@@ -27,7 +27,7 @@ revisiting this file.
 
 ## Change rules
 
-- Tokens are consumed by three independently deployed frontends. A rename or removal is a breaking
+- Tokens are consumed by two independently deployed frontends. A rename or removal is a breaking
   change across all of them; verify every consumer in the same change.
 - Prefer adding a token over redefining an existing one. Never change a token's meaning in place.
 - Keep every value semantic. `--color-accent` is correct; `--color-amber` is not, because it

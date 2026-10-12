@@ -40,8 +40,8 @@ product detail duplicated here will eventually contradict the product that owns 
   meaning.
 - `src/app/globals.css` holds layout; `src/app/tokens.css` holds every colour, size, and font.
 - `DESIGN.md` is the hub's design law and `design-notes.md` records what the owner rejected. Read
-  both before changing how the hub looks. The hub owns its tokens instead of `@monet/ui` (like
-  Regretz) so monet.sh reads as a studio; never import the shared token layer here.
+  both before changing how the hub looks. The hub owns its tokens instead of `@monet/ui` so
+  monet.sh reads as a studio; never import the shared token layer here.
 
 ## Environment
 

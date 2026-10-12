@@ -86,13 +86,13 @@ production must provide the scoped value.
 
 ## Design system
 
-Design tokens live in `@monet/ui` and are shared with every other Monet frontend; this app's theme,
+Design tokens live in `@monet/ui` and are shared with the `monet.sh` hub; this app's theme,
 component styling, and page composition are not contractual. A frontend redesign may replace the
 styling if it remains coherent across public, customer, and operator surfaces.
 
-Changing a token changes `monet.sh` and `regretz.monet.sh` too. Restyle this app in its own
-`src/app/globals.css`; reach into `packages/ui` only for a deliberate brand-wide change, and then
-verify every consumer. See `packages/ui/AGENTS.md`.
+Changing a token changes `monet.sh` too. Restyle this app in its own `src/app/globals.css`; reach
+into `packages/ui` only for a deliberate brand-wide change, and then verify every consumer. See
+`packages/ui/AGENTS.md`.
 
 - Preserve the route behavior, content hierarchy, state handling, money semantics, and security
   boundaries in `../../docs/frontend-product-contract.md`.

@@ -110,7 +110,7 @@ verified against `products/inver/gateway/docs/public-api.md`.
   app that is **not** migrating to Effect; putting Effect types in the transport boundary would
   force Effect into the browser bundle. Effect Schema may be used *inside* the gateway to parse
   contract types, not to define them.
-- `products/inver/web`, `apps/hub`, and `products/regretz/web` are out of scope.
+- `products/inver/web` and `apps/hub` are out of scope.
 - If a stage cannot land green, revert it. Do not carry a red suite into the next stage.
 
 ## Rollback
