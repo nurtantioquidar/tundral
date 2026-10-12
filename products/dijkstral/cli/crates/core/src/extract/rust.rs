@@ -42,6 +42,39 @@ pub struct RustFacts {
     /// `self.name()` calls inside an impl when the file has no method `name` at all: they resolve
     /// to the method `name` of the same type in another file (EXTRACTED, score 1.0).
     pub self_calls: Vec<SelfCall>,
+    /// Every `use` leaf with its full path, function bodies included (module resolution).
+    pub uses: Vec<RsUse>,
+    /// `mod name;` declarations (out-of-line modules).
+    pub mods: Vec<RsMod>,
+    /// Names of the items the file declares, inline modules included and flattened, each with
+    /// whether a path can continue through it (a module or a type, not a function or value).
+    pub items: Vec<(String, bool)>,
+    /// `extern crate name [as alias];`: (crate name, bound name).
+    pub extern_crates: Vec<(String, String)>,
+}
+
+/// One leaf of a `use` tree.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RsUse {
+    /// Segments as written (`crate`, `self`, `super`, names); `""` first for a leading `::`. A
+    /// glob's path names the module; `a::{self}` names `a`.
+    pub path: Vec<String>,
+    /// The name the leaf binds (the alias, else the last segment); `None` for globs and `as _`.
+    pub bound: Option<String>,
+    pub glob: bool,
+    /// Enclosing inline `mod` blocks at the use site: `super` inside one stays in the file.
+    pub depth: u32,
+    /// Inside a function body (Graphify emits no edge for it).
+    pub in_fn: bool,
+    pub line: u32,
+}
+
+/// `mod name;` inside the inline modules `inline`, with its `#[path = "…"]` if any.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RsMod {
+    pub inline: Vec<String>,
+    pub name: String,
+    pub path: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -212,6 +245,15 @@ struct Walker<'c, 'a> {
     /// Index of the first node with each id.
     first_node: HashMap<String, usize>,
     sites: Vec<Site<'a>>,
+    /// Names of the inline `mod` blocks around the current item.
+    mod_path: Vec<&'a str>,
+    uses: Vec<RsUse>,
+    mods: Vec<RsMod>,
+    items: Vec<(String, bool)>,
+    item_seen: HashMap<&'a str, usize>,
+    extern_crates: Vec<(String, String)>,
+    /// Recording the `use` declarations of a function body.
+    in_body: bool,
 }
 
 fn push_distinct(v: &mut Vec<String>, id: &str) {
@@ -253,6 +295,13 @@ impl<'c, 'a> Walker<'c, 'a> {
             callers: Vec::new(),
             first_node: HashMap::new(),
             sites: Vec::new(),
+            mod_path: Vec::new(),
+            uses: Vec::new(),
+            mods: Vec::new(),
+            items: Vec::new(),
+            item_seen: HashMap::new(),
+            extern_crates: Vec::new(),
+            in_body: false,
         }
     }
 
@@ -453,11 +502,60 @@ impl<'c, 'a> Walker<'c, 'a> {
 
     fn items(&mut self, container: TsNode) {
         for item in named_children(container) {
+            if matches!(
+                item.kind(),
+                "mod_item"
+                    | "struct_item"
+                    | "enum_item"
+                    | "trait_item"
+                    | "function_item"
+                    | "function_signature_item"
+                    | "const_item"
+                    | "static_item"
+                    | "macro_definition"
+                    | "type_item"
+                    | "union_item"
+            ) {
+                if let Some(name) = self.field_text(item, "name") {
+                    let prefix = matches!(
+                        item.kind(),
+                        "mod_item"
+                            | "struct_item"
+                            | "enum_item"
+                            | "trait_item"
+                            | "type_item"
+                            | "union_item"
+                    );
+                    self.item_name(name, prefix);
+                }
+            }
             match item.kind() {
-                "use_declaration" => self.use_decl(item),
+                "use_declaration" => {
+                    self.use_decl(item);
+                    self.record_uses(item);
+                }
+                "extern_crate_declaration" => {
+                    if let Some(name) = self.field_text(item, "name") {
+                        let bound = self.field_text(item, "alias").unwrap_or(name);
+                        self.extern_crates
+                            .push((name.to_string(), bound.to_string()));
+                    }
+                }
                 "mod_item" => {
-                    if let Some(body) = item.child_by_field_name("body") {
-                        self.items(body);
+                    let name = self.field_text(item, "name");
+                    match (item.child_by_field_name("body"), name) {
+                        (Some(body), Some(name)) => {
+                            self.mod_path.push(name);
+                            self.items(body);
+                            self.mod_path.pop();
+                        }
+                        (Some(body), None) => self.items(body),
+                        (None, Some(name)) => self.mods.push(RsMod {
+                            inline: self.mod_path.iter().map(|s| s.to_string()).collect(),
+                            name: name.to_string(),
+                            path: self.path_attr(item),
+                        }),
+                        (None, None) => {}
                     }
                 }
                 "struct_item" => self.struct_item(item),
@@ -472,6 +570,9 @@ impl<'c, 'a> Walker<'c, 'a> {
                         for f in named_children(body) {
                             if f.kind() == "function_signature_item" || f.kind() == "function_item"
                             {
+                                if let Some(name) = self.field_text(f, "name") {
+                                    self.item_name(name, false);
+                                }
                                 self.free_fn(f);
                             }
                         }
@@ -776,6 +877,138 @@ impl<'c, 'a> Walker<'c, 'a> {
         }
     }
 
+    fn item_name(&mut self, name: &'a str, prefix: bool) {
+        match self.item_seen.get(name) {
+            Some(&i) => self.items[i].1 |= prefix,
+            None => {
+                self.item_seen.insert(name, self.items.len());
+                self.items.push((name.to_string(), prefix));
+            }
+        }
+    }
+
+    /// `#[path = "…"]` among the attributes written before an item.
+    fn path_attr(&self, item: TsNode) -> Option<String> {
+        let mut prev = item.prev_named_sibling();
+        while let Some(p) = prev.filter(|p| matches!(p.kind(), "attribute_item" | "line_comment")) {
+            let text = self.text(p);
+            if let Some(rest) = text
+                .strip_prefix("#[")
+                .map(str::trim_start)
+                .and_then(|t| t.strip_prefix("path"))
+                .map(str::trim_start)
+                .and_then(|t| t.strip_prefix('='))
+            {
+                let value = rest.trim().trim_end_matches(']').trim();
+                if let Some(v) = value.strip_prefix('"').and_then(|v| v.strip_suffix('"')) {
+                    return Some(v.to_string());
+                }
+            }
+            prev = p.prev_named_sibling();
+        }
+        None
+    }
+
+    /// Full-path leaves of a `use` declaration (module resolution, `crate::resolve::rust`).
+    fn record_uses(&mut self, n: TsNode) {
+        if let Some(arg) = n.child_by_field_name("argument") {
+            let mut prefix = Vec::new();
+            self.use_tree(arg, &mut prefix);
+        }
+    }
+
+    /// Segments of a path (`a::b::c`); `false` for anything that is not a plain path.
+    fn path_segments(&self, n: TsNode, out: &mut Vec<&'a str>) -> bool {
+        match n.kind() {
+            "scoped_identifier" => {
+                match n.child_by_field_name("path") {
+                    Some(p) => {
+                        if !self.path_segments(p, out) {
+                            return false;
+                        }
+                    }
+                    None => out.push(""),
+                }
+                match self.field_text(n, "name") {
+                    Some(name) => {
+                        out.push(name);
+                        true
+                    }
+                    None => false,
+                }
+            }
+            "identifier" | "crate" | "self" | "super" => {
+                out.push(self.text(n));
+                true
+            }
+            _ => false,
+        }
+    }
+
+    fn use_tree(&mut self, n: TsNode, prefix: &mut Vec<&'a str>) {
+        let mark = prefix.len();
+        match n.kind() {
+            "use_list" => {
+                for c in named_children(n) {
+                    self.use_tree(c, prefix);
+                }
+            }
+            "scoped_use_list" => {
+                let ok = match n.child_by_field_name("path") {
+                    Some(p) => self.path_segments(p, prefix),
+                    None => true,
+                };
+                if let (true, Some(list)) = (ok, n.child_by_field_name("list")) {
+                    self.use_tree(list, prefix);
+                }
+            }
+            "use_wildcard" => {
+                if named_children(n)
+                    .next()
+                    .is_none_or(|p| self.path_segments(p, prefix))
+                {
+                    self.push_use(prefix, None, true, n);
+                }
+            }
+            "use_as_clause" => {
+                let ok = n
+                    .child_by_field_name("path")
+                    .is_some_and(|p| self.path_segments(p, prefix));
+                if ok {
+                    if prefix.last() == Some(&"self") {
+                        prefix.pop();
+                    }
+                    let alias = self.field_text(n, "alias").filter(|a| *a != "_");
+                    self.push_use(prefix, alias, false, n);
+                }
+            }
+            _ => {
+                if self.path_segments(n, prefix) {
+                    if prefix.last() == Some(&"self") && prefix.len() > 1 {
+                        prefix.pop();
+                    }
+                    let bound = prefix.last().copied();
+                    self.push_use(prefix, bound, false, n);
+                }
+            }
+        }
+        prefix.truncate(mark);
+    }
+
+    fn push_use(&mut self, path: &[&str], bound: Option<&str>, glob: bool, n: TsNode) {
+        if path.is_empty() {
+            return;
+        }
+        self.uses.push(RsUse {
+            path: path.iter().map(|s| s.to_string()).collect(),
+            bound: bound.map(str::to_string),
+            glob,
+            depth: self.mod_path.len() as u32,
+            in_fn: self.in_body,
+            line: Ctx::line(n),
+        });
+    }
+
     /// Last segment of a path in a `use` tree (`a::b` → `b`; `self` → the enclosing segment).
     fn path_last(&self, n: TsNode, parent: Option<&'a str>) -> Option<&'a str> {
         let seg = match n.kind() {
@@ -853,9 +1086,16 @@ impl<'c, 'a> Walker<'c, 'a> {
         let mut stack = vec![body];
         while let Some(n) = stack.pop() {
             match n.kind() {
+                // A `use` in a body brings no edge Graphify knows, but it is a dependency of the
+                // file (module resolution).
+                "use_declaration" => {
+                    self.in_body = true;
+                    self.record_uses(n);
+                    self.in_body = false;
+                    continue;
+                }
                 "function_item" | "impl_item" | "trait_item" | "mod_item" | "macro_definition"
-                | "foreign_mod_item" | "struct_item" | "enum_item" | "union_item"
-                | "use_declaration" => continue,
+                | "foreign_mod_item" | "struct_item" | "enum_item" | "union_item" => continue,
                 "macro_invocation" => {
                     if let Some(m) = n.child_by_field_name("macro") {
                         if m.kind() == "identifier" {
@@ -1055,6 +1295,10 @@ impl<'c, 'a> Walker<'c, 'a> {
             externals,
             calls,
             self_calls,
+            uses: std::mem::take(&mut self.uses),
+            mods: std::mem::take(&mut self.mods),
+            items: std::mem::take(&mut self.items),
+            extern_crates: std::mem::take(&mut self.extern_crates),
         });
     }
 }
@@ -1124,6 +1368,66 @@ mod tests {
             ]
         );
         assert_eq!(rust(&f).externals.len(), 8);
+    }
+
+    #[test]
+    fn module_facts_record_full_use_paths_mods_and_items() {
+        let f = facts(
+            "use std::{io::{self, Read}, fmt as f};\nuse ::abs::X;\nuse super::m::*;\n\
+             use a::B as _;\n#[path = \"other.rs\"]\nmod renamed;\nmod plain;\n\
+             extern crate grep_cli as cli;\nmod inner {\n    use super::*;\n    mod deep;\n    \
+             pub struct S;\n}\nfn regex() { use crate::x::Y; }\ntype Alias = u8;\n",
+        );
+        let r = rust(&f);
+        let uses: Vec<(String, Option<&str>, bool, u32)> = r
+            .uses
+            .iter()
+            .map(|u| (u.path.join("::"), u.bound.as_deref(), u.glob, u.depth))
+            .collect();
+        assert_eq!(
+            uses,
+            [
+                ("std::io".to_string(), Some("io"), false, 0),
+                ("std::io::Read".to_string(), Some("Read"), false, 0),
+                ("std::fmt".to_string(), Some("f"), false, 0),
+                ("::abs::X".to_string(), Some("X"), false, 0),
+                ("super::m".to_string(), None, true, 0),
+                ("a::B".to_string(), None, false, 0),
+                ("super".to_string(), None, true, 1),
+                ("crate::x::Y".to_string(), Some("Y"), false, 0),
+            ]
+        );
+        let mods: Vec<(String, Option<&str>)> = r
+            .mods
+            .iter()
+            .map(|m| {
+                let mut p = m.inline.clone();
+                p.push(m.name.clone());
+                (p.join("::"), m.path.as_deref())
+            })
+            .collect();
+        assert_eq!(
+            mods,
+            [
+                ("renamed".to_string(), Some("other.rs")),
+                ("plain".to_string(), None),
+                ("inner::deep".to_string(), None),
+            ]
+        );
+        assert_eq!(r.extern_crates, [("grep_cli".into(), "cli".into())]);
+        let items: Vec<(&str, bool)> = r.items.iter().map(|(n, p)| (n.as_str(), *p)).collect();
+        assert_eq!(
+            items,
+            [
+                ("renamed", true),
+                ("plain", true),
+                ("inner", true),
+                ("deep", true),
+                ("S", true),
+                ("regex", false),
+                ("Alias", true),
+            ]
+        );
     }
 
     #[test]

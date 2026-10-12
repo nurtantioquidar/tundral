@@ -14,9 +14,24 @@
 //!    owner's `_rust_impl_key` name, else its label) names exactly one declared struct, enum or
 //!    trait, the unique method `name` among all impls of that type name gets an EXTRACTED `calls`
 //!    edge with score 1.0 (`impl Atlas` split across `lib.rs` and `rank.rs`).
+//!
+//! Deliberate departures from Graphify 0.9.86 (Q7 not reproduced), through the module tree in
+//! [`modules`]:
+//!
+//! - Every `use` leaf that resolves into the repository (function bodies included) adds a
+//!   file → file `imports_from` edge to the file defining it (`use crate::flags::HiArgs` →
+//!   `flags/hiargs.rs` through the `pub use` in `flags/mod.rs`). The per-leaf edges to the
+//!   `slug(leaf)` external stubs stay as Graphify emits them.
+//! - A type stub named by one of its file's imports resolves through that import: to the
+//!   definition it names, or not at all when the import leads outside the repository
+//!   (`use termcolor::Color` never becomes another crate's `Color`). Only names no import
+//!   explains fall back to the unique-label rule (step 2).
+
+mod modules;
 
 use std::collections::{HashMap, HashSet};
 
+use self::modules::{Modules, Res};
 use super::{Index, Resolution, View};
 use crate::extract::{external_node, origin};
 use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc, NodeKind};
@@ -151,9 +166,59 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         }
     }
 
+    let modules = Modules::new(files);
+    // Per Rust file (module order), definitions by bare label: declared types first.
+    let defs: Vec<HashMap<&str, &str>> = modules
+        .views
+        .iter()
+        .map(|v| {
+            let mut m: HashMap<&str, &str> = HashMap::new();
+            for pass in [true, false] {
+                for n in v.facts.nodes.iter().filter(|n| n.kind == NodeKind::Def) {
+                    if (n.attr("_rust_declaration_count").is_some()) != pass {
+                        continue;
+                    }
+                    let label = n.label.as_str();
+                    if label.starts_with('.') {
+                        continue;
+                    }
+                    let name = label
+                        .strip_suffix("()")
+                        .or_else(|| label.strip_suffix('!'))
+                        .unwrap_or(label);
+                    m.entry(name).or_insert(n.id.as_str());
+                }
+            }
+            m
+        })
+        .collect();
+
+    // What each `use` leaf names, by the id of the stub its Graphify edge targets
+    // (`slug(last segment)`): a stub redirected through one file's import drags every other
+    // file's leaf edge with that id along (§11.2 rule 4).
+    let mut leaf_targets: HashMap<String, Vec<(usize, Option<&str>)>> = HashMap::new();
+    for fi in 0..modules.views.len() {
+        // Only leaves Graphify emits an edge for: not in function bodies, not aliased.
+        for u in modules.uses(fi).iter().filter(|u| !u.in_fn) {
+            let Some(last) = u.path.last() else { continue };
+            if u.bound.as_deref().is_some_and(|b| b != last) {
+                continue;
+            }
+            // A glob over an enum (`use self::Kind::*`) names the enum like a plain leaf.
+            let target = match modules.resolve_use(fi, u) {
+                Some(Res::Item(t)) => defs[t].get(last.as_str()).copied(),
+                _ => None,
+            };
+            leaf_targets
+                .entry(crate::extract::slug(last))
+                .or_default()
+                .push((fi, target));
+        }
+    }
+
     let mut externals: HashSet<&str> = HashSet::new();
     let mut redirected: HashSet<&str> = HashSet::new();
-    for v in &rust {
+    for (fi, v) in rust.iter().enumerate() {
         let LangFacts::Rust(facts) = &v.facts.lang else {
             continue;
         };
@@ -170,14 +235,22 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             if index.get(files, &n.id).map(|k| k.kind) != Some(NodeKind::Stub) {
                 continue;
             }
-            let target = if type_targets.has(&n.label) {
-                type_targets.unique(&n.label)
-            } else {
-                stub_targets.unique(&n.label)
+            let target = match imported_name(&modules, fi, &n.label, &defs) {
+                // Another file's leaf with this id would follow the redirect somewhere else.
+                Some(Some(t))
+                    if leaf_targets
+                        .get(&n.id)
+                        .is_some_and(|v| v.iter().any(|&(f, x)| f != fi && x != Some(t))) =>
+                {
+                    None
+                }
+                Some(found) => found,
+                None if type_targets.has(&n.label) => type_targets.unique(&n.label).map(|t| t.id),
+                None => stub_targets.unique(&n.label).map(|t| t.id),
             };
-            if let Some(t) = target {
+            if let Some(t) = target.filter(|t| *t != n.id) {
                 redirected.insert(&n.id);
-                out.redirects.push((n.id.clone(), t.id.to_string()));
+                out.redirects.push((n.id.clone(), t.to_string()));
             }
         }
     }
@@ -206,6 +279,37 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             if !ids.contains(&method.id.as_str()) {
                 ids.push(&method.id);
             }
+        }
+    }
+
+    // File → file imports through the module tree.
+    for (fi, v) in modules.views.iter().enumerate() {
+        let Some(source) = index.file_ids.get(&v.file.rel) else {
+            continue;
+        };
+        let mut seen: HashSet<usize> = HashSet::new();
+        for u in modules.uses(fi) {
+            let Some(t) = modules.resolve_use(fi, u).and_then(Res::file) else {
+                continue;
+            };
+            if t == fi || !seen.insert(t) {
+                continue;
+            }
+            let Some(target) = index.file_ids.get(&modules.views[t].file.rel) else {
+                continue;
+            };
+            out.edges.push(Edge {
+                source: source.clone(),
+                target: target.clone(),
+                relation: "imports_from".into(),
+                confidence: Confidence::Extracted,
+                score: Some(1.0),
+                context: Some("import".into()),
+                source_file: v.file.rel.clone(),
+                loc: Loc::Line(u.line),
+                weight: Some(1.0),
+                attrs: vec![origin()],
+            });
         }
     }
 
@@ -271,6 +375,43 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         }
     }
     out
+}
+
+/// The definition a name used in Rust file `f` refers to through the file's own imports: an
+/// explicit `use` binding the name, else a glob import that brings it in. `Some(None)` when the
+/// import leads outside the repository or to something that is not a node; `None` when no
+/// import explains the name.
+fn imported_name<'d>(
+    modules: &Modules,
+    f: usize,
+    name: &str,
+    defs: &[HashMap<&str, &'d str>],
+) -> Option<Option<&'d str>> {
+    let uses = modules.uses(f);
+    let explicit = uses
+        .iter()
+        .filter(|u| !u.glob && u.bound.as_deref() == Some(name))
+        .min_by_key(|u| u.depth);
+    if let Some(u) = explicit {
+        let original = u.path.last().map_or(name, String::as_str);
+        return match modules.resolve_use(f, u)? {
+            Res::Item(t) => Some(defs[t].get(original).copied()),
+            Res::File(_) | Res::External => Some(None),
+        };
+    }
+    for u in uses.iter().filter(|u| u.glob) {
+        if let Some(Res::File(g)) = modules.resolve_use(f, u) {
+            if g == f {
+                continue;
+            }
+            match modules.lookup(g, name, false) {
+                Some(Res::Item(t)) => return Some(defs[t].get(name).copied()),
+                Some(Res::File(_) | Res::External) => return Some(None),
+                None => {}
+            }
+        }
+    }
+    None
 }
 
 #[cfg(test)]
