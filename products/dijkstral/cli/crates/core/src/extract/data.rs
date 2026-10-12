@@ -1,4 +1,4 @@
-//! JSON manifests, `Cargo.toml`/`pyproject.toml`, `go.mod` and shell scripts (§12, §14).
+//! JSON manifests, `Cargo.toml`/`pyproject.toml` and shell scripts (§14).
 
 use serde::{Deserialize, Serialize};
 

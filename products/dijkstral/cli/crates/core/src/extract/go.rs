@@ -13,3 +13,8 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
     cx.add_file_node(vec![]);
     let _ = tree;
 }
+
+/// `go.mod`: the module path for import resolution and a package node (§12).
+pub fn extract_mod(cx: &mut Ctx) {
+    let _ = cx;
+}

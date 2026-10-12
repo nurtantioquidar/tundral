@@ -28,7 +28,8 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Rust => rust::extract(&mut cx, tree.as_ref()),
         Lang::Go => go::extract(&mut cx, tree.as_ref()),
         Lang::Java => java::extract(&mut cx, tree.as_ref()),
-        Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => data::extract(&mut cx),
+        Lang::GoMod => go::extract_mod(&mut cx),
+        Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }
     cx.facts
 }
