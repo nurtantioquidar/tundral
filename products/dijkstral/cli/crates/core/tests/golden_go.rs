@@ -8,5 +8,5 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn go_fixture_matches_graphify() {
-    common::assert_golden("go", 0.0, 0.0, ALLOWED);
+    common::assert_golden("go", 1.0, 1.0, ALLOWED);
 }
