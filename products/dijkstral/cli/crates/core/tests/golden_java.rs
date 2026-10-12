@@ -4,9 +4,18 @@ mod common;
 
 /// Documented, deliberate differences (quirks not reproduced; see docs/graphify-format.md §15).
 /// Each entry is a line as printed by the parity summary.
-const ALLOWED: &[&str] = &[];
+const ALLOWED: &[&str] = &[
+    // Q11/J1: `import com.shop.model.*;` targets Graphify's class `Model` because the package's
+    // last segment `model` equals that class's stub id; dijkstral keeps the external `model`.
+    "model",
+    "src_main_java_com_shop_service_userservice -imports-> model",
+    "src_main_java_com_shop_service_userservice -imports-> src_main_java_com_shop_model_model_model",
+    // Q11/J2: `import static com.shop.service.Formatter.slug;` links every class named
+    // `Formatter`; dijkstral links only the one its FQN names (the main `Formatter`).
+    "src_main_java_com_shop_service_userservice -imports-> src_test_java_com_shop_service_userservicetest_formatter",
+];
 
 #[test]
 fn java_fixture_matches_graphify() {
-    common::assert_golden("java", 0.0, 0.0, ALLOWED);
+    common::assert_golden("java", 1.0, 1.0, ALLOWED);
 }

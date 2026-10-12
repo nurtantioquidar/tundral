@@ -20,7 +20,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::discover::SourceFile;
 use crate::extract::slug;
-use crate::facts::{Edge, FileFacts, Node, NodeKind};
+use crate::facts::{Attr, Edge, FileFacts, Node, NodeKind};
 use crate::graph::Graph;
 use crate::lang::Family;
 
@@ -69,6 +69,9 @@ pub struct Resolution {
     pub edges: Vec<Edge>,
     /// `(from, to)`: delete node `from` and re-point every edge endpoint `from` to `to`.
     pub redirects: Vec<(String, String)>,
+    /// `(id, key, value)`: set a field on an existing node (first node with that id) when the
+    /// value depends on other files, e.g. Java `metadata.unresolved_calls`.
+    pub attrs: Vec<(String, String, Attr)>,
 }
 
 pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
@@ -115,10 +118,23 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         edges.extend(v.facts.edges);
     }
     let mut redirects: HashMap<String, String> = HashMap::new();
+    let mut attrs: HashMap<String, Vec<(String, Attr)>> = HashMap::new();
     for r in results {
         nodes.extend(r.nodes);
         edges.extend(r.edges);
         redirects.extend(r.redirects);
+        for (id, key, value) in r.attrs {
+            attrs.entry(id).or_default().push((key, value));
+        }
+    }
+    // Each patch applies to the first node with its id (the one the build keeps).
+    for n in &mut nodes {
+        if attrs.is_empty() {
+            break;
+        }
+        if let Some(extra) = attrs.remove(&n.id) {
+            n.attrs.extend(extra);
+        }
     }
     redirects.extend(merge_rationale(&nodes));
 
