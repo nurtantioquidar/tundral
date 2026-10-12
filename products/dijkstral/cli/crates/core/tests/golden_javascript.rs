@@ -15,7 +15,7 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn javascript_fixture_matches_graphify() {
-    common::assert_golden("javascript", 1.0, 1.0, ALLOWED);
+    common::assert_fixture("javascript", ALLOWED, 1.0, true, false);
 }
 
 fn build_project(files: &[(&str, &str)]) -> (BTreeSet<String>, BTreeSet<String>) {
@@ -30,6 +30,7 @@ fn build_project(files: &[(&str, &str)]) -> (BTreeSet<String>, BTreeSet<String>)
         root: root.clone(),
         out: None,
         threads: 2,
+        cluster: false,
     })
     .unwrap();
     let g: Value =

@@ -130,4 +130,7 @@ pub struct FileFacts {
     /// In-file edges in raw emission order (undeduplicated: the build keeps the last duplicate).
     pub edges: Vec<Edge>,
     pub lang: LangFacts,
+    /// Whitespace-separated words in the file (Python `len(text.split())`), for the report's
+    /// corpus check.
+    pub words: u64,
 }

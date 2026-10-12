@@ -14,7 +14,7 @@ outside the source tree under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstr
 | `setup.sh` | Installs pinned Graphify (`graphifyy[leiden,mcp]`, Python 3.13 so Leiden uses graspologic-native) into an isolated venv and fetches each repo at its pinned commit |
 | `run.py` | Build benchmark: cold / warm / one-file update, wall, CPU, process-tree peak RSS, node and edge counts → `results/build-<epoch>.json`; `report` prints the markdown table. Tools: `graphify`, `graphify-nocluster`, `dijkstral` |
 | `reference.sh` | Freezes Graphify's cold `extract --code-only` graph per repo as `$DIJKSTRAL_BENCH_HOME/reference/<repo>.graph.json` |
-| `parity.py` | Compares two `graph.json` files as sets: nodes by kind, links by relation, field agreement, samples of each difference |
+| `parity.py` | Compares two `graph.json` files as sets: nodes by kind, links by relation, field agreement, samples of each difference; for clustered graphs, community agreement (same id, NMI, ARI) and array order |
 | `accuracy/` | Stage-2 SCIP oracle: precision and recall of both tools' graphs against compiler-grade indexes ([accuracy/README.md](accuracy/README.md)) |
 
 Later stages add query and hook latency, graph parity, SCIP precision/recall, and the paid
@@ -32,6 +32,11 @@ bench/reference.sh fastapi           # freeze Graphify's graph for parity
 cli/target/release/dijkstral extract ~/.cache/dijkstral-bench/corpus/fastapi --out /tmp/fa
 uv run --no-project bench/parity.py /tmp/fa/dijkstral-out/graph.json \
   ~/.cache/dijkstral-bench/reference/fastapi.graph.json --ext .py
+# clustering alone: re-cluster a copy of the reference (cluster-only rewrites the graph it reads)
+mkdir -p /tmp/co/dijkstral-out && cp ~/.cache/dijkstral-bench/reference/fastapi.graph.json /tmp/co/dijkstral-out/graph.json
+cli/target/release/dijkstral cluster-only /tmp/co
+uv run --no-project bench/parity.py /tmp/co/dijkstral-out/graph.json \
+  ~/.cache/dijkstral-bench/reference/fastapi.graph.json --samples 0
 ```
 
 ## Method
@@ -173,3 +178,40 @@ What the gaps are:
   stubs (fastapi `references`).
 - Where they differ, dijkstral's edges follow the actual imports and scopes; which tool is right
   per edge is measured in stage 2 against SCIP indexes, not assumed.
+
+### Stage 2: clustering, analysis and report — 2026-10-13
+
+Same machine; dijkstral at the stage-2 clustering commit (binary sha256 `8bc4388c434f2894…`), 10
+threads, `SOURCE_DATE_EPOCH` set; peak RSS from `/usr/bin/time -l` (dijkstral is one process).
+
+**Clustering is Graphify's.** `dijkstral cluster-only` on each frozen reference
+(`$DIJKSTRAL_BENCH_HOME/reference/<repo>.graph.json`) reproduces Graphify's community of every node
+and both arrays byte for byte on all seven repos, Kubernetes included (256,424 nodes, 9,417
+communities): 12 s against Graphify `cluster-only`'s 278 s. The analysis sidecar is byte-identical
+on monet, ripgrep, excalidraw and Kubernetes; `cli/docs/graphify-format.md` §17.7 lists what still
+differs in the rest and in the report.
+
+**End to end** (`dijkstral extract` vs the frozen reference, `parity.py` on shared nodes), the
+communities follow the stage-1 graph differences: a missing or extra link moves Leiden's result and
+the size-ranked ids, so same-id agreement is low while the partitions stay close.
+
+| repo | shared nodes | same community id | NMI | ARI |
+|---|---|---|---|---|
+| monet | 3,400 / 3,454 | 10.3% | 0.945 | 0.820 |
+| graphify | 16,198 / 16,790 | 6.6% | 0.937 | 0.706 |
+| fastapi | 9,145 / 9,268 | 2.1% | 0.915 | 0.558 |
+| ripgrep | 4,142 / 4,232 | 9.1% | 0.930 | 0.765 |
+| excalidraw | 4,902 / 4,990 | 9.2% | 0.831 | 0.604 |
+| erpnext | 24,576 / 24,633 | 2.1% | 0.904 | 0.503 |
+
+**Cost** (cold `extract --code-only`, median of 3; Graphify's cold build clusters too):
+
+| repo | dijkstral wall s | of which cluster / analyze / report ms | peak RSS MB | `--no-cluster` wall s / RSS MB | Graphify cold wall s / RSS MB |
+|---|---|---|---|---|---|
+| erpnext | 1.01 | 91 / 12 / 24 | 308 | 1.14 / 283 | 22.44 / 1,132 |
+| kubernetes | 9.72 | 1,303 / 272 / 707 | 2,216 | 8.49 / 2,149 | 861.97 / 2,281 |
+
+Clustering, analysis and the report add about 2.3 s and 70 MB on Kubernetes. Outputs are
+byte-identical between `--threads 1` and the default on both repos. The stage-1 Kubernetes cold
+build measured 5.5 s on a quiet machine; these runs shared the machine with other work, so compare
+the two dijkstral columns with each other.

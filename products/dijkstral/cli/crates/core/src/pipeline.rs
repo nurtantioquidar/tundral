@@ -8,11 +8,14 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use anyhow::{Context, Result};
 use rayon::prelude::*;
 
+use crate::analyze::{analyze, ANALYSIS_FILE, REPORT_FILE};
 use crate::cache::{content_key, Cache, Key, Stat};
+use crate::cluster::{cluster, Topology};
 use crate::discover::{discover, SourceFile};
 use crate::extract::extract_file;
-use crate::facts::FileFacts;
+use crate::facts::{Attr, FileFacts};
 use crate::graph::Graph;
+use crate::report::{self, Corpus};
 use crate::resolve::resolve;
 
 pub const OUT_DIR: &str = "dijkstral-out";
@@ -23,6 +26,9 @@ pub struct BuildOptions {
     /// Directory that receives `dijkstral-out/`; defaults to `root`.
     pub out: Option<PathBuf>,
     pub threads: usize,
+    /// Cluster, analyse and write `GRAPH_REPORT.md` and `.graphify_analysis.json` (Graphify's
+    /// default); without it `graph.json` has no `community` and the sidecars are removed.
+    pub cluster: bool,
 }
 
 #[derive(Debug, Default)]
@@ -32,6 +38,7 @@ pub struct BuildReport {
     pub cached: usize,
     pub nodes: usize,
     pub edges: usize,
+    pub communities: usize,
     pub out_dir: PathBuf,
     pub phases: Vec<(&'static str, Duration)>,
 }
@@ -139,16 +146,57 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
         .collect();
     report.cached = ordered.len() - report.extracted;
 
+    let words: Vec<u64> = ordered.iter().map(|(_, f)| f.words).collect();
     let graph: Graph = resolve(ordered);
     phase(&mut report, "resolve");
 
     report.nodes = graph.nodes.len();
     report.edges = graph.edges.len();
+    let commit = git_head(&root);
+
+    let clustered = if opts.cluster {
+        let topo = Topology::of(&graph);
+        let communities = cluster(&topo);
+        report.communities = communities.members.len();
+        phase(&mut report, "cluster");
+        Some((topo, communities))
+    } else {
+        None
+    };
+
     let target = out_dir.join("graph.json");
     let tmp = target.with_extension("json.tmp");
-    graph.write_graphify_json(fs::File::create(&tmp)?, git_head(&root).as_deref())?;
+    graph.write_graphify_json(
+        fs::File::create(&tmp)?,
+        commit.as_deref(),
+        clustered.as_ref().map(|(_, c)| c.of_node.as_slice()),
+    )?;
     fs::rename(&tmp, &target)?;
     phase(&mut report, "write");
+
+    if let Some((topo, communities)) = clustered {
+        let analysis = analyze(&graph, &topo, &communities);
+        write_atomic(
+            &out_dir.join(ANALYSIS_FILE),
+            analysis.to_json(&graph, &communities).as_bytes(),
+        )?;
+        phase(&mut report, "analyze");
+        let corpus = Corpus {
+            name: root
+                .file_name()
+                .map_or_else(String::new, |n| n.to_string_lossy().into_owned()),
+            stats: Some((words.len(), words.iter().sum())),
+            commit: commit.clone(),
+            date: today(),
+        };
+        let md = report::render(&graph, &topo, &communities, &analysis, &corpus);
+        write_atomic(&out_dir.join(REPORT_FILE), md.as_bytes())?;
+        phase(&mut report, "report");
+    } else {
+        // A previous clustered build's sidecars would describe a different graph.
+        fs::remove_file(out_dir.join(ANALYSIS_FILE)).ok();
+        fs::remove_file(out_dir.join(REPORT_FILE)).ok();
+    }
     Ok(report)
 }
 
@@ -183,6 +231,103 @@ fn now_ns() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_or(0, |d| d.as_nanos() as u64)
+}
+
+/// What `cluster_only` produces, in memory.
+pub struct ClusterOnly {
+    pub graph_json: String,
+    pub analysis_json: String,
+    pub report: String,
+    pub communities: usize,
+}
+
+/// Re-cluster an existing clustered `graph.json` the way `graphify cluster-only --no-label` does:
+/// nodes and links in file order, `Community N` names (also written as `community_name`), no file
+/// statistics, and `questions` in the analysis sidecar.
+pub fn cluster_only(doc: &serde_json::Value, name: &str) -> Result<ClusterOnly> {
+    let mut graph = Graph::from_graphify_json(doc).map_err(anyhow::Error::msg)?;
+    let commit = doc
+        .get("built_at_commit")
+        .and_then(serde_json::Value::as_str)
+        .map(str::to_string);
+    let topo = Topology::of(&graph);
+    let communities = cluster(&topo);
+    let mut analysis = analyze(&graph, &topo, &communities);
+    analysis.labels = (0..communities.members.len())
+        .map(|c| format!("Community {c}"))
+        .collect();
+    let analysis_json = report::cluster_only_analysis_json(&graph, &communities, &analysis);
+    let corpus = Corpus {
+        name: name.to_string(),
+        stats: None,
+        commit: commit.clone(),
+        date: today(),
+    };
+    let md = report::render(&graph, &topo, &communities, &analysis, &corpus);
+    for (i, n) in graph.nodes.iter_mut().enumerate() {
+        let c = communities.of_node[i];
+        n.attrs
+            .push(("community_name".into(), Attr::Str(format!("Community {c}"))));
+    }
+    let graph_json = graph.to_graphify_json(commit.as_deref(), Some(&communities.of_node));
+    Ok(ClusterOnly {
+        graph_json,
+        analysis_json,
+        report: md,
+        communities: communities.members.len(),
+    })
+}
+
+/// `cluster_only` on `<dir>/dijkstral-out/graph.json` (or `graph`), rewriting that graph and its
+/// sidecars in place. Returns the output directory and the community count.
+pub fn cluster_only_files(dir: &Path, graph: Option<&Path>) -> Result<(PathBuf, usize)> {
+    let path = graph.map_or_else(|| dir.join(OUT_DIR).join("graph.json"), Path::to_path_buf);
+    let doc: serde_json::Value = serde_json::from_slice(
+        &fs::read(&path).with_context(|| format!("reading {}", path.display()))?,
+    )
+    .with_context(|| format!("parsing {}", path.display()))?;
+    let name = dir
+        .canonicalize()
+        .ok()
+        .and_then(|d| d.file_name().map(|n| n.to_string_lossy().into_owned()))
+        .unwrap_or_default();
+    let out = cluster_only(&doc, &name)?;
+    drop(doc);
+    let out_dir = path.parent().map_or_else(PathBuf::new, Path::to_path_buf);
+    write_atomic(&path, out.graph_json.as_bytes())?;
+    write_atomic(&out_dir.join(ANALYSIS_FILE), out.analysis_json.as_bytes())?;
+    write_atomic(&out_dir.join(REPORT_FILE), out.report.as_bytes())?;
+    Ok((out_dir, out.communities))
+}
+
+fn write_atomic(path: &Path, bytes: &[u8]) -> Result<()> {
+    let tmp = path.with_extension("tmp");
+    fs::write(&tmp, bytes)?;
+    fs::rename(&tmp, path)?;
+    Ok(())
+}
+
+/// Today's date (UTC) as `YYYY-MM-DD`; `SOURCE_DATE_EPOCH` pins it for reproducible reports.
+fn today() -> String {
+    let secs = std::env::var("SOURCE_DATE_EPOCH")
+        .ok()
+        .and_then(|v| v.parse::<i64>().ok())
+        .unwrap_or_else(|| {
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .map_or(0, |d| d.as_secs() as i64)
+        });
+    // Howard Hinnant's civil_from_days.
+    let z = secs.div_euclid(86_400) + 719_468;
+    let era = z.div_euclid(146_097);
+    let doe = z - era * 146_097;
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = doy - (153 * mp + 2) / 5 + 1;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    let y = yoe + era * 400 + i64::from(m <= 2);
+    format!("{y:04}-{m:02}-{d:02}")
 }
 
 fn git_head(root: &Path) -> Option<String> {

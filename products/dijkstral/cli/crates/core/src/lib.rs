@@ -1,6 +1,9 @@
-//! Dijkstral core: discovery, extraction, cache, resolution and graph output.
+//! Dijkstral core: discovery, extraction, cache, resolution, graph output, clustering, analysis and
+//! the graph report.
 
+pub mod analyze;
 pub mod cache;
+pub mod cluster;
 pub mod discover;
 pub mod extract;
 pub mod facts;
@@ -8,6 +11,8 @@ pub mod graph;
 pub mod ids;
 pub mod lang;
 pub mod pipeline;
+pub mod pyjson;
+pub mod report;
 pub mod resolve;
 
 pub use pipeline::{build, BuildOptions, BuildReport};

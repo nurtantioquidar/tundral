@@ -45,7 +45,8 @@ const ALLOWED: &[&str] = &[
 
 #[test]
 fn rust_fixture_matches_graphify() {
-    common::assert_golden("rust", 1.0, 1.0, ALLOWED);
+    // Community ids move with the ALLOWED differences (NMI 0.88, graphify-format.md §17.7).
+    common::assert_fixture("rust", ALLOWED, 0.25, false, false);
 }
 
 /// Build a probe repository and return its links as `source -relation-> target`.

@@ -1,15 +1,30 @@
-//! Golden comparison against Graphify's clustered output for the fixtures in `cli/tests/fixtures`.
+//! Golden comparison against Graphify's output for the fixtures in `cli/tests/fixtures`.
 //!
 //! The fixture is copied to a temporary directory (not a git repository, as when the goldens were
 //! made), built, and compared to `<name>.clustered.graphify.json` as sets: nodes by id with all
 //! fields except `community`/`community_name`, links by (source, target, relation) with all fields.
+//! Community agreement is measured separately (`community_agreement`), because one extraction
+//! difference moves community ids everywhere while the node and link sets stay comparable.
+//!
+//! Report goldens (`docs/graphify-format.md` §17.6):
+//!
+//! - `<name>.graphify_analysis.json`: `graphify extract --code-only`'s sidecar, byte for byte.
+//! - `<name>.graphify_report.md`: `graphify update`'s report (the no-model report over the same
+//!   graph; for `mixed`, made on a copy without `README.md`, which `update` would index).
+//! - `<name>.cluster_only.graphify_{analysis.json,report.md}`: `graphify cluster-only --no-label`
+//!   run on `<name>.clustered.graphify.json`; `dijkstral cluster-only` must reproduce them from the
+//!   same input, which tests clustering, analysis and the report independently of extraction.
+//!
+//! Reports are compared after `normalise_report`: the title line carries the directory name and
+//! the date, and the hints name `graphify` where dijkstral names itself.
 
 #![allow(dead_code)]
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use dijkstral_core::pipeline::cluster_only;
 use dijkstral_core::{build, BuildOptions};
 use serde_json::Value;
 
@@ -30,8 +45,27 @@ fn copy_dir(from: &Path, to: &Path) {
     }
 }
 
-/// Build the fixture and return our graph and Graphify's golden graph.
-pub fn build_fixture(name: &str) -> (Value, Value) {
+/// One fixture built by dijkstral, next to Graphify's goldens.
+pub struct Built {
+    pub ours: Value,
+    pub golden: Value,
+    pub analysis: String,
+    pub report: String,
+}
+
+fn golden_text(file: &str) -> String {
+    fs::read_to_string(fixtures().join(file)).unwrap()
+}
+
+fn golden_graph(name: &str) -> Value {
+    serde_json::from_slice(
+        &fs::read(fixtures().join(format!("{name}.clustered.graphify.json"))).unwrap(),
+    )
+    .unwrap()
+}
+
+/// Build the fixture and return our outputs and Graphify's golden graph.
+pub fn build_fixture(name: &str) -> Built {
     let tmp = tempfile::tempdir().unwrap();
     let root = tmp.path().join(name);
     copy_dir(&fixtures().join(name), &root);
@@ -39,15 +73,272 @@ pub fn build_fixture(name: &str) -> (Value, Value) {
         root: root.clone(),
         out: None,
         threads: 2,
+        cluster: true,
     })
     .unwrap();
-    let ours: Value =
-        serde_json::from_slice(&fs::read(root.join("dijkstral-out/graph.json")).unwrap()).unwrap();
-    let golden: Value = serde_json::from_slice(
-        &fs::read(fixtures().join(format!("{name}.clustered.graphify.json"))).unwrap(),
-    )
-    .unwrap();
-    (ours, golden)
+    let out = root.join("dijkstral-out");
+    let ours: Value = serde_json::from_slice(&fs::read(out.join("graph.json")).unwrap()).unwrap();
+    Built {
+        ours,
+        golden: golden_graph(name),
+        analysis: fs::read_to_string(out.join(".graphify_analysis.json")).unwrap(),
+        report: fs::read_to_string(out.join("GRAPH_REPORT.md")).unwrap(),
+    }
+}
+
+/// Mask what legitimately differs between Graphify's report and ours: the title line (directory
+/// name and date) and the command named in hints.
+pub fn normalise_report(text: &str) -> String {
+    let mut lines: Vec<String> = text.split('\n').map(str::to_string).collect();
+    if let Some(first) = lines.first_mut() {
+        if first.starts_with("# Graph Report - ") {
+            *first = "# Graph Report - <name>  (<date>)".into();
+        }
+    }
+    lines
+        .join("\n")
+        .replace("`graphify update", "`dijkstral update")
+        .replace("`graphify query", "`dijkstral query")
+}
+
+/// The `## ` section headings of a report, in order.
+pub fn report_sections(text: &str) -> Vec<String> {
+    text.lines()
+        .filter(|l| l.starts_with("## "))
+        .map(|l| l.split(" (").next().unwrap().to_string())
+        .collect()
+}
+
+/// Line diff summary (first differing lines) for assertion messages.
+pub fn first_differences(a: &str, b: &str, max: usize) -> String {
+    let (al, bl): (Vec<&str>, Vec<&str>) = (a.lines().collect(), b.lines().collect());
+    let mut out = String::new();
+    let mut shown = 0;
+    for i in 0..al.len().max(bl.len()) {
+        let (x, y) = (al.get(i).copied(), bl.get(i).copied());
+        if x != y {
+            out.push_str(&format!(
+                "  line {}:\n    ours   {:?}\n    golden {:?}\n",
+                i + 1,
+                x.unwrap_or(""),
+                y.unwrap_or("")
+            ));
+            shown += 1;
+            if shown == max {
+                break;
+            }
+        }
+    }
+    out
+}
+
+/// How far our communities agree with Graphify's on the nodes both graphs have: exact id
+/// matches, and the partition similarity (NMI, ARI) independent of numbering.
+#[derive(Debug, Clone, Copy)]
+pub struct CommunityAgreement {
+    pub shared: usize,
+    pub equal: usize,
+    pub nmi: f64,
+    pub ari: f64,
+}
+
+impl CommunityAgreement {
+    pub fn exact(&self) -> f64 {
+        ratio(self.equal, self.shared)
+    }
+}
+
+pub fn community_agreement(ours: &Value, golden: &Value) -> CommunityAgreement {
+    let map = |g: &Value| -> HashMap<String, i64> {
+        g["nodes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter_map(|n| Some((n["id"].as_str()?.to_string(), n["community"].as_i64()?)))
+            .collect()
+    };
+    let (a, b) = (map(ours), map(golden));
+    let pairs: Vec<(i64, i64)> = a
+        .iter()
+        .filter_map(|(id, &ca)| b.get(id).map(|&cb| (ca, cb)))
+        .collect();
+    let equal = pairs.iter().filter(|(x, y)| x == y).count();
+    let (nmi, ari) = partition_similarity(&pairs);
+    CommunityAgreement {
+        shared: pairs.len(),
+        equal,
+        nmi,
+        ari,
+    }
+}
+
+/// (NMI with arithmetic-mean normalisation, adjusted Rand index) of two labelings.
+fn partition_similarity(pairs: &[(i64, i64)]) -> (f64, f64) {
+    let n = pairs.len() as f64;
+    if pairs.is_empty() {
+        return (1.0, 1.0);
+    }
+    let mut joint: HashMap<(i64, i64), f64> = HashMap::new();
+    let mut ca: HashMap<i64, f64> = HashMap::new();
+    let mut cb: HashMap<i64, f64> = HashMap::new();
+    for &(x, y) in pairs {
+        *joint.entry((x, y)).or_default() += 1.0;
+        *ca.entry(x).or_default() += 1.0;
+        *cb.entry(y).or_default() += 1.0;
+    }
+    let h = |m: &HashMap<i64, f64>| -> f64 {
+        m.values().map(|&c| -(c / n) * (c / n).ln()).sum::<f64>()
+    };
+    let mi: f64 = joint
+        .iter()
+        .map(|(&(x, y), &c)| (c / n) * ((c * n) / (ca[&x] * cb[&y])).ln())
+        .sum();
+    let (ha, hb) = (h(&ca), h(&cb));
+    let nmi = if ha + hb == 0.0 {
+        1.0
+    } else {
+        2.0 * mi / (ha + hb)
+    };
+    let comb = |c: f64| c * (c - 1.0) / 2.0;
+    let index: f64 = joint.values().map(|&c| comb(c)).sum();
+    let (sa, sb): (f64, f64) = (
+        ca.values().map(|&c| comb(c)).sum(),
+        cb.values().map(|&c| comb(c)).sum(),
+    );
+    let expected = sa * sb / comb(n);
+    let max = (sa + sb) / 2.0;
+    let ari = if max == expected {
+        1.0
+    } else {
+        (index - expected) / (max - expected)
+    };
+    (nmi, ari)
+}
+
+/// `dijkstral cluster-only` on Graphify's clustered golden must reproduce Graphify's
+/// `cluster-only --no-label` exactly: community of every node, node and link array order, the
+/// analysis sidecar and the report. `unordered_surprises` names fixtures whose surprise ties
+/// Graphify orders differently (`docs/graphify-format.md` §17.4); there the surprises are compared
+/// as sets.
+pub fn assert_cluster_only(name: &str, unordered_surprises: bool) {
+    let golden = golden_graph(name);
+    let out = cluster_only(&golden, name).unwrap();
+    let ours: Value = serde_json::from_str(&out.graph_json).unwrap();
+
+    let agreement = community_agreement(&ours, &golden);
+    let nodes = golden["nodes"].as_array().unwrap().len();
+    assert!(
+        agreement.shared == nodes && agreement.equal == nodes,
+        "{name}: communities differ from Graphify's on its own graph: {agreement:?}"
+    );
+    let ids = |g: &Value, k: &str, f: &dyn Fn(&Value) -> String| -> Vec<String> {
+        g[k].as_array().unwrap().iter().map(f).collect()
+    };
+    let node_id = |n: &Value| n["id"].as_str().unwrap().to_string();
+    let link_id = |e: &Value| format!("{} {} {}", e["source"], e["target"], e["relation"]);
+    assert_eq!(
+        ids(&ours, "nodes", &node_id),
+        ids(&golden, "nodes", &node_id),
+        "{name}: node order"
+    );
+    assert_eq!(
+        ids(&ours, "links", &link_id),
+        ids(&golden, "links", &link_id),
+        "{name}: link order"
+    );
+
+    let mut analysis = out.analysis_json.clone();
+    let mut want = golden_text(&format!("{name}.cluster_only.graphify_analysis.json"));
+    let mut report = normalise_report(&out.report);
+    let mut want_report = normalise_report(&golden_text(&format!(
+        "{name}.cluster_only.graphify_report.md"
+    )));
+    if unordered_surprises {
+        analysis = sort_surprises_json(&analysis);
+        want = sort_surprises_json(&want);
+        report = sort_surprise_lines(&report);
+        want_report = sort_surprise_lines(&want_report);
+    }
+    assert!(
+        analysis == want,
+        "{name}: cluster-only analysis differs:\n{}",
+        first_differences(&analysis, &want, 6)
+    );
+    assert!(
+        report == want_report,
+        "{name}: cluster-only report differs:\n{}",
+        first_differences(&report, &want_report, 6)
+    );
+}
+
+fn sort_surprises_json(text: &str) -> String {
+    let mut v: Value = serde_json::from_str(text).unwrap();
+    if let Some(list) = v["surprises"].as_array_mut() {
+        list.sort_by_key(|s| s.to_string());
+    }
+    v.to_string()
+}
+
+fn sort_surprise_lines(text: &str) -> String {
+    let start = text.find("## Surprising Connections").unwrap();
+    let end = start + text[start..].find("\n\n## ").unwrap();
+    let section = &text[start..end];
+    let mut head = section.lines().take(1).collect::<Vec<_>>().join("\n");
+    let lines: Vec<&str> = section.lines().skip(1).collect();
+    let mut items: Vec<String> = lines.chunks(2).map(|c| c.join("\n")).collect();
+    items.sort();
+    for i in items {
+        head.push('\n');
+        head.push_str(&i);
+    }
+    format!("{}{}{}", &text[..start], head, &text[end..])
+}
+
+/// Our extract-time sidecars against Graphify's (`graphify extract` analysis, `graphify update`
+/// report). `exact` fixtures must match after normalisation; the others share the shape (keys
+/// and section order) while their contents follow the graph differences listed in `ALLOWED`.
+pub fn check_report_goldens(name: &str, built: &Built, exact: bool) {
+    let want = golden_text(&format!("{name}.graphify_analysis.json"));
+    let want_report = normalise_report(&golden_text(&format!("{name}.graphify_report.md")));
+    let report = normalise_report(&built.report);
+    let (a, b): (Value, Value) = (
+        serde_json::from_str(&built.analysis).unwrap(),
+        serde_json::from_str(&want).unwrap(),
+    );
+    let keys = |v: &Value| v.as_object().unwrap().keys().cloned().collect::<Vec<_>>();
+    assert_eq!(keys(&a), keys(&b), "{name}: analysis keys");
+    assert_eq!(
+        report_sections(&report),
+        report_sections(&want_report),
+        "{name}: report sections"
+    );
+    let analysis_same = built.analysis == want;
+    let report_same = report == want_report;
+    eprintln!(
+        "{name}: analysis {} / report {} Graphify's",
+        if analysis_same {
+            "equals"
+        } else {
+            "differs from"
+        },
+        if report_same {
+            "equals"
+        } else {
+            "differs from"
+        }
+    );
+    if exact {
+        assert!(
+            analysis_same,
+            "{name}: analysis differs:\n{}",
+            first_differences(&built.analysis, &want, 6)
+        );
+        assert!(
+            report_same,
+            "{name}: report differs:\n{}",
+            first_differences(&report, &want_report, 6)
+        );
+    }
 }
 
 #[derive(Debug, Default)]
@@ -228,9 +519,18 @@ pub fn compare(ours: &Value, golden: &Value) -> Parity {
 /// Assert parity with a fixture's golden at the given minimums, printing the full diff on failure.
 /// `allowed` lists diff lines (as printed by `Parity::summary`) that are documented, deliberate
 /// differences (quirks we do not reproduce); they are removed before thresholds are checked.
-pub fn assert_golden(name: &str, min_node: f64, min_link: f64, allowed: &[&str]) {
-    let (ours, golden) = build_fixture(name);
-    let mut p = compare(&ours, &golden);
+///
+/// Community agreement is printed and returned with the build (`Built`) for the caller to check:
+/// it is exact only where extraction matches Graphify's (see each golden's `COMMUNITY` note).
+pub fn assert_golden(
+    name: &str,
+    min_node: f64,
+    min_link: f64,
+    allowed: &[&str],
+) -> (Built, CommunityAgreement) {
+    let built = build_fixture(name);
+    let (ours, golden) = (&built.ours, &built.golden);
+    let mut p = compare(ours, golden);
     let allowed: BTreeSet<&str> = allowed.iter().copied().collect();
     p.nodes_only_ours.retain(|x| !allowed.contains(x.as_str()));
     p.nodes_only_golden
@@ -247,4 +547,51 @@ pub fn assert_golden(name: &str, min_node: f64, min_link: f64, allowed: &[&str])
             && p.link_precision() >= min_link,
         "{name} below parity thresholds (nodes {min_node}, links {min_link}):\n{summary}"
     );
+    let agreement = community_agreement(ours, golden);
+    eprintln!(
+        "{name}: community equal on {}/{} shared nodes ({:.3}), NMI {:.3}, ARI {:.3}",
+        agreement.equal,
+        agreement.shared,
+        agreement.exact(),
+        agreement.nmi,
+        agreement.ari
+    );
+    (built, agreement)
+}
+
+/// The full golden check for one fixture: node/link parity, community agreement (exact on at
+/// least `min_community` of the shared nodes), Graphify's own graph re-clustered exactly, and the
+/// report goldens (byte-exact when `exact_report`).
+pub fn assert_fixture(
+    name: &str,
+    allowed: &[&str],
+    min_community: f64,
+    exact_report: bool,
+    unordered_surprises: bool,
+) {
+    let (built, agreement) = assert_golden(name, 1.0, 1.0, allowed);
+    assert!(
+        agreement.exact() >= min_community,
+        "{name}: community agreement {:.3} below {min_community}",
+        agreement.exact()
+    );
+    if agreement.exact() == 1.0 {
+        // Same communities and node set: the arrays must come out in Graphify's order too.
+        let order = |g: &Value| -> Vec<String> {
+            g["nodes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|n| n["id"].as_str().unwrap().to_string())
+                .collect()
+        };
+        let (ours, golden) = (order(&built.ours), order(&built.golden));
+        let in_ours: BTreeSet<&String> = ours.iter().collect();
+        let in_golden: BTreeSet<&String> = golden.iter().collect();
+        let ours: Vec<&String> = ours.iter().filter(|i| in_golden.contains(i)).collect();
+        let golden: Vec<&String> = golden.iter().filter(|i| in_ours.contains(i)).collect();
+        assert_eq!(ours, golden, "{name}: node array order");
+    }
+    assert_cluster_only(name, unordered_surprises);
+    check_report_goldens(name, &built, exact_report);
 }

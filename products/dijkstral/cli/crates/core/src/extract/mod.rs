@@ -31,7 +31,18 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }
-    cx.facts
+    let mut facts = cx.facts;
+    facts.words = count_words(source);
+    facts
+}
+
+/// `len(text.split())` over the lossily decoded text: Python's `str.isspace` is Unicode
+/// White_Space plus the ASCII separators U+001C–U+001F.
+pub fn count_words(source: &[u8]) -> u64 {
+    String::from_utf8_lossy(source)
+        .split(|c: char| c.is_whitespace() || ('\u{1c}'..='\u{1f}').contains(&c))
+        .filter(|w| !w.is_empty())
+        .count() as u64
 }
 
 /// `slug(s)` from the spec (§4.1).

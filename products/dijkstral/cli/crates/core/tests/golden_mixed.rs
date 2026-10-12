@@ -16,5 +16,5 @@ const ALLOWED: &[&str] = &[
 
 #[test]
 fn mixed_fixture_matches_graphify() {
-    common::assert_golden("mixed", 1.0, 1.0, ALLOWED);
+    common::assert_fixture("mixed", ALLOWED, 1.0, true, false);
 }

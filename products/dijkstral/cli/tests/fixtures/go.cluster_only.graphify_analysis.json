@@ -1,0 +1,212 @@
+{
+  "communities": {
+    "0": [
+      "cmd_app_main",
+      "go_pkg_fmt",
+      "go_pkg_github_com_google_uuid",
+      "go_pkg_os",
+      "go_pkg_sort",
+      "service_greeter",
+      "service_greeter_greet",
+      "service_service",
+      "service_service_apply",
+      "service_service_logline",
+      "service_service_strings2upper"
+    ],
+    "1": [
+      "cmd_app_main_main",
+      "n",
+      "service_service_newuserservice",
+      "store_helpers_format",
+      "store_store_sum"
+    ],
+    "2": [
+      "go_pkg_strconv",
+      "go_pkg_strings",
+      "store_helpers",
+      "store_helpers_clean",
+      "store_helpers_normalize"
+    ],
+    "3": [
+      "go_pkg_testing",
+      "go_type_testing_t",
+      "service_service_clean",
+      "service_service_test",
+      "service_service_test_testregister"
+    ],
+    "4": [
+      "service_user",
+      "service_userservice",
+      "service_userservice_greet",
+      "service_userservice_names",
+      "service_userservice_register"
+    ],
+    "5": [
+      "go_pkg_errors",
+      "store_number",
+      "store_store_go_store_store",
+      "store_store_newstore"
+    ],
+    "6": [
+      "store_store_t",
+      "store_store_t_get",
+      "store_store_t_put",
+      "t"
+    ],
+    "7": [
+      "store_id",
+      "store_model_identity",
+      "store_store_go_store_model"
+    ],
+    "8": [
+      "store_entity",
+      "store_entity_identity"
+    ],
+    "9": [
+      "pkg_example_com_shop"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2,
+    "1": 0.4,
+    "2": 0.5,
+    "3": 0.4,
+    "4": 0.7,
+    "5": 0.5,
+    "6": 0.6666666666666666,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0
+  },
+  "gods": [
+    {
+      "id": "store_store_go_store_store",
+      "label": "Store",
+      "degree": 13
+    },
+    {
+      "id": "service_user",
+      "label": "User",
+      "degree": 7
+    },
+    {
+      "id": "service_userservice",
+      "label": "UserService",
+      "degree": 7
+    },
+    {
+      "id": "store_id",
+      "label": "ID",
+      "degree": 6
+    },
+    {
+      "id": "cmd_app_main_main",
+      "label": "main()",
+      "degree": 4
+    },
+    {
+      "id": "service_service_newuserservice",
+      "label": "NewUserService()",
+      "degree": 4
+    },
+    {
+      "id": "store_helpers_normalize",
+      "label": "Normalize()",
+      "degree": 4
+    },
+    {
+      "id": "service_service_test_testregister",
+      "label": "TestRegister()",
+      "degree": 4
+    },
+    {
+      "id": "store_store_go_store_model",
+      "label": "Model",
+      "degree": 4
+    },
+    {
+      "id": "store_store_sum",
+      "label": "Sum()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "User",
+      "target": "Model",
+      "source_files": [
+        "service/service.go",
+        "store/store.go"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "embeds",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "UserService",
+      "target": "Store",
+      "source_files": [
+        "service/service.go",
+        "store/store.go"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "NewUserService()",
+      "source_files": [
+        "cmd/app/main.go",
+        "service/service.go"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "main()",
+      "target": "Format()",
+      "source_files": [
+        "cmd/app/main.go",
+        "store/helpers.go"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "main()",
+      "target": "Sum()",
+      "source_files": [
+        "cmd/app/main.go",
+        "store/store.go"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Store` connect `Community 5` to `Community 0`, `Community 1`, `Community 4`, `Community 6`, `Community 7`, `Community 8`?",
+      "why": "High betweenness centrality (0.393) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `example.com/shop` to the rest of the system?",
+      "why": "1 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `ID` connect `Community 7` to `Community 8`, `Community 2`, `Community 5`, `Community 6`?",
+      "why": "High betweenness centrality (0.110) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `UserService` connect `Community 4` to `Community 0`, `Community 1`, `Community 5`?",
+      "why": "High betweenness centrality (0.094) - this node is a cross-community bridge."
+    }
+  ]
+}

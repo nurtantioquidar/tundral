@@ -13,14 +13,18 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
 - `crates/cli`: the `dijkstral` binary and command surface.
 - `crates/core`: discovery (`discover.rs`), per-file extraction (`extract/<lang>.rs`), the
   content-addressed cache (`cache.rs`), the cross-file build stage (`resolve/mod.rs` plus
-  `resolve/<lang>.rs`), and the graph fold and `graph.json` writer (`graph.rs`). Clustering
-  joins it in stage 2.
+  `resolve/<lang>.rs`), the graph fold and `graph.json` writer (`graph.rs`), Leiden clustering
+  through Microsoft's `network_partitions` (`cluster.rs`), the analysis behind
+  `.graphify_analysis.json` (`analyze.rs`), `GRAPH_REPORT.md` (`report.rs`) and Python-exact JSON
+  output (`pyjson.rs`).
 - `crates/serve`, `crates/export`, `crates/semantic`: later stages.
 
 Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's
 output, and enforced by `crates/core/tests/golden_<lang>.rs` against the goldens in
 `tests/fixtures/`. Each golden test's `ALLOWED` list names the Graphify quirks dijkstral does not
-reproduce; a new entry needs a comment with the quirk id or reason.
+reproduce; a new entry needs a comment with the quirk id or reason. The same tests check community
+agreement, re-cluster Graphify's own graph (`dijkstral cluster-only`, which must reproduce
+`graphify cluster-only --no-label` byte for byte) and compare the report goldens (§17.6).
 
 ## Ownership boundaries
 

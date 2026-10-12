@@ -1,0 +1,205 @@
+{
+  "communities": {
+    "0": [
+      "collections",
+      "functools",
+      "json",
+      "os_path",
+      "pkg_service",
+      "pkg_service_rationale_1",
+      "pkg_util",
+      "pkg_util_helper",
+      "pkg_util_slugify",
+      "pkg_util_traced",
+      "pkg_util_traced_wrapper",
+      "re"
+    ],
+    "1": [
+      "pkg_init",
+      "pkg_init_rationale_1",
+      "pkg_models_admin",
+      "pkg_models_admin_promote",
+      "pkg_models_admin_promote_bump",
+      "pkg_models_rationale_24",
+      "pkg_models_user",
+      "pkg_models_user_guest",
+      "pkg_service_userservice_promote"
+    ],
+    "2": [
+      "dataclasses",
+      "pkg_models",
+      "pkg_models_format_name",
+      "pkg_models_helper",
+      "pkg_models_rationale_15",
+      "pkg_models_rationale_77",
+      "pkg_models_user_display",
+      "typing"
+    ],
+    "3": [
+      "main",
+      "main_main",
+      "pkg_service_run",
+      "pkg_service_userservice",
+      "pkg_service_userservice_register",
+      "sys"
+    ],
+    "4": [
+      "pkg_models_base",
+      "pkg_models_base_describe",
+      "pkg_models_base_save",
+      "pkg_models_rationale_12",
+      "pkg_models_user_save",
+      "pkg_models_validate"
+    ],
+    "5": [
+      "pkg_models_repo",
+      "pkg_models_repo_add",
+      "pkg_models_repo_get",
+      "pkg_models_repo_init",
+      "pkg_service_userservice_init",
+      "t"
+    ],
+    "6": [
+      "fixture",
+      "pytest",
+      "tests_test_service",
+      "tests_test_service_service",
+      "tests_test_service_test_run"
+    ],
+    "7": [
+      "pkg_models_user_parse",
+      "tests_test_service_testuserservice",
+      "tests_test_service_testuserservice_test_parse",
+      "tests_test_service_testuserservice_test_register"
+    ],
+    "8": [
+      "pkg_service_helper",
+      "pkg_service_rationale_17",
+      "pkg_service_userservice_export"
+    ]
+  },
+  "cohesion": {
+    "0": 0.24242424242424243,
+    "1": 0.3055555555555556,
+    "2": 0.25,
+    "3": 0.6,
+    "4": 0.4666666666666667,
+    "5": 0.4,
+    "6": 0.4,
+    "7": 0.5,
+    "8": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "pkg_models_user",
+      "label": "User",
+      "degree": 17
+    },
+    {
+      "id": "pkg_service_userservice",
+      "label": "UserService",
+      "degree": 12
+    },
+    {
+      "id": "pkg_service_run",
+      "label": "run()",
+      "degree": 11
+    },
+    {
+      "id": "pkg_models_repo",
+      "label": "Repo",
+      "degree": 8
+    },
+    {
+      "id": "pkg_models_base",
+      "label": "Base",
+      "degree": 6
+    },
+    {
+      "id": "pkg_util_slugify",
+      "label": "slugify()",
+      "degree": 6
+    },
+    {
+      "id": "pkg_models_admin",
+      "label": "Admin",
+      "degree": 5
+    },
+    {
+      "id": "tests_test_service_testuserservice",
+      "label": "TestUserService",
+      "degree": 5
+    },
+    {
+      "id": "main_main",
+      "label": "main()",
+      "degree": 3
+    },
+    {
+      "id": "pkg_models_validate",
+      "label": "validate()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "TestUserService",
+      "target": "User",
+      "source_files": [
+        "tests/test_service.py",
+        "pkg/models.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "TestUserService",
+      "target": "UserService",
+      "source_files": [
+        "tests/test_service.py",
+        "pkg/service.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "UserService",
+      "source_files": [
+        "main.py",
+        "pkg/service.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "service()",
+      "target": "run()",
+      "source_files": [
+        "tests/test_service.py",
+        "pkg/service.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "run()",
+      "source_files": [
+        "main.py",
+        "pkg/service.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

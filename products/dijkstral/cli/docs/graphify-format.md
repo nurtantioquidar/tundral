@@ -34,6 +34,7 @@ Status labels used below:
 14. JSON, TOML, shell and markdown in a code-only build
 15. Quirks summary and open questions
 16. Addenda from implementation
+17. Clustering, analysis and `GRAPH_REPORT.md`
 
 ---
 
@@ -173,8 +174,9 @@ once clustering matches.
   edge ends up `EXTRACTED` with score `0.85` (§8.2).
 - `community_name` is **absent** from a fresh `extract`. It is present on every node after `update`,
   `label` or `cluster-only` (`"Community N"` with `--no-label`; otherwise a hub-based name).
-- `.graphify_analysis.json` (communities, cohesion, god nodes) is written next to the graph and is
-  not part of `graph.json`.
+- `.graphify_analysis.json` (communities, cohesion, god nodes, surprises) is written next to the
+  graph and is not part of `graph.json`. `extract` writes no `GRAPH_REPORT.md`; `update` and
+  `cluster-only` do (§17).
 
 ---
 
@@ -1792,8 +1794,7 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
      `gzip`).
    - Unknown: whether the trigger is the importing language, the stub's origin (`use` versus
      `import`), or the stem file's language.
-4. **Community assignment.** Leiden (seed, resolution, oversize re-split) and the `community_name`
-   heuristic were not studied. Clustered array order (§2.2) depends on them.
+4. **Community assignment.** Resolved in §17: reproduced exactly on every fixture and corpus graph.
 5. **`AMBIGUOUS`** never appears in code-only output. It may exist only in semantic or LLM mode.
 6. **Rationale truncation** when the first 80 characters contain no space. Python docstring
    threshold behaviour exactly at 20/21 characters after whitespace collapse with non-ASCII text.
@@ -1872,3 +1873,198 @@ section disagrees with an earlier one, this section wins; the module docs of eac
   `kind:"code"` nodes (the "unexplained" quirk). Sourcing resolves `./`/`../` paths EXTRACTED,
   existing bare paths INFERRED, missing bare paths to an external, script-directory variables
   INFERRED; running another script creates `calls` with context `script_invocation`.
+- **`norm_label` (§5.4).** "Combining marks" are characters with a non-zero canonical combining
+  class (`unicodedata.combining`), not the general category M: Devanagari spacing vowel signs
+  (`ि`, class 0) stay, the virama (`्`, class 9) goes. Found on a graphify-corpus rationale label.
+
+---
+
+## 17. Clustering, analysis and `GRAPH_REPORT.md` (2026-10-13)
+
+Derived black-box like the rest of this document: `graphify extract`, `update` and
+`cluster-only --no-label --no-viz` were run on scratch copies of the fixtures and the corpus, on
+hand-written `graph.json` files fed to `cluster-only`, and through `graphify god-nodes`. The Leiden
+engine was read from its own source (Microsoft's MIT-licensed `graspologic-native` 1.3.1, crate
+`network_partitions`, used by dijkstral at the same tag); Graphify's source was not.
+
+**Where each output comes from.** `extract` writes `graph.json` (with `community`) and
+`.graphify_analysis.json`, but **no report**. `update` (no model) writes `GRAPH_REPORT.md` with
+hub-named communities and corpus statistics; `cluster-only --no-label` re-clusters an existing
+`graph.json` and writes the report with `Community N` names. Dijkstral's `extract` writes all three:
+the analysis sidecar as `extract` does and the report as `update` would for the same graph.
+`dijkstral cluster-only` mirrors `graphify cluster-only --no-label`.
+
+**Verification.** `dijkstral cluster-only` on Graphify's own `graph.json` reproduces Graphify's
+`cluster-only` output: `graph.json` byte-identical for all 7 fixtures and all 7 corpus repos
+(Kubernetes included: 256,424 nodes, 9,417 communities); the analysis sidecar byte-identical for 6
+of 7 fixtures and for monet, ripgrep, excalidraw and Kubernetes (sampled betweenness included);
+the report byte-identical for 6 of 7 fixtures and monet. The residual differences are in §17.7.
+
+### 17.1 Hypotheses (as briefed) and outcome
+
+| Hypothesis | Outcome |
+|---|---|
+| Leiden via graspologic-native 1.3.1: resolution 1.0, randomness 0.001, 1 iteration, modularity, seed 42, 1 trial | **Held** |
+| Input graph rebuilt in sorted order | **Held, refined**: the edge list is `sorted((min(u,v), max(u,v), w))` over all links, self-loops included; nodes are numbered by first appearance in that list |
+| AMBIGUOUS weights × 0.5 | **Not observable** in code-only graphs (no AMBIGUOUS links); implemented as stated. Link `weight` is the Leiden weight (1.0 when absent) — verified: unweighted runs diverge |
+| Isolates become singletons | **Held** |
+| Communities > 25% of nodes and ≥ 10 nodes are split again | **Refined**: > 25% **and > 10** (a 10-node community at 32% of the `mixed` fixture is not split; 11 is) |
+| Communities ≥ 50 nodes with cohesion < 0.05 re-split | **Held** (one pass, after the size split; boundaries not pinned by any corpus) |
+| Final ids by size descending, ties by sorted members | **Held** (Python list order of the sorted member ids) |
+| Label = highest-degree member, ties smaller id, trailing `()` stripped | **Held** (100% of 2,800 corpus communities) |
+| God nodes: top 10 by degree excluding files, stubs/concepts and noise labels | **Refined**: §17.4 |
+| Betweenness sampled with k=100 | **Refined**: exact up to 1,000 nodes; above, `k=100` sources from `random.Random(42).sample(list(G.nodes()), 100)` |
+| Edge betweenness skipped above 5k nodes | **Not observable**: no output uses edge betweenness |
+
+### 17.2 Community detection
+
+1. Links → `(lo, hi, weight)` with `lo < hi` by id (Python string order), `weight` from the link
+   (absent → 1.0; AMBIGUOUS × 0.5). Sort the list. Self-loops stay.
+2. graspologic-native `leiden(edges, resolution=1.0, randomness=0.001, iterations=1,
+   use_modularity=True, seed=42, trials=1)`: nodes numbered by first appearance in the list; a
+   repeated pair keeps its first weight; a self-loop only adds to the total self-link weight.
+3. Nodes without links: one singleton community each.
+4. Each community with `len > 0.25 · N` and `len > 10` is replaced by a Leiden run (same
+   parameters, same edge-list recipe) on its induced subgraph, plus singletons for its isolates.
+5. Then, once, each community with `len ≥ 50` and cohesion `< 0.05` is re-partitioned the same way.
+6. Number communities by `(-len, sorted member ids)`.
+
+Cohesion (reported and in step 5) is `internal links without self-loops / (n·(n−1)/2)`, `1.0`
+for fewer than two members (`go` and `typescript` fixtures pin the self-loop exclusion).
+
+### 17.3 `.graphify_analysis.json`
+
+`json.dump(indent=2)`, no trailing newline, floats in Python `repr` (`0.059940059940059943`,
+`1e-05`). `extract` escapes non-ASCII text (`ensure_ascii=True`: `"Caf\u00e9"`); `cluster-only`
+writes it as UTF-8 (a Kubernetes id with `ω`). Keys in order:
+
+```json
+{
+  "communities": {"0": ["lib_store_store", "..."], "...": []},
+  "cohesion": {"0": 0.2857142857142857},
+  "gods": [{"id": "lib_store_store", "label": "Store", "degree": 9}],
+  "surprises": [{"source": "Row()", "target": "formatLabel()",
+                 "source_files": ["components/App.jsx", "lib/format.mjs"],
+                 "confidence": "EXTRACTED", "relation": "calls",
+                 "why": "connects across different repos/directories; bridges separate communities"}],
+  "tokens": {"input": 0, "output": 0}
+}
+```
+
+Members are sorted by id. `cluster-only` writes `questions` (`[{type, question, why}]`, §17.5)
+instead of `tokens`.
+
+### 17.4 Rankings
+
+All rankings run over the NetworkX graph in **build order** (nodes as extracted; each node's
+neighbours in the order their links were added), so ties keep that order. Under `cluster-only`
+the order is the loaded `graph.json` order, which is why `extract` and `cluster-only` can name
+different tenth god nodes for the same graph. Degree counts a self-loop twice.
+
+- **Symbol**: `source_file` has a suffix (`PurePath.suffix`; `benchsuite/benchsuite` does not) and
+  the node is not a file node (label is a `/`-suffix of `source_file`). Stubs and externals
+  (empty `source_file`) are not symbols; concepts with a `source_file` (JSON `ref_*`) are.
+- **Hub candidate** = symbol, label not a method (`.x()`), label not in the noise list:
+  `Any AsyncMock Bool Callable ClassVar Color Combine Comparable Counter Data Date Dict Double Enum
+  Equatable Error False Final Float Font Foundation Hashable Identifiable Int List Literal MagicMock
+  Mock Optional OrderedDict Path Protocol Sendable Set String True Tuple Type URL UUID Union View abc
+  bool bytearray bytes complex datetime defaultdict float int io json object os patch re sentinel
+  str sys typing` (case-sensitive; found by feeding ~593k candidate labels to `graphify god-nodes`).
+- **God nodes**: hub candidates that are also not generic JSON keys (in a `.json` file,
+  case-insensitively: `bundleddependencies bundledependencies data dependencies description
+  devdependencies end id items key name optionaldependencies peerdependencies properties start
+  title type value version`); top 10 by degree, stable.
+- **Surprising connections**: links in `G.edges()` order between two hub candidates (neither a
+  concept nor rationale) in different files. Score = confidence (EXTRACTED 1, INFERRED 2,
+  AMBIGUOUS 3) + 2 if the top-level directories differ (`main.py` → `""`) + 1 if the communities
+  differ + 1 if one end has degree ≤ 2 and the other ≥ 5. Stable sort by score, top 5. `why` joins,
+  in this order: `inferred connection - not explicitly stated in source`, `connects across
+  different repos/directories`, `bridges separate communities`, ``peripheral node `p` unexpectedly
+  reaches hub `h` ``; with none of them, `cross-file semantic connection`.
+
+### 17.5 `GRAPH_REPORT.md`
+
+No trailing newline. Sections in order, each preceded by a blank line:
+
+```text
+# Graph Report - <dir name>  (<YYYY-MM-DD>)
+## Corpus Check            - N files · ~W,WWW words | Verdict: corpus is large enough that graph structure adds value.
+                           (cluster-only: "- cluster-only mode — file stats not available")
+## Summary                 - N nodes · E edges · C communities (S shown, T thin omitted)
+                           - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS[ · INFERRED: n edges (avg confidence: 0.91)]
+                           - Token cost: 0 input · 0 output
+## Graph Freshness         only with built_at_commit: commit[:8] and two fixed hint lines
+## Community Hubs (Navigation)   "- <label>" for every community with at least one listed member
+## God Nodes (most connected - your core abstractions)   "1. `User` - 17 edges"
+## Surprising Connections (you probably didn't know these)
+                           "- `a` --rel--> `b`  [CONF]" + "  src/a.py → src/b.py";
+                           none: "- None detected - all connections are within the same source files."
+## Import Cycles           "- k-file cycle: `a -> b -> a`" (≤ 20) or "- None detected."
+## Communities (C total, T thin omitted)
+                           per non-thin community: ### Community i - "label" / Cohesion: 0.24 / Nodes (k): a, b, … (+n more)
+## Knowledge Gaps          - **n isolated node(s):** `a`, … (+n more) + explanation line; - **T thin communities (<3 nodes) omitted from report** — …
+## Suggested Questions     _Questions this graph is uniquely positioned to answer:_ then "- **q**" / "  _why_"
+```
+
+Rules:
+
+- **Words**: `len(text.split())` per file, thousands separators. Files/words count every file
+  `update` indexes (code and markdown; dijkstral counts the code files it indexes). An
+  `Unclassified: N file(s) not represented in the graph (top: …)` line appears when the walk saw
+  unsupported files; dijkstral does not write it.
+- **Percentages**: `round(100·count/links)`; the INFERRED clause only when there is one, with the
+  mean INFERRED `confidence_score` to two decimals.
+- **Listed members** (Community sections, hubs, thin): symbols, not rationale, not methods, not
+  functions (`…()`) with degree ≤ 1; in id order, first 8 shown. *Thin* = fewer than 3 listed.
+- **Isolated nodes**: symbols, not rationale, not functions, degree ≤ 1, unless their one link is a
+  `contains`; build order; the explanation adds `or undocumented components` when
+  the graph has `document` nodes; the total counts every node with degree ≤ 1.
+- **Import cycles**: a file digraph from `imports_from` links and module-level `re_exports` (target
+  is a file node), skipping `type_only` and `deferred` imports (erpnext's `TYPE_CHECKING` cycle,
+  excalidraw's dynamic imports); simple cycles of at most 5 files, shortest first, each rotated to
+  start at its smallest path, at most 20.
+- **Suggested questions**, interleaved one per kind per round (bridge, verify, isolated, low
+  cohesion), at most 7:
+  - *bridge_node*: the 5 hub candidates with the highest betweenness; those touching other
+    communities, at most 3. ``Why does `X` connect `<own>` to `<a>`, `<b>`?`` — other communities
+    in the iteration order of a CPython `set` of their ids. Why: `High betweenness centrality
+    (0.304) - this node is a cross-community bridge.`
+  - *verify_inferred*: god nodes among the first 5 with ≥ 2 INFERRED links. ``Are the n inferred
+    relationships involving `X` (e.g. with `a` and `b`) actually correct?`` (first two INFERRED
+    neighbours by id).
+  - *isolated_nodes*: ``What connects `a`, `b`, `c` to the rest of the system?`` / `n
+    weakly-connected nodes found - possible documentation gaps or missing edges.`
+  - *low_cohesion*: communities with cohesion < 0.15 (a connected community needs 14+ members), in id
+    order: ``Should `label` be split into smaller, more focused modules?`` / `Cohesion score
+    <repr> - nodes in this community are weakly interconnected.`
+  - None at all: `_Not enough signal to generate questions. …_`.
+
+### 17.6 Goldens
+
+`tests/fixtures/<lang>.graphify_analysis.json` (from `extract`), `<lang>.graphify_report.md`
+(from `update`; `mixed` from a copy without `README.md`, which `update` would index) and
+`<lang>.cluster_only.graphify_{analysis.json,report.md}` (from `cluster-only --no-label` on
+`<lang>.clustered.graphify.json`). Reports are compared after replacing the title line (directory
+name and date) and `graphify update`/`graphify query` in hints with `dijkstral …`; analysis files
+need no normalisation.
+
+### 17.7 Remaining differences
+
+- **Extraction**: wherever dijkstral's node or link set differs from Graphify's (the `ALLOWED`
+  quirks, stage-1 parity), Leiden sees a different graph and community ids move globally
+  (NMI 0.83–0.95 on the corpus); god-node and surprise ties follow build order, which differs where
+  the cross-file pass emits links in another order (`go` fixture: `main() → Sum()` vs `Format()`).
+- **Surprise ties**: Graphify orders two equal-score surprises differently from `G.edges()` in the
+  `java` fixture and in fastapi. Not explained.
+- **verify_inferred**: on fastapi (`HTTPException`) and erpnext (`make_stock_entry()`,
+  `make_sales_order()`) Graphify asks no question for a top-5 god node with ≥ 2 INFERRED links,
+  although it does for the same node in an ego graph. Not explained.
+- **Bridge community order**: the `set` iteration order matches for most bridges; for a few
+  (graphify `dispatch_command()`, erpnext `make_stock_entry()`) Graphify's insertion order differs
+  from sorted-neighbour order.
+- **Import cycles**: the same cycles are found where Graphify lists all of them (fastapi, monet,
+  erpnext, graphify); the order of equal-length cycles, and therefore which 20 are listed in
+  ripgrep, excalidraw and Kubernetes, differs. Graphify's enumeration order is not
+  `networkx.simple_cycles` over the arcs in link or `G.edges()` order (tested).
+- **Words** count the code files dijkstral indexes; `update` also counts markdown and other
+  documents, and lists unclassified files, which dijkstral does not.

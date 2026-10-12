@@ -1,0 +1,245 @@
+{
+  "communities": {
+    "0": [
+      "build",
+      "circle",
+      "label",
+      "render",
+      "round",
+      "round_kind",
+      "src_lib_total_area",
+      "src_main",
+      "src_main_main",
+      "src_model_named",
+      "src_model_named_name",
+      "src_model_shape",
+      "src_model_shape_area",
+      "src_model_shape_describe",
+      "total_area"
+    ],
+    "1": [
+      "formatter",
+      "memchr",
+      "src_model_circle",
+      "src_model_circle_area",
+      "src_model_circle_fmt",
+      "src_model_circle_new",
+      "src_model_circle_scale",
+      "src_model_circle_unit",
+      "src_model_fixture",
+      "src_util_fmt",
+      "src_util_fmt_configure",
+      "src_util_fmt_helper",
+      "src_util_fmt_render",
+      "src_util_fmt_rs_settings"
+    ],
+    "2": [
+      "f",
+      "render_as_render_shape",
+      "src_model_circle_diameter",
+      "src_model_meters",
+      "src_util_mod",
+      "src_util_mod_apply",
+      "src_util_mod_helper",
+      "src_util_mod_reconfigure",
+      "src_util_mod_render",
+      "src_util_mod_rs_settings",
+      "src_util_mod_run_all",
+      "src_util_mod_twice",
+      "src_util_mod_widen"
+    ],
+    "3": [
+      "serialize",
+      "src_model",
+      "src_model_area_is_positive",
+      "src_model_classify",
+      "src_model_kind",
+      "src_model_kind_empty",
+      "src_model_kind_round",
+      "src_model_kind_square",
+      "src_model_platform",
+      "src_model_round_kind",
+      "src_model_unit",
+      "super"
+    ],
+    "4": [
+      "circle_as_round",
+      "cow",
+      "hashmap",
+      "hashset",
+      "registry",
+      "src_lib",
+      "src_lib_build",
+      "src_lib_greeting",
+      "src_lib_label",
+      "src_lib_macro_square",
+      "src_lib_max_shapes"
+    ],
+    "5": [
+      "src_model_pair",
+      "src_model_pair_t",
+      "src_model_pair_t_first",
+      "src_model_wrapper",
+      "src_model_wrapper_t",
+      "src_model_wrapper_t_area",
+      "src_model_wrapper_t_new",
+      "t"
+    ],
+    "6": [
+      "classify",
+      "kind",
+      "tests_it",
+      "tests_it_classifies_empty",
+      "twice"
+    ],
+    "7": [
+      "pkg_shapes"
+    ]
+  },
+  "cohesion": {
+    "0": 0.14285714285714285,
+    "1": 0.16483516483516483,
+    "2": 0.19230769230769232,
+    "3": 0.21212121212121213,
+    "4": 0.18181818181818182,
+    "5": 0.25,
+    "6": 0.4,
+    "7": 1.0
+  },
+  "gods": [
+    {
+      "id": "src_model_circle",
+      "label": "Circle",
+      "degree": 13
+    },
+    {
+      "id": "src_model_shape",
+      "label": "Shape",
+      "degree": 9
+    },
+    {
+      "id": "src_model_kind",
+      "label": "Kind",
+      "degree": 7
+    },
+    {
+      "id": "src_model_round_kind",
+      "label": "round_kind()",
+      "degree": 5
+    },
+    {
+      "id": "src_util_mod_apply",
+      "label": "apply()",
+      "degree": 4
+    },
+    {
+      "id": "src_model_named",
+      "label": "Named",
+      "degree": 3
+    },
+    {
+      "id": "src_model_meters",
+      "label": "Meters",
+      "degree": 3
+    },
+    {
+      "id": "src_lib_total_area",
+      "label": "total_area()",
+      "degree": 3
+    },
+    {
+      "id": "src_main_main",
+      "label": "main()",
+      "degree": 3
+    },
+    {
+      "id": "src_model_fixture",
+      "label": "fixture()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "render()",
+      "target": "Circle",
+      "source_files": [
+        "src/util/mod.rs",
+        "src/model.rs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities; peripheral node `render()` unexpectedly reaches hub `Circle`"
+    },
+    {
+      "source": "main()",
+      "target": "round_kind()",
+      "source_files": [
+        "src/main.rs",
+        "src/model.rs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "render()",
+      "target": "Circle",
+      "source_files": [
+        "src/util/fmt.rs",
+        "src/model.rs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `render()` unexpectedly reaches hub `Circle`"
+    },
+    {
+      "source": "widen()",
+      "target": "Meters",
+      "source_files": [
+        "src/util/mod.rs",
+        "src/model.rs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source"
+    },
+    {
+      "source": "main()",
+      "target": "total_area()",
+      "source_files": [
+        "src/main.rs",
+        "src/lib.rs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Shape` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`?",
+      "why": "High betweenness centrality (0.382) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Pair<T>`, `Empty`, `Square` to the rest of the system?",
+      "why": "4 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Circle` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`?",
+      "why": "High betweenness centrality (0.190) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Pair` connect `Community 5` to `Community 3`?",
+      "why": "High betweenness centrality (0.065) - this node is a cross-community bridge."
+    }
+  ]
+}
