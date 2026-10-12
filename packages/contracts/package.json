@@ -8,7 +8,8 @@
     "./customer": "./src/customer.ts",
     "./pricing": "./src/pricing.ts",
     "./upstreams": "./src/upstreams.ts",
-    "./validation": "./src/validation.ts"
+    "./validation": "./src/validation.ts",
+    "./nimble": "./src/nimble.ts"
   },
   "scripts": {
     "test": "bun test",

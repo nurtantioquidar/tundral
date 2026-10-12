@@ -3,8 +3,9 @@
 ## Purpose
 
 `@monet/contracts` contains the explicit, transport-level HTTP contracts shared by independently
-deployable Monet applications. It exists because both `products/inver/gateway` and `products/inver/web`
-consume the same request and response shapes.
+deployable Monet applications. It exists because `products/inver/gateway` and `products/inver/web`
+consume the same request and response shapes, and `products/nimble/router` consumes the versioned
+`nimble/v1` contract (`nimble.ts`).
 
 Follow the repository-root `AGENTS.md` first. `CLAUDE.md` must remain a relative symlink to this
 file.
@@ -13,7 +14,7 @@ file.
 
 This package owns:
 
-- JSON-serializable public, customer, admin, pricing, and upstream-routing contract types;
+- JSON-serializable public, customer, admin, pricing, upstream-routing, and Nimble-routing contract types;
 - small runtime validators for envelopes or payloads that cross an application boundary.
 
 This package does not own:
