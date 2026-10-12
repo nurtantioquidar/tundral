@@ -215,3 +215,57 @@ Clustering, analysis and the report add about 2.3 s and 70 MB on Kubernetes. Out
 byte-identical between `--threads 1` and the default on both repos. The stage-1 Kubernetes cold
 build measured 5.5 s on a quiet machine; these runs shared the machine with other work, so compare
 the two dijkstral columns with each other.
+
+### Stage 2 head-to-head: merged build vs full Graphify — 2026-10-13
+
+dijkstral at `2829682` (clustering, analysis, report and the accuracy fixes), quiet machine, 10
+threads, 3 runs (Kubernetes 3 for dijkstral, 1 for Graphify). Graphify's column is the stage-0
+baseline (full `extract --code-only` with clustering; Kubernetes warm/update with the size cap
+raised). Raw: `results/build-1791848836.json`, `results/build-1791848853.json`.
+
+| repo | scenario | Graphify (full) s | dijkstral s | speedup | Graphify peak RSS MB | dijkstral peak RSS MB |
+|---|---|---|---|---|---|---|
+| monet | cold | 2.07 | 0.14 | 15× | 686 | 58 |
+|  | warm | 1.12 | 0.08 | 14× | 109 | 8 |
+|  | update | 1.95 | 0.08 | 23× | 621 | 9 |
+| graphify | cold | 9.26 | 0.37 | 25× | 964 | 187 |
+|  | warm | 4.98 | 0.17 | 28× | 290 | 97 |
+|  | update | 7.71 | 0.17 | 44× | 894 | 101 |
+| fastapi | cold | 6.80 | 0.25 | 27× | 707 | 89 |
+|  | warm | 3.01 | 0.13 | 23× | 162 | 78 |
+|  | update | 9.51 | 0.15 | 64× | 617 | 70 |
+| ripgrep | cold | 1.70 | 0.12 | 14× | 640 | 66 |
+|  | warm | 0.97 | 0.08 | 12× | 101 | 8 |
+|  | update | 1.02 | 0.08 | 12× | 115 | 8 |
+| excalidraw | cold | 3.98 | 0.22 | 18× | 759 | 86 |
+|  | warm | 1.98 | 0.11 | 17× | 161 | 76 |
+|  | update | 3.92 | 0.12 | 34× | 791 | 77 |
+| erpnext | cold | 22.44 | 0.88 | 25× | 1,132 | 298 |
+|  | warm | 10.44 | 0.29 | 35× | 464 | 243 |
+|  | update | 21.41 | 0.31 | 69× | 1,451 | 234 |
+| kubernetes | cold | 861.97 | 7.90 | 109× | 2,280 | 2,078 |
+|  | warm | 184.54 | 4.50 | 41× | 3,144 | 1,907 |
+|  | update | 735.97 | 4.45 | 165× | 4,713 | 1,908 |
+
+dijkstral is faster (12× to 165×) and lower in peak memory in all 21 scenarios. Graphify's build
+also writes `graph.html`, which dijkstral adds with the other exporters in stage 4. A no-change
+rebuild now reruns clustering, analysis and the report (Kubernetes warm 4.5 s against 2.2 s without
+them); skipping them when no input changed is the obvious next optimisation.
+
+Graph accuracy against SCIP is in [accuracy/README.md](accuracy/README.md): dijkstral meets
+"precision ≥ Graphify and recall ≥ Graphify" in all 27 repo/relation rows. Parity with Graphify's
+graph on the merged build (`parity.py`, recall / precision %, and community NMI):
+
+| repo | def nodes | all links | community NMI |
+|---|---|---|---|
+| monet | 99.8 / 99.9 | 97.2 / 95.9 | 0.945 |
+| graphify | 95.9 / 99.9 | 97.3 / 95.9 | 0.944 |
+| fastapi | 100.0 / 100.0 | 93.8 / 94.0 | 0.915 |
+| ripgrep | 99.9 / 100.0 | 94.9 / 95.2 | 0.917 |
+| excalidraw | 100.0 / 100.0 | 97.3 / 99.5 | 0.831 |
+| erpnext | 100.0 / 100.0 | 94.1 / 91.1 | 0.905 |
+| kubernetes | 99.9 / 100.0 | 99.9 / 99.8 | 0.865 |
+
+Link parity moved slightly since stage 1 where the accuracy fixes made dijkstral deliberately
+differ from Graphify (e.g. ripgrep gains 205 correct file-level Rust imports Graphify lacks).
+
