@@ -1,0 +1,211 @@
+{
+  "communities": {
+    "0": [
+      "function",
+      "requirenonnull",
+      "slug",
+      "src_main_java_com_shop_service_userservice",
+      "src_main_java_com_shop_service_userservice_formatter",
+      "src_main_java_com_shop_service_userservice_formatter_format",
+      "src_main_java_com_shop_service_userservice_formatter_shout",
+      "src_main_java_com_shop_service_userservice_formatter_slug",
+      "src_main_java_com_shop_service_userservice_repository",
+      "src_main_java_com_shop_service_userservice_repository_save",
+      "src_main_java_com_shop_service_userservice_stats",
+      "src_main_java_com_shop_service_userservice_stats_count",
+      "src_main_java_com_shop_service_userservice_userservice",
+      "src_main_java_com_shop_service_userservice_userservice_names",
+      "util"
+    ],
+    "1": [
+      "src_main_java_com_shop_model_user_address",
+      "src_main_java_com_shop_model_user_address_label",
+      "src_main_java_com_shop_model_user_badge",
+      "src_main_java_com_shop_model_user_badge_text",
+      "src_main_java_com_shop_model_user_user",
+      "src_main_java_com_shop_model_user_user_getname",
+      "src_main_java_com_shop_model_user_user_of",
+      "src_main_java_com_shop_model_user_user_user",
+      "src_main_java_com_shop_service_userservice_java_override",
+      "src_main_java_com_shop_service_userservice_userservice_notify",
+      "src_main_java_com_shop_service_userservice_userservice_notify_object_runnable_l38",
+      "src_main_java_com_shop_service_userservice_userservice_notify_object_runnable_l38_run",
+      "src_main_java_com_shop_service_userservice_userservice_register",
+      "src_main_java_com_shop_service_userservice_userservice_save"
+    ],
+    "2": [
+      "instant",
+      "objects",
+      "src_main_java_com_shop_model_entity",
+      "src_main_java_com_shop_model_entity_entity",
+      "src_main_java_com_shop_model_entity_entity_describe",
+      "src_main_java_com_shop_model_entity_entity_id",
+      "src_main_java_com_shop_model_model",
+      "src_main_java_com_shop_model_model_java_override",
+      "src_main_java_com_shop_model_model_model",
+      "src_main_java_com_shop_model_model_model_compareto",
+      "src_main_java_com_shop_model_model_model_id",
+      "src_main_java_com_shop_model_model_model_model",
+      "src_main_java_com_shop_model_model_model_status"
+    ],
+    "3": [
+      "assertequals",
+      "org_junit_jupiter_api_beforeeach",
+      "org_junit_jupiter_api_test",
+      "src_test_java_com_shop_service_userservicetest",
+      "src_test_java_com_shop_service_userservicetest_formatter",
+      "src_test_java_com_shop_service_userservicetest_formatter_format",
+      "src_test_java_com_shop_service_userservicetest_userservicetest",
+      "src_test_java_com_shop_service_userservicetest_userservicetest_registersuser",
+      "src_test_java_com_shop_service_userservicetest_userservicetest_setup"
+    ],
+    "4": [
+      "src_main_java_com_shop_model_model_status",
+      "src_main_java_com_shop_model_model_status_active",
+      "src_main_java_com_shop_model_model_status_islive",
+      "src_main_java_com_shop_model_model_status_suspended",
+      "src_main_java_com_shop_model_user_java_override",
+      "src_main_java_com_shop_model_user_user_status"
+    ],
+    "5": [
+      "java_lang_annotation_retention",
+      "retentionpolicy",
+      "src_main_java_com_shop_service_audited",
+      "src_main_java_com_shop_service_audited_audited"
+    ],
+    "6": [
+      "arraylist",
+      "list",
+      "src_main_java_com_shop_model_user"
+    ]
+  },
+  "cohesion": {
+    "0": 0.17142857142857143,
+    "1": 0.24175824175824176,
+    "2": 0.16666666666666666,
+    "3": 0.2777777777777778,
+    "4": 0.3333333333333333,
+    "5": 0.6666666666666666,
+    "6": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "src_main_java_com_shop_model_user_user",
+      "label": "User",
+      "degree": 13
+    },
+    {
+      "id": "src_main_java_com_shop_service_userservice_userservice",
+      "label": "UserService",
+      "degree": 11
+    },
+    {
+      "id": "src_main_java_com_shop_model_model_model",
+      "label": "Model",
+      "degree": 9
+    },
+    {
+      "id": "src_main_java_com_shop_model_model_status",
+      "label": "Status",
+      "degree": 6
+    },
+    {
+      "id": "src_main_java_com_shop_service_userservice_formatter",
+      "label": "Formatter",
+      "degree": 5
+    },
+    {
+      "id": "src_main_java_com_shop_model_user_address",
+      "label": "Address",
+      "degree": 5
+    },
+    {
+      "id": "src_test_java_com_shop_service_userservicetest_userservicetest",
+      "label": "UserServiceTest",
+      "degree": 5
+    },
+    {
+      "id": "src_main_java_com_shop_model_entity_entity",
+      "label": "Entity",
+      "degree": 4
+    },
+    {
+      "id": "src_main_java_com_shop_service_userservice_repository",
+      "label": "Repository",
+      "degree": 3
+    },
+    {
+      "id": "src_test_java_com_shop_service_userservicetest_formatter",
+      "label": "Formatter",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "UserService",
+      "target": "User",
+      "source_files": [
+        "src/main/java/com/shop/service/UserService.java",
+        "src/main/java/com/shop/model/User.java"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "UserServiceTest",
+      "target": "UserService",
+      "source_files": [
+        "src/test/java/com/shop/service/UserServiceTest.java",
+        "src/main/java/com/shop/service/UserService.java"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "User",
+      "target": "Model",
+      "source_files": [
+        "src/main/java/com/shop/model/User.java",
+        "src/main/java/com/shop/model/Model.java"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "Model",
+      "target": "Entity",
+      "source_files": [
+        "src/main/java/com/shop/model/Model.java",
+        "src/main/java/com/shop/model/Entity.java"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "implements",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `User` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 6`?",
+      "why": "High betweenness centrality (0.413) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `ACTIVE`, `SUSPENDED` to the rest of the system?",
+      "why": "2 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Model` connect `Community 2` to `Community 0`, `Community 1`, `Community 4`?",
+      "why": "High betweenness centrality (0.384) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `UserService` connect `Community 0` to `Community 1`, `Community 3`?",
+      "why": "High betweenness centrality (0.229) - this node is a cross-community bridge."
+    }
+  ]
+}

@@ -17,6 +17,11 @@ bincode = "1.3"
 clap = { version = "4", features = ["derive"] }
 ignore = "0.4"
 mimalloc = { version = "0.1", default-features = false }
+# Microsoft's MIT-licensed Leiden (graspologic-native v1.3.1, the engine Graphify calls through
+# Python), so partitions match Graphify's for identical input and seed.
+network_partitions = { git = "https://github.com/microsoft/graspologic-native", rev = "773181488b4e5b81925e302b972b294fd51f61a4" }
+# The RNG network_partitions is driven by; the version graspologic-native 1.3.1 locks.
+rand = "=0.10.1"
 rayon = "1"
 redb = "2"
 serde = { version = "1", features = ["derive"] }

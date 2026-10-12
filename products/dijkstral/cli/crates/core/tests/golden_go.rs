@@ -8,5 +8,7 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn go_fixture_matches_graphify() {
-    common::assert_golden("go", 1.0, 1.0, ALLOWED);
+    // Same graph, same communities; the report differs only in the order of two equal-score
+    // surprises, which follows the cross-file pass's emission order (graphify-format.md §17.7).
+    common::assert_fixture("go", ALLOWED, 1.0, false, false);
 }

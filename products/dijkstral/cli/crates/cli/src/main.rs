@@ -3,6 +3,7 @@ use std::process::ExitCode;
 use std::time::Instant;
 
 use clap::{Args, Parser, Subcommand};
+use dijkstral_core::pipeline::cluster_only_files;
 use dijkstral_core::{build, BuildOptions, BuildReport};
 
 // mimalloc keeps fragmentation and the retained high-water mark well below the system allocator's
@@ -24,6 +25,21 @@ enum Command {
     Extract(BuildArgs),
     /// Rebuild incrementally after changes (only changed files are re-extracted).
     Update(BuildArgs),
+    /// Re-cluster an existing graph.json and rewrite it with GRAPH_REPORT.md and
+    /// .graphify_analysis.json (`graphify cluster-only --no-label`: communities named
+    /// "Community N", no file statistics).
+    ClusterOnly(ClusterOnlyArgs),
+}
+
+#[derive(Args, Debug)]
+struct ClusterOnlyArgs {
+    /// Directory whose dijkstral-out/graph.json is re-clustered.
+    #[arg(default_value = ".")]
+    path: PathBuf,
+    /// Graph to re-cluster instead (Graphify's graphify-out/graph.json works too); outputs are
+    /// written next to it.
+    #[arg(long, value_name = "FILE")]
+    graph: Option<PathBuf>,
 }
 
 #[derive(Args, Debug)]
@@ -34,7 +50,8 @@ struct BuildArgs {
     /// Index code only (no documents, papers or images). The only mode before the semantic pass.
     #[arg(long)]
     code_only: bool,
-    /// Skip clustering. Clustering arrives in stage 2, so this is currently always the case.
+    /// Skip clustering, analysis and the report: graph.json gets no `community`, and
+    /// GRAPH_REPORT.md and .graphify_analysis.json are not written.
     #[arg(long)]
     no_cluster: bool,
     /// Write dijkstral-out/ under this directory instead of the indexed one.
@@ -50,7 +67,21 @@ struct BuildArgs {
 
 fn main() -> ExitCode {
     let cli = Cli::parse();
-    let (Command::Extract(args) | Command::Update(args)) = cli.command;
+    let args = match cli.command {
+        Command::Extract(args) | Command::Update(args) => args,
+        Command::ClusterOnly(args) => {
+            return match cluster_only_files(&args.path, args.graph.as_deref()) {
+                Ok((dir, communities)) => {
+                    println!("{communities} communities\nwrote {}", dir.display());
+                    ExitCode::SUCCESS
+                }
+                Err(e) => {
+                    eprintln!("error: {e:#}");
+                    ExitCode::FAILURE
+                }
+            };
+        }
+    };
     let threads = args
         .threads
         .unwrap_or_else(|| std::thread::available_parallelism().map_or(1, |n| n.get()));
@@ -59,6 +90,7 @@ fn main() -> ExitCode {
         root: args.path,
         out: args.out,
         threads,
+        cluster: !args.no_cluster,
     };
     match build(&opts) {
         Ok(report) => {
@@ -73,13 +105,19 @@ fn main() -> ExitCode {
 }
 
 fn print_report(r: &BuildReport, timings: bool, started: Instant) {
+    let communities = if r.communities > 0 {
+        format!(", {} communities", r.communities)
+    } else {
+        String::new()
+    };
     println!(
-        "{} files ({} extracted, {} cached) -> {} nodes, {} edges in {:.2}s\nwrote {}",
+        "{} files ({} extracted, {} cached) -> {} nodes, {} edges{} in {:.2}s\nwrote {}",
         r.files,
         r.extracted,
         r.cached,
         r.nodes,
         r.edges,
+        communities,
         started.elapsed().as_secs_f64(),
         r.out_dir.join("graph.json").display()
     );

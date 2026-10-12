@@ -1,0 +1,146 @@
+{
+  "communities": {
+    "0": [
+      "package",
+      "package_devdependencies",
+      "package_devdependencies_typescript",
+      "package_name",
+      "package_scripts",
+      "package_scripts_build",
+      "package_version",
+      "ref_react",
+      "ref_typescript",
+      "ref_zod"
+    ],
+    "1": [
+      "scripts_build",
+      "scripts_build_build",
+      "scripts_build_clean",
+      "scripts_build_compile_all",
+      "scripts_build_sh__entry",
+      "scripts_common",
+      "scripts_common_log",
+      "scripts_common_sh__entry"
+    ],
+    "2": [
+      "tsconfig",
+      "tsconfig_compileroptions",
+      "tsconfig_compileroptions_strict",
+      "tsconfig_compileroptions_target",
+      "tsconfig_include"
+    ],
+    "3": [
+      "app_main",
+      "app_main_helper",
+      "app_main_main"
+    ],
+    "4": [
+      "package_dependencies",
+      "package_dependencies_react",
+      "package_dependencies_zod"
+    ],
+    "5": [
+      "cargo_toml_pkg_mixed_fixture"
+    ],
+    "6": [
+      "pyproject_toml_pkg_mixed_fixture"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2,
+    "1": 0.42857142857142855,
+    "2": 0.4,
+    "3": 1.0,
+    "4": 0.6666666666666666,
+    "5": 1.0,
+    "6": 1.0
+  },
+  "gods": [
+    {
+      "id": "scripts_build_build",
+      "label": "build()",
+      "degree": 5
+    },
+    {
+      "id": "scripts_build_clean",
+      "label": "clean()",
+      "degree": 3
+    },
+    {
+      "id": "scripts_common_log",
+      "label": "log()",
+      "degree": 3
+    },
+    {
+      "id": "tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 3
+    },
+    {
+      "id": "app_main_helper",
+      "label": "helper()",
+      "degree": 2
+    },
+    {
+      "id": "app_main_main",
+      "label": "main()",
+      "degree": 2
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 2
+    },
+    {
+      "id": "scripts_build_compile_all",
+      "label": "compile_all()",
+      "degree": 2
+    },
+    {
+      "id": "scripts_build_sh__entry",
+      "label": "build.sh script",
+      "degree": 2
+    },
+    {
+      "id": "package_devdependencies_typescript",
+      "label": "typescript",
+      "degree": 1
+    }
+  ],
+  "surprises": [
+    {
+      "source": "build()",
+      "target": "log()",
+      "source_files": [
+        "scripts/build.sh",
+        "scripts/common.sh"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "clean()",
+      "target": "log()",
+      "source_files": [
+        "scripts/build.sh",
+        "scripts/common.sh"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `dependencies` connect `Community 4` to `Community 0`?",
+      "why": "High betweenness centrality (0.048) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `react`, `typescript`, `zod` to the rest of the system?",
+      "why": "5 weakly-connected nodes found - possible documentation gaps or missing edges."
+    }
+  ]
+}

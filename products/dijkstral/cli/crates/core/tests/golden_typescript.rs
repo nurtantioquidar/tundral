@@ -39,7 +39,8 @@ const ALLOWED: &[&str] = &[
 
 #[test]
 fn typescript_fixture_matches_graphify() {
-    common::assert_golden("typescript", 1.0, 1.0, ALLOWED);
+    // Community ids move with the ALLOWED differences (NMI 0.95, graphify-format.md §17.7).
+    common::assert_fixture("typescript", ALLOWED, 0.2, false, false);
 }
 
 /// Build a throwaway project and return its node ids and `source -relation-> target` links.
@@ -55,6 +56,7 @@ fn build_project(files: &[(&str, &str)]) -> (BTreeSet<String>, BTreeSet<String>)
         root: root.clone(),
         out: None,
         threads: 2,
+        cluster: false,
     })
     .unwrap();
     let g: Value =
