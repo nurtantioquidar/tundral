@@ -10,5 +10,11 @@ node_modules/
 **/backups/
 coverage/
 dist/
+target/
 .turbo/
 
+# Repo-local agent skills are checked in. A global ignore may exclude .claude/
+# wholesale; re-include only the skills tree, keeping local settings untracked.
+!.claude/
+.claude/*
+!.claude/skills/
