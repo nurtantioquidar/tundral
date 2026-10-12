@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+# Crates are added when their stage begins (see ../DIJKSTRAL_DESIGN.md): core, serve, export,
+# semantic. Stage 0 ships only the binary shell.
+members = ["crates/cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "UNLICENSED"
+publish = false
+
+[workspace.dependencies]
+clap = { version = "4", features = ["derive"] }
+
+[profile.release]
+lto = "thin"
+strip = true
+codegen-units = 1

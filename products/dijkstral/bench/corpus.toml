@@ -1,0 +1,68 @@
+# Pinned benchmark corpus. Every tool is measured on exactly these commits.
+#
+# `edit_file` is the file the `update` scenario appends one comment line to (then restores).
+# `tier` groups repos for the headline tables. Repos are fetched outside the source tree by
+# setup.sh into $DIJKSTRAL_BENCH_HOME/corpus/<name>.
+
+[[repo]]
+name = "monet"
+url = "local:monet"            # this repository, at the pinned commit
+commit = "ba20bd74444ed1118b301739e128297340aaf03e"
+tier = "small"
+langs = ["typescript", "rust", "python"]
+edit_file = "products/cocoon/cli/src/config.rs"
+comment = "//"
+
+[[repo]]
+name = "graphify"
+url = "https://github.com/Graphify-Labs/graphify"
+commit = "a5ba60ddf6293d9f380321965ecf1084391dcc2b"   # v0.9.86
+tier = "small"
+langs = ["python"]
+edit_file = "graphify/ids.py"
+comment = "#"
+
+[[repo]]
+name = "fastapi"
+url = "https://github.com/fastapi/fastapi"
+commit = "f5c6e9b4f9cadc1bf0f9a1fd672e621206b63007"   # 0.143.0
+tier = "medium"
+langs = ["python"]
+edit_file = "fastapi/routing.py"
+comment = "#"
+
+[[repo]]
+name = "ripgrep"
+url = "https://github.com/BurntSushi/ripgrep"
+commit = "e89fff89ac9af12e8d4ce9d5fd07beb408ca730f"   # 15.2.0
+tier = "medium"
+langs = ["rust"]
+edit_file = "crates/core/main.rs"
+comment = "//"
+
+[[repo]]
+name = "excalidraw"
+url = "https://github.com/excalidraw/excalidraw"
+commit = "a2ec2889babf7d2295469c6d90ebe77fae57df84"   # v0.18.1
+tier = "large"
+langs = ["typescript", "javascript"]
+edit_file = "packages/excalidraw/scene/Renderer.ts"
+comment = "//"
+
+[[repo]]
+name = "erpnext"
+url = "https://github.com/frappe/erpnext"
+commit = "7474d9e786277383de1242ab882f16856d17a9c9"   # v16.50.0
+tier = "large"
+langs = ["python", "javascript"]
+edit_file = "erpnext/controllers/accounts_controller.py"
+comment = "#"
+
+[[repo]]
+name = "kubernetes"
+url = "https://github.com/kubernetes/kubernetes"
+commit = "f78e722310e50bcaca9276be22276d9e91d91308"   # v1.37.1
+tier = "huge"
+langs = ["go"]
+edit_file = "pkg/scheduler/scheduler.go"
+comment = "//"
