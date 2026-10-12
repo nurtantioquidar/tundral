@@ -70,6 +70,9 @@ pub enum RefKind {
     Decorator,
     /// Bare-identifier base class (`inherits`).
     Base,
+    /// Class-level annotation `name: T [= value]` (`references`, context `field`). Graphify
+    /// emits nothing for class attributes; dijkstral records the field's type like Rust and Go.
+    Field,
 }
 
 /// A name used as a type, base or decorator by definition `source`.
@@ -82,6 +85,9 @@ pub struct TypeRef {
     /// Dotted qualifier before the name (`m` in `m.Foo`), when written qualified.
     pub qual: Option<String>,
     pub line: u32,
+    /// From a source Graphify ignores (a class field, a string annotation): emitted only when
+    /// it resolves to a definition, never as a stub.
+    pub resolved_only: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -253,6 +259,8 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         comments: Vec::new(),
         mention_seen: HashSet::new(),
         locals: Vec::new(),
+        opaque_strings: 0,
+        field_annotation: false,
     };
     let file_id = w.cx.file_id.clone();
     w.docstring(root, None);
@@ -389,11 +397,15 @@ struct Walker<'c, 'a> {
     comments: Vec<(u32, String)>,
     mention_seen: HashSet<(u32, Option<u32>, String)>,
     locals: Vec<Locals>,
+    /// Inside call arguments or `Annotated` metadata of an annotation: strings are values.
+    opaque_strings: u32,
+    /// Walking a class-level field annotation.
+    field_annotation: bool,
 }
 
-impl Walker<'_, '_> {
-    fn text(&self, node: TsNode) -> &str {
-        std::str::from_utf8(&self.cx.src[node.byte_range()]).unwrap_or("")
+impl<'a> Walker<'_, 'a> {
+    fn text(&self, node: TsNode) -> &'a str {
+        self.cx.text(node)
     }
 
     fn finish(mut self) {
@@ -777,6 +789,7 @@ impl Walker<'_, '_> {
                 name: base,
                 qual: None,
                 line: l,
+                resolved_only: false,
             });
         }
         let uses_scope = f.uses_scope.or(Some(idx));
@@ -821,6 +834,7 @@ impl Walker<'_, '_> {
                             name: name.to_string(),
                             qual: qual.map(str::to_string),
                             line,
+                            resolved_only: false,
                         });
                     }
                 }
@@ -1013,6 +1027,16 @@ impl Walker<'_, '_> {
             return;
         };
         if f.caller.is_none() {
+            // A class-level annotation is a field of the class (`name: T`, `name: T = v`).
+            if let (Some(class), true, Some(ty)) = (
+                f.parent_def,
+                f.parent_is_class && !f.in_function,
+                node.child_by_field_name("type"),
+            ) {
+                self.field_annotation = true;
+                self.walk_type(ty, class, RefKind::Field, Ctx::line(ty), 0);
+                self.field_annotation = false;
+            }
             return;
         }
         if l.kind() == "identifier" {
@@ -1222,26 +1246,32 @@ impl Walker<'_, '_> {
                     name: name.to_string(),
                     qual: qual.map(str::to_string),
                     line,
+                    resolved_only: self.field_annotation,
                 });
             }
             "subscript" => {
-                if let Some(v) = node.child_by_field_name("value") {
+                let value = node.child_by_field_name("value");
+                if let Some(v) = value {
                     self.walk_type(v, def, kind, line, depth + 1);
                 }
+                let head = value.map(|v| split_dotted(self.text(v)).1);
                 let mut cur = node.walk();
-                for s in node.children_by_field_name("subscript", &mut cur) {
-                    self.walk_type(s, def, RefKind::Generic, line, depth + 1);
-                }
+                let args: Vec<TsNode> =
+                    node.children_by_field_name("subscript", &mut cur).collect();
+                self.type_args(head, &args, def, line, depth);
             }
             "generic_type" => {
                 let mut cur = node.walk();
+                let mut head = None;
                 for c in node.named_children(&mut cur) {
-                    let k = if c.kind() == "type_parameter" {
-                        RefKind::Generic
+                    if c.kind() == "type_parameter" {
+                        let mut c2 = c.walk();
+                        let args: Vec<TsNode> = c.named_children(&mut c2).collect();
+                        self.type_args(head, &args, def, line, depth);
                     } else {
-                        kind
-                    };
-                    self.walk_type(c, def, k, line, depth + 1);
+                        head = Some(split_dotted(self.text(c)).1);
+                        self.walk_type(c, def, kind, line, depth + 1);
+                    }
                 }
             }
             "call" => {
@@ -1249,6 +1279,8 @@ impl Walker<'_, '_> {
                     self.walk_type(func, def, kind, line, depth + 1);
                 }
                 if let Some(args) = node.child_by_field_name("arguments") {
+                    // Call arguments are values: a string there is not a forward reference.
+                    self.opaque_strings += 1;
                     let mut cur = args.walk();
                     for a in args.named_children(&mut cur) {
                         let v = if a.kind() == "keyword_argument" {
@@ -1259,6 +1291,28 @@ impl Walker<'_, '_> {
                         if let Some(v) = v {
                             self.walk_type(v, def, RefKind::Generic, line, depth + 1);
                         }
+                    }
+                    self.opaque_strings -= 1;
+                }
+            }
+            // A forward reference (`"User"`, `"list[Path | FileSlice]"`): Graphify skips it, but
+            // it names the same types as the unquoted annotation.
+            "string" if self.opaque_strings == 0 => {
+                let text = self.text(node);
+                if let Some(inner) = string_content(text).filter(|s| !s.contains(['"', '\''])) {
+                    for (name, nested) in string_annotation_names(inner) {
+                        let (qual, last) = split_dotted(name);
+                        if EXCLUDED_TYPES.contains(last) {
+                            continue;
+                        }
+                        self.facts.refs.push(TypeRef {
+                            source: def,
+                            kind: if nested { RefKind::Generic } else { kind },
+                            name: last.to_string(),
+                            qual: qual.map(str::to_string),
+                            line,
+                            resolved_only: true,
+                        });
                     }
                 }
             }
@@ -1290,6 +1344,67 @@ impl Walker<'_, '_> {
             _ => {}
         }
     }
+
+    /// The arguments of a subscripted annotation `head[args]`, as `generic_arg`. `Literal[…]`
+    /// holds values, not types; `Annotated[T, …]` holds a type and then metadata values.
+    fn type_args(&mut self, head: Option<&str>, args: &[TsNode], def: u32, line: u32, depth: u32) {
+        if head == Some("Literal") {
+            return;
+        }
+        for (i, a) in args.iter().enumerate() {
+            let metadata = head == Some("Annotated") && i > 0;
+            // A field's metadata (validators, docs) names values, not the field's type.
+            if metadata && self.field_annotation {
+                continue;
+            }
+            self.opaque_strings += u32::from(metadata);
+            self.walk_type(*a, def, RefKind::Generic, line, depth + 1);
+            self.opaque_strings -= u32::from(metadata);
+        }
+    }
+}
+
+/// The dotted names in a string annotation, each with whether it sits inside brackets
+/// (`"list[Path | FileSlice]"` → `list` top level, `Path` and `FileSlice` nested). Empty unless
+/// the text is a plain type expression (names, `[]`, `()`, `,`, `|`, `...`), so prose such as
+/// `"the user id"` yields nothing.
+fn string_annotation_names(s: &str) -> Vec<(&str, bool)> {
+    let b = s.as_bytes();
+    let mut out = Vec::new();
+    let (mut i, mut depth, mut after_name) = (0, 0u32, false);
+    while i < b.len() {
+        let c = b[i];
+        if c == b'_' || c.is_ascii_alphabetic() {
+            if after_name {
+                return Vec::new();
+            }
+            let start = i;
+            while i < b.len() && (b[i] == b'_' || b[i] == b'.' || b[i].is_ascii_alphanumeric()) {
+                i += 1;
+            }
+            let name = &s[start..i];
+            if !is_dotted(name) {
+                return Vec::new();
+            }
+            out.push((name, depth > 0));
+            after_name = true;
+            continue;
+        }
+        match c {
+            b'[' | b'(' => depth += 1,
+            b']' | b')' => depth = depth.saturating_sub(1),
+            b',' | b'|' => {}
+            b'.' if s[i..].starts_with("...") => i += 2,
+            b' ' | b'\t' | b'\n' => {
+                i += 1;
+                continue;
+            }
+            _ => return Vec::new(),
+        }
+        after_name = false;
+        i += 1;
+    }
+    out
 }
 
 /// `a.b.C` → (`Some("a.b")`, `"C"`); `C` → (`None`, `"C"`).
@@ -1395,7 +1510,59 @@ mod tests {
                 ("Foo", None, RefKind::Param),
                 ("Bar", None, RefKind::Generic),
                 ("Baz", None, RefKind::Param),
+                ("Str", None, RefKind::Param),
                 ("Qux", Some("m"), RefKind::Generic),
+            ]
+        );
+    }
+
+    #[test]
+    fn string_annotations_name_types_but_not_values() {
+        let (_, py) = run(
+            "def f(a: \"list[Path | m.Slice]\", b: Literal[\"Zed\"], c: Annotated[\"Kind\", \"the doc\"], d: Q(\"Arg\")) -> \"tuple[A, ...]\":\n    pass\n",
+        );
+        let refs: Vec<_> = py.refs.iter().map(|r| (r.name.as_str(), r.kind)).collect();
+        assert_eq!(
+            refs,
+            [
+                ("Path", RefKind::Generic),
+                ("Slice", RefKind::Generic),
+                ("Kind", RefKind::Generic),
+                ("Q", RefKind::Param),
+                ("A", RefKind::Generic),
+            ]
+        );
+        assert_eq!(string_annotation_names("the user id"), []);
+        assert_eq!(string_annotation_names("a-b"), []);
+        assert_eq!(
+            string_annotation_names("Dict[str, x.Y]"),
+            [("Dict", false), ("str", true), ("x.Y", true)]
+        );
+    }
+
+    #[test]
+    fn class_level_annotations_are_fields() {
+        let (_, py) = run(
+            "class C:\n    a: Foo\n    b: list[Bar] = []\n    c: Annotated[Baz, Field(check)] = None\n    def m(self):\n        x: Local = 1\n        self.y: Other = 2\n\n\ndef outer():\n    class Hidden:\n        z: Skip\n    Hidden()\n",
+        );
+        let refs: Vec<_> = py
+            .refs
+            .iter()
+            .map(|r| {
+                (
+                    py.defs[r.source as usize].name.as_str(),
+                    r.name.as_str(),
+                    r.kind,
+                    r.line,
+                )
+            })
+            .collect();
+        assert_eq!(
+            refs,
+            [
+                ("C", "Foo", RefKind::Field, 2),
+                ("C", "Bar", RefKind::Generic, 3),
+                ("C", "Baz", RefKind::Generic, 4),
             ]
         );
     }

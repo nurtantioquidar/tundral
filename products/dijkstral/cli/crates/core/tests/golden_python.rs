@@ -30,6 +30,9 @@ const ALLOWED: &[&str] = &[
     // `osp.basename(path)` in top-level `run` follows §9.4 (`import x.y as z` in a top-level
     // function → the external node); Graphify emits this form in isolation but not here.
     "pkg_service_run -calls-> os_path",
+    // A string annotation (`admin: "Admin"`) names its type like an unquoted one; Graphify
+    // skips forward references (§9.1), the SCIP oracle counts them.
+    "pkg_service_userservice_promote -references-> pkg_models_admin",
 ];
 
 #[test]
@@ -211,4 +214,104 @@ fn same_file_id_clashes() {
         assert!(has(&l, want), "missing {want}: {l:#?}");
     }
     assert!(!l.iter().any(|x| x.contains("a_k_m_")), "{l:#?}");
+}
+
+#[test]
+fn private_imported_names_never_produce_uses() {
+    // Probe: Graphify emits `uses` for an imported class unless its original name starts with
+    // `_` (the alias does not matter); the `references` edge stays.
+    let l = links(&[
+        ("pkg/__init__.py", ""),
+        (
+            "pkg/models.py",
+            "class Pub:\n    pass\n\n\nclass _Priv:\n    pass\n",
+        ),
+        (
+            "pkg/use.py",
+            "from pkg.models import Pub as _P, _Priv, _Priv as Q\n\n\ndef a(x: _P):\n    pass\n\n\ndef b(x: _Priv):\n    pass\n\n\ndef c(x: Q):\n    pass\n",
+        ),
+    ]);
+    assert!(
+        has(&l, "pkg_use_a -uses-> pkg_models_pub [parameter_type]"),
+        "{l:#?}"
+    );
+    assert!(
+        has(
+            &l,
+            "pkg_use_b -references-> pkg_models_priv [parameter_type]"
+        ),
+        "{l:#?}"
+    );
+    assert!(
+        has(
+            &l,
+            "pkg_use_c -references-> pkg_models_priv [parameter_type]"
+        ),
+        "{l:#?}"
+    );
+    assert!(
+        !l.iter().any(|x| x.contains("-uses-> pkg_models_priv")),
+        "{l:#?}"
+    );
+}
+
+#[test]
+fn absolute_imports_resolve_next_to_the_importer() {
+    // A script directory imports its siblings by bare name (`sys.path[0]`, Pyright's local
+    // directory fallback); stdlib names never resolve by directory.
+    let l = links(&[
+        ("raw/models.py", "class Request:\n    pass\n"),
+        ("raw/json.py", "def dumps():\n    pass\n"),
+        (
+            "raw/auth.py",
+            "import json\nfrom models import Request\n\n\ndef flow(r: Request) -> \"Request\":\n    json.dumps(r)\n",
+        ),
+        (
+            "raw/sub/deep.py",
+            "import models\n\n\ndef f():\n    models.Request()\n",
+        ),
+    ]);
+    for want in [
+        "raw_auth -imports_from-> raw_models [import]",
+        "raw_auth -imports-> raw_models_request [import]",
+        "raw_auth -imports-> json [import]",
+        "raw_sub_deep -imports-> raw_models [import]",
+        "raw_sub_deep_f -calls-> raw_models_request [call]",
+    ] {
+        assert!(has(&l, want), "missing {want}: {l:#?}");
+    }
+    assert!(
+        !l.iter()
+            .any(|x| x.starts_with("raw_auth") && x.contains("raw_json")),
+        "{l:#?}"
+    );
+}
+
+#[test]
+fn class_fields_and_string_annotations_reference_their_types() {
+    let l = links(&[
+        ("m.py", "class Fact:\n    pass\n\n\nclass Slice:\n    pass\n"),
+        (
+            "a.py",
+            "from m import Fact, Slice\n\n\nclass Facts:\n    items: list[Fact]\n    parent: \"Facts | None\" = None\n\n\nclass _Local:\n    pass\n\n\nclass Holder:\n    item: _Local\n\n\ndef unit(u: \"Path | Slice\") -> None:\n    pass\n",
+        ),
+    ]);
+    for want in [
+        // A mention of an imported class from the class body is also a `uses`, which outranks
+        // the field reference in the collapse (§8.2).
+        "a_facts -uses-> m_fact",
+        "a_holder -references-> a_local [field]",
+        "a_unit -references-> m_slice [parameter_type]",
+    ] {
+        assert!(
+            l.iter().any(|x| x.starts_with(want)),
+            "missing {want}: {l:#?}"
+        );
+    }
+    // A recursive field is not a link from the class to itself.
+    assert!(
+        !l.iter()
+            .any(|x| x.starts_with("a_facts -references-> a_facts")),
+        "{l:#?}"
+    );
 }

@@ -1839,7 +1839,12 @@ section disagrees with an earlier one, this section wins; the module docs of eac
 - **Python (§9).** Same-file clashes between plain functions or methods get `_sha1(name)[:6]`;
   `indirect_call` is skipped when the function was already called; module-level collections and
   assignments use the file node as the source; `uses` also counts class-body and function-level
-  imports. Excluded type and decorator names are listed in the module.
+  imports. Excluded type and decorator names are listed in the module. `uses` is never emitted
+  for an imported name whose original name starts with `_` (`from m import _Priv`, also
+  `_Priv as Q`; `Pub as _P` still counts). An absolute `from models import X` with no root-level
+  `models` resolves to a same-stem file elsewhere in the repository (a sibling in the probe,
+  `lib/helpers.py` for `from helpers import …` in `other/x.py`); `uses` follows it only when the
+  stem is unique.
 - **TS/JS (§10).** Module resolution also follows the nearest `tsconfig`/`jsconfig` `extends`,
   workspace packages by `package.json` name and `exports`/`main`; `@/` resolves relative to the
   importing directory. Class-expression methods, object-literal methods passed to module-level

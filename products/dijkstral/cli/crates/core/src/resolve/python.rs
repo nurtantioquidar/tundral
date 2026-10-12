@@ -5,6 +5,20 @@
 //! re-exports through `__init__.py` and other modules), then the heuristics Graphify applies to
 //! free names (modules the file imports from, then a unique definition anywhere). Ids stored in
 //! `PyFacts` were recorded before collision renaming and are translated with `View::id`.
+//!
+//! Deliberate departures from Graphify 0.9.86, each checked against the SCIP oracle
+//! (`bench/accuracy`):
+//!
+//! - An absolute import that is not a module under the scan root (or `src/`) resolves from the
+//!   importer's directory and then each enclosing one, as Pyright and a script's `sys.path[0]`
+//!   do; standard-library names never resolve this way. Graphify resolves some of these by file
+//!   stem, and only when the stem is unique.
+//! - Class-level annotations (`references`, context `field`) and string annotations are type
+//!   references; they are emitted only when they resolve, never as stubs.
+//! - A `references` link from a node to itself is dropped.
+//!
+//! Matched from probes: `uses` is never emitted for an imported name whose original name starts
+//! with `_`, aliased or not.
 
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
@@ -96,6 +110,33 @@ const BUILTINS: &[&str] = &[
     "zip",
     "__import__",
 ];
+
+/// Top-level standard-library modules (Python 3.13 plus modules removed since 3.8). An absolute
+/// import of one never resolves to a same-named file next to the importer (Pyright resolves
+/// typeshed's stdlib before the importing file's directory).
+const STDLIB: &str = "
+    abc antigravity argparse array ast asynchat asyncio asyncore atexit base64 bdb binascii
+    bisect builtins bz2 cProfile calendar cgi cgitb cmath cmd code codecs codeop collections
+    colorsys compileall concurrent configparser contextlib contextvars copy copyreg crypt csv
+    ctypes curses dataclasses datetime dbm decimal difflib dis distutils doctest email
+    encodings ensurepip enum errno faulthandler fcntl filecmp fileinput fnmatch fractions
+    ftplib functools gc genericpath getopt getpass gettext glob graphlib grp gzip hashlib
+    heapq hmac html http idlelib imaplib imghdr imp importlib inspect io ipaddress itertools
+    json keyword lib2to3 linecache locale logging lzma mailbox mailcap marshal math mimetypes
+    mmap modulefinder msvcrt multiprocessing netrc nis nntplib nt ntpath nturl2path numbers
+    opcode operator optparse os ossaudiodev pathlib pdb pickle pickletools pipes pkgutil
+    platform plistlib poplib posix posixpath pprint profile pstats pty pwd py_compile pyclbr
+    pydoc pydoc_data pyexpat queue quopri random re readline reprlib resource rlcompleter
+    runpy sched secrets select selectors shelve shlex shutil signal site smtpd smtplib sndhdr
+    socket socketserver spwd sqlite3 sre_compile sre_constants sre_parse ssl stat statistics
+    string stringprep struct subprocess sunau symtable sys sysconfig syslog tabnanny tarfile
+    telnetlib tempfile termios textwrap this threading time timeit tkinter token tokenize
+    tomllib trace traceback tracemalloc tty turtle turtledemo types typing unicodedata
+    unittest urllib uu uuid venv warnings wave weakref webbrowser winreg winsound wsgiref
+    xdrlib xml xmlrpc zipapp zipfile zipimport zlib zoneinfo";
+
+static STDLIB_SET: std::sync::LazyLock<HashSet<&'static str>> =
+    std::sync::LazyLock::new(|| STDLIB.split_whitespace().collect());
 
 #[derive(Debug, Clone)]
 enum ModRef {
@@ -383,13 +424,28 @@ impl<'a> Resolver<'a> {
                     }
                 };
                 match &imp.kind {
-                    ImportKind::Module { path, alias } => match alias {
-                        Some(a) => bind(a.as_str(), Binding::Module(path.clone())),
-                        None => {
-                            let first = first_component(path);
-                            bind(first, Binding::Module(first.to_string()));
+                    ImportKind::Module { path, alias } => {
+                        // Bind the module under the key it resolved to (a directory-relative
+                        // import keeps its directory prefix).
+                        let key = self.absolute_key(fi, path);
+                        match alias {
+                            Some(a) => {
+                                bind(a.as_str(), Binding::Module(key.unwrap_or(path.clone())))
+                            }
+                            None => {
+                                let first = first_component(path);
+                                let qualified = key
+                                    .as_deref()
+                                    .and_then(|k| k.strip_suffix(path.as_str()))
+                                    .map(|prefix| format!("{prefix}{first}"))
+                                    .filter(|q| self.module(q).is_some());
+                                bind(
+                                    first,
+                                    Binding::Module(qualified.unwrap_or(first.to_string())),
+                                );
+                            }
                         }
-                    },
+                    }
                     ImportKind::From {
                         level,
                         module,
@@ -436,9 +492,35 @@ impl<'a> Resolver<'a> {
             .copied()
     }
 
+    /// The `modules` key of absolute module `dotted` imported by file `fi`: from the scan root
+    /// or `src/`; failing that, like Pyright (and a script's own directory on `sys.path`), from
+    /// the importer's directory and then each enclosing one (`from models import Request` in
+    /// `raw/auth.py` → `raw/models.py`). Standard-library names never resolve by directory.
+    fn absolute_key(&self, fi: usize, dotted: &str) -> Option<String> {
+        if self.modules.contains_key(dotted) {
+            return Some(dotted.to_string());
+        }
+        let src = format!("src.{dotted}");
+        if self.modules.contains_key(&src) {
+            return Some(src);
+        }
+        if STDLIB_SET.contains(first_component(dotted)) {
+            return None;
+        }
+        let dir = &self.files[fi].dir;
+        (1..=dir.len()).rev().find_map(|k| {
+            let key = format!("{}.{dotted}", dir[..k].join("."));
+            self.modules.contains_key(&key).then_some(key)
+        })
+    }
+
+    fn absolute(&self, fi: usize, dotted: &str) -> Option<usize> {
+        self.absolute_key(fi, dotted).map(|k| self.modules[&k])
+    }
+
     fn import_module(&self, fi: usize, level: u32, module: &str) -> ModRef {
         if level == 0 {
-            return match self.module(module) {
+            return match self.absolute(fi, module) {
                 Some(m) => ModRef::Local(m),
                 None => ModRef::External(module.to_string()),
             };
@@ -646,7 +728,7 @@ impl<'a> Resolver<'a> {
         for (fi, f) in self.files.iter().enumerate() {
             for imp in f.py.imports.iter().filter(|i| i.scope.is_none()) {
                 let (target, relation) = match &imp.kind {
-                    ImportKind::Module { path, .. } => match self.module(path) {
+                    ImportKind::Module { path, .. } => match self.absolute(fi, path) {
                         Some(m) => (Some(self.files[m].file_id.clone()), "imports"),
                         None => (out.external(path), "imports"),
                     },
@@ -754,7 +836,7 @@ impl<'a> Resolver<'a> {
                         ModRef::External(d) if !d.is_empty() => {
                             let dotted = format!("{d}.{n}");
                             if *level == 0 {
-                                self.module(&dotted)
+                                self.absolute(fi, &dotted)
                             } else {
                                 self.modules.get(&dotted).copied()
                             }
@@ -880,9 +962,11 @@ impl<'a> Resolver<'a> {
                     RefKind::Return => ("references", Some("return_type")),
                     RefKind::Generic => ("references", Some("generic_arg")),
                     RefKind::Decorator => ("references", Some("decorator")),
+                    RefKind::Field => ("references", Some("field")),
                 };
                 let to = match target {
                     Lookup::Drop => continue,
+                    Lookup::NotFound if r.resolved_only => continue,
                     Lookup::Found((f2, d)) => {
                         if r.kind == RefKind::Base && self.def(f2, d).kind == DefKind::Class {
                             bases.entry((fi, r.source)).or_default().push((f2, d));
@@ -973,6 +1057,11 @@ impl<'a> Resolver<'a> {
                     id
                 }
             };
+            // A type mentioning itself (a recursive field, or a function whose id merged with a
+            // same-named class) is not a reference between two nodes.
+            if relation == "references" && source == target {
+                continue;
+            }
             // An `inherits` link carries its score so a folded `uses` cannot lower it (§8.2).
             let score = (relation == "inherits").then_some(1.0);
             out.edges.push(edge(
@@ -1190,7 +1279,9 @@ impl<'a> Resolver<'a> {
                 else {
                     continue;
                 };
-                if *m2 == fi {
+                // Graphify never emits `uses` for a private (`_`-prefixed) imported name, aliased
+                // or not; the original name decides.
+                if *m2 == fi || name.starts_with('_') {
                     continue;
                 }
                 let Some(&c) = self.files[*m2].top.get(name.as_str()) else {
