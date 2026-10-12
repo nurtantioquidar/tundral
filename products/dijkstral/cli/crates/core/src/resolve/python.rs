@@ -225,6 +225,9 @@ struct Resolver<'a> {
     memo: RefCell<HashMap<(usize, String), Option<Target>>>,
     /// Resolved base classes per class.
     bases: HashMap<(usize, u32), Vec<(usize, u32)>>,
+    /// Definitions whose id an earlier, differently named definition of the same file holds
+    /// (§4.5, Q5): the graph has no node for them, so nothing links to them.
+    merged: HashSet<(usize, u32)>,
 }
 
 pub fn resolve(files: &[View], index: &Index) -> Resolution {
@@ -397,6 +400,17 @@ impl<'a> Resolver<'a> {
             }
         }
 
+        let mut merged = HashSet::new();
+        for (fi, f) in files.iter().enumerate() {
+            let mut first: HashMap<&str, &str> = HashMap::new();
+            for (di, d) in f.py.defs.iter().enumerate() {
+                let name = *first.entry(f.ids[di].as_str()).or_insert(d.name.as_str());
+                if name != d.name {
+                    merged.insert((fi, di as u32));
+                }
+            }
+        }
+
         let mut r = Resolver {
             views,
             files,
@@ -404,6 +418,7 @@ impl<'a> Resolver<'a> {
             uniq,
             memo: RefCell::new(HashMap::new()),
             bases: HashMap::new(),
+            merged,
         };
         r.bind_imports();
         r
@@ -651,7 +666,9 @@ impl<'a> Resolver<'a> {
     }
 
     /// A definition visible from `scope` by name: nested definitions of enclosing functions,
-    /// then the file's top level.
+    /// then the file's top level. An import inside an enclosing function binds the name in that
+    /// function first (`def f(): from m import f; f()` calls `m.f`), so the search stops there
+    /// and `binding` finds it.
     fn local(&self, fi: usize, scope: Option<u32>, name: &str) -> Option<u32> {
         let f = &self.files[fi];
         let mut s = scope;
@@ -660,6 +677,9 @@ impl<'a> Resolver<'a> {
             if def.kind != DefKind::Class {
                 if let Some(&c) = f.children.get(&d).and_then(|m| m.get(name)) {
                     return Some(c);
+                }
+                if f.fn_bindings.get(&d).is_some_and(|m| m.contains_key(name)) {
+                    return None;
                 }
             }
             s = def.parent;
@@ -701,6 +721,11 @@ impl<'a> Resolver<'a> {
 
     fn id(&self, fi: usize, d: u32) -> &str {
         &self.files[fi].ids[d as usize]
+    }
+
+    /// The definition has a node of its own (see `merged`).
+    fn live(&self, t: (usize, u32)) -> bool {
+        !self.merged.contains(&t)
     }
 
     /// Method (or nested class) `name` of class `c`, searching base classes depth-first.
@@ -796,6 +821,8 @@ impl<'a> Resolver<'a> {
                 };
                 for (n, _) in names {
                     if let Some(Target::Def(f2, d)) = self.lookup(m, n) {
+                        // A merged definition still names the file it lives in: the import edge
+                        // stays (unlike calls, which would bind to another function).
                         if f2 != fi {
                             out.edges.push(edge(
                                 &f.file_id,
@@ -968,6 +995,7 @@ impl<'a> Resolver<'a> {
                 };
                 let to = match target {
                     Lookup::Drop => continue,
+                    Lookup::Found(t) if !self.live(t) => continue,
                     Lookup::NotFound if r.resolved_only => continue,
                     Lookup::Found((f2, d)) => {
                         if r.kind == RefKind::Base && self.def(f2, d).kind == DefKind::Class {
@@ -1112,29 +1140,49 @@ impl<'a> Resolver<'a> {
     }
 
     /// Emits `calls` and returns the first call line per (file, caller, target).
+    /// `x.m()` where `x` holds an instance of the class written `class`: the method `m` defined
+    /// directly on that class (§9.4), INFERRED.
+    fn typed_call(
+        &self,
+        fi: usize,
+        caller: u32,
+        class: &str,
+        name: &str,
+    ) -> Option<(String, Confidence, Option<f64>)> {
+        let (q, n) = split_dotted(class);
+        let Lookup::Found(cls) = self.resolve_type(fi, Some(caller), n, q) else {
+            return None;
+        };
+        Some(cls)
+            .filter(|&(f2, d)| self.def(f2, d).kind == DefKind::Class)
+            .and_then(|cls| self.method(cls, name, false))
+            .filter(|&(f2, d)| self.def(f2, d).kind == DefKind::Method)
+            .filter(|&t| self.live(t))
+            .map(|(f2, d)| (self.id(f2, d).to_string(), Confidence::Inferred, Some(0.85)))
+    }
+
     fn calls(&self, out: &mut Out) -> HashMap<(usize, u32, String), u32> {
         let mut first: HashMap<(usize, u32, String), u32> = HashMap::new();
         for (fi, f) in self.files.iter().enumerate() {
+            // `self.attr` types per class; two different classes leave the attribute untyped.
+            let mut attr_types: HashMap<(u32, &str), Option<&str>> = HashMap::new();
+            for a in &f.py.attr_types {
+                let slot = attr_types
+                    .entry((a.class, a.attr.as_str()))
+                    .or_insert(Some(a.type_name.as_str()));
+                if *slot != Some(a.type_name.as_str()) {
+                    *slot = None;
+                }
+            }
             for c in &f.py.calls {
                 let target: Option<(String, Confidence, Option<f64>)> = match &c.kind {
                     CallKind::Name => self
                         .free_name(fi, Some(c.caller), &c.name)
+                        .filter(|(t, ..)| self.live(*t))
                         .map(|(t, conf, score)| (self.id(t.0, t.1).to_string(), conf, score)),
-                    CallKind::SelfMethod(class) => {
-                        self.method((fi, *class), &c.name, true).map(|(f2, d)| {
-                            (
-                                self.id(f2, d).to_string(),
-                                Confidence::Extracted,
-                                (f2 != fi).then_some(1.0),
-                            )
-                        })
-                    }
-                    CallKind::Super(class) => self
-                        .bases
-                        .get(&(fi, *class))
-                        .into_iter()
-                        .flatten()
-                        .find_map(|&b| self.method(b, &c.name, true))
+                    CallKind::SelfMethod(class) => self
+                        .method((fi, *class), &c.name, true)
+                        .filter(|&t| self.live(t))
                         .map(|(f2, d)| {
                             (
                                 self.id(f2, d).to_string(),
@@ -1142,20 +1190,26 @@ impl<'a> Resolver<'a> {
                                 (f2 != fi).then_some(1.0),
                             )
                         }),
-                    CallKind::Typed(class) => {
-                        let (q, n) = split_dotted(class);
-                        let found = match self.resolve_type(fi, Some(c.caller), n, q) {
-                            Lookup::Found(t) => Some(t),
-                            _ => None,
-                        };
-                        found
-                            .filter(|&(f2, d)| self.def(f2, d).kind == DefKind::Class)
-                            .and_then(|cls| self.method(cls, &c.name, false))
-                            .filter(|&(f2, d)| self.def(f2, d).kind == DefKind::Method)
-                            .map(|(f2, d)| {
-                                (self.id(f2, d).to_string(), Confidence::Inferred, Some(0.85))
-                            })
-                    }
+                    CallKind::Super(class) => self
+                        .bases
+                        .get(&(fi, *class))
+                        .into_iter()
+                        .flatten()
+                        .find_map(|&b| self.method(b, &c.name, true))
+                        .filter(|&t| self.live(t))
+                        .map(|(f2, d)| {
+                            (
+                                self.id(f2, d).to_string(),
+                                Confidence::Extracted,
+                                (f2 != fi).then_some(1.0),
+                            )
+                        }),
+                    CallKind::Typed(class) => self.typed_call(fi, c.caller, class, &c.name),
+                    CallKind::SelfAttr(class, attr) => attr_types
+                        .get(&(*class, attr.as_str()))
+                        .copied()
+                        .flatten()
+                        .and_then(|t| self.typed_call(fi, c.caller, t, &c.name)),
                     CallKind::Attr(recv) => self.attr_call(fi, c.caller, recv, &c.name, out),
                 };
                 let Some((target, conf, score)) = target else {
@@ -1220,6 +1274,9 @@ impl<'a> Resolver<'a> {
             }
             Target::Def(..) | Target::Ext => return None,
         };
+        if !self.live((f2, d)) {
+            return None;
+        }
         Some((self.id(f2, d).to_string(), Confidence::Extracted, Some(1.0)))
     }
 
@@ -1231,7 +1288,7 @@ impl<'a> Resolver<'a> {
                 let Some(((f2, d), _, _)) = self.free_name(fi, s.caller, &s.name) else {
                     continue;
                 };
-                if self.def(f2, d).kind == DefKind::Class {
+                if self.def(f2, d).kind == DefKind::Class || !self.live((f2, d)) {
                     continue;
                 }
                 let target = self.id(f2, d).to_string();
@@ -1286,7 +1343,7 @@ impl<'a> Resolver<'a> {
                 let Some(&c) = self.files[*m2].top.get(name.as_str()) else {
                     continue;
                 };
-                if self.def(*m2, c).kind != DefKind::Class {
+                if self.def(*m2, c).kind != DefKind::Class || !self.live((*m2, c)) {
                     continue;
                 }
                 let target = self.id(*m2, c).to_string();

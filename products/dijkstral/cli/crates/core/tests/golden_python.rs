@@ -351,3 +351,53 @@ fn class_fields_and_string_annotations_reference_their_types() {
         "{l:#?}"
     );
 }
+
+#[test]
+fn receivers_typed_by_attributes_annotations_and_cls() {
+    // Probe: `self.attr = Cls()` or `self.attr: Cls` in any method types `self.attr.m()` in
+    // every method of the class; annotated locals type their variable; `cls.m()` in a
+    // classmethod is the class's own method.
+    let l = links(&[
+        ("pkg/__init__.py", ""),
+        (
+            "pkg/q.py",
+            "class Queue:\n    def add_stock(self, n):\n        pass\n\n\nclass Stack:\n    def only_stack(self):\n        pass\n",
+        ),
+        (
+            "pkg/t.py",
+            "from pkg.q import Queue, Stack\n\n\nclass T:\n    def test_b(self):\n        self.later.only_stack()\n\n    def other(self):\n        self.later = Stack()\n        self.q: Queue = make()\n\n    def go(self):\n        self.q.add_stock(1)\n\n    @classmethod\n    def mk(cls):\n        return cls.helper()\n\n    @classmethod\n    def helper(cls):\n        pass\n\n\ndef local_annot(rows):\n    x: Queue = rows[0]\n    x.add_stock(1)\n\n\ndef make():\n    pass\n",
+        ),
+    ]);
+    for want in [
+        "pkg_t_t_test_b -calls-> pkg_q_stack_only_stack [call]",
+        "pkg_t_t_go -calls-> pkg_q_queue_add_stock [call]",
+        "pkg_t_t_mk -calls-> pkg_t_t_helper [call]",
+        "pkg_t_local_annot -calls-> pkg_q_queue_add_stock [call]",
+    ] {
+        assert!(has(&l, want), "missing {want}: {l:#?}");
+    }
+}
+
+#[test]
+fn function_imports_shadow_module_names_and_merged_defs_take_no_calls() {
+    let l = links(&[
+        ("ledger.py", "def make_entries():\n    pass\n"),
+        (
+            "a.py",
+            "def make_entries():\n    from ledger import make_entries\n\n    make_entries()\n\n\n@deco\ndef rate():\n    pass\n\n\ndef _rate():\n    pass\n\n\ndef deco(f):\n    return f\n",
+        ),
+        ("b.py", "from a import _rate\n\n\ndef use():\n    _rate()\n"),
+    ]);
+    assert!(
+        has(&l, "a_make_entries -calls-> ledger_make_entries [call]"),
+        "{l:#?}"
+    );
+    assert!(
+        !has(&l, "a_make_entries -calls-> a_make_entries [call]"),
+        "{l:#?}"
+    );
+    // `_rate` lost its id to the decorated `rate` above it (Q5): a call to it is not a call to
+    // `rate`; the import still links the files.
+    assert!(!has(&l, "b_use -calls-> a_rate [call]"), "{l:#?}");
+    assert!(has(&l, "b -imports_from-> a [import]"), "{l:#?}");
+}

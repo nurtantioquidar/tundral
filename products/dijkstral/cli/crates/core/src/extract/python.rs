@@ -103,6 +103,17 @@ pub enum CallKind {
     /// `x.m()` where `x`'s class is known from an annotation or `x = Cls(...)`; the class name
     /// as written.
     Typed(String),
+    /// `self.attr.m()` inside class `defs[class]` (see `PyAttrType`).
+    SelfAttr(u32, String),
+}
+
+/// `self.attr = Cls(...)` or `self.attr: Cls` in a method of class `defs[class]`.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct PyAttrType {
+    pub class: u32,
+    pub attr: String,
+    /// The class name as written.
+    pub type_name: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -147,6 +158,7 @@ pub struct PyFacts {
     pub calls: Vec<PyCall>,
     pub indirect: Vec<PyIndirect>,
     pub mentions: Vec<PyMention>,
+    pub attr_types: Vec<PyAttrType>,
 }
 
 /// Annotation names that never produce a `references` edge (builtins and typing constructs).
@@ -1045,14 +1057,38 @@ impl<'a> Walker<'_, 'a> {
             }
             return;
         }
+        // The class a value has: its annotation (`x: Cls = …`, `x: "Cls"`), else the class
+        // called to build it (`x = Cls(…)`).
+        let class = node
+            .child_by_field_name("type")
+            .and_then(|t| self.class_name_of_annotation(t))
+            .or_else(|| {
+                right
+                    .filter(|r| r.kind() == "call")
+                    .and_then(|r| r.child_by_field_name("function"))
+                    .filter(|func| matches!(func.kind(), "identifier" | "attribute"))
+                    .map(|func| self.text(func).to_string())
+                    .filter(|t| is_dotted(t))
+            });
+        // `self.attr = Cls(…)` / `self.attr: Cls` in any method types `self.attr.m()` in all of
+        // the class's methods.
+        if l.kind() == "attribute" {
+            let attr = l.child_by_field_name("attribute").map(|a| self.text(a));
+            let on_self = l
+                .child_by_field_name("object")
+                .is_some_and(|o| o.kind() == "identifier" && self.text(o) == "self");
+            if let (true, Some(owner), Some(attr), Some(class)) =
+                (on_self, f.self_class, attr, class.clone())
+            {
+                self.facts.attr_types.push(PyAttrType {
+                    class: owner,
+                    attr: attr.to_string(),
+                    type_name: class,
+                });
+            }
+        }
         if l.kind() == "identifier" {
             let var = self.text(l).to_string();
-            let class = right
-                .filter(|r| r.kind() == "call")
-                .and_then(|r| r.child_by_field_name("function"))
-                .filter(|func| matches!(func.kind(), "identifier" | "attribute"))
-                .map(|func| self.text(func).to_string())
-                .filter(|t| is_dotted(t));
             if let Some(top) = self.locals.last_mut() {
                 match class {
                     Some(c) => {
@@ -1128,7 +1164,8 @@ impl<'a> Walker<'_, 'a> {
                 let kind = match obj.kind() {
                     "identifier" => {
                         let recv = self.text(obj);
-                        if recv == "self" {
+                        // `cls.m()` in a classmethod is the class's own method, like `self.m()`.
+                        if recv == "self" || (recv == "cls" && f.self_class.is_some()) {
                             f.self_class.map(CallKind::SelfMethod)
                         } else if let Some(t) = self.local_type(recv) {
                             Some(CallKind::Typed(t.to_string()))
@@ -1151,8 +1188,14 @@ impl<'a> Walker<'_, 'a> {
                     "attribute" => {
                         let recv = self.text(obj);
                         let first = first_component(recv);
-                        (is_dotted(recv) && first != "self" && !self.is_local(first))
-                            .then(|| CallKind::Attr(recv.to_string()))
+                        match recv.strip_prefix("self.") {
+                            // `self.attr.m()`: typed by the class's `self.attr` assignments.
+                            Some(attr) if is_identifier(attr) => f
+                                .self_class
+                                .map(|c| CallKind::SelfAttr(c, attr.to_string())),
+                            _ => (is_dotted(recv) && first != "self" && !self.is_local(first))
+                                .then(|| CallKind::Attr(recv.to_string())),
+                        }
                     }
                     _ => None,
                 };
