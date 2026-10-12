@@ -288,6 +288,42 @@ fn absolute_imports_resolve_next_to_the_importer() {
 }
 
 #[test]
+fn names_imported_from_outside_never_bind_by_name() {
+    // `Response` comes from an external package (directly, or re-exported by a local package
+    // from one): a same-named class in the repository is not its definition. A class defined
+    // inside a function is local to it.
+    let l = links(&[
+        (
+            "app/__init__.py",
+            "from starlette.responses import Response\n",
+        ),
+        (
+            "app/models.py",
+            "class Response:\n    pass\n\n\nclass State:\n    pass\n",
+        ),
+        (
+            "app/handlers.py",
+            "from starlette.exceptions import HTTPException\nfrom app import Response\n\n\ndef h():\n    raise HTTPException(404)\n\n\ndef g():\n    return Response()\n",
+        ),
+        ("app/errors.py", "class HTTPException(Exception):\n    pass\n"),
+        (
+            "app/local.py",
+            "def f():\n    class State:\n        pass\n\n    return State()\n",
+        ),
+    ]);
+    for bad in [
+        "-calls-> app_errors_httpexception",
+        "-calls-> app_models_response",
+        "-calls-> app_models_state",
+    ] {
+        assert!(
+            !l.iter().any(|x| x.contains(bad)),
+            "unexpected {bad}: {l:#?}"
+        );
+    }
+}
+
+#[test]
 fn class_fields_and_string_annotations_reference_their_types() {
     let l = links(&[
         ("m.py", "class Fact:\n    pass\n\n\nclass Slice:\n    pass\n"),

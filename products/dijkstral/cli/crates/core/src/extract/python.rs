@@ -737,6 +737,12 @@ impl<'a> Walker<'_, 'a> {
         self.own_comments(node);
         let bases = node.child_by_field_name("superclasses");
         if f.in_function {
+            // The class is a local name of the function: `Local()` must not bind to a
+            // same-named definition elsewhere.
+            let name = self.text(name_node).to_string();
+            if let Some(top) = self.locals.last_mut() {
+                top.names.insert(name);
+            }
             // Classes inside functions are transparent (§9: their methods become nested
             // functions of the enclosing function).
             for d in decorators {
@@ -1565,6 +1571,8 @@ mod tests {
                 ("C", "Baz", RefKind::Generic, 4),
             ]
         );
+        // A class defined inside a function is a local name: calling it records no call.
+        assert!(!py.calls.iter().any(|c| c.name == "Hidden"));
     }
 
     #[test]

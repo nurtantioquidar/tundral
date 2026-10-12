@@ -13,6 +13,8 @@
 //!   importer's directory and then each enclosing one, as Pyright and a script's `sys.path[0]`
 //!   do; standard-library names never resolve this way. Graphify resolves some of these by file
 //!   stem, and only when the stem is unique.
+//! - A name bound by an import from outside the repository is never resolved by the unique-name
+//!   fallback (`from starlette.responses import Response` is not the repo's `Response`).
 //! - Class-level annotations (`references`, context `field`) and string annotations are type
 //!   references; they are emitted only when they resolve, never as stubs.
 //! - A `references` link from a node to itself is dropped.
@@ -1094,11 +1096,8 @@ impl<'a> Resolver<'a> {
                 Bound::Target(Target::Def(f2, d)) => {
                     Some(((f2, d), Confidence::Extracted, (f2 != fi).then_some(1.0)))
                 }
-                // Imported from outside the repository: at best a unique-name guess (a sibling
-                // script module imported as a top-level name).
-                Bound::ExtSym if !BUILTINS.contains(&name) => self
-                    .unique(name, Uniq::Any)
-                    .map(|t| (t, Confidence::Inferred, Some(0.85))),
+                // Imported from outside the repository (or a local module that does not define
+                // it): never a same-named definition here.
                 _ => None,
             };
         }
