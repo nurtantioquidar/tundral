@@ -1,0 +1,236 @@
+//! Per-file extraction: one tree-sitter parse, one walk, then the tree is dropped.
+//!
+//! Each language module exposes `extract(&mut Ctx, Option<&Tree>)` and owns a serializable facts
+//! type (`LangFacts` variant) for the cross-file pass in `crate::resolve`. Node and edge shapes are
+//! specified in `docs/graphify-format.md`; use the `Ctx` constructors so shapes stay uniform.
+
+pub mod data;
+pub mod go;
+pub mod java;
+pub mod python;
+pub mod rust;
+pub mod script;
+
+use tree_sitter::Node as TsNode;
+
+use crate::facts::{Attr, Confidence, Edge, FileFacts, Loc, Node, NodeKind};
+use crate::ids::{file_id, normalize};
+use crate::lang::{parse, Lang};
+
+/// Extract facts for one file. Never fails: unparsable input yields whatever the language emits
+/// for an empty tree (normally just the file node).
+pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
+    let mut cx = Ctx::new(lang, rel, source);
+    let tree = parse(lang, source);
+    match lang {
+        Lang::Python => python::extract(&mut cx, tree.as_ref()),
+        Lang::TypeScript | Lang::Tsx | Lang::JavaScript => script::extract(&mut cx, tree.as_ref()),
+        Lang::Rust => rust::extract(&mut cx, tree.as_ref()),
+        Lang::Go => go::extract(&mut cx, tree.as_ref()),
+        Lang::Java => java::extract(&mut cx, tree.as_ref()),
+        Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => data::extract(&mut cx),
+    }
+    cx.facts
+}
+
+/// `slug(s)` from the spec (§4.1).
+pub fn slug(s: &str) -> String {
+    normalize(s)
+}
+
+/// Shared extraction state for one file.
+pub struct Ctx<'a> {
+    pub lang: Lang,
+    /// Repo-relative path with `/` separators.
+    pub rel: &'a str,
+    pub src: &'a [u8],
+    /// `slug(path without last extension)`.
+    pub file_id: String,
+    pub facts: FileFacts,
+}
+
+impl<'a> Ctx<'a> {
+    pub fn new(lang: Lang, rel: &'a str, src: &'a [u8]) -> Ctx<'a> {
+        Ctx {
+            lang,
+            rel,
+            src,
+            file_id: file_id(rel),
+            facts: FileFacts::default(),
+        }
+    }
+
+    pub fn text(&self, node: TsNode) -> &'a str {
+        std::str::from_utf8(&self.src[node.byte_range()]).unwrap_or("")
+    }
+
+    /// 1-based line of a tree-sitter node's start.
+    pub fn line(node: TsNode) -> u32 {
+        node.start_position().row as u32 + 1
+    }
+
+    /// `parent_slug(name)`: ids are always built by appending slugged parts to a parent id.
+    pub fn child_id(parent: &str, name: &str) -> String {
+        let s = slug(name);
+        if s.is_empty() {
+            parent.to_string()
+        } else if parent.is_empty() {
+            s
+        } else {
+            format!("{parent}_{s}")
+        }
+    }
+
+    /// The file node (`label` is a placeholder; the build assigns the unique-suffix label).
+    /// A 0-byte file gets `source_location: null` (§3).
+    pub fn add_file_node(&mut self, extra: Vec<(String, Attr)>) {
+        let loc = if self.src.is_empty() {
+            Loc::Null
+        } else {
+            Loc::Line(1)
+        };
+        let mut attrs = extra;
+        attrs.push(origin());
+        let label = self.rel.rsplit('/').next().unwrap_or(self.rel).to_string();
+        self.facts.nodes.push(Node {
+            id: self.file_id.clone(),
+            label,
+            kind: NodeKind::File,
+            file_type: "code".into(),
+            source_file: self.rel.into(),
+            loc,
+            attrs,
+        });
+    }
+
+    /// A definition node in this file (`_origin: "ast"` is added).
+    pub fn add_def(&mut self, id: String, label: String, line: u32, extra: Vec<(String, Attr)>) {
+        let mut attrs = extra;
+        attrs.push(origin());
+        self.facts.nodes.push(Node {
+            id,
+            label,
+            kind: NodeKind::Def,
+            file_type: "code".into(),
+            source_file: self.rel.into(),
+            loc: Loc::Line(line),
+            attrs,
+        });
+    }
+
+    /// An unresolved-reference stub: `{"id","label","file_type":"code","source_file":"","source_location":"","_origin":"ast"}`.
+    pub fn add_stub(&mut self, id: String, label: String) {
+        self.facts.nodes.push(Node {
+            id,
+            label,
+            kind: NodeKind::Stub,
+            file_type: "code".into(),
+            source_file: String::new(),
+            loc: Loc::Empty,
+            attrs: vec![origin()],
+        });
+    }
+
+    /// A shared external import node; label equals the id (§4.4).
+    pub fn add_external(&mut self, id: String) {
+        self.facts.nodes.push(external_node(id));
+    }
+
+    /// A rationale node (`file_type: "rationale"`).
+    pub fn add_rationale(&mut self, id: String, label: String, line: u32) {
+        self.facts.nodes.push(Node {
+            id,
+            label,
+            kind: NodeKind::Rationale,
+            file_type: "rationale".into(),
+            source_file: self.rel.into(),
+            loc: Loc::Line(line),
+            attrs: vec![origin()],
+        });
+    }
+
+    /// An in-file EXTRACTED edge with weight 1.0 and no score (the common case).
+    pub fn add_edge(
+        &mut self,
+        source: &str,
+        target: &str,
+        relation: &str,
+        line: u32,
+        context: Option<&str>,
+    ) {
+        let e = self.edge(source, target, relation, Loc::Line(line), context);
+        self.facts.edges.push(e);
+    }
+
+    /// Build (but do not push) an in-file edge, for callers that need to set more fields.
+    pub fn edge(
+        &self,
+        source: &str,
+        target: &str,
+        relation: &str,
+        loc: Loc,
+        context: Option<&str>,
+    ) -> Edge {
+        Edge {
+            source: source.into(),
+            target: target.into(),
+            relation: relation.into(),
+            confidence: Confidence::Extracted,
+            score: None,
+            context: context.map(str::to_string),
+            source_file: self.rel.into(),
+            loc,
+            weight: Some(1.0),
+            attrs: vec![origin()],
+        }
+    }
+}
+
+pub fn origin() -> (String, Attr) {
+    ("_origin".into(), Attr::Str("ast".into()))
+}
+
+pub fn flag(key: &str) -> (String, Attr) {
+    (key.into(), Attr::Bool(true))
+}
+
+/// `{"id","label":id,"file_type":"concept","type":"external","external":true,"source_file":""}`.
+pub fn external_node(id: String) -> Node {
+    Node {
+        label: id.clone(),
+        id,
+        kind: NodeKind::External,
+        file_type: "concept".into(),
+        source_file: String::new(),
+        loc: Loc::Absent,
+        attrs: vec![
+            ("external".into(), Attr::Bool(true)),
+            ("type".into(), Attr::Str("external".into())),
+        ],
+    }
+}
+
+/// Rationale label: whitespace collapsed; over 80 chars cut at the last space before 80 plus `…`.
+pub fn rationale_label(text: &str) -> String {
+    let collapsed = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    if collapsed.chars().count() <= 80 {
+        return collapsed;
+    }
+    let head: String = collapsed.chars().take(80).collect();
+    let cut = head.rsplit_once(' ').map_or(head.as_str(), |(a, _)| a);
+    format!("{cut}…")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rationale_labels_truncate_on_a_space() {
+        assert_eq!(rationale_label("  a   b\n c "), "a b c");
+        let long = "word ".repeat(30);
+        let label = rationale_label(&long);
+        assert!(label.ends_with('…'));
+        assert_eq!(label.chars().count(), 80);
+    }
+}

@@ -1,0 +1,927 @@
+{
+ "nodes": [
+  {
+   "id": "components_app",
+   "label": "App.jsx",
+   "file_type": "code",
+   "source_file": "components/App.jsx",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "components_app_row",
+   "label": "Row()",
+   "file_type": "code",
+   "source_file": "components/App.jsx",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "components_app_list",
+   "label": "List()",
+   "file_type": "code",
+   "source_file": "components/App.jsx",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "components_app_app",
+   "label": "App",
+   "file_type": "code",
+   "source_file": "components/App.jsx",
+   "source_location": "L18",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "components_app_app_constructor",
+   "label": ".constructor()",
+   "file_type": "code",
+   "source_file": "components/App.jsx",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "components_app_app_onclick",
+   "label": ".onClick()",
+   "file_type": "code",
+   "source_file": "components/App.jsx",
+   "source_location": "L25",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "components_app_app_render",
+   "label": ".render()",
+   "file_type": "code",
+   "source_file": "components/App.jsx",
+   "source_location": "L29",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_default",
+   "label": "default.cjs",
+   "file_type": "code",
+   "source_file": "lib/default.cjs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_default_store",
+   "label": "{ Store }",
+   "file_type": "code",
+   "source_file": "lib/default.cjs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_default_lodash",
+   "label": "lodash",
+   "file_type": "code",
+   "source_file": "lib/default.cjs",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_default_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "lib/default.cjs",
+   "source_location": "L5",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_format",
+   "label": "format.mjs",
+   "file_type": "code",
+   "source_file": "lib/format.mjs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_format_formatlabel",
+   "label": "formatLabel()",
+   "file_type": "code",
+   "source_file": "lib/format.mjs",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_format_formatlabel_pad",
+   "label": "pad()",
+   "file_type": "code",
+   "source_file": "lib/format.mjs",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_format_formatall",
+   "label": "formatAll()",
+   "file_type": "code",
+   "source_file": "lib/format.mjs",
+   "source_location": "L15",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_format_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "lib/format.mjs",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_format_rationale_7",
+   "label": "WHY: labels are shown in a fixed-width column.",
+   "file_type": "rationale",
+   "source_file": "lib/format.mjs",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store",
+   "label": "store.js",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_store",
+   "label": "Store",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L5",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_store_constructor",
+   "label": ".constructor()",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_store_create",
+   "label": ".create()",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_store_add",
+   "label": ".add()",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_store_size",
+   "label": ".size()",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_cachedstore",
+   "label": "CachedStore",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L24",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_cachedstore_add",
+   "label": ".add()",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L25",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_clear",
+   "label": "clear()",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L32",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L36",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_utils",
+   "label": "utils",
+   "file_type": "code",
+   "source_file": "lib/store.js",
+   "source_location": "L40",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_store_rationale_26",
+   "label": "NOTE: invalidates the cache on every write.",
+   "file_type": "rationale",
+   "source_file": "lib/store.js",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_store_test",
+   "label": "store.test.js",
+   "file_type": "code",
+   "source_file": "test/store.test.js",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_store_test_store",
+   "label": "{ Store }",
+   "file_type": "code",
+   "source_file": "test/store.test.js",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_store_test_fixture",
+   "label": "fixture()",
+   "file_type": "code",
+   "source_file": "test/store.test.js",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "ref_react",
+   "label": "ref_react",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "ref_lodash",
+   "label": "ref_lodash",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "ref_path",
+   "label": "ref_path",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "ref_node_fs",
+   "label": "ref_node_fs",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "components_app",
+   "target": "ref_react",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app",
+   "target": "lib_format",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app",
+   "target": "lib_format_formatlabel",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app",
+   "target": "lib_store",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app",
+   "target": "lib_store_cachedstore",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app",
+   "target": "components_app_row",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app",
+   "target": "components_app_list",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app",
+   "target": "components_app_app",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_app",
+   "target": "components_app_app_constructor",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_app",
+   "target": "components_app_app_onclick",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_app",
+   "target": "components_app_app_render",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_list",
+   "target": "components_app_row",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_app_render",
+   "target": "components_app_list",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L30",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_default",
+   "target": "lib_store",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/default.cjs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_default",
+   "target": "lib_store_store",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/default.cjs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_default",
+   "target": "lib_default_store",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/default.cjs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_default",
+   "target": "ref_lodash",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/default.cjs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_default",
+   "target": "lib_default_lodash",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/default.cjs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_default",
+   "target": "lib_default_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/default.cjs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "ref_path",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "ref_node_fs",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "lib_default",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "lib_store",
+   "relation": "imports_from",
+   "context": "re-export",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "lib_store_helper",
+   "relation": "re_exports",
+   "context": "re-export",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "lib_format_formatlabel",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format_formatlabel",
+   "target": "lib_format_formatlabel_pad",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "lib_format_formatall",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "lib_format_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format_formatlabel",
+   "target": "lib_format_formatlabel_pad",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format_formatall",
+   "target": "lib_format_formatlabel",
+   "relation": "indirect_call",
+   "context": "argument",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "lib/format.mjs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format_rationale_7",
+   "target": "lib_format",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store",
+   "target": "lib_store_store",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_store",
+   "target": "lib_store_store_constructor",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_store",
+   "target": "lib_store_store_create",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_store",
+   "target": "lib_store_store_add",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_store",
+   "target": "lib_store_store_size",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store",
+   "target": "lib_store_cachedstore",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_cachedstore",
+   "target": "lib_store_cachedstore_add",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store",
+   "target": "lib_store_clear",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L32",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store",
+   "target": "lib_store_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store",
+   "target": "lib_store_utils",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L40",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_store_create",
+   "target": "lib_store_store",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_cachedstore_add",
+   "target": "lib_store_clear",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store",
+   "target": "lib_store_helper",
+   "relation": "indirect_call",
+   "context": "collection",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "lib/store.js",
+   "source_location": "L47",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_rationale_26",
+   "target": "lib_store",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_store_test",
+   "target": "lib_store",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "test/store.test.js",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_store_test",
+   "target": "lib_store_store",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "test/store.test.js",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_store_test",
+   "target": "test_store_test_store",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "test/store.test.js",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_store_test",
+   "target": "test_store_test_fixture",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "test/store.test.js",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_store_test",
+   "target": "test_store_test_fixture",
+   "relation": "indirect_call",
+   "context": "collection",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "test/store.test.js",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_format",
+   "target": "lib_store",
+   "relation": "re_exports",
+   "context": "export",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/format.mjs",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app",
+   "target": "lib_format_formatall",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_row",
+   "target": "lib_format_formatlabel",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "components/App.jsx",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_store_cachedstore",
+   "target": "lib_store_store",
+   "relation": "inherits",
+   "context": "type",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/store.js",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_app_constructor",
+   "target": "lib_store_cachedstore",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "components/App.jsx",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_app_onclick",
+   "target": "lib_format_formatall",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "components/App.jsx",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_store_test_fixture",
+   "target": "lib_store_store",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/store.test.js",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

@@ -1,0 +1,7 @@
+[project]
+name = "mixed-fixture"
+version = "0.1.0"
+dependencies = ["requests>=2.31", "pydantic==2.8.2"]
+
+[tool.ruff]
+line-length = 100

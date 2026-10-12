@@ -1,0 +1,1162 @@
+{
+ "nodes": [
+  {
+   "id": "cmd_app_main",
+   "label": "main.go",
+   "file_type": "code",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "cmd_app_main_main",
+   "label": "main()",
+   "file_type": "code",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_example_com_shop",
+   "label": "example.com/shop",
+   "file_type": "code",
+   "type": "package",
+   "ecosystem": "go",
+   "source_file": "go.mod",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_service",
+   "label": "service.go",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_user",
+   "label": "User",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_greeter",
+   "label": "Greeter",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_greeter_greet",
+   "label": ".Greet()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_userservice",
+   "label": "UserService",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_service_newuserservice",
+   "label": "NewUserService()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L33",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_userservice_register",
+   "label": ".Register()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L37",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_userservice_greet",
+   "label": ".Greet()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L45",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_userservice_names",
+   "label": ".Names()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L49",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_service_logline",
+   "label": "logLine()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L59",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_service_apply",
+   "label": "apply()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L63",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_service_strings2upper",
+   "label": "strings2upper()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L69",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_service_clean",
+   "label": "clean()",
+   "file_type": "code",
+   "source_file": "service/service.go",
+   "source_location": "L74",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_service_test",
+   "label": "service_test.go",
+   "file_type": "code",
+   "source_file": "service/service_test.go",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "service_service_test_testregister",
+   "label": "TestRegister()",
+   "file_type": "code",
+   "source_file": "service/service_test.go",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_helpers",
+   "label": "helpers.go",
+   "file_type": "code",
+   "source_file": "store/helpers.go",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_helpers_normalize",
+   "label": "Normalize()",
+   "file_type": "code",
+   "source_file": "store/helpers.go",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_helpers_clean",
+   "label": "clean()",
+   "file_type": "code",
+   "source_file": "store/helpers.go",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_helpers_format",
+   "label": "Format()",
+   "file_type": "code",
+   "source_file": "store/helpers.go",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_store_go_store_store",
+   "label": "Store",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L39",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_id",
+   "label": "ID",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_entity",
+   "label": "Entity",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_entity_identity",
+   "label": ".Identity()",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L19",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_store_go_store_model",
+   "label": "Model",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_model_identity",
+   "label": ".Identity()",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_number",
+   "label": "Number",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L34",
+   "_origin": "ast"
+  },
+  {
+   "id": "t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_store_newstore",
+   "label": "NewStore()",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L44",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_store_t",
+   "label": "Store[T]",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L49",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_store_t_put",
+   "label": ".Put()",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L49",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_store_t_get",
+   "label": ".Get()",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L54",
+   "_origin": "ast"
+  },
+  {
+   "id": "store_store_sum",
+   "label": "Sum()",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L64",
+   "_origin": "ast"
+  },
+  {
+   "id": "n",
+   "label": "N",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "go_type_testing_t",
+   "label": "testing.T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "go_pkg_fmt",
+   "label": "go_pkg_fmt",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "go_pkg_os",
+   "label": "go_pkg_os",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "go_pkg_sort",
+   "label": "go_pkg_sort",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "go_pkg_github_com_google_uuid",
+   "label": "go_pkg_github_com_google_uuid",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "go_pkg_testing",
+   "label": "go_pkg_testing",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "go_pkg_strings",
+   "label": "go_pkg_strings",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "go_pkg_strconv",
+   "label": "go_pkg_strconv",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "go_pkg_errors",
+   "label": "go_pkg_errors",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "cmd_app_main",
+   "target": "go_pkg_fmt",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main",
+   "target": "go_pkg_os",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main",
+   "target": "service_service",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main",
+   "target": "service_service_test",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main",
+   "target": "store_helpers",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main",
+   "target": "store_store_go_store_store",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main",
+   "target": "cmd_app_main_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "go_pkg_fmt",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "go_pkg_sort",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "store_helpers",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "store_store_go_store_store",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "go_pkg_github_com_google_uuid",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "service_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_user",
+   "target": "store_store_go_store_model",
+   "relation": "embeds",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "service_greeter",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_greeter",
+   "target": "service_greeter_greet",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_greeter_greet",
+   "target": "service_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "service_userservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice",
+   "target": "store_store_go_store_store",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L28",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice",
+   "target": "service_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L28",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "service_service_newuserservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L33",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service_newuserservice",
+   "target": "service_userservice",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L33",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice",
+   "target": "service_userservice_register",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice_register",
+   "target": "service_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L37",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice",
+   "target": "service_userservice_greet",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L45",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice_greet",
+   "target": "service_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L45",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice",
+   "target": "service_userservice_names",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice_names",
+   "target": "service_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L49",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "service_service_logline",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L59",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "service_service_apply",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L63",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "service_service_strings2upper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L69",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service",
+   "target": "service_service_clean",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L74",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice_names",
+   "target": "service_service_apply",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service.go",
+   "source_location": "L55",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service_test",
+   "target": "go_pkg_testing",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service_test.go",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service_test",
+   "target": "service_service_test_testregister",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service_test.go",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service_test_testregister",
+   "target": "go_type_testing_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "service/service_test.go",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_helpers",
+   "target": "go_pkg_strings",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "store/helpers.go",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_helpers",
+   "target": "go_pkg_strconv",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "store/helpers.go",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_helpers",
+   "target": "store_helpers_normalize",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/helpers.go",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_helpers_normalize",
+   "target": "store_id",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/helpers.go",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_helpers",
+   "target": "store_helpers_clean",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/helpers.go",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_helpers",
+   "target": "store_helpers_format",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/helpers.go",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_helpers_normalize",
+   "target": "store_id",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "store/helpers.go",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_helpers_normalize",
+   "target": "store_helpers_clean",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "store/helpers.go",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "go_pkg_errors",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "store_id",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "store_entity",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_entity",
+   "target": "store_entity_identity",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_entity_identity",
+   "target": "store_id",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "store_store_go_store_model",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_model",
+   "target": "store_id",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L24",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_model",
+   "target": "store_model_identity",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_model_identity",
+   "target": "store_id",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L29",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "store_number",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L34",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "store_store_go_store_store",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L39",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "store_id",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L40",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L40",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "store_store_newstore",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L44",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_newstore",
+   "target": "store_store_go_store_store",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L44",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_newstore",
+   "target": "t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L44",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_t",
+   "target": "store_store_t_put",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_t_put",
+   "target": "t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L49",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_t",
+   "target": "store_store_t_get",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L54",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_t_get",
+   "target": "store_id",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L54",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_t_get",
+   "target": "t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L54",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
+   "target": "store_store_sum",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L64",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_sum",
+   "target": "n",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L64",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_t_put",
+   "target": "store_model_identity",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L51",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main_main",
+   "target": "service_service_newuserservice",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "cmd/app/main.go",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main_main",
+   "target": "store_store_sum",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "cmd/app/main.go",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cmd_app_main_main",
+   "target": "store_helpers_format",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "cmd/app/main.go",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_userservice_register",
+   "target": "store_helpers_normalize",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "service/service.go",
+   "source_location": "L38",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service_test_testregister",
+   "target": "service_service_newuserservice",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "service/service_test.go",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "service_service_test_testregister",
+   "target": "service_service_clean",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "service/service_test.go",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

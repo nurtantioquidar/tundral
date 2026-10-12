@@ -1,0 +1,1800 @@
+{
+ "nodes": [
+  {
+   "id": "main",
+   "label": "main.py",
+   "file_type": "code",
+   "source_file": "main.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_main",
+   "label": "main()",
+   "file_type": "code",
+   "source_file": "main.py",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_init",
+   "label": "__init__.py",
+   "file_type": "code",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_init_rationale_1",
+   "label": "Fixture package: re-exports the public model types.",
+   "file_type": "rationale",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models",
+   "label": "models.py",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_base",
+   "label": "Base",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L11",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_base_save",
+   "label": ".save()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_base_describe",
+   "label": ".describe()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L18",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_user",
+   "label": "User",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L23",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_user_display",
+   "label": ".display()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L31",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_user_parse",
+   "label": ".parse()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L35",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_user_guest",
+   "label": ".guest()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L39",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_user_save",
+   "label": ".save()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L42",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_admin",
+   "label": "Admin",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L48",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_admin_promote",
+   "label": ".promote()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L51",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_admin_promote_bump",
+   "label": "bump()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L52",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_repo",
+   "label": "Repo",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L59",
+   "metadata": {
+    "python_opaque_bases": true
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_repo_init",
+   "label": ".__init__()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L62",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_repo_add",
+   "label": ".add()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L65",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_repo_get",
+   "label": ".get()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L68",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_validate",
+   "label": "validate()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L72",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_format_name",
+   "label": "format_name()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L76",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "pkg/models.py",
+   "source_location": "L81",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_rationale_12",
+   "label": "Root of the model hierarchy.",
+   "file_type": "rationale",
+   "source_file": "pkg/models.py",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_rationale_24",
+   "label": "A person who can sign in.",
+   "file_type": "rationale",
+   "source_file": "pkg/models.py",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_rationale_15",
+   "label": "# NOTE: persistence is faked in this fixture.",
+   "file_type": "rationale",
+   "source_file": "pkg/models.py",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_models_rationale_77",
+   "label": "# WHY: names are displayed title-cased everywhere.",
+   "file_type": "rationale",
+   "source_file": "pkg/models.py",
+   "source_location": "L77",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service",
+   "label": "service.py",
+   "file_type": "code",
+   "source_file": "pkg/service.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "pkg/service.py",
+   "source_location": "L16",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_userservice",
+   "label": "UserService",
+   "file_type": "code",
+   "source_file": "pkg/service.py",
+   "source_location": "L21",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_userservice_init",
+   "label": ".__init__()",
+   "file_type": "code",
+   "source_file": "pkg/service.py",
+   "source_location": "L22",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_userservice_register",
+   "label": ".register()",
+   "file_type": "code",
+   "source_file": "pkg/service.py",
+   "source_location": "L26",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_userservice_promote",
+   "label": ".promote()",
+   "file_type": "code",
+   "source_file": "pkg/service.py",
+   "source_location": "L33",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_userservice_export",
+   "label": ".export()",
+   "file_type": "code",
+   "source_file": "pkg/service.py",
+   "source_location": "L36",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_run",
+   "label": "run()",
+   "file_type": "code",
+   "source_file": "pkg/service.py",
+   "source_location": "L42",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_rationale_1",
+   "label": "Service layer exercising every import and call form.",
+   "file_type": "rationale",
+   "source_file": "pkg/service.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_service_rationale_17",
+   "label": "Duplicate name: also defined in models and util.",
+   "file_type": "rationale",
+   "source_file": "pkg/service.py",
+   "source_location": "L17",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_util",
+   "label": "util.py",
+   "file_type": "code",
+   "source_file": "pkg/util.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_util_traced",
+   "label": "traced()",
+   "file_type": "code",
+   "source_file": "pkg/util.py",
+   "source_location": "L5",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_util_traced_wrapper",
+   "label": "wrapper()",
+   "file_type": "code",
+   "source_file": "pkg/util.py",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_util_slugify",
+   "label": "slugify()",
+   "file_type": "code",
+   "source_file": "pkg/util.py",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "pkg_util_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "pkg/util.py",
+   "source_location": "L18",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_test_service",
+   "label": "test_service.py",
+   "file_type": "code",
+   "source_file": "tests/test_service.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_test_service_testuserservice",
+   "label": "TestUserService",
+   "file_type": "code",
+   "source_file": "tests/test_service.py",
+   "source_location": "L7",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_test_service_testuserservice_test_register",
+   "label": ".test_register()",
+   "file_type": "code",
+   "source_file": "tests/test_service.py",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_test_service_testuserservice_test_parse",
+   "label": ".test_parse()",
+   "file_type": "code",
+   "source_file": "tests/test_service.py",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "fixture",
+   "label": "fixture",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_test_service_service",
+   "label": "service()",
+   "file_type": "code",
+   "source_file": "tests/test_service.py",
+   "source_location": "L17",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_test_service_test_run",
+   "label": "test_run()",
+   "file_type": "code",
+   "source_file": "tests/test_service.py",
+   "source_location": "L21",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sys",
+   "label": "sys",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "dataclasses",
+   "label": "dataclasses",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "typing",
+   "label": "typing",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "json",
+   "label": "json",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "os_path",
+   "label": "os_path",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "collections",
+   "label": "collections",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "re",
+   "label": "re",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "functools",
+   "label": "functools",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "pytest",
+   "label": "pytest",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "main",
+   "target": "sys",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "main.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "pkg_init",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "main.py",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "pkg_init",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "main.py",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "pkg_service",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "main.py",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "main.py",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_init",
+   "target": "pkg_models",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_init",
+   "target": "pkg_service",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_init_rationale_1",
+   "target": "pkg_init",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "dataclasses",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "typing",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "pkg_models_base",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_base",
+   "target": "pkg_models_base_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_base",
+   "target": "pkg_models_base_describe",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "pkg_models_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user",
+   "target": "pkg_models_base",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user",
+   "target": "pkg_models_user_display",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user",
+   "target": "pkg_models_user_parse",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user_parse",
+   "target": "pkg_models_user",
+   "relation": "references",
+   "context": "return_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user",
+   "target": "pkg_models_user_guest",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L39",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user",
+   "target": "pkg_models_user_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L42",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "pkg_models_admin",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L48",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_admin",
+   "target": "pkg_models_user",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L48",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_admin",
+   "target": "pkg_models_admin_promote",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L51",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_admin_promote",
+   "target": "pkg_models_user",
+   "relation": "references",
+   "context": "parameter_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L51",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_admin_promote",
+   "target": "pkg_models_admin",
+   "relation": "references",
+   "context": "return_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L51",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_admin_promote",
+   "target": "pkg_models_admin_promote_bump",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L52",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "pkg_models_repo",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L59",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_repo",
+   "target": "pkg_models_repo_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L62",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_repo",
+   "target": "pkg_models_repo_add",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L65",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_repo_add",
+   "target": "t",
+   "relation": "references",
+   "context": "parameter_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L65",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_repo",
+   "target": "pkg_models_repo_get",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L68",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_repo_get",
+   "target": "t",
+   "relation": "references",
+   "context": "generic_arg",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L68",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "pkg_models_validate",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L72",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_validate",
+   "target": "pkg_models_base",
+   "relation": "references",
+   "context": "parameter_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L72",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "pkg_models_format_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L76",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models",
+   "target": "pkg_models_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L81",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_base_save",
+   "target": "pkg_models_validate",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user_display",
+   "target": "pkg_models_format_name",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L32",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user_parse",
+   "target": "pkg_models_user",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user_save",
+   "target": "pkg_models_base_save",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L43",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_user_save",
+   "target": "pkg_models_base_describe",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L44",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_admin_promote",
+   "target": "pkg_models_admin_promote_bump",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L55",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_admin_promote",
+   "target": "pkg_models_admin",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L56",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_rationale_12",
+   "target": "pkg_models_base",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_rationale_24",
+   "target": "pkg_models_user",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_rationale_15",
+   "target": "pkg_models",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_models_rationale_77",
+   "target": "pkg_models",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/models.py",
+   "source_location": "L77",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "json",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "os_path",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "collections",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "typing",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_init",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_models",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_util",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_service_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_service_userservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice",
+   "target": "pkg_service_userservice_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice_init",
+   "target": "pkg_models_repo",
+   "relation": "references",
+   "context": "parameter_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice_init",
+   "target": "pkg_models_user",
+   "relation": "references",
+   "context": "generic_arg",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice",
+   "target": "pkg_service_userservice_register",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice_register",
+   "target": "pkg_models_user",
+   "relation": "references",
+   "context": "return_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice",
+   "target": "pkg_service_userservice_promote",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L33",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice_promote",
+   "target": "pkg_models_user",
+   "relation": "references",
+   "context": "parameter_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L33",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice",
+   "target": "pkg_service_userservice_export",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_service_run",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L42",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_run",
+   "target": "pkg_service_userservice",
+   "relation": "references",
+   "context": "return_type",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L42",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice_export",
+   "target": "pkg_service_helper",
+   "relation": "indirect_call",
+   "context": "argument",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "pkg/service.py",
+   "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_run",
+   "target": "pkg_service_userservice",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L43",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_rationale_1",
+   "target": "pkg_service",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_rationale_17",
+   "target": "pkg_service_helper",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util",
+   "target": "re",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/util.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util",
+   "target": "functools",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/util.py",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util",
+   "target": "pkg_util_traced",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/util.py",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util_traced",
+   "target": "pkg_util_traced_wrapper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/util.py",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util_slugify",
+   "target": "pkg_util_traced",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/util.py",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "decorator",
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util",
+   "target": "pkg_util_slugify",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/util.py",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util",
+   "target": "pkg_util_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/util.py",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util_traced",
+   "target": "pkg_util_traced_wrapper",
+   "relation": "indirect_call",
+   "context": "return",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "pkg/util.py",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util_slugify",
+   "target": "pkg_util_helper",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/util.py",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "pytest",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "pkg_models",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "pkg_service",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "tests_test_service_testuserservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service_testuserservice",
+   "target": "tests_test_service_testuserservice_test_register",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service_testuserservice",
+   "target": "tests_test_service_testuserservice_test_parse",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service_service",
+   "target": "fixture",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L16",
+   "weight": 1.0,
+   "context": "decorator",
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "tests_test_service_service",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "tests_test_service_test_run",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_init",
+   "target": "pkg_models",
+   "relation": "re_exports",
+   "context": "export",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_init",
+   "target": "pkg_service",
+   "relation": "re_exports",
+   "context": "export",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "pkg_service_run",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "main.py",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "pkg_service_userservice",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "main.py",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_init",
+   "target": "pkg_models_user",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_init",
+   "target": "pkg_models_admin",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_init",
+   "target": "pkg_service_run",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/__init__.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_models_repo",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_models_user",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_util_helper",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_util_slugify",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service",
+   "target": "pkg_models_admin",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "pkg_models_user",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "pkg_service_userservice",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service",
+   "target": "pkg_service_run",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/test_service.py",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "pkg_service_run",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "main.py",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_run",
+   "target": "pkg_models_repo",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "pkg/service.py",
+   "source_location": "L43",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "pkg_service_userservice",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "main.py",
+   "source_location": "L11",
+   "weight": 0.8,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice",
+   "target": "pkg_models_repo",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "pkg/service.py",
+   "source_location": "L22",
+   "weight": 0.8,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_run",
+   "target": "pkg_models_repo",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "pkg/service.py",
+   "source_location": "L43",
+   "weight": 0.8,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice",
+   "target": "pkg_models_user",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "pkg/service.py",
+   "source_location": "L22",
+   "weight": 0.8,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service_testuserservice",
+   "target": "pkg_models_user",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "tests/test_service.py",
+   "source_location": "L13",
+   "weight": 0.8,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service_testuserservice",
+   "target": "pkg_service_userservice",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "tests/test_service.py",
+   "source_location": "L10",
+   "weight": 0.8,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice_register",
+   "target": "pkg_util_slugify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "pkg/service.py",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_run",
+   "target": "pkg_models_format_name",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "pkg/service.py",
+   "source_location": "L45",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service_testuserservice_test_register",
+   "target": "pkg_service_run",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tests/test_service.py",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service_service",
+   "target": "pkg_service_run",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tests/test_service.py",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice_promote",
+   "target": "pkg_models_admin_promote",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "pkg/service.py",
+   "source_location": "L34",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_run",
+   "target": "pkg_service_userservice_register",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "pkg/service.py",
+   "source_location": "L44",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_util_slugify",
+   "target": "re",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "pkg/util.py",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_test_service_testuserservice_test_parse",
+   "target": "pkg_models_user_parse",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tests/test_service.py",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

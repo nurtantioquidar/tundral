@@ -63,19 +63,32 @@ class Tool:
 
 
 class Graphify(Tool):
+    name_suffix = ""
+    extra: tuple[str, ...] = ()
+
     def __init__(self) -> None:
         self.bin = BENCH_HOME / "tools" / f"graphify-{GRAPHIFY_VERSION}" / "bin" / "graphify"
         if not self.bin.exists():
             sys.exit(f"graphify not installed at {self.bin}; run bench/setup.sh")
-        super().__init__("graphify", GRAPHIFY_VERSION, "graphify-out", {"GRAPHIFY_QUERY_LOG_DISABLE": "1"})
+        # GRAPHIFY_MAX_GRAPH_BYTES: Graphify refuses to reload its own graph above 512 MiB by
+        # default (Kubernetes is 570 MB); raise it so warm/update measure work, not the cap.
+        env = {"GRAPHIFY_QUERY_LOG_DISABLE": "1", "GRAPHIFY_MAX_GRAPH_BYTES": "8GB"}
+        super().__init__("graphify" + self.name_suffix, GRAPHIFY_VERSION, "graphify-out", env)
 
     def build(self, repo: Path, workers: int) -> list[str]:
         self.env["GRAPHIFY_MAX_WORKERS"] = str(workers)
-        return [str(self.bin), "extract", str(repo), "--code-only", "--max-workers", str(workers)]
+        return [str(self.bin), "extract", str(repo), "--code-only", "--max-workers", str(workers), *self.extra]
 
     def update(self, repo: Path, workers: int) -> list[str]:
         self.env["GRAPHIFY_MAX_WORKERS"] = str(workers)
-        return [str(self.bin), "update", str(repo)]
+        return [str(self.bin), "update", str(repo), *self.extra]
+
+
+class GraphifyNoCluster(Graphify):
+    """Graphify without clustering, report and HTML: the like-for-like target until dijkstral clusters."""
+
+    name_suffix = "-nocluster"
+    extra = ("--no-cluster",)
 
 
 class Dijkstral(Tool):
@@ -94,7 +107,7 @@ class Dijkstral(Tool):
         return [str(self.bin), "update", str(repo), "--threads", str(workers)]
 
 
-TOOLS = {"graphify": Graphify, "dijkstral": Dijkstral}
+TOOLS = {"graphify": Graphify, "graphify-nocluster": GraphifyNoCluster, "dijkstral": Dijkstral}
 
 
 # ---------------------------------------------------------------------------------------------

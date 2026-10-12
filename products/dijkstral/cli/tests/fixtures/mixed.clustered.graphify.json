@@ -1,0 +1,714 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1,
+  "graphify_version": "0.9.86"
+ },
+ "nodes": [
+  {
+   "id": "app_main_helper",
+   "label": "helper()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "helper()",
+   "source_file": "app/main.py",
+   "source_location": "L5"
+  },
+  {
+   "id": "app_main_main",
+   "label": "main()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "main()",
+   "source_file": "app/main.py",
+   "source_location": "L1"
+  },
+  {
+   "id": "package",
+   "label": "package.json",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "package.json",
+   "source_file": "package.json",
+   "source_location": "L1"
+  },
+  {
+   "id": "package_devdependencies",
+   "label": "devDependencies",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "devdependencies",
+   "source_file": "package.json",
+   "source_location": "L6"
+  },
+  {
+   "id": "package_devdependencies_typescript",
+   "label": "typescript",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "typescript",
+   "source_file": "package.json",
+   "source_location": "L6"
+  },
+  {
+   "id": "package_name",
+   "label": "name",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "name",
+   "source_file": "package.json",
+   "source_location": "L2"
+  },
+  {
+   "id": "package_scripts",
+   "label": "scripts",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "scripts",
+   "source_file": "package.json",
+   "source_location": "L4"
+  },
+  {
+   "id": "package_scripts_build",
+   "label": "build",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "build",
+   "source_file": "package.json",
+   "source_location": "L4"
+  },
+  {
+   "id": "package_version",
+   "label": "version",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "version",
+   "source_file": "package.json",
+   "source_location": "L3"
+  },
+  {
+   "id": "ref_react",
+   "label": "react",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "concept",
+   "norm_label": "react",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "ref_typescript",
+   "label": "typescript",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "concept",
+   "norm_label": "typescript",
+   "source_file": "package.json",
+   "source_location": "L6"
+  },
+  {
+   "id": "ref_zod",
+   "label": "zod",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "concept",
+   "norm_label": "zod",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "scripts_build",
+   "label": "build.sh",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "language": "bash",
+    "kind": "file"
+   },
+   "norm_label": "build.sh",
+   "source_file": "scripts/build.sh",
+   "source_location": "L1"
+  },
+  {
+   "id": "scripts_build_build",
+   "label": "build()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "language": "bash",
+    "kind": "bash_function"
+   },
+   "norm_label": "build()",
+   "source_file": "scripts/build.sh",
+   "source_location": "L11"
+  },
+  {
+   "id": "scripts_build_clean",
+   "label": "clean()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "language": "bash",
+    "kind": "bash_function"
+   },
+   "norm_label": "clean()",
+   "source_file": "scripts/build.sh",
+   "source_location": "L6"
+  },
+  {
+   "id": "scripts_build_compile_all",
+   "label": "compile_all()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "language": "bash",
+    "kind": "bash_function"
+   },
+   "norm_label": "compile_all()",
+   "source_file": "scripts/build.sh",
+   "source_location": "L17"
+  },
+  {
+   "id": "scripts_build_sh__entry",
+   "label": "build.sh script",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "language": "bash",
+    "kind": "bash_entrypoint"
+   },
+   "norm_label": "build.sh script",
+   "source_file": "scripts/build.sh",
+   "source_location": "L1"
+  },
+  {
+   "id": "scripts_common",
+   "label": "common.sh",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "language": "bash",
+    "kind": "file"
+   },
+   "norm_label": "common.sh",
+   "source_file": "scripts/common.sh",
+   "source_location": "L1"
+  },
+  {
+   "id": "scripts_common_log",
+   "label": "log()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "language": "bash",
+    "kind": "bash_function"
+   },
+   "norm_label": "log()",
+   "source_file": "scripts/common.sh",
+   "source_location": "L2"
+  },
+  {
+   "id": "scripts_common_sh__entry",
+   "label": "common.sh script",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "language": "bash",
+    "kind": "bash_entrypoint"
+   },
+   "norm_label": "common.sh script",
+   "source_file": "scripts/common.sh",
+   "source_location": "L1"
+  },
+  {
+   "id": "tsconfig",
+   "label": "tsconfig.json",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "tsconfig.json",
+   "source_file": "tsconfig.json",
+   "source_location": "L1"
+  },
+  {
+   "id": "tsconfig_compileroptions",
+   "label": "compilerOptions",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "compileroptions",
+   "source_file": "tsconfig.json",
+   "source_location": "L2"
+  },
+  {
+   "id": "tsconfig_compileroptions_strict",
+   "label": "strict",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "strict",
+   "source_file": "tsconfig.json",
+   "source_location": "L2"
+  },
+  {
+   "id": "tsconfig_compileroptions_target",
+   "label": "target",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "target",
+   "source_file": "tsconfig.json",
+   "source_location": "L2"
+  },
+  {
+   "id": "tsconfig_include",
+   "label": "include",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "include",
+   "source_file": "tsconfig.json",
+   "source_location": "L3"
+  },
+  {
+   "id": "app_main",
+   "label": "main.py",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "main.py",
+   "source_file": "app/main.py",
+   "source_location": "L1"
+  },
+  {
+   "id": "package_dependencies",
+   "label": "dependencies",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "dependencies",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "package_dependencies_react",
+   "label": "react",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "react",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "package_dependencies_zod",
+   "label": "zod",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "zod",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "cargo_toml_pkg_mixed_fixture",
+   "label": "mixed-fixture",
+   "_origin": "ast",
+   "community": 5,
+   "ecosystem": "cargo",
+   "file_type": "code",
+   "norm_label": "mixed-fixture",
+   "source_file": "Cargo.toml",
+   "source_location": "L1",
+   "type": "package",
+   "version": "0.1.0"
+  },
+  {
+   "id": "pyproject_toml_pkg_mixed_fixture",
+   "label": "mixed-fixture",
+   "_origin": "ast",
+   "community": 6,
+   "ecosystem": "python",
+   "file_type": "code",
+   "norm_label": "mixed-fixture",
+   "source_file": "pyproject.toml",
+   "source_location": "L1",
+   "type": "package",
+   "version": "0.1.0"
+  }
+ ],
+ "links": [
+  {
+   "source": "app_main_main",
+   "target": "app_main_helper",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "app/main.py",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build_build",
+   "target": "scripts_build_clean",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "scripts/build.sh",
+   "source_location": "L12",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build_build",
+   "target": "scripts_common_log",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "scripts/build.sh",
+   "source_location": "L13",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build_build",
+   "target": "scripts_build_compile_all",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "scripts/build.sh",
+   "source_location": "L14",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build_clean",
+   "target": "scripts_common_log",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "scripts/build.sh",
+   "source_location": "L7",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build_sh__entry",
+   "target": "scripts_build_build",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "scripts/build.sh",
+   "source_location": "L21",
+   "weight": 1.0
+  },
+  {
+   "source": "package",
+   "target": "ref_react",
+   "relation": "imports",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "import",
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "package",
+   "target": "ref_zod",
+   "relation": "imports",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "import",
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "package",
+   "target": "ref_typescript",
+   "relation": "imports",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "import",
+   "source_file": "package.json",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build",
+   "target": "scripts_common",
+   "relation": "imports_from",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "import",
+   "source_file": "scripts/build.sh",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "app_main",
+   "target": "app_main_main",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "app/main.py",
+   "source_location": "L1",
+   "weight": 1.0
+  },
+  {
+   "source": "app_main",
+   "target": "app_main_helper",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "app/main.py",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "package",
+   "target": "package_name",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "package",
+   "target": "package_version",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L3",
+   "weight": 1.0
+  },
+  {
+   "source": "package",
+   "target": "package_scripts",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "package",
+   "target": "package_dependencies",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "package",
+   "target": "package_devdependencies",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "package_dependencies",
+   "target": "package_dependencies_react",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "package_dependencies",
+   "target": "package_dependencies_zod",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "package_devdependencies",
+   "target": "package_devdependencies_typescript",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "package_scripts",
+   "target": "package_scripts_build",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build",
+   "target": "scripts_build_sh__entry",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "scripts/build.sh",
+   "source_location": "L1",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_common",
+   "target": "scripts_common_sh__entry",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "scripts/common.sh",
+   "source_location": "L1",
+   "weight": 1.0
+  },
+  {
+   "source": "tsconfig",
+   "target": "tsconfig_compileroptions",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tsconfig.json",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "tsconfig",
+   "target": "tsconfig_include",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tsconfig.json",
+   "source_location": "L3",
+   "weight": 1.0
+  },
+  {
+   "source": "tsconfig_compileroptions",
+   "target": "tsconfig_compileroptions_strict",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tsconfig.json",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "tsconfig_compileroptions",
+   "target": "tsconfig_compileroptions_target",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tsconfig.json",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build",
+   "target": "scripts_build_build",
+   "relation": "defines",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "scripts/build.sh",
+   "source_location": "L11",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build",
+   "target": "scripts_build_compile_all",
+   "relation": "defines",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "scripts/build.sh",
+   "source_location": "L17",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_build",
+   "target": "scripts_build_clean",
+   "relation": "defines",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "scripts/build.sh",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "scripts_common",
+   "target": "scripts_common_log",
+   "relation": "defines",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "scripts/common.sh",
+   "source_location": "L2",
+   "weight": 1.0
+  }
+ ],
+ "hyperedges": []
+}
