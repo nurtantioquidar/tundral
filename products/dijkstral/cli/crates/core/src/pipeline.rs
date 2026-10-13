@@ -15,6 +15,7 @@ use crate::discover::{discover, SourceFile};
 use crate::extract::extract_file;
 use crate::facts::{Attr, FileFacts};
 use crate::graph::Graph;
+use crate::index;
 use crate::report::{self, Corpus};
 use crate::resolve::resolve;
 
@@ -41,6 +42,8 @@ pub struct BuildReport {
     pub communities: usize,
     pub out_dir: PathBuf,
     pub phases: Vec<(&'static str, Duration)>,
+    /// Nothing changed since the last build; outputs were left as they are.
+    pub unchanged: bool,
 }
 
 enum Probe {
@@ -96,6 +99,15 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
             Probe::Failed => None,
         })
         .collect();
+    let commit = git_head(&root);
+    let date = today();
+    let digest = build_digest(&files, &file_keys, opts.cluster, commit.as_deref(), &date);
+    if file_keys.iter().all(Option::is_some) && outputs_current(&out_dir, opts.cluster, &digest) {
+        report.unchanged = true;
+        report.cached = files.len();
+        phase(&mut report, "unchanged");
+        return Ok(report);
+    }
     let keys: Vec<Key> = file_keys.iter().flatten().copied().collect();
     let mut hits = cache.get_many(&keys)?;
     phase(&mut report, "cache-read");
@@ -152,7 +164,8 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
 
     report.nodes = graph.nodes.len();
     report.edges = graph.edges.len();
-    let commit = git_head(&root);
+    // A failed or interrupted build must never look current: drop the digest first.
+    fs::remove_file(out_dir.join(DIGEST_FILE)).ok();
 
     let clustered = if opts.cluster {
         let topo = Topology::of(&graph);
@@ -172,6 +185,11 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
         clustered.as_ref().map(|(_, c)| c.of_node.as_slice()),
     )?;
     fs::rename(&tmp, &target)?;
+    index::write(
+        &out_dir.join(index::INDEX_FILE),
+        &graph,
+        clustered.as_ref().map(|(_, c)| c.of_node.as_slice()),
+    )?;
     phase(&mut report, "write");
 
     if let Some((topo, communities)) = clustered {
@@ -187,7 +205,7 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
                 .map_or_else(String::new, |n| n.to_string_lossy().into_owned()),
             stats: Some((words.len(), words.iter().sum())),
             commit: commit.clone(),
-            date: today(),
+            date: date.clone(),
         };
         let md = report::render(&graph, &topo, &communities, &analysis, &corpus);
         write_atomic(&out_dir.join(REPORT_FILE), md.as_bytes())?;
@@ -197,7 +215,46 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
         fs::remove_file(out_dir.join(ANALYSIS_FILE)).ok();
         fs::remove_file(out_dir.join(REPORT_FILE)).ok();
     }
+    write_atomic(&out_dir.join(DIGEST_FILE), digest.as_bytes())?;
     Ok(report)
+}
+
+/// Records what the outputs in `dijkstral-out/` were built from.
+const DIGEST_FILE: &str = ".build-digest";
+
+/// Everything that determines the outputs: the binary, each file's content key, the options, the
+/// git commit written into `graph.json`, and the date written into the report.
+fn build_digest(
+    files: &[SourceFile],
+    keys: &[Option<Key>],
+    cluster: bool,
+    commit: Option<&str>,
+    date: &str,
+) -> String {
+    let mut h = blake3::Hasher::new();
+    h.update(env!("DIJKSTRAL_BUILD_FINGERPRINT").as_bytes());
+    h.update(&[cluster as u8]);
+    h.update(commit.unwrap_or("").as_bytes());
+    h.update(&[0]);
+    h.update(date.as_bytes());
+    h.update(&[0]);
+    for (f, k) in files.iter().zip(keys) {
+        h.update(f.rel.as_bytes());
+        h.update(&[0]);
+        h.update(k.as_ref().map_or(&[0u8; 32][..], |k| &k[..]));
+    }
+    h.finalize().to_hex().to_string()
+}
+
+/// The last build had the same digest and every output it writes is still there.
+fn outputs_current(out_dir: &Path, cluster: bool, digest: &str) -> bool {
+    let recorded = fs::read_to_string(out_dir.join(DIGEST_FILE)).unwrap_or_default();
+    let mut required = vec![out_dir.join("graph.json"), out_dir.join(index::INDEX_FILE)];
+    if cluster {
+        required.push(out_dir.join(ANALYSIS_FILE));
+        required.push(out_dir.join(REPORT_FILE));
+    }
+    recorded == digest && required.iter().all(|p| p.is_file())
 }
 
 fn probe(cache: &Cache, f: &SourceFile) -> Probe {

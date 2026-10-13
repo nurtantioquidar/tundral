@@ -105,6 +105,15 @@ fn main() -> ExitCode {
 }
 
 fn print_report(r: &BuildReport, timings: bool, started: Instant) {
+    if r.unchanged {
+        println!(
+            "{} files unchanged; {} is current ({:.2}s)",
+            r.files,
+            r.out_dir.join("graph.json").display(),
+            started.elapsed().as_secs_f64()
+        );
+        return;
+    }
     let communities = if r.communities > 0 {
         format!(", {} communities", r.communities)
     } else {

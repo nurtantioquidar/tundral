@@ -1,5 +1,6 @@
 //! Fingerprint the extraction sources so cached per-file facts never outlive the code that
-//! produced them (`cache::content_key` mixes it into every key).
+//! produced them (`cache::content_key` mixes it into every key), and the whole crate so an
+//! unchanged rebuild can be skipped (`pipeline`).
 
 use std::collections::hash_map::DefaultHasher;
 use std::fs;
@@ -22,6 +23,23 @@ fn main() {
     println!("cargo:rerun-if-changed=src/extract");
     println!(
         "cargo:rustc-env=DIJKSTRAL_EXTRACTOR_FINGERPRINT={:016x}",
+        h.finish()
+    );
+
+    // Everything that shapes the outputs, for skipping a rebuild whose inputs did not change.
+    let mut all = Vec::new();
+    collect(Path::new("src"), &mut all);
+    all.push("Cargo.toml".into());
+    all.sort();
+    let mut h = DefaultHasher::new();
+    for f in &all {
+        println!("cargo:rerun-if-changed={f}");
+        f.hash(&mut h);
+        fs::read(f).unwrap_or_default().hash(&mut h);
+    }
+    println!("cargo:rerun-if-changed=src");
+    println!(
+        "cargo:rustc-env=DIJKSTRAL_BUILD_FINGERPRINT={:016x}",
         h.finish()
     );
 }

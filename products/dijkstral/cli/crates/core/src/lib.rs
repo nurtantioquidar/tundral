@@ -9,6 +9,7 @@ pub mod extract;
 pub mod facts;
 pub mod graph;
 pub mod ids;
+pub mod index;
 pub mod lang;
 pub mod pipeline;
 pub mod pyjson;
