@@ -1,0 +1,13 @@
+Affected nodes for User
+Relations: calls, indirect_call, references, imports, imports_from, dynamic_import, re_exports, inherits, extends, implements, uses, mixes_in, embeds, defines, requires
+Depth: 1
+- makeUser() [calls] src/__tests__/service.test.ts:L17
+- BadgeProps [references] src/ui/App.tsx:L6
+- UserService [references] src/service.ts:L13
+- .constructor() [references] src/service.ts:L15
+- service.ts [imports] src/service.ts:L4
+- service.test.ts [imports] src/__tests__/service.test.ts:L3
+- App.tsx [imports] src/ui/App.tsx:L2
+- .promote() [references] src/service.ts:L27
+- .register() [references] src/service.ts:L19
+- Admin [inherits] src/models/user.ts:L47

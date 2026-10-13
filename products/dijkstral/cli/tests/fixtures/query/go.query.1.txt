@@ -1,0 +1,97 @@
+Graph: go.clustered.graphify.json (45 nodes) | Traversal: BFS depth=2 | Start: ['Store', 'User'] | 36 nodes found
+
+[i] Complete answer over budget: all 36 nodes and 57 edges shown (~2236 tokens vs the requested ~2000-token budget). Edges are never dropped once every node fits, so this is already the full answer — raising --budget further will not shrink it. Narrow with context_filter=['call'] or use get_node for a specific symbol to reduce size instead.
+
+NODE Store [src=store/store.go loc=L39 community=5]
+NODE User [src=service/service.go loc=L15 community=4]
+NODE service.go [src=service/service.go loc=L1 community=0]
+NODE main.go [src=cmd/app/main.go loc=L1 community=0]
+NODE UserService [src=service/service.go loc=L27 community=4]
+NODE ID [src=store/store.go loc=L12 community=7]
+NODE Model [src=store/store.go loc=L23 community=7]
+NODE T [src= loc= community=6]
+NODE .Names() [src=service/service.go loc=L49 community=4]
+NODE .Register() [src=service/service.go loc=L37 community=4]
+NODE Sum() [src=store/store.go loc=L64 community=1]
+NODE .Greet() [src=service/service.go loc=L23 community=0]
+NODE .Greet() [src=service/service.go loc=L45 community=4]
+NODE Entity [src=store/store.go loc=L18 community=8]
+NODE NewStore() [src=store/store.go loc=L44 community=5]
+NODE go_pkg_errors [src= loc= community=5]
+NODE Number [src=store/store.go loc=L34 community=5]
+NODE helpers.go [src=store/helpers.go loc=L1 community=2]
+NODE main() [src=cmd/app/main.go loc=L11 community=1]
+NODE NewUserService() [src=service/service.go loc=L33 community=1]
+NODE Normalize() [src=store/helpers.go loc=L9 community=2]
+NODE service_test.go [src=service/service_test.go loc=L1 community=3]
+NODE .Identity() [src=store/store.go loc=L29 community=7]
+NODE .Get() [src=store/store.go loc=L54 community=6]
+NODE .Put() [src=store/store.go loc=L49 community=6]
+NODE go_pkg_fmt [src= loc= community=0]
+NODE Greeter [src=service/service.go loc=L22 community=0]
+NODE apply() [src=service/service.go loc=L63 community=0]
+NODE clean() [src=service/service.go loc=L74 community=3]
+NODE .Identity() [src=store/store.go loc=L19 community=8]
+NODE go_pkg_github_com_google_uuid [src= loc= community=0]
+NODE go_pkg_os [src= loc= community=0]
+NODE go_pkg_sort [src= loc= community=0]
+NODE N [src= loc= community=1]
+NODE logLine() [src=service/service.go loc=L59 community=0]
+NODE strings2upper() [src=service/service.go loc=L69 community=0]
+EDGE UserService --references [EXTRACTED context=field]--> Store at=service/service.go:L28
+EDGE Store --references [EXTRACTED context=field]--> T at=store/store.go:L40
+EDGE main.go --imports_from [EXTRACTED context=import]--> Store at=cmd/app/main.go:L8
+EDGE service.go --imports_from [EXTRACTED context=import]--> Store at=service/service.go:L8
+EDGE Store --imports_from [EXTRACTED context=import]--> go_pkg_errors at=store/store.go:L4
+EDGE Store --contains [EXTRACTED]--> ID at=store/store.go:L12
+EDGE Store --contains [EXTRACTED]--> Entity at=store/store.go:L18
+EDGE Store --contains [EXTRACTED]--> Model at=store/store.go:L23
+EDGE Store --contains [EXTRACTED]--> Number at=store/store.go:L34
+EDGE Store --contains [EXTRACTED]--> NewStore() at=store/store.go:L44
+EDGE Store --contains [EXTRACTED]--> Sum() at=store/store.go:L64
+EDGE UserService --references [EXTRACTED context=generic_arg]--> User at=service/service.go:L28
+EDGE .Greet() --references [EXTRACTED context=parameter_type]--> User at=service/service.go:L23
+EDGE .Greet() --references [EXTRACTED context=parameter_type]--> User at=service/service.go:L45
+EDGE .Names() --references [EXTRACTED context=parameter_type]--> User at=service/service.go:L49
+EDGE .Register() --references [EXTRACTED context=return_type]--> User at=service/service.go:L37
+EDGE service.go --contains [EXTRACTED]--> User at=service/service.go:L15
+EDGE User --embeds [EXTRACTED]--> Model at=service/service.go:L16
+EDGE Entity --method [EXTRACTED]--> .Identity() at=store/store.go:L19
+EDGE Normalize() --calls [EXTRACTED context=call]--> ID at=store/helpers.go:L11
+EDGE .Get() --references [EXTRACTED context=parameter_type]--> ID at=store/store.go:L54
+EDGE .Identity() --references [EXTRACTED context=return_type]--> ID at=store/store.go:L19
+EDGE .Identity() --references [EXTRACTED context=return_type]--> ID at=store/store.go:L29
+EDGE .Put() --references [EXTRACTED context=parameter_type]--> T at=store/store.go:L49
+EDGE .Get() --references [EXTRACTED context=return_type]--> T at=store/store.go:L54
+EDGE Greeter --method [EXTRACTED]--> .Greet() at=service/service.go:L23
+EDGE NewUserService() --references [EXTRACTED context=return_type]--> UserService at=service/service.go:L33
+EDGE service.go --imports_from [EXTRACTED context=import]--> go_pkg_github_com_google_uuid at=service/service.go:L11
+EDGE service.go --imports_from [EXTRACTED context=import]--> go_pkg_fmt at=service/service.go:L5
+EDGE service.go --imports_from [EXTRACTED context=import]--> go_pkg_sort at=service/service.go:L6
+EDGE service.go --imports_from [EXTRACTED context=import]--> helpers.go at=service/service.go:L8
+EDGE service.go --contains [EXTRACTED]--> Greeter at=service/service.go:L22
+EDGE service.go --contains [EXTRACTED]--> NewUserService() at=service/service.go:L33
+EDGE service.go --contains [EXTRACTED]--> logLine() at=service/service.go:L59
+EDGE service.go --contains [EXTRACTED]--> apply() at=service/service.go:L63
+EDGE service.go --contains [EXTRACTED]--> strings2upper() at=service/service.go:L69
+EDGE service.go --contains [EXTRACTED]--> clean() at=service/service.go:L74
+EDGE main() --calls [EXTRACTED context=call]--> Sum() at=cmd/app/main.go:L18
+EDGE Sum() --references [EXTRACTED context=return_type]--> N at=store/store.go:L64
+EDGE main.go --imports_from [EXTRACTED context=import]--> go_pkg_fmt at=cmd/app/main.go:L4
+EDGE main.go --imports_from [EXTRACTED context=import]--> go_pkg_os at=cmd/app/main.go:L5
+EDGE main.go --imports_from [EXTRACTED context=import]--> service_test.go at=cmd/app/main.go:L7
+EDGE main.go --imports_from [EXTRACTED context=import]--> helpers.go at=cmd/app/main.go:L8
+EDGE main.go --contains [EXTRACTED]--> main() at=cmd/app/main.go:L11
+EDGE Model --method [EXTRACTED]--> .Identity() at=store/store.go:L29
+EDGE .Register() --calls [INFERRED context=call]--> Normalize() at=service/service.go:L38
+EDGE .Names() --calls [EXTRACTED context=call]--> apply() at=service/service.go:L55
+EDGE main.go --imports_from [EXTRACTED context=import]--> service.go at=cmd/app/main.go:L7
+EDGE main() --calls [EXTRACTED context=call]--> NewUserService() at=cmd/app/main.go:L12
+EDGE service.go --contains [EXTRACTED]--> UserService at=service/service.go:L27
+EDGE UserService --method [EXTRACTED]--> .Register() at=service/service.go:L37
+EDGE UserService --method [EXTRACTED]--> .Greet() at=service/service.go:L45
+EDGE UserService --method [EXTRACTED]--> .Names() at=service/service.go:L49
+EDGE helpers.go --contains [EXTRACTED]--> Normalize() at=store/helpers.go:L9
+EDGE Model --references [EXTRACTED context=field]--> ID at=store/store.go:L24
+EDGE .Put() --calls [EXTRACTED context=call]--> .Identity() at=store/store.go:L51
+EDGE NewStore() --references [EXTRACTED context=generic_arg]--> T at=store/store.go:L44

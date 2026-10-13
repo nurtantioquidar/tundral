@@ -1,0 +1,11 @@
+Affected nodes for format_name()
+Relations: calls, indirect_call, references, imports, imports_from, dynamic_import, re_exports, inherits, extends, implements, uses, mixes_in, embeds, defines, requires
+Depth: 2
+- .display() [calls] pkg/models.py:L32
+- run() [calls] pkg/service.py:L45
+- main() [calls] main.py:L11
+- service() [calls] tests/test_service.py:L18
+- .test_register() [calls] tests/test_service.py:L9
+- main.py [imports] main.py:L6
+- __init__.py [imports] pkg/__init__.py:L3
+- test_service.py [imports] tests/test_service.py:L4

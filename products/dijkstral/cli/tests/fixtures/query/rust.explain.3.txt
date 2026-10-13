@@ -1,0 +1,21 @@
+Node: Circle
+  ID:        src_model_circle
+  Source:    src/model.rs L16
+  Type:      code
+  Community: 1
+  Degree:    13
+
+Connections (13):
+  <-- model.rs [contains] [EXTRACTED] src/model.rs:L16
+  --> Shape [implements] [EXTRACTED] src/model.rs:L62
+  <-- Kind [references] [EXTRACTED] src/model.rs:L38
+  <-- fmt.rs [imports_from] [EXTRACTED] src/util/fmt.rs:L1
+  --> .new() [method] [EXTRACTED] src/model.rs:L46
+  <-- fixture() [references] [EXTRACTED] src/model.rs:L114
+  --> .diameter() [method] [EXTRACTED] src/model.rs:L50
+  --> .fmt() [method] [EXTRACTED] src/model.rs:L69
+  <-- render() [references] [EXTRACTED] src/util/fmt.rs:L4
+  <-- render() [references] [EXTRACTED] src/util/mod.rs:L19
+  --> .UNIT [contains] [EXTRACTED] src/model.rs:L44
+  --> .scale() [method] [EXTRACTED] src/model.rs:L57
+  --> .area() [method] [EXTRACTED] src/model.rs:L63

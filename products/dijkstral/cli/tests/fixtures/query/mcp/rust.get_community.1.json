@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 10,
+  "method": "tools/call",
+  "params": {
+   "name": "get_community",
+   "arguments": {
+    "community_id": 3
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 10,
+  "result": {
+   "content": [
+    {
+     "text": "Community 3 (12 nodes):\n  Kind [src/model.rs]\n  Unit [src/model.rs]\n  Platform [src/model.rs]\n  model.rs [src/model.rs]\n  area_is_positive() [src/model.rs]\n  classify() [src/model.rs]\n  Empty [src/model.rs]\n  Round [src/model.rs]\n  Square [src/model.rs]\n  round_kind() [src/model.rs]\n  serialize []\n  super []",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

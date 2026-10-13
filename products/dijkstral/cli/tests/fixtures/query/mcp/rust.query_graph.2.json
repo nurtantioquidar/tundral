@@ -1,0 +1,34 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": false,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+   "name": "query_graph",
+   "arguments": {
+    "question": "render",
+    "depth": 1
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+   "content": [
+    {
+     "text": "Graph: graphify-out/graph.json (79 nodes) | Traversal: BFS depth=1 | Start: ['render', 'render()'] | 6 nodes found\n\nNODE render [src= loc= community=0]\nNODE render() [src=src/util/fmt.rs loc=L4 community=1]\nNODE Circle [src=src/model.rs loc=L16 community=1]\nNODE lib.rs [src=src/lib.rs loc=L1 community=4]\nNODE main.rs [src=src/main.rs loc=L1 community=0]\nNODE fmt.rs [src=src/util/fmt.rs loc=L1 community=1]\nEDGE main.rs --imports_from [EXTRACTED context=import]--> render at=src/main.rs:L2\nEDGE lib.rs --imports_from [EXTRACTED context=import]--> render at=src/lib.rs:L7\nEDGE fmt.rs --contains [EXTRACTED]--> render() at=src/util/fmt.rs:L4\nEDGE render() --references [EXTRACTED context=parameter_type]--> Circle at=src/util/fmt.rs:L4\nEDGE fmt.rs --imports_from [EXTRACTED context=import]--> Circle at=src/util/fmt.rs:L1",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ },
+ "note": "EDGE line order varies with PYTHONHASHSEED; compare EDGE lines as a set"
+}

@@ -1,0 +1,22 @@
+Graph: javascript.clustered.graphify.json (36 nodes) | Traversal: DFS depth=2 | Start: ['formatLabel()', 'format.mjs', 'formatAll()'] | 8 nodes found
+
+NODE formatLabel() [src=lib/format.mjs loc=L8 community=6]
+NODE format.mjs [src=lib/format.mjs loc=L1 community=1]
+NODE formatAll() [src=lib/format.mjs loc=L15 community=5]
+NODE App.jsx [src=components/App.jsx loc=L1 community=3]
+NODE Row() [src=components/App.jsx loc=L6 community=3]
+NODE .onClick() [src=components/App.jsx loc=L25 community=5]
+NODE pad() [src=lib/format.mjs loc=L9 community=6]
+NODE List() [src=components/App.jsx loc=L10 community=3]
+EDGE Row() --calls [EXTRACTED context=call]--> formatLabel() at=components/App.jsx:L7
+EDGE formatLabel() --contains [EXTRACTED context=call]--> pad() at=lib/format.mjs:L9
+EDGE App.jsx --imports [EXTRACTED context=import]--> formatLabel() at=components/App.jsx:L2
+EDGE format.mjs --contains [EXTRACTED]--> formatLabel() at=lib/format.mjs:L8
+EDGE formatAll() --indirect_call [INFERRED context=argument]--> formatLabel() at=lib/format.mjs:L16
+EDGE .onClick() --calls [EXTRACTED context=call]--> formatAll() at=components/App.jsx:L26
+EDGE App.jsx --imports [EXTRACTED context=import]--> formatAll() at=components/App.jsx:L2
+EDGE format.mjs --contains [EXTRACTED]--> formatAll() at=lib/format.mjs:L15
+EDGE App.jsx --imports_from [EXTRACTED context=import]--> format.mjs at=components/App.jsx:L2
+EDGE App.jsx --contains [EXTRACTED]--> List() at=components/App.jsx:L10
+EDGE App.jsx --contains [EXTRACTED]--> Row() at=components/App.jsx:L6
+EDGE List() --calls [EXTRACTED context=call]--> Row() at=components/App.jsx:L13

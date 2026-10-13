@@ -1,0 +1,29 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 29,
+  "method": "resources/read",
+  "params": {
+   "uri": "graphify://surprises"
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 29,
+  "result": {
+   "contents": [
+    {
+     "mimeType": "text/plain",
+     "text": "Surprising cross-community connections:\n  TestUserService <-> UserService [uses]\n  TestUserService <-> User [uses]\n  main() <-> UserService [uses]\n  service() <-> run() [calls]\n  UserService <-> Repo [uses]\n  UserService <-> User [uses]\n  main() <-> run() [calls]\n  run() <-> Repo [calls]\n  run() <-> format_name() [calls]",
+     "uri": "graphify://surprises"
+    }
+   ]
+  }
+ }
+}

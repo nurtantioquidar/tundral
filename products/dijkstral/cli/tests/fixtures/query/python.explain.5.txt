@@ -1,0 +1,11 @@
+Node: helper()
+  ID:        pkg_util_helper
+  Source:    pkg/util.py L18
+  Type:      code
+  Community: 0
+  Degree:    3
+
+Connections (3):
+  <-- service.py [imports] [EXTRACTED] pkg/service.py:L10
+  <-- slugify() [calls] [EXTRACTED] pkg/util.py:L15
+  <-- util.py [contains] [EXTRACTED] pkg/util.py:L18

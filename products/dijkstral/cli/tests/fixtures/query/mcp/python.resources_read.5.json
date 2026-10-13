@@ -1,0 +1,29 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 30,
+  "method": "resources/read",
+  "params": {
+   "uri": "graphify://questions"
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 30,
+  "result": {
+   "contents": [
+    {
+     "mimeType": "text/plain",
+     "text": "Suggested questions:\n  - Why does `User` connect `Community 1` to `Community 2`, `Community 4`, `Community 7`?\n  - Are the 2 inferred relationships involving `UserService` (e.g. with `Repo` and `User`) actually correct?\n  - Why does `run()` connect `Community 3` to `Community 2`, `Community 5`?\n  - Why does `UserService` connect `Community 3` to `Community 8`, `Community 1`, `Community 5`?",
+     "uri": "graphify://questions"
+    }
+   ]
+  }
+ }
+}

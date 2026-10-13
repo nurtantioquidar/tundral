@@ -1,0 +1,11 @@
+God nodes (most connected):
+  1. User - 17 edges
+  2. UserService - 12 edges
+  3. run() - 11 edges
+  4. Repo - 8 edges
+  5. Base - 6 edges
+  6. slugify() - 6 edges
+  7. Admin - 5 edges
+  8. TestUserService - 5 edges
+  9. helper() - 3 edges
+  10. traced() - 3 edges

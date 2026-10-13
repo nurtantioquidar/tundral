@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+   "name": "get_node",
+   "arguments": {
+    "label": "UserService"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 5,
+  "result": {
+   "content": [
+    {
+     "text": "Node: UserService\n  ID: pkg_service_userservice\n  Source: pkg/service.py L21\n  Type: code\n  Community: 3\n  Degree: 12",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

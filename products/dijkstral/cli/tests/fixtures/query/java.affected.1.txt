@@ -1,0 +1,12 @@
+Affected nodes for Model
+Relations: calls, indirect_call, references, imports, imports_from, dynamic_import, re_exports, inherits, extends, implements, uses, mixes_in, embeds, defines, requires
+Depth: 2
+- UserService.java [imports] src/main/java/com/shop/service/UserService.java:L3
+- User [inherits] src/main/java/com/shop/model/User.java:L6
+- .status() [references] src/main/java/com/shop/model/User.java:L20
+- .save() [calls] src/main/java/com/shop/service/UserService.java:L34
+- .registersUser() [calls] src/test/java/com/shop/service/UserServiceTest.java:L20
+- UserService [references] src/main/java/com/shop/service/UserService.java:L12
+- UserServiceTest.java [imports] src/test/java/com/shop/service/UserServiceTest.java:L5
+- .notify() [references] src/main/java/com/shop/service/UserService.java:L37
+- .register() [references] src/main/java/com/shop/service/UserService.java:L25

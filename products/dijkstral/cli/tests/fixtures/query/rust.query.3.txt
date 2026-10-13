@@ -1,0 +1,92 @@
+Graph: rust.clustered.graphify.json (79 nodes) | Traversal: BFS depth=2 | Start: ['shapes', 'total_area', 'total_area()', '.area()'] | 39 nodes found
+
+NODE shapes [src=Cargo.toml loc=L1 community=7]
+NODE total_area [src= loc= community=0]
+NODE total_area() [src=src/lib.rs loc=L42 community=0]
+NODE .area() [src=src/model.rs loc=L63 community=1]
+NODE Circle [src=src/model.rs loc=L16 community=1]
+NODE lib.rs [src=src/lib.rs loc=L1 community=4]
+NODE main.rs [src=src/main.rs loc=L1 community=0]
+NODE Shape [src=src/model.rs loc=L6 community=0]
+NODE main() [src=src/main.rs loc=L4 community=0]
+NODE model.rs [src=src/model.rs loc=L1 community=3]
+NODE Kind [src=src/model.rs loc=L37 community=3]
+NODE fmt.rs [src=src/util/fmt.rs loc=L1 community=1]
+NODE round_kind() [src=src/model.rs loc=L96 community=3]
+NODE .new() [src=src/model.rs loc=L46 community=1]
+NODE fixture() [src=src/model.rs loc=L114 community=1]
+NODE Named [src=src/model.rs loc=L24 community=0]
+NODE render [src= loc= community=0]
+NODE build() [src=src/lib.rs loc=L24 community=4]
+NODE .diameter() [src=src/model.rs loc=L50 community=2]
+NODE .fmt() [src=src/model.rs loc=L69 community=1]
+NODE render() [src=src/util/fmt.rs loc=L4 community=1]
+NODE render() [src=src/util/mod.rs loc=L19 community=2]
+NODE build [src= loc= community=0]
+NODE circle [src= loc= community=0]
+NODE circle_as_round [src= loc= community=4]
+NODE cow [src= loc= community=4]
+NODE hashmap [src= loc= community=4]
+NODE hashset [src= loc= community=4]
+NODE label [src= loc= community=0]
+NODE round [src= loc= community=0]
+NODE round_kind [src= loc= community=0]
+NODE GREETING [src=src/lib.rs loc=L14 community=4]
+NODE label() [src=src/lib.rs loc=L33 community=4]
+NODE square! [src=src/lib.rs loc=L18 community=4]
+NODE MAX_SHAPES [src=src/lib.rs loc=L13 community=4]
+NODE .scale() [src=src/model.rs loc=L57 community=1]
+NODE .UNIT [src=src/model.rs loc=L44 community=1]
+NODE .area() [src=src/model.rs loc=L7 community=0]
+NODE .describe() [src=src/model.rs loc=L10 community=0]
+EDGE Circle --method [EXTRACTED]--> .area() at=src/model.rs:L63
+EDGE total_area() --references [EXTRACTED context=generic_arg]--> Shape at=src/lib.rs:L42
+EDGE lib.rs --contains [EXTRACTED]--> total_area() at=src/lib.rs:L42
+EDGE main() --calls [INFERRED context=call]--> total_area() at=src/main.rs:L13
+EDGE main.rs --imports_from [EXTRACTED context=import]--> total_area at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> circle at=src/main.rs:L1
+EDGE main.rs --imports_from [EXTRACTED context=import]--> round_kind at=src/main.rs:L1
+EDGE main.rs --imports_from [EXTRACTED context=import]--> build at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> label at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> render at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> round at=src/main.rs:L2
+EDGE Kind --references [EXTRACTED context=field]--> Circle at=src/model.rs:L38
+EDGE fmt.rs --imports_from [EXTRACTED context=import]--> Circle at=src/util/fmt.rs:L1
+EDGE render() --references [EXTRACTED context=parameter_type]--> Circle at=src/util/fmt.rs:L4
+EDGE render() --references [EXTRACTED context=parameter_type]--> Circle at=src/util/mod.rs:L19
+EDGE fixture() --references [EXTRACTED context=return_type]--> Circle at=src/model.rs:L114
+EDGE model.rs --contains [EXTRACTED]--> Circle at=src/model.rs:L16
+EDGE Circle --contains [EXTRACTED]--> .UNIT at=src/model.rs:L44
+EDGE Circle --method [EXTRACTED]--> .new() at=src/model.rs:L46
+EDGE Circle --method [EXTRACTED]--> .diameter() at=src/model.rs:L50
+EDGE Circle --method [EXTRACTED]--> .scale() at=src/model.rs:L57
+EDGE Circle --method [EXTRACTED]--> .fmt() at=src/model.rs:L69
+EDGE main() --calls [INFERRED context=call]--> round_kind() at=src/main.rs:L15
+EDGE lib.rs --imports_from [EXTRACTED context=import]--> hashmap at=src/lib.rs:L10
+EDGE lib.rs --imports_from [EXTRACTED context=import]--> hashset at=src/lib.rs:L10
+EDGE lib.rs --imports_from [EXTRACTED context=import]--> circle_as_round at=src/lib.rs:L6
+EDGE lib.rs --imports_from [EXTRACTED context=import]--> render at=src/lib.rs:L7
+EDGE lib.rs --imports_from [EXTRACTED context=import]--> cow at=src/lib.rs:L9
+EDGE lib.rs --contains [EXTRACTED]--> MAX_SHAPES at=src/lib.rs:L13
+EDGE lib.rs --contains [EXTRACTED]--> GREETING at=src/lib.rs:L14
+EDGE lib.rs --contains [EXTRACTED]--> square! at=src/lib.rs:L18
+EDGE lib.rs --contains [EXTRACTED]--> build() at=src/lib.rs:L24
+EDGE lib.rs --contains [EXTRACTED]--> label() at=src/lib.rs:L33
+EDGE fmt.rs --imports_from [EXTRACTED context=import]--> Shape at=src/util/fmt.rs:L1
+EDGE model.rs --contains [EXTRACTED]--> Shape at=src/model.rs:L6
+EDGE Named --inherits [EXTRACTED]--> Shape at=src/model.rs:L24
+EDGE Shape --method [EXTRACTED]--> .describe() at=src/model.rs:L10
+EDGE Shape --method [EXTRACTED]--> .area() at=src/model.rs:L7
+EDGE lib.rs --imports_from [EXTRACTED context=import]--> Shape at=src/lib.rs:L6
+EDGE main.rs --imports_from [EXTRACTED context=import]--> Shape at=src/main.rs:L2
+EDGE main.rs --contains [EXTRACTED]--> main() at=src/main.rs:L4
+EDGE model.rs --imports_from [EXTRACTED context=import]--> fmt.rs at=src/model.rs:L3
+EDGE model.rs --contains [EXTRACTED]--> fixture() at=src/model.rs:L114
+EDGE model.rs --contains [EXTRACTED]--> Named at=src/model.rs:L24
+EDGE model.rs --contains [EXTRACTED]--> Kind at=src/model.rs:L37
+EDGE model.rs --contains [EXTRACTED]--> round_kind() at=src/model.rs:L96
+EDGE Circle --implements [EXTRACTED]--> Shape at=src/model.rs:L62
+EDGE fixture() --calls [EXTRACTED context=call]--> .new() at=src/model.rs:L115
+EDGE round_kind() --calls [EXTRACTED context=call]--> .new() at=src/model.rs:L97
+EDGE round_kind() --references [EXTRACTED context=return_type]--> Kind at=src/model.rs:L96
+EDGE fmt.rs --contains [EXTRACTED]--> render() at=src/util/fmt.rs:L4

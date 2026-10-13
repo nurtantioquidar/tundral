@@ -1,0 +1,36 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+   "name": "query_graph",
+   "arguments": {
+    "question": "slugify",
+    "depth": 2,
+    "context_filter": [
+     "call"
+    ]
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+   "content": [
+    {
+     "text": "Graph: graphify-out/graph.json (59 nodes) | Traversal: BFS depth=2 | Start: ['slugify()'] | Context: call (explicit) | 5 nodes found\n\nNODE slugify() [src=pkg/util.py loc=L14 community=0]\nNODE .register() [src=pkg/service.py loc=L26 community=3]\nNODE helper() [src=pkg/util.py loc=L18 community=0]\nNODE re [src= loc= community=0]\nNODE run() [src=pkg/service.py loc=L42 community=3]\nEDGE slugify() --calls [EXTRACTED context=call]--> helper() at=pkg/util.py:L15\nEDGE slugify() --calls [EXTRACTED context=call]--> re at=pkg/util.py:L15\nEDGE .register() --calls [EXTRACTED context=call]--> slugify() at=pkg/service.py:L29\nEDGE run() --calls [INFERRED context=call]--> .register() at=pkg/service.py:L44",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

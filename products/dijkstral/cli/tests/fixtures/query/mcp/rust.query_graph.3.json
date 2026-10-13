@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+   "name": "query_graph",
+   "arguments": {
+    "question": "classify",
+    "depth": 0
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+   "content": [
+    {
+     "text": "Graph: graphify-out/graph.json (79 nodes) | Traversal: BFS depth=0 | Start: ['classify', 'classify()'] | 2 nodes found\n\nNODE classify [src= loc= community=6]\nNODE classify() [src=src/model.rs loc=L100 community=3]",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

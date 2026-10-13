@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 17,
+  "method": "tools/call",
+  "params": {
+   "name": "god_nodes",
+   "arguments": {
+    "top_n": 3,
+    "exclude_hubs_percentile": 90
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 17,
+  "result": {
+   "content": [
+    {
+     "text": "God nodes (most connected):\n  1. Repo - 8 edges\n  2. Base - 6 edges\n  3. slugify() - 6 edges",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

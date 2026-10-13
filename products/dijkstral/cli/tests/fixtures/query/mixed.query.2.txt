@@ -1,0 +1,8 @@
+Graph: mixed.clustered.graphify.json (31 nodes) | Traversal: BFS depth=2 | Start: ['main()'] | 3 nodes found
+
+NODE main() [src=app/main.py loc=L1 community=3]
+NODE main.py [src=app/main.py loc=L1 community=3]
+NODE helper() [src=app/main.py loc=L5 community=3]
+EDGE main() --calls [EXTRACTED context=call]--> helper() at=app/main.py:L2
+EDGE main.py --contains [EXTRACTED]--> main() at=app/main.py:L1
+EDGE main.py --contains [EXTRACTED]--> helper() at=app/main.py:L5

@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 4,
+  "method": "tools/call",
+  "params": {
+   "name": "query_graph",
+   "arguments": {
+    "question": "zzzqqq nothing"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 4,
+  "result": {
+   "content": [
+    {
+     "text": "No matching nodes found.",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

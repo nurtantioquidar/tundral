@@ -1,0 +1,21 @@
+Node: Store
+  ID:        store_store_go_store_store
+  Source:    store/store.go L39
+  Type:      code
+  Community: 5
+  Degree:    13
+
+Connections (13):
+  <-- service.go [imports_from] [EXTRACTED] service/service.go:L8
+  --> Store [contains] [EXTRACTED] store/store.go:L39
+  <-- Store [contains] [EXTRACTED] store/store.go:L39
+  <-- UserService [references] [EXTRACTED] service/service.go:L28
+  <-- main.go [imports_from] [EXTRACTED] cmd/app/main.go:L8
+  --> ID [contains] [EXTRACTED] store/store.go:L12
+  --> T [references] [EXTRACTED] store/store.go:L40
+  --> Model [contains] [EXTRACTED] store/store.go:L23
+  --> Sum() [contains] [EXTRACTED] store/store.go:L64
+  --> Entity [contains] [EXTRACTED] store/store.go:L18
+  --> NewStore() [contains] [EXTRACTED] store/store.go:L44
+  --> go_pkg_errors [imports_from] [EXTRACTED] store/store.go:L4
+  --> Number [contains] [EXTRACTED] store/store.go:L34

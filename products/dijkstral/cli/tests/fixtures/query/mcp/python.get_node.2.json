@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 6,
+  "method": "tools/call",
+  "params": {
+   "name": "get_node",
+   "arguments": {
+    "label": "helper()"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 6,
+  "result": {
+   "content": [
+    {
+     "text": "Ambiguous: 'helper()' matches 3 nodes in different files.\n  pkg/util.py\n    id: pkg_util_helper\n  pkg/models.py\n    id: pkg_models_helper\n  pkg/service.py\n    id: pkg_service_helper\nRetry with path::symbol using one of the paths above (e.g. <path>::helper()) or the full node id.",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+   "name": "query_graph",
+   "arguments": {
+    "question": "circle area",
+    "depth": 1
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+   "content": [
+    {
+     "text": "Graph: graphify-out/graph.json (79 nodes) | Traversal: BFS depth=1 | Start: ['circle', '.area()'] | 4 nodes found\n\nNODE circle [src= loc= community=0]\nNODE .area() [src=src/model.rs loc=L63 community=1]\nNODE Circle [src=src/model.rs loc=L16 community=1]\nNODE main.rs [src=src/main.rs loc=L1 community=0]\nEDGE Circle --method [EXTRACTED]--> .area() at=src/model.rs:L63\nEDGE main.rs --imports_from [EXTRACTED context=import]--> circle at=src/main.rs:L1",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

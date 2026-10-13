@@ -1,0 +1,97 @@
+Graph: java.clustered.graphify.json (64 nodes) | Traversal: BFS depth=2 | Start: ['UserService'] | 36 nodes found
+
+[i] Complete answer over budget: all 36 nodes and 57 edges shown (~3090 tokens vs the requested ~2000-token budget). Edges are never dropped once every node fits, so this is already the full answer — raising --budget further will not shrink it. Narrow with context_filter=['call'] or use get_node for a specific symbol to reduce size instead.
+
+NODE UserService [src=src/main/java/com/shop/service/UserService.java loc=L11 community=0]
+NODE User [src=src/main/java/com/shop/model/User.java loc=L6 community=1]
+NODE UserService.java [src=src/main/java/com/shop/service/UserService.java loc=L1 community=0]
+NODE .register() [src=src/main/java/com/shop/service/UserService.java loc=L15 community=1]
+NODE Formatter [src=src/main/java/com/shop/service/UserService.java loc=L67 community=0]
+NODE .save() [src=src/main/java/com/shop/service/UserService.java loc=L32 community=1]
+NODE UserServiceTest [src=src/test/java/com/shop/service/UserServiceTest.java loc=L9 community=3]
+NODE .notify() [src=src/main/java/com/shop/service/UserService.java loc=L37 community=1]
+NODE Repository [src=src/main/java/com/shop/service/UserService.java loc=L63 community=0]
+NODE .count() [src=src/main/java/com/shop/service/UserService.java loc=L57 community=0]
+NODE Stats [src=src/main/java/com/shop/service/UserService.java loc=L56 community=0]
+NODE .names() [src=src/main/java/com/shop/service/UserService.java loc=L47 community=0]
+NODE Model [src=src/main/java/com/shop/model/Model.java loc=L9 community=2]
+NODE Address [src=src/main/java/com/shop/model/User.java loc=L34 community=1]
+NODE UserServiceTest.java [src=src/test/java/com/shop/service/UserServiceTest.java loc=L1 community=3]
+NODE .id() [src=src/main/java/com/shop/model/Model.java loc=L18 community=2]
+NODE .registersUser() [src=src/test/java/com/shop/service/UserServiceTest.java loc=L17 community=3]
+NODE User.java [src=src/main/java/com/shop/model/User.java loc=L1 community=6]
+NODE .getName() [src=src/main/java/com/shop/model/User.java loc=L25 community=1]
+NODE .of() [src=src/main/java/com/shop/model/User.java loc=L29 community=1]
+NODE .status() [src=src/main/java/com/shop/model/User.java loc=L20 community=4]
+NODE .User() [src=src/main/java/com/shop/model/User.java loc=L10 community=1]
+NODE Audited [src=src/main/java/com/shop/service/Audited.java loc=L7 community=5]
+NODE Formatter [src=src/test/java/com/shop/service/UserServiceTest.java loc=L24 community=3]
+NODE Badge [src=src/main/java/com/shop/model/User.java loc=L41 community=1]
+NODE .slug() [src=src/main/java/com/shop/service/UserService.java loc=L76 community=0]
+NODE Override [src= loc= community=1]
+NODE Runnable [src=src/main/java/com/shop/service/UserService.java loc=L38 community=1]
+NODE .setUp() [src=src/test/java/com/shop/service/UserServiceTest.java loc=L12 community=3]
+NODE function [src= loc= community=0]
+NODE requirenonnull [src= loc= community=0]
+NODE slug [src= loc= community=0]
+NODE .format() [src=src/main/java/com/shop/service/UserService.java loc=L68 community=0]
+NODE .shout() [src=src/main/java/com/shop/service/UserService.java loc=L72 community=0]
+NODE .save() [src=src/main/java/com/shop/service/UserService.java loc=L64 community=0]
+NODE util [src= loc= community=0]
+EDGE UserService --references [EXTRACTED context=field]--> Formatter at=src/main/java/com/shop/service/UserService.java:L13
+EDGE UserServiceTest --references [EXTRACTED context=field]--> UserService at=src/test/java/com/shop/service/UserServiceTest.java:L10
+EDGE UserService --references [EXTRACTED context=generic_arg]--> User at=src/main/java/com/shop/service/UserService.java:L12
+EDGE .count() --references [EXTRACTED context=parameter_type]--> UserService at=src/main/java/com/shop/service/UserService.java:L57
+EDGE UserService.java --contains [EXTRACTED]--> UserService at=src/main/java/com/shop/service/UserService.java:L11
+EDGE UserService --contains [EXTRACTED]--> Stats at=src/main/java/com/shop/service/UserService.java:L56
+EDGE UserService --implements [EXTRACTED]--> Repository at=src/main/java/com/shop/service/UserService.java:L11
+EDGE UserService --method [EXTRACTED]--> .register() at=src/main/java/com/shop/service/UserService.java:L25
+EDGE UserService --method [EXTRACTED]--> .save() at=src/main/java/com/shop/service/UserService.java:L32
+EDGE UserService --method [EXTRACTED]--> .notify() at=src/main/java/com/shop/service/UserService.java:L37
+EDGE UserService --method [EXTRACTED]--> .names() at=src/main/java/com/shop/service/UserService.java:L47
+EDGE .notify() --contains [EXTRACTED context=call]--> Runnable at=src/main/java/com/shop/service/UserService.java:L38
+EDGE .register() --references [EXTRACTED context=attribute]--> Audited at=src/main/java/com/shop/service/UserService.java:L15
+EDGE .register() --calls [EXTRACTED context=call]--> .of() at=src/main/java/com/shop/service/UserService.java:L17
+EDGE .register() --calls [EXTRACTED context=call]--> .slug() at=src/main/java/com/shop/service/UserService.java:L21
+EDGE .register() --references [EXTRACTED context=parameter_type]--> Address at=src/main/java/com/shop/service/UserService.java:L25
+EDGE .register() --calls [INFERRED context=call]--> .getName() at=src/main/java/com/shop/service/UserService.java:L20
+EDGE .registersUser() --calls [INFERRED context=call]--> .register() at=src/test/java/com/shop/service/UserServiceTest.java:L19
+EDGE UserServiceTest.java --contains [EXTRACTED]--> UserServiceTest at=src/test/java/com/shop/service/UserServiceTest.java:L9
+EDGE UserServiceTest --contains [EXTRACTED]--> Formatter at=src/test/java/com/shop/service/UserServiceTest.java:L24
+EDGE UserServiceTest --method [EXTRACTED]--> .setUp() at=src/test/java/com/shop/service/UserServiceTest.java:L12
+EDGE UserServiceTest --method [EXTRACTED]--> .registersUser() at=src/test/java/com/shop/service/UserServiceTest.java:L17
+EDGE Formatter --method [EXTRACTED]--> .format() at=src/main/java/com/shop/service/UserService.java:L68
+EDGE Formatter --method [EXTRACTED]--> .shout() at=src/main/java/com/shop/service/UserService.java:L72
+EDGE Formatter --method [EXTRACTED]--> .slug() at=src/main/java/com/shop/service/UserService.java:L76
+EDGE .save() --references [EXTRACTED context=attribute]--> Override at=src/main/java/com/shop/service/UserService.java:L32
+EDGE .save() --calls [INFERRED context=call]--> .id() at=src/main/java/com/shop/service/UserService.java:L34
+EDGE Repository --method [EXTRACTED]--> .save() at=src/main/java/com/shop/service/UserService.java:L64
+EDGE UserService.java --imports [EXTRACTED context=import]--> Model at=src/main/java/com/shop/service/UserService.java:L3
+EDGE UserService.java --imports [EXTRACTED context=import]--> Address at=src/main/java/com/shop/service/UserService.java:L4
+EDGE UserService.java --imports [EXTRACTED context=import]--> util at=src/main/java/com/shop/service/UserService.java:L5
+EDGE UserService.java --imports [EXTRACTED context=import]--> function at=src/main/java/com/shop/service/UserService.java:L6
+EDGE UserService.java --imports [EXTRACTED context=import]--> requirenonnull at=src/main/java/com/shop/service/UserService.java:L7
+EDGE UserService.java --imports [EXTRACTED context=import]--> slug at=src/main/java/com/shop/service/UserService.java:L8
+EDGE UserService.java --imports [EXTRACTED]--> Formatter at=src/main/java/com/shop/service/UserService.java:L8
+EDGE UserServiceTest.java --imports [EXTRACTED context=import]--> User at=src/test/java/com/shop/service/UserServiceTest.java:L5
+EDGE User.java --contains [EXTRACTED]--> User at=src/main/java/com/shop/model/User.java:L6
+EDGE User --contains [EXTRACTED]--> Address at=src/main/java/com/shop/model/User.java:L34
+EDGE User --contains [EXTRACTED]--> Badge at=src/main/java/com/shop/model/User.java:L41
+EDGE User --inherits [EXTRACTED]--> Model at=src/main/java/com/shop/model/User.java:L6
+EDGE User --method [EXTRACTED]--> .User() at=src/main/java/com/shop/model/User.java:L15
+EDGE User --method [EXTRACTED]--> .status() at=src/main/java/com/shop/model/User.java:L20
+EDGE User --method [EXTRACTED]--> .getName() at=src/main/java/com/shop/model/User.java:L25
+EDGE User --method [EXTRACTED]--> .of() at=src/main/java/com/shop/model/User.java:L29
+EDGE Model --method [EXTRACTED]--> .id() at=src/main/java/com/shop/model/Model.java:L18
+EDGE .registersUser() --calls [INFERRED context=call]--> .id() at=src/test/java/com/shop/service/UserServiceTest.java:L20
+EDGE .User() --references [EXTRACTED context=parameter_type]--> Address at=src/main/java/com/shop/model/User.java:L15
+EDGE .notify() --references [EXTRACTED context=parameter_type]--> User at=src/main/java/com/shop/service/UserService.java:L37
+EDGE .save() --references [EXTRACTED context=parameter_type]--> User at=src/main/java/com/shop/service/UserService.java:L32
+EDGE .register() --references [EXTRACTED context=return_type]--> User at=src/main/java/com/shop/service/UserService.java:L25
+EDGE .of() --calls [EXTRACTED context=call]--> .User() at=src/main/java/com/shop/model/User.java:L30
+EDGE UserService.java --contains [EXTRACTED]--> Repository at=src/main/java/com/shop/service/UserService.java:L63
+EDGE UserService.java --imports [EXTRACTED]--> Formatter at=src/main/java/com/shop/service/UserService.java:L8
+EDGE Stats --method [EXTRACTED]--> .count() at=src/main/java/com/shop/service/UserService.java:L57
+EDGE .count() --calls [INFERRED context=call]--> .names() at=src/main/java/com/shop/service/UserService.java:L58
+EDGE .register() --calls [EXTRACTED context=call]--> .notify() at=src/main/java/com/shop/service/UserService.java:L19
+EDGE .register() --calls [EXTRACTED context=call]--> .save() at=src/main/java/com/shop/service/UserService.java:L18

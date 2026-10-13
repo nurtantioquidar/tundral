@@ -1,0 +1,2 @@
+Shortest path (2 hops):
+  UserServiceTest --references [EXTRACTED]--> UserService --references [EXTRACTED]--> User

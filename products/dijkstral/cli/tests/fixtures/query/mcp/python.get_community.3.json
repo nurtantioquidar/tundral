@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 15,
+  "method": "tools/call",
+  "params": {
+   "name": "get_community",
+   "arguments": {
+    "community_id": 99
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 15,
+  "result": {
+   "content": [
+    {
+     "text": "Community 99 not found.",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

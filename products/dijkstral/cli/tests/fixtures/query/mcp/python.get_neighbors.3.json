@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 12,
+  "method": "tools/call",
+  "params": {
+   "name": "get_neighbors",
+   "arguments": {
+    "label": "User",
+    "relation_filter": "meth"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 12,
+  "result": {
+   "content": [
+    {
+     "text": "Neighbors of User:\n  --> .display() [method] [EXTRACTED] at=pkg/models.py:L31\n  --> .parse() [method] [EXTRACTED] at=pkg/models.py:L35\n  --> .guest() [method] [EXTRACTED] at=pkg/models.py:L39\n  --> .save() [method] [EXTRACTED] at=pkg/models.py:L42",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

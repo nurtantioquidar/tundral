@@ -1,0 +1,44 @@
+Graph: go.clustered.graphify.json (45 nodes) | Traversal: BFS depth=2 | Start: ['go_pkg_os', 'go_pkg_fmt', 'go_pkg_sort'] | 18 nodes found
+
+NODE go_pkg_os [src= loc= community=0]
+NODE go_pkg_fmt [src= loc= community=0]
+NODE go_pkg_sort [src= loc= community=0]
+NODE service.go [src=service/service.go loc=L1 community=0]
+NODE main.go [src=cmd/app/main.go loc=L1 community=0]
+NODE Store [src=store/store.go loc=L39 community=5]
+NODE User [src=service/service.go loc=L15 community=4]
+NODE UserService [src=service/service.go loc=L27 community=4]
+NODE helpers.go [src=store/helpers.go loc=L1 community=2]
+NODE main() [src=cmd/app/main.go loc=L11 community=1]
+NODE NewUserService() [src=service/service.go loc=L33 community=1]
+NODE service_test.go [src=service/service_test.go loc=L1 community=3]
+NODE Greeter [src=service/service.go loc=L22 community=0]
+NODE apply() [src=service/service.go loc=L63 community=0]
+NODE clean() [src=service/service.go loc=L74 community=3]
+NODE go_pkg_github_com_google_uuid [src= loc= community=0]
+NODE logLine() [src=service/service.go loc=L59 community=0]
+NODE strings2upper() [src=service/service.go loc=L69 community=0]
+EDGE main.go --imports_from [EXTRACTED context=import]--> go_pkg_fmt at=cmd/app/main.go:L4
+EDGE service.go --imports_from [EXTRACTED context=import]--> go_pkg_fmt at=service/service.go:L5
+EDGE main.go --imports_from [EXTRACTED context=import]--> go_pkg_os at=cmd/app/main.go:L5
+EDGE service.go --imports_from [EXTRACTED context=import]--> go_pkg_sort at=service/service.go:L6
+EDGE main.go --imports_from [EXTRACTED context=import]--> service_test.go at=cmd/app/main.go:L7
+EDGE main.go --imports_from [EXTRACTED context=import]--> helpers.go at=cmd/app/main.go:L8
+EDGE main.go --imports_from [EXTRACTED context=import]--> Store at=cmd/app/main.go:L8
+EDGE main.go --contains [EXTRACTED]--> main() at=cmd/app/main.go:L11
+EDGE service.go --imports_from [EXTRACTED context=import]--> go_pkg_github_com_google_uuid at=service/service.go:L11
+EDGE service.go --imports_from [EXTRACTED context=import]--> helpers.go at=service/service.go:L8
+EDGE service.go --imports_from [EXTRACTED context=import]--> Store at=service/service.go:L8
+EDGE service.go --contains [EXTRACTED]--> User at=service/service.go:L15
+EDGE service.go --contains [EXTRACTED]--> Greeter at=service/service.go:L22
+EDGE service.go --contains [EXTRACTED]--> UserService at=service/service.go:L27
+EDGE service.go --contains [EXTRACTED]--> NewUserService() at=service/service.go:L33
+EDGE service.go --contains [EXTRACTED]--> logLine() at=service/service.go:L59
+EDGE service.go --contains [EXTRACTED]--> apply() at=service/service.go:L63
+EDGE service.go --contains [EXTRACTED]--> strings2upper() at=service/service.go:L69
+EDGE service.go --contains [EXTRACTED]--> clean() at=service/service.go:L74
+EDGE main.go --imports_from [EXTRACTED context=import]--> service.go at=cmd/app/main.go:L7
+EDGE main() --calls [EXTRACTED context=call]--> NewUserService() at=cmd/app/main.go:L12
+EDGE NewUserService() --references [EXTRACTED context=return_type]--> UserService at=service/service.go:L33
+EDGE UserService --references [EXTRACTED context=generic_arg]--> User at=service/service.go:L28
+EDGE UserService --references [EXTRACTED context=field]--> Store at=service/service.go:L28

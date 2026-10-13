@@ -1,0 +1,6 @@
+Ambiguous: 'build()' matches 2 nodes in different files.
+  package.json
+    id: package_scripts_build
+  scripts/build.sh
+    id: scripts_build_build
+Retry with path::symbol using one of the paths above (e.g. <path>::build) or the full node id.

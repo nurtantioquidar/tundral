@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 19,
+  "method": "tools/call",
+  "params": {
+   "name": "shortest_path",
+   "arguments": {
+    "source": "main_main",
+    "target": "slugify()"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 19,
+  "result": {
+   "content": [
+    {
+     "text": "Shortest path (3 hops):\n  main() --calls [EXTRACTED]--> run() --calls [INFERRED]--> .register() --calls [EXTRACTED]--> slugify()",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

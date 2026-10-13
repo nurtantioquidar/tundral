@@ -1,0 +1,35 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+   "name": "query_graph",
+   "arguments": {
+    "question": "slugify",
+    "mode": "dfs",
+    "depth": 2,
+    "token_budget": 300
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+   "content": [
+    {
+     "text": "Graph: graphify-out/graph.json (59 nodes) | Traversal: DFS depth=2 | Start: ['slugify()'] | 11 nodes found\n\n[i] Complete answer over budget: all 11 nodes and 20 edges shown (~708 tokens vs the requested ~300-token budget). Edges are never dropped once every node fits, so this is already the full answer — raising --budget further will not shrink it. Narrow with context_filter=['call'] or use get_node for a specific symbol to reduce size instead.\n\nNODE slugify() [src=pkg/util.py loc=L14 community=0]\nNODE service.py [src=pkg/service.py loc=L1 community=0]\nNODE util.py [src=pkg/util.py loc=L1 community=0]\nNODE .register() [src=pkg/service.py loc=L26 community=3]\nNODE helper() [src=pkg/util.py loc=L18 community=0]\nNODE traced() [src=pkg/util.py loc=L5 community=0]\nNODE re [src= loc= community=0]\nNODE User [src=pkg/models.py loc=L23 community=1]\nNODE UserService [src=pkg/service.py loc=L21 community=3]\nNODE run() [src=pkg/service.py loc=L42 community=3]\nNODE functools [src= loc= community=0]\nEDGE slugify() --calls [EXTRACTED context=call]--> helper() at=pkg/util.py:L15\nEDGE slugify() --calls [EXTRACTED context=call]--> re at=pkg/util.py:L15\nEDGE slugify() --references [EXTRACTED context=decorator]--> traced() at=pkg/util.py:L13\nEDGE .register() --calls [EXTRACTED context=call]--> slugify() at=pkg/service.py:L29\nEDGE service.py --imports [EXTRACTED context=import]--> slugify() at=pkg/service.py:L10\nEDGE util.py --contains [EXTRACTED]--> slugify() at=pkg/util.py:L14\nEDGE service.py --imports_from [EXTRACTED context=import]--> util.py at=pkg/service.py:L10\nEDGE util.py --imports [EXTRACTED context=import]--> re at=pkg/util.py:L1\nEDGE util.py --imports_from [EXTRACTED context=import]--> functools at=pkg/util.py:L2\nEDGE util.py --contains [EXTRACTED]--> helper() at=pkg/util.py:L18\nEDGE util.py --contains [EXTRACTED]--> traced() at=pkg/util.py:L5\nEDGE service.py --imports [EXTRACTED context=import]--> helper() at=pkg/service.py:L10\nEDGE service.py --imports [EXTRACTED context=import]--> User at=pkg/service.py:L9\nEDGE service.py --contains [EXTRACTED]--> UserService at=pkg/service.py:L21\nEDGE service.py --contains [EXTRACTED]--> run() at=pkg/service.py:L42\nEDGE UserService --method [EXTRACTED]--> .register() at=pkg/service.py:L26\nEDGE run() --calls [INFERRED context=call]--> .register() at=pkg/service.py:L44\nEDGE .register() --references [EXTRACTED context=return_type]--> User at=pkg/service.py:L26\nEDGE UserService --uses [INFERRED]--> User at=pkg/service.py:L22\nEDGE run() --calls [EXTRACTED context=call]--> UserService at=pkg/service.py:L43",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

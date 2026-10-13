@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 13,
+  "method": "tools/call",
+  "params": {
+   "name": "get_community",
+   "arguments": {
+    "community_id": 3
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 13,
+  "result": {
+   "content": [
+    {
+     "text": "Community 3 (6 nodes):\n  UserService [pkg/service.py]\n  main() [main.py]\n  run() [pkg/service.py]\n  .register() [pkg/service.py]\n  main.py [main.py]\n  sys []",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

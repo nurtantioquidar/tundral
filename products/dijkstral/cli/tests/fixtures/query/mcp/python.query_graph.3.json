@@ -1,0 +1,34 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+   "name": "query_graph",
+   "arguments": {
+    "question": "how does UserService register users",
+    "depth": 2,
+    "token_budget": 100
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+   "content": [
+    {
+     "text": "Graph: graphify-out/graph.json (59 nodes) | Traversal: BFS depth=2 | Start: ['UserService', '.register()'] | 44 nodes found\n\n[!] TRUNCATED: showing 5 of 44 nodes (~100-token budget). The answer may be among the 39 cut nodes — raise the token budget to 791 to get all 44 (CLI: --budget 791, MCP: token_budget=791) or narrow the query (e.g. context_filter=['call'], or get_node for a specific symbol).\n\nNODE UserService [src=pkg/service.py loc=L21 community=3]\nNODE .register() [src=pkg/service.py loc=L26 community=3]\nNODE service.py [src=pkg/service.py loc=L1 community=0]\nNODE User [src=pkg/models.py loc=L23 community=1]\nNODE run() [src=pkg/service.py loc=L42 community=3]\n... (truncated — 39 more nodes cut by ~100-token budget. Narrow with context_filter=['call'] or use get_node for a specific symbol)",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

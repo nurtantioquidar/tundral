@@ -1,0 +1,17 @@
+[
+  {
+    "id": "pkg_models_user",
+    "label": "User",
+    "degree": 17
+  },
+  {
+    "id": "pkg_service_userservice",
+    "label": "UserService",
+    "degree": 12
+  },
+  {
+    "id": "pkg_service_run",
+    "label": "run()",
+    "degree": 11
+  }
+]

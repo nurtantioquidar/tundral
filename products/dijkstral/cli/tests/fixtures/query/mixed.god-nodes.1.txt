@@ -1,0 +1,11 @@
+God nodes (most connected):
+  1. build() - 5 edges
+  2. clean() - 3 edges
+  3. log() - 3 edges
+  4. compilerOptions - 3 edges
+  5. helper() - 2 edges
+  6. main() - 2 edges
+  7. scripts - 2 edges
+  8. compile_all() - 2 edges
+  9. build.sh script - 2 edges
+  10. typescript - 1 edges

@@ -1,0 +1,18 @@
+Node: Repo
+  ID:        src_models_repo_repo
+  Source:    src/models/repo.ts L10
+  Type:      code
+  Community: 2
+  Degree:    10
+
+Connections (10):
+  <-- service.ts [imports] [EXTRACTED] src/service.ts:L4
+  <-- UserService [references] [EXTRACTED] src/service.ts:L13
+  <-- run() [calls] [EXTRACTED] src/service.ts:L47
+  <-- index.ts [re_exports] [EXTRACTED] src/models/index.ts:L3
+  <-- repo.ts [contains] [EXTRACTED] src/models/repo.ts:L10
+  <-- .constructor() [references] [EXTRACTED] src/service.ts:L15
+  --> sealed() [references] [EXTRACTED] src/models/repo.ts:L9
+  --> .add() [method] [EXTRACTED] src/models/repo.ts:L13
+  --> .get() [method] [EXTRACTED] src/models/repo.ts:L17
+  --> .all() [method] [EXTRACTED] src/models/repo.ts:L21

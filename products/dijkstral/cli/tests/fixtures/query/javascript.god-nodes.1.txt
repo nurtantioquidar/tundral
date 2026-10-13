@@ -1,0 +1,6 @@
+God nodes (most connected):
+  1. Store - 9 edges
+  2. CachedStore - 5 edges
+  3. formatLabel() - 5 edges
+  4. App - 4 edges
+  5. formatAll() - 4 edges

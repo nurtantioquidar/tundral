@@ -1,0 +1,10 @@
+Affected nodes for User
+Relations: imports, uses
+Depth: 2
+- __init__.py [imports] pkg/__init__.py:L2
+- service.py [imports] pkg/service.py:L9
+- test_service.py [imports] tests/test_service.py:L3
+- UserService [uses] pkg/service.py:L22
+- TestUserService [uses] tests/test_service.py:L13
+- main.py [imports] main.py:L7
+- main() [uses] main.py:L11

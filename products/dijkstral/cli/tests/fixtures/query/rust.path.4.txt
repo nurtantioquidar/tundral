@@ -1,0 +1,2 @@
+Shortest path (3 hops):
+  Circle --implements [EXTRACTED]--> Shape <--references [EXTRACTED]-- total_area() <--calls [INFERRED]-- main()

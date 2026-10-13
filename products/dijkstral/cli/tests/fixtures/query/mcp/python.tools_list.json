@@ -1,0 +1,271 @@
+{
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 33,
+  "method": "tools/list"
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 33,
+  "result": {
+   "tools": [
+    {
+     "description": "<redacted: 94 chars>",
+     "inputSchema": {
+      "properties": {
+       "question": {
+        "type": "string",
+        "description": "Natural language question or keyword search"
+       },
+       "mode": {
+        "type": "string",
+        "enum": [
+         "bfs",
+         "dfs"
+        ],
+        "default": "bfs",
+        "description": "bfs=broad context, dfs=trace a specific path"
+       },
+       "depth": {
+        "type": "integer",
+        "default": 3,
+        "description": "Traversal depth (1-6)"
+       },
+       "token_budget": {
+        "type": "integer",
+        "default": 2000,
+        "description": "Max output tokens"
+       },
+       "context_filter": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Optional explicit edge-context filter, e.g. ['call', 'field']"
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "required": [
+       "question"
+      ],
+      "type": "object"
+     },
+     "name": "query_graph"
+    },
+    {
+     "description": "<redacted: 52 chars>",
+     "inputSchema": {
+      "properties": {
+       "label": {
+        "type": "string",
+        "description": "Node label or ID to look up"
+       },
+       "node_id": {
+        "type": "string",
+        "description": "Alias for label (node id)"
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "type": "object"
+     },
+     "name": "get_node"
+    },
+    {
+     "description": "<redacted: 53 chars>",
+     "inputSchema": {
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "node_id": {
+        "type": "string",
+        "description": "Alias for label (node id)"
+       },
+       "relation_filter": {
+        "type": "string",
+        "description": "Optional: filter by relation type"
+       },
+       "token_budget": {
+        "type": "integer",
+        "default": 2000,
+        "description": "Max output tokens"
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "type": "object"
+     },
+     "name": "get_neighbors"
+    },
+    {
+     "description": "<redacted: 45 chars>",
+     "inputSchema": {
+      "properties": {
+       "community_id": {
+        "type": "integer",
+        "description": "Community ID (0-indexed by size)"
+       },
+       "token_budget": {
+        "type": "integer",
+        "default": 2000,
+        "description": "Max output tokens"
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "required": [
+       "community_id"
+      ],
+      "type": "object"
+     },
+     "name": "get_community"
+    },
+    {
+     "description": "<redacted: 79 chars>",
+     "inputSchema": {
+      "properties": {
+       "top_n": {
+        "type": "integer",
+        "default": 10
+       },
+       "exclude_hubs_percentile": {
+        "type": "number",
+        "description": "Suppress nodes whose degree exceeds this percentile (0-100) of the degree distribution, matching cluster()'s hub exclusion"
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "type": "object"
+     },
+     "name": "god_nodes"
+    },
+    {
+     "description": "<redacted: 85 chars>",
+     "inputSchema": {
+      "properties": {
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "type": "object"
+     },
+     "name": "graph_stats"
+    },
+    {
+     "description": "<redacted: 143 chars>",
+     "inputSchema": {
+      "properties": {
+       "source": {
+        "type": "string",
+        "description": "Source concept label or keyword"
+       },
+       "target": {
+        "type": "string",
+        "description": "Target concept label or keyword"
+       },
+       "max_hops": {
+        "type": "integer",
+        "default": 8,
+        "description": "Maximum hops to consider"
+       },
+       "undirected": {
+        "type": "boolean",
+        "default": false,
+        "description": "Ignore stored edge direction when searching"
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "required": [
+       "source",
+       "target"
+      ],
+      "type": "object"
+     },
+     "name": "shortest_path"
+    },
+    {
+     "description": "<redacted: 213 chars>",
+     "inputSchema": {
+      "properties": {
+       "base": {
+        "type": "string",
+        "description": "Base branch to filter PRs by (auto-detected if omitted)"
+       },
+       "repo": {
+        "type": "string",
+        "description": "GitHub repo (owner/repo). Defaults to current repo."
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "type": "object"
+     },
+     "name": "list_prs"
+    },
+    {
+     "description": "<redacted: 223 chars>",
+     "inputSchema": {
+      "properties": {
+       "pr_number": {
+        "type": "integer",
+        "description": "PR number to analyse"
+       },
+       "repo": {
+        "type": "string",
+        "description": "GitHub repo (owner/repo). Defaults to current repo."
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "required": [
+       "pr_number"
+      ],
+      "type": "object"
+     },
+     "name": "get_pr_impact"
+    },
+    {
+     "description": "<redacted: 242 chars>",
+     "inputSchema": {
+      "properties": {
+       "base": {
+        "type": "string",
+        "description": "Base branch to filter PRs by (auto-detected if omitted)"
+       },
+       "repo": {
+        "type": "string",
+        "description": "GitHub repo (owner/repo). Defaults to current repo."
+       },
+       "project_path": {
+        "type": "string",
+        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+       }
+      },
+      "type": "object"
+     },
+     "name": "triage_prs"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,11 @@
+God nodes (most connected):
+  1. Store - 13 edges
+  2. User - 7 edges
+  3. UserService - 7 edges
+  4. ID - 6 edges
+  5. main() - 4 edges
+  6. NewUserService() - 4 edges
+  7. Normalize() - 4 edges
+  8. TestRegister() - 4 edges
+  9. Model - 4 edges
+  10. Sum() - 3 edges

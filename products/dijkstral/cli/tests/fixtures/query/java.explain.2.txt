@@ -1,0 +1,21 @@
+Node: User
+  ID:        src_main_java_com_shop_model_user_user
+  Source:    src/main/java/com/shop/model/User.java L6
+  Type:      code
+  Community: 1
+  Degree:    13
+
+Connections (13):
+  <-- UserService [references] [EXTRACTED] src/main/java/com/shop/service/UserService.java:L12
+  <-- .register() [references] [EXTRACTED] src/main/java/com/shop/service/UserService.java:L25
+  --> Model [inherits] [EXTRACTED] src/main/java/com/shop/model/User.java:L6
+  --> Address [contains] [EXTRACTED] src/main/java/com/shop/model/User.java:L34
+  <-- UserServiceTest.java [imports] [EXTRACTED] src/test/java/com/shop/service/UserServiceTest.java:L5
+  <-- .save() [references] [EXTRACTED] src/main/java/com/shop/service/UserService.java:L32
+  <-- .notify() [references] [EXTRACTED] src/main/java/com/shop/service/UserService.java:L37
+  --> .User() [method] [EXTRACTED] src/main/java/com/shop/model/User.java:L15
+  --> .status() [method] [EXTRACTED] src/main/java/com/shop/model/User.java:L20
+  --> .getName() [method] [EXTRACTED] src/main/java/com/shop/model/User.java:L25
+  --> .of() [method] [EXTRACTED] src/main/java/com/shop/model/User.java:L29
+  <-- User.java [contains] [EXTRACTED] src/main/java/com/shop/model/User.java:L6
+  --> Badge [contains] [EXTRACTED] src/main/java/com/shop/model/User.java:L41

@@ -1,0 +1,6 @@
+Ambiguous: 'User' matches 2 nodes in src/main/java/com/shop/model/User.java.
+  L6
+    id: src_main_java_com_shop_model_user_user
+  L10
+    id: src_main_java_com_shop_model_user_user_user
+Retry with the full node id.

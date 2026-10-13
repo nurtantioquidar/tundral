@@ -1,0 +1,56 @@
+Graph: javascript.clustered.graphify.json (36 nodes) | Traversal: BFS depth=2 | Start: ['Store', '{ Store }'] | 23 nodes found
+
+NODE Store [src=lib/store.js loc=L5 community=0]
+NODE { Store } [src=test/store.test.js loc=L1 community=0]
+NODE store.js [src=lib/store.js loc=L1 community=2]
+NODE default.cjs [src=lib/default.cjs loc=L1 community=4]
+NODE CachedStore [src=lib/store.js loc=L24 community=2]
+NODE store.test.js [src=test/store.test.js loc=L1 community=0]
+NODE fixture() [src=test/store.test.js loc=L10 community=0]
+NODE .add() [src=lib/store.js loc=L14 community=0]
+NODE .constructor() [src=lib/store.js loc=L6 community=0]
+NODE .create() [src=lib/store.js loc=L10 community=0]
+NODE .size() [src=lib/store.js loc=L19 community=0]
+NODE format.mjs [src=lib/format.mjs loc=L1 community=1]
+NODE App.jsx [src=components/App.jsx loc=L1 community=3]
+NODE .constructor() [src=components/App.jsx loc=L19 community=5]
+NODE .add() [src=lib/store.js loc=L25 community=2]
+NODE clear() [src=lib/store.js loc=L32 community=2]
+NODE helper() [src=lib/store.js loc=L36 community=1]
+NODE helper() [src=lib/default.cjs loc=L5 community=4]
+NODE lodash [src=lib/default.cjs loc=L3 community=4]
+NODE { Store } [src=lib/default.cjs loc=L1 community=4]
+NODE NOTE: invalidates the cache on every write. [src=lib/store.js loc=L26 community=2]
+NODE utils [src=lib/store.js loc=L40 community=2]
+NODE ref_lodash [src= loc= community=4]
+EDGE fixture() --calls [EXTRACTED context=call]--> Store at=test/store.test.js:L11
+EDGE default.cjs --imports [EXTRACTED context=import]--> Store at=lib/default.cjs:L1
+EDGE store.test.js --imports [EXTRACTED context=import]--> Store at=test/store.test.js:L1
+EDGE CachedStore --inherits [EXTRACTED context=type]--> Store at=lib/store.js:L24
+EDGE store.js --contains [EXTRACTED]--> Store at=lib/store.js:L5
+EDGE Store --method [EXTRACTED]--> .create() at=lib/store.js:L10
+EDGE Store --method [EXTRACTED]--> .add() at=lib/store.js:L14
+EDGE Store --method [EXTRACTED]--> .size() at=lib/store.js:L19
+EDGE Store --method [EXTRACTED]--> .constructor() at=lib/store.js:L6
+EDGE store.test.js --contains [EXTRACTED]--> { Store } at=test/store.test.js:L1
+EDGE default.cjs --imports_from [EXTRACTED context=import]--> ref_lodash at=lib/default.cjs:L3
+EDGE format.mjs --imports_from [EXTRACTED context=import]--> default.cjs at=lib/format.mjs:L3
+EDGE default.cjs --contains [EXTRACTED]--> { Store } at=lib/default.cjs:L2
+EDGE default.cjs --contains [EXTRACTED]--> lodash at=lib/default.cjs:L3
+EDGE default.cjs --contains [EXTRACTED]--> helper() at=lib/default.cjs:L5
+EDGE .constructor() --calls [EXTRACTED context=call]--> CachedStore at=components/App.jsx:L21
+EDGE App.jsx --imports [EXTRACTED context=import]--> CachedStore at=components/App.jsx:L3
+EDGE CachedStore --method [EXTRACTED]--> .add() at=lib/store.js:L25
+EDGE format.mjs --re_exports [EXTRACTED context=export]--> store.js at=lib/format.mjs:L4
+EDGE App.jsx --imports_from [EXTRACTED context=import]--> store.js at=components/App.jsx:L3
+EDGE store.js --contains [EXTRACTED]--> clear() at=lib/store.js:L32
+EDGE store.js --contains [EXTRACTED]--> utils at=lib/store.js:L40
+EDGE NOTE: invalidates the cache on every write. --rationale_for [EXTRACTED]--> store.js at=lib/store.js:L26
+EDGE store.js --indirect_call [INFERRED context=collection]--> helper() at=lib/store.js:L47
+EDGE App.jsx --imports_from [EXTRACTED context=import]--> format.mjs at=components/App.jsx:L2
+EDGE default.cjs --imports_from [EXTRACTED context=import]--> store.js at=lib/default.cjs:L2
+EDGE format.mjs --re_exports [EXTRACTED context=re-export]--> helper() at=lib/format.mjs:L5
+EDGE store.test.js --imports_from [EXTRACTED context=import]--> store.js at=test/store.test.js:L1
+EDGE store.js --contains [EXTRACTED]--> CachedStore at=lib/store.js:L24
+EDGE .add() --calls [EXTRACTED context=call]--> clear() at=lib/store.js:L28
+EDGE store.test.js --indirect_call [INFERRED context=collection]--> fixture() at=test/store.test.js:L14

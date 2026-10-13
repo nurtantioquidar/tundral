@@ -1,0 +1,13 @@
+Node: build()
+  ID:        scripts_build_build
+  Source:    scripts/build.sh L11
+  Type:      code
+  Community: 1
+  Degree:    5
+
+Connections (5):
+  <-- build.sh [defines] [EXTRACTED] scripts/build.sh:L11
+  --> clean() [calls] [EXTRACTED] scripts/build.sh:L12
+  --> log() [calls] [EXTRACTED] scripts/build.sh:L13
+  --> compile_all() [calls] [EXTRACTED] scripts/build.sh:L14
+  <-- build.sh script [calls] [EXTRACTED] scripts/build.sh:L21

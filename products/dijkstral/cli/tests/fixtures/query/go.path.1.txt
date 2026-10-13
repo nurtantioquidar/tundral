@@ -1,0 +1,2 @@
+Shortest path (2 hops):
+  main() <--contains [EXTRACTED]-- main.go --imports_from [EXTRACTED]--> Store

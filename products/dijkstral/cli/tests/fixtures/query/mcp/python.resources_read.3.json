@@ -1,0 +1,29 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 28,
+  "method": "resources/read",
+  "params": {
+   "uri": "graphify://audit"
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 28,
+  "result": {
+   "contents": [
+    {
+     "mimeType": "text/plain",
+     "text": "Total edges: 107\nEXTRACTED: 98 (92%)\nINFERRED: 9 (8%)\nAMBIGUOUS: 0 (0%)\n",
+     "uri": "graphify://audit"
+    }
+   ]
+  }
+ }
+}

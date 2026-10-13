@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 7,
+  "method": "tools/call",
+  "params": {
+   "name": "get_node",
+   "arguments": {
+    "label": "pkg/util.py::helper"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 7,
+  "result": {
+   "content": [
+    {
+     "text": "Node: helper()\n  ID: pkg_util_helper\n  Source: pkg/util.py L18\n  Type: code\n  Community: 0\n  Degree: 3",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

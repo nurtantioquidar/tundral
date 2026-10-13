@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 9,
+  "method": "tools/call",
+  "params": {
+   "name": "get_neighbors",
+   "arguments": {
+    "node_id": "src_model_circle"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 9,
+  "result": {
+   "content": [
+    {
+     "text": "Neighbors of Circle:\n  --> .UNIT [contains] [EXTRACTED] at=src/model.rs:L44\n  --> Shape [implements] [EXTRACTED] at=src/model.rs:L62\n  --> .new() [method] [EXTRACTED] at=src/model.rs:L46\n  --> .diameter() [method] [EXTRACTED] at=src/model.rs:L50\n  --> .scale() [method] [EXTRACTED] at=src/model.rs:L57\n  --> .area() [method] [EXTRACTED] at=src/model.rs:L63\n  --> .fmt() [method] [EXTRACTED] at=src/model.rs:L69\n  <-- Kind [references] [EXTRACTED] at=src/model.rs:L38\n  <-- fmt.rs [imports_from] [EXTRACTED] at=src/util/fmt.rs:L1\n  <-- render() [references] [EXTRACTED] at=src/util/fmt.rs:L4\n  <-- render() [references] [EXTRACTED] at=src/util/mod.rs:L19\n  <-- fixture() [references] [EXTRACTED] at=src/model.rs:L114\n  <-- model.rs [contains] [EXTRACTED] at=src/model.rs:L16",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

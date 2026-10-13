@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 7,
+  "method": "tools/call",
+  "params": {
+   "name": "get_node",
+   "arguments": {
+    "id": "src_model_circle"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 7,
+  "result": {
+   "content": [
+    {
+     "text": "Node: Circle\n  ID: src_model_circle\n  Source: src/model.rs L16\n  Type: code\n  Community: 1\n  Degree: 13",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

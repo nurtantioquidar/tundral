@@ -1,0 +1,1003 @@
+{
+ "tool": "graphify 0.9.86",
+ "how": "argv run from a directory holding a copy of tests/fixtures/<fixture>.clustered.graphify.json; env GRAPHIFY_QUERY_LOG_DISABLE=1 PYTHONHASHSEED=0. Compare stdout byte for byte except that for edge_lines=set the EDGE lines are compared as a multiset (BFS emission order is hash-seed dependent).",
+ "cases": [
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "how does UserService register users",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.query.1.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "slugify",
+    "--dfs",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.query.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "UserService",
+    "--context",
+    "call",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.query.3.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "who calls run",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.query.4.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "user service",
+    "--budget",
+    "200",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.query.5.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "xyzzy",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 4,
+   "stdout": "python.query.6.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "the",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.query.7.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "pkg/models.py",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.query.8.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "query",
+    "UserService",
+    "--budget",
+    "0",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.query.9.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "path",
+    "main_main",
+    "format_name()",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.path.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "path",
+    "format_name()",
+    "main_main",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.path.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "path",
+    "format_name()",
+    "main_main",
+    "--undirected",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.path.3.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "path",
+    "main()",
+    "run()",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "python.path.4.txt",
+   "stderr": "Ambiguous: 'main()' matches 2 nodes in main.py.\n  L10\n    id: main_main\n  L1\n    id: main\nRetry with the full node id.\n",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "path",
+    "nosuch",
+    "run()",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 4,
+   "stdout": "python.path.5.txt",
+   "stderr": "No node matching 'nosuch' found.\n",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "path",
+    "slugify",
+    "slugify",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "python.path.6.txt",
+   "stderr": "'slugify' and 'slugify' both resolved to the same node 'pkg_util_slugify'. Use a more specific label or the exact node ID.\n",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "path",
+    "Base",
+    "User",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.path.7.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "explain",
+    "UserService",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.explain.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "explain",
+    "helper",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "python.explain.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "explain",
+    "nosuch",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 4,
+   "stdout": "python.explain.3.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "explain",
+    "re",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.explain.4.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "explain",
+    "pkg/util.py::helper",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.explain.5.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "explain",
+    "service.py",
+    "--all",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.explain.6.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "affected",
+    "format_name()",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.affected.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "affected",
+    "User",
+    "--relation",
+    "imports",
+    "--relation",
+    "uses",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.affected.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "affected",
+    "helper()",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.affected.3.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "affected",
+    "slug",
+    "--depth",
+    "1",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.affected.4.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "god-nodes",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.god-nodes.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "god-nodes",
+    "--top",
+    "3",
+    "--json",
+    "--graph",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.god-nodes.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "python",
+   "argv": [
+    "benchmark",
+    "python.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "python.benchmark.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "typescript",
+   "argv": [
+    "query",
+    "how does UserService run",
+    "--graph",
+    "typescript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "typescript.query.1.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "typescript",
+   "argv": [
+    "query",
+    "Repo",
+    "--dfs",
+    "--graph",
+    "typescript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "typescript.query.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "typescript",
+   "argv": [
+    "query",
+    "models index",
+    "--graph",
+    "typescript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "typescript.query.3.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "typescript",
+   "argv": [
+    "path",
+    "UserService",
+    "User",
+    "--graph",
+    "typescript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "typescript.path.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "typescript",
+   "argv": [
+    "explain",
+    "Repo",
+    "--graph",
+    "typescript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "typescript.explain.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "typescript",
+   "argv": [
+    "affected",
+    "User",
+    "--depth",
+    "1",
+    "--graph",
+    "typescript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "typescript.affected.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "typescript",
+   "argv": [
+    "god-nodes",
+    "--graph",
+    "typescript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "typescript.god-nodes.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "typescript",
+   "argv": [
+    "benchmark",
+    "typescript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "typescript.benchmark.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "javascript",
+   "argv": [
+    "query",
+    "Store",
+    "--graph",
+    "javascript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "javascript.query.1.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "javascript",
+   "argv": [
+    "query",
+    "format label",
+    "--dfs",
+    "--graph",
+    "javascript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "javascript.query.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "javascript",
+   "argv": [
+    "path",
+    "CachedStore",
+    "Store",
+    "--graph",
+    "javascript.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "javascript.path.1.txt",
+   "stderr": "Ambiguous: 'Store' matches 3 nodes in different files.\n  lib/store.js\n    id: lib_store_store\n  test/store.test.js\n    id: test_store_test_store\n  lib/default.cjs\n    id: lib_default_store\nRetry with path::symbol using one of the paths above (e.g. <path>::Store) or the full node id.\n",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "javascript",
+   "argv": [
+    "path",
+    "CachedStore",
+    "lib/store.js::Store",
+    "--graph",
+    "javascript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "javascript.path.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "javascript",
+   "argv": [
+    "explain",
+    "formatLabel()",
+    "--graph",
+    "javascript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "javascript.explain.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "javascript",
+   "argv": [
+    "god-nodes",
+    "--top",
+    "5",
+    "--graph",
+    "javascript.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "javascript.god-nodes.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "query",
+    "circle area",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.query.1.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "query",
+    "Shape",
+    "--dfs",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.query.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "query",
+    "total area of shapes",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.query.3.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "path",
+    "main()",
+    "Circle",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "rust.path.1.txt",
+   "stderr": "Ambiguous: 'Circle' matches 2 nodes in different files.\n  src/model.rs\n    id: src_model_circle\n  circle\n    id: circle\nRetry with path::symbol using one of the paths above (e.g. <path>::Circle) or the full node id.\n",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "path",
+    "Circle",
+    "main()",
+    "--undirected",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "rust.path.2.txt",
+   "stderr": "Ambiguous: 'Circle' matches 2 nodes in different files.\n  src/model.rs\n    id: src_model_circle\n  circle\n    id: circle\nRetry with path::symbol using one of the paths above (e.g. <path>::Circle) or the full node id.\n",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "explain",
+    "Circle",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "rust.explain.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "explain",
+    "area",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "rust.explain.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "explain",
+    "src_model_circle",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.explain.3.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "path",
+    "main()",
+    "src_model_circle",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.path.3.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "path",
+    "src_model_circle",
+    "main()",
+    "--undirected",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.path.4.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "affected",
+    "Shape",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.affected.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "god-nodes",
+    "--top",
+    "15",
+    "--graph",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.god-nodes.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "rust",
+   "argv": [
+    "benchmark",
+    "rust.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "rust.benchmark.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "go",
+   "argv": [
+    "query",
+    "store save user",
+    "--graph",
+    "go.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "go.query.1.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "go",
+   "argv": [
+    "query",
+    "pkg",
+    "--graph",
+    "go.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "go.query.2.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "go",
+   "argv": [
+    "path",
+    "main()",
+    "Store",
+    "--graph",
+    "go.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "go.path.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "go",
+   "argv": [
+    "explain",
+    "Store",
+    "--graph",
+    "go.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "go.explain.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "go",
+   "argv": [
+    "god-nodes",
+    "--graph",
+    "go.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "go.god-nodes.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "java",
+   "argv": [
+    "query",
+    "UserService",
+    "--graph",
+    "java.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "java.query.1.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "java",
+   "argv": [
+    "query",
+    "user model",
+    "--context",
+    "import",
+    "--graph",
+    "java.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "java.query.2.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "java",
+   "argv": [
+    "path",
+    "UserServiceTest",
+    "User",
+    "--graph",
+    "java.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "java.path.1.txt",
+   "stderr": "Ambiguous: 'User' matches 2 nodes in src/main/java/com/shop/model/User.java.\n  L6\n    id: src_main_java_com_shop_model_user_user\n  L10\n    id: src_main_java_com_shop_model_user_user_user\nRetry with the full node id.\n",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "java",
+   "argv": [
+    "explain",
+    "User",
+    "--graph",
+    "java.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "java.explain.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "java",
+   "argv": [
+    "explain",
+    "src_main_java_com_shop_model_user_user",
+    "--graph",
+    "java.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "java.explain.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "java",
+   "argv": [
+    "path",
+    "UserServiceTest",
+    "src_main_java_com_shop_model_user_user",
+    "--graph",
+    "java.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "java.path.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "java",
+   "argv": [
+    "affected",
+    "Model",
+    "--graph",
+    "java.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "java.affected.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "java",
+   "argv": [
+    "god-nodes",
+    "--json",
+    "--graph",
+    "java.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "java.god-nodes.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "mixed",
+   "argv": [
+    "query",
+    "build script",
+    "--graph",
+    "mixed.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "mixed.query.1.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "mixed",
+   "argv": [
+    "query",
+    "main",
+    "--graph",
+    "mixed.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "mixed.query.2.txt",
+   "stderr": "",
+   "edge_lines": "set"
+  },
+  {
+   "fixture": "mixed",
+   "argv": [
+    "explain",
+    "build()",
+    "--graph",
+    "mixed.clustered.graphify.json"
+   ],
+   "exit": 3,
+   "stdout": "mixed.explain.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "mixed",
+   "argv": [
+    "explain",
+    "scripts/build.sh::build()",
+    "--graph",
+    "mixed.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "mixed.explain.2.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  },
+  {
+   "fixture": "mixed",
+   "argv": [
+    "god-nodes",
+    "--graph",
+    "mixed.clustered.graphify.json"
+   ],
+   "exit": 0,
+   "stdout": "mixed.god-nodes.1.txt",
+   "stderr": "",
+   "edge_lines": "exact"
+  }
+ ]
+}

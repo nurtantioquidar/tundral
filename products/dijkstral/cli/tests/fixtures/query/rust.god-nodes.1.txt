@@ -1,0 +1,16 @@
+God nodes (most connected):
+  1. Circle - 13 edges
+  2. Shape - 9 edges
+  3. Kind - 7 edges
+  4. round_kind() - 5 edges
+  5. apply() - 4 edges
+  6. Named - 3 edges
+  7. Meters - 3 edges
+  8. total_area() - 3 edges
+  9. main() - 3 edges
+  10. fixture() - 3 edges
+  11. helper() - 3 edges
+  12. run_all() - 3 edges
+  13. Pair - 2 edges
+  14. Wrapper - 2 edges
+  15. configure() - 2 edges

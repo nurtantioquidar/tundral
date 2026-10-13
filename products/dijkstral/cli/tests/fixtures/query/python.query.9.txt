@@ -1,0 +1,6 @@
+Graph: python.clustered.graphify.json (59 nodes) | Traversal: BFS depth=2 | Start: ['UserService'] | 42 nodes found
+
+[!] TRUNCATED: showing 1 of 42 nodes (~0-token budget). The answer may be among the 41 cut nodes — raise the token budget to 763 to get all 42 (CLI: --budget 763, MCP: token_budget=763) or narrow the query (e.g. context_filter=['call'], or get_node for a specific symbol).
+
+NODE UserService [src=pkg/service.py loc=L21 community=3]
+... (truncated — 41 more nodes cut by ~0-token budget. Narrow with context_filter=['call'] or use get_node for a specific symbol)
