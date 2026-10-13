@@ -1,0 +1,20 @@
+Node: UserService
+  ID:        pkg_service_userservice
+  Source:    pkg/service.py L21
+  Type:      code
+  Community: 3
+  Degree:    12
+
+Connections (12):
+  <-- service.py [contains] [EXTRACTED] pkg/service.py:L21
+  --> User [uses] [INFERRED] pkg/service.py:L22
+  <-- run() [calls] [EXTRACTED] pkg/service.py:L43
+  <-- test_service.py [imports] [EXTRACTED] tests/test_service.py:L4
+  --> Repo [uses] [INFERRED] pkg/service.py:L22
+  <-- main.py [imports] [EXTRACTED] main.py:L7
+  <-- TestUserService [uses] [INFERRED] tests/test_service.py:L10
+  --> .register() [method] [EXTRACTED] pkg/service.py:L26
+  --> .__init__() [method] [EXTRACTED] pkg/service.py:L22
+  --> .promote() [method] [EXTRACTED] pkg/service.py:L33
+  <-- main() [uses] [INFERRED] main.py:L11
+  --> .export() [method] [EXTRACTED] pkg/service.py:L36

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "src_main_java_com_shop_model_user_user",
+    "label": "User",
+    "degree": 13
+  },
+  {
+    "id": "src_main_java_com_shop_service_userservice_userservice",
+    "label": "UserService",
+    "degree": 11
+  },
+  {
+    "id": "src_main_java_com_shop_model_model_model",
+    "label": "Model",
+    "degree": 9
+  },
+  {
+    "id": "src_main_java_com_shop_model_model_status",
+    "label": "Status",
+    "degree": 6
+  },
+  {
+    "id": "src_main_java_com_shop_service_userservice_formatter",
+    "label": "Formatter",
+    "degree": 5
+  },
+  {
+    "id": "src_main_java_com_shop_model_user_address",
+    "label": "Address",
+    "degree": 5
+  },
+  {
+    "id": "src_test_java_com_shop_service_userservicetest_userservicetest",
+    "label": "UserServiceTest",
+    "degree": 5
+  },
+  {
+    "id": "src_main_java_com_shop_model_entity_entity",
+    "label": "Entity",
+    "degree": 4
+  },
+  {
+    "id": "src_main_java_com_shop_service_userservice_repository",
+    "label": "Repository",
+    "degree": 3
+  },
+  {
+    "id": "src_test_java_com_shop_service_userservicetest_formatter",
+    "label": "Formatter",
+    "degree": 3
+  }
+]

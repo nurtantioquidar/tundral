@@ -1,0 +1,10 @@
+Node: re
+  ID:        re
+  Source:
+  Type:      concept
+  Community: 0
+  Degree:    2
+
+Connections (2):
+  <-- slugify() [calls] [EXTRACTED] pkg/util.py:L15
+  <-- util.py [imports] [EXTRACTED] pkg/util.py:L1

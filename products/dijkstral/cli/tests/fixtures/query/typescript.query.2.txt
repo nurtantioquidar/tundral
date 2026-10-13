@@ -1,0 +1,98 @@
+Graph: typescript.clustered.graphify.json (68 nodes) | Traversal: DFS depth=2 | Start: ['Repo'] | 32 nodes found
+
+[i] Complete answer over budget: all 32 nodes and 62 edges shown (~2361 tokens vs the requested ~2000-token budget). Edges are never dropped once every node fits, so this is already the full answer — raising --budget further will not shrink it. Narrow with context_filter=['call'] or use get_node for a specific symbol to reduce size instead.
+
+NODE Repo [src=src/models/repo.ts loc=L10 community=2]
+NODE service.ts [src=src/service.ts loc=L1 community=1]
+NODE UserService [src=src/service.ts loc=L12 community=3]
+NODE run() [src=src/service.ts loc=L46 community=3]
+NODE index.ts [src=src/models/index.ts loc=L1 community=2]
+NODE repo.ts [src=src/models/repo.ts loc=L1 community=2]
+NODE .constructor() [src=src/service.ts loc=L15 community=3]
+NODE sealed() [src=src/models/repo.ts loc=L5 community=2]
+NODE .add() [src=src/models/repo.ts loc=L13 community=2]
+NODE .all() [src=src/models/repo.ts loc=L21 community=2]
+NODE .get() [src=src/models/repo.ts loc=L17 community=2]
+NODE User [src=src/models/user.ts loc=L26 community=4]
+NODE user.ts [src=src/models/user.ts loc=L1 community=0]
+NODE App.tsx [src=src/ui/App.tsx loc=L1 community=6]
+NODE util.ts [src=src/util.ts loc=L1 community=5]
+NODE service.test.ts [src=src/__tests__/service.test.ts loc=L1 community=3]
+NODE Admin [src=src/models/user.ts loc=L47 community=4]
+NODE Entity [src=src/models/repo.ts loc=L1 community=2]
+NODE Named [src=src/models/user.ts loc=L11 community=4]
+NODE slugify() [src=src/util.ts loc=L4 community=5]
+NODE src_models_index_user [src= loc= community=3]
+NODE helper() [src=src/models/user.ts loc=L64 community=0]
+NODE compareNames() [src=src/service.ts loc=L42 community=1]
+NODE helper() [src=src/service.ts loc=L8 community=1]
+NODE ref_fs [src= loc= community=1]
+NODE ref_node_path [src= loc= community=1]
+NODE ref_polyfill [src= loc= community=1]
+NODE src_models_index_admin [src= loc= community=1]
+NODE src_models_index_helper [src= loc= community=1]
+NODE src_models_index_storage [src= loc= community=1]
+NODE key() [src=src/models/repo.ts loc=L27 community=2]
+NODE Storage [src=src/models/repo.ts loc=L26 community=2]
+EDGE run() --calls [EXTRACTED context=call]--> Repo at=src/service.ts:L47
+EDGE Repo --references [EXTRACTED context=decorator]--> sealed() at=src/models/repo.ts:L9
+EDGE UserService --references [EXTRACTED context=field]--> Repo at=src/service.ts:L13
+EDGE service.ts --imports [EXTRACTED context=import]--> Repo at=src/service.ts:L4
+EDGE .constructor() --references [EXTRACTED context=parameter_type]--> Repo at=src/service.ts:L15
+EDGE index.ts --re_exports [EXTRACTED context=re-export]--> Repo at=src/models/index.ts:L3
+EDGE repo.ts --contains [EXTRACTED]--> Repo at=src/models/repo.ts:L10
+EDGE Repo --method [EXTRACTED]--> .add() at=src/models/repo.ts:L13
+EDGE Repo --method [EXTRACTED]--> .get() at=src/models/repo.ts:L17
+EDGE Repo --method [EXTRACTED]--> .all() at=src/models/repo.ts:L21
+EDGE index.ts --re_exports [EXTRACTED context=export]--> repo.ts at=src/models/index.ts:L3
+EDGE user.ts --imports_from [EXTRACTED context=import]--> repo.ts at=src/models/user.ts:L1
+EDGE repo.ts --contains [EXTRACTED]--> Entity at=src/models/repo.ts:L1
+EDGE repo.ts --contains [EXTRACTED]--> Storage at=src/models/repo.ts:L26
+EDGE repo.ts --contains [EXTRACTED]--> key() at=src/models/repo.ts:L27
+EDGE repo.ts --contains [EXTRACTED]--> sealed() at=src/models/repo.ts:L5
+EDGE user.ts --imports [EXTRACTED context=import]--> Entity at=src/models/user.ts:L1
+EDGE index.ts --re_exports [EXTRACTED context=re-export]--> Entity at=src/models/index.ts:L3
+EDGE index.ts --re_exports [EXTRACTED context=export]--> user.ts at=src/models/index.ts:L2
+EDGE service.ts --imports_from [EXTRACTED context=import]--> user.ts at=src/service.ts:L5
+EDGE user.ts --contains [EXTRACTED]--> Named at=src/models/user.ts:L11
+EDGE user.ts --contains [EXTRACTED]--> User at=src/models/user.ts:L26
+EDGE user.ts --contains [EXTRACTED]--> Admin at=src/models/user.ts:L47
+EDGE user.ts --contains [EXTRACTED]--> helper() at=src/models/user.ts:L64
+EDGE service.ts --imports_from [EXTRACTED context=import]--> index.ts at=src/service.ts:L4
+EDGE service.test.ts --imports_from [EXTRACTED context=import]--> index.ts at=src/__tests__/service.test.ts:L3
+EDGE App.tsx --imports_from [EXTRACTED context=import]--> index.ts at=src/ui/App.tsx:L2
+EDGE .constructor() --references [EXTRACTED context=generic_arg]--> User at=src/service.ts:L15
+EDGE UserService --method [EXTRACTED]--> .constructor() at=src/service.ts:L15
+EDGE run() --calls [EXTRACTED context=call]--> UserService at=src/service.ts:L47
+EDGE UserService --references [EXTRACTED context=generic_arg]--> User at=src/service.ts:L13
+EDGE service.test.ts --imports [EXTRACTED context=import]--> UserService at=src/__tests__/service.test.ts:L2
+EDGE App.tsx --imports [EXTRACTED context=import]--> UserService at=src/ui/App.tsx:L3
+EDGE service.ts --contains [EXTRACTED]--> UserService at=src/service.ts:L12
+EDGE service.ts --imports [EXTRACTED context=import]--> User at=src/service.ts:L4
+EDGE service.test.ts --imports [EXTRACTED context=import]--> User at=src/__tests__/service.test.ts:L3
+EDGE App.tsx --imports [EXTRACTED context=import]--> User at=src/ui/App.tsx:L2
+EDGE User --implements [EXTRACTED context=type]--> Named at=src/models/user.ts:L26
+EDGE Admin --inherits [EXTRACTED context=type]--> User at=src/models/user.ts:L47
+EDGE service.ts --imports [EXTRACTED context=import]--> src_models_index_admin at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> src_models_index_helper at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> src_models_index_storage at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> src_models_index_user at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> Admin at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> helper() at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> Named at=src/service.ts:L5
+EDGE service.ts --imports [EXTRACTED context=import]--> slugify() at=src/service.ts:L6
+EDGE service.ts --imports_from [EXTRACTED context=import]--> ref_polyfill at=src/service.ts:L1
+EDGE service.ts --imports_from [EXTRACTED context=import]--> ref_fs at=src/service.ts:L2
+EDGE service.ts --imports_from [EXTRACTED context=import]--> ref_node_path at=src/service.ts:L3
+EDGE service.ts --imports_from [EXTRACTED context=import]--> util.ts at=src/service.ts:L6
+EDGE service.test.ts --imports_from [EXTRACTED context=import]--> service.ts at=src/__tests__/service.test.ts:L2
+EDGE App.tsx --imports_from [EXTRACTED context=import]--> service.ts at=src/ui/App.tsx:L3
+EDGE service.ts --contains [EXTRACTED]--> compareNames() at=src/service.ts:L42
+EDGE service.ts --contains [EXTRACTED]--> run() at=src/service.ts:L46
+EDGE service.ts --contains [EXTRACTED]--> helper() at=src/service.ts:L8
+EDGE run() --imports_from [EXTRACTED context=import]--> util.ts at=src/service.ts:L49
+EDGE service.test.ts --imports [EXTRACTED context=import]--> run() at=src/__tests__/service.test.ts:L2
+EDGE App.tsx --imports [EXTRACTED context=import]--> run() at=src/ui/App.tsx:L3
+EDGE App.tsx --imports [EXTRACTED context=import]--> src_models_index_user at=src/ui/App.tsx:L2
+EDGE service.test.ts --imports [EXTRACTED context=import]--> src_models_index_user at=src/__tests__/service.test.ts:L3
+EDGE util.ts --contains [EXTRACTED]--> slugify() at=src/util.ts:L4

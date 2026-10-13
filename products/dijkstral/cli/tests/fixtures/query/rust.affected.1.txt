@@ -1,0 +1,15 @@
+Affected nodes for Shape
+Relations: calls, indirect_call, references, imports, imports_from, dynamic_import, re_exports, inherits, extends, implements, uses, mixes_in, embeds, defines, requires
+Depth: 2
+- total_area() [references] src/lib.rs:L42
+- lib.rs [imports_from] src/lib.rs:L6
+- main.rs [imports_from] src/main.rs:L2
+- fmt.rs [imports_from] src/util/fmt.rs:L1
+- Circle [implements] src/model.rs:L62
+- Named [inherits] src/model.rs:L24
+- main() [calls] src/main.rs:L13
+- model.rs [imports_from] src/model.rs:L3
+- Kind [references] src/model.rs:L38
+- render() [references] src/util/fmt.rs:L4
+- render() [references] src/util/mod.rs:L19
+- fixture() [references] src/model.rs:L114

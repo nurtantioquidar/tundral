@@ -1,0 +1,26 @@
+Node: service.py
+  ID:        pkg_service
+  Source:    pkg/service.py L1
+  Type:      code
+  Community: 0
+  Degree:    18
+
+Connections (18):
+  --> User [imports] [EXTRACTED] pkg/service.py:L9
+  --> models.py [imports_from] [EXTRACTED] pkg/service.py:L7
+  --> UserService [contains] [EXTRACTED] pkg/service.py:L21
+  --> run() [contains] [EXTRACTED] pkg/service.py:L42
+  <-- test_service.py [imports_from] [EXTRACTED] tests/test_service.py:L4
+  --> Repo [imports] [EXTRACTED] pkg/service.py:L9
+  --> __init__.py [imports_from] [EXTRACTED] pkg/service.py:L7
+  --> slugify() [imports] [EXTRACTED] pkg/service.py:L10
+  --> util.py [imports_from] [EXTRACTED] pkg/service.py:L10
+  <-- main.py [imports_from] [EXTRACTED] main.py:L7
+  --> Admin [imports] [EXTRACTED] pkg/service.py:L13
+  --> helper() [imports] [EXTRACTED] pkg/service.py:L10
+  --> helper() [contains] [EXTRACTED] pkg/service.py:L16
+  --> typing [imports_from] [EXTRACTED] pkg/service.py:L5
+  --> json [imports] [EXTRACTED] pkg/service.py:L2
+  --> os_path [imports] [EXTRACTED] pkg/service.py:L3
+  --> collections [imports_from] [EXTRACTED] pkg/service.py:L4
+  <-- Service layer exercising every import and call form. [rationale_for] [EXTRACTED] pkg/service.py:L1

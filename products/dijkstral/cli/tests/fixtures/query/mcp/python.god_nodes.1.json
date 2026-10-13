@@ -1,0 +1,30 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 16,
+  "method": "tools/call",
+  "params": {
+   "name": "god_nodes",
+   "arguments": {}
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 16,
+  "result": {
+   "content": [
+    {
+     "text": "God nodes (most connected):\n  1. User - 17 edges\n  2. UserService - 12 edges\n  3. run() - 11 edges\n  4. Repo - 8 edges\n  5. Base - 6 edges\n  6. slugify() - 6 edges\n  7. Admin - 5 edges\n  8. TestUserService - 5 edges\n  9. helper() - 3 edges\n  10. traced() - 3 edges",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

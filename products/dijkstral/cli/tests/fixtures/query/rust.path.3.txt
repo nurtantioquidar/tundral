@@ -1,0 +1,2 @@
+Shortest path (3 hops):
+  main() --calls [INFERRED]--> round_kind() --references [EXTRACTED]--> Kind --references [EXTRACTED]--> Circle

@@ -1,0 +1,8 @@
+Ambiguous: 'area' matches 3 nodes in src/model.rs.
+  L7
+    id: src_model_shape_area
+  L63
+    id: src_model_circle_area
+  L83
+    id: src_model_wrapper_t_area
+Retry with the full node id.

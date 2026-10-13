@@ -25,6 +25,8 @@ output, and enforced by `crates/core/tests/golden_<lang>.rs` against the goldens
 reproduce; a new entry needs a comment with the quirk id or reason. The same tests check community
 agreement, re-cluster Graphify's own graph (`dijkstral cluster-only`, which must reproduce
 `graphify cluster-only --no-label` byte for byte) and compare the report goldens (§17.6).
+The query, MCP, hook-guard and installer surfaces are specified the same way in
+`docs/graphify-query.md`, with goldens in `tests/fixtures/query/`.
 
 ## Ownership boundaries
 

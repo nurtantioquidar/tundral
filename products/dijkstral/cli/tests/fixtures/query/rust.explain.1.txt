@@ -1,0 +1,6 @@
+Ambiguous: 'Circle' matches 2 nodes in different files.
+  src/model.rs
+    id: src_model_circle
+  circle
+    id: circle
+Retry with path::symbol using one of the paths above (e.g. <path>::Circle) or the full node id.

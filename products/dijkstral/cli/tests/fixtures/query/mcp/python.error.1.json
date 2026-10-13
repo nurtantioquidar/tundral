@@ -1,0 +1,30 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 23,
+  "method": "tools/call",
+  "params": {
+   "name": "nope",
+   "arguments": {}
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 23,
+  "result": {
+   "content": [
+    {
+     "text": "Unknown tool: nope",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

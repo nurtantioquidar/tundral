@@ -1,0 +1,131 @@
+Graph: typescript.clustered.graphify.json (68 nodes) | Traversal: BFS depth=2 | Start: ['index.ts', 'src_models_index_user'] | 46 nodes found
+
+[i] Complete answer over budget: all 46 nodes and 81 edges shown (~3176 tokens vs the requested ~2000-token budget). Edges are never dropped once every node fits, so this is already the full answer — raising --budget further will not shrink it. Narrow with context_filter=['call'] or use get_node for a specific symbol to reduce size instead.
+
+NODE index.ts [src=src/models/index.ts loc=L1 community=2]
+NODE src_models_index_user [src= loc= community=3]
+NODE service.ts [src=src/service.ts loc=L1 community=1]
+NODE user.ts [src=src/models/user.ts loc=L1 community=0]
+NODE App.tsx [src=src/ui/App.tsx loc=L1 community=6]
+NODE Repo [src=src/models/repo.ts loc=L10 community=2]
+NODE service.test.ts [src=src/__tests__/service.test.ts loc=L1 community=3]
+NODE repo.ts [src=src/models/repo.ts loc=L1 community=2]
+NODE Entity [src=src/models/repo.ts loc=L1 community=2]
+NODE User [src=src/models/user.ts loc=L26 community=4]
+NODE UserService [src=src/service.ts loc=L12 community=3]
+NODE util.ts [src=src/util.ts loc=L1 community=5]
+NODE run() [src=src/service.ts loc=L46 community=3]
+NODE Admin [src=src/models/user.ts loc=L47 community=4]
+NODE Base [src=src/models/user.ts loc=L15 community=0]
+NODE Named [src=src/models/user.ts loc=L11 community=4]
+NODE slugify() [src=src/util.ts loc=L4 community=5]
+NODE Role [src=src/models/user.ts loc=L4 community=0]
+NODE .constructor() [src=src/service.ts loc=L15 community=3]
+NODE App [src=src/ui/App.tsx loc=L24 community=6]
+NODE UserList() [src=src/ui/App.tsx loc=L14 community=6]
+NODE sealed() [src=src/models/repo.ts loc=L5 community=2]
+NODE formatName() [src=src/models/user.ts loc=L62 community=0]
+NODE helper() [src=src/models/user.ts loc=L64 community=0]
+NODE validate() [src=src/models/user.ts loc=L57 community=0]
+NODE compareNames() [src=src/service.ts loc=L42 community=1]
+NODE helper() [src=src/service.ts loc=L8 community=1]
+NODE makeUser() [src=src/__tests__/service.test.ts loc=L16 community=3]
+NODE Badge() [src=src/ui/App.tsx loc=L10 community=6]
+NODE BadgeProps [src=src/ui/App.tsx loc=L5 community=6]
+NODE ref_fs [src= loc= community=1]
+NODE ref_node_path [src= loc= community=1]
+NODE ref_polyfill [src= loc= community=1]
+NODE ref_react [src= loc= community=6]
+NODE ref_vitest [src= loc= community=3]
+NODE src_models_index_admin [src= loc= community=1]
+NODE src_models_index_helper [src= loc= community=1]
+NODE src_models_index_storage [src= loc= community=1]
+NODE key() [src=src/models/repo.ts loc=L27 community=2]
+NODE .add() [src=src/models/repo.ts loc=L13 community=2]
+NODE .all() [src=src/models/repo.ts loc=L21 community=2]
+NODE .get() [src=src/models/repo.ts loc=L17 community=2]
+NODE Storage [src=src/models/repo.ts loc=L26 community=2]
+NODE NOTE: persistence is faked in this fixture. [src=src/models/user.ts loc=L21 community=0]
+NODE WHY: names are displayed title-cased everywhere. [src=src/models/user.ts loc=L61 community=0]
+NODE UserId [src=src/models/user.ts loc=L9 community=0]
+EDGE service.ts --imports [EXTRACTED context=import]--> src_models_index_user at=src/service.ts:L4
+EDGE service.test.ts --imports [EXTRACTED context=import]--> src_models_index_user at=src/__tests__/service.test.ts:L3
+EDGE App.tsx --imports [EXTRACTED context=import]--> src_models_index_user at=src/ui/App.tsx:L2
+EDGE index.ts --re_exports [EXTRACTED context=export]--> user.ts at=src/models/index.ts:L2
+EDGE index.ts --re_exports [EXTRACTED context=export]--> repo.ts at=src/models/index.ts:L3
+EDGE service.ts --imports_from [EXTRACTED context=import]--> index.ts at=src/service.ts:L4
+EDGE service.test.ts --imports_from [EXTRACTED context=import]--> index.ts at=src/__tests__/service.test.ts:L3
+EDGE App.tsx --imports_from [EXTRACTED context=import]--> index.ts at=src/ui/App.tsx:L2
+EDGE index.ts --re_exports [EXTRACTED context=re-export]--> Entity at=src/models/index.ts:L3
+EDGE index.ts --re_exports [EXTRACTED context=re-export]--> Repo at=src/models/index.ts:L3
+EDGE user.ts --contains [EXTRACTED]--> Named at=src/models/user.ts:L11
+EDGE user.ts --contains [EXTRACTED]--> Base at=src/models/user.ts:L15
+EDGE user.ts --contains [EXTRACTED]--> User at=src/models/user.ts:L26
+EDGE user.ts --contains [EXTRACTED]--> Role at=src/models/user.ts:L4
+EDGE user.ts --contains [EXTRACTED]--> Admin at=src/models/user.ts:L47
+EDGE user.ts --contains [EXTRACTED]--> validate() at=src/models/user.ts:L57
+EDGE user.ts --contains [EXTRACTED]--> formatName() at=src/models/user.ts:L62
+EDGE user.ts --contains [EXTRACTED]--> helper() at=src/models/user.ts:L64
+EDGE user.ts --contains [EXTRACTED]--> UserId at=src/models/user.ts:L9
+EDGE NOTE: persistence is faked in this fixture. --rationale_for [EXTRACTED]--> user.ts at=src/models/user.ts:L21
+EDGE WHY: names are displayed title-cased everywhere. --rationale_for [EXTRACTED]--> user.ts at=src/models/user.ts:L61
+EDGE Base --implements [EXTRACTED context=type]--> Entity at=src/models/user.ts:L15
+EDGE repo.ts --contains [EXTRACTED]--> Storage at=src/models/repo.ts:L26
+EDGE repo.ts --contains [EXTRACTED]--> key() at=src/models/repo.ts:L27
+EDGE repo.ts --contains [EXTRACTED]--> sealed() at=src/models/repo.ts:L5
+EDGE App.tsx --imports [EXTRACTED context=import]--> User at=src/ui/App.tsx:L2
+EDGE App.tsx --imports [EXTRACTED context=import]--> run() at=src/ui/App.tsx:L3
+EDGE App.tsx --imports [EXTRACTED context=import]--> UserService at=src/ui/App.tsx:L3
+EDGE App.tsx --imports_from [EXTRACTED context=import]--> ref_react at=src/ui/App.tsx:L1
+EDGE App.tsx --contains [EXTRACTED]--> Badge() at=src/ui/App.tsx:L10
+EDGE App.tsx --contains [EXTRACTED]--> UserList() at=src/ui/App.tsx:L14
+EDGE App.tsx --contains [EXTRACTED]--> App at=src/ui/App.tsx:L24
+EDGE App.tsx --contains [EXTRACTED]--> BadgeProps at=src/ui/App.tsx:L5
+EDGE run() --calls [EXTRACTED context=call]--> Repo at=src/service.ts:L47
+EDGE Repo --references [EXTRACTED context=decorator]--> sealed() at=src/models/repo.ts:L9
+EDGE UserService --references [EXTRACTED context=field]--> Repo at=src/service.ts:L13
+EDGE .constructor() --references [EXTRACTED context=parameter_type]--> Repo at=src/service.ts:L15
+EDGE Repo --method [EXTRACTED]--> .add() at=src/models/repo.ts:L13
+EDGE Repo --method [EXTRACTED]--> .get() at=src/models/repo.ts:L17
+EDGE Repo --method [EXTRACTED]--> .all() at=src/models/repo.ts:L21
+EDGE service.ts --imports [EXTRACTED context=import]--> src_models_index_admin at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> src_models_index_helper at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> src_models_index_storage at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> Admin at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> helper() at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> User at=src/service.ts:L4
+EDGE service.ts --imports [EXTRACTED context=import]--> Named at=src/service.ts:L5
+EDGE service.ts --imports [EXTRACTED context=import]--> slugify() at=src/service.ts:L6
+EDGE service.ts --imports_from [EXTRACTED context=import]--> ref_polyfill at=src/service.ts:L1
+EDGE service.ts --imports_from [EXTRACTED context=import]--> ref_fs at=src/service.ts:L2
+EDGE service.ts --imports_from [EXTRACTED context=import]--> ref_node_path at=src/service.ts:L3
+EDGE service.ts --imports_from [EXTRACTED context=import]--> util.ts at=src/service.ts:L6
+EDGE service.ts --contains [EXTRACTED]--> UserService at=src/service.ts:L12
+EDGE service.ts --contains [EXTRACTED]--> compareNames() at=src/service.ts:L42
+EDGE service.ts --contains [EXTRACTED]--> run() at=src/service.ts:L46
+EDGE service.ts --contains [EXTRACTED]--> helper() at=src/service.ts:L8
+EDGE service.test.ts --imports [EXTRACTED context=import]--> run() at=src/__tests__/service.test.ts:L2
+EDGE service.test.ts --imports [EXTRACTED context=import]--> UserService at=src/__tests__/service.test.ts:L2
+EDGE service.test.ts --imports [EXTRACTED context=import]--> User at=src/__tests__/service.test.ts:L3
+EDGE service.test.ts --imports_from [EXTRACTED context=import]--> ref_vitest at=src/__tests__/service.test.ts:L1
+EDGE service.test.ts --contains [EXTRACTED]--> makeUser() at=src/__tests__/service.test.ts:L16
+EDGE user.ts --imports_from [EXTRACTED context=import]--> repo.ts at=src/models/user.ts:L1
+EDGE repo.ts --contains [EXTRACTED]--> Entity at=src/models/repo.ts:L1
+EDGE repo.ts --contains [EXTRACTED]--> Repo at=src/models/repo.ts:L10
+EDGE user.ts --imports [EXTRACTED context=import]--> Entity at=src/models/user.ts:L1
+EDGE service.ts --imports [EXTRACTED context=import]--> Repo at=src/service.ts:L4
+EDGE service.ts --imports_from [EXTRACTED context=import]--> user.ts at=src/service.ts:L5
+EDGE Admin --inherits [EXTRACTED context=type]--> User at=src/models/user.ts:L47
+EDGE User --inherits [EXTRACTED context=type]--> Base at=src/models/user.ts:L26
+EDGE User --implements [EXTRACTED context=type]--> Named at=src/models/user.ts:L26
+EDGE makeUser() --calls [EXTRACTED context=call]--> User at=src/__tests__/service.test.ts:L17
+EDGE BadgeProps --references [EXTRACTED context=field]--> User at=src/ui/App.tsx:L6
+EDGE UserService --references [EXTRACTED context=generic_arg]--> User at=src/service.ts:L13
+EDGE .constructor() --references [EXTRACTED context=generic_arg]--> User at=src/service.ts:L15
+EDGE service.test.ts --imports_from [EXTRACTED context=import]--> service.ts at=src/__tests__/service.test.ts:L2
+EDGE App.tsx --imports_from [EXTRACTED context=import]--> service.ts at=src/ui/App.tsx:L3
+EDGE run() --calls [EXTRACTED context=call]--> UserService at=src/service.ts:L47
+EDGE run() --imports_from [EXTRACTED context=import]--> util.ts at=src/service.ts:L49
+EDGE UserService --method [EXTRACTED]--> .constructor() at=src/service.ts:L15
+EDGE UserList() --calls [EXTRACTED context=call]--> Badge() at=src/ui/App.tsx:L18
+EDGE util.ts --contains [EXTRACTED]--> slugify() at=src/util.ts:L4

@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 20,
+  "method": "tools/call",
+  "params": {
+   "name": "shortest_path",
+   "arguments": {
+    "source": "slugify()",
+    "target": "main_main"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 20,
+  "result": {
+   "content": [
+    {
+     "text": "No directed path found between 'slugify()' and 'main()'. Retry with undirected=true to search ignoring edge direction.",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

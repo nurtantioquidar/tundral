@@ -1,0 +1,24 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 32,
+  "method": "resources/read",
+  "params": {
+   "uri": "graphify://nope"
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 32,
+  "error": {
+   "code": 0,
+   "message": "Unknown resource: graphify://nope"
+  }
+ }
+}

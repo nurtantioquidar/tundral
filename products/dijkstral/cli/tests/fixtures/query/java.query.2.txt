@@ -1,0 +1,24 @@
+Graph: java.clustered.graphify.json (64 nodes) | Traversal: BFS depth=2 | Start: ['Model', 'User'] | Context: import (explicit) | 12 nodes found
+
+NODE Model [src=src/main/java/com/shop/model/Model.java loc=L9 community=2]
+NODE User [src=src/main/java/com/shop/model/User.java loc=L6 community=1]
+NODE UserService.java [src=src/main/java/com/shop/service/UserService.java loc=L1 community=0]
+NODE UserServiceTest.java [src=src/test/java/com/shop/service/UserServiceTest.java loc=L1 community=3]
+NODE assertequals [src= loc= community=3]
+NODE function [src= loc= community=0]
+NODE org.junit.jupiter.api.BeforeEach [src= loc= community=3]
+NODE org.junit.jupiter.api.Test [src= loc= community=3]
+NODE requirenonnull [src= loc= community=0]
+NODE slug [src= loc= community=0]
+NODE Address [src=src/main/java/com/shop/model/User.java loc=L34 community=1]
+NODE util [src= loc= community=0]
+EDGE UserService.java --imports [EXTRACTED context=import]--> Model at=src/main/java/com/shop/service/UserService.java:L3
+EDGE UserServiceTest.java --imports [EXTRACTED context=import]--> User at=src/test/java/com/shop/service/UserServiceTest.java:L5
+EDGE UserService.java --imports [EXTRACTED context=import]--> Address at=src/main/java/com/shop/service/UserService.java:L4
+EDGE UserService.java --imports [EXTRACTED context=import]--> util at=src/main/java/com/shop/service/UserService.java:L5
+EDGE UserService.java --imports [EXTRACTED context=import]--> function at=src/main/java/com/shop/service/UserService.java:L6
+EDGE UserService.java --imports [EXTRACTED context=import]--> requirenonnull at=src/main/java/com/shop/service/UserService.java:L7
+EDGE UserService.java --imports [EXTRACTED context=import]--> slug at=src/main/java/com/shop/service/UserService.java:L8
+EDGE UserServiceTest.java --imports [EXTRACTED context=import]--> org.junit.jupiter.api.BeforeEach at=src/test/java/com/shop/service/UserServiceTest.java:L6
+EDGE UserServiceTest.java --imports [EXTRACTED context=import]--> org.junit.jupiter.api.Test at=src/test/java/com/shop/service/UserServiceTest.java:L7
+EDGE UserServiceTest.java --imports [EXTRACTED context=import]--> assertequals at=src/test/java/com/shop/service/UserServiceTest.java:L3

@@ -1,0 +1,54 @@
+Graph: rust.clustered.graphify.json (79 nodes) | Traversal: BFS depth=2 | Start: ['circle', '.area()'] | 23 nodes found
+
+NODE circle [src= loc= community=0]
+NODE .area() [src=src/model.rs loc=L63 community=1]
+NODE Circle [src=src/model.rs loc=L16 community=1]
+NODE main.rs [src=src/main.rs loc=L1 community=0]
+NODE model.rs [src=src/model.rs loc=L1 community=3]
+NODE Shape [src=src/model.rs loc=L6 community=0]
+NODE Kind [src=src/model.rs loc=L37 community=3]
+NODE fmt.rs [src=src/util/fmt.rs loc=L1 community=1]
+NODE main() [src=src/main.rs loc=L4 community=0]
+NODE .new() [src=src/model.rs loc=L46 community=1]
+NODE fixture() [src=src/model.rs loc=L114 community=1]
+NODE render [src= loc= community=0]
+NODE .diameter() [src=src/model.rs loc=L50 community=2]
+NODE .fmt() [src=src/model.rs loc=L69 community=1]
+NODE render() [src=src/util/fmt.rs loc=L4 community=1]
+NODE render() [src=src/util/mod.rs loc=L19 community=2]
+NODE build [src= loc= community=0]
+NODE label [src= loc= community=0]
+NODE round [src= loc= community=0]
+NODE round_kind [src= loc= community=0]
+NODE .scale() [src=src/model.rs loc=L57 community=1]
+NODE .UNIT [src=src/model.rs loc=L44 community=1]
+NODE total_area [src= loc= community=0]
+EDGE Circle --method [EXTRACTED]--> .area() at=src/model.rs:L63
+EDGE main.rs --imports_from [EXTRACTED context=import]--> circle at=src/main.rs:L1
+EDGE main.rs --imports_from [EXTRACTED context=import]--> round_kind at=src/main.rs:L1
+EDGE main.rs --imports_from [EXTRACTED context=import]--> build at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> label at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> render at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> round at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> Shape at=src/main.rs:L2
+EDGE main.rs --imports_from [EXTRACTED context=import]--> total_area at=src/main.rs:L2
+EDGE main.rs --contains [EXTRACTED]--> main() at=src/main.rs:L4
+EDGE Kind --references [EXTRACTED context=field]--> Circle at=src/model.rs:L38
+EDGE fmt.rs --imports_from [EXTRACTED context=import]--> Circle at=src/util/fmt.rs:L1
+EDGE render() --references [EXTRACTED context=parameter_type]--> Circle at=src/util/fmt.rs:L4
+EDGE render() --references [EXTRACTED context=parameter_type]--> Circle at=src/util/mod.rs:L19
+EDGE fixture() --references [EXTRACTED context=return_type]--> Circle at=src/model.rs:L114
+EDGE model.rs --contains [EXTRACTED]--> Circle at=src/model.rs:L16
+EDGE Circle --contains [EXTRACTED]--> .UNIT at=src/model.rs:L44
+EDGE Circle --implements [EXTRACTED]--> Shape at=src/model.rs:L62
+EDGE Circle --method [EXTRACTED]--> .new() at=src/model.rs:L46
+EDGE Circle --method [EXTRACTED]--> .diameter() at=src/model.rs:L50
+EDGE Circle --method [EXTRACTED]--> .scale() at=src/model.rs:L57
+EDGE Circle --method [EXTRACTED]--> .fmt() at=src/model.rs:L69
+EDGE model.rs --imports_from [EXTRACTED context=import]--> fmt.rs at=src/model.rs:L3
+EDGE model.rs --contains [EXTRACTED]--> fixture() at=src/model.rs:L114
+EDGE model.rs --contains [EXTRACTED]--> Kind at=src/model.rs:L37
+EDGE model.rs --contains [EXTRACTED]--> Shape at=src/model.rs:L6
+EDGE fixture() --calls [EXTRACTED context=call]--> .new() at=src/model.rs:L115
+EDGE fmt.rs --imports_from [EXTRACTED context=import]--> Shape at=src/util/fmt.rs:L1
+EDGE fmt.rs --contains [EXTRACTED]--> render() at=src/util/fmt.rs:L4

@@ -1,0 +1,8 @@
+Ambiguous: 'helper' matches 3 nodes in different files.
+  pkg/util.py
+    id: pkg_util_helper
+  pkg/models.py
+    id: pkg_models_helper
+  pkg/service.py
+    id: pkg_service_helper
+Retry with path::symbol using one of the paths above (e.g. <path>::helper()) or the full node id.

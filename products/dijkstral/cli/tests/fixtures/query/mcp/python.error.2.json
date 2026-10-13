@@ -1,0 +1,30 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 24,
+  "method": "tools/call",
+  "params": {
+   "name": "query_graph",
+   "arguments": {}
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 24,
+  "result": {
+   "content": [
+    {
+     "text": "Error executing query_graph: 'question'",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

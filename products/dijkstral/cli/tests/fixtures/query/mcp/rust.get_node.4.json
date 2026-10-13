@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 8,
+  "method": "tools/call",
+  "params": {
+   "name": "get_node",
+   "arguments": {
+    "label": "memchr"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 8,
+  "result": {
+   "content": [
+    {
+     "text": "Node: memchr\n  ID: memchr\n  Source:  \n  Type: concept\n  Community: 1\n  Degree: 1",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

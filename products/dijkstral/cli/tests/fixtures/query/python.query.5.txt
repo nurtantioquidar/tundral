@@ -1,0 +1,15 @@
+Graph: python.clustered.graphify.json (59 nodes) | Traversal: BFS depth=2 | Start: ['User', 'service()', 'UserService'] | 53 nodes found
+
+[!] TRUNCATED: showing 10 of 53 nodes (~200-token budget). The answer may be among the 43 cut nodes — raise the token budget to 999 to get all 53 (CLI: --budget 999, MCP: token_budget=999) or narrow the query (e.g. context_filter=['call'], or get_node for a specific symbol).
+
+NODE User [src=pkg/models.py loc=L23 community=1]
+NODE service() [src=tests/test_service.py loc=L17 community=6]
+NODE UserService [src=pkg/service.py loc=L21 community=3]
+NODE service.py [src=pkg/service.py loc=L1 community=0]
+NODE models.py [src=pkg/models.py loc=L1 community=2]
+NODE run() [src=pkg/service.py loc=L42 community=3]
+NODE test_service.py [src=tests/test_service.py loc=L1 community=6]
+NODE Repo [src=pkg/models.py loc=L59 community=5]
+NODE __init__.py [src=pkg/__init__.py loc=L1 community=1]
+NODE main.py [src=main.py loc=L1 community=3]
+... (truncated — 43 more nodes cut by ~200-token budget. Narrow with context_filter=['call'] or use get_node for a specific symbol)

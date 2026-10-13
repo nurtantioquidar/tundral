@@ -1,0 +1,39 @@
+Graph: mixed.clustered.graphify.json (31 nodes) | Traversal: BFS depth=2 | Start: ['build()', 'build', 'build.sh script', 'scripts'] | 17 nodes found
+
+NODE build() [src=scripts/build.sh loc=L11 community=1]
+NODE build [src=package.json loc=L4 community=0]
+NODE build.sh script [src=scripts/build.sh loc=L1 community=1]
+NODE scripts [src=package.json loc=L4 community=0]
+NODE package.json [src=package.json loc=L1 community=0]
+NODE build.sh [src=scripts/build.sh loc=L1 community=1]
+NODE clean() [src=scripts/build.sh loc=L6 community=1]
+NODE log() [src=scripts/common.sh loc=L2 community=1]
+NODE compile_all() [src=scripts/build.sh loc=L17 community=1]
+NODE dependencies [src=package.json loc=L5 community=4]
+NODE common.sh [src=scripts/common.sh loc=L1 community=1]
+NODE devDependencies [src=package.json loc=L6 community=0]
+NODE name [src=package.json loc=L2 community=0]
+NODE version [src=package.json loc=L3 community=0]
+NODE react [src=package.json loc=L5 community=0]
+NODE typescript [src=package.json loc=L6 community=0]
+NODE zod [src=package.json loc=L5 community=0]
+EDGE build.sh --contains [EXTRACTED]--> build.sh script at=scripts/build.sh:L1
+EDGE package.json --contains [EXTRACTED]--> scripts at=package.json:L4
+EDGE build() --calls [EXTRACTED context=call]--> clean() at=scripts/build.sh:L12
+EDGE build() --calls [EXTRACTED context=call]--> log() at=scripts/build.sh:L13
+EDGE build() --calls [EXTRACTED context=call]--> compile_all() at=scripts/build.sh:L14
+EDGE build.sh --defines [EXTRACTED]--> build() at=scripts/build.sh:L11
+EDGE common.sh --defines [EXTRACTED]--> log() at=scripts/common.sh:L2
+EDGE build.sh --imports_from [EXTRACTED context=import]--> common.sh at=scripts/build.sh:L4
+EDGE package.json --imports [EXTRACTED context=import]--> react at=package.json:L5
+EDGE package.json --imports [EXTRACTED context=import]--> zod at=package.json:L5
+EDGE package.json --imports [EXTRACTED context=import]--> typescript at=package.json:L6
+EDGE package.json --contains [EXTRACTED]--> name at=package.json:L2
+EDGE package.json --contains [EXTRACTED]--> version at=package.json:L3
+EDGE package.json --contains [EXTRACTED]--> dependencies at=package.json:L5
+EDGE package.json --contains [EXTRACTED]--> devDependencies at=package.json:L6
+EDGE scripts --contains [EXTRACTED]--> build at=package.json:L4
+EDGE build.sh --defines [EXTRACTED]--> compile_all() at=scripts/build.sh:L17
+EDGE build.sh --defines [EXTRACTED]--> clean() at=scripts/build.sh:L6
+EDGE build.sh script --calls [EXTRACTED context=call]--> build() at=scripts/build.sh:L21
+EDGE clean() --calls [EXTRACTED context=call]--> log() at=scripts/build.sh:L7

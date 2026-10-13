@@ -1,0 +1,135 @@
+Graph: python.clustered.graphify.json (59 nodes) | Traversal: BFS depth=2 | Start: ['UserService', '.register()'] | 44 nodes found
+
+[i] Complete answer over budget: all 44 nodes and 87 edges shown (~3133 tokens vs the requested ~2000-token budget). Edges are never dropped once every node fits, so this is already the full answer — raising --budget further will not shrink it. Narrow with context_filter=['call'] or use get_node for a specific symbol to reduce size instead.
+
+NODE UserService [src=pkg/service.py loc=L21 community=3]
+NODE .register() [src=pkg/service.py loc=L26 community=3]
+NODE service.py [src=pkg/service.py loc=L1 community=0]
+NODE User [src=pkg/models.py loc=L23 community=1]
+NODE run() [src=pkg/service.py loc=L42 community=3]
+NODE test_service.py [src=tests/test_service.py loc=L1 community=6]
+NODE Repo [src=pkg/models.py loc=L59 community=5]
+NODE main.py [src=main.py loc=L1 community=3]
+NODE slugify() [src=pkg/util.py loc=L14 community=0]
+NODE TestUserService [src=tests/test_service.py loc=L7 community=7]
+NODE main() [src=main.py loc=L10 community=3]
+NODE .__init__() [src=pkg/service.py loc=L22 community=5]
+NODE .promote() [src=pkg/service.py loc=L33 community=1]
+NODE .export() [src=pkg/service.py loc=L36 community=8]
+NODE models.py [src=pkg/models.py loc=L1 community=2]
+NODE __init__.py [src=pkg/__init__.py loc=L1 community=1]
+NODE Base [src=pkg/models.py loc=L11 community=4]
+NODE util.py [src=pkg/util.py loc=L1 community=0]
+NODE Admin [src=pkg/models.py loc=L48 community=1]
+NODE .promote() [src=pkg/models.py loc=L51 community=1]
+NODE format_name() [src=pkg/models.py loc=L76 community=2]
+NODE .save() [src=pkg/models.py loc=L42 community=4]
+NODE helper() [src=pkg/service.py loc=L16 community=8]
+NODE helper() [src=pkg/util.py loc=L18 community=0]
+NODE traced() [src=pkg/util.py loc=L5 community=0]
+NODE service() [src=tests/test_service.py loc=L17 community=6]
+NODE .add() [src=pkg/models.py loc=L65 community=5]
+NODE .get() [src=pkg/models.py loc=L68 community=5]
+NODE .display() [src=pkg/models.py loc=L31 community=2]
+NODE .parse() [src=pkg/models.py loc=L35 community=7]
+NODE re [src= loc= community=0]
+NODE .test_parse() [src=tests/test_service.py loc=L12 community=7]
+NODE .test_register() [src=tests/test_service.py loc=L8 community=7]
+NODE typing [src= loc= community=2]
+NODE collections [src= loc= community=0]
+NODE json [src= loc= community=0]
+NODE os_path [src= loc= community=0]
+NODE A person who can sign in. [src=pkg/models.py loc=L24 community=1]
+NODE .__init__() [src=pkg/models.py loc=L62 community=5]
+NODE .guest() [src=pkg/models.py loc=L39 community=1]
+NODE Service layer exercising every import and call form. [src=pkg/service.py loc=L1 community=0]
+NODE pytest [src= loc= community=6]
+NODE sys [src= loc= community=3]
+NODE test_run() [src=tests/test_service.py loc=L21 community=6]
+EDGE .register() --calls [EXTRACTED context=call]--> slugify() at=pkg/service.py:L29
+EDGE .register() --references [EXTRACTED context=return_type]--> User at=pkg/service.py:L26
+EDGE run() --calls [INFERRED context=call]--> .register() at=pkg/service.py:L44
+EDGE run() --calls [EXTRACTED context=call]--> UserService at=pkg/service.py:L43
+EDGE main.py --imports [EXTRACTED context=import]--> UserService at=main.py:L7
+EDGE test_service.py --imports [EXTRACTED context=import]--> UserService at=tests/test_service.py:L4
+EDGE service.py --contains [EXTRACTED]--> UserService at=pkg/service.py:L21
+EDGE UserService --method [EXTRACTED]--> .__init__() at=pkg/service.py:L22
+EDGE UserService --method [EXTRACTED]--> .promote() at=pkg/service.py:L33
+EDGE UserService --method [EXTRACTED]--> .export() at=pkg/service.py:L36
+EDGE main() --uses [INFERRED]--> UserService at=main.py:L11
+EDGE UserService --uses [INFERRED]--> Repo at=pkg/service.py:L22
+EDGE UserService --uses [INFERRED]--> User at=pkg/service.py:L22
+EDGE TestUserService --uses [INFERRED]--> UserService at=tests/test_service.py:L10
+EDGE service.py --imports [EXTRACTED context=import]--> helper() at=pkg/service.py:L10
+EDGE service.py --imports [EXTRACTED context=import]--> Admin at=pkg/service.py:L13
+EDGE service.py --imports [EXTRACTED context=import]--> json at=pkg/service.py:L2
+EDGE service.py --imports [EXTRACTED context=import]--> os_path at=pkg/service.py:L3
+EDGE service.py --imports_from [EXTRACTED context=import]--> util.py at=pkg/service.py:L10
+EDGE service.py --imports_from [EXTRACTED context=import]--> collections at=pkg/service.py:L4
+EDGE service.py --imports_from [EXTRACTED context=import]--> typing at=pkg/service.py:L5
+EDGE service.py --imports_from [EXTRACTED context=import]--> __init__.py at=pkg/service.py:L7
+EDGE service.py --imports_from [EXTRACTED context=submodule_import]--> models.py at=pkg/service.py:L7
+EDGE service.py --contains [EXTRACTED]--> helper() at=pkg/service.py:L16
+EDGE Service layer exercising every import and call form. --rationale_for [EXTRACTED]--> service.py at=pkg/service.py:L1
+EDGE models.py --contains [EXTRACTED]--> Repo at=pkg/models.py:L59
+EDGE Repo --method [EXTRACTED]--> .__init__() at=pkg/models.py:L62
+EDGE Repo --method [EXTRACTED]--> .add() at=pkg/models.py:L65
+EDGE Repo --method [EXTRACTED]--> .get() at=pkg/models.py:L68
+EDGE slugify() --calls [EXTRACTED context=call]--> helper() at=pkg/util.py:L15
+EDGE slugify() --calls [EXTRACTED context=call]--> re at=pkg/util.py:L15
+EDGE slugify() --references [EXTRACTED context=decorator]--> traced() at=pkg/util.py:L13
+EDGE util.py --contains [EXTRACTED]--> slugify() at=pkg/util.py:L14
+EDGE TestUserService --method [EXTRACTED]--> .test_parse() at=tests/test_service.py:L12
+EDGE TestUserService --method [EXTRACTED]--> .test_register() at=tests/test_service.py:L8
+EDGE test_service.py --imports [EXTRACTED context=import]--> pytest at=tests/test_service.py:L1
+EDGE test_service.py --imports_from [EXTRACTED context=import]--> models.py at=tests/test_service.py:L3
+EDGE test_service.py --contains [EXTRACTED]--> service() at=tests/test_service.py:L17
+EDGE test_service.py --contains [EXTRACTED]--> test_run() at=tests/test_service.py:L21
+EDGE __init__.py --imports [EXTRACTED context=import]--> User at=pkg/__init__.py:L2
+EDGE .promote() --references [EXTRACTED context=parameter_type]--> User at=pkg/models.py:L51
+EDGE models.py --contains [EXTRACTED]--> User at=pkg/models.py:L23
+EDGE Admin --inherits [EXTRACTED]--> User at=pkg/models.py:L48
+EDGE User --inherits [EXTRACTED]--> Base at=pkg/models.py:L23
+EDGE User --method [EXTRACTED]--> .display() at=pkg/models.py:L31
+EDGE User --method [EXTRACTED]--> .parse() at=pkg/models.py:L35
+EDGE User --method [EXTRACTED]--> .guest() at=pkg/models.py:L39
+EDGE User --method [EXTRACTED]--> .save() at=pkg/models.py:L42
+EDGE A person who can sign in. --rationale_for [EXTRACTED]--> User at=pkg/models.py:L24
+EDGE .promote() --calls [INFERRED context=call]--> .promote() at=pkg/service.py:L34
+EDGE .export() --indirect_call [INFERRED context=argument]--> helper() at=pkg/service.py:L37
+EDGE main.py --imports [EXTRACTED context=import]--> sys at=main.py:L3
+EDGE main.py --imports_from [EXTRACTED context=import]--> __init__.py at=main.py:L6
+EDGE run() --calls [EXTRACTED context=call]--> format_name() at=pkg/service.py:L45
+EDGE service() --calls [EXTRACTED context=call]--> run() at=tests/test_service.py:L18
+EDGE .test_register() --calls [EXTRACTED context=call]--> run() at=tests/test_service.py:L9
+EDGE __init__.py --imports [EXTRACTED context=import]--> run() at=pkg/__init__.py:L3
+EDGE main.py --imports [EXTRACTED context=import]--> run() at=main.py:L6
+EDGE main.py --imports_from [EXTRACTED context=import]--> service.py at=main.py:L7
+EDGE main.py --contains [EXTRACTED]--> main() at=main.py:L10
+EDGE main() --calls [EXTRACTED context=call]--> run() at=main.py:L11
+EDGE __init__.py --re_exports [EXTRACTED context=export]--> models.py at=pkg/__init__.py:L2
+EDGE __init__.py --imports [EXTRACTED context=import]--> Admin at=pkg/__init__.py:L2
+EDGE models.py --imports_from [EXTRACTED context=import]--> typing at=pkg/models.py:L5
+EDGE models.py --contains [EXTRACTED]--> Base at=pkg/models.py:L11
+EDGE models.py --contains [EXTRACTED]--> Admin at=pkg/models.py:L48
+EDGE models.py --contains [EXTRACTED]--> format_name() at=pkg/models.py:L76
+EDGE Admin --method [EXTRACTED]--> .promote() at=pkg/models.py:L51
+EDGE .display() --calls [EXTRACTED context=call]--> format_name() at=pkg/models.py:L32
+EDGE run() --calls [EXTRACTED context=call]--> Repo at=pkg/service.py:L43
+EDGE service.py --imports [EXTRACTED context=import]--> Repo at=pkg/service.py:L9
+EDGE .__init__() --references [EXTRACTED context=parameter_type]--> Repo at=pkg/service.py:L22
+EDGE .__init__() --references [EXTRACTED context=generic_arg]--> User at=pkg/service.py:L22
+EDGE service.py --imports [EXTRACTED context=import]--> User at=pkg/service.py:L9
+EDGE test_service.py --imports [EXTRACTED context=import]--> User at=tests/test_service.py:L3
+EDGE .promote() --references [EXTRACTED context=parameter_type]--> User at=pkg/service.py:L33
+EDGE TestUserService --uses [INFERRED]--> User at=tests/test_service.py:L13
+EDGE .test_parse() --calls [EXTRACTED context=call]--> .parse() at=tests/test_service.py:L13
+EDGE service.py --imports [EXTRACTED context=import]--> slugify() at=pkg/service.py:L10
+EDGE test_service.py --imports_from [EXTRACTED context=import]--> service.py at=tests/test_service.py:L4
+EDGE service.py --contains [EXTRACTED]--> run() at=pkg/service.py:L42
+EDGE test_service.py --imports [EXTRACTED context=import]--> run() at=tests/test_service.py:L4
+EDGE UserService --method [EXTRACTED]--> .register() at=pkg/service.py:L26
+EDGE util.py --imports [EXTRACTED context=import]--> re at=pkg/util.py:L1
+EDGE util.py --contains [EXTRACTED]--> helper() at=pkg/util.py:L18
+EDGE util.py --contains [EXTRACTED]--> traced() at=pkg/util.py:L5
+EDGE test_service.py --contains [EXTRACTED]--> TestUserService at=tests/test_service.py:L7

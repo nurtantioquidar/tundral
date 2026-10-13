@@ -1,0 +1,51 @@
+{
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 17,
+  "method": "resources/list"
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 17,
+  "result": {
+   "resources": [
+    {
+     "description": "<redacted: 20 chars>",
+     "mimeType": "text/markdown",
+     "name": "Graph Report",
+     "uri": "graphify://report"
+    },
+    {
+     "description": "<redacted: 51 chars>",
+     "mimeType": "text/plain",
+     "name": "Graph Stats",
+     "uri": "graphify://stats"
+    },
+    {
+     "description": "<redacted: 27 chars>",
+     "mimeType": "text/plain",
+     "name": "God Nodes",
+     "uri": "graphify://god-nodes"
+    },
+    {
+     "description": "<redacted: 38 chars>",
+     "mimeType": "text/plain",
+     "name": "Surprising Connections",
+     "uri": "graphify://surprises"
+    },
+    {
+     "description": "<redacted: 43 chars>",
+     "mimeType": "text/plain",
+     "name": "Confidence Audit",
+     "uri": "graphify://audit"
+    },
+    {
+     "description": "<redacted: 37 chars>",
+     "mimeType": "text/plain",
+     "name": "Suggested Questions",
+     "uri": "graphify://questions"
+    }
+   ]
+  }
+ }
+}

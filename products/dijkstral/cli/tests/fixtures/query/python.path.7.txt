@@ -1,0 +1,2 @@
+Shortest path (2 hops):
+  Base <--contains [EXTRACTED]-- models.py --contains [EXTRACTED]--> User

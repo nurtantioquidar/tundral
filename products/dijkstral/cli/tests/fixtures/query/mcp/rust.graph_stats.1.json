@@ -1,0 +1,30 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 12,
+  "method": "tools/call",
+  "params": {
+   "name": "graph_stats",
+   "arguments": {}
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 12,
+  "result": {
+   "content": [
+    {
+     "text": "Nodes: 79\nEdges: 99\nCommunities: 8\nEXTRACTED: 97%\nINFERRED: 3%\nAMBIGUOUS: 0%\n",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

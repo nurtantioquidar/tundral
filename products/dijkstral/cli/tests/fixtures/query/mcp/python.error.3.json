@@ -1,0 +1,25 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 25,
+  "method": "tools/call",
+  "params": {
+   "arguments": {}
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 25,
+  "error": {
+   "code": -32602,
+   "message": "Invalid request parameters",
+   "data": ""
+  }
+ }
+}

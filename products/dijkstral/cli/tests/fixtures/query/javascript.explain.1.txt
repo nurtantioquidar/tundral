@@ -1,0 +1,13 @@
+Node: formatLabel()
+  ID:        lib_format_formatlabel
+  Source:    lib/format.mjs L8
+  Type:      code
+  Community: 6
+  Degree:    5
+
+Connections (5):
+  <-- format.mjs [contains] [EXTRACTED] lib/format.mjs:L8
+  <-- App.jsx [imports] [EXTRACTED] components/App.jsx:L2
+  <-- formatAll() [indirect_call] [INFERRED] lib/format.mjs:L16
+  <-- Row() [calls] [EXTRACTED] components/App.jsx:L7
+  --> pad() [contains] [EXTRACTED] lib/format.mjs:L9

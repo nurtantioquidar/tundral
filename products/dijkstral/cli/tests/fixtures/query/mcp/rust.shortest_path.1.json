@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 13,
+  "method": "tools/call",
+  "params": {
+   "name": "shortest_path",
+   "arguments": {
+    "source": "src_main_main",
+    "target": "src_model_circle_area"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 13,
+  "result": {
+   "content": [
+    {
+     "text": "Shortest path (4 hops):\n  main() --calls [INFERRED]--> round_kind() --references [EXTRACTED]--> Kind --references [EXTRACTED]--> Circle --method [EXTRACTED]--> .area()",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

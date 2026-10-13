@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 22,
+  "method": "tools/call",
+  "params": {
+   "name": "shortest_path",
+   "arguments": {
+    "source": "main()",
+    "target": "slugify()"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 22,
+  "result": {
+   "content": [
+    {
+     "text": "Ambiguous: 'main()' matches 2 nodes in main.py.\n  L10\n    id: main_main\n  L1\n    id: main\nRetry with the full node id.",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

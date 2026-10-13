@@ -1,0 +1,33 @@
+Graph: python.clustered.graphify.json (59 nodes) | Traversal: DFS depth=2 | Start: ['slugify()'] | 11 nodes found
+
+NODE slugify() [src=pkg/util.py loc=L14 community=0]
+NODE service.py [src=pkg/service.py loc=L1 community=0]
+NODE util.py [src=pkg/util.py loc=L1 community=0]
+NODE .register() [src=pkg/service.py loc=L26 community=3]
+NODE helper() [src=pkg/util.py loc=L18 community=0]
+NODE traced() [src=pkg/util.py loc=L5 community=0]
+NODE re [src= loc= community=0]
+NODE User [src=pkg/models.py loc=L23 community=1]
+NODE UserService [src=pkg/service.py loc=L21 community=3]
+NODE run() [src=pkg/service.py loc=L42 community=3]
+NODE functools [src= loc= community=0]
+EDGE .register() --calls [EXTRACTED context=call]--> slugify() at=pkg/service.py:L29
+EDGE slugify() --calls [EXTRACTED context=call]--> helper() at=pkg/util.py:L15
+EDGE slugify() --calls [EXTRACTED context=call]--> re at=pkg/util.py:L15
+EDGE slugify() --references [EXTRACTED context=decorator]--> traced() at=pkg/util.py:L13
+EDGE service.py --imports [EXTRACTED context=import]--> slugify() at=pkg/service.py:L10
+EDGE util.py --contains [EXTRACTED]--> slugify() at=pkg/util.py:L14
+EDGE util.py --imports [EXTRACTED context=import]--> re at=pkg/util.py:L1
+EDGE service.py --imports_from [EXTRACTED context=import]--> util.py at=pkg/service.py:L10
+EDGE util.py --imports_from [EXTRACTED context=import]--> functools at=pkg/util.py:L2
+EDGE util.py --contains [EXTRACTED]--> helper() at=pkg/util.py:L18
+EDGE util.py --contains [EXTRACTED]--> traced() at=pkg/util.py:L5
+EDGE service.py --imports [EXTRACTED context=import]--> helper() at=pkg/service.py:L10
+EDGE service.py --imports [EXTRACTED context=import]--> User at=pkg/service.py:L9
+EDGE service.py --contains [EXTRACTED]--> UserService at=pkg/service.py:L21
+EDGE service.py --contains [EXTRACTED]--> run() at=pkg/service.py:L42
+EDGE .register() --references [EXTRACTED context=return_type]--> User at=pkg/service.py:L26
+EDGE UserService --method [EXTRACTED]--> .register() at=pkg/service.py:L26
+EDGE run() --calls [INFERRED context=call]--> .register() at=pkg/service.py:L44
+EDGE run() --calls [EXTRACTED context=call]--> UserService at=pkg/service.py:L43
+EDGE UserService --uses [INFERRED]--> User at=pkg/service.py:L22

@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 14,
+  "method": "tools/call",
+  "params": {
+   "name": "get_community",
+   "arguments": {
+    "community_id": 0,
+    "token_budget": 30
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 14,
+  "result": {
+   "content": [
+    {
+     "text": "[!] TRUNCATED: showing 3 of 13 lines (~30-token budget). Raise the token budget to 105 to get all 13 (token_budget=105). Raise token_budget or use get_node for specific members\n\nCommunity 0 (12 nodes):\n  helper() [pkg/util.py]\n  slugify() [pkg/util.py]\n... (truncated — 10 more lines cut by ~30-token budget. Raise token_budget or use get_node for specific members)",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+   "name": "get_node",
+   "arguments": {
+    "label": "Circle"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 5,
+  "result": {
+   "content": [
+    {
+     "text": "Ambiguous: 'circle' matches 2 nodes in different files.\n  src/model.rs\n    id: src_model_circle\n  circle\n    id: circle\nRetry with path::symbol using one of the paths above (e.g. <path>::Circle) or the full node id.",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

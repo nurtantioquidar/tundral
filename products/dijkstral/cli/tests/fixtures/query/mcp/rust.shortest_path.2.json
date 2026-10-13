@@ -1,0 +1,34 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 14,
+  "method": "tools/call",
+  "params": {
+   "name": "shortest_path",
+   "arguments": {
+    "source": "src_main_main",
+    "target": "src_model_circle_area",
+    "max_hops": 1
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 14,
+  "result": {
+   "content": [
+    {
+     "text": "Path exceeds max_hops=1 (4 hops found).",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

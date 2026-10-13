@@ -1,0 +1,32 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/rust.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 6,
+  "method": "tools/call",
+  "params": {
+   "name": "get_node",
+   "arguments": {
+    "label": ".area()"
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 6,
+  "result": {
+   "content": [
+    {
+     "text": "Ambiguous: '.area()' matches 3 nodes in src/model.rs.\n  L7\n    id: src_model_shape_area\n  L63\n    id: src_model_circle_area\n  L83\n    id: src_model_wrapper_t_area\nRetry with the full node id.",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

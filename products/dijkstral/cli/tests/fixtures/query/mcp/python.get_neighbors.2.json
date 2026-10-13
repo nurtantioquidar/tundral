@@ -1,0 +1,33 @@
+{
+ "server": {
+  "cwd_contains": "graphify-out/graph.json",
+  "fixture": "tests/fixtures/python.clustered.graphify.json",
+  "args": []
+ },
+ "stable_across_hash_seeds": true,
+ "request": {
+  "jsonrpc": "2.0",
+  "id": 11,
+  "method": "tools/call",
+  "params": {
+   "name": "get_neighbors",
+   "arguments": {
+    "label": "User",
+    "token_budget": 50
+   }
+  }
+ },
+ "response": {
+  "jsonrpc": "2.0",
+  "id": 11,
+  "result": {
+   "content": [
+    {
+     "text": "[!] TRUNCATED: showing 3 of 18 lines (~50-token budget). Raise the token budget to 359 to get all 18 (token_budget=359). Narrow with relation_filter or use get_node for a specific symbol\n\nNeighbors of User:\n  --> Base [inherits] [EXTRACTED] at=pkg/models.py:L23\n  --> .display() [method] [EXTRACTED] at=pkg/models.py:L31\n... (truncated — 15 more lines cut by ~50-token budget. Narrow with relation_filter or use get_node for a specific symbol)",
+     "type": "text"
+    }
+   ],
+   "isError": false
+  }
+ }
+}

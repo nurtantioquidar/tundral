@@ -1,0 +1,17 @@
+Graph: python.clustered.graphify.json (59 nodes) | Traversal: BFS depth=2 | Start: ['UserService'] | Context: call (explicit) | 8 nodes found
+
+NODE UserService [src=pkg/service.py loc=L21 community=3]
+NODE run() [src=pkg/service.py loc=L42 community=3]
+NODE format_name() [src=pkg/models.py loc=L76 community=2]
+NODE .register() [src=pkg/service.py loc=L26 community=3]
+NODE main() [src=main.py loc=L10 community=3]
+NODE Repo [src=pkg/models.py loc=L59 community=5]
+NODE service() [src=tests/test_service.py loc=L17 community=6]
+NODE .test_register() [src=tests/test_service.py loc=L8 community=7]
+EDGE run() --calls [EXTRACTED context=call]--> UserService at=pkg/service.py:L43
+EDGE run() --calls [EXTRACTED context=call]--> Repo at=pkg/service.py:L43
+EDGE run() --calls [EXTRACTED context=call]--> format_name() at=pkg/service.py:L45
+EDGE main() --calls [EXTRACTED context=call]--> run() at=main.py:L11
+EDGE service() --calls [EXTRACTED context=call]--> run() at=tests/test_service.py:L18
+EDGE .test_register() --calls [EXTRACTED context=call]--> run() at=tests/test_service.py:L9
+EDGE run() --calls [INFERRED context=call]--> .register() at=pkg/service.py:L44
