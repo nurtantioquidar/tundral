@@ -17,6 +17,12 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   through Microsoft's `network_partitions` (`cluster.rs`), the analysis behind
   `.graphify_analysis.json` (`analyze.rs`), `GRAPH_REPORT.md` (`report.rs`) and Python-exact JSON
   output (`pyjson.rs`).
+- `crates/agents`: assistant integrations — the `PreToolUse` hook guard (`guard.rs`, Bash command
+  lexer in `bash.rs`) and the Claude Code / Codex installers (`install.rs`), which edit settings
+  JSON by splicing text (`jsonedit.rs`) and instruction files by section (`section.rs`). All prose
+  an assistant sees is in `text.rs` and is dijkstral's own. The guard runs before clap parses
+  (`crates/cli/src/agents_cmd.rs`), never opens the graph, fails open, and is measured by
+  `../bench/hook.py`.
 - `crates/serve`, `crates/export`, `crates/semantic`: later stages.
 
 Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's

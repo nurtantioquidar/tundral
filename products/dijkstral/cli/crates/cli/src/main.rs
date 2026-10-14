@@ -1,3 +1,5 @@
+mod agents_cmd;
+
 use std::path::PathBuf;
 use std::process::ExitCode;
 use std::time::Instant;
@@ -29,6 +31,8 @@ enum Command {
     /// .graphify_analysis.json (`graphify cluster-only --no-label`: communities named
     /// "Community N", no file statistics).
     ClusterOnly(ClusterOnlyArgs),
+    #[command(flatten)]
+    Agents(agents_cmd::AgentCommand),
 }
 
 #[derive(Args, Debug)]
@@ -66,8 +70,12 @@ struct BuildArgs {
 }
 
 fn main() -> ExitCode {
+    if let Some(code) = agents_cmd::early_dispatch() {
+        return code;
+    }
     let cli = Cli::parse();
     let args = match cli.command {
+        Command::Agents(cmd) => return agents_cmd::run(cmd),
         Command::Extract(args) | Command::Update(args) => args,
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
@@ -145,5 +153,12 @@ mod tests {
     #[test]
     fn cli_definition_is_valid() {
         Cli::command().debug_assert();
+    }
+
+    #[test]
+    fn hook_guard_watches_the_files_builds_write() {
+        use dijkstral_core::pipeline;
+        assert_eq!(dijkstral_agents::OUT_DIR, pipeline::OUT_DIR);
+        assert_eq!(dijkstral_agents::DIGEST_FILE, pipeline::DIGEST_FILE);
     }
 }

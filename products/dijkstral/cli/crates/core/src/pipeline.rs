@@ -105,6 +105,14 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
     if file_keys.iter().all(Option::is_some) && outputs_current(&out_dir, opts.cluster, &digest) {
         report.unchanged = true;
         report.cached = files.len();
+        // Record that the outputs were confirmed current now: the hook guard compares a file's
+        // mtime with this, so a touched-but-identical file stops counting as stale.
+        if let Ok(f) = fs::OpenOptions::new()
+            .write(true)
+            .open(out_dir.join(DIGEST_FILE))
+        {
+            f.set_modified(SystemTime::now()).ok();
+        }
         phase(&mut report, "unchanged");
         return Ok(report);
     }
@@ -220,7 +228,7 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
 }
 
 /// Records what the outputs in `dijkstral-out/` were built from.
-const DIGEST_FILE: &str = ".build-digest";
+pub const DIGEST_FILE: &str = ".build-digest";
 
 /// Everything that determines the outputs: the binary, each file's content key, the options, the
 /// git commit written into `graph.json`, and the date written into the report.

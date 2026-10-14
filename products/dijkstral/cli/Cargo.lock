@@ -228,9 +228,21 @@ checksum = "a31eee39dddec8330830986fcd7625edb5a24ec90ea038215273bbc3adb08ac6"
 name = "dijkstral"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "clap",
+ "dijkstral-agents",
  "dijkstral-core",
  "mimalloc",
+]
+
+[[package]]
+name = "dijkstral-agents"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "serde",
+ "serde_json",
+ "tempfile",
 ]
 
 [[package]]
