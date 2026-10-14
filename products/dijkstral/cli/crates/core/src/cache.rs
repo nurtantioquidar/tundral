@@ -40,6 +40,11 @@ pub struct Cache {
     written_at_ns: u64,
 }
 
+/// The extractor fingerprint as stored in the cache's metadata.
+fn fingerprint_u64() -> u64 {
+    u64::from_str_radix(EXTRACTOR_FINGERPRINT, 16).unwrap_or(0)
+}
+
 pub fn content_key(lang: Lang, rel: &str, content: &[u8]) -> Key {
     let mut h = blake3::Hasher::new();
     h.update(EXTRACTOR_FINGERPRINT.as_bytes());
@@ -66,11 +71,21 @@ impl Cache {
         };
         let tx = db.begin_write()?;
         tx.open_table(FACTS)?;
+        let mut written_at_ns;
+        {
+            let mut meta = tx.open_table(META)?;
+            written_at_ns = meta.get("written_at_ns")?.map_or(0, |v| v.value());
+            let recorded = meta.get("extractor")?.map(|v| v.value());
+            // The stat index maps a file to the key it was last hashed under; keys mix in the
+            // extractor fingerprint, so a stat hit from an older extractor would serve its facts.
+            // A different extractor invalidates the whole index (facts are pruned on commit).
+            if recorded != Some(fingerprint_u64()) {
+                tx.delete_table(STATS)?;
+                meta.insert("extractor", fingerprint_u64())?;
+                written_at_ns = 0;
+            }
+        }
         tx.open_table(STATS)?;
-        let written_at_ns = tx
-            .open_table(META)?
-            .get("written_at_ns")?
-            .map_or(0, |v| v.value());
         tx.commit()?;
 
         let mut stats = HashMap::new();
@@ -191,4 +206,44 @@ fn decode_stat(bytes: &[u8]) -> Option<(Stat, Key)> {
     let mtime_ns = u64::from_le_bytes(bytes[..8].try_into().ok()?);
     let size = u64::from_le_bytes(bytes[8..16].try_into().ok()?);
     Some((Stat { mtime_ns, size }, bytes[16..].try_into().ok()?))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_different_extractor_invalidates_the_stat_index() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("cache.redb");
+        let stat = Stat {
+            mtime_ns: 1,
+            size: 2,
+        };
+        let key = [7u8; 32];
+        {
+            let mut cache = Cache::open(&path).unwrap();
+            let facts = FileFacts::default();
+            let mut stats = HashMap::new();
+            stats.insert("a.py".to_string(), (stat, key));
+            cache.commit(&[(key, &facts)], stats, u64::MAX).unwrap();
+            assert_eq!(
+                Cache::open(&path).unwrap().stats.get("a.py"),
+                Some(&(stat, key))
+            );
+        }
+        // Simulate a cache written by another extractor build.
+        {
+            let db = Builder::new().create(&path).unwrap();
+            let tx = db.begin_write().unwrap();
+            tx.open_table(META)
+                .unwrap()
+                .insert("extractor", 1u64)
+                .unwrap();
+            tx.commit().unwrap();
+        }
+        let cache = Cache::open(&path).unwrap();
+        assert!(cache.stats.is_empty());
+        assert_eq!(cache.key_from_stat("a.py", stat), None);
+    }
 }
