@@ -1,0 +1,6 @@
+inherited AboutForm: TAboutForm
+  OnShow = FormShow
+  object Logo: TImage
+    OnClick = LogoClick
+  end
+end

@@ -7,12 +7,14 @@
 pub mod c;
 pub mod csharp;
 pub mod data;
+pub mod dotnet;
 pub mod elixir;
 pub mod fortran;
 pub mod go;
 pub mod java;
 pub mod julia;
 pub mod kotlin;
+pub mod legacy;
 pub mod objc;
 pub mod php;
 pub mod powershell;
@@ -24,6 +26,7 @@ pub mod script;
 pub mod sfc;
 pub mod swift;
 pub mod verilog;
+pub mod xml;
 pub mod zig;
 
 use tree_sitter::Node as TsNode;
@@ -66,6 +69,13 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Solidity => {}
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
+        Lang::MsBuild | Lang::Sln | Lang::Slnx | Lang::Razor | Lang::Xaml => {
+            dotnet::extract(&mut cx)
+        }
+        Lang::Inert => {}
+        Lang::Pascal | Lang::DelphiForm | Lang::Lpk | Lang::Apex | Lang::Cobol | Lang::Byond => {
+            legacy::extract(&mut cx)
+        }
     }
     let mut facts = cx.facts;
     facts.words = count_words(source);

@@ -64,6 +64,31 @@ pub enum Lang {
     Verilog,
     /// `.sol`: counted, never extracted (Graphify lacks the grammar, §37).
     Solidity,
+    /// `.csproj`, `.fsproj`, `.vbproj` (§43.1).
+    MsBuild,
+    /// `.sln` (§43.2).
+    Sln,
+    /// `.slnx` (§43.2).
+    Slnx,
+    /// `.razor`, `.cshtml` (§43.3).
+    Razor,
+    /// `.xaml` (§43.4).
+    Xaml,
+    /// Code Graphify counts but extracts nothing from (§44.8): `.r`, `.sql`, `.tf`, `.ejs`, and
+    /// perl, fish and tcsh shebang scripts.
+    Inert,
+    /// `.pas .dpr .pp .inc .lpr .dpk` (§44.1).
+    Pascal,
+    /// `.dfm .lfm` (§44.2).
+    DelphiForm,
+    /// `.lpk` (§44.3).
+    Lpk,
+    /// `.cls .trigger` (§44.4).
+    Apex,
+    /// `.cob .cbl .cpy` (§44.5).
+    Cobol,
+    /// `.dmf .dmi .dmm` (§44.6).
+    Byond,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -94,6 +119,12 @@ pub enum Family {
     Fortran,
     Verilog,
     Solidity,
+    /// .NET project and markup files (§43).
+    Dotnet,
+    /// Counted as code, never extracted (§44).
+    Inert,
+    /// Grammar-less scanners (§44).
+    Legacy,
 }
 
 impl Lang {
@@ -142,6 +173,19 @@ impl Lang {
             "v" | "sv" | "svh" | "vh" => Lang::Verilog,
             "sol" => Lang::Solidity,
             "h" => return crate::extract::objc::header_lang(path),
+            "csproj" | "fsproj" | "vbproj" => Lang::MsBuild,
+            "sln" => Lang::Sln,
+            "slnx" => Lang::Slnx,
+            "razor" | "cshtml" => Lang::Razor,
+            "xaml" => Lang::Xaml,
+            "r" | "sql" | "tf" | "ejs" => Lang::Inert,
+            "metal" => Lang::Cpp,
+            "pas" | "dpr" | "pp" | "inc" | "lpr" | "dpk" => Lang::Pascal,
+            "dfm" | "lfm" => Lang::DelphiForm,
+            "lpk" => Lang::Lpk,
+            "cls" | "trigger" => Lang::Apex,
+            "cob" | "cbl" | "cpy" => Lang::Cobol,
+            "dmf" | "dmi" | "dmm" => Lang::Byond,
             _ => return None,
         })
     }
@@ -173,6 +217,14 @@ impl Lang {
             Lang::Fortran => Family::Fortran,
             Lang::Verilog => Family::Verilog,
             Lang::Solidity => Family::Solidity,
+            Lang::MsBuild | Lang::Sln | Lang::Slnx | Lang::Razor | Lang::Xaml => Family::Dotnet,
+            Lang::Inert => Family::Inert,
+            Lang::Pascal
+            | Lang::DelphiForm
+            | Lang::Lpk
+            | Lang::Apex
+            | Lang::Cobol
+            | Lang::Byond => Family::Legacy,
         }
     }
 
@@ -205,11 +257,24 @@ impl Lang {
             Lang::Verilog => tree_sitter_verilog::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
             Lang::Solidity => return None,
+            Lang::MsBuild
+            | Lang::Sln
+            | Lang::Slnx
+            | Lang::Razor
+            | Lang::Xaml
+            | Lang::Inert
+            | Lang::Pascal
+            | Lang::DelphiForm
+            | Lang::Lpk
+            | Lang::Apex
+            | Lang::Cobol
+            | Lang::Byond => return None,
         })
     }
 }
 
-/// Extensionless scripts: python and sh/bash/zsh shebangs are code (§14.5).
+/// Extensionless scripts: the interpreter named by a shebang (after `env` and its flags) decides
+/// the language, by exact name (§14.5, §44.8): `python3.11` or `Python3` are not code.
 fn shebang(path: &Path) -> Option<Lang> {
     let mut head = [0u8; 128];
     let n = std::fs::File::open(path).ok()?.read(&mut head).ok()?;
@@ -218,17 +283,17 @@ fn shebang(path: &Path) -> Option<Lang> {
     let mut words = interp.split_whitespace();
     let mut prog = words.next()?.rsplit('/').next()?;
     if prog == "env" {
-        prog = words.next()?;
+        prog = words.find(|w| !w.starts_with('-'))?;
     }
-    if prog.starts_with("python") {
-        Some(Lang::Python)
-    } else if matches!(prog, "sh" | "bash" | "zsh") {
-        Some(Lang::Shell)
-    } else if prog.starts_with("ruby") {
-        Some(Lang::Ruby)
-    } else {
-        None
-    }
+    Some(match prog {
+        "python" | "python2" | "python3" => Lang::Python,
+        "sh" | "bash" | "zsh" | "ksh" | "dash" => Lang::Shell,
+        "ruby" => Lang::Ruby,
+        "node" | "nodejs" => Lang::JavaScript,
+        "php" => Lang::Php,
+        "perl" | "fish" | "tcsh" => Lang::Inert,
+        _ => return None,
+    })
 }
 
 thread_local! {

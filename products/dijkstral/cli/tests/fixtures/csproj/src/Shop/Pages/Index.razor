@@ -1,0 +1,30 @@
+@page "/"
+@page "/items/{id:int}"
+@using Shop.Services
+@using static System.Math
+@inject Shop.Core.IItemService Items
+@inject NavigationManager Navigation
+@inherits LayoutComponentBase
+
+<h1>Items</h1>
+<button @onclick="Load">Load</button>
+<Card Item="@item" />
+<Widget Title="hello" />
+<Widget Title="again" />
+<Div />
+
+@code {
+    private Item item;
+
+    protected override void OnInitialized()
+    {
+        Load();
+    }
+
+    private void Load()
+    {
+        item = Items.Find("x");
+    }
+
+    public static int Twice(int x) => x * 2;
+}

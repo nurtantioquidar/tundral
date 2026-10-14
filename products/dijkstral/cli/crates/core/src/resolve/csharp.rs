@@ -372,6 +372,10 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
         }
         id
     };
+    // Razor and XAML nodes act as types of the global namespace (§43.5): a type C# cannot find
+    // binds to the only such node with its simple name.
+    let markup_types = super::dotnet::markup_types(files);
+    let markup = |name: &str| markup_types.get(last(name)).cloned().flatten();
     for (v, _) in &cs {
         for e in &v.facts.edges {
             let t = e.target.as_str();
@@ -386,7 +390,10 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                 "t" if parts.len() == 4 => {
                     let (scope, arity) =
                         (parts[1].parse().unwrap_or(0), parts[2].parse().unwrap_or(0));
-                    match file(parts[0]).and_then(|f| types.resolve(f, scope, parts[3], arity)) {
+                    match file(parts[0])
+                        .and_then(|f| types.resolve(f, scope, parts[3], arity))
+                        .or_else(|| markup(parts[3]))
+                    {
                         Some(id) => id,
                         None => stub(parts[3], &mut res),
                     }
@@ -395,8 +402,9 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                 "b" if parts.len() == 5 => {
                     let (scope, arity) =
                         (parts[1].parse().unwrap_or(0), parts[2].parse().unwrap_or(0));
-                    let found =
-                        file(parts[0]).and_then(|f| types.resolve(f, scope, parts[3], arity));
+                    let found = file(parts[0])
+                        .and_then(|f| types.resolve(f, scope, parts[3], arity))
+                        .or_else(|| markup(parts[3]));
                     let implements = found
                         .as_ref()
                         .is_some_and(|id| types.interfaces.contains(id))

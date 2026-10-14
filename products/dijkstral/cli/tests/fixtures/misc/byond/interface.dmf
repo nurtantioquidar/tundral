@@ -1,0 +1,15 @@
+macro "default"
+	elem
+		name = "North"
+		command = ".north"
+window "mainwindow"
+	elem "mainwindow"
+		type = MAIN
+		is-pane = true
+	elem "map"
+		type = MAP
+		is-default = true
+window "infowindow"
+	elem "info"
+		type = CHILD
+		left = "statwindow"

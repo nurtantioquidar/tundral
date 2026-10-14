@@ -133,6 +133,8 @@ pub enum LangFacts {
     ObjC(crate::extract::objc::ObjcFacts),
     Fortran(crate::extract::fortran::FortranFacts),
     Verilog(crate::extract::verilog::VerilogFacts),
+    Dotnet(crate::extract::dotnet::DotnetFacts),
+    Legacy(crate::extract::legacy::LegacyFacts),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

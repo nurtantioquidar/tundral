@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <Name Value="WidgetsPkg"/>
+    <Files Count="2">
+      <Item1>
+        <Filename Value="Widgets.pas"/>
+        <UnitName Value="Widgets"/>
+      </Item1>
+      <Item2>
+        <Filename Value="extra.pas"/>
+        <UnitName Value="Extra"/>
+      </Item2>
+    </Files>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+    </RequiredPkgs>
+  </Package>
+</CONFIG>

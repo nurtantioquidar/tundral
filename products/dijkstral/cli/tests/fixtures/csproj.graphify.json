@@ -1,0 +1,2575 @@
+{
+ "nodes": [
+  {
+   "id": "shop_sln_shop",
+   "label": "Shop.sln",
+   "file_type": "code",
+   "source_file": "Shop.sln",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "build",
+   "label": "build",
+   "file_type": "code",
+   "source_file": "build",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_shop",
+   "label": "Shop.csproj",
+   "file_type": "code",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_core",
+   "label": "Core.csproj",
+   "file_type": "code",
+   "source_file": "src/Core/Core.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_shop_tests",
+   "label": "Shop.Tests.csproj",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "legacy_legacy",
+   "label": "Legacy.vbproj",
+   "file_type": "code",
+   "source_file": "legacy/Legacy.vbproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_slnx_shop",
+   "label": "Shop.slnx",
+   "file_type": "code",
+   "source_file": "Shop.slnx",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_gen_gen",
+   "label": "Gen",
+   "file_type": "code",
+   "source_file": "tools/Gen/Gen.fsproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "nuget_dapper",
+   "label": "Dapper (2.1.35)",
+   "file_type": "code",
+   "source_file": "legacy/Legacy.vbproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_core_csproj_framework_net8_0",
+   "label": "net8.0",
+   "file_type": "concept",
+   "source_file": "src/Core/Core.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "nuget_newtonsoft_json",
+   "label": "Newtonsoft.Json",
+   "file_type": "code",
+   "source_file": "src/Core/Core.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_core_csproj_sdk_microsoft_net_sdk",
+   "label": "Microsoft.NET.Sdk",
+   "file_type": "concept",
+   "source_file": "src/Core/Core.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_models",
+   "label": "Models.cs",
+   "file_type": "code",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "csharp_namespace:5ba844462a95df30",
+   "label": "Shop.Core",
+   "file_type": "code",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L1",
+   "type": "namespace",
+   "metadata": {
+    "kind": "csharp_namespace",
+    "namespace": "Shop.Core"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_models_shop_core_item",
+   "label": "Item",
+   "file_type": "code",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L3",
+   "metadata": {
+    "namespace": "Shop.Core",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_models_shop_core_item_name",
+   "label": "Name",
+   "file_type": "code",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L5",
+   "metadata": {
+    "namespace": "Shop.Core",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_models_shop_core_card",
+   "label": "Card",
+   "file_type": "code",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L8",
+   "metadata": {
+    "namespace": "Shop.Core",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_models_shop_core_card_item",
+   "label": "Item",
+   "file_type": "code",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L10",
+   "metadata": {
+    "namespace": "Shop.Core",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_models_shop_core_iitemservice",
+   "label": "IItemService",
+   "file_type": "code",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L13",
+   "metadata": {
+    "namespace": "Shop.Core",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_core_models_shop_core_iitemservice_find",
+   "label": ".Find()",
+   "file_type": "code",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L15",
+   "metadata": {
+    "namespace": "Shop.Core",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_pages_index",
+   "label": "Index.razor",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "route",
+   "label": "route:/",
+   "file_type": "concept",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "route_items_id_int",
+   "label": "route:/items/{id:int}",
+   "file_type": "concept",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "system_math",
+   "label": "System.Math",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "navigationmanager",
+   "label": "NavigationManager",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "layoutcomponentbase",
+   "label": "LayoutComponentBase",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_pages_index_razor_card",
+   "label": "Card",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "widget",
+   "label": "Widget",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_pages_index_oninitialized",
+   "label": "OnInitialized",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L19",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_pages_index_load",
+   "label": "Load",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_pages_index_twice",
+   "label": "Twice",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_pages_widget",
+   "label": "Widget.razor",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Widget.razor",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "componentbase",
+   "label": "ComponentBase",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/Widget.razor",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_pages_imports",
+   "label": "_Imports.razor",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/_Imports.razor",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "microsoft_aspnetcore_components_web",
+   "label": "Microsoft.AspNetCore.Components.Web",
+   "file_type": "code",
+   "source_file": "src/Shop/Pages/_Imports.razor",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_itemservice",
+   "label": "ItemService.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "csharp_namespace:b854194435a541c1",
+   "label": "Shop.Services",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L3",
+   "type": "namespace",
+   "metadata": {
+    "kind": "csharp_namespace",
+    "namespace": "Shop.Services"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_itemservice_shop_services_itemservice",
+   "label": "ItemService",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L5",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_itemservice_shop_services_itemservice_find",
+   "label": ".Find()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L7",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_itemservice_shop_services_wizard",
+   "label": "Wizard",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L10",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "framework_net48",
+   "label": "net48",
+   "file_type": "concept",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "framework_targetframeworks",
+   "label": "$(TargetFrameworks)",
+   "file_type": "concept",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_shop_csproj_framework_net8_0",
+   "label": "net8.0",
+   "file_type": "concept",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_shop_csproj_framework_net9_0",
+   "label": "net9.0",
+   "file_type": "concept",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "nuget_communitytoolkit_mvvm",
+   "label": "CommunityToolkit.Mvvm (8.2.2)",
+   "file_type": "code",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "nuget_serilog",
+   "label": "Serilog (3.1.1)",
+   "file_type": "code",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "nuget_system_valuetuple",
+   "label": "System.ValueTuple (4.5.0)",
+   "file_type": "code",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "sdk_microsoft_net_sdk_web",
+   "label": "Microsoft.NET.Sdk.Web",
+   "file_type": "concept",
+   "source_file": "src/Shop/Shop.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel",
+   "label": "SettingsViewModel.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "csharp_namespace:64e39de93bfd1d74",
+   "label": "Shop.ViewModels",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L4",
+   "type": "namespace",
+   "metadata": {
+    "kind": "csharp_namespace",
+    "namespace": "Shop.ViewModels"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "label": "SettingsViewModel",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L6",
+   "metadata": {
+    "is_partial": true,
+    "namespace": "Shop.ViewModels",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "observableobject",
+   "label": "ObservableObject",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_plain",
+   "label": "Plain",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L13",
+   "metadata": {
+    "namespace": "Shop.ViewModels",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_saveasync",
+   "label": ".SaveAsync()",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L15",
+   "metadata": {
+    "namespace": "Shop.ViewModels",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "task",
+   "label": "Task",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "relaycommand",
+   "label": "RelayCommand",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_reset",
+   "label": ".Reset()",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L21",
+   "metadata": {
+    "namespace": "Shop.ViewModels",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_designview",
+   "label": "DesignView.xaml",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_designview_usercontrol",
+   "label": "UserControl",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_designview_designview",
+   "label": "DesignView",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_title",
+   "label": "Title",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_username",
+   "label": "UserName",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_savecommand",
+   "label": "SaveCommand",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_resetcommand",
+   "label": "ResetCommand",
+   "file_type": "code",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L21",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_designview_layout",
+   "label": "Layout",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "xaml_grid",
+   "label": "Grid",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_home",
+   "label": "Home.cshtml",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "route_home",
+   "label": "route:/home",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "homemodel",
+   "label": "HomeModel",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_home_cshtml_card",
+   "label": "Card",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_home_greet",
+   "label": "Greet",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow",
+   "label": "MainWindow.xaml",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_window",
+   "label": "Window",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+   "label": "MainWindow",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L5",
+   "metadata": {
+    "is_partial": true,
+    "namespace": "Shop.Views",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_window_loaded",
+   "label": ".Window_Loaded()",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L7",
+   "metadata": {
+    "namespace": "Shop.Views",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "binding_order_total",
+   "label": "Order.Total",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "binding_converter_moneyconverter",
+   "label": "MoneyConverter",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_rootpanel",
+   "label": "RootPanel",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "xaml_stackpanel",
+   "label": "StackPanel",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_searchbox",
+   "label": "SearchBox",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "xaml_textbox",
+   "label": "TextBox",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "binding_query",
+   "label": "Query",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_search_changed",
+   "label": ".Search_Changed()",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L9",
+   "metadata": {
+    "namespace": "Shop.Views",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_savebutton",
+   "label": "SaveButton",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "xaml_button",
+   "label": "Button",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_save_click",
+   "label": ".Save_Click()",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L11",
+   "metadata": {
+    "namespace": "Shop.Views",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_xaml_binding_savecommand",
+   "label": "SaveCommand",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "binding_status",
+   "label": "Status",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "binding_converter_upperconverter",
+   "label": "UpperConverter",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_unnamed_click",
+   "label": ".Unnamed_Click()",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L13",
+   "metadata": {
+    "namespace": "Shop.Views",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_xaml",
+   "label": "MainWindow.xaml.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "csharp_namespace:1e78a469d3cd39dc",
+   "label": "Shop.Views",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L3",
+   "type": "namespace",
+   "metadata": {
+    "kind": "csharp_namespace",
+    "namespace": "Shop.Views"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "routedeventargs",
+   "label": "RoutedEventArgs",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "textchangedeventargs",
+   "label": "TextChangedEventArgs",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_helper",
+   "label": ".Helper()",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L15",
+   "metadata": {
+    "namespace": "Shop.Views",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "eventargs",
+   "label": "EventArgs",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_settingsview",
+   "label": "SettingsView.xaml",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_settingsview_usercontrol",
+   "label": "UserControl",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_settingsview_settingsview",
+   "label": "SettingsView",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "binding_title",
+   "label": "Title",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "binding_username",
+   "label": "UserName",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_settingsview_xaml_binding_savecommand",
+   "label": "SaveCommand",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "binding_resetcommand",
+   "label": "ResetCommand",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_wizardpage",
+   "label": "WizardPage.xaml",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_wizardpage_page",
+   "label": "Page",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_wizardpage_wizardpage",
+   "label": "WizardPage",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_views_wizardpage_steps",
+   "label": "Steps",
+   "file_type": "code",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "xaml_frame",
+   "label": "Frame",
+   "file_type": "concept",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_shop_tests_csproj_framework_net8_0",
+   "label": "net8.0",
+   "file_type": "concept",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_shop_tests_csproj_framework_net9_0",
+   "label": "net9.0",
+   "file_type": "concept",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "nuget_xunit",
+   "label": "xunit (2.9.2)",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "nuget_microsoft_net_test_sdk",
+   "label": "Microsoft.NET.Test.Sdk (17.11.1)",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_missing_missing",
+   "label": "Missing.csproj",
+   "file_type": "code",
+   "source_file": "src/Missing/Missing.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "ext_external_external_csproj",
+   "label": "External.csproj",
+   "file_type": "code",
+   "source_file": "../External/External.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_shop_tests_csproj_sdk_microsoft_net_sdk",
+   "label": "Microsoft.NET.Sdk",
+   "file_type": "concept",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "communitytoolkit_mvvm_componentmodel",
+   "label": "communitytoolkit_mvvm_componentmodel",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "communitytoolkit_mvvm_input",
+   "label": "communitytoolkit_mvvm_input",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "system_windows",
+   "label": "system_windows",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "shop_sln_shop",
+   "target": "build",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.sln",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_sln_shop",
+   "target": "src_shop_shop",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.sln",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_sln_shop",
+   "target": "src_core_core",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.sln",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_sln_shop",
+   "target": "tests_shop_tests_shop_tests",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.sln",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_sln_shop",
+   "target": "legacy_legacy",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.sln",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "src_core_core",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.sln",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_slnx_shop",
+   "target": "src_shop_shop",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.slnx",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_slnx_shop",
+   "target": "src_core_core",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.slnx",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_slnx_shop",
+   "target": "tools_gen_gen",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop.slnx",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_legacy",
+   "target": "nuget_dapper",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/Legacy.vbproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_core",
+   "target": "src_core_core_csproj_framework_net8_0",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Core.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_core",
+   "target": "nuget_newtonsoft_json",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Core.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_core",
+   "target": "src_core_core_csproj_sdk_microsoft_net_sdk",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Core.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models",
+   "target": "csharp_namespace:5ba844462a95df30",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models",
+   "target": "src_core_models_shop_core_item",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models_shop_core_item",
+   "target": "src_core_models_shop_core_item_name",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models",
+   "target": "src_core_models_shop_core_card",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models_shop_core_card",
+   "target": "src_core_models_shop_core_card_item",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models_shop_core_card",
+   "target": "src_core_models_shop_core_item",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "field",
+   "metadata": {
+    "ref_token": "Item"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models",
+   "target": "src_core_models_shop_core_iitemservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models_shop_core_iitemservice",
+   "target": "src_core_models_shop_core_iitemservice_find",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models_shop_core_iitemservice_find",
+   "target": "src_core_models_shop_core_item",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Core/Models.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "Item"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "route",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "route_items_id_int",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "csharp_namespace:b854194435a541c1",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L3",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Shop.Services",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "system_math",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L4",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "static",
+    "target_fqn": "System.Math",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "src_core_models_shop_core_iitemservice",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L5",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "IItemService",
+    "qualified": true,
+    "ref_qualifier": "Shop.Core"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "navigationmanager",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L6",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "NavigationManager"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "layoutcomponentbase",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "src_shop_pages_index_razor_card",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "widget",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "src_shop_pages_index_oninitialized",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "src_shop_pages_index_load",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_index",
+   "target": "src_shop_pages_index_twice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Index.razor",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_widget",
+   "target": "componentbase",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/Widget.razor",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_imports",
+   "target": "csharp_namespace:5ba844462a95df30",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/_Imports.razor",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Shop.Core",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_pages_imports",
+   "target": "microsoft_aspnetcore_components_web",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Pages/_Imports.razor",
+   "source_location": "L2",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Microsoft.AspNetCore.Components.Web",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_itemservice",
+   "target": "csharp_namespace:5ba844462a95df30",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Shop.Core",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_itemservice",
+   "target": "csharp_namespace:b854194435a541c1",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_itemservice",
+   "target": "src_shop_services_itemservice_shop_services_itemservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_itemservice_shop_services_itemservice",
+   "target": "src_core_models_shop_core_iitemservice",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "IItemService"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_itemservice_shop_services_itemservice",
+   "target": "src_shop_services_itemservice_shop_services_itemservice_find",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_itemservice_shop_services_itemservice_find",
+   "target": "src_core_models_shop_core_item",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "Item"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_itemservice",
+   "target": "src_shop_services_itemservice_shop_services_wizard",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_itemservice_shop_services_wizard",
+   "target": "src_shop_views_wizardpage_page",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "Page"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "framework_net48",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Shop.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "framework_targetframeworks",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Shop.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "src_shop_shop_csproj_framework_net8_0",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Shop.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "src_shop_shop_csproj_framework_net9_0",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Shop.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "nuget_communitytoolkit_mvvm",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Shop.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "nuget_serilog",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Shop.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "nuget_system_valuetuple",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Shop.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "sdk_microsoft_net_sdk_web",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Shop.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel",
+   "target": "communitytoolkit_mvvm_componentmodel",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "CommunityToolkit.Mvvm.ComponentModel",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel",
+   "target": "communitytoolkit_mvvm_input",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L2",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "CommunityToolkit.Mvvm.Input",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel",
+   "target": "csharp_namespace:64e39de93bfd1d74",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "target": "observableobject",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L6",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "ObservableObject"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_plain",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_saveasync",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_saveasync",
+   "target": "task",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "Task"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_saveasync",
+   "target": "relaycommand",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "attribute",
+   "metadata": {
+    "ref_token": "RelayCommand"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_reset",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_reset",
+   "target": "relaycommand",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L21",
+   "weight": 1.0,
+   "context": "attribute",
+   "metadata": {
+    "ref_token": "RelayCommand"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_designview",
+   "target": "src_shop_views_designview_usercontrol",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_designview_usercontrol",
+   "target": "src_shop_views_designview_designview",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "x_class",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_designview_usercontrol",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "view_model",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_title",
+   "relation": "defines",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "communitytoolkit_observable_property",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_username",
+   "relation": "defines",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "communitytoolkit_observable_property",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_savecommand",
+   "relation": "defines",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "communitytoolkit_relay_command",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_resetcommand",
+   "relation": "defines",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
+   "source_location": "L21",
+   "weight": 1.0,
+   "context": "communitytoolkit_relay_command",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_designview_usercontrol",
+   "target": "src_shop_views_designview_layout",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_designview_layout",
+   "target": "xaml_grid",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/DesignView.xaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_home",
+   "target": "route_home",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_home",
+   "target": "homemodel",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_home",
+   "target": "csharp_namespace:5ba844462a95df30",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": "L3",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Shop.Core",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_home",
+   "target": "src_core_models_shop_core_iitemservice",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "IItemService"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_home",
+   "target": "src_shop_views_home_cshtml_card",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_home",
+   "target": "src_shop_views_home_greet",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/Home.cshtml",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow",
+   "target": "src_shop_views_mainwindow_window",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "x_class",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_window_loaded",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_window_loaded",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "binding_order_total",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "binding_path",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "binding_converter_moneyconverter",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "binding_converter",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "src_shop_views_mainwindow_rootpanel",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_rootpanel",
+   "target": "xaml_stackpanel",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "src_shop_views_mainwindow_searchbox",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_searchbox",
+   "target": "xaml_textbox",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_searchbox",
+   "target": "binding_query",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "binding_path",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_searchbox",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_search_changed",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_search_changed",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "src_shop_views_mainwindow_savebutton",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_savebutton",
+   "target": "xaml_button",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_savebutton",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_save_click",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_save_click",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_savebutton",
+   "target": "src_shop_views_mainwindow_xaml_binding_savecommand",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "binding_command",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "binding_status",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "binding_path",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "binding_converter_upperconverter",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "binding_converter",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_window",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_unnamed_click",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_unnamed_click",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml",
+   "target": "system_windows",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "System.Windows",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml",
+   "target": "csharp_namespace:1e78a469d3cd39dc",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_window_loaded",
+   "target": "routedeventargs",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "RoutedEventArgs"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_search_changed",
+   "target": "textchangedeventargs",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "TextChangedEventArgs"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_save_click",
+   "target": "routedeventargs",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "RoutedEventArgs"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_unnamed_click",
+   "target": "routedeventargs",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "RoutedEventArgs"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+   "target": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_helper",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_mainwindow_xaml_shop_views_mainwindow_helper",
+   "target": "eventargs",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/MainWindow.xaml.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "EventArgs"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview",
+   "target": "src_shop_views_settingsview_usercontrol",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "src_shop_views_settingsview_settingsview",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "x_class",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "view_model",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "binding_title",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "binding_path",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_title",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "binding_path",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "binding_username",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "binding_path",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_username",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "binding_path",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "src_shop_views_settingsview_xaml_binding_savecommand",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "binding_command",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_savecommand",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "binding_command",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "binding_resetcommand",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "binding_command",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_settingsview_usercontrol",
+   "target": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_resetcommand",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "source_file": "src/Shop/Views/SettingsView.xaml",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "binding_command",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_wizardpage",
+   "target": "src_shop_views_wizardpage_page",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_wizardpage_page",
+   "target": "src_shop_views_wizardpage_wizardpage",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "x_class",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_wizardpage_page",
+   "target": "src_shop_views_wizardpage_steps",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_views_wizardpage_steps",
+   "target": "xaml_frame",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Views/WizardPage.xaml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_shop_tests",
+   "target": "tests_shop_tests_shop_tests_csproj_framework_net8_0",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_shop_tests",
+   "target": "tests_shop_tests_shop_tests_csproj_framework_net9_0",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_shop_tests",
+   "target": "nuget_xunit",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_shop_tests",
+   "target": "nuget_microsoft_net_test_sdk",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_shop_tests",
+   "target": "src_shop_shop",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_shop_tests",
+   "target": "src_missing_missing",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_shop_tests",
+   "target": "ext_external_external_csproj",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_shop_tests",
+   "target": "tests_shop_tests_shop_tests_csproj_sdk_microsoft_net_sdk",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/Shop.Tests.csproj",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_core_models_shop_core_iitemservice_find",
+   "target": "src_shop_services_itemservice_shop_services_itemservice_find",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/ItemService.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

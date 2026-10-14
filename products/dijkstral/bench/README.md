@@ -465,3 +465,15 @@ ecto cold `extract`, single runs on a busy machine (other builds running), indic
 Graphify 3.55 s wall (6.53 s user), dijkstral 0.25 s wall (0.70 s user). dijkstral `--timings`
 (release, 126 files): discover 9.0 ms, stat 51.8, cache-read 30.0, extract 150.8, cache-write
 18.7, resolve 9.5, cluster 9.0, write 26.7, analyze 2.8, report 34.7, html 12.9.
+Stage 4b, C# project/markup and grammar-less files (2026-10-15, dijkstral on base `16deb0e` plus
+the stage-4b change, all extensions, same frozen references):
+
+| repo | def nodes | all nodes | all links | NMI |
+|---|---|---|---|---|
+| serilog (C#) | 100.0 / 100.0 | 99.9 / 100.0 | 99.7 / 99.9 | 0.881 |
+| graphify | 99.1 / 100.0 | 99.1 / 99.4 | 98.6 / 95.9 | 0.948 |
+
+serilog's remaining node gap is its two `.ps1` scripts (PowerShell, another stage); the graphify
+repository's remaining definitions are in languages other stages add (`.f90 .groovy .ps1 .psd1 .zig
+.jl .sv .m .luau .ex`) plus Python/C++/JS differences already listed for those languages.
+

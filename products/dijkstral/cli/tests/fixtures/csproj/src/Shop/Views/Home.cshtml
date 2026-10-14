@@ -1,0 +1,9 @@
+@page "/home"
+@model HomeModel
+@using Shop.Core
+@inject IItemService Items
+<partial name="_Footer" />
+<Card />
+@functions {
+    public string Greet() { return "hi"; }
+}
