@@ -66,3 +66,77 @@ tier = "huge"
 langs = ["go"]
 edit_file = "pkg/scheduler/scheduler.go"
 comment = "//"
+
+# Stage 4a languages.
+
+[[repo]]
+name = "jq"
+url = "https://github.com/jqlang/jq"
+commit = "34f7186b86743a083a589741b6cea95293524108"   # jq-1.8.2
+tier = "medium"
+langs = ["c"]
+edit_file = "src/jv.c"
+comment = "//"
+
+[[repo]]
+name = "fmt"
+url = "https://github.com/fmtlib/fmt"
+commit = "1be298e1bd68957e4cd352e1f676f00e07dcfb57"   # 12.2.0
+tier = "medium"
+langs = ["cpp"]
+edit_file = "src/format.cc"
+comment = "//"
+
+[[repo]]
+name = "serilog"
+url = "https://github.com/serilog/serilog"
+commit = "6d9fc0b84e004418f2677b5961b9c8970349d0be"   # v4.4.0
+tier = "medium"
+langs = ["csharp"]
+edit_file = "src/Serilog/LoggerConfiguration.cs"
+comment = "//"
+
+[[repo]]
+name = "okhttp"
+url = "https://github.com/square/okhttp"
+commit = "a94bdf152084d11acecd44dcd09ffef203f4f0aa"   # parent-5.5.0
+tier = "large"
+langs = ["kotlin", "java"]
+edit_file = "okhttp/src/commonJvmAndroid/kotlin/okhttp3/OkHttpClient.kt"
+comment = "//"
+
+[[repo]]
+name = "munit"
+url = "https://github.com/scalameta/munit"
+commit = "031dbe8243308413d763c96add3c7e95c7e61ee9"   # v1.3.6
+tier = "small"
+langs = ["scala"]
+edit_file = "munit/shared/src/main/scala/munit/Assertions.scala"
+comment = "//"
+
+[[repo]]
+name = "alamofire"
+url = "https://github.com/Alamofire/Alamofire"
+commit = "bda9ed57d72988a3a2ada33d824583541f86eac6"   # 5.12.2
+tier = "medium"
+langs = ["swift"]
+edit_file = "Source/Core/Session.swift"
+comment = "//"
+
+[[repo]]
+name = "guzzle"
+url = "https://github.com/guzzle/guzzle"
+commit = "93939470950a9b11e2e84204166ef5e048c55fe4"   # 8.2.0
+tier = "small"
+langs = ["php"]
+edit_file = "src/Client.php"
+comment = "//"
+
+[[repo]]
+name = "sinatra"
+url = "https://github.com/sinatra/sinatra"
+commit = "599a007a779dc9940e49f34e9077220f4c209f4b"   # v4.2.1
+tier = "small"
+langs = ["ruby"]
+edit_file = "lib/sinatra/base.rb"
+comment = "#"
