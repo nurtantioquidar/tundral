@@ -446,3 +446,15 @@ dijkstral defers to stage 4b; on `.cs` alone definitions are at 100%. fmt's gaps
 `cli/docs/graphify-format.md` §25 (self-calls Graphify drops in large files, include-target rules
 only partly pinned).
 
+Stage 4b, C# project/markup and grammar-less files (2026-10-15, dijkstral on base `16deb0e` plus
+the stage-4b change, all extensions, same frozen references):
+
+| repo | def nodes | all nodes | all links | NMI |
+|---|---|---|---|---|
+| serilog (C#) | 100.0 / 100.0 | 99.9 / 100.0 | 99.7 / 99.9 | 0.881 |
+| graphify | 99.1 / 100.0 | 99.1 / 99.4 | 98.6 / 95.9 | 0.948 |
+
+serilog's remaining node gap is its two `.ps1` scripts (PowerShell, another stage); the graphify
+repository's remaining definitions are in languages other stages add (`.f90 .groovy .ps1 .psd1 .zig
+.jl .sv .m .luau .ex`) plus Python/C++/JS differences already listed for those languages.
+

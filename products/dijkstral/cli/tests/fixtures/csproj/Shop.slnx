@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Shop/Shop.csproj">
+      <BuildDependency Project="src/Core/Core.csproj" />
+    </Project>
+    <Project Path="src/Core/Core.csproj" />
+  </Folder>
+  <Project Path="tools/Gen/Gen.fsproj" />
+</Solution>

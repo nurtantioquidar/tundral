@@ -1,0 +1,289 @@
+{
+  "communities": {
+    "0": [
+      "binding_converter_moneyconverter",
+      "binding_converter_upperconverter",
+      "binding_order_total",
+      "binding_query",
+      "binding_status",
+      "csharp_namespace:1e78a469d3cd39dc",
+      "eventargs",
+      "routedeventargs",
+      "src_shop_views_mainwindow",
+      "src_shop_views_mainwindow_rootpanel",
+      "src_shop_views_mainwindow_savebutton",
+      "src_shop_views_mainwindow_searchbox",
+      "src_shop_views_mainwindow_window",
+      "src_shop_views_mainwindow_xaml",
+      "src_shop_views_mainwindow_xaml_binding_savecommand",
+      "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+      "src_shop_views_mainwindow_xaml_shop_views_mainwindow_helper",
+      "src_shop_views_mainwindow_xaml_shop_views_mainwindow_save_click",
+      "src_shop_views_mainwindow_xaml_shop_views_mainwindow_search_changed",
+      "src_shop_views_mainwindow_xaml_shop_views_mainwindow_unnamed_click",
+      "src_shop_views_mainwindow_xaml_shop_views_mainwindow_window_loaded",
+      "system_windows",
+      "textchangedeventargs",
+      "xaml_button",
+      "xaml_stackpanel",
+      "xaml_textbox"
+    ],
+    "1": [
+      "build",
+      "ext_external_external_csproj",
+      "framework_net48",
+      "framework_targetframeworks",
+      "legacy_legacy",
+      "nuget_communitytoolkit_mvvm",
+      "nuget_dapper",
+      "nuget_microsoft_net_test_sdk",
+      "nuget_newtonsoft_json",
+      "nuget_serilog",
+      "nuget_system_valuetuple",
+      "nuget_xunit",
+      "sdk_microsoft_net_sdk_web",
+      "shop_sln_shop",
+      "shop_slnx_shop",
+      "src_core_core",
+      "src_core_core_csproj_framework_net8_0",
+      "src_core_core_csproj_sdk_microsoft_net_sdk",
+      "src_missing_missing",
+      "src_shop_shop",
+      "src_shop_shop_csproj_framework_net9_0",
+      "tests_shop_tests_shop_tests",
+      "tools_gen_gen"
+    ],
+    "2": [
+      "binding_resetcommand",
+      "binding_title",
+      "binding_username",
+      "communitytoolkit_mvvm_componentmodel",
+      "communitytoolkit_mvvm_input",
+      "csharp_namespace:64e39de93bfd1d74",
+      "observableobject",
+      "relaycommand",
+      "src_shop_viewmodels_settingsviewmodel",
+      "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+      "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_plain",
+      "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_reset",
+      "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_resetcommand",
+      "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_saveasync",
+      "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_savecommand",
+      "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_title",
+      "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel_username",
+      "src_shop_views_settingsview",
+      "src_shop_views_settingsview_settingsview",
+      "src_shop_views_settingsview_usercontrol",
+      "task"
+    ],
+    "3": [
+      "csharp_namespace:5ba844462a95df30",
+      "homemodel",
+      "microsoft_aspnetcore_components_web",
+      "route_home",
+      "src_core_models",
+      "src_core_models_shop_core_card",
+      "src_core_models_shop_core_card_item",
+      "src_core_models_shop_core_iitemservice",
+      "src_core_models_shop_core_iitemservice_find",
+      "src_core_models_shop_core_item",
+      "src_core_models_shop_core_item_name",
+      "src_shop_pages_imports",
+      "src_shop_services_itemservice_shop_services_itemservice",
+      "src_shop_services_itemservice_shop_services_itemservice_find",
+      "src_shop_views_home",
+      "src_shop_views_home_cshtml_card",
+      "src_shop_views_home_greet"
+    ],
+    "4": [
+      "layoutcomponentbase",
+      "navigationmanager",
+      "route",
+      "route_items_id_int",
+      "src_shop_pages_index",
+      "src_shop_pages_index_load",
+      "src_shop_pages_index_oninitialized",
+      "src_shop_pages_index_razor_card",
+      "src_shop_pages_index_twice",
+      "system_math",
+      "widget"
+    ],
+    "5": [
+      "csharp_namespace:b854194435a541c1",
+      "src_shop_services_itemservice",
+      "src_shop_services_itemservice_shop_services_wizard",
+      "src_shop_views_wizardpage",
+      "src_shop_views_wizardpage_page",
+      "src_shop_views_wizardpage_steps",
+      "src_shop_views_wizardpage_wizardpage",
+      "xaml_frame"
+    ],
+    "6": [
+      "src_shop_views_designview",
+      "src_shop_views_designview_designview",
+      "src_shop_views_designview_layout",
+      "src_shop_views_designview_usercontrol",
+      "xaml_grid"
+    ],
+    "7": [
+      "componentbase",
+      "src_shop_pages_widget"
+    ]
+  },
+  "cohesion": {
+    "0": 0.09538461538461539,
+    "1": 0.11462450592885376,
+    "2": 0.11904761904761904,
+    "3": 0.15441176470588236,
+    "4": 0.18181818181818182,
+    "5": 0.25,
+    "6": 0.4,
+    "7": 1.0
+  },
+  "gods": [
+    {
+      "id": "src_shop_shop",
+      "label": "Shop",
+      "degree": 12
+    },
+    {
+      "id": "src_shop_viewmodels_settingsviewmodel_shop_viewmodels_settingsviewmodel",
+      "label": "SettingsViewModel",
+      "degree": 11
+    },
+    {
+      "id": "src_shop_views_mainwindow_window",
+      "label": "Window",
+      "degree": 11
+    },
+    {
+      "id": "src_shop_views_settingsview_usercontrol",
+      "label": "UserControl",
+      "degree": 11
+    },
+    {
+      "id": "tests_shop_tests_shop_tests",
+      "label": "Shop.Tests",
+      "degree": 9
+    },
+    {
+      "id": "src_shop_views_mainwindow_xaml_shop_views_mainwindow",
+      "label": "MainWindow",
+      "degree": 7
+    },
+    {
+      "id": "src_core_core",
+      "label": "Core",
+      "degree": 6
+    },
+    {
+      "id": "src_core_models_shop_core_iitemservice",
+      "label": "IItemService",
+      "degree": 5
+    },
+    {
+      "id": "src_core_models_shop_core_item",
+      "label": "Item",
+      "degree": 5
+    },
+    {
+      "id": "src_shop_views_mainwindow_savebutton",
+      "label": "SaveButton",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Shop.Tests",
+      "target": "Microsoft.NET.Sdk",
+      "source_files": [
+        "tests/Shop.Tests/Shop.Tests.csproj",
+        "src/Core/Core.csproj"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; peripheral node `Microsoft.NET.Sdk` unexpectedly reaches hub `Shop.Tests`"
+    },
+    {
+      "source": "Shop.Tests",
+      "target": "net9.0",
+      "source_files": [
+        "tests/Shop.Tests/Shop.Tests.csproj",
+        "src/Shop/Shop.csproj"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; peripheral node `net9.0` unexpectedly reaches hub `Shop.Tests`"
+    },
+    {
+      "source": "UserControl",
+      "target": "SaveCommand",
+      "source_files": [
+        "src/Shop/Views/SettingsView.xaml",
+        "src/Shop/Views/MainWindow.xaml"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities; peripheral node `SaveCommand` unexpectedly reaches hub `UserControl`"
+    },
+    {
+      "source": "Shop.Tests",
+      "target": "net8.0",
+      "source_files": [
+        "tests/Shop.Tests/Shop.Tests.csproj",
+        "src/Core/Core.csproj"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "UserControl",
+      "target": "ResetCommand",
+      "source_files": [
+        "src/Shop/Views/SettingsView.xaml",
+        "src/Shop/ViewModels/SettingsViewModel.cs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; peripheral node `ResetCommand` unexpectedly reaches hub `UserControl`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `UserControl` connect `Community 2` to `Community 0`?",
+      "why": "High betweenness centrality (0.123) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 5 inferred relationships involving `SettingsViewModel` (e.g. with `ResetCommand` and `SaveCommand`) actually correct?",
+      "why": "`SettingsViewModel` has 5 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `MoneyConverter`, `UpperConverter`, `Order.Total` to the rest of the system?",
+      "why": "40 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09538461538461539 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `SaveCommand` connect `Community 0` to `Community 2`?",
+      "why": "High betweenness centrality (0.105) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 5 inferred relationships involving `UserControl` (e.g. with `SettingsViewModel` and `ResetCommand`) actually correct?",
+      "why": "`UserControl` has 5 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.11462450592885376 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

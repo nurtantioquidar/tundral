@@ -44,6 +44,8 @@ Status labels used below:
 23. Swift
 24. C
 25. C++
+43. C# project and markup files
+44. Other code-counted files
 
 ---
 
@@ -66,6 +68,8 @@ Status labels used below:
 | `swift/` | `Sources/App/main.swift`, `Sources/Shop/{Models/{Entity,User,Shape},Services/UserService,Extensions/User+Format}.swift`, `Tests/ShopTests/UserServiceTests.swift` | `swift.graphify.json` | `swift.clustered.graphify.json` |
 | `c/` | `main.c`, `include/{shape,util}.h`, `src/{shape,util}.c`, `tests/test_shape.c` | `c.graphify.json` | `c.clustered.graphify.json` |
 | `cpp/` | `include/geo/{shape.hpp,point.h}`, `src/{shape.cpp,main.cc,legacy.cxx,kernels.cu,kernels.h}`, `tests/shape_test.cc` | `cpp.graphify.json` | `cpp.clustered.graphify.json` |
+| `csproj/` | `Shop.sln`, `Shop.slnx`, `src/{Shop,Core}/*.csproj`, `tests/Shop.Tests/Shop.Tests.csproj`, `legacy/{Legacy.vbproj,Broken.csproj}`, `src/Shop/Pages/{Index,Widget,_Imports}.razor`, `src/Shop/Views/{Home.cshtml,*.xaml,MainWindow.xaml.cs}`, view model and C# models (§43) | `csproj.graphify.json` | `csproj.clustered.graphify.json` |
+| `misc/` | `pascal/` (`.pas .dpr .dpk .inc .dfm .lfm .lpk`), `apex/` (`.cls .trigger`), `cobol/` (`.cbl .cpy`), `byond/` (`.dmf .dmi .dmm`), `gpu/kernels.metal`, `inert/` (`.r .sql .tf .ejs`), `scripts/` (shebangs) (§44) | `misc.graphify.json` | `misc.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -1708,7 +1712,11 @@ Code (by extension, observed): `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .go .j
 .gradle .dart .lua .zig .ex .exs .erl .ml .jl .m .mm .v .sol .f90 .vb .vue .svelte .ps1 .r .sql .tf`.
 `.d.ts` and `.min.js` are code (not filtered).
 
-- `.r`, `.sql`, `.tf` count as code but contribute nothing (stderr: optional grammar missing).
+- `.r`, `.sql`, `.tf` count as code but contribute nothing, not even a file node (stderr: optional
+  grammar missing); `.ejs` likewise ("no AST extractor"). The project, markup and grammar-less
+  formats `.csproj .fsproj .vbproj .sln .slnx .razor .cshtml .xaml .pas .dpr .pp .inc .lpr .dpk
+  .dfm .lfm .lpk .cls .trigger .cob .cbl .cpy .dmf .dmi .dmm .metal` are code too (§43, §44; the
+  final per-extension and shebang check is §44.8).
 - Some code files "yield no symbols" (warning lists them): e.g. `fun kt() {}` in `.kt` (the
   function's id `<file>_kt` is the file's internal id, so it merges into the file node, §21.1),
   `fn = () => 1` in `.jsx`, any `.vue`/`.svelte`/`.lua`/`.zig` stub, root workspace `Cargo.toml`.
@@ -1727,7 +1735,9 @@ Rakefile`.
 Extensionless files with a shebang are code: `#!/usr/bin/env python3`, `#!/usr/bin/python`,
 `#!/bin/sh`, `#!/bin/bash`/`env bash`, `#!/bin/zsh` (shell extractor; note `.zsh` *extension* is
 not classified — quirk), `#!/usr/bin/env node`, `#!/usr/bin/env ruby`, `#!/usr/bin/env perl`
-(counted as code, zero nodes). `#!/usr/bin/env -S deno run` is not classified.
+(counted as code, zero nodes). `#!/usr/bin/env -S deno run` is not classified. Interpreter names
+are matched exactly (§44.8): `ksh`/`dash` are shell, `node`/`nodejs` JavaScript, `php` PHP,
+`fish`/`tcsh` inert like `perl`; `python3.11` and `ruby2.7` are not classified.
 Example in corpus: ripgrep `benchsuite/benchsuite` (python shebang) → file node id
 `benchsuite_benchsuite`, label `benchsuite`.
 
@@ -2208,12 +2218,7 @@ the pair (a call outranks it in the collapse).
 
 ### 18.5 `.csproj`, `.sln`, `.razor` in a code-only build
 
-**Open** (not implemented): `.csproj` files get a node (`source_location: null`) with
-`framework_<tfm>` nodes (`file_type: "concept"`, per file when the TFM is shared: `…_csproj_framework_net8_0`)
-and `…_csproj_sdk_<sdk>` nodes (`references`), `nuget_<package>` nodes labelled `Name (version)`
-(`imports`) and `imports` to referenced projects; `.sln` files a bare node; `.razor` files a node,
-`route:<path>` nodes, `@using` imports, `@inject` field references and `calls` to components.
-Parity runs use `--ext .cs`.
+Resolved: see §43 (project files, solutions, Razor, XAML).
 
 ### 18.6 Quirks (not reproduced)
 
@@ -3046,3 +3051,301 @@ usual (their file nodes: `x_h_x`, `x_cpp_x`).
 - **Error recovery.** A few fmt and gtest regions (methods attached to `buffer`, iterator buffer
   fields) come out of the parse differently, which moves `contains`/`references` lines and a
   handful of nodes.
+
+---
+
+## 43. C# project and markup files (2026-10-15)
+
+Fixture `csproj/` (a solution and `.slnx`, three `.csproj`, a namespaced `.vbproj`, a broken
+`.csproj`, `Directory.Build.props`, two Razor components and a `.cshtml` view, four XAML views with
+code-behind and a CommunityToolkit view model); goldens `csproj.graphify.json`,
+`csproj.clustered.graphify.json` (113 nodes, 134 links) and the §17.6 report goldens. Derived
+from about sixty probe trees, the graphify repository's `tests/fixtures` (copied, inputs only) and
+serilog. Implementation: `crates/core/src/extract/{xml.rs,dotnet/}`, `crates/core/src/resolve/dotnet.rs`,
+plus the additions to C# named in §43.5.
+
+`.csproj .fsproj .vbproj .sln .slnx .razor .cshtml .xaml` are code (case-insensitive);
+`.props .targets .vcxproj .proj .shproj .projitems .sqlproj .nuspec .resx .config .axaml
+packages.config` are not classified. The XML-based files (`.csproj` family, `.slnx`, `.xaml`) are
+read with a conforming namespace-aware XML parser: a file that is not well-formed (unclosed tag,
+junk after the root, undeclared prefix, undefined entity, duplicate attribute, leading whitespace
+before `<?xml`, empty file) produces **nothing, not even a file node**. A BOM is accepted.
+
+### 43.1 MSBuild projects (`.csproj`, `.fsproj`, `.vbproj`)
+
+Elements are matched by local name anywhere in the document, whatever their namespace or root
+element. All nodes and edges have `source_location: null` / no location; edges are EXTRACTED with
+no context.
+
+| Source | Node | Edge from the file |
+|---|---|---|
+| file | file node, label = basename, `source_location: null` | — |
+| each `TargetFramework`, then each `TargetFrameworks` (split on `;`, trimmed, empty dropped; `$(Var)` kept verbatim) | `framework_<slug>` concept, label as written | `references` |
+| `PackageReference Include=` (not `Update=`; the `Version` *attribute* only, a `<Version>` child or `VersionOverride` is ignored) | `nuget_<slug(Include)>` code node, label `Include (Version)` or `Include` | `imports` |
+| `ProjectReference Include=` | the referenced project's node (§43.2) | `imports` |
+| root `Sdk=` attribute (verbatim, `A;B/2.0` stays one) | `sdk_<slug>` concept | `references` |
+
+Order: frameworks, packages, project references, SDK; one node per id per file (the first label
+wins). `<Sdk Name=…>`, `Import`, `Reference`, `FrameworkReference`, `Using`, `Compile` produce
+nothing. A `<Project></Project>` keeps its file node. `framework_*`/`sdk_*` collide across files
+and are renamed (§4.5), then same-label concept nodes merge into the shortest id when the label's
+entropy is at least 2.5 bits per character (the JSON rule of §16): serilog's
+`src_serilog_serilog_csproj_framework_net10_0` serves every project; `net48` (2.32 bits) stays per
+file. `nuget_*` nodes are code and never merge.
+
+### 43.2 Solutions and project nodes
+
+`.sln`: the file node (`source_location: null`, also for an empty or unparsable file) and, for
+every `Project("{type}") = "Name", "Path", "{GUID}"` line (case-sensitive `Project`, any spacing):
+
+- a project node: `Path` with `\` read as `/`, joined to the solution's directory and normalised
+  (`os.path.normpath`); id `file_id(path)`, label `Name`, `source_file` = that path,
+  `source_location: null`. A `Path` equal to `Name` (solution folders, whatever the type GUID) is
+  not joined: id `slug(Name)`, `source_file` = `Name` (serilog: `assets`, `.github` → `github`).
+- `solution -contains-> project` (unlocated), in file order.
+- after all entries, `ProjectDependencies` sections: `project -imports-> dependency` by GUID
+  (case-insensitive; unknown GUIDs dropped). `NestedProjects` is ignored.
+
+`.slnx` (XML): every `Project Path=` (at any depth, inside `Folder`s too; lower-case `project`
+ignored) gives the project node, labelled with the path's last `/` segment without extension
+(backslashes are not split: `..\a\Core.csproj` → label `..\a\Core`), `contains` from the file, and
+each `BuildDependency Project=` child an `imports` after all entries. `DisplayName`, `Folder`,
+`File` produce nothing.
+
+Project paths that leave the root keep their `../` form as `source_file` and get
+`ext_<slug(path)>`; an absolute path is reduced to its basename. Inside the root, a referenced or
+listed project is one node however many files name it: **a project node's `source_file` is the
+project's path, not the naming file's**, and such nodes are not renamed by §4.5 (two solutions,
+a solution and the project file itself all merge). When several namings carry different labels,
+the **shortest label wins, ties by the smaller string** (`Graphify: node … was extracted twice …
+keeping …`): serilog's `src/Serilog/Serilog.csproj` is labelled `Serilog` (from the solution), not
+`Serilog.csproj`. A project node whose label equals its path's basename then takes part in file
+labelling (§5.1, `x/Q.csproj`); any other label does not.
+
+### 43.3 Razor (`.razor`, `.cshtml`)
+
+A line scanner. The file node has `source_location: null` (also when empty). Directives must start
+at column 0 and are read **in line order**; a directive naming `slug(X)` reuses a node the file
+already emitted under that id (an `@inject` stub stays a stub, an `@inherits` def stays a def):
+
+| Directive | Node | Edge from the file |
+|---|---|---|
+| `@page "p"` (unquoted ignored; one route per id) | concept `route_<slug(p)>` (`route` for `/`), label `route:p`, at its line | `references`, unlocated |
+| `@model T` | def `slug(T)`, label `T` | `references`, located |
+| `@using N` / `@using static N` / `@using A = T` (`;` stripped) | def `slug(target)`, label = target | `imports`, context `import`, `metadata {"using_kind": namespace\|static\|alias, "target_fqn": HTML-escaped target, "scope_kind": "file"[, "alias"]}` |
+| `@inject Type name` (`[\w.<>]+` then a name; `IFoo<A, B>` does not match) | stub `slug(simple name)` | `references`, context `field`, `metadata {"ref_token"[, "qualified": true, "ref_qualifier"]}` |
+| `@inherits T` | def `slug(T)` (generic arguments kept) | `inherits` |
+
+`@namespace`, `@implements`, `@layout`, `@attribute`, `@typeparam`, `@functions` as a directive
+produce nothing. Then **components**: every `<Name` in the whole file (code blocks and directive
+lines included: `List<CounterRecord>` and `ILogger<Index>` count) where `Name` is an uppercase
+ASCII letter followed by at least one ASCII letter or digit and then whitespace, `/` or `>`, except
+`article aside body button div footer form head header html input label link main meta nav option
+script section select span style table textarea title` (any case): def `slug(Name)` at its first
+line and a `calls` edge per occurrence (no context). Then **methods**: in each brace-matched `@code`
+/ `@functions` block, `(modifier\s+)+ type\s+ name\s*(` with modifiers `public private protected
+internal static async override virtual abstract sealed` (case-sensitive) and a type of word
+characters, `<>[],` and whitespace only: node `<file>_<slug(name)>`, label `name` (no
+parentheses), located at the first modifier, `contains` from the file (unlocated); the first of
+several wins. Constructors, properties, operators other than `operator int(` (→ `int`, quirk RZ1),
+generic methods, tuple or nullable return types are skipped; comments are not stripped.
+
+Cross-file (§43.5 lookups):
+
+- `@using N` of a local C# namespace imports the namespace node; `@using A = T` of a local type
+  the type; otherwise the def node stays.
+- `@inject T`: C# name lookup from the file — aliases, the global namespace, then its own
+  `@using` namespaces (two usings supplying the name: unresolved; `_Imports.razor` does not count);
+  unresolved → the shared stub `slug(T)` (not the file's own stub).
+- `@inherits T` and components bind **only when their node is an `@inject` stub**: to the only
+  local type of that simple name in the repository, if its namespace is global, one of the file's
+  `@using`s or one of an `_Imports.razor` in the same directory. A def-shaped component never binds.
+- A node of the file whose every edge was bound elsewhere disappears.
+- An `@inject` reference and a `calls`/`inherits` edge to the same target fold to the latter
+  **without** the reference's `context` and `metadata` (not the §8.2 merge).
+
+### 43.4 XAML (`.xaml`)
+
+Strict XML (§43 intro). The file node is at `L1`. The root becomes `<file>_<slug(tag)>` (local
+name), `file -contains-> root`. `x:` means the XAML language namespace
+`http://schemas.microsoft.com/winfx/2006/xaml`.
+
+- **Named elements**: the first `Name` or `x:Name` attribute of any element (the root too) gives
+  `<file>_<slug(name)>`, contained by the **root** (flat), with `references` (context `type`) to
+  the concept `xaml_<slug(local tag)>` (one per file; the prefix is dropped). Concepts and named
+  nodes are located at the element.
+- **Edge source**: a named element's own attributes start at its node; everything else (unnamed
+  elements, however deeply nested, and the root) at the root.
+- **Bindings**: `{Binding p}`, `{Binding Path=p, …}` (other keys ignored, `{Binding}` and
+  `Mode=…`-only produce nothing; `x:Bind`, `TemplateBinding`, `StaticResource` alone are ignored)
+  and `<Binding Path=…>` elements give the concept `binding_<slug(p)>` (label `p` as written,
+  `A.B[0].C` too) with `references`, context `binding_command` when the attribute is `Command`,
+  else `binding_path`; `Converter={StaticResource X}` gives `binding_converter_<slug(X)>` with
+  context `binding_converter`. Located at the attribute's line.
+- **`x:Class="N.C"`**: `root -references-> class` (context `x_class`, root line) to the class `N.C`
+  declared in the `.xaml.cs` file beside it (exact path, exact fqn); otherwise to the file's own node
+  `<file>_<slug(C)>`, which is only kept in that case.
+- **Events**: any attribute (not `x:`, not `xmlns`, not `Name Header ToolTip DataContext Source Uid
+  Key Class Text Tag Content Title Style`) whose value is an identifier naming a method of that
+  code-behind class with an `…Args` parameter type (`RoutedEventArgs`, `MyArgs<int>`; not
+  `Foo.BarArgs`, `object`, `List<EventArgs>`) gives `references` (context `event`, attribute line)
+  to the method.
+- **View models** — only for a view inside the directory of a `.csproj` (the nearest one):
+  explicit `DataContext="{d:DesignInstance Type=vm:X}"` / `Type={x:Type vm:X}` attributes (not the
+  positional form) and the elements inside any `*.DataContext` property element, in document order,
+  give `root -references-> X` (context `view_model`, EXTRACTED, at the attribute/element) to the
+  first C# class named `X` (arity 0) under that directory; with none written, the naming
+  convention: the `x:Class` short name (else the file stem) without a trailing `UserControl`,
+  `Control`, `Window`, `View` or `Page`, plus `ViewModel` (`MainWindow` → `MainViewModel`,
+  `HomePage` → `HomeViewModel`, `Nested` → none), INFERRED, at the root line.
+- **Generated members**: every view model bound this way gets the members CommunityToolkit.Mvvm
+  generates — `[ObservableProperty]` fields (`title`, `_title`, `m_title` → `Title`; `mName` →
+  `MName`) and `[RelayCommand]` methods (`SaveAsync` → `SaveCommand`) — as nodes
+  `<view model id>_<slug(member)>` (source the view model's file, located at the attribute list)
+  with `defines` from the class (INFERRED, context `communitytoolkit_observable_property` /
+  `communitytoolkit_relay_command`), unbound ones too. A binding whose whole path names one of them
+  adds an INFERRED `references` (same context and line) beside its concept edge; hand-written
+  properties never match.
+
+### 43.5 C# additions
+
+- `crates/core/src/extract/csharp.rs` records the generated members of §43.4 in `CsFacts.generated`
+  (no node is emitted by C# itself).
+- `crates/core/src/resolve/csharp.rs`: **Razor and XAML code nodes act as types of the global
+  namespace** — a type C# cannot resolve binds to the only Razor/XAML code node carrying its simple
+  name (the last segment of a qualified name): `class A : Window` with one XAML `<Window>` root
+  `inherits` that root node; with two such roots it stays the stub `window`.
+
+### 43.6 Discovery and ordering notes
+
+Graphify reads the code-behind and view-model files while extracting a XAML file, so it lists
+the bound C# class and the generated members among the view's nodes; dijkstral emits them once,
+from the C# file and the cross-file pass. The node order differs only in their positions (the
+fixture's communities are unaffected).
+
+### 43.7 Quirks (not reproduced)
+
+- **PJ1** A project or solution-folder node whose id equals another file's node id: Graphify
+  renames by the nodes' `source_file`s (`a` folder + `a.py` → `a_a`, `a_py_a`) or keeps the
+  project's id and gives the other file its with-extension id (`pkg_mod` + `pkg_mod_py`);
+  dijkstral merges them.
+- **PJ2** Graphify's per-file C# stubs collide with same-id Razor nodes, so a Razor component
+  `widget` that a C# file also references as an unresolved type becomes `<file>_razor_widget`;
+  dijkstral creates C# stubs in the cross-file pass and keeps `widget`.
+- **PJ3** An `x:Class` class that inherits its own XAML root's tag through §43.5 gets the
+  root's `x_class` context merged into its `inherits` link in Graphify.
+- **PJ4** Surprises: Graphify lists project-file concept nodes (`net9.0`, `Microsoft.NET.Sdk`,
+  XAML bindings) as surprise endpoints; the shared analysis (`analyze.rs`) excludes concept nodes,
+  so the fixture's report and analysis goldens are compared by shape (graph, communities, order
+  and every other analysis key match).
+
+---
+
+## 44. Other code-counted files (2026-10-15)
+
+Fixture `misc/` (Pascal unit/program/package/include, a Delphi form, a Lazarus form and package,
+Apex class and trigger, COBOL program and copybook, BYOND skin/icon/map, Metal, `.r .sql .tf .ejs`,
+five shebang scripts); goldens `misc.graphify.json`, `misc.clustered.graphify.json` (110 nodes,
+109 links) and the §17.6 report goldens. Implementation: `crates/core/src/extract/legacy/` and
+`crates/core/src/resolve/legacy.rs`. None of these uses a grammar; every file node is at `L1`,
+even for an empty file.
+
+### 44.1 Pascal (`.pas .dpr .pp .inc .lpr .dpk`)
+
+Comments (`{…}`, `(*…*)`, `//`) and strings are blanked first; keywords are case-insensitive.
+
+- `unit|program|library X;` (the first non-blank line) → `<file>_<slug(X)>`, contained by the file;
+  `.dpk` packages and include files have none (routines hang off the file node).
+- Every `uses` clause (interface and implementation) → `imports` (context `import`, at the `uses`
+  line) from the unit to each entry (`X in 'x.pas'` → `X`): the file node of the file declaring
+  `unit X`, else the external `slug(X)`.
+- `T[<…>] = class|interface|dispinterface[ sealed|abstract][(bases)]` (not `class of`) → type
+  `<file>_<slug(T)>` contained by the unit; its body is every line up to the next `end;`, whose
+  `[class] procedure|function|constructor|destructor M` lines are methods `<type>_<slug(M)>`,
+  label `M()`, `method`. **A forward `T = class;` opens a body too** (quirk PAS2): it swallows the
+  declarations up to the next `end;` and keeps the type's first-declaration entry, whose methods
+  merge in but whose later base list is never bound across files. Records and enums produce
+  nothing.
+- Bases: a type of the file → `inherits`; otherwise a node `slug(Base)` of the file at the
+  declaration (`tobject`, renamed per file by §4.5), unless a used unit declares the type, which
+  then gets the edge and the node is dropped. Interfaces are `inherits` too.
+- Routines defined after `implementation` (the whole file without it), outside type bodies →
+  `<file>_<slug(R)>`, label `R()`, contained by the unit; nested routines too, flat; interface
+  forward declarations make no node; `Class.Method` definitions make none either.
+- Calls: in each routine's first `begin` … next `end;` (so an outer routine with a nested one only
+  sees the nested body), every identifier not qualified by anything but `Self.` that names a
+  routine: the caller's class when it declares that name exactly once (overloads count twice), else
+  the only declaration of that name in the file; self-calls dropped, one edge per target. A method
+  whose name stays unresolved walks its class's bases (in the file, then in used units) in the
+  cross-file pass (EXTRACTED 1.0). The reported line is the routine's header line plus the number of
+  lines between `begin` and the call (quirk PAS1).
+
+### 44.2 Forms (`.dfm`, `.lfm`, text form)
+
+`object Name: TType` → node `<file>_<slug(TType)>` (one per type: two `TButton`s share it),
+contained by the nearest enclosing `object` (else the file); `OnX = Handler` → `<file>_<slug>`,
+label `Handler()`, `references` with context `event` from the enclosing object. `inherited` and
+`inline` blocks (and collection `item`s) nest but make nothing, so their events are dropped. Each
+edge once, at its first line.
+
+### 44.3 Lazarus packages (`.lpk`, XML)
+
+`Package/Name` (else the file stem) → `<file>_<slug(name)>`, `file -contains->`; each
+`RequiredPkgs/*/PackageName` → node `slug(name)` and `imports` (context `import`); each
+`Files/*/UnitName` → node `slug(unit)` and `contains`; all at `L1`. A unit named like exactly one
+`.pas`/`.pp` file takes that file's id as emitted by the package: when that is the package file's
+own id (same directory and stem) the unit *is* the package file node, which takes the shorter label
+(`sample`) and of the two opposite `contains` edges the one with the smaller source survives.
+
+### 44.4 Apex (`.cls`, `.trigger`)
+
+A line scanner. `class X` → `<file>_<slug(X)>` contained by the file (inner classes too) and the
+current class; `interface`/`enum` are contained by the current class without replacing it.
+`extends B` → node `slug(B)` and INFERRED `extends`; `implements A, B.C<…>` → nodes for the first
+dotted segment and INFERRED `implements`. A line starting with an access/member modifier or `void`
+and naming `name(` is a method of the current class (`<class>_<slug>`, `.name()`), including
+constructors and interface methods; an annotation on the same line hides it. After `@AuraEnabled`
+or `@InvocableMethod` the file also `contains` it (INFERRED). `trigger X on Obj` → the trigger node
+(current class) with INFERRED `uses` to `slug(Obj)`. SOQL `[SELECT … FROM Obj` and DML statements
+(`insert update delete upsert merge undelete` followed by a word) give INFERRED `uses` to
+`slug(Obj)` / `dml_<verb>` from the current class, **one edge per occurrence** (the last one's line
+survives).
+
+### 44.5 COBOL (`.cob .cbl .cpy`, fixed format)
+
+Every node carries `metadata {"language":"cobol","kind":…}`. `PROGRAM-ID. X.` →
+`<slug(file with extension)>_program_<slug(X)>` (`_callable`, kind `program`); level-numbered
+data items → `…_data_<name>` (kind `data_item`, of the program, or of the file in a copybook);
+area-A names in the PROCEDURE DIVISION → `…_paragraph_<name>` (kind `paragraph` or `section`,
+`_callable`); `PERFORM X [THRU Y]` → `calls` (no context) within the program. Comment lines
+(column 7 `*` or `/`) are skipped.
+
+### 44.6 BYOND (`.dmf .dmi .dmm`)
+
+`.dmf`: `window "w"` → `<file>_window_<w>` (label `window "w"`); its named `elem "e"` →
+`<file>_elem_<w>_<e>`, label `elem "e" [TYPE]` from its `type =`; `macro`/`menu` blocks and unnamed
+elements produce nothing. `.dmi`: the PNG `tEXt` `Description` chunk's `state = "s"` lines →
+`<file>_state_<s>`, label `"s"`, located by their line in that text. `.dmm`: the file node only.
+`.dm` is not classified.
+
+### 44.7 Notes and gaps
+
+- `.metal` is C++ (§25) and matches Graphify's output.
+- **Inert code**: `.r .sql .tf .ejs` and `perl`, `fish`, `tcsh` shebang scripts count as code (the
+  report's file and word counts) but produce nothing, not even a file node.
+- Not reproduced: zTXt (compressed) `.dmi` headers (no inflate; only the file node), and the
+  rename Graphify applies to a `.pas` file node when an `.lpk` names its unit from another stem
+  (`c.pas` → `d_sub_c_pas_d_sub_c`).
+- Surprises: with no cross-file candidate Graphify falls back to a community bridge between Pascal
+  routines (`Area()` → `Compute()`); the shared analysis lists none, so the fixture's analysis and
+  report goldens are compared by shape (every other key matches).
+
+### 44.8 Discovery after §43–§44
+
+Running both tools over one file of every extension and shebang of §14.5 plus the new ones, every
+file produces nodes in dijkstral exactly when it does in Graphify, except the languages other
+stages add (Astro, Dart, Elixir, Fortran, Groovy/Gradle, Julia, Lua/Luau, Objective-C `.mm`,
+PowerShell `.ps1 .psd1 .psm1`, Svelte, Verilog `.v .sv .svh .vh`, Vue, Zig). Shebangs are matched
+by exact interpreter name after `env` and its flags: `python python2 python3` (not `python3.11`,
+`Python3`, `pypy3`), `sh bash zsh ksh dash`, `ruby` (not `ruby2.7`), `node nodejs` (JavaScript),
+`php`, and the inert `perl fish tcsh`; a BOM or a blank first line hides the shebang.

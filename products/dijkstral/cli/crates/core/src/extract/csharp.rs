@@ -126,6 +126,21 @@ pub struct CsFacts {
     /// Namespaces declared in the file: (name, line of the first declaration).
     pub namespaces: Vec<(String, u32)>,
     pub calls: Vec<CsCall>,
+    /// Members CommunityToolkit.Mvvm generates; only XAML view models use them (§43.4).
+    #[serde(default)]
+    pub generated: Vec<CsGenerated>,
+}
+
+/// A `[ObservableProperty]` field's property or a `[RelayCommand]` method's command.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CsGenerated {
+    /// Local id of the declaring type.
+    pub owner: String,
+    /// The generated member's name (`userName` → `UserName`, `SaveAsync` → `SaveCommand`).
+    pub name: String,
+    /// Line of the attribute list naming the generator.
+    pub line: u32,
+    pub command: bool,
 }
 
 /// Prefix of the virtual ids above; see the module docs.
@@ -775,6 +790,7 @@ impl<'a> Cs<'_, 'a> {
             let line = Ctx::line(member);
             match member.kind() {
                 "field_declaration" => {
+                    self.generated_properties(member, owner);
                     if let Some(t) = named_children(member)
                         .into_iter()
                         .find(|n| n.kind() == "variable_declaration")
@@ -804,7 +820,10 @@ impl<'a> Cs<'_, 'a> {
                         self.type_refs(owner, t, "field", line, place, tparams);
                     }
                 }
-                "method_declaration" => self.method(member, place, owner, fields, tparams),
+                "method_declaration" => {
+                    self.generated_command(member, owner);
+                    self.method(member, place, owner, fields, tparams)
+                }
                 "constructor_declaration" => {
                     if let Some(b) = member.child_by_field_name("body") {
                         let mut locals = HashMap::new();
@@ -832,6 +851,77 @@ impl<'a> Cs<'_, 'a> {
                 _ => {}
             }
         }
+    }
+
+    /// Line of the attribute list holding `[<name>]` (or `[<name>Attribute]`, qualified or not).
+    fn generator_attribute(&self, decl: TsNode, name: &str) -> Option<u32> {
+        named_children(decl)
+            .into_iter()
+            .filter(|n| n.kind() == "attribute_list")
+            .find(|list| {
+                named_children(*list).into_iter().any(|a| {
+                    a.child_by_field_name("name").is_some_and(|n| {
+                        let text = self.text(n);
+                        let last = text.rsplit('.').next().unwrap_or(text);
+                        last == name || last.strip_suffix("Attribute") == Some(name)
+                    })
+                })
+            })
+            .map(Ctx::line)
+    }
+
+    /// `[ObservableProperty] T field;` → the generated property (`_x`, `m_x`, `x` → `X`).
+    fn generated_properties(&mut self, decl: TsNode, owner: &str) {
+        let Some(line) = self.generator_attribute(decl, "ObservableProperty") else {
+            return;
+        };
+        let Some(vars) = named_children(decl)
+            .into_iter()
+            .find(|n| n.kind() == "variable_declaration")
+        else {
+            return;
+        };
+        for d in named_children(vars) {
+            let Some(n) = d
+                .child_by_field_name("name")
+                .filter(|_| d.kind() == "variable_declarator")
+            else {
+                continue;
+            };
+            let field = self.text(n);
+            let bare = field
+                .strip_prefix("m_")
+                .or_else(|| field.strip_prefix('_'))
+                .unwrap_or(field);
+            let mut chars = bare.chars();
+            let Some(first) = chars.next() else {
+                continue;
+            };
+            self.facts.generated.push(CsGenerated {
+                owner: owner.to_string(),
+                name: first.to_uppercase().chain(chars).collect(),
+                line,
+                command: false,
+            });
+        }
+    }
+
+    /// `[RelayCommand] void Save()` / `SaveAsync()` → the generated `SaveCommand`.
+    fn generated_command(&mut self, decl: TsNode, owner: &str) {
+        let Some(line) = self.generator_attribute(decl, "RelayCommand") else {
+            return;
+        };
+        let Some(n) = decl.child_by_field_name("name") else {
+            return;
+        };
+        let name = self.text(n);
+        let base = name.strip_suffix("Async").unwrap_or(name);
+        self.facts.generated.push(CsGenerated {
+            owner: owner.to_string(),
+            name: format!("{base}Command"),
+            line,
+            command: true,
+        });
     }
 
     /// Parameter types (`parameter_type` from `source` when given) and their names as typed

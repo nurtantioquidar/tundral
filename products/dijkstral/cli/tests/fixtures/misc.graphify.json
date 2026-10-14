@@ -1,0 +1,2095 @@
+{
+ "nodes": [
+  {
+   "id": "apex_accountservice",
+   "label": "AccountService.cls",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_accountservice",
+   "label": "AccountService",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "baseservice",
+   "label": "BaseService",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "queueable",
+   "label": "Queueable",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "database",
+   "label": "Database",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_notifier",
+   "label": "Notifier",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_accountservice_notify",
+   "label": ".notify()",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_status",
+   "label": "Status",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_accountservice_getaccounts",
+   "label": ".getAccounts()",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_cls_account",
+   "label": "Account",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_accountservice_archive",
+   "label": ".archive()",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "dml_update",
+   "label": "update",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L17",
+   "_origin": "ast"
+  },
+  {
+   "id": "contact",
+   "label": "Contact",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_accountservice_create",
+   "label": ".create()",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
+   "id": "dml_insert",
+   "label": "insert",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accountservice_accountservice_helper",
+   "label": ".helper()",
+   "file_type": "code",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accounttrigger",
+   "label": "AccountTrigger.trigger",
+   "file_type": "code",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accounttrigger_accounttrigger",
+   "label": "AccountTrigger",
+   "file_type": "code",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "apex_accounttrigger_trigger_account",
+   "label": "Account",
+   "file_type": "code",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "dml_upsert",
+   "label": "upsert",
+   "file_type": "code",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_icons",
+   "label": "icons.dmi",
+   "file_type": "code",
+   "source_file": "byond/icons.dmi",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_icons_state_idle",
+   "label": "\"idle\"",
+   "file_type": "code",
+   "source_file": "byond/icons.dmi",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_icons_state_walk",
+   "label": "\"walk\"",
+   "file_type": "code",
+   "source_file": "byond/icons.dmi",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_interface",
+   "label": "interface.dmf",
+   "file_type": "code",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_interface_window_mainwindow",
+   "label": "window \"mainwindow\"",
+   "file_type": "code",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_interface_elem_mainwindow_mainwindow",
+   "label": "elem \"mainwindow\" [MAIN]",
+   "file_type": "code",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_interface_elem_mainwindow_map",
+   "label": "elem \"map\" [MAP]",
+   "file_type": "code",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_interface_window_infowindow",
+   "label": "window \"infowindow\"",
+   "file_type": "code",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_interface_elem_infowindow_info",
+   "label": "elem \"info\" [CHILD]",
+   "file_type": "code",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "byond_map",
+   "label": "map.dmm",
+   "file_type": "code",
+   "source_file": "byond/map.dmm",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing",
+   "label": "billing.cbl",
+   "file_type": "code",
+   "source_location": "L1",
+   "metadata": {
+    "language": "cobol",
+    "kind": "file"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing",
+   "label": "BILLING",
+   "file_type": "code",
+   "source_location": "L3",
+   "metadata": {
+    "language": "cobol",
+    "kind": "program"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing_data_ws_total",
+   "label": "WS-TOTAL",
+   "file_type": "code",
+   "source_location": "L6",
+   "metadata": {
+    "language": "cobol",
+    "kind": "data_item"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing_data_ws_rec",
+   "label": "WS-REC",
+   "file_type": "code",
+   "source_location": "L7",
+   "metadata": {
+    "language": "cobol",
+    "kind": "data_item"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing_data_ws_name",
+   "label": "WS-NAME",
+   "file_type": "code",
+   "source_location": "L8",
+   "metadata": {
+    "language": "cobol",
+    "kind": "data_item"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing_paragraph_main_para",
+   "label": "MAIN-PARA",
+   "file_type": "code",
+   "source_location": "L10",
+   "metadata": {
+    "language": "cobol",
+    "kind": "paragraph"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing_paragraph_init_para",
+   "label": "INIT-PARA",
+   "file_type": "code",
+   "source_location": "L15",
+   "metadata": {
+    "language": "cobol",
+    "kind": "paragraph"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing_paragraph_calc_section",
+   "label": "CALC-SECTION",
+   "file_type": "code",
+   "source_location": "L17",
+   "metadata": {
+    "language": "cobol",
+    "kind": "section"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing_paragraph_calc_para",
+   "label": "CALC-PARA",
+   "file_type": "code",
+   "source_location": "L18",
+   "metadata": {
+    "language": "cobol",
+    "kind": "paragraph"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_billing_cbl_program_billing_paragraph_calc_exit",
+   "label": "CALC-EXIT",
+   "file_type": "code",
+   "source_location": "L20",
+   "metadata": {
+    "language": "cobol",
+    "kind": "paragraph"
+   },
+   "source_file": "cobol/billing.cbl",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_record",
+   "label": "record.cpy",
+   "file_type": "code",
+   "source_location": "L1",
+   "metadata": {
+    "language": "cobol",
+    "kind": "file"
+   },
+   "source_file": "cobol/record.cpy",
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_record_cpy_data_customer_rec",
+   "label": "CUSTOMER-REC",
+   "file_type": "code",
+   "source_location": "L1",
+   "metadata": {
+    "language": "cobol",
+    "kind": "data_item"
+   },
+   "source_file": "cobol/record.cpy",
+   "_origin": "ast"
+  },
+  {
+   "id": "cobol_record_cpy_data_cust_id",
+   "label": "CUST-ID",
+   "file_type": "code",
+   "source_location": "L2",
+   "metadata": {
+    "language": "cobol",
+    "kind": "data_item"
+   },
+   "source_file": "cobol/record.cpy",
+   "_origin": "ast"
+  },
+  {
+   "id": "gpu_kernels",
+   "label": "kernels.metal",
+   "file_type": "code",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "gpu_kernels_particle",
+   "label": "Particle",
+   "file_type": "code",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L4",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "gpu_kernels_particle_x",
+   "label": "x",
+   "file_type": "code",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "gpu_kernels_particle_y",
+   "label": "y",
+   "file_type": "code",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "gpu_kernels_speed",
+   "label": "speed()",
+   "file_type": "code",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "gpu_kernels_step",
+   "label": "step()",
+   "file_type": "code",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L13",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "kernel",
+   "label": "kernel",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "device",
+   "label": "device",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "uint",
+   "label": "uint",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_about",
+   "label": "About.lfm",
+   "file_type": "code",
+   "source_file": "pascal/About.lfm",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_about_timage",
+   "label": "TImage",
+   "file_type": "code",
+   "source_file": "pascal/About.lfm",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_about_logoclick",
+   "label": "LogoClick()",
+   "file_type": "code",
+   "source_file": "pascal/About.lfm",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_demo_dpk_pascal_demo",
+   "label": "Demo.dpk",
+   "file_type": "code",
+   "source_file": "pascal/Demo.dpk",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_demo_dpr_pascal_demo",
+   "label": "Demo.dpr",
+   "file_type": "code",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_demo_demo",
+   "label": "Demo",
+   "file_type": "code",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_demo_main",
+   "label": "Main()",
+   "file_type": "code",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_geometry",
+   "label": "Geometry.pas",
+   "file_type": "code",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_geometry_geometry",
+   "label": "Geometry",
+   "file_type": "code",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_geometry_tbaseshape",
+   "label": "TBaseShape",
+   "file_type": "code",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "tobject",
+   "label": "TObject",
+   "file_type": "code",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_geometry_tbaseshape_prepare",
+   "label": "Prepare()",
+   "file_type": "code",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform",
+   "label": "MainForm.dfm",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform_tmainform",
+   "label": "TMainForm",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform_formcreate",
+   "label": "FormCreate()",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform_tpanel",
+   "label": "TPanel",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform_tbutton",
+   "label": "TButton",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform_okbuttonclick",
+   "label": "OkButtonClick()",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform_cancelbuttonclick",
+   "label": "CancelButtonClick()",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform_tmemo",
+   "label": "TMemo",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_mainform_memochange",
+   "label": "MemoChange()",
+   "file_type": "code",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes",
+   "label": "Shapes.pas",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_shapes",
+   "label": "Shapes",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tshape",
+   "label": "TShape",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tshape_paint",
+   "label": "Paint()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L17",
+   "_origin": "ast"
+  },
+  {
+   "id": "tbaseshape",
+   "label": "TBaseShape",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "idrawable",
+   "label": "IDrawable",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tshape_setname",
+   "label": "SetName()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tshape_create",
+   "label": "Create()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L25",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tshape_draw",
+   "label": "Draw()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tshape_area",
+   "label": "Area()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tcircle",
+   "label": "TCircle",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L32",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tcircle_area",
+   "label": "Area()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L33",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_tcircle_grow",
+   "label": "Grow()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L34",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_log",
+   "label": "Log()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L45",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_register",
+   "label": "Register()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L50",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_shapes_compute",
+   "label": "Compute()",
+   "file_type": "code",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L55",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_widgets_lpk_pascal_widgets",
+   "label": "Widgets",
+   "file_type": "code",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_widgets_widgetspkg",
+   "label": "WidgetsPkg",
+   "file_type": "code",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lcl",
+   "label": "LCL",
+   "file_type": "code",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "extra",
+   "label": "Extra",
+   "file_type": "code",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_widgets_pas_pascal_widgets",
+   "label": "Widgets.pas",
+   "file_type": "code",
+   "source_file": "pascal/Widgets.pas",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_widgets_widgets",
+   "label": "Widgets",
+   "file_type": "code",
+   "source_file": "pascal/Widgets.pas",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_widgets_install",
+   "label": "Install()",
+   "file_type": "code",
+   "source_file": "pascal/Widgets.pas",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_defs",
+   "label": "defs.inc",
+   "file_type": "code",
+   "source_file": "pascal/defs.inc",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_defs_includedhelper",
+   "label": "IncludedHelper()",
+   "file_type": "code",
+   "source_file": "pascal/defs.inc",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_deploy",
+   "label": "deploy",
+   "file_type": "code",
+   "source_file": "scripts/deploy",
+   "source_location": "L1",
+   "metadata": {
+    "language": "bash",
+    "kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_deploy__entry",
+   "label": "deploy script",
+   "file_type": "code",
+   "source_file": "scripts/deploy",
+   "source_location": "L1",
+   "metadata": {
+    "language": "bash",
+    "kind": "bash_entrypoint"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_deploy_deploy",
+   "label": "deploy()",
+   "file_type": "code",
+   "source_file": "scripts/deploy",
+   "source_location": "L2",
+   "metadata": {
+    "language": "bash",
+    "kind": "bash_function"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_report",
+   "label": "report",
+   "file_type": "code",
+   "source_file": "scripts/report",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_report_report",
+   "label": "report()",
+   "file_type": "code",
+   "source_file": "scripts/report",
+   "source_location": "L3",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_serve",
+   "label": "serve",
+   "file_type": "code",
+   "source_file": "scripts/serve",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_serve_serve",
+   "label": "serve()",
+   "file_type": "code",
+   "source_file": "scripts/serve",
+   "source_location": "L2",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "metal_stdlib",
+   "label": "metal_stdlib",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "forms",
+   "label": "forms",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "sysutils",
+   "label": "sysutils",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "classes",
+   "label": "classes",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "math",
+   "label": "math",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "apex_accountservice",
+   "target": "apex_accountservice_accountservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "baseservice",
+   "relation": "extends",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "queueable",
+   "relation": "implements",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "database",
+   "relation": "implements",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "apex_accountservice_notifier",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "apex_accountservice_accountservice_notify",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "apex_accountservice_status",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "apex_accountservice_accountservice_getaccounts",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice",
+   "target": "apex_accountservice_accountservice_getaccounts",
+   "relation": "contains",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "apex_accountservice_cls_account",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "apex_accountservice_accountservice_archive",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "dml_update",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "contact",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "apex_accountservice_accountservice_create",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice",
+   "target": "apex_accountservice_accountservice_create",
+   "relation": "contains",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "dml_insert",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accountservice_accountservice",
+   "target": "apex_accountservice_accountservice_helper",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountService.cls",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accounttrigger",
+   "target": "apex_accounttrigger_accounttrigger",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accounttrigger_accounttrigger",
+   "target": "apex_accounttrigger_trigger_account",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "apex_accounttrigger_accounttrigger",
+   "target": "dml_upsert",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "byond_icons",
+   "target": "byond_icons_state_idle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "byond/icons.dmi",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "byond_icons",
+   "target": "byond_icons_state_walk",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "byond/icons.dmi",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "byond_interface",
+   "target": "byond_interface_window_mainwindow",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "byond_interface_window_mainwindow",
+   "target": "byond_interface_elem_mainwindow_mainwindow",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "byond_interface_window_mainwindow",
+   "target": "byond_interface_elem_mainwindow_map",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "byond_interface",
+   "target": "byond_interface_window_infowindow",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "byond_interface_window_infowindow",
+   "target": "byond_interface_elem_infowindow_info",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "byond/interface.dmf",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing",
+   "target": "cobol_billing_cbl_program_billing",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing",
+   "target": "cobol_billing_cbl_program_billing_data_ws_total",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing",
+   "target": "cobol_billing_cbl_program_billing_data_ws_rec",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing",
+   "target": "cobol_billing_cbl_program_billing_data_ws_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing",
+   "target": "cobol_billing_cbl_program_billing_paragraph_main_para",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing",
+   "target": "cobol_billing_cbl_program_billing_paragraph_init_para",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing",
+   "target": "cobol_billing_cbl_program_billing_paragraph_calc_section",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing",
+   "target": "cobol_billing_cbl_program_billing_paragraph_calc_para",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing",
+   "target": "cobol_billing_cbl_program_billing_paragraph_calc_exit",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing_paragraph_main_para",
+   "target": "cobol_billing_cbl_program_billing_paragraph_init_para",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing_paragraph_main_para",
+   "target": "cobol_billing_cbl_program_billing_paragraph_calc_para",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_billing_cbl_program_billing_paragraph_main_para",
+   "target": "cobol_billing_cbl_program_billing_paragraph_calc_exit",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/billing.cbl",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_record",
+   "target": "cobol_record_cpy_data_customer_rec",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/record.cpy",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "cobol_record",
+   "target": "cobol_record_cpy_data_cust_id",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "cobol/record.cpy",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels",
+   "target": "metal_stdlib",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels",
+   "target": "gpu_kernels_particle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels_particle",
+   "target": "gpu_kernels_particle_x",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels_particle",
+   "target": "gpu_kernels_particle_y",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels",
+   "target": "gpu_kernels_speed",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels_speed",
+   "target": "gpu_kernels_particle",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels",
+   "target": "gpu_kernels_step",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels_step",
+   "target": "kernel",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels_step",
+   "target": "device",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels_step",
+   "target": "uint",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "gpu_kernels_step",
+   "target": "gpu_kernels_speed",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_about",
+   "target": "pascal_about_timage",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/About.lfm",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_about_timage",
+   "target": "pascal_about_logoclick",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/About.lfm",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_demo_dpr_pascal_demo",
+   "target": "pascal_demo_demo",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_demo_demo",
+   "target": "forms",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_demo_demo",
+   "target": "pascal_shapes",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_demo_demo",
+   "target": "pascal_demo_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_geometry",
+   "target": "pascal_geometry_geometry",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_geometry_geometry",
+   "target": "pascal_geometry_tbaseshape",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_geometry_tbaseshape",
+   "target": "tobject",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_geometry_tbaseshape",
+   "target": "pascal_geometry_tbaseshape_prepare",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_mainform",
+   "target": "pascal_mainform_tmainform",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_mainform_tmainform",
+   "target": "pascal_mainform_formcreate",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_mainform_tmainform",
+   "target": "pascal_mainform_tpanel",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_mainform_tpanel",
+   "target": "pascal_mainform_tbutton",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_mainform_tbutton",
+   "target": "pascal_mainform_okbuttonclick",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_mainform_tbutton",
+   "target": "pascal_mainform_cancelbuttonclick",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_mainform_tmainform",
+   "target": "pascal_mainform_tmemo",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_mainform_tmemo",
+   "target": "pascal_mainform_memochange",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/MainForm.dfm",
+   "source_location": "L18",
+   "weight": 1.0,
+   "context": "event",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes",
+   "target": "pascal_shapes_shapes",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "sysutils",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "classes",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "pascal_geometry",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "math",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L42",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "pascal_shapes_tshape",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape",
+   "target": "pascal_shapes_tshape_paint",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape",
+   "target": "tbaseshape",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape",
+   "target": "idrawable",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape",
+   "target": "pascal_shapes_tshape_setname",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape",
+   "target": "pascal_shapes_tshape_create",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape",
+   "target": "pascal_shapes_tshape_draw",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape",
+   "target": "pascal_shapes_tshape_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "pascal_shapes_tcircle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L32",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tcircle",
+   "target": "pascal_shapes_tshape",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L32",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tcircle",
+   "target": "pascal_shapes_tcircle_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L33",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tcircle",
+   "target": "pascal_shapes_tcircle_grow",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L34",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "pascal_shapes_log",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L45",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "pascal_shapes_register",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L50",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_shapes",
+   "target": "pascal_shapes_compute",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L55",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_register",
+   "target": "pascal_shapes_log",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L51",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_compute",
+   "target": "pascal_shapes_register",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L57",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape_create",
+   "target": "pascal_shapes_tshape_setname",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L63",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tshape_paint",
+   "target": "pascal_shapes_tshape_setname",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L74",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tcircle_area",
+   "target": "pascal_shapes_compute",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L95",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tcircle_area",
+   "target": "pascal_shapes_tcircle_grow",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L95",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tcircle_grow",
+   "target": "pascal_shapes_tshape_paint",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L101",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_widgets_lpk_pascal_widgets",
+   "target": "pascal_widgets_widgetspkg",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_widgets_widgetspkg",
+   "target": "lcl",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_widgets_widgetspkg",
+   "target": "pascal_widgets_lpk_pascal_widgets",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_widgets_widgetspkg",
+   "target": "extra",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_widgets_pas_pascal_widgets",
+   "target": "pascal_widgets_widgets",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Widgets.pas",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_widgets_widgets",
+   "target": "pascal_widgets_install",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/Widgets.pas",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_defs",
+   "target": "pascal_defs_includedhelper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "pascal/defs.inc",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "scripts_deploy",
+   "target": "scripts_deploy__entry",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "scripts/deploy",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "scripts_deploy",
+   "target": "scripts_deploy_deploy",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "scripts/deploy",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "scripts_deploy__entry",
+   "target": "scripts_deploy_deploy",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "scripts/deploy",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "scripts_report",
+   "target": "scripts_report_report",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "scripts/report",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "scripts_serve",
+   "target": "scripts_serve_serve",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "scripts/serve",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pascal_shapes_tcircle_grow",
+   "target": "pascal_shapes_tshape_draw",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L100",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

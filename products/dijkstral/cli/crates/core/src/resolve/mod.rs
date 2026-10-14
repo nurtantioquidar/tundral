@@ -12,9 +12,11 @@
 pub mod c;
 pub mod csharp;
 pub mod data;
+pub mod dotnet;
 pub mod go;
 pub mod java;
 pub mod kotlin;
+pub mod legacy;
 pub mod php;
 pub mod python;
 pub mod ruby;
@@ -79,6 +81,10 @@ pub struct Resolution {
     /// `(id, key, value)`: set a field on an existing node (first node with that id) when the
     /// value depends on other files, e.g. Java `metadata.unresolved_calls`.
     pub attrs: Vec<(String, String, Attr)>,
+    /// `(id, label)`: relabel the first node with that id before file labels are assigned (a
+    /// project named by several files keeps its shortest name, §43). The node takes part in file
+    /// labelling (§5.1) exactly when the new label is its source file's basename.
+    pub labels: Vec<(String, String)>,
 }
 
 pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
@@ -113,6 +119,8 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         php::resolve,
         ruby::resolve,
         c::resolve,
+        dotnet::resolve,
+        legacy::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {
         let handles: Vec<_> = passes
@@ -139,10 +147,12 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
     }
     let mut redirects: HashMap<String, String> = HashMap::new();
     let mut attrs: HashMap<String, Vec<(String, Attr)>> = HashMap::new();
+    let mut labels: HashMap<String, String> = HashMap::new();
     for r in results {
         nodes.extend(r.nodes);
         batches.push(r.edges);
         redirects.extend(r.redirects);
+        labels.extend(r.labels);
         for (id, key, value) in r.attrs {
             attrs.entry(id).or_default().push((key, value));
         }
@@ -154,6 +164,20 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         }
         if let Some(extra) = attrs.remove(&n.id) {
             n.attrs.extend(extra);
+        }
+    }
+    for n in &mut nodes {
+        if labels.is_empty() {
+            break;
+        }
+        if let Some(label) = labels.remove(&n.id) {
+            let base = n.source_file.rsplit('/').next().unwrap_or("");
+            if label == base {
+                n.kind = NodeKind::File;
+            } else if n.kind == NodeKind::File {
+                n.kind = NodeKind::Def;
+            }
+            n.label = label;
         }
     }
     redirects.extend(merge_rationale(&nodes));
@@ -192,10 +216,13 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
 /// shared and exempt.
 fn rename_collisions(files: Vec<(&SourceFile, FileFacts)>) -> Vec<View<'_>> {
     let mut emitters: HashMap<&str, Vec<usize>> = HashMap::new();
-    for (fi, (_, facts)) in files.iter().enumerate() {
+    for (fi, (file, facts)) in files.iter().enumerate() {
         let mut local = HashSet::new();
         for n in &facts.nodes {
-            if n.kind != NodeKind::External && local.insert(n.id.as_str()) {
+            // A node located in another file (a project a solution names, §43) is not an
+            // emission of this file: every naming of that path merges into one node.
+            let foreign = !n.source_file.is_empty() && n.source_file != file.rel;
+            if n.kind != NodeKind::External && !foreign && local.insert(n.id.as_str()) {
                 emitters.entry(n.id.as_str()).or_default().push(fi);
             }
         }

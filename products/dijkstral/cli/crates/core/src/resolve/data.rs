@@ -264,7 +264,7 @@ fn normalize(p: &Path) -> PathBuf {
 }
 
 /// Shannon entropy in bits per character.
-fn entropy(s: &str) -> f64 {
+pub(super) fn entropy(s: &str) -> f64 {
     let mut counts: HashMap<char, usize> = HashMap::new();
     let mut n = 0usize;
     for c in s.chars() {

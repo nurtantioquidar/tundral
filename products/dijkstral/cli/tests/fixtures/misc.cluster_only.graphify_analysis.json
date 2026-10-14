@@ -1,0 +1,268 @@
+{
+  "communities": {
+    "0": [
+      "apex_accountservice",
+      "apex_accountservice_accountservice",
+      "apex_accountservice_accountservice_archive",
+      "apex_accountservice_accountservice_create",
+      "apex_accountservice_accountservice_getaccounts",
+      "apex_accountservice_accountservice_helper",
+      "apex_accountservice_accountservice_notify",
+      "apex_accountservice_cls_account",
+      "apex_accountservice_notifier",
+      "apex_accountservice_status",
+      "baseservice",
+      "contact",
+      "database",
+      "dml_insert",
+      "dml_update",
+      "queueable"
+    ],
+    "1": [
+      "classes",
+      "forms",
+      "math",
+      "pascal_demo_demo",
+      "pascal_demo_dpr_pascal_demo",
+      "pascal_demo_main",
+      "pascal_shapes",
+      "pascal_shapes_compute",
+      "pascal_shapes_log",
+      "pascal_shapes_register",
+      "pascal_shapes_shapes",
+      "sysutils"
+    ],
+    "2": [
+      "idrawable",
+      "pascal_shapes_tcircle",
+      "pascal_shapes_tcircle_area",
+      "pascal_shapes_tcircle_grow",
+      "pascal_shapes_tshape",
+      "pascal_shapes_tshape_area",
+      "pascal_shapes_tshape_create",
+      "pascal_shapes_tshape_draw",
+      "pascal_shapes_tshape_paint",
+      "pascal_shapes_tshape_setname",
+      "tbaseshape"
+    ],
+    "3": [
+      "cobol_billing",
+      "cobol_billing_cbl_program_billing",
+      "cobol_billing_cbl_program_billing_data_ws_name",
+      "cobol_billing_cbl_program_billing_data_ws_rec",
+      "cobol_billing_cbl_program_billing_data_ws_total",
+      "cobol_billing_cbl_program_billing_paragraph_calc_exit",
+      "cobol_billing_cbl_program_billing_paragraph_calc_para",
+      "cobol_billing_cbl_program_billing_paragraph_calc_section",
+      "cobol_billing_cbl_program_billing_paragraph_init_para",
+      "cobol_billing_cbl_program_billing_paragraph_main_para"
+    ],
+    "4": [
+      "device",
+      "gpu_kernels",
+      "gpu_kernels_particle",
+      "gpu_kernels_particle_x",
+      "gpu_kernels_particle_y",
+      "gpu_kernels_speed",
+      "gpu_kernels_step",
+      "kernel",
+      "metal_stdlib",
+      "uint"
+    ],
+    "5": [
+      "pascal_mainform",
+      "pascal_mainform_cancelbuttonclick",
+      "pascal_mainform_formcreate",
+      "pascal_mainform_memochange",
+      "pascal_mainform_okbuttonclick",
+      "pascal_mainform_tbutton",
+      "pascal_mainform_tmainform",
+      "pascal_mainform_tmemo",
+      "pascal_mainform_tpanel"
+    ],
+    "6": [
+      "byond_interface",
+      "byond_interface_elem_infowindow_info",
+      "byond_interface_elem_mainwindow_mainwindow",
+      "byond_interface_elem_mainwindow_map",
+      "byond_interface_window_infowindow",
+      "byond_interface_window_mainwindow"
+    ],
+    "7": [
+      "pascal_geometry",
+      "pascal_geometry_geometry",
+      "pascal_geometry_tbaseshape",
+      "pascal_geometry_tbaseshape_prepare",
+      "tobject"
+    ],
+    "8": [
+      "apex_accounttrigger",
+      "apex_accounttrigger_accounttrigger",
+      "apex_accounttrigger_trigger_account",
+      "dml_upsert"
+    ],
+    "9": [
+      "extra",
+      "lcl",
+      "pascal_widgets_lpk_pascal_widgets",
+      "pascal_widgets_widgetspkg"
+    ],
+    "10": [
+      "byond_icons",
+      "byond_icons_state_idle",
+      "byond_icons_state_walk"
+    ],
+    "11": [
+      "cobol_record",
+      "cobol_record_cpy_data_cust_id",
+      "cobol_record_cpy_data_customer_rec"
+    ],
+    "12": [
+      "pascal_about",
+      "pascal_about_logoclick",
+      "pascal_about_timage"
+    ],
+    "13": [
+      "pascal_widgets_install",
+      "pascal_widgets_pas_pascal_widgets",
+      "pascal_widgets_widgets"
+    ],
+    "14": [
+      "scripts_deploy",
+      "scripts_deploy__entry",
+      "scripts_deploy_deploy"
+    ],
+    "15": [
+      "pascal_defs",
+      "pascal_defs_includedhelper"
+    ],
+    "16": [
+      "scripts_report",
+      "scripts_report_report"
+    ],
+    "17": [
+      "scripts_serve",
+      "scripts_serve_serve"
+    ],
+    "18": [
+      "byond_map"
+    ],
+    "19": [
+      "pascal_demo_dpk_pascal_demo"
+    ]
+  },
+  "cohesion": {
+    "0": 0.14166666666666666,
+    "1": 0.19696969696969696,
+    "2": 0.2727272727272727,
+    "3": 0.26666666666666666,
+    "4": 0.24444444444444444,
+    "5": 0.2222222222222222,
+    "6": 0.3333333333333333,
+    "7": 0.4,
+    "8": 0.5,
+    "9": 0.5,
+    "10": 0.6666666666666666,
+    "11": 0.6666666666666666,
+    "12": 0.6666666666666666,
+    "13": 0.6666666666666666,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0
+  },
+  "gods": [
+    {
+      "id": "apex_accountservice_accountservice",
+      "label": "AccountService",
+      "degree": 15
+    },
+    {
+      "id": "pascal_shapes_shapes",
+      "label": "Shapes",
+      "degree": 10
+    },
+    {
+      "id": "cobol_billing_cbl_program_billing",
+      "label": "BILLING",
+      "degree": 9
+    },
+    {
+      "id": "pascal_shapes_tshape",
+      "label": "TShape",
+      "degree": 9
+    },
+    {
+      "id": "gpu_kernels_step",
+      "label": "step()",
+      "degree": 5
+    },
+    {
+      "id": "gpu_kernels_particle",
+      "label": "Particle",
+      "degree": 4
+    },
+    {
+      "id": "cobol_billing_cbl_program_billing_paragraph_main_para",
+      "label": "MAIN-PARA",
+      "degree": 4
+    },
+    {
+      "id": "pascal_demo_demo",
+      "label": "Demo",
+      "degree": 4
+    },
+    {
+      "id": "pascal_shapes_tcircle",
+      "label": "TCircle",
+      "degree": 4
+    },
+    {
+      "id": "pascal_shapes_tcircle_grow",
+      "label": "Grow()",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Area()",
+      "target": "Compute()",
+      "source_files": [
+        "pascal/Shapes.pas",
+        "pascal/Shapes.pas"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "note": "Bridges community 1 → community 2"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Shapes` connect `Community 1` to `Community 2`, `Community 7`?",
+      "why": "High betweenness centrality (0.046) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 7 inferred relationships involving `AccountService` (e.g. with `Account` and `BaseService`) actually correct?",
+      "why": "`AccountService` has 7 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Account`, `BaseService`, `Contact` to the rest of the system?",
+      "why": "15 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14166666666666666 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `TShape` connect `Community 2` to `Community 1`?",
+      "why": "High betweenness centrality (0.026) - this node is a cross-community bridge."
+    }
+  ]
+}

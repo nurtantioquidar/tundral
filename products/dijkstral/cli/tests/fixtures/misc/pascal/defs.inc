@@ -1,0 +1,3 @@
+procedure IncludedHelper;
+begin
+end;
