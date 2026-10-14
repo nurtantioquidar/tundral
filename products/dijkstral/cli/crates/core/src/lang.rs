@@ -16,6 +16,7 @@ pub enum Lang {
     Rust,
     Go,
     Java,
+    Swift,
     /// `.json` manifests (allowlist decided at extraction, §14.1).
     Json,
     /// `Cargo.toml` and `pyproject.toml` only.
@@ -34,12 +35,13 @@ pub enum Family {
     Rust,
     Go,
     Java,
+    Swift,
     Data,
     Shell,
 }
 
 impl Lang {
-    pub const COUNT: usize = 11;
+    pub const COUNT: usize = 12;
 
     /// Classify a path. `shebang` is consulted only for extensionless files.
     pub fn classify(path: &Path) -> Option<Lang> {
@@ -61,6 +63,7 @@ impl Lang {
             "rs" => Lang::Rust,
             "go" => Lang::Go,
             "java" => Lang::Java,
+            "swift" => Lang::Swift,
             "json" => Lang::Json,
             "sh" | "bash" => Lang::Shell,
             _ => return None,
@@ -74,6 +77,7 @@ impl Lang {
             Lang::Rust => Family::Rust,
             Lang::Go | Lang::GoMod => Family::Go,
             Lang::Java => Family::Java,
+            Lang::Swift => Family::Swift,
             Lang::Json | Lang::Toml => Family::Data,
             Lang::Shell => Family::Shell,
         }
@@ -88,6 +92,7 @@ impl Lang {
             Lang::Rust => tree_sitter_rust::LANGUAGE.into(),
             Lang::Go => tree_sitter_go::LANGUAGE.into(),
             Lang::Java => tree_sitter_java::LANGUAGE.into(),
+            Lang::Swift => tree_sitter_swift::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }

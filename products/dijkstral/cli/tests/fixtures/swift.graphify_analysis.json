@@ -1,0 +1,237 @@
+{
+  "communities": {
+    "0": [
+      "combine",
+      "error",
+      "sources_shop_models_user_user_make",
+      "sources_shop_services_userservice",
+      "sources_shop_services_userservice_log",
+      "sources_shop_services_userservice_repository",
+      "sources_shop_services_userservice_repository_save",
+      "sources_shop_services_userservice_shoperror",
+      "sources_shop_services_userservice_shoperror_invalid",
+      "sources_shop_services_userservice_shoperror_missing",
+      "sources_shop_services_userservice_userrepository",
+      "sources_shop_services_userservice_userrepository_all",
+      "sources_shop_services_userservice_userrepository_save",
+      "sources_shop_services_userservice_userservice",
+      "sources_shop_services_userservice_userservice_init",
+      "sources_shop_services_userservice_userservice_names",
+      "sources_shop_services_userservice_userservice_notify",
+      "sources_shop_services_userservice_userservice_register",
+      "tests_shoptests_userservicetests_userservicetests_testregisterstoresuser",
+      "void"
+    ],
+    "1": [
+      "double",
+      "key",
+      "sources_app_main_run",
+      "sources_shop_models_shape",
+      "sources_shop_models_shape_circle",
+      "sources_shop_models_shape_circle_area",
+      "sources_shop_models_shape_circle_init",
+      "sources_shop_models_shape_circle_summary",
+      "sources_shop_models_shape_pair",
+      "sources_shop_models_shape_shape",
+      "sources_shop_models_shape_shape_area",
+      "sources_shop_models_shape_shape_init",
+      "sources_shop_models_shape_shape_unit",
+      "value"
+    ],
+    "2": [
+      "date",
+      "int",
+      "sources_shop_models_user_payment",
+      "sources_shop_models_user_payment_describe",
+      "sources_shop_models_user_payment_failed",
+      "sources_shop_models_user_payment_paid",
+      "sources_shop_models_user_payment_pending",
+      "tests_shoptests_userservicetests",
+      "tests_shoptests_userservicetests_userservicetests",
+      "tests_shoptests_userservicetests_userservicetests_setup",
+      "tests_shoptests_userservicetests_userservicetests_testpaymentdescription",
+      "xctest",
+      "xctestcase"
+    ],
+    "3": [
+      "customstringconvertible",
+      "equatable",
+      "sources_shop_extensions_user_format_user_description",
+      "sources_shop_extensions_user_format_user_formatted",
+      "sources_shop_extensions_user_format_user_summary",
+      "sources_shop_models_user_swift_bool",
+      "sources_shop_models_user_user",
+      "sources_shop_models_user_user_displayname",
+      "sources_shop_models_user_user_matches",
+      "sources_shop_models_user_user_normalized"
+    ],
+    "4": [
+      "item",
+      "sources_shop_extensions_user_format_string",
+      "sources_shop_extensions_user_format_string_shout",
+      "sources_shop_models_user_user_rename",
+      "sources_shop_services_userservice_cache",
+      "sources_shop_services_userservice_cache_lookup",
+      "sources_shop_services_userservice_cache_remember",
+      "sources_shop_services_userservice_repository_find",
+      "sources_shop_services_userservice_userrepository_find",
+      "sources_shop_services_userservice_userservice_lookup"
+    ],
+    "5": [
+      "codable",
+      "sources_shop_models_user",
+      "sources_shop_models_user_address",
+      "sources_shop_models_user_role",
+      "sources_shop_models_user_role_admin",
+      "sources_shop_models_user_role_customer",
+      "sources_shop_models_user_role_guest",
+      "sources_shop_models_user_role_isprivileged",
+      "sources_shop_models_user_user_init"
+    ],
+    "6": [
+      "foundation",
+      "shop",
+      "sources_app_main",
+      "sources_shop_models_entity",
+      "sources_shop_models_entity_describable",
+      "sources_shop_models_entity_entity",
+      "sources_shop_models_entity_entity_validate",
+      "sources_shop_models_entity_swift_bool"
+    ],
+    "7": [
+      "sources_shop_models_shape_box",
+      "sources_shop_models_shape_box_first",
+      "sources_shop_models_shape_box_put",
+      "t"
+    ],
+    "8": [
+      "sources_shop_extensions_user_format",
+      "sources_shop_extensions_user_format_array",
+      "sources_shop_extensions_user_format_array_sortedbyname"
+    ]
+  },
+  "cohesion": {
+    "0": 0.15789473684210525,
+    "1": 0.21978021978021978,
+    "2": 0.15384615384615385,
+    "3": 0.26666666666666666,
+    "4": 0.28888888888888886,
+    "5": 0.25,
+    "6": 0.25,
+    "7": 0.8333333333333334,
+    "8": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "sources_shop_models_user_user",
+      "label": "User",
+      "degree": 32
+    },
+    {
+      "id": "sources_shop_models_user_role",
+      "label": "Role",
+      "degree": 11
+    },
+    {
+      "id": "sources_shop_services_userservice_userservice",
+      "label": "UserService",
+      "degree": 11
+    },
+    {
+      "id": "sources_shop_services_userservice_userrepository",
+      "label": "UserRepository",
+      "degree": 10
+    },
+    {
+      "id": "sources_shop_models_shape_circle",
+      "label": "Circle",
+      "degree": 9
+    },
+    {
+      "id": "sources_shop_models_user_payment",
+      "label": "Payment",
+      "degree": 9
+    },
+    {
+      "id": "sources_shop_models_shape_shape",
+      "label": "Shape",
+      "degree": 6
+    },
+    {
+      "id": "sources_shop_services_userservice_shoperror",
+      "label": "ShopError",
+      "degree": 6
+    },
+    {
+      "id": "sources_shop_services_userservice_cache",
+      "label": "Cache",
+      "degree": 6
+    },
+    {
+      "id": "tests_shoptests_userservicetests_userservicetests",
+      "label": "UserServiceTests",
+      "degree": 6
+    }
+  ],
+  "surprises": [
+    {
+      "source": "UserServiceTests",
+      "target": "UserService",
+      "source_files": [
+        "Tests/ShopTests/UserServiceTests.swift",
+        "Sources/Shop/Services/UserService.swift"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "run()",
+      "target": "log()",
+      "source_files": [
+        "Sources/App/main.swift",
+        "Sources/Shop/Services/UserService.swift"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "run()",
+      "target": "Circle",
+      "source_files": [
+        "Sources/App/main.swift",
+        "Sources/Shop/Models/Shape.swift"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source"
+    },
+    {
+      "source": "Circle",
+      "target": "String",
+      "source_files": [
+        "Sources/Shop/Models/Shape.swift",
+        "Sources/Shop/Extensions/User+Format.swift"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "Shape",
+      "target": "String",
+      "source_files": [
+        "Sources/Shop/Models/Shape.swift",
+        "Sources/Shop/Extensions/User+Format.swift"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

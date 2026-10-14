@@ -1,0 +1,2757 @@
+{
+ "nodes": [
+  {
+   "id": "sources_app_main",
+   "label": "main.swift",
+   "file_type": "code",
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "foundation",
+   "label": "Foundation",
+   "file_type": "code",
+   "type": "module",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop",
+   "label": "Shop",
+   "file_type": "code",
+   "type": "module",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_app_main_run",
+   "label": "run()",
+   "file_type": "code",
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_extensions_user_format",
+   "label": "User+Format.swift",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "customstringconvertible",
+   "label": "CustomStringConvertible",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_extensions_user_format_user_description",
+   "label": ".description",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_extensions_user_format_user_formatted",
+   "label": ".formatted()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_extensions_user_format_user_summary",
+   "label": ".summary",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_extensions_user_format_array",
+   "label": "Array",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L17",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_extensions_user_format_array_sortedbyname",
+   "label": ".sortedByName()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L18",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_extensions_user_format_string",
+   "label": "String",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L23",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_extensions_user_format_string_shout",
+   "label": ".shout()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L24",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_entity",
+   "label": "Entity.swift",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_entity_entity",
+   "label": "Entity",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L4",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_entity_entity_validate",
+   "label": ".validate()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_entity_swift_bool",
+   "label": "Bool",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_entity_describable",
+   "label": "Describable",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L10",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape",
+   "label": "Shape.swift",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_shape",
+   "label": "Shape",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L3",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_shape_init",
+   "label": ".init()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_shape_area",
+   "label": ".area()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "double",
+   "label": "Double",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_shape_unit",
+   "label": ".unit()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_circle",
+   "label": "Circle",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L19",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_circle_init",
+   "label": ".init()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L22",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_circle_area",
+   "label": ".area()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L27",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_circle_summary",
+   "label": ".summary",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L31",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_box",
+   "label": "Box",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L37",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_box_put",
+   "label": ".put()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L40",
+   "_callable": true,
+   "metadata": {
+    "unresolved_calls": [
+     {
+      "callee": "append",
+      "receiver_type": "T",
+      "lang": "swift",
+      "line": "L41"
+     }
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_box_first",
+   "label": ".first()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L44",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_shape_pair",
+   "label": "Pair",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L49",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "key",
+   "label": "Key",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "value",
+   "label": "Value",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user",
+   "label": "User.swift",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_role",
+   "label": "Role",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L4",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "codable",
+   "label": "Codable",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_role_admin",
+   "label": "admin",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_role_customer",
+   "label": "customer",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_role_guest",
+   "label": "guest",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_swift_bool",
+   "label": "Bool",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_role_isprivileged",
+   "label": ".isPrivileged",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_payment",
+   "label": "Payment",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L14",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_payment_pending",
+   "label": "pending",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_payment_paid",
+   "label": "paid",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L16",
+   "_origin": "ast"
+  },
+  {
+   "id": "int",
+   "label": "Int",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "date",
+   "label": "Date",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_payment_failed",
+   "label": "failed",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L17",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_payment_describe",
+   "label": ".describe()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_user",
+   "label": "User",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L29",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "equatable",
+   "label": "Equatable",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_user_init",
+   "label": ".init()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L37",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_user_displayname",
+   "label": ".displayName",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L49",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_user_matches",
+   "label": ".matches()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L54",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_user_normalized",
+   "label": ".normalized()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L58",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_user_make",
+   "label": ".make()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L62",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_user_rename",
+   "label": ".rename()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L66",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_models_user_address",
+   "label": "Address",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L71",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice",
+   "label": "UserService.swift",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "combine",
+   "label": "Combine",
+   "file_type": "code",
+   "type": "module",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_repository",
+   "label": "Repository",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L4",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_repository_save",
+   "label": ".save()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "item",
+   "label": "Item",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_repository_find",
+   "label": ".find()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userrepository",
+   "label": "UserRepository",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L10",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userrepository_save",
+   "label": ".save()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userrepository_find",
+   "label": ".find()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userrepository_all",
+   "label": ".all()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L23",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_shoperror",
+   "label": "ShopError",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L28",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "error",
+   "label": "Error",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_shoperror_invalid",
+   "label": "invalid",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_shoperror_missing",
+   "label": "missing",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L30",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_cache",
+   "label": "Cache",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L33",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_cache_lookup",
+   "label": ".lookup()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L36",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_cache_remember",
+   "label": ".remember()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L40",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userservice",
+   "label": "UserService",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L46",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "void",
+   "label": "Void",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userservice_init",
+   "label": ".init()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L51",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userservice_register",
+   "label": ".register()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L55",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userservice_lookup",
+   "label": ".lookup()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L68",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userservice_notify",
+   "label": ".notify()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L77",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_userservice_names",
+   "label": ".names()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L82",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "sources_shop_services_userservice_log",
+   "label": "log()",
+   "file_type": "code",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L87",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shoptests_userservicetests",
+   "label": "UserServiceTests.swift",
+   "file_type": "code",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "xctest",
+   "label": "XCTest",
+   "file_type": "code",
+   "type": "module",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shoptests_userservicetests_userservicetests",
+   "label": "UserServiceTests",
+   "file_type": "code",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L4",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "xctestcase",
+   "label": "XCTestCase",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shoptests_userservicetests_userservicetests_setup",
+   "label": ".setUp()",
+   "file_type": "code",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shoptests_userservicetests_userservicetests_testregisterstoresuser",
+   "label": ".testRegisterStoresUser()",
+   "file_type": "code",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shoptests_userservicetests_userservicetests_testpaymentdescription",
+   "label": ".testPaymentDescription()",
+   "file_type": "code",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L18",
+   "_callable": true,
+   "_origin": "ast"
+  }
+ ],
+ "edges": [
+  {
+   "source": "sources_app_main",
+   "target": "foundation",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_app_main",
+   "target": "shop",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_app_main",
+   "target": "sources_app_main_run",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format",
+   "target": "foundation",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format",
+   "target": "sources_shop_models_user_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "customstringconvertible",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_extensions_user_format_user_description",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_extensions_user_format_user_formatted",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format_user_formatted",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_entity_describable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_extensions_user_format_user_summary",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format",
+   "target": "sources_shop_extensions_user_format_array",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format_array",
+   "target": "sources_shop_extensions_user_format_array_sortedbyname",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format_array_sortedbyname",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L18",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format_string",
+   "target": "sources_shop_extensions_user_format_string_shout",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format_string_shout",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L24",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format_user_description",
+   "target": "sources_shop_extensions_user_format_user_formatted",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_extensions_user_format_user_summary",
+   "target": "sources_shop_extensions_user_format_user_formatted",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Extensions/User+Format.swift",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_entity",
+   "target": "foundation",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_entity",
+   "target": "sources_shop_models_entity_entity",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_entity_entity",
+   "target": "sources_shop_models_entity_entity_validate",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_entity_entity_validate",
+   "target": "sources_shop_models_entity_swift_bool",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_entity",
+   "target": "sources_shop_models_entity_describable",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Entity.swift",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape",
+   "target": "foundation",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape",
+   "target": "sources_shop_models_shape_shape",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_shape",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_shape",
+   "target": "sources_shop_models_shape_shape_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_shape_init",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_shape",
+   "target": "sources_shop_models_shape_shape_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_shape_area",
+   "target": "double",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_shape",
+   "target": "sources_shop_models_shape_shape_unit",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_shape_unit",
+   "target": "sources_shop_models_shape_shape",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L14",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape",
+   "target": "sources_shop_models_shape_circle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle",
+   "target": "sources_shop_models_shape_shape",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle",
+   "target": "sources_shop_models_entity_describable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle",
+   "target": "double",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L20",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle",
+   "target": "sources_shop_models_shape_circle_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle_init",
+   "target": "double",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L22",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle",
+   "target": "sources_shop_models_shape_circle_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle_area",
+   "target": "double",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L27",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L31",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle",
+   "target": "sources_shop_models_shape_circle_summary",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape",
+   "target": "sources_shop_models_shape_box",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_box",
+   "target": "t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L38",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_box",
+   "target": "sources_shop_models_shape_box_put",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L40",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_box_put",
+   "target": "t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L40",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_box",
+   "target": "sources_shop_models_shape_box_first",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L44",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_box_first",
+   "target": "t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L44",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape",
+   "target": "sources_shop_models_shape_pair",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_pair",
+   "target": "key",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L50",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_pair",
+   "target": "value",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L51",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_shape_unit",
+   "target": "sources_shop_models_shape_shape",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_shape_circle_init",
+   "target": "sources_shop_models_shape_shape_init",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/Shape.swift",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user",
+   "target": "foundation",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user",
+   "target": "sources_shop_models_user_role",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_role",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_role",
+   "target": "codable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_role",
+   "target": "sources_shop_models_user_role_admin",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_role",
+   "target": "sources_shop_models_user_role_customer",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_role",
+   "target": "sources_shop_models_user_role_guest",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_role",
+   "target": "sources_shop_models_user_swift_bool",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_role",
+   "target": "sources_shop_models_user_role_isprivileged",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user",
+   "target": "sources_shop_models_user_payment",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_payment",
+   "target": "sources_shop_models_user_payment_pending",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_payment",
+   "target": "sources_shop_models_user_payment_paid",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_payment",
+   "target": "int",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L16",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_payment",
+   "target": "date",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L16",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_payment",
+   "target": "sources_shop_models_user_payment_failed",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_payment",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L17",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_payment",
+   "target": "sources_shop_models_user_payment_describe",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_payment_describe",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user",
+   "target": "sources_shop_models_user_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_entity_entity",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "equatable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_role",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L32",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_address",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L33",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_user_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_init",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L37",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_init",
+   "target": "sources_shop_models_user_role",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L43",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_user_displayname",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_user_matches",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L54",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_matches",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L54",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_matches",
+   "target": "sources_shop_models_user_swift_bool",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L54",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_user_normalized",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L58",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_normalized",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L58",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_user_make",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L62",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_make",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L62",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_make",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L62",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_user_rename",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L66",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_rename",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L66",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user",
+   "target": "sources_shop_models_user_address",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L71",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_address",
+   "target": "codable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L71",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_address",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L72",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_matches",
+   "target": "sources_shop_models_user_user_normalized",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L55",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user_make",
+   "target": "sources_shop_models_user_user",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L63",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_models_user_user",
+   "target": "sources_shop_models_user_user",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Models/User.swift",
+   "source_location": "L34",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice",
+   "target": "foundation",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice",
+   "target": "combine",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice",
+   "target": "sources_shop_services_userservice_repository",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_repository",
+   "target": "sources_shop_services_userservice_repository_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_repository_save",
+   "target": "item",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_repository",
+   "target": "sources_shop_services_userservice_repository_find",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_repository_find",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_repository_find",
+   "target": "item",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice",
+   "target": "sources_shop_services_userservice_userrepository",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository",
+   "target": "sources_shop_services_userservice_repository",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository",
+   "target": "sources_shop_services_userservice_userrepository_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository_save",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L14",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository",
+   "target": "sources_shop_services_userservice_userrepository_find",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository_find",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository_find",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository",
+   "target": "sources_shop_services_userservice_userrepository_all",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository_all",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice",
+   "target": "sources_shop_services_userservice_shoperror",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_shoperror",
+   "target": "error",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_shoperror",
+   "target": "sources_shop_services_userservice_shoperror_invalid",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_shoperror",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L29",
+   "weight": 1.0,
+   "context": "type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_shoperror",
+   "target": "sources_shop_services_userservice_shoperror_missing",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L30",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice",
+   "target": "sources_shop_services_userservice_cache",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L33",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_cache",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L34",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_cache",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L34",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_cache",
+   "target": "sources_shop_services_userservice_cache_lookup",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_cache_lookup",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L36",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_cache_lookup",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L36",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_cache",
+   "target": "sources_shop_services_userservice_cache_remember",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L40",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_cache_remember",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L40",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice",
+   "target": "sources_shop_services_userservice_userservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L46",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "sources_shop_services_userservice_userrepository",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L47",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L49",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "void",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L49",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "sources_shop_services_userservice_userservice_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L51",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_init",
+   "target": "sources_shop_services_userservice_userrepository",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L51",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "sources_shop_services_userservice_userservice_register",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L55",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_register",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L55",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_register",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L55",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "swift_plain_return": true
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_register",
+   "target": "sources_shop_models_user_role",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L62",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "sources_shop_services_userservice_userservice_lookup",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L68",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_lookup",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L68",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_lookup",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L68",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "sources_shop_services_userservice_userservice_notify",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L77",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_notify",
+   "target": "sources_shop_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L77",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "sources_shop_services_userservice_userservice_names",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L82",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_names",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L82",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice",
+   "target": "sources_shop_services_userservice_log",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L87",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_log",
+   "target": "sources_shop_extensions_user_format_string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L87",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_register",
+   "target": "sources_shop_services_userservice_userrepository_save",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L57",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_register",
+   "target": "sources_shop_services_userservice_userservice_notify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L58",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_lookup",
+   "target": "sources_shop_services_userservice_userservice_lookup",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L69",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_lookup",
+   "target": "sources_shop_services_userservice_userrepository_find",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L72",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_lookup",
+   "target": "sources_shop_services_userservice_cache_remember",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L73",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_notify",
+   "target": "sources_shop_services_userservice_log",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L79",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice",
+   "target": "sources_shop_services_userservice_cache",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L48",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests",
+   "target": "xctest",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests",
+   "target": "shop",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests",
+   "target": "tests_shoptests_userservicetests_userservicetests",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests",
+   "target": "xctestcase",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests",
+   "target": "sources_shop_services_userservice_userservice",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests",
+   "target": "tests_shoptests_userservicetests_userservicetests_setup",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests",
+   "target": "tests_shoptests_userservicetests_userservicetests_testregisterstoresuser",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests",
+   "target": "tests_shoptests_userservicetests_userservicetests_testpaymentdescription",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_app_main_run",
+   "target": "sources_shop_models_shape_circle",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_app_main_run",
+   "target": "sources_shop_services_userservice_log",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests_setup",
+   "target": "sources_shop_services_userservice_userrepository",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_app_main_run",
+   "target": "sources_shop_models_shape_circle_area",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_app_main_run",
+   "target": "sources_shop_models_shape_shape_unit",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Sources/App/main.swift",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userrepository_save",
+   "target": "sources_shop_services_userservice_shoperror",
+   "relation": "references",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_register",
+   "target": "sources_shop_models_user_user_make",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L56",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_notify",
+   "target": "sources_shop_extensions_user_format_user_formatted",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L79",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_userservice_names",
+   "target": "sources_shop_services_userservice_userrepository_all",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L83",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests_testregisterstoresuser",
+   "target": "sources_shop_services_userservice_userservice_register",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests_testregisterstoresuser",
+   "target": "sources_shop_services_userservice_userservice_names",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests_testregisterstoresuser",
+   "target": "sources_shop_models_user_user_make",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shoptests_userservicetests_userservicetests_testpaymentdescription",
+   "target": "sources_shop_models_user_payment",
+   "relation": "references",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Tests/ShopTests/UserServiceTests.swift",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_repository_save",
+   "target": "sources_shop_services_userservice_userrepository_save",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "sources_shop_services_userservice_repository_find",
+   "target": "sources_shop_services_userservice_userrepository_find",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Sources/Shop/Services/UserService.swift",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

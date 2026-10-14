@@ -119,6 +119,7 @@ pub enum LangFacts {
     Rust(crate::extract::rust::RustFacts),
     Go(crate::extract::go::GoFacts),
     Java(crate::extract::java::JavaFacts),
+    Swift(crate::extract::swift::SwiftFacts),
     Data(crate::extract::data::DataFacts),
 }
 

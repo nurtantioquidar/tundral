@@ -10,6 +10,7 @@ pub mod java;
 pub mod python;
 pub mod rust;
 pub mod script;
+pub mod swift;
 
 use tree_sitter::Node as TsNode;
 
@@ -28,6 +29,7 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Rust => rust::extract(&mut cx, tree.as_ref()),
         Lang::Go => go::extract(&mut cx, tree.as_ref()),
         Lang::Java => java::extract(&mut cx, tree.as_ref()),
+        Lang::Swift => swift::extract(&mut cx, tree.as_ref()),
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }
