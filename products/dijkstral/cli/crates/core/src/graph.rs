@@ -175,6 +175,18 @@ impl Graph {
         built_at_commit: Option<&str>,
         community: Option<&[u32]>,
     ) -> io::Result<()> {
+        self.write_graphify_json_ordered(w, built_at_commit, community)
+            .map(drop)
+    }
+
+    /// [`Graph::write_graphify_json`], returning the order it wrote: node and edge indices in
+    /// `graph.json` array order, for exporters that must follow the file.
+    pub fn write_graphify_json_ordered<W: Write>(
+        &self,
+        w: W,
+        built_at_commit: Option<&str>,
+        community: Option<&[u32]>,
+    ) -> io::Result<(Vec<u32>, Vec<u32>)> {
         let comm = |i: usize| community.map(|c| c[i]);
         let node_order = sorted_order(&self.nodes, |i, n| sort_key(node_map(n, comm(i))));
         let link_order = sorted_order(&self.edges, |_, e| sort_key(edge_map(e)));
@@ -198,7 +210,8 @@ impl Graph {
             w.write_all(ascii_escape(serde_json::to_string(c).unwrap()).as_bytes())?;
         }
         w.write_all(b"}")?;
-        w.flush()
+        w.flush()?;
+        Ok((node_order, link_order))
     }
 
     /// Load a clustered-shape `graph.json` (Graphify's or ours) with nodes and links in file order,

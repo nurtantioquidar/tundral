@@ -10,7 +10,7 @@ use rayon::prelude::*;
 
 use crate::analyze::{analyze, ANALYSIS_FILE, REPORT_FILE};
 use crate::cache::{content_key, Cache, Key, Stat};
-use crate::cluster::{cluster, Topology};
+use crate::cluster::{cluster, Communities, Topology};
 use crate::discover::{discover, SourceFile};
 use crate::extract::extract_file;
 use crate::facts::{Attr, FileFacts};
@@ -56,15 +56,42 @@ enum Probe {
     Failed,
 }
 
+/// What an [`Exporter`] sees of a finished build.
+pub struct Built<'a> {
+    pub graph: &'a Graph,
+    /// Node indices in `graph.json` array order.
+    pub node_order: &'a [u32],
+    /// Edge indices in `graph.json` array order.
+    pub edge_order: &'a [u32],
+    /// The communities and their `GRAPH_REPORT.md` labels; `None` without clustering.
+    pub communities: Option<(&'a Communities, &'a [String])>,
+    pub out_dir: &'a Path,
+}
+
+/// An output written after the core ones (`graph.html` and the wiki live in `crates/export`).
+pub trait Exporter: Sync {
+    /// Phase name for `--timings`.
+    fn name(&self) -> &'static str;
+    /// Paths it writes, relative to the output directory. An unchanged build is skipped only when
+    /// every one exists.
+    fn outputs(&self) -> Vec<PathBuf>;
+    fn write(&self, built: &Built) -> Result<()>;
+}
+
 pub fn build(opts: &BuildOptions) -> Result<BuildReport> {
+    build_with(opts, &[])
+}
+
+/// [`build`], then `exporters` in order, before the build is recorded as current.
+pub fn build_with(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<BuildReport> {
     let pool = rayon::ThreadPoolBuilder::new()
         .num_threads(opts.threads.max(1))
         .build()
         .context("building thread pool")?;
-    pool.install(|| build_inner(opts))
+    pool.install(|| build_inner(opts, exporters))
 }
 
-fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
+fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<BuildReport> {
     let mut report = BuildReport::default();
     let mut clock = Instant::now();
     let mut phase = |report: &mut BuildReport, name: &'static str| {
@@ -102,7 +129,10 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
     let commit = git_head(&root);
     let date = today();
     let digest = build_digest(&files, &file_keys, opts.cluster, commit.as_deref(), &date);
-    if file_keys.iter().all(Option::is_some) && outputs_current(&out_dir, opts.cluster, &digest) {
+    let extra: Vec<PathBuf> = exporters.iter().flat_map(|e| e.outputs()).collect();
+    if file_keys.iter().all(Option::is_some)
+        && outputs_current(&out_dir, opts.cluster, &digest, &extra)
+    {
         report.unchanged = true;
         report.cached = files.len();
         // Record that the outputs were confirmed current now: the hook guard compares a file's
@@ -187,7 +217,7 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
 
     let target = out_dir.join("graph.json");
     let tmp = target.with_extension("json.tmp");
-    graph.write_graphify_json(
+    let (node_order, edge_order) = graph.write_graphify_json_ordered(
         fs::File::create(&tmp)?,
         commit.as_deref(),
         clustered.as_ref().map(|(_, c)| c.of_node.as_slice()),
@@ -200,6 +230,7 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
     )?;
     phase(&mut report, "write");
 
+    let mut labelled = None;
     if let Some((topo, communities)) = clustered {
         let analysis = analyze(&graph, &topo, &communities);
         write_atomic(
@@ -218,10 +249,24 @@ fn build_inner(opts: &BuildOptions) -> Result<BuildReport> {
         let md = report::render(&graph, &topo, &communities, &analysis, &corpus);
         write_atomic(&out_dir.join(REPORT_FILE), md.as_bytes())?;
         phase(&mut report, "report");
+        labelled = Some((communities, analysis.labels));
     } else {
         // A previous clustered build's sidecars would describe a different graph.
         fs::remove_file(out_dir.join(ANALYSIS_FILE)).ok();
         fs::remove_file(out_dir.join(REPORT_FILE)).ok();
+    }
+    let built = Built {
+        graph: &graph,
+        node_order: &node_order,
+        edge_order: &edge_order,
+        communities: labelled.as_ref().map(|(c, l)| (c, l.as_slice())),
+        out_dir: &out_dir,
+    };
+    for exporter in exporters {
+        exporter
+            .write(&built)
+            .with_context(|| format!("writing {}", exporter.name()))?;
+        phase(&mut report, exporter.name());
     }
     write_atomic(&out_dir.join(DIGEST_FILE), digest.as_bytes())?;
     Ok(report)
@@ -254,14 +299,16 @@ fn build_digest(
     h.finalize().to_hex().to_string()
 }
 
-/// The last build had the same digest and every output it writes is still there.
-fn outputs_current(out_dir: &Path, cluster: bool, digest: &str) -> bool {
+/// The last build had the same digest and every output it writes is still there, the exporters'
+/// (`extra`, relative to `out_dir`) included.
+fn outputs_current(out_dir: &Path, cluster: bool, digest: &str, extra: &[PathBuf]) -> bool {
     let recorded = fs::read_to_string(out_dir.join(DIGEST_FILE)).unwrap_or_default();
     let mut required = vec![out_dir.join("graph.json"), out_dir.join(index::INDEX_FILE)];
     if cluster {
         required.push(out_dir.join(ANALYSIS_FILE));
         required.push(out_dir.join(REPORT_FILE));
     }
+    required.extend(extra.iter().map(|p| out_dir.join(p)));
     recorded == digest && required.iter().all(|p| p.is_file())
 }
 

@@ -1,0 +1,1093 @@
+{
+ "RAW_NODES": [
+  {
+   "id": "app_main_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 17.5,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "app/main.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "app_main_main",
+   "label": "main()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 17.5,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "app/main.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "package",
+   "label": "package.json",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 40.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "package.json",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 8
+  },
+  {
+   "id": "package_devdependencies",
+   "label": "devDependencies",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 17.5,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "devDependencies",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "package_devdependencies_typescript",
+   "label": "typescript",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "typescript",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "package_name",
+   "label": "name",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "name",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "package_scripts",
+   "label": "scripts",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 17.5,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "scripts",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "package_scripts_build",
+   "label": "build",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "build",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "package_version",
+   "label": "version",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "version",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "ref_react",
+   "label": "react",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "react",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "ref_typescript",
+   "label": "typescript",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "typescript",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "ref_zod",
+   "label": "zod",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "zod",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "package.json",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "scripts_build",
+   "label": "build.sh",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 28.8,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "build.sh",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "scripts/build.sh",
+   "file_type": "code",
+   "degree": 5
+  },
+  {
+   "id": "scripts_build_build",
+   "label": "build()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 28.8,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "build()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "scripts/build.sh",
+   "file_type": "code",
+   "degree": 5
+  },
+  {
+   "id": "scripts_build_clean",
+   "label": "clean()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 21.2,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "clean()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "scripts/build.sh",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "scripts_build_compile_all",
+   "label": "compile_all()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 17.5,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "compile_all()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "scripts/build.sh",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "scripts_build_sh__entry",
+   "label": "build.sh script",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 17.5,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "build.sh script",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "scripts/build.sh",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "scripts_common",
+   "label": "common.sh",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 21.2,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "common.sh",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "scripts/common.sh",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "scripts_common_log",
+   "label": "log()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 21.2,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "log()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "scripts/common.sh",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "scripts_common_sh__entry",
+   "label": "common.sh script",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "common.sh script",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "scripts/common.sh",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "tsconfig",
+   "label": "tsconfig.json",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 17.5,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "tsconfig.json",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "tsconfig.json",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "tsconfig_compileroptions",
+   "label": "compilerOptions",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 21.2,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "compilerOptions",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "tsconfig.json",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "tsconfig_compileroptions_strict",
+   "label": "strict",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "strict",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "tsconfig.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "tsconfig_compileroptions_target",
+   "label": "target",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "target",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "tsconfig.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "tsconfig_include",
+   "label": "include",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "include",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "tsconfig.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "app_main",
+   "label": "main.py",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 17.5,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main.py",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "app/main.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "package_dependencies",
+   "label": "dependencies",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 21.2,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "dependencies",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "package_dependencies_react",
+   "label": "react",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "react",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "package_dependencies_zod",
+   "label": "zod",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 13.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "zod",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "package.json",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "cargo_toml_pkg_mixed_fixture",
+   "label": "mixed-fixture",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 10.0,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "mixed-fixture",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "Cargo.toml",
+   "file_type": "code",
+   "degree": 0
+  },
+  {
+   "id": "pyproject_toml_pkg_mixed_fixture",
+   "label": "mixed-fixture",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 10.0,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "mixed-fixture",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "pyproject.toml",
+   "file_type": "code",
+   "degree": 0
+  }
+ ],
+ "RAW_EDGES": [
+  {
+   "from": "app_main_main",
+   "to": "app_main_helper",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "app_main",
+   "to": "app_main_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "app_main",
+   "to": "app_main_main",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package",
+   "to": "ref_react",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package",
+   "to": "ref_zod",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package",
+   "to": "ref_typescript",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package",
+   "to": "package_name",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package",
+   "to": "package_version",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package",
+   "to": "package_scripts",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package",
+   "to": "package_dependencies",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package",
+   "to": "package_devdependencies",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package_devdependencies",
+   "to": "package_devdependencies_typescript",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package_scripts",
+   "to": "package_scripts_build",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build",
+   "to": "scripts_common",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build",
+   "to": "scripts_build_sh__entry",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build",
+   "to": "scripts_build_build",
+   "label": "defines",
+   "title": "defines [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build",
+   "to": "scripts_build_compile_all",
+   "label": "defines",
+   "title": "defines [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build",
+   "to": "scripts_build_clean",
+   "label": "defines",
+   "title": "defines [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build_build",
+   "to": "scripts_build_clean",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build_build",
+   "to": "scripts_common_log",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build_build",
+   "to": "scripts_build_compile_all",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build_sh__entry",
+   "to": "scripts_build_build",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_build_clean",
+   "to": "scripts_common_log",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_common",
+   "to": "scripts_common_sh__entry",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "scripts_common",
+   "to": "scripts_common_log",
+   "label": "defines",
+   "title": "defines [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tsconfig",
+   "to": "tsconfig_compileroptions",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tsconfig",
+   "to": "tsconfig_include",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tsconfig_compileroptions",
+   "to": "tsconfig_compileroptions_strict",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tsconfig_compileroptions",
+   "to": "tsconfig_compileroptions_target",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package_dependencies",
+   "to": "package_dependencies_react",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "package_dependencies",
+   "to": "package_dependencies_zod",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  }
+ ],
+ "LEGEND": [],
+ "hyperedges": []
+}

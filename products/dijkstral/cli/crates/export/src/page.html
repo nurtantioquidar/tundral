@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@@TITLE@@</title>
+<style>
+:root {
+  --bg: #0e1116;
+  --panel: #151a22;
+  --raised: #1c222c;
+  --line: #29303c;
+  --text: #e5e9f0;
+  --muted: #8f99a8;
+  --focus: #88c0d0;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); }
+body { font: 13px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+button, input { font: inherit; color: inherit; }
+.shell { display: grid; grid-template-columns: minmax(0, 1fr) 340px; height: 100vh; }
+.stage { position: relative; min-width: 0; overflow: hidden; }
+#canvas { position: absolute; inset: 0; }
+.notice { position: absolute; left: 16px; right: 16px; bottom: 16px; max-width: 560px; padding: 10px 12px;
+  border: 1px solid var(--line); border-radius: 6px; background: rgba(21, 26, 34, 0.92); color: var(--muted); }
+.side { display: flex; flex-direction: column; min-height: 0; border-left: 1px solid var(--line); background: var(--panel); }
+.side > section, .side > header { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+h1 { margin: 0; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.muted { color: var(--muted); }
+.stats { margin: 4px 0 0; color: var(--muted); }
+.search input { width: 100%; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--raised); outline: none; }
+.search input:focus { border-color: var(--focus); }
+.list { list-style: none; margin: 0; padding: 0; }
+.hits { margin-top: 6px; max-height: 220px; overflow: auto; }
+.pick { display: flex; gap: 8px; align-items: baseline; width: 100%; padding: 4px 6px; border: 0; border-radius: 4px;
+  background: none; text-align: left; cursor: pointer; }
+.pick:hover, .pick:focus-visible { background: var(--raised); outline: none; }
+.pick .name { flex: 1 1 50%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick .meta { flex: 0 1 auto; min-width: 0; max-width: 50%; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; color: var(--muted); font-size: 11px; }
+.detail { flex: 1 1 auto; min-height: 120px; overflow: auto; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0 10px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+.loc { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+.group { margin-top: 10px; }
+.group h4 { margin: 0 0 2px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.tag { margin-left: 4px; padding: 0 4px; border-radius: 3px; background: var(--raised); color: var(--muted); font-size: 10px; }
+.swatch { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.groups { flex: 0 1 34%; min-height: 0; display: flex; flex-direction: column; }
+.groups .bar { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.groups .bar h2 { flex: 1; }
+.groups .bar button { padding: 2px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--raised); cursor: pointer; }
+.legend { overflow: auto; }
+.legend label { display: flex; align-items: center; gap: 6px; padding: 2px 0; cursor: pointer; }
+.legend .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.legend .count { color: var(--muted); font-size: 11px; }
+.legend .more { padding-top: 4px; }
+@media (max-width: 760px) {
+  .shell { grid-template-columns: 1fr; grid-template-rows: 58vh auto; height: auto; min-height: 100vh; }
+  .side { border-left: 0; border-top: 1px solid var(--line); }
+  .groups { flex-basis: auto; }
+  .legend { max-height: 40vh; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <main class="stage">
+    <div id="canvas" role="img" aria-label="Graph view"></div>
+    <div id="notice" class="notice" hidden></div>
+  </main>
+  <aside class="side">
+    <header>
+      <h1 id="title"></h1>
+      <p id="stats" class="stats"></p>
+    </header>
+    <section class="search">
+      <input id="search" type="search" placeholder="Search nodes by name" autocomplete="off" spellcheck="false" aria-label="Search nodes">
+      <ul id="hits" class="list hits"></ul>
+    </section>
+    <section id="detail" class="detail">
+      <p class="muted">Click a node or a search result to see where it is defined and what it links to.</p>
+    </section>
+    <section class="groups">
+      <div class="bar">
+        <h2>Communities</h2>
+        <button id="show-all" type="button">All</button>
+        <button id="show-none" type="button">None</button>
+      </div>
+      <div id="legend" class="legend"></div>
+    </section>
+  </aside>
+</div>
+<script id="graph-data" type="application/json">@@DATA@@</script>
+@@SCRIPTS@@
+<script>
+"use strict";
+(function () {
+  // Tableau 10, indexed by community id modulo 10 (the colours Graphify's graph.html uses).
+  var PALETTE = ["#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",
+                 "#EDC948", "#B07AA1", "#FF9DA7", "#9C755F", "#BAB0AC"];
+  // Above this many links the WebGL view draws only the selected node's links.
+  var EDGE_BUDGET = 150000;
+  var MAX_HITS = 20;
+  var MAX_PER_GROUP = 50;
+  var MAX_LEGEND = 400;
+
+  var data = JSON.parse(document.getElementById("graph-data").textContent);
+  var G = load(data);
+  var hidden = new Set();
+  var selected = -1;
+  var view = null;
+
+  // Every graph item becomes plain arrays; text only ever reaches the page through textContent.
+  function load(d) {
+    var nodes = [], legend = d.LEGEND || [], names = new Map();
+    legend.forEach(function (c) { names.set(c.cid, c.label); });
+    var rels = [], relIndex = new Map(), confs = ["EXTRACTED", "INFERRED", "AMBIGUOUS"];
+    function rel(r) {
+      var k = relIndex.get(r);
+      if (k === undefined) { k = rels.length; rels.push(r); relIndex.set(r, k); }
+      return k;
+    }
+    function conf(c) { var k = confs.indexOf(c); if (k < 0) { k = confs.length; confs.push(c); } return k; }
+    var src, dst, erel, econf, i;
+    if (d.mode === "webgl") {
+      var f = fieldIndex(d.nodeFields);
+      var maxDeg = 1;
+      d.nodes.forEach(function (r) { if (r[f.degree] > maxDeg) maxDeg = r[f.degree]; });
+      d.nodes.forEach(function (r) {
+        var cid = r[f.community];
+        nodes.push({
+          id: r[f.id], label: r[f.label], community: cid,
+          communityName: names.has(cid) ? names.get(cid) : "Community " + cid,
+          file: r[f.source_file], kind: r[f.file_type], loc: r[f.source_location],
+          degree: r[f.degree], color: PALETTE[cid % 10],
+          size: Math.round((10 + 30 * r[f.degree] / maxDeg) * 10) / 10,
+          showLabel: r[f.degree] / maxDeg >= 0.15
+        });
+      });
+      rels = d.relations.slice();
+      rels.forEach(function (r, k) { relIndex.set(r, k); });
+      confs = d.confidences.slice();
+      var m = d.edges.length;
+      src = new Int32Array(m); dst = new Int32Array(m); erel = new Int32Array(m); econf = new Int32Array(m);
+      for (i = 0; i < m; i++) {
+        var e = d.edges[i];
+        src[i] = e[0]; dst[i] = e[1]; erel[i] = e[2]; econf[i] = e[3];
+      }
+    } else {
+      var at = new Map();
+      d.RAW_NODES.forEach(function (n, k) {
+        at.set(n.id, k);
+        nodes.push({
+          id: n.id, label: n.label, community: n.community, communityName: n.community_name,
+          file: n.source_file, kind: n.file_type, loc: n.source_location === undefined ? null : n.source_location,
+          degree: n.degree, color: n.color.background, size: n.size, showLabel: n.font.size > 0
+        });
+      });
+      var edges = d.RAW_EDGES;
+      src = new Int32Array(edges.length); dst = new Int32Array(edges.length);
+      erel = new Int32Array(edges.length); econf = new Int32Array(edges.length);
+      edges.forEach(function (e, k) {
+        src[k] = at.get(e.from); dst[k] = at.get(e.to); erel[k] = rel(e.label); econf[k] = conf(e.confidence);
+      });
+    }
+    // Incident links per node (compressed rows); a self-loop is listed once.
+    var n = nodes.length, start = new Int32Array(n + 1);
+    for (i = 0; i < src.length; i++) { start[src[i] + 1]++; if (dst[i] !== src[i]) start[dst[i] + 1]++; }
+    for (i = 0; i < n; i++) start[i + 1] += start[i];
+    var fill = start.slice(0, n), inc = new Int32Array(start[n]);
+    for (i = 0; i < src.length; i++) {
+      inc[fill[src[i]]++] = i;
+      if (dst[i] !== src[i]) inc[fill[dst[i]]++] = i;
+    }
+    if (!legend.length) legend = deriveLegend(nodes);
+    return { nodes: nodes, src: src, dst: dst, rel: erel, conf: econf, rels: rels, confs: confs,
+             start: start, inc: inc, legend: legend, meta: d.meta || {}, mode: d.mode };
+  }
+
+  function fieldIndex(fields) {
+    var out = {};
+    fields.forEach(function (name, k) { out[name] = k; });
+    return out;
+  }
+
+  function deriveLegend(nodes) {
+    var by = new Map();
+    nodes.forEach(function (n) {
+      var c = by.get(n.community);
+      if (!c) { c = { cid: n.community, color: n.color, label: n.communityName, count: 0 }; by.set(n.community, c); }
+      c.count++;
+    });
+    return Array.from(by.values()).sort(function (a, b) { return a.cid - b.cid; });
+  }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = String(text);
+    return e;
+  }
+
+  function where(n) {
+    if (!n.file) return "";
+    var line = typeof n.loc === "string" && /^L\d+$/.test(n.loc) ? ":" + n.loc.slice(1) : "";
+    return n.file + line;
+  }
+
+  function fmt(x) { return Number(x).toLocaleString("en-US"); }
+
+  // ---- side panel -------------------------------------------------------------------------
+
+  document.getElementById("title").textContent = G.meta.title || "Code graph";
+  document.title = (G.meta.title ? G.meta.title + " · " : "") + "dijkstral graph";
+  document.getElementById("stats").textContent =
+    fmt(G.nodes.length) + " nodes · " + fmt(G.src.length) + " links · " + fmt(G.legend.length) + " communities";
+
+  var search = document.getElementById("search");
+  var hits = document.getElementById("hits");
+  var timer = 0;
+  search.addEventListener("input", function () {
+    clearTimeout(timer);
+    timer = setTimeout(runSearch, G.nodes.length > 20000 ? 160 : 40);
+  });
+  search.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") {
+      var first = hits.querySelector("button");
+      if (first) first.click();
+    }
+  });
+
+  function runSearch() {
+    var q = search.value.trim().toLowerCase();
+    hits.textContent = "";
+    if (!q) return;
+    var found = [];
+    for (var i = 0; i < G.nodes.length; i++) {
+      var label = String(G.nodes[i].label).toLowerCase();
+      var at = label.indexOf(q);
+      if (at < 0) continue;
+      found.push([label === q ? 0 : at === 0 ? 1 : 2, -G.nodes[i].degree, i]);
+    }
+    found.sort(function (a, b) { return a[0] - b[0] || a[1] - b[1] || a[2] - b[2]; });
+    found.slice(0, MAX_HITS).forEach(function (h) {
+      var n = G.nodes[h[2]];
+      var li = el("li"), b = el("button", "pick");
+      b.type = "button";
+      var sw = el("span", "swatch"); sw.style.background = n.color;
+      b.appendChild(sw);
+      b.appendChild(el("span", "name", n.label));
+      var at = where(n);
+      b.appendChild(el("span", "meta", at ? at.slice(at.lastIndexOf("/") + 1) : n.kind || ""));
+      b.title = where(n);
+      b.addEventListener("click", function () { select(h[2], true); });
+      li.appendChild(b);
+      hits.appendChild(li);
+    });
+    if (!found.length) hits.appendChild(el("li", "muted", "No node matches."));
+  }
+
+  function select(i, focus) {
+    selected = i;
+    renderDetail(i);
+    if (view) {
+      view.select(i);
+      if (focus) view.focus(i);
+    }
+  }
+
+  function renderDetail(i) {
+    var box = document.getElementById("detail");
+    box.textContent = "";
+    if (i < 0) {
+      box.appendChild(el("p", "muted", "Click a node or a search result to see where it is defined and what it links to."));
+      return;
+    }
+    var n = G.nodes[i];
+    box.appendChild(el("h3", null, n.label));
+    var dl = el("dl", "facts");
+    function fact(k, v, cls) {
+      dl.appendChild(el("dt", null, k));
+      var dd = el("dd", cls || null, v);
+      dl.appendChild(dd);
+      return dd;
+    }
+    var at = where(n);
+    fact("Defined", at || "not in a source file (external or unresolved)", at ? "loc" : "muted");
+    var dd = fact("Community", "");
+    var sw = el("span", "swatch"); sw.style.background = n.color;
+    dd.appendChild(sw);
+    dd.appendChild(document.createTextNode(n.communityName));
+    if (n.kind) fact("Kind", n.kind);
+    fact("Links", fmt(n.degree));
+    fact("Id", n.id, "loc");
+    box.appendChild(dl);
+
+    var groups = new Map();
+    for (var k = G.start[i]; k < G.start[i + 1]; k++) {
+      var e = G.inc[k];
+      var other = G.src[e] === i ? G.dst[e] : G.src[e];
+      var arrow = G.src[e] === G.dst[e] ? "↺" : G.src[e] === i ? "→" : "←";
+      var name = G.rels[G.rel[e]];
+      if (!groups.has(name)) groups.set(name, []);
+      groups.get(name).push([other, arrow, G.confs[G.conf[e]]]);
+    }
+    Array.from(groups.keys()).sort().forEach(function (name) {
+      var items = groups.get(name);
+      items.sort(function (a, b) { return G.nodes[b[0]].degree - G.nodes[a[0]].degree; });
+      var g = el("div", "group");
+      g.appendChild(el("h4", null, name + " (" + items.length + ")"));
+      var ul = el("ul", "list");
+      items.slice(0, MAX_PER_GROUP).forEach(function (it) {
+        var m = G.nodes[it[0]];
+        var li = el("li"), b = el("button", "pick");
+        b.type = "button";
+        b.appendChild(el("span", "meta", it[1]));
+        var s = el("span", "swatch"); s.style.background = m.color;
+        b.appendChild(s);
+        var label = el("span", "name", m.label);
+        if (it[2] !== "EXTRACTED") label.appendChild(el("span", "tag", it[2].toLowerCase()));
+        b.appendChild(label);
+        b.title = where(m) || m.id;
+        b.addEventListener("click", function () { select(it[0], true); });
+        li.appendChild(b);
+        ul.appendChild(li);
+      });
+      if (items.length > MAX_PER_GROUP) ul.appendChild(el("li", "muted", "… and " + fmt(items.length - MAX_PER_GROUP) + " more"));
+      g.appendChild(ul);
+      box.appendChild(g);
+    });
+  }
+
+  function renderLegend() {
+    var box = document.getElementById("legend");
+    box.textContent = "";
+    var shown = G.legend.slice().sort(function (a, b) { return b.count - a.count || a.cid - b.cid; });
+    shown.slice(0, MAX_LEGEND).forEach(function (c) {
+      var row = el("label");
+      var cb = el("input");
+      cb.type = "checkbox";
+      cb.checked = !hidden.has(c.cid);
+      cb.addEventListener("change", function () {
+        if (cb.checked) hidden.delete(c.cid); else hidden.add(c.cid);
+        if (view) view.refresh();
+      });
+      row.appendChild(cb);
+      var sw = el("span", "swatch"); sw.style.background = c.color;
+      row.appendChild(sw);
+      row.appendChild(el("span", "name", c.label));
+      row.appendChild(el("span", "count", fmt(c.count)));
+      box.appendChild(row);
+    });
+    if (shown.length > MAX_LEGEND) {
+      box.appendChild(el("div", "muted more", fmt(shown.length - MAX_LEGEND) + " smaller communities not listed; All and None include them."));
+    }
+  }
+
+  document.getElementById("show-all").addEventListener("click", function () {
+    hidden.clear(); renderLegend(); if (view) view.refresh();
+  });
+  document.getElementById("show-none").addEventListener("click", function () {
+    G.legend.forEach(function (c) { hidden.add(c.cid); }); renderLegend(); if (view) view.refresh();
+  });
+
+  function notice(text) {
+    var n = document.getElementById("notice");
+    n.textContent = text;
+    n.hidden = !text;
+  }
+
+  // ---- renderers --------------------------------------------------------------------------
+
+  function visView(container) {
+    var nodes = new vis.DataSet(G.nodes.map(function (n, i) {
+      var tip = el("div", null, n.label + (where(n) ? "\n" + where(n) : ""));
+      tip.style.whiteSpace = "pre";
+      return {
+        id: i, label: n.label, title: tip, shape: "dot", size: n.size,
+        color: { background: n.color, border: n.color, highlight: { background: "#ffffff", border: n.color } },
+        font: { size: n.showLabel ? 12 : 0, color: "#ffffff" }
+      };
+    }));
+    var edges = [];
+    for (var k = 0; k < G.src.length; k++) {
+      var c = G.confs[G.conf[k]];
+      edges.push({ id: k, from: G.src[k], to: G.dst[k], dashes: c !== "EXTRACTED", width: c === "EXTRACTED" ? 2 : 1,
+                   color: { color: "#6b7689", highlight: "#e5e9f0", opacity: c === "EXTRACTED" ? 0.7 : 0.35 } });
+    }
+    var net = new vis.Network(container, { nodes: nodes, edges: new vis.DataSet(edges) }, {
+      autoResize: true,
+      layout: { improvedLayout: G.nodes.length <= 1000 },
+      physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -40, springLength: 90 },
+                 stabilization: { iterations: 250, updateInterval: 50 } },
+      interaction: { hover: true, tooltipDelay: 150, hideEdgesOnDrag: G.src.length > 4000 },
+      edges: { smooth: false, arrows: { to: { enabled: true, scaleFactor: 0.4 } } }
+    });
+    net.once("stabilizationIterationsDone", function () { net.setOptions({ physics: false }); });
+    net.on("click", function (p) { if (p.nodes.length) select(p.nodes[0], false); });
+    return {
+      select: function (i) { if (i >= 0) net.selectNodes([i]); else net.unselectAll(); },
+      focus: function (i) { net.focus(i, { scale: 1.1, animation: { duration: 400 } }); },
+      refresh: function () {
+        nodes.update(G.nodes.map(function (n, i) { return { id: i, hidden: hidden.has(n.community) }; }));
+      }
+    };
+  }
+
+  // Communities packed on a sunflower spiral, members on a smaller one inside each disc (best
+  // connected at the centre): linear time, deterministic, and readable at any size.
+  function packedLayout() {
+    var golden = Math.PI * (3 - Math.sqrt(5));
+    var by = new Map();
+    G.nodes.forEach(function (n, i) {
+      if (!by.has(n.community)) by.set(n.community, []);
+      by.get(n.community).push(i);
+    });
+    var groups = Array.from(by.values()).sort(function (a, b) { return b.length - a.length; });
+    var pos = new Float64Array(G.nodes.length * 2), area = 0;
+    groups.forEach(function (members, k) {
+      var r = Math.sqrt(members.length) * 6 + 4;
+      area += r * r;
+      var dist = Math.sqrt(area) * 1.9, angle = k * golden;
+      var cx = k === 0 ? 0 : dist * Math.cos(angle), cy = k === 0 ? 0 : dist * Math.sin(angle);
+      area += r * r;
+      members.sort(function (a, b) { return G.nodes[b].degree - G.nodes[a].degree || a - b; });
+      members.forEach(function (i, j) {
+        var rr = r * Math.sqrt((j + 0.5) / members.length), a = j * golden;
+        pos[2 * i] = cx + rr * Math.cos(a);
+        pos[2 * i + 1] = cy + rr * Math.sin(a);
+      });
+    });
+    return pos;
+  }
+
+  function webglView(container) {
+    var GraphCtor = graphology.Graph || graphology;
+    var SigmaCtor = typeof Sigma === "function" ? Sigma : (Sigma.Sigma || Sigma.default);
+    var g = new GraphCtor({ type: "undirected", multi: true, allowSelfLoops: true });
+    var pos = packedLayout();
+    G.nodes.forEach(function (n, i) {
+      g.addNode(String(i), { x: pos[2 * i], y: pos[2 * i + 1], size: 1 + n.size / 10, color: n.color,
+                             label: n.label, forceLabel: false });
+    });
+    var all = G.src.length <= EDGE_BUDGET;
+    if (all) {
+      for (var k = 0; k < G.src.length; k++) g.addEdge(String(G.src[k]), String(G.dst[k]), { size: 0.4, color: "#3a4352" });
+    } else {
+      notice(fmt(G.src.length) + " links: only the selected node's links are drawn.");
+    }
+    var near = new Set(), temp = [];
+    // Hovered and selected nodes: a ring and a dark label box (the default box is white).
+    function drawHover(ctx, d, settings) {
+      var size = settings.labelSize, label = d.label || "";
+      ctx.font = settings.labelWeight + " " + size + "px " + settings.labelFont;
+      var w = ctx.measureText(label).width + 10, h = size + 8, x = d.x + d.size + 4;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.size + 2, 0, Math.PI * 2);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#ffffff";
+      ctx.stroke();
+      if (!label) return;
+      ctx.fillStyle = "#151a22";
+      ctx.fillRect(x, d.y - h / 2, w, h);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#88c0d0";
+      ctx.strokeRect(x, d.y - h / 2, w, h);
+      ctx.fillStyle = "#e5e9f0";
+      ctx.fillText(label, x + 5, d.y + size / 3);
+    }
+    var renderer = new SigmaCtor(g, container, {
+      hideEdgesOnMove: true,
+      labelRenderedSizeThreshold: 7,
+      labelColor: { color: "#e5e9f0" },
+      defaultDrawNodeHover: drawHover,
+      zIndex: true,
+      nodeReducer: function (key, attrs) {
+        var i = +key, n = G.nodes[i], out = Object.assign({}, attrs);
+        if (hidden.has(n.community)) { out.hidden = true; return out; }
+        if (selected >= 0) {
+          if (i === selected) { out.highlighted = true; out.zIndex = 2; out.forceLabel = true; }
+          else if (near.has(i)) { out.zIndex = 1; if (near.size > 12) out.label = null; }
+          else { out.color = "#2a313c"; out.label = null; out.zIndex = 0; }
+        }
+        return out;
+      },
+      edgeReducer: function (key, attrs) {
+        var out = Object.assign({}, attrs);
+        var ends = g.extremities(key);
+        if (hidden.has(G.nodes[+ends[0]].community) || hidden.has(G.nodes[+ends[1]].community)) out.hidden = true;
+        else if (selected >= 0) {
+          if (+ends[0] === selected || +ends[1] === selected) { out.color = "#c8d0dc"; out.size = 1; }
+          else out.hidden = true;
+        }
+        return out;
+      }
+    });
+    renderer.on("clickNode", function (ev) { select(+ev.node, false); });
+    renderer.on("clickStage", function () { select(-1, false); });
+    return {
+      select: function (i) {
+        temp.forEach(function (key) { if (g.hasEdge(key)) g.dropEdge(key); });
+        temp = [];
+        near = new Set();
+        if (i >= 0) {
+          for (var k = G.start[i]; k < G.start[i + 1]; k++) {
+            var e = G.inc[k];
+            near.add(G.src[e] === i ? G.dst[e] : G.src[e]);
+            if (!all) temp.push(g.addEdge(String(G.src[e]), String(G.dst[e]), { size: 0.8, color: "#c8d0dc" }));
+          }
+        }
+        renderer.refresh();
+      },
+      focus: function (i) {
+        var p = renderer.getNodeDisplayData(String(i));
+        var ratio = Math.max(0.03, Math.min(0.5, 30 / Math.sqrt(G.nodes.length)));
+        if (p) renderer.getCamera().animate({ x: p.x, y: p.y, ratio: ratio }, { duration: 450 });
+      },
+      refresh: function () { renderer.refresh(); }
+    };
+  }
+
+  renderLegend();
+  var container = document.getElementById("canvas");
+  try {
+    if (G.mode === "webgl") {
+      if (typeof Sigma === "undefined" || typeof graphology === "undefined") throw new Error("offline");
+      view = webglView(container);
+    } else {
+      if (typeof vis === "undefined") throw new Error("offline");
+      view = visView(container);
+    }
+  } catch (err) {
+    view = null;
+    notice(err && err.message === "offline"
+      ? "The graph renderer could not be loaded (it comes from a CDN). Search, details and communities still work."
+      : "The graph could not be drawn: " + (err && err.message ? err.message : err));
+  }
+}());
+</script>
+</body>
+</html>

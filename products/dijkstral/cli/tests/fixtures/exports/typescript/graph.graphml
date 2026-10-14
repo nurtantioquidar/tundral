@@ -1,0 +1,1608 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d19" for="edge" attr.name="type_only" attr.type="boolean" />
+  <key id="d18" for="edge" attr.name="deferred" attr.type="boolean" />
+  <key id="d17" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d16" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d15" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d14" for="edge" attr.name="context" attr.type="string" />
+  <key id="d13" for="edge" attr.name="confidence_score" attr.type="double" />
+  <key id="d12" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d11" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d10" for="node" attr.name="type" attr.type="string" />
+  <key id="d9" for="node" attr.name="external" attr.type="boolean" />
+  <key id="d8" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d7" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d6" for="node" attr.name="norm_label" attr.type="string" />
+  <key id="d5" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d4" for="node" attr.name="community" attr.type="long" />
+  <key id="d3" for="node" attr.name="label" attr.type="string" />
+  <key id="d2" for="graph" attr.name="hyperedges" attr.type="string" />
+  <key id="d1" for="graph" attr.name="graphify_version" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="long" />
+  <graph edgedefault="undirected">
+    <node id="src_models_user_base">
+      <data key="d3">Base</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">base</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L15</data>
+    </node>
+    <node id="src_models_user_role">
+      <data key="d3">Role</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">role</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L4</data>
+    </node>
+    <node id="src_models_user_userid">
+      <data key="d3">UserId</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">userid</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L9</data>
+    </node>
+    <node id="src_models_repo_entity">
+      <data key="d3">Entity</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">entity</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_models_repo_repo">
+      <data key="d3">Repo</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">repo</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L10</data>
+    </node>
+    <node id="src_service_userservice">
+      <data key="d3">UserService</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">userservice</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L12</data>
+    </node>
+    <node id="src_models_user_admin">
+      <data key="d3">Admin</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">admin</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L47</data>
+    </node>
+    <node id="src_models_user_named">
+      <data key="d3">Named</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">named</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L11</data>
+    </node>
+    <node id="src_models_user_user">
+      <data key="d3">User</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">user</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L26</data>
+    </node>
+    <node id="src_ui_app_app">
+      <data key="d3">App</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">app</data>
+      <data key="d7">src/ui/App.tsx</data>
+      <data key="d8">L24</data>
+    </node>
+    <node id="src_ui_app_badgeprops">
+      <data key="d3">BadgeProps</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">badgeprops</data>
+      <data key="d7">src/ui/App.tsx</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="src_models_user_base_describe">
+      <data key="d3">.describe()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.describe()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L18</data>
+    </node>
+    <node id="src_models_user_base_save">
+      <data key="d3">.save()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.save()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L20</data>
+    </node>
+    <node id="src_models_user_formatname">
+      <data key="d3">formatName()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">formatname()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L62</data>
+    </node>
+    <node id="src_models_user_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L64</data>
+    </node>
+    <node id="src_models_user_user_display">
+      <data key="d3">.display()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.display()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L34</data>
+    </node>
+    <node id="src_models_user_validate">
+      <data key="d3">validate()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">validate()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L57</data>
+    </node>
+    <node id="src_service_comparenames">
+      <data key="d3">compareNames()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">comparenames()</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L42</data>
+    </node>
+    <node id="src_service_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L8</data>
+    </node>
+    <node id="src_service_userservice_export">
+      <data key="d3">.export()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.export()</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L31</data>
+    </node>
+    <node id="src_models_repo_key">
+      <data key="d3">key()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">key()</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L27</data>
+    </node>
+    <node id="src_models_repo_repo_add">
+      <data key="d3">.add()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.add()</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L13</data>
+    </node>
+    <node id="src_models_repo_repo_all">
+      <data key="d3">.all()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.all()</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L21</data>
+    </node>
+    <node id="src_models_repo_repo_get">
+      <data key="d3">.get()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.get()</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L17</data>
+    </node>
+    <node id="src_models_repo_sealed">
+      <data key="d3">sealed()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">sealed()</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="src_service_run">
+      <data key="d3">run()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">run()</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L46</data>
+    </node>
+    <node id="src_service_userservice_constructor">
+      <data key="d3">.constructor()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">.constructor()</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L15</data>
+    </node>
+    <node id="src_service_userservice_log">
+      <data key="d3">.log()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">.log()</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L37</data>
+    </node>
+    <node id="src_service_userservice_register">
+      <data key="d3">.register()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">.register()</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L19</data>
+    </node>
+    <node id="src_tests_service_test_makeuser">
+      <data key="d3">makeUser()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">makeuser()</data>
+      <data key="d7">src/__tests__/service.test.ts</data>
+      <data key="d8">L16</data>
+    </node>
+    <node id="src_models_user_admin_promote">
+      <data key="d3">.promote()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.promote()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L48</data>
+    </node>
+    <node id="src_models_user_admin_promote_bump">
+      <data key="d3">bump()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">bump()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L49</data>
+    </node>
+    <node id="src_models_user_user_constructor">
+      <data key="d3">.constructor()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.constructor()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L29</data>
+    </node>
+    <node id="src_models_user_user_describe">
+      <data key="d3">.describe()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.describe()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L42</data>
+    </node>
+    <node id="src_models_user_user_parse">
+      <data key="d3">.parse()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.parse()</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L38</data>
+    </node>
+    <node id="src_service_userservice_promote">
+      <data key="d3">.promote()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.promote()</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L27</data>
+    </node>
+    <node id="src_util_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">src/util.ts</data>
+      <data key="d8">L8</data>
+    </node>
+    <node id="src_util_slugify">
+      <data key="d3">slugify()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">slugify()</data>
+      <data key="d7">src/util.ts</data>
+      <data key="d8">L4</data>
+    </node>
+    <node id="src_util_traced">
+      <data key="d3">traced()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">traced()</data>
+      <data key="d7">src/util.ts</data>
+      <data key="d8">L12</data>
+    </node>
+    <node id="src_ui_app_app_handleclick">
+      <data key="d3">.handleClick()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">.handleclick()</data>
+      <data key="d7">src/ui/App.tsx</data>
+      <data key="d8">L25</data>
+    </node>
+    <node id="src_ui_app_app_render">
+      <data key="d3">.render()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">.render()</data>
+      <data key="d7">src/ui/App.tsx</data>
+      <data key="d8">L29</data>
+    </node>
+    <node id="src_ui_app_badge">
+      <data key="d3">Badge()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">badge()</data>
+      <data key="d7">src/ui/App.tsx</data>
+      <data key="d8">L10</data>
+    </node>
+    <node id="src_ui_app_userlist">
+      <data key="d3">UserList()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">userlist()</data>
+      <data key="d7">src/ui/App.tsx</data>
+      <data key="d8">L14</data>
+    </node>
+    <node id="src_models_user">
+      <data key="d3">user.ts</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">user.ts</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_models_user_role_admin">
+      <data key="d3">Admin</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">admin</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="src_models_user_role_member">
+      <data key="d3">Member</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">member</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="src_models_user_rationale_21">
+      <data key="d3">NOTE: persistence is faked in this fixture.</data>
+      <data key="d4">0</data>
+      <data key="d5">rationale</data>
+      <data key="d6">note: persistence is faked in this fixture.</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L21</data>
+    </node>
+    <node id="src_models_user_rationale_61">
+      <data key="d3">WHY: names are displayed title-cased everywhere.</data>
+      <data key="d4">0</data>
+      <data key="d5">rationale</data>
+      <data key="d6">why: names are displayed title-cased everywhere.</data>
+      <data key="d7">src/models/user.ts</data>
+      <data key="d8">L61</data>
+    </node>
+    <node id="src_service">
+      <data key="d3">service.ts</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">service.ts</data>
+      <data key="d7">src/service.ts</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_models_index">
+      <data key="d3">index.ts</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">index.ts</data>
+      <data key="d7">src/models/index.ts</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_models_repo">
+      <data key="d3">repo.ts</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">repo.ts</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_models_repo_storage">
+      <data key="d3">Storage</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">storage</data>
+      <data key="d7">src/models/repo.ts</data>
+      <data key="d8">L26</data>
+    </node>
+    <node id="src_tests_service_test">
+      <data key="d3">service.test.ts</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">service.test.ts</data>
+      <data key="d7">src/__tests__/service.test.ts</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_util">
+      <data key="d3">util.ts</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">util.ts</data>
+      <data key="d7">src/util.ts</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_util_join">
+      <data key="d3">{ join }</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">{ join }</data>
+      <data key="d7">src/util.ts</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_util_legacy">
+      <data key="d3">legacy</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">legacy</data>
+      <data key="d7">src/util.ts</data>
+      <data key="d8">L2</data>
+    </node>
+    <node id="src_ui_app">
+      <data key="d3">App.tsx</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">app.tsx</data>
+      <data key="d7">src/ui/App.tsx</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="ref_fs">
+      <data key="d3">ref_fs</data>
+      <data key="d4">1</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_fs</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_node_path">
+      <data key="d3">ref_node_path</data>
+      <data key="d4">1</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_node_path</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_polyfill">
+      <data key="d3">ref_polyfill</data>
+      <data key="d4">1</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_polyfill</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="src_models_index_admin">
+      <data key="d3">src_models_index_admin</data>
+      <data key="d4">1</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">src_models_index_admin</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="src_models_index_helper">
+      <data key="d3">src_models_index_helper</data>
+      <data key="d4">1</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">src_models_index_helper</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="src_models_index_storage">
+      <data key="d3">src_models_index_storage</data>
+      <data key="d4">1</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">src_models_index_storage</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_vitest">
+      <data key="d3">ref_vitest</data>
+      <data key="d4">3</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_vitest</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="src_models_index_user">
+      <data key="d3">src_models_index_user</data>
+      <data key="d4">3</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">src_models_index_user</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_legacy">
+      <data key="d3">ref_legacy</data>
+      <data key="d4">5</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_legacy</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_path">
+      <data key="d3">ref_path</data>
+      <data key="d4">5</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_path</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_react">
+      <data key="d3">ref_react</data>
+      <data key="d4">6</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_react</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <edge source="src_models_user_base" target="src_models_repo_entity">
+      <data key="d11">implements</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">type</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L15</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_base" target="src_models_user_user">
+      <data key="d11">inherits</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">type</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L26</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_base" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L15</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_base" target="src_models_user_base_describe">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L18</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_base" target="src_models_user_base_save">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L20</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_role" target="src_models_user_role_member">
+      <data key="d11">case_of</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L5</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_role" target="src_models_user_role_admin">
+      <data key="d11">case_of</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L6</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_role" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_userid" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L9</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_entity" target="src_models_user">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_entity" target="src_models_index">
+      <data key="d11">re_exports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">re-export</data>
+      <data key="d15">src/models/index.ts</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_entity" target="src_models_repo">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_service_run">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L47</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_models_repo_sealed">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">decorator</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L9</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_service_userservice">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">field</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L13</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_service">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_service_userservice_constructor">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">parameter_type</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L15</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_models_index">
+      <data key="d11">re_exports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">re-export</data>
+      <data key="d15">src/models/index.ts</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_models_repo">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L10</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_models_repo_repo_add">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L13</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_models_repo_repo_get">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L17</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_repo" target="src_models_repo_repo_all">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L21</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_service_run">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L47</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_models_user_user">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">generic_arg</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L13</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_tests_service_test">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_ui_app">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_service">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L12</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_service_userservice_constructor">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L15</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_service_userservice_register">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L19</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_service_userservice_promote">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L27</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_service_userservice_export">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L31</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice" target="src_service_userservice_log">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L37</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_admin" target="src_service">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_admin" target="src_service_userservice_promote">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">parameter_type</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L27</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_admin" target="src_models_user_user">
+      <data key="d11">inherits</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">type</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L47</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_admin" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L47</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_admin" target="src_models_user_admin_promote">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L48</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_named" target="src_service">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L5</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_named" target="src_service_userservice_promote">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">parameter_type</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L27</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_named" target="src_models_user_user">
+      <data key="d11">implements</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">type</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L26</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_named" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L11</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_tests_service_test_makeuser">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L17</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_ui_app_badgeprops">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">field</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L6</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_service_userservice_constructor">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">generic_arg</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L15</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_service">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_tests_service_test">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_ui_app">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_service_userservice_promote">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">parameter_type</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L27</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_service_userservice_register">
+      <data key="d11">references</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">return_type</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L19</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L26</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_models_user_user_constructor">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L29</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_models_user_user_display">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L34</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_models_user_user_parse">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L38</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_user" target="src_models_user_user_describe">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L42</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app_app" target="src_ui_app">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L24</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app_app" target="src_ui_app_app_handleclick">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L25</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app_app" target="src_ui_app_app_render">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L29</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app_badgeprops" target="src_ui_app">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L5</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_base_save" target="src_models_user_validate">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L22</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_formatname" target="src_models_user_user_display">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L35</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_formatname" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L62</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_helper" target="src_service">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_helper" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L64</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_validate" target="src_models_user">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L57</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_comparenames" target="src_service">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L42</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_comparenames" target="src_service_userservice_export">
+      <data key="d11">indirect_call</data>
+      <data key="d12">INFERRED</data>
+      <data key="d13">0.85</data>
+      <data key="d14">argument</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L33</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_helper" target="src_service">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L8</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_helper" target="src_service_userservice_export">
+      <data key="d11">indirect_call</data>
+      <data key="d12">INFERRED</data>
+      <data key="d13">0.85</data>
+      <data key="d14">argument</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L34</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_key" target="src_models_repo">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L27</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo_sealed" target="src_models_repo">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L5</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_run" target="src_service_userservice_register">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L48</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_run" target="src_ui_app_app_handleclick">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L26</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_run" target="src_util">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d18">True</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L49</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_run" target="src_tests_service_test">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_run" target="src_ui_app">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_run" target="src_service">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L46</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice_log" target="src_service_userservice_log">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L38</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice_log" target="src_service_userservice_register">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L23</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice_register" target="src_util_slugify">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L23</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_tests_service_test_makeuser" target="src_tests_service_test">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L16</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user_admin_promote" target="src_models_user_admin_promote_bump">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L49</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service_userservice_promote" target="src_service_userservice_promote">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L28</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util_helper" target="src_util_slugify">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/util.ts</data>
+      <data key="d16">L5</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util_helper" target="src_util">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/util.ts</data>
+      <data key="d16">L8</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util_slugify" target="src_service">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L6</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util_slugify" target="src_util">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/util.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util_traced" target="src_util">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/util.ts</data>
+      <data key="d16">L12</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app_app_render" target="src_ui_app_userlist">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L33</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app_badge" target="src_ui_app_userlist">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L18</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app_badge" target="src_ui_app">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L10</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app_userlist" target="src_ui_app">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L14</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user" target="src_models_index">
+      <data key="d11">re_exports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">export</data>
+      <data key="d15">src/models/index.ts</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user" target="src_models_repo">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L1</data>
+      <data key="d19">True</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user" target="src_service">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L5</data>
+      <data key="d19">True</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user" target="src_models_user_rationale_21">
+      <data key="d11">rationale_for</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L21</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_user" target="src_models_user_rationale_61">
+      <data key="d11">rationale_for</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/user.ts</data>
+      <data key="d16">L61</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="src_models_index_admin">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="src_models_index_helper">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="src_models_index_storage">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="src_models_index_user">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="ref_polyfill">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="ref_fs">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="ref_node_path">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="src_models_index">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="src_util">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/service.ts</data>
+      <data key="d16">L6</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="src_tests_service_test">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_service" target="src_ui_app">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_index" target="src_models_repo">
+      <data key="d11">re_exports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">export</data>
+      <data key="d15">src/models/index.ts</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_index" target="src_tests_service_test">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_index" target="src_ui_app">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_models_repo" target="src_models_repo_storage">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/models/repo.ts</data>
+      <data key="d16">L26</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_tests_service_test" target="src_models_index_user">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_tests_service_test" target="ref_vitest">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/__tests__/service.test.ts</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util" target="ref_path">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/util.ts</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util" target="ref_legacy">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/util.ts</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util" target="src_util_join">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/util.ts</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_util" target="src_util_legacy">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">src/util.ts</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app" target="src_models_index_user">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="src_ui_app" target="ref_react">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">src/ui/App.tsx</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <data key="d0">1</data>
+    <data key="d1">0.9.86</data>
+    <data key="d2">[]</data>
+  </graph>
+</graphml>
