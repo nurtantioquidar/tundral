@@ -6,7 +6,7 @@ use std::collections::{HashMap, HashSet};
 use dijkstral_core::index::Index;
 use memchr::memmem::Finder;
 
-use crate::text::{is_alnum, py_len, py_repr_list};
+use crate::text::{is_alnum, line_label, py_len, py_repr_list};
 
 /// Stopwords of three or more characters (§3.3); shorter tokens are dropped by length.
 const STOPWORDS: &[&str] = &[
@@ -156,6 +156,20 @@ pub fn explicit_context<S: AsRef<str>>(values: &[S]) -> Option<ContextFilter> {
     })
 }
 
+/// The order DFS pushes a node's neighbours in (the last pushed is visited first). BFS reaches
+/// the same nodes in either order.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum NeighbourOrder {
+    /// graph.json link order (CLI `query`, §3.7).
+    #[default]
+    Links,
+    /// NetworkX's `MultiDiGraph.to_undirected()` order, which Graphify's MCP `query_graph` uses
+    /// (fitted on every fixture): links enumerated source by source (nodes in file order), each
+    /// source's targets in first-link order, and a neighbour placed where its first such link
+    /// falls.
+    BySource,
+}
+
 #[derive(Debug, Clone)]
 pub struct QueryOptions {
     pub dfs: bool,
@@ -163,6 +177,7 @@ pub struct QueryOptions {
     pub depth: u32,
     /// `Some` for `--context`; `None` applies the heuristic.
     pub context: Option<Vec<String>>,
+    pub order: NeighbourOrder,
 }
 
 impl Default for QueryOptions {
@@ -171,8 +186,46 @@ impl Default for QueryOptions {
             dfs: false,
             depth: 2,
             context: None,
+            order: NeighbourOrder::Links,
         }
     }
+}
+
+/// `u`'s neighbours over links passing `filter`, in [`NeighbourOrder::BySource`] order, once
+/// each.
+fn by_source_neighbours(ix: &Index, u: u32, filter: &LinkFilter<'_>) -> Vec<u32> {
+    // Key of neighbour v: (u, rank of v among u's successors) for a link u -> v, (v, 0) for a link
+    // v -> u; the smaller wins. Ranks only break ties among u's own successors.
+    let mut keys: HashMap<u32, (u32, u32)> = HashMap::new();
+    let mut passes: HashSet<u32> = HashSet::new();
+    let mut succ_rank = 0u32;
+    for (e, v) in ix.adjacent(u) {
+        let (s, _) = ix.endpoints(e);
+        let key = if s == u {
+            match keys.get(&v) {
+                Some(&k) if k.0 == u => k,
+                _ => {
+                    succ_rank += 1;
+                    (u, succ_rank)
+                }
+            }
+        } else {
+            (v, 0)
+        };
+        keys.entry(v)
+            .and_modify(|k| *k = (*k).min(key))
+            .or_insert(key);
+        if filter.passes(e) {
+            passes.insert(v);
+        }
+    }
+    let mut out: Vec<(u32, u32, u32)> = keys
+        .into_iter()
+        .filter(|(v, _)| passes.contains(v))
+        .map(|(v, (a, b))| (a, b, v))
+        .collect();
+    out.sort_unstable();
+    out.into_iter().map(|(_, _, v)| v).collect()
 }
 
 /// A query answer before rendering.
@@ -515,9 +568,20 @@ pub fn query(ix: &Index, question: &str, opts: &QueryOptions) -> Option<QueryAns
             }
             visit.push(u);
             if d < opts.depth && expandable(u) {
-                for (e, v) in ix.adjacent(u) {
-                    if filter.passes(e) && !visited.contains(&v) {
-                        stack.push((v, d + 1));
+                match opts.order {
+                    NeighbourOrder::Links => {
+                        for (e, v) in ix.adjacent(u) {
+                            if filter.passes(e) && !visited.contains(&v) {
+                                stack.push((v, d + 1));
+                            }
+                        }
+                    }
+                    NeighbourOrder::BySource => {
+                        for v in by_source_neighbours(ix, u, &filter) {
+                            if !visited.contains(&v) {
+                                stack.push((v, d + 1));
+                            }
+                        }
                     }
                 }
             }
@@ -639,7 +703,10 @@ pub fn node_line(ix: &Index, i: u32) -> String {
     let n = ix.node(i);
     format!(
         "NODE {} [src={} loc={} community={}]",
-        n.label, n.source_file, n.source_location, n.community
+        line_label(n.label),
+        n.source_file,
+        n.source_location,
+        n.community
     )
 }
 
@@ -649,22 +716,18 @@ pub fn edge_line(ix: &Index, e: u32) -> String {
         .context
         .map(|c| format!(" context={c}"))
         .unwrap_or_default();
-    let at = if e.source_file.is_none() && e.source_location.is_none() {
-        String::new()
-    } else {
-        format!(
-            " at={}:{}",
-            e.source_file.unwrap_or(""),
-            e.source_location.unwrap_or("")
-        )
+    // No ` at=` without a location (excalidraw's `dynamic_import` links carry a file only).
+    let at = match e.source_location {
+        Some(loc) if !loc.is_empty() => format!(" at={}:{loc}", e.source_file.unwrap_or("")),
+        _ => String::new(),
     };
     format!(
         "EDGE {} --{} [{}{}]--> {}{}",
-        ix.label(e.source),
+        line_label(ix.label(e.source)),
         e.relation,
         e.confidence.unwrap_or(""),
         ctx,
-        ix.label(e.target),
+        line_label(ix.label(e.target)),
         at
     )
 }

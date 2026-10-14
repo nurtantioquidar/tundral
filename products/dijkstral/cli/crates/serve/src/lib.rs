@@ -1,5 +1,5 @@
 //! Dijkstral's query engine: Graphify's `query`, `path`, `explain`, `affected`, `god-nodes` and
-//! `benchmark` (`docs/graphify-query.md`) over a [`dijkstral_core::index::Index`].
+//! `benchmark`, and the MCP server (`docs/graphify-query.md`), over a [`dijkstral_core::index::Index`].
 //!
 //! Every command is split into a function that returns a structured answer and a renderer that
 //! produces Graphify's text (without the trailing newline the CLI adds), so the CLI and the MCP
@@ -9,7 +9,9 @@ pub mod affected;
 pub mod benchmark;
 pub mod explain;
 pub mod god_nodes;
+pub mod insights;
 pub mod load;
+pub mod mcp;
 pub mod path;
 pub mod query;
 pub mod resolve;

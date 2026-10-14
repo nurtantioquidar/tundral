@@ -65,6 +65,17 @@ pub fn thousands(n: i64) -> String {
     out
 }
 
+/// A label as Graphify prints it in `NODE`/`EDGE` lines and the MCP node tools: line breaks
+/// removed (excalidraw's multi-line destructuring labels; `path`, `explain` and `Start:` keep
+/// them).
+pub fn line_label(s: &str) -> std::borrow::Cow<'_, str> {
+    if s.contains(['\n', '\r']) {
+        s.replace(['\n', '\r'], "").into()
+    } else {
+        s.into()
+    }
+}
+
 /// Python `str.isalnum()` for one character.
 pub fn is_alnum(c: char) -> bool {
     c.is_alphanumeric()

@@ -1,3 +1,4 @@
+mod mcp_cmd;
 mod query_cmds;
 
 use std::path::PathBuf;
@@ -33,6 +34,8 @@ enum Command {
     ClusterOnly(ClusterOnlyArgs),
     #[command(flatten)]
     Query(query_cmds::QueryCommand),
+    /// Serve the graph to AI assistants over MCP (stdio): Graphify's graphify-mcp tools.
+    Mcp(mcp_cmd::McpArgs),
 }
 
 #[derive(Args, Debug)]
@@ -74,6 +77,7 @@ fn main() -> ExitCode {
     let args = match cli.command {
         Command::Extract(args) | Command::Update(args) => args,
         Command::Query(cmd) => return query_cmds::run(cmd),
+        Command::Mcp(args) => return mcp_cmd::run(args),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {

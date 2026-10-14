@@ -20,7 +20,8 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   for any Graphify `graph.json` (`index.rs`).
 - `crates/serve`: the query engine behind `query`, `path`, `explain`, `affected`, `god-nodes` and
   `benchmark`: structured answers plus Graphify-format renderers, shared by the CLI
-  (`crates/cli/src/query_cmds.rs`) and the MCP server.
+  (`crates/cli/src/query_cmds.rs`) and the stdio MCP server (`mcp.rs`, with the graph summaries
+  of `insights.rs`; `crates/cli/src/mcp_cmd.rs`).
 - `crates/export`, `crates/semantic`: later stages.
 
 Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's
@@ -31,7 +32,9 @@ agreement, re-cluster Graphify's own graph (`dijkstral cluster-only`, which must
 `graphify cluster-only --no-label` byte for byte) and compare the report goldens (§17.6).
 The query, MCP, hook-guard and installer surfaces are specified the same way in
 `docs/graphify-query.md`, with goldens in `tests/fixtures/query/`; `crates/cli/tests/query_goldens.rs`
-runs every CLI case on the JSON load path and on `graph.dij`, and must stay at 100%. Query
+runs every CLI case on the JSON load path and on `graph.dij`, and must stay at 100%;
+`crates/cli/tests/mcp_goldens.rs` replays every MCP transcript against `dijkstral mcp` the same way,
+with its deliberate differences (§10.9) listed in the test. Query
 commands write nothing next to the graph (Graphify's `cache/last_query_stamp` is read by nothing).
 
 ## Ownership boundaries

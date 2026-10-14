@@ -3,6 +3,7 @@
 
     uv run --no-project bench/query.py latency --repos fastapi,erpnext,kubernetes --runs 20
     uv run --no-project bench/query.py parity --repos fastapi,erpnext,kubernetes
+    uv run --no-project bench/query.py mcp --repos fastapi,erpnext,kubernetes --starts 5
     uv run --no-project bench/query.py report bench/results/query-<epoch>.json
 
 latency: every call is a fresh process (as an agent's CLI call is). One discarded warm-up run,
@@ -17,6 +18,14 @@ parity: both tools answer the same questions on Graphify's reference graph (dijk
 same graph.json), and their `Start:` seeds, NODE lists, EDGE sets and full output are compared;
 plus `explain` and `path` on sampled labels. The question set is fixed per repo (hand-written
 questions plus label-word questions drawn with a fixed seed).
+
+mcp: the MCP servers (`graphify-mcp` on its reference graph.json; `dijkstral mcp` on its own
+graph.dij, and optionally on Graphify's graph.json) over stdio. Each of `--starts` cold starts
+times spawn -> `tools/list` response (initialize, the initialized notification and tools/list
+sent back to back), then the first `query_graph` call (the repo's latency question at depth 2,
+the CLI's depth, default budget), then `--calls` warm `query_graph` calls. Peak RSS comes from
+the last start, run under `/usr/bin/time`. The answers of both tools are compared (EDGE lines as a
+set).
 
 Graphify writes `cache/last_query_stamp` next to the graph it reads, so both tools read copies
 under $DIJKSTRAL_BENCH_HOME/query/. Stdlib only; no network, no paid calls.
@@ -42,6 +51,7 @@ BENCH_HOME = Path(
     os.environ.get("DIJKSTRAL_BENCH_HOME", Path.home() / ".cache/dijkstral-bench")
 )
 GRAPHIFY = BENCH_HOME / "tools" / "graphify-0.9.86" / "bin" / "graphify"
+GRAPHIFY_MCP = BENCH_HOME / "tools" / "graphify-0.9.86" / "bin" / "graphify-mcp"
 DIJKSTRAL = Path(
     os.environ.get(
         "DIJKSTRAL_BIN", HERE.parent / "cli" / "target" / "release" / "dijkstral"
@@ -236,6 +246,159 @@ def latency(args: argparse.Namespace) -> None:
     write(results)
 
 
+class McpServer:
+    """A stdio MCP server process driven line by line."""
+
+    def __init__(self, argv: list[str], cwd: Path, env: dict[str, str]) -> None:
+        self.t0 = time.perf_counter()
+        self.proc = subprocess.Popen(
+            argv,
+            cwd=cwd,
+            env=env,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.next_id = 0
+
+    def send(
+        self, method: str, params: dict | None = None, notify: bool = False
+    ) -> None:
+        msg: dict = {"jsonrpc": "2.0", "method": method}
+        if params is not None:
+            msg["params"] = params
+        if not notify:
+            msg["id"] = self.next_id
+            self.next_id += 1
+        assert self.proc.stdin is not None
+        self.proc.stdin.write(json.dumps(msg) + "\n")
+        self.proc.stdin.flush()
+
+    def recv(self) -> dict:
+        assert self.proc.stdout is not None
+        line = self.proc.stdout.readline()
+        if not line:
+            raise RuntimeError("server closed stdout")
+        return json.loads(line)
+
+    def call(self, name: str, arguments: dict) -> tuple[float, str]:
+        t0 = time.perf_counter()
+        self.send("tools/call", {"name": name, "arguments": arguments})
+        reply = self.recv()
+        ms = (time.perf_counter() - t0) * 1e3
+        return ms, reply["result"]["content"][0]["text"]
+
+    def close(self) -> str:
+        """Close stdin (the server exits on EOF) and return its stderr."""
+        _, err = self.proc.communicate(timeout=600)
+        return err
+
+
+def mcp_start(
+    argv: list[str], cwd: Path, env: dict[str, str], question: str, calls: int
+) -> dict:
+    srv = McpServer(argv, cwd, env)
+    srv.send(
+        "initialize",
+        {
+            "protocolVersion": "2025-06-18",
+            "capabilities": {},
+            "clientInfo": {"name": "bench", "version": "0"},
+        },
+    )
+    srv.send("notifications/initialized", notify=True)
+    srv.send("tools/list")
+    srv.recv()
+    srv.recv()
+    startup = (time.perf_counter() - srv.t0) * 1e3
+    args = {"question": question, "depth": 2}
+    first, text = srv.call("query_graph", args)
+    warm = [srv.call("query_graph", args)[0] for _ in range(calls)]
+    err = srv.close()
+    return {
+        "startup_ms": startup,
+        "first_ms": first,
+        "warm_ms": warm,
+        "text": text,
+        "stderr": err,
+    }
+
+
+def mcp(args: argparse.Namespace) -> None:
+    tools = args.tools.split(",")
+    results = {
+        "kind": "mcp-latency",
+        "date": time.strftime("%Y-%m-%d"),
+        "machine": machine(),
+        "starts": args.starts,
+        "calls": args.calls,
+        "repos": {},
+    }
+    flag = "-l" if platform.system() == "Darwin" else "-v"
+    for repo in args.repos.split(","):
+        root, gjson, dij = prepare(repo, args.build)
+        question = COMMANDS[repo]["query"][1]
+        env = dict(os.environ)
+        argvs = {
+            "graphify": (
+                [str(GRAPHIFY_MCP), str(gjson)],
+                {**env, **GRAPHIFY_ENV},
+            ),
+            "dijkstral": ([str(DIJKSTRAL), "mcp", "--graph", str(dij)], env),
+            "dijkstral-json": ([str(DIJKSTRAL), "mcp", "--graph", str(gjson)], env),
+        }
+        rep: dict = {"question": question, "tools": {}}
+        texts = {}
+        for tool in tools:
+            argv, tenv = argvs[tool]
+            starts = []
+            for k in range(args.starts):
+                last = k == args.starts - 1
+                full = ["/usr/bin/time", flag, *argv] if last else argv
+                starts.append(mcp_start(full, root, tenv, question, args.calls))
+            rss = None
+            for line in starts[-1]["stderr"].splitlines():
+                m = re.match(r"\s*(\d+)\s+maximum resident set size", line)
+                if m:
+                    rss = int(m.group(1))
+                m = re.match(r"\s*Maximum resident set size \(kbytes\):\s*(\d+)", line)
+                if m:
+                    rss = int(m.group(1)) * 1024
+            up = [x["startup_ms"] for x in starts]
+            first = [x["first_ms"] for x in starts]
+            warm = [w for x in starts for w in x["warm_ms"]]
+            row = {
+                "startup_p50_ms": round(percentile(up, 50), 1),
+                "startup_p95_ms": round(percentile(up, 95), 1),
+                "first_p50_ms": round(percentile(first, 50), 2),
+                "first_p95_ms": round(percentile(first, 95), 2),
+                "warm_p50_ms": round(percentile(warm, 50), 2),
+                "warm_p95_ms": round(percentile(warm, 95), 2),
+                "peak_rss_bytes": rss,
+                "first_line": starts[-1]["text"].split("\n", 1)[0],
+            }
+            texts[tool] = starts[-1]["text"]
+            rep["tools"][tool] = row
+            print(
+                f"{repo:10} {tool:15} start p50 {row['startup_p50_ms']:8.1f} ms  first {row['first_p50_ms']:8.1f} ms"
+                f"  warm p50 {row['warm_p50_ms']:8.2f} / p95 {row['warm_p95_ms']:8.2f} ms  rss {fmt_mb(rss)}",
+                flush=True,
+            )
+        if "graphify" in texts:
+            ref = split_output(texts["graphify"])
+            for tool, text in texts.items():
+                got = split_output(text)
+                # The header names the graph file each server was given.
+                rep["tools"][tool]["same_answer_as_graphify"] = (
+                    got["nodes"] == ref["nodes"]
+                    and got["edges"] == ref["edges"]
+                    and got["start"] == ref["start"]
+                )
+        results["repos"][repo] = rep
+    write(results)
+
+
 def words_of(label: str) -> list[str]:
     parts = re.findall(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+", label)
     return [p.lower() for p in parts if len(p) >= 3]
@@ -400,6 +563,19 @@ def write(results: dict) -> None:
 
 def report(args: argparse.Namespace) -> None:
     doc = json.loads(Path(args.file).read_text())
+    if doc["kind"] == "mcp-latency":
+        print(
+            "| repo | server | spawn → tools/list p50 / p95 ms | 1st query_graph p50 ms | warm query_graph p50 / p95 ms | peak RSS | same answer |"
+        )
+        print("|---|---|---|---|---|---|---|")
+        for repo, rep in doc["repos"].items():
+            for tool, r in rep["tools"].items():
+                print(
+                    f"| {repo} | {tool} | {r['startup_p50_ms']:,.1f} / {r['startup_p95_ms']:,.1f} | {r['first_p50_ms']:,.1f}"
+                    f" | {r['warm_p50_ms']:,.2f} / {r['warm_p95_ms']:,.2f} | {fmt_mb(r['peak_rss_bytes'])}"
+                    f" | {r.get('same_answer_as_graphify', '')} |"
+                )
+        return
     if doc["kind"] == "query-latency":
         print("| repo | command | tool | p50 ms | p95 ms | peak RSS |")
         print("|---|---|---|---|---|---|")
@@ -450,6 +626,16 @@ def main() -> None:
     par.add_argument(
         "--lookups", type=int, default=5, help="explain and path cases per repo"
     )
+    mc = sub.add_parser("mcp")
+    mc.add_argument("--repos", default="fastapi,erpnext,kubernetes")
+    mc.add_argument("--starts", type=int, default=5, help="cold server starts per tool")
+    mc.add_argument(
+        "--calls", type=int, default=20, help="warm query_graph calls per start"
+    )
+    mc.add_argument("--tools", default="graphify,dijkstral,dijkstral-json")
+    mc.add_argument(
+        "--build", action="store_true", help="rebuild dijkstral's graph of each repo"
+    )
     rep = sub.add_parser("report")
     rep.add_argument("file")
     args = ap.parse_args()
@@ -459,7 +645,7 @@ def main() -> None:
         sys.exit(
             f"dijkstral not built at {DIJKSTRAL}; run `cargo build --release` in cli/"
         )
-    {"latency": latency, "parity": parity, "report": report}[args.cmd](args)
+    {"latency": latency, "parity": parity, "mcp": mcp, "report": report}[args.cmd](args)
 
 
 if __name__ == "__main__":

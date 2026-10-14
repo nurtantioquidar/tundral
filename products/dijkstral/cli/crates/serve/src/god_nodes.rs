@@ -7,9 +7,13 @@ use dijkstral_core::pyjson::{dumps_indent, Json};
 pub const DEFAULT_TOP: i64 = 10;
 
 /// The same candidates as the report's god nodes (`docs/graphify-format.md` §17.4): symbols in
-/// files with a suffix, not file nodes or methods, not noise labels or generic JSON keys.
+/// files with a suffix, not file nodes or methods, not noise labels or generic JSON keys; and,
+/// past the report's top ten, no functions with at most one link (probed with `--top 30` and MCP
+/// `exclude_hubs_percentile` on the fixtures).
 fn candidate(ix: &Index, i: u32) -> bool {
-    is_god_candidate_parts(ix.label(i), ix.source_file(i))
+    let label = ix.label(i);
+    is_god_candidate_parts(label, ix.source_file(i))
+        && !(label.ends_with("()") && ix.degree(i) <= 1)
 }
 
 /// The top `n` candidates by degree, descending, stable over node order (`n` below 1 is 1).

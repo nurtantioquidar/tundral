@@ -149,7 +149,11 @@ EDGE <source label> --<relation> [<confidence>[ context=<context>]]--> <target l
 - **Rule.** `<K>` counts every node reached, before budget truncation.
 - **Rule.** A missing node field prints as empty (`community=`); a `null` community prints
   `community=None`. A missing edge `confidence` prints `[]`; a missing `context` omits
-  ` context=…`; when both `source_file` and `source_location` are missing, ` at=…` is omitted.
+  ` context=…`; a link without a `source_location` (missing or empty) has no ` at=…`, even with a
+  `source_file` (refined in stage 3 on excalidraw's `dynamic_import` links).
+- **Rule (stage 3, excalidraw).** Line breaks are removed from labels in `NODE` and `EDGE` lines
+  (a multi-line destructuring label `[\n  a,\n  b,\n]` prints `[  a,  b,]`); the `Start:` repr,
+  `path` and `explain` keep them.
 - **Rule.** Notices (exact text, `<…>` filled in):
 
 ```text
@@ -617,7 +621,9 @@ graphify god-nodes [--top N] [--json] [--graph PATH]
   (suffix compared case-insensitively), not a generic JSON key (compared stripped and
   case-insensitively: `" name"` and `"  Dependencies "` are excluded). The mixed golden drops
   `dependencies` and `devDependencies` of `package.json` this way. Rationale and document-section
-  nodes stay.
+  nodes stay. Functions (label ends with `()`) with at most one link are dropped (stage 3, visible
+  only past the top ten: python `--top 30` omits `wrapper()`, `bump()`, `test_run()`; checked
+  with `--top 500` on every fixture and `--top 5000` on fastapi).
 - **Rule (order).** Degree (§2.2) descending, stable over `nodes` array order; the first `N`
   (default 10; values below 1 count as 1; no value keeps 10). Non-integer: stderr
   `error: --top must be an integer`, exit 1.
@@ -818,6 +824,7 @@ the `EDGE` lines are the same multiset. The truncation notice names both spellin
 | default depth | 3 | 2 |
 | depth bounds | values above 6 are clamped to 6 (header `depth=6`). Values below 1 are kept: `depth=0` and `depth=-1` print in the header and return only the seeds | no flag |
 | mode | `mode` string, uppercased into the header. **Quirk:** an unknown value such as `"xyz"` gives `Traversal: XYZ` and BFS behaviour | `--dfs` |
+| DFS neighbour order | NetworkX `MultiDiGraph.to_undirected()` order: links enumerated source node by source node (nodes in file order, each source's targets in first-link order); a neighbour sits where its first such link falls. Fitted in stage 3 on every DFS probe of the seven fixtures and fastapi | `links` array order (§3.7) |
 | `context_filter` | list of strings. **Quirk:** a bare string is iterated per character and de-duplicated (`"call"` gives `Context: c, a, l (explicit)`) | `--context` repeated |
 | no match | `No matching nodes found.` (`isError:false`) | the CLI's own message and exit 4 |
 | `EDGE` line order | **Quirk:** can differ from the CLI for the same query, and for some queries (for example rust `render`, depth 1) varies with `PYTHONHASHSEED` between processes; stable within one process | also hash-seed dependent |
@@ -844,6 +851,8 @@ Node: <label>
   `explain` header. Missing `source_file` and `source_location` print as empty strings, so a
   concept node shows `  Source:  ` (two trailing spaces). There is no connection list; use
   `get_neighbors`.
+- **Rule (stage 3).** `get_node`, `get_neighbors` and `get_community` print labels with line
+  breaks removed, as `NODE` lines do (§3.2); `shortest_path` keeps them.
 - **Rule.** With none of `label`, `node_id` or `id`:
   `Provide a node label or id (accepted keys: label, node_id, id).`
 - **Rule.** Name resolution matches CLI `explain`/`path` (§4). These
@@ -893,6 +902,7 @@ Neighbors of <label>:
   <-- <source label> [<relation>] [<confidence>] at=<source_file>:<source_location>
 ```
 
+- **Rule (stage 3).** A link without a `source_location` has no ` at=…` (as in §3.2).
 - **Rule.** All outgoing edges come first, then all incoming edges. Each group is in `links`
   array order of the stored graph, so direction is the stored `source`→`target`. There is no
   `context=` here and no top-20 cap; the CLI `explain` list uses a different order and format.
@@ -943,10 +953,12 @@ God nodes (most connected):
 ```
 
 - **Rule.** `top_n` less than 1 is treated as 1.
-- **Rule.** `exclude_hubs_percentile p` computes the linear-interpolation (numpy default)
-  percentile of the degree of **every** node, and drops candidates whose degree is strictly
-  greater than it. The fit was exact on python at p in {0, 75, 80, 85, 88, 90, 92, 93, 95, 96,
-  97, 98, 99, 100}. At p=0 only degree-1 nodes remain.
+- **Rule (corrected in stage 3).** `exclude_hubs_percentile p` computes NumPy's
+  `interpolated_inverted_cdf` percentile of the degree of **every** node (sorted degrees `d`,
+  position `p·n/100 − 1` clamped to `[0, n−1]`, linear between neighbours) and drops candidates
+  whose degree is strictly greater than it. Fitted on all seven fixtures and fastapi at p = 0,
+  0.5, …, 100 (1,608 probes); NumPy's default linear method misses 34 of them (mixed: p 51 keeps
+  only degree ≤ 1). At p=0 only the lowest-degree candidates remain.
 - **Quirk.** p > 100 gives `Error executing god_nodes: list index out of range`.
 
 #### `graph_stats`
@@ -962,6 +974,8 @@ AMBIGUOUS: <pct>%
 
 - **Rule.** The text ends with `%\n`; it is the only tool whose text keeps a trailing newline.
   The percentages are rounded integers (python: 98/107 gives 92%).
+- **Rule (stage 3).** When `graph.json` has a top-level `built_at_commit`, one more line follows:
+  `Built at commit: <sha>` (and the newline). The fixtures have none; the corpus references do.
 
 #### `shortest_path`
 
@@ -1022,9 +1036,34 @@ AMBIGUOUS: <n> (<pct>%)
   - `surprises` is `Surprising cross-community connections:` followed by
     `  <a> <-> <b> [<relation>]` lines.
   - `questions` is `Suggested questions:` followed by `  - <question>` lines.
-- **Open.** It is not known whether `surprises` and `questions` come from the graph alone or
-  prefer `.graphify_analysis.json`; none was present in the probes. Their content matches the
-  report's analysis sections.
+- **Rule (stage 3).** Without `.graphify_analysis.json` (the only case probed), `surprises` and
+  `questions` are computed from the stored graph, **not** as the report computes them: the
+  communities are the stored `community` values, named `Community <id>`, and the graph is the
+  directed multigraph of `links` (NetworkX `MultiDiGraph`; a node's successors in first-link
+  order). Fitted on the seven fixtures and the fastapi, ripgrep, excalidraw, erpnext, graphify and
+  monet references:
+  - `surprises`: every link `u → v` between hub candidates (`graphify-format.md` §17.4) that are
+    not `concept` or `rationale` and lie in different files, scored as in the report
+    (confidence 1/2/3, +2 across top-level directories, +1 across stored communities, +1 when
+    `min(deg) ≤ 2` and `max(deg) ≥ 5`, degree counting every link); stable sort by score over
+    `MultiDiGraph.edges()` order; the best **ten**, printed `  <source label> <-> <target label>
+    [<relation>]`. Parallel links print twice (rust `render() <-> Circle`).
+  - `questions`, at most **ten**, interleaved one per kind per round (bridge, verify, isolated,
+    low cohesion):
+    - bridge: of the **three** hub candidates with the highest directed betweenness (NetworkX,
+      `k = 100`, seed 42 above 1,000 nodes), those whose successors lie in other stored
+      communities: ``Why does `<label>` connect `Community <own>` to `Community <a>`, …?``, the
+      others in Python set order of insertion in successor order.
+    - verify: of the five god-node candidates (§8) with the most **incoming** links (fastapi:
+      `Query()` outranks `APIRouter`), those with at least two outgoing `INFERRED` links,
+      ``Are the <n> inferred relationships involving `<label>` (e.g. with `<a>` and `<b>`)
+      actually correct?``, `a`, `b` the first two targets in link order.
+    - isolated: symbols (§17.4) that are not rationale and not functions, with at most one link
+      that is not an outgoing `contains`: ``What connects `<a>`, `<b>`, `<c>` to the rest of the
+      system?`` (the first three in node order).
+    - low cohesion: stored communities with cohesion below 0.15 (internal links over
+      `m(m−1)/2`), in order of first appearance among the nodes: ``Should `Community <id>` be
+      split into smaller, more focused modules?``.
 - **Rule.** An unknown URI, or a missing graph, gives JSON-RPC error
   `{"code":0,"message":"Unknown resource: <uri>"}` or `{"code":0,"message":"graph.json not
   found: <path>"}`, with the traceback on stderr. Resources ignore `project_path`.
@@ -1505,8 +1544,8 @@ argv.
 6. `benchmark`: seeds and `avg` resolved in stage 3 (§9); open: the source of `words` when scan
    metadata exists.
 7. Path selection when several links join one node pair (§5). Path ties are resolved (§5).
-8. MCP resources `surprises` and `questions` with an analysis file present; PR tools with a working
-   `gh`; the HTTP transport (§10).
+8. MCP resources `surprises` and `questions` with an analysis file present (without one they are
+   resolved, §10.7); PR tools with a working `gh`; the HTTP transport (§10).
 9. Hook guard: Bash tokenizer boundary cases, equal mtimes; installer: quoting of a `graphify` path
    with spaces, `hooks` without `PreToolUse` (§11, §12).
 10. What `GRAPHIFY_QUERY_LOG_DISABLE` suppresses (§2.3).

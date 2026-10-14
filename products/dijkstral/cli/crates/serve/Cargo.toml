@@ -1,6 +1,6 @@
 [package]
 name = "dijkstral-serve"
-description = "Query engine for dijkstral: query, path, explain, affected, god-nodes and benchmark"
+description = "Query engine and MCP server for dijkstral: query, path, explain, affected, god-nodes, benchmark"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -10,7 +10,7 @@ publish.workspace = true
 anyhow.workspace = true
 dijkstral-core.workspace = true
 memchr.workspace = true
+serde_json.workspace = true
 
 [dev-dependencies]
-serde_json.workspace = true
 tempfile.workspace = true

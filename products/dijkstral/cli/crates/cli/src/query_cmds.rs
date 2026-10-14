@@ -210,6 +210,7 @@ fn run_query(a: QueryArgs) -> Result<ExitCode, ExitCode> {
         dfs: a.dfs,
         depth: 2,
         context: (!a.context.is_empty()).then_some(a.context),
+        ..Default::default()
     };
     Ok(match query::query(&ix, &question, &opts) {
         None => emit(query::NO_MATCH, false, 4),

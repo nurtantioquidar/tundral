@@ -16,7 +16,7 @@ outside the source tree under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstr
 | `reference.sh` | Freezes Graphify's cold `extract --code-only` graph per repo as `$DIJKSTRAL_BENCH_HOME/reference/<repo>.graph.json` |
 | `parity.py` | Compares two `graph.json` files as sets: nodes by kind, links by relation, field agreement, samples of each difference; for clustered graphs, community agreement (same id, NMI, ARI) and array order |
 | `accuracy/` | Stage-2 SCIP oracle: precision and recall of both tools' graphs against compiler-grade indexes ([accuracy/README.md](accuracy/README.md)) |
-| `query.py` | Stage-3 query benchmark: `latency` (fresh process per call, p50/p95, peak RSS; Graphify on its reference graph, dijkstral on its own `graph.dij` and on Graphify's `graph.json`) → `results/query-<epoch>.json`; `parity` (both tools on Graphify's reference graph, seeds, NODE lists, EDGE sets and full output compared) → `results/query-parity-<epoch>.json`; `report` prints the tables |
+| `query.py` | Stage-3 query benchmark: `latency` (fresh process per call, p50/p95, peak RSS; Graphify on its reference graph, dijkstral on its own `graph.dij` and on Graphify's `graph.json`) → `results/query-<epoch>.json`; `parity` (both tools on Graphify's reference graph, seeds, NODE lists, EDGE sets and full output compared) → `results/query-parity-<epoch>.json`; `mcp` (MCP servers over stdio: spawn → `tools/list`, first and warm `query_graph` calls, peak RSS) → `results/mcp-<epoch>.json`; `report` prints the tables |
 
 Later stages add query and hook latency, graph parity, SCIP precision/recall, and the paid
 agent-outcome runs (see `../DIJKSTRAL_DESIGN.md`).
@@ -314,3 +314,42 @@ The 74 query goldens pass on both load paths. The probes behind the stage-3 refi
 `cli/docs/graphify-query.md` (630 `path` probes, 750 `benchmark` questions on random graphs,
 `explain`, `affected` and `god-nodes` on random fastapi, erpnext and ripgrep nodes) all match
 except one recorded open case (§4: the exact id of an extensionless file's node).
+
+### Stage 3: MCP server — 2026-10-14
+
+Apple M5, 10 cores, 16 GB, macOS 27.0; `bench/query.py mcp --starts 5 --calls 20`, raw
+`results/mcp-1791916372.json`. `graphify-mcp` 0.9.86 (`GRAPHIFY_MAX_GRAPH_BYTES=8GB`,
+`GRAPHIFY_QUERY_LOG_DISABLE=1`) serves its frozen reference graph; `dijkstral mcp` (worktree build
+on top of `c95c097`) serves its own `extract --code-only` build (`graph.dij`) and Graphify's
+`graph.json`. Each cold start sends `initialize`, `notifications/initialized` and `tools/list`
+back to back and times spawn → `tools/list` reply; then one `query_graph` with the repo's
+latency question at depth 2, then 20 warm calls (100 per row). Graphify loads its graph before
+answering the handshake; dijkstral answers it at once and loads on a background thread, so its
+first call carries the load.
+
+| repo | server | spawn → tools/list p50 / p95 ms | 1st query_graph p50 / p95 ms | warm query_graph p50 / p95 ms | peak RSS |
+|---|---|---|---|---|---|
+| fastapi | graphify-mcp | 606 / 609 | 55.9 / 56.3 | 11.7 / 13.2 | 154 MB |
+| fastapi | dijkstral (graph.dij) | 14.6 / 18.1 | 1.1 / 1.2 | 0.59 / 0.73 | 7 MB |
+| fastapi | dijkstral (Graphify's graph.json) | 12.6 / 20.3 | 27.3 / 28.0 | 0.57 / 0.67 | 53 MB |
+| erpnext | graphify-mcp | 1,198 / 1,297 | 104 / 112 | 18.9 / 20.3 | 300 MB |
+| erpnext | dijkstral (graph.dij) | 15.0 / 18.0 | 1.9 / 17.0 | 1.27 / 1.36 | 12 MB |
+| erpnext | dijkstral (Graphify's graph.json) | 14.7 / 21.0 | 89.9 / 90.6 | 1.27 / 1.33 | 133 MB |
+| kubernetes | graphify-mcp | 10,406 / 12,472 | 2,063 / 2,248 | 101 / 122 | 3,324 MB |
+| kubernetes | dijkstral (graph.dij) | 13.6 / 22.2 | 6.7 / 55.0 | 5.25 / 5.38 | 41 MB |
+| kubernetes | dijkstral (Graphify's graph.json) | 14.5 / 19.6 | 1,206 / 1,227 | 5.58 / 5.74 | 1,928 MB |
+
+- Ready for `tools/list` in 13–15 ms at every size (Graphify 0.6 s, 1.2 s, 10.4 s); a warm
+  `query_graph` is 20x faster (0.6 ms, 1.3 ms, 5.3 ms against 12, 19 and 101 ms).
+- On Graphify's `graph.json` both servers return the same answer (seeds, NODE list, EDGE set).
+  The `graph.dij` rows answer from dijkstral's own build of the corpus, so their answers differ
+  as the graphs do.
+- Conformance: the 53 MCP transcripts replay in `crates/cli/tests/mcp_goldens.rs` (50 identical
+  texts; the other three and every `isError` difference are the deliberate ones of
+  `cli/docs/graphify-query.md` §10.9). A black-box differential run of both servers on the same
+  graph (305 tool and resource calls per fixture: every resource, `graph_stats`, `god_nodes` with
+  and without `exclude_hubs_percentile`, `get_community`/`get_neighbors` with budgets,
+  `get_node`, BFS and DFS `query_graph` at depths 1–3, directed and undirected `shortest_path`)
+  matched on all seven fixtures and on the fastapi (500 calls), ripgrep, excalidraw, graphify,
+  monet, erpnext (240 each) and kubernetes (162) references, comparing EDGE lines as a set and
+  ambiguity texts case-folded.
