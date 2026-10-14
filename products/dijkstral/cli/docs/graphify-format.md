@@ -42,6 +42,8 @@ Status labels used below:
 21. Kotlin
 22. Scala
 23. Swift
+24. C
+25. C++
 
 ---
 
@@ -62,6 +64,8 @@ Status labels used below:
 | `kotlin/` | `build.gradle.kts`, `src/main/kotlin/Main.kt`, `src/main/kotlin/com/shop/{model,service,util}/*.kt`, `src/test/kotlin/com/shop/service/UserServiceTest.kt` | `kotlin.graphify.json` | `kotlin.clustered.graphify.json` |
 | `scala/` | `build.sbt` (not classified), `src/main/scala/Main.scala`, `src/main/scala/shop/{model,service,util}/*.scala`, `src/test/scala/shop/service/UserServiceSuite.scala` | `scala.graphify.json` | `scala.clustered.graphify.json` |
 | `swift/` | `Sources/App/main.swift`, `Sources/Shop/{Models/{Entity,User,Shape},Services/UserService,Extensions/User+Format}.swift`, `Tests/ShopTests/UserServiceTests.swift` | `swift.graphify.json` | `swift.clustered.graphify.json` |
+| `c/` | `main.c`, `include/{shape,util}.h`, `src/{shape,util}.c`, `tests/test_shape.c` | `c.graphify.json` | `c.clustered.graphify.json` |
+| `cpp/` | `include/geo/{shape.hpp,point.h}`, `src/{shape.cpp,main.cc,legacy.cxx,kernels.cu,kernels.h}`, `tests/shape_test.cc` | `cpp.graphify.json` | `cpp.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -2806,3 +2810,239 @@ the god list then differs). The test `swift_cluster_only_matches_graphify` is ig
 analysis distinguishes the two lists. Equal-score surprise ties also follow insertion order, where
 Graphify inserts module nodes at their first import and shared stubs at first use; dijkstral adds
 both after all files.
+## 24. C
+
+Fixture `tests/fixtures/c/`; goldens `c.graphify.json`, `c.clustered.graphify.json` and the report
+goldens of §17.6. Extensions `.c` and `.h`; tree-sitter-c 0.24.2 (Graphify's version). Rules were
+isolated with probe repositories run through `graphify extract --code-only`; jq (`.c`/`.h`) is the
+corpus check. Implementation: `crates/core/src/{extract,resolve}/c.rs` (shared with C++).
+
+### 24.1 Which language a file is
+
+- **Rule.** `.c` is C. `.h` is C++ when its bytes contain any of `class `, `namespace `,
+  `template`, `::`, `public:`, `private:`, `protected:` anywhere, comments included (case
+  sensitive, plain substrings: `// subclass Foo` makes a header C++, `// class` followed by a
+  newline does not, `extern "C"` and `__cplusplus` do not). Every other `.h` is C. Probed up to
+  200 KB into a file.
+- C headers therefore get no class, struct or field nodes even in C++ projects (jq's headers,
+  fmt's C++ headers are C++).
+
+### 24.2 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| file | file id | §5.1 | — |
+| function definition | `file_slug(name)` | `name()` | `_callable: true` |
+| type name used in a signature (`Shape`, `AreaFn`, `FILE`) | `slug(name)`, per file (§4.5) | name | stub |
+| `#include` with no local file | §24.4 | | external |
+
+- **Rule.** Function definitions are found anywhere outside function bodies: in preprocessor
+  branches (`#if`/`#else` both), `extern "C"` blocks, and the `ERROR` nodes of error recovery
+  (jq's `util.c`, `jv_dtoa.c`, decNumber). A definition the parse nested inside another
+  function's body is not a node.
+- Not emitted: prototypes, `struct`/`union`/`enum` (with or without body), typedefs, macros
+  (`#define`), globals, and comments: C has no rationale nodes (`NOTE:`/`WHY:`/`HACK:` ignored).
+- Same-file duplicates (two `static` definitions under `#if` branches) keep the first (§8.1).
+
+### 24.3 Edges
+
+| relation | source → target | context | location |
+|---|---|---|---|
+| `contains` | file → function | — | definition line |
+| `references` | function → type stub; return type first, then each parameter | `return_type` / `parameter_type` | function line |
+| `imports` | file → file / stub / external (§24.4) | `import` | directive line |
+| `calls` | function → function (§24.5) | `call` | call line |
+
+- Only `type_identifier` types produce references: primitive types (including `size_t`,
+  `uint8_t`, `bool`), `struct X` / `enum E` and types inside function-pointer parameters do not.
+- Stubs never bind to anything in a pure C repository (there are no type nodes to bind to); in a
+  mixed repository they bind like C++ stubs (§25.4).
+
+### 24.4 Includes
+
+`#include "p"` resolves to the indexed file at `p` relative to the including file's directory
+(`../include/util.h` works; a path relative to the repository root or to an include directory does
+not). `<p>` never resolves that way. Otherwise the target is the external id
+`E = slug(stem of p)` (`<sys/types.h>` → `types`), and Graphify then lands the edge, in this
+order, on:
+
+1. the stub of the first header (`.h`/`.hpp`, by path) that has a renamed (§4.5) stub `E`
+   (`#include "jv.h"` from `tests/` → `src_jv_h_jv`; fmt's `<vector>` →
+   `test_gtest_gmock_gmock_h_vector`);
+2. a node of the including file with local id `E` (its own stub `Shape` next to
+   `#include "shape.h"`), renamed and bound like that stub;
+3. any node whose id is `E` (an unrenamed stub elsewhere);
+4. the only definition labelled exactly `E` (a class, field or enumerator `E`, or a function
+   `E()`; not a method): fmt's `<ostream>` → class `ostream`, `"fmt/printf.h"` → `printf()`;
+5. the only file whose stem is `E`, in any language (§8.1; jq's `"version.h"` →
+   `scripts/version`);
+6. the external node `E` (label = id, §4.4).
+
+A macro include (`#include FOO_H`) emits nothing. Each directive gives an edge; duplicates fold
+as usual.
+
+### 24.5 Calls
+
+- **In the file**: a call `f(...)`, and also `x.f()` / `x->f()` whatever `x` is, binds to the file's
+  node answering to `f` (call name: label without `.` and `()`; functions, and in C++ methods,
+  classes, fields, enumerators). Among several, the **node created last** wins; a later
+  definition that merged into an existing id (§8.1) does not count. EXTRACTED, no score.
+  Recursion gives a self-loop.
+- **Across files**: a bare `f()` with no `f` in the file binds by path proximity, exactly as Go's
+  bare calls (§16): the candidate sharing the longest directory prefix with the caller, a tie
+  binding nothing, a candidate sharing no directory only when it is the only one. INFERRED 0.85.
+  Graphify adds a file's cross-file calls in callee-name order (observable in surprise ties).
+- Builtin-like names never bind by name (in-file, cross-file or as a qualified fallback): the
+  Python builtins and JavaScript globals of Go's list minus the names Graphify does bind
+  (`format`, `compile`, `slice`, `eval`, `exec`, `chr`, `hex`, `oct`, `ord`, `pow`, `input`, `help`,
+  `globals`, `locals`, `property`, `staticmethod`, `classmethod`, `frozenset`, `bytearray`,
+  `memoryview`, `ascii`, `bin`, `breakpoint`, `complex`, `divmod`, `issubclass`, `require`, typed
+  arrays, `Function`, `DataView`, `ArrayBuffer`); 82 names, listed in `extract/c.rs`.
+- Calls through pointers (`fp(x)`, `(*fp)(x)`), macros and calls at file scope bind nothing; one
+  edge per (caller, callee), first line kept.
+
+### 24.6 Quirks (C)
+
+- **C1** The C/C++ split of `.h` is a substring test that also reads comments.
+- **C2** Unresolved includes land on unrelated stubs and definitions that share the name (§24.4
+  steps 1–4): an `imports` edge to a type stub or to a function.
+- **C3** `s->free(x)` binds to a function `free` of the same file (member calls bind by name).
+- **C4** Header and source with the same directory and stem (`jv.h`, `jv.c`) collide on their
+  file ids and get renamed (`src_jv_h_src_jv`), as do their shared stubs.
+
+---
+
+## 25. C++
+
+Fixture `tests/fixtures/cpp/` (also `.cu` and a C++ `.h`); goldens `cpp.*`. Extensions `.cpp .cc
+.cxx .hpp .cu` and C++ headers (§24.1); tree-sitter-cpp 0.23.4. Corpus check: fmt. Everything in
+§24 applies; this section lists what C++ adds.
+
+### 25.1 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| class / struct / union / enum with a name | `file_slug(Name)`, **flat** (namespaces and outer classes are not part of it) | `Name`; a specialization keeps its arguments (`Arr<bool, 1>`) | `_callable`, `_callable_class` |
+| enumerator | `enum_slug(NAME)` | `NAME` | — |
+| field | `class_slug(name)` | `name` (`x_`, `kind_`) | — |
+| method defined or declared in the class body | `class_slug(name)` | `.name()`; `.~Shape()`, `.operator==()` | `_callable` |
+| function, and function template | `file_slug(name)` | `name()` | `_callable` |
+| out-of-line definition `R A::f(...)`, `ns::f` | `file_slug(A::f)` | `A::f()` as written (`Registry<T>::first()`, `geo::detail::round_up()`) | `_callable` |
+| base or type stub | §25.3 | | stub |
+
+- **Rule.** A named class specifier anywhere outside a function body is a class contained by the
+  file, including forward declarations (`struct Fwd;`), elaborated types in declarations
+  (`struct S *gs;`) and in prototype parameters. Not: inside function bodies (local classes),
+  in a field's type (`struct Node *next;`), in friend declarations, or anonymous ones (their
+  enumerators and fields are dropped too).
+- A class or enum defined as a field type in a class body (`class Inner {...};`) is contained by
+  the outer class; its id is still flat (`file_inner`).
+- Class bodies: field declarations give fields (`int *p, **q;` two fields; array and bit-field
+  declarators count; reference declarators and function-pointer fields give nothing) or, with a
+  function declarator, a method declaration; function definitions give methods (with
+  `= default`/`= delete`). Constructor declarations (`explicit Shape(Kind);`, a `declaration`
+  node) give nothing. Every other construct of the body is walked like file scope: a template
+  member (`template <class U> U conv()`) becomes a file-level function `conv()`, and anything
+  inside `#if` in a class body becomes file level (methods turn into functions `get()`, fields
+  vanish).
+- Destructor and constructor share an id (`~Outer` slugs to `outer`); overloads merge (§8.1).
+  Operator names slug to `operator`; conversion operators (`operator bool`) and declarators
+  behind a reference (`Outer &operator=(...)`, out-of-line too) give nothing.
+- Namespaces, `using`, typedefs, aliases, macros and comments give nothing (no rationale).
+- **Misread classes.** `class MACRO Name { ... }` (fmt's `FMT_API`, gtest's `GTEST_API_`) parses
+  as a function definition; Graphify still emits class `Name`. With a base list the name is in an
+  `ERROR` node and the base is the declarator (an `inherits` edge). In the body (a compound
+  statement) declarations with a function declarator, also one moved into an `ERROR` child or a
+  `void f()` read as a variable initialised with `()`, are methods; other declarations without
+  an `ERROR` child are fields; function definitions are methods; labels (`public:`) are walked;
+  everything else, including classes and functions the recovery swallowed after the class, is
+  file level.
+
+### 25.2 Edges
+
+| relation | source → target | context | location |
+|---|---|---|---|
+| `contains` | file → class / function / out-of-line definition; outer class → nested class | — | definition line |
+| `method` | class → method | — (`field` when a field shares the id, either order) | method line |
+| `defines` | class → field | `field` | field line |
+| `case_of` | enum → enumerator | — | enumerator line |
+| `inherits` | class → base | — | class line |
+| `references` | class → field type (before the `defines`) | `field` | field line |
+| `references` | function or method **definition** → return / parameter type | `return_type` / `parameter_type` | function line |
+| `references` | the same → template arguments (`std::vector<Inner>` → `Inner`) | `generic_arg` | |
+
+- Method declarations carry no references; qualified types reference their last name
+  (`std::string` → stub `string`, `geo::Point` → `Point`); `auto`, primitives and `decltype` give
+  nothing.
+
+### 25.3 Type targets and bases
+
+- **Rule.** A type name binds in its file to whatever node has the id a file-level definition of
+  that name would have (`file_slug(name)`), a class but also a function or a field (fmt binds base
+  `testing::Test` to the macro function `TEST()`); otherwise to a per-file stub.
+- A base names its stub after the base text minus its first qualifier: `Tmpl<int>` → `Tmpl`,
+  `::testing::Test` → `testing::Test`, `detail::buffer<char>` → `buffer<char>` (id
+  `buffer_char`); the in-file lookup uses the innermost name (`buffer`) and never the class
+  itself (`struct is_contiguous : detail::is_contiguous<T>` → stub `is_contiguous<T>`).
+- Stubs bind across files to the only definition labelled like them (classes, enumerators,
+  fields): `Rect` with a class `Rect` and an enumerator `Rect` stays a stub.
+
+### 25.4 Calls
+
+In-file binding is §24.5, with two additions:
+
+- In a method defined in a class body, `f()` and `this->f()` first take the class's own member `f`.
+- Template calls `f<T>(...)` and `obj.template f<T>()` bind nothing.
+
+Qualified calls `A::...::f(...)` (scope = outermost qualifier, name = the rest):
+
+1. scope names exactly one class (not templated: `formatter<std::tm, Char>::parse` skips this)
+   → its member (method, field or enumerator) `f`, else the only out-of-line definition
+   `A::f()`; EXTRACTED 1.0; a method never calls itself this way;
+2. otherwise the file's node answering to the rest of the name (`ns::helper()` → `helper()`,
+   `std::f()` → a local `f()`, `internal::FilePath::MakeFileName` → the out-of-line
+   `FilePath::MakeFileName()`), EXTRACTED; never across files.
+
+Typed calls: `x.m()` / `x->m()` with no `m` in the file use `x`'s type, taken from the file's
+**first** local declaration of `x` (any function, earlier or later) that has a single declarator
+and a capitalised type name (`Shape s;`, `Shape *p = ...;`, `const Shape &r = ...;`,
+`geo::Shape g;` → `Shape`, condition declarations; not parameters, `auto`, templates
+`Box<int> b`, `Shape a, b;`, range-for). The class's member `m` binds INFERRED 0.85; no
+inheritance walk, out-of-line definitions are not members here.
+
+`metadata.unresolved_calls` (§6), `{"callee","receiver_type","lang":"cpp","line"}` in source
+order, once per (callee, type) and caller: typed calls whose type names no class
+(`BiggestConvertible parsed; parsed.push_back(...)`), and qualified calls whose scope starts with a
+capital and names no class (`L::lm()`, `TypeParameterizedTest<...>::Register`).
+
+### 25.5 Declaration and definition merge
+
+**Rule.** A header and its implementation file in the same directory with the same stem share a
+file id prefix, so an out-of-line definition `K::a()` gets the id of the header's method `.a()`.
+Graphify does not rename this pair apart (§4.5): the method node stays (its label, line and
+fields) and gains `definition_file` and `definition_location` (the first definition's), the
+definition's `contains` and calls attach to it. Other ids the two files share are renamed as
+usual (their file nodes: `x_h_x`, `x_cpp_x`).
+
+### 25.6 Quirks (C++)
+
+- **CPP1** Flat class ids: same-named nested classes of one file merge (`F::Inner`, `G::Inner`).
+- **CPP2** `#if` inside a class body moves its members to file level.
+- **CPP3** Typed calls take the first capitalised declaration of the variable name anywhere in
+  the file; parameters are ignored.
+- **CPP4** Type names bind to any same-id node (a base binding to a `TEST()` function).
+- **CPP5** In-file binding ignores receivers (`g.go()` on a `G1` binds `G2::go` when defined later).
+- **CPP6** `#include <x>` can land on a stub, a field or a function named `x` (§24.4).
+
+### 25.7 Open (C and C++)
+
+- **Self-calls in large files.** fmt shows no self-loop for about 120 calls dijkstral resolves to
+  the caller itself by the rules above (`fmt_.begin()` in `parse_context::begin`, `detail::compare`
+  in `compare`), while every probe keeps such self-loops (`k(n-1)`, `d::f(x)`, `items_.size()`).
+  Not explained; possibly a parse difference between py-tree-sitter 0.25.2 and the Rust runtime
+  0.25.10 on error recovery.
+- **Header capture order.** §24.4 step 1 picks the first header by path; only the jq, fmt and
+  probe cases pin it.
+- **Error recovery.** A few fmt and gtest regions (methods attached to `buffer`, iterator buffer
+  fields) come out of the parse differently, which moves `contains`/`references` lines and a
+  handful of nodes.

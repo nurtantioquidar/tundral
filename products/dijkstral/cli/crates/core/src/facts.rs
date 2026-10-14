@@ -126,6 +126,7 @@ pub enum LangFacts {
     Data(crate::extract::data::DataFacts),
     Php(crate::extract::php::PhpFacts),
     Ruby(crate::extract::ruby::RubyFacts),
+    C(crate::extract::c::CFacts),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

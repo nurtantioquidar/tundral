@@ -4,6 +4,7 @@
 //! type (`LangFacts` variant) for the cross-file pass in `crate::resolve`. Node and edge shapes are
 //! specified in `docs/graphify-format.md`; use the `Ctx` constructors so shapes stay uniform.
 
+pub mod c;
 pub mod csharp;
 pub mod data;
 pub mod go;
@@ -40,6 +41,7 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Kotlin => kotlin::extract(&mut cx, tree.as_ref()),
         Lang::Scala => scala::extract(&mut cx, tree.as_ref()),
         Lang::Swift => swift::extract(&mut cx, tree.as_ref()),
+        Lang::C | Lang::Cpp => c::extract(&mut cx, tree.as_ref()),
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }

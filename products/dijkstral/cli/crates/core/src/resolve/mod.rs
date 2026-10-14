@@ -9,6 +9,7 @@
 //! Language passes see the renamed per-file facts through `View`; any id stored in their
 //! `LangFacts` was recorded before renaming, so translate it with `View::id`.
 
+pub mod c;
 pub mod csharp;
 pub mod data;
 pub mod go;
@@ -111,6 +112,7 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         csharp::resolve,
         php::resolve,
         ruby::resolve,
+        c::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {
         let handles: Vec<_> = passes

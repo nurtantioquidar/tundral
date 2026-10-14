@@ -32,6 +32,10 @@ pub enum Lang {
     Kotlin,
     /// `.scala` (`.sc` and `.sbt` are not classified).
     Scala,
+    /// `.c`, and `.h` without C++ markers (§18).
+    C,
+    /// `.cpp .cc .cxx .hpp .cu`, and `.h` with C++ markers (§19).
+    Cpp,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -50,6 +54,7 @@ pub enum Family {
     Ruby,
     Kotlin,
     Scala,
+    C,
 }
 
 impl Lang {
@@ -81,6 +86,9 @@ impl Lang {
             "rb" | "rake" => Lang::Ruby,
             "kt" | "kts" => Lang::Kotlin,
             "scala" => Lang::Scala,
+            "c" => Lang::C,
+            "cpp" | "cc" | "cxx" | "hpp" | "cu" => Lang::Cpp,
+            "h" => return crate::extract::c::header_lang(path),
             _ => return None,
         })
     }
@@ -100,6 +108,7 @@ impl Lang {
             Lang::Ruby => Family::Ruby,
             Lang::Kotlin => Family::Kotlin,
             Lang::Scala => Family::Scala,
+            Lang::C | Lang::Cpp => Family::C,
         }
     }
 
@@ -118,6 +127,8 @@ impl Lang {
             Lang::Kotlin => tree_sitter_kotlin_ng::LANGUAGE.into(),
             Lang::Scala => tree_sitter_scala::LANGUAGE.into(),
             Lang::Swift => tree_sitter_swift::LANGUAGE.into(),
+            Lang::C => tree_sitter_c::LANGUAGE.into(),
+            Lang::Cpp => tree_sitter_cpp::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }
