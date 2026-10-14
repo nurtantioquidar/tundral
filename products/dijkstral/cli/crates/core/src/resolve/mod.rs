@@ -18,6 +18,7 @@ pub mod java;
 pub mod julia;
 pub mod kotlin;
 pub mod php;
+pub mod powershell;
 pub mod python;
 pub mod ruby;
 pub mod rust;
@@ -117,6 +118,7 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         c::resolve,
         elixir::resolve,
         julia::resolve,
+        powershell::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {
         let handles: Vec<_> = passes

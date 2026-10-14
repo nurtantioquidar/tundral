@@ -48,6 +48,11 @@ Status labels used below:
 30. Erlang
 31. OCaml
 32. Julia
+38. Vue
+39. Svelte
+40. Astro
+41. PowerShell
+42. Visual Basic
 
 ---
 
@@ -74,6 +79,11 @@ Status labels used below:
 | `erlang/` | `src/{shop,shop_util}.erl`, `include/shop.hrl`, `test/shop_tests.erl`, `tools/{release,versions}.py` | `erlang.graphify.json` | `erlang.clustered.graphify.json` |
 | `ocaml/` | `lib/shop.{ml,mli}`, `bin/main.ml`, `test/test_shop.ml`, `tools/{release,versions}.py` | `ocaml.graphify.json` | `ocaml.clustered.graphify.json` |
 | `julia/` | `src/{Shop,models,service}.jl`, `test/runtests.jl` | `julia.graphify.json` | `julia.clustered.graphify.json` |
+| `vue/` | `src/{main,store,types}.ts`, `src/utils/format.ts`, `src/composables/useFilter.ts`, `src/App.vue`, `src/components/{TodoHeader,TodoList,TodoItem,EmptyState,LegacyCounter}.vue`, `src/__tests__/format.spec.ts` | `vue.graphify.json` | `vue.clustered.graphify.json` |
+| `svelte/` | `src/lib/{stores.ts,format.js,Cart.svelte,CartRow.svelte,Badge.svelte}`, `src/routes/{+page.svelte,+page.ts}` | `svelte.graphify.json` | `svelte.clustered.graphify.json` |
+| `astro/` | `src/utils/posts.ts`, `src/layouts/Base.astro`, `src/components/{Header,PostCard}.astro`, `src/components/Like.tsx`, `src/pages/{index,about}.astro` | `astro.graphify.json` | `astro.clustered.graphify.json` |
+| `powershell/` | `build.ps1`, `scripts/Common.ps1`, `Modules/Shop/{Shop.psd1,Shop.psm1}`, `Modules/Shop/Private/Pricing.psm1`, `tests/Shop.Tests.ps1` | `powershell.graphify.json` | `powershell.clustered.graphify.json` |
+| `vb/` | `Shop/Program.vb`, `Shop/Models/{Entity,User}.vb`, `Shop/Services/UserService.vb` | `vb.graphify.json` (empty) | none (Graphify stops: "graph is empty") |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -1713,7 +1723,8 @@ Every file falls into one of: code (extracted), doc/paper/image (counted then sk
 
 Code (by extension, observed): `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .go .java .rs .json
 .toml* .sh .bash .rb .rake .c .h .cpp .cc .cxx .hpp .cu .cs .kt .kts .swift .php .scala .groovy
-.gradle .dart .lua .zig .ex .exs .erl .ml .jl .m .mm .v .sol .f90 .vb .vue .svelte .ps1 .r .sql .tf`.
+.gradle .dart .lua .zig .ex .exs .erl .ml .jl .m .mm .v .sol .f90 .vb .vue .svelte .ps1 .r .sql .tf`,
+and also `.astro .psm1 .psd1 .cls .vbproj` (§38–§42).
 `.d.ts` and `.min.js` are code (not filtered).
 
 - `.r`, `.sql`, `.tf` count as code but contribute nothing (stderr: optional grammar missing).
@@ -1837,7 +1848,8 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 8. **TS/JS.**
    - Is the `@/` → `src/` mapping without a tsconfig a fixed heuristic?
    - Do INFERRED member calls walk inheritance?
-   - What do `.vue` stem collisions do (a merged `c_vue_c` node with a self-loop was seen)?
+   - `.vue` stem collisions follow §4.5 (`c.vue` + `c.ts` → `c_vue_c`, `c_ts_c`); the merged
+     `c_vue_c` node with a self-loop was not reproduced by any probe (§38).
 9. **Python.**
    - Does the unique-global-name fallback (`lonely_b()` → INFERRED) also consider methods
      (labels `.name()`), as Rust's does?
@@ -3265,3 +3277,211 @@ No Julia corpus repo. The Graphify repository's `sample.jl` matches exactly on a
 (23 nodes, 27 links with `sample.ex`). In the whole repository its ids are collision-renamed
 (§4.5) against `sample.ps1` and `sample.f90`, languages dijkstral does not extract yet, so five
 definitions there differ by id until those languages land.
+## 38. Vue (2026-10-15)
+
+Fixture `tests/fixtures/vue/` (a Vue 3 todo app: `<script setup lang="ts">`, a dual
+`<script>` + `<script setup>` component, an Options API component, a template-only component and
+an HTML comment holding a `<script>` tag) with the usual goldens; about thirty probes. Graphify
+counts `.vue` (and `.svelte`, `.astro`) as code and has **no component grammar**: it finds the
+script by text and runs its TypeScript/JavaScript extractor (§10) on it. Implementation:
+`crates/core/src/extract/sfc.rs`, which blanks the rest of the file and calls the existing
+`extract::script::extract` unchanged; resolution is `crate::resolve::script`.
+
+### 38.1 Script regions and grammar
+
+- **Rule.** Every `<script …>…</script>` pair, case-insensitive (`<SCRIPT>`, attributes over
+  several lines), **including ones inside HTML comments** (`<!-- <script>function f(){}</script> -->`
+  yields `f()`), is code; everything else is ignored, so lines and ids are those of the outer
+  file. All blocks form **one module**: a function in `<script>` calls, or is called through an
+  import made in, `<script setup>` as if they were one file.
+- **Grammar** (Rule): the first `lang` attribute on any `<script>` tag (case-insensitive, quoted or
+  bare; `lang` on `<style>`/`<template>` does not count): `tsx` → TSX; `js`, `jsx` → JavaScript;
+  anything else (`ts`, `typescript`, `javascript`) or none → **TypeScript**. So JSX in a block
+  without `lang` swallows the declarations after it (error recovery nests them: `src_s_j_ok2`).
+- **Default exports** (Rule, observed): which declaration is a module's default export is decided
+  on a **TypeScript** parse whatever the grammar: the first `export default` function, generator
+  or class declaration at any depth (a default declared after JSX still counts), or an
+  identifier. `export default function F() { return <div/> }` in a `lang="tsx"` block becomes a
+  function expression under TypeScript, so `import F from './F.vue'` links nothing.
+- A file with no script (template only) keeps its file node and "yields no symbols" (§14.5).
+
+### 38.2 What differs from a `.ts` file
+
+- **VU1** No rationale nodes: `// NOTE:` and `* WHY:` lines inside the script are ignored.
+- Imports resolve like TS (§10.3): `./Foo.vue` by its exact path; an extensionless `./Foo` never
+  tries `.vue` (it becomes `ref_foo`); `@/x/Foo.vue` from `src/x/` is `ref_x`.
+- Calls, import-scoped calls (no `confidence_score` in raw output, also across blocks), object
+  literal methods (`data()`, `methods: { … }` → module-level functions), heritage, type references,
+  `type_only` and default imports behave as in TS.
+- **Self imports.** A module importing itself (`import { k } from './K.vue'`) keeps its `imports`
+  links, but the clustered build drops the `imports_from` self-loop; this holds for `.ts` too, so
+  `resolve::script` skips it for every module (shared rule change).
+
+### 38.3 INFERRED member calls across component kinds
+
+Raw output links `x.m()` (typed receiver, §10.4) into and out of components, but the clustered
+build keeps an INFERRED member call that touches a component only for Vue → Vue, Vue → Svelte and
+Svelte → Svelte (probes: TS ↔ Vue, TS ↔ Svelte, TS → Astro dropped; Svelte → Vue, anything from
+an Astro file never linked). TS/JS among themselves are unaffected (`.ts` → `.js`, `.tsx` kept).
+`resolve::script` applies the same table (shared rule change).
+
+### 38.4 Stem collisions
+
+`c.vue` beside `c.ts` collide like any other files (§4.5): `c_vue_c`, `c_ts_c`; symbol ids do not
+collide unless the names do.
+
+### 38.5 Golden and quirks
+
+- Golden: nodes 44/44, links 84/84 after the one allowed Q8 link (`.mount()` binding to the
+  `mount()` function in `main.ts`); communities identical.
+- TS behaviours seen through Vue and not reproduced, as for `.ts`: Q8 (`this.other()` inside an
+  options-API method binds to the flattened `other()`), and Graphify emits uninitialised
+  `export let x` late without a `contains` link (dijkstral links it).
+
+### 38.6 Analysis (Open)
+
+`dijkstral cluster-only` on the Vue golden asks one more bridge question than Graphify:
+`formatTitle()`, ranked fourth by betweenness, whose only neighbour in another community is its
+own file node. Graphify's two bridges are consistent with not counting same-file neighbours when
+listing the communities a bridge connects; unverified on other graphs, so `report.rs` is unchanged
+and `vue_cluster_only_matches_graphify` is ignored.
+
+## 39. Svelte (2026-10-15)
+
+Fixture `tests/fixtures/svelte/` (SvelteKit layout: `<script context="module">` plus instance
+script, props, `$:` statements, `$lib/…` imports, a markup-only component, `+page.ts`). Script
+regions as §38.1; the grammar is JavaScript for `lang="js"`/`"jsx"` and TypeScript otherwise
+(`tsx` included).
+
+Svelte goes through a reduced TS path. Compared with §38 (Rule, all observed):
+
+- No import-scoped call pass: calls from module-level functions to imported functions carry
+  `confidence_score` 1.0, like calls from methods (only the edge order changes once clustered).
+- No `type_only`, no `imports` link for a **default** import (`import Cart from …`), no
+  `inherits`/`implements`, no type `references` (`field`, `parameter_type`, `return_type`).
+  Named imports, decorators (`references`, `decorator`) and `indirect_call` remain.
+- An exported variable without a value (`export let item: Item`, the props idiom) has no node.
+- No rationale.
+
+Quirks (not reproduced):
+
+- **SV1** With two `<script>` blocks, a later pass reads the second block at shifted offsets:
+  stray nodes named after neighbouring tokens appear without `contains` (`export let n: number`
+  gives a node `number`), and once a default import was linked (`imports` to `Counter`).
+- **SV2** (Q9 family) Every import whose specifier does not resolve to a local file also gets a
+  phantom code node (id `slug(last segment)`, `$lib/Cart.svelte` → `cart_svelte`; a missing
+  relative path → `slug(resolved path without extension)`), labelled with the specifier,
+  `source_file` the specifier or resolved path, `confidence` and no location, plus an
+  `imports_from` link without context, line or weight, beside the normal link to `ref_lib`. Some
+  of these links disappear in the clustered build (`pkg/C.svelte`). Dijkstral keeps the external
+  only.
+
+Golden: nodes 27/27 and links 45/45 after the two phantom nodes and links (SV2); NMI 1.0.
+
+## 40. Astro (2026-10-15)
+
+Fixture `tests/fixtures/astro/` (pages, a layout, components with frontmatter, a client
+`<script>`, a React island `.tsx`). The frontmatter body (the file's first line is `---`, up to the
+next `---` line) and every `<script>` block form one TypeScript module; a `---` later in the
+markup is not a fence. Everything else is §39: no import-scoped pass, no default-import links,
+no heritage or type references, no `type_only`, no props without a value, no rationale, and the
+SV2 phantoms for unresolved imports (`@/H.astro` → `h_astro`). INFERRED member calls involving an
+Astro file are never kept (§38.3).
+
+Golden: nodes 22/22, links 32/32, identical communities, analysis and report.
+
+## 41. PowerShell (2026-10-15)
+
+Fixture `tests/fixtures/powershell/` (`build.ps1`, a dot-sourced `scripts/Common.ps1`, a module
+`Modules/Shop/` with manifest `Shop.psd1`, `Shop.psm1` with classes and an enum, a nested
+`Private/Pricing.psm1`, a Pester test). `.ps1`, `.psm1` and `.psd1` are code, parsed with
+tree-sitter-powershell 0.26.4 (Graphify's version; the Rust crate of the same version is used).
+Probes `ps1`–`ps5` and the graphify corpus fixtures. Implementation:
+`crates/core/src/{extract,resolve}/powershell.rs`. Nothing carries `_callable`; there is no
+rationale.
+
+### 41.1 Nodes
+
+| Construct | Id | Label |
+|---|---|---|
+| `function`, `filter`, `workflow`, at any depth outside class methods (nested, in script blocks) | `file_slug(name)` | `name()` (`global:Scoped()`, id `…_global_scoped`) |
+| `class` | `file_slug(Name)` | `Name` |
+| method or constructor (overloads merge, first line kept) | `class_slug(name)` | `.Name()` |
+| `enum`, member | `file_slug(Name)`, `enum_slug(Member)` | bare |
+| unresolved type | `slug(Name)`, per file (§4.5 applies) | `Name` as written, last segment |
+| import target | external `slug(stem)` | = id |
+
+Functions, classes and imports inside a class method body are ignored (only its calls count).
+
+### 41.2 Edges
+
+| Relation | Source → target | Context | Line |
+|---|---|---|---|
+| `contains` | file → function (nested ones too), class, enum | — | statement |
+| `method` | class → method, once per definition (overloads repeat; the build keeps the last) | — | method |
+| `case_of` | enum → member | — | member |
+| `inherits` / `implements` | class → first base / each further base | — | base name |
+| `references` | class → property type (`field`; never its own class); method → return type (`return_type`), then each typed parameter (`parameter_type`) | as listed | the type literal's line |
+| `imports_from` | file → external or file | none; `import` in a manifest | statement / manifest key |
+| `calls` | function or method → function or method | none in-file; `call` + INFERRED 0.85 across files | call |
+
+**Types** (Rule): `[T]` names the last segment of a plain type name (`[System.IO.FileInfo]` →
+`FileInfo`); array (`[string[]]`) and generic (`[List[string]]`) types give nothing; function
+`param()` blocks, `[OutputType()]` and attributes give nothing. A type binds to a class or enum of
+the file, else to the file's stub, which the cross-file pass binds to the only PowerShell class or
+enum with that name **unless that class's id was renamed** by §4.5 (then the stub stays). Classes
+in other languages never count (`[UniquePy]` stays a stub).
+
+**Imports** (Rule):
+
+- `Import-Module` (any case) with a bare word (the first `generic_token`, parameters skipped) →
+  stem of its last `/` or `\` component (`Az.Accounts` → `az`, `C:\abs\Win.psm1` → `win`,
+  `./b.c.psm1` → `b_c`).
+- Dot-sourcing a bare path (`. ./Helpers.ps1`, `. .\Utils.ps1`) → its stem.
+- `using namespace|module|assembly X` → the last `.` segment of `X` (`System.IO` → `io`,
+  `using module ./Shop.psm1` → `psm1`).
+- Nothing for quoted or variable paths (`Import-Module "$PSScriptRoot/x.psm1"`,
+  `. $PSScriptRoot\x.ps1`), `&` invocation, aliases (`ipmo`), `#Requires -Modules`, or imports
+  inside class methods. Imports inside functions come from the file.
+- `.psd1` manifests: in the top-level hashtable, unquoted keys exactly `RootModule` and
+  `NestedModules` (every string inside, in order, nested hashtables included: `ModuleVersion =
+  '1.0'` gives `1`) and `RequiredModules` (strings and `ModuleName` entries, **sorted**), each the
+  stem of the string, context `import`, line of the key.
+- An external whose id equals `slug(stem)` of exactly one file of the repository, **in any
+  language**, is replaced by that file (`. .\Utils.ps1` → `worked/httpx/raw/utils.py` in the
+  graphify corpus; `Private/Pricing.psm1` → the module file); a file importing itself loses the
+  link.
+
+**Calls** (Rule): callers are functions and methods (top-level code has none; a nested function
+owns its own calls; calls in script blocks belong to the enclosing function). In the file, a
+command name binds case-insensitively to a function of the file, `$this.M()` to the class's method
+and `[Class]::M()` to a method of a class of the file, EXTRACTED without context, once per pair,
+grouped by caller in definition order. Other command names go to the function **or method** of
+exactly that (case-sensitive) name nearest to the caller's file (§19.5), INFERRED 0.85 with
+context `call`; `[Other]::M()` across files, `$x.M()`, `& F` and `[T]::new()` give nothing.
+
+### 41.3 Parity
+
+- Golden: nodes 43/43, links 63/63, identical communities, analysis and report.
+- Graphify corpus fixtures (`--ext .ps1,.psm1,.psd1`, frozen reference): nodes 25 shared of 28,
+  links 27 shared of 34 (theirs) / 36 (ours), NMI 1.0. Every difference comes from §4.5 renames
+  caused by `tests/fixtures/sample.{zig,jl,java}`, which define `Shape`, `Circle` and a
+  `DataProcessor` constructor: dijkstral does not extract Zig and (in this branch) Julia, and in
+  Graphify the `inherits` and constructor `method` links between two renamed nodes of
+  `sample.ps1` are lost (**Open**: a probe with only Python collisions keeps them).
+  `sample.cls` is Apex (§42), not PowerShell.
+
+## 42. Visual Basic (2026-10-15)
+
+Graphify 0.9.86 classifies `.vb` as code but parses it only with the optional
+`tree-sitter-vb-dotnet` grammar (`pip install "graphifyy[vbnet]"`), which the reference install
+lacks: every `.vb` file "contributed nothing to the graph" — **no file node**, no symbols. A
+VB-only fixture (`tests/fixtures/vb/`) gives an empty raw graph (`vb.graphify.json`) and the
+clustered build stops with "graph is empty". Dijkstral classifies `.vb` (it counts toward the
+corpus check) and emits nothing; on an empty corpus it writes an empty graph instead of stopping.
+A Rust crate `tree-sitter-vb-dotnet` 0.1.0 exists, but there is no reference output to match.
+
+Related extensions: `.cls` is code in Graphify but extracted as **Apex** (the graphify corpus'
+`sample.cls`: `AccountService`, `.createAccounts()`, DML `uses`), not VB6, and is not implemented
+here; `.vbproj` is code (an MSBuild file, like `.csproj` §18.5, not implemented); `.bas`, `.frm`
+and `.vbs` are not classified.

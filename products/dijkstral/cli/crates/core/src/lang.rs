@@ -32,9 +32,9 @@ pub enum Lang {
     Kotlin,
     /// `.scala` (`.sc` and `.sbt` are not classified).
     Scala,
-    /// `.c`, and `.h` without C++ markers (§18).
+    /// `.c`, and `.h` without C++ markers (§24).
     C,
-    /// `.cpp .cc .cxx .hpp .cu`, and `.h` with C++ markers (§19).
+    /// `.cpp .cc .cxx .hpp .cu`, and `.h` with C++ markers (§25).
     Cpp,
     /// `.ex`, `.exs` (§29).
     Elixir,
@@ -44,6 +44,16 @@ pub enum Lang {
     OCaml,
     /// `.jl` (§32).
     Julia,
+    /// `.vue` single-file components (script blocks only, §38).
+    Vue,
+    /// `.svelte` components (script blocks only, §39).
+    Svelte,
+    /// `.astro` components (frontmatter and script blocks, §40).
+    Astro,
+    /// `.ps1`, `.psm1`, `.psd1` (§41).
+    PowerShell,
+    /// `.vb`: counted as code, contributes nothing (the reference lacks its grammar, §42).
+    VisualBasic,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -67,6 +77,8 @@ pub enum Family {
     Julia,
     /// Code files Graphify counts but extracts nothing from (Erlang, OCaml).
     Opaque,
+    PowerShell,
+    VisualBasic,
 }
 
 impl Lang {
@@ -105,6 +117,11 @@ impl Lang {
             "erl" | "hrl" => Lang::Erlang,
             "ml" | "mli" => Lang::OCaml,
             "jl" => Lang::Julia,
+            "vue" => Lang::Vue,
+            "svelte" => Lang::Svelte,
+            "astro" => Lang::Astro,
+            "ps1" | "psm1" | "psd1" => Lang::PowerShell,
+            "vb" => Lang::VisualBasic,
             _ => return None,
         })
     }
@@ -128,6 +145,9 @@ impl Lang {
             Lang::Elixir => Family::Elixir,
             Lang::Erlang | Lang::OCaml => Family::Opaque,
             Lang::Julia => Family::Julia,
+            Lang::Vue | Lang::Svelte | Lang::Astro => Family::Script,
+            Lang::PowerShell => Family::PowerShell,
+            Lang::VisualBasic => Family::VisualBasic,
         }
     }
 
@@ -151,6 +171,9 @@ impl Lang {
             Lang::Elixir => tree_sitter_elixir::LANGUAGE.into(),
             Lang::Julia => tree_sitter_julia::LANGUAGE.into(),
             Lang::Erlang | Lang::OCaml => return None,
+            Lang::PowerShell => tree_sitter_powershell::LANGUAGE.into(),
+            // Single-file components are masked and parsed as TSX by `extract::sfc`.
+            Lang::Vue | Lang::Svelte | Lang::Astro | Lang::VisualBasic => return None,
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }

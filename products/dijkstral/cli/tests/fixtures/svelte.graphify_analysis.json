@@ -1,0 +1,163 @@
+{
+  "communities": {
+    "0": [
+      "src_lib_cart",
+      "src_lib_cart_announce",
+      "src_lib_cart_cart_key",
+      "src_lib_cart_clear",
+      "src_lib_cart_compact",
+      "src_lib_cart_emptymessage",
+      "src_lib_cart_label",
+      "src_lib_cart_title",
+      "src_lib_format_plural"
+    ],
+    "1": [
+      "ref_svelte",
+      "src_lib_stores",
+      "src_lib_stores_cart",
+      "src_lib_stores_item",
+      "src_lib_stores_sumprices",
+      "src_lib_stores_total",
+      "src_routes_page_load",
+      "src_routes_page_ts_src_routes_page"
+    ],
+    "2": [
+      "badge_svelte",
+      "cart_svelte",
+      "ref_lib",
+      "src_lib_stores_additem",
+      "src_routes_page_buy",
+      "src_routes_page_svelte_src_routes_page"
+    ],
+    "3": [
+      "src_lib_cartrow",
+      "src_lib_cartrow_price",
+      "src_lib_format",
+      "src_lib_format_money",
+      "src_lib_format_rationale_1"
+    ],
+    "4": [
+      "src_lib_badge"
+    ]
+  },
+  "cohesion": {
+    "0": 0.3055555555555556,
+    "1": 0.39285714285714285,
+    "2": 0.4,
+    "3": 0.6,
+    "4": 1.0
+  },
+  "gods": [
+    {
+      "id": "src_lib_format_money",
+      "label": "money()",
+      "degree": 5
+    },
+    {
+      "id": "src_lib_stores_sumprices",
+      "label": "sumPrices()",
+      "degree": 5
+    },
+    {
+      "id": "src_lib_cart_label",
+      "label": "label()",
+      "degree": 3
+    },
+    {
+      "id": "src_lib_cart_announce",
+      "label": "announce()",
+      "degree": 3
+    },
+    {
+      "id": "src_lib_format_plural",
+      "label": "plural()",
+      "degree": 3
+    },
+    {
+      "id": "src_lib_stores_item",
+      "label": "Item",
+      "degree": 3
+    },
+    {
+      "id": "src_lib_stores_total",
+      "label": "total",
+      "degree": 3
+    },
+    {
+      "id": "src_lib_stores_additem",
+      "label": "addItem()",
+      "degree": 3
+    },
+    {
+      "id": "src_lib_cart_emptymessage",
+      "label": "emptyMessage()",
+      "degree": 2
+    },
+    {
+      "id": "src_lib_cart_clear",
+      "label": "clear()",
+      "degree": 2
+    }
+  ],
+  "surprises": [
+    {
+      "source": "label()",
+      "target": "money()",
+      "source_files": [
+        "src/lib/Cart.svelte",
+        "src/lib/format.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "price()",
+      "target": "money()",
+      "source_files": [
+        "src/lib/CartRow.svelte",
+        "src/lib/format.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `price()` unexpectedly reaches hub `money()`"
+    },
+    {
+      "source": "load()",
+      "target": "sumPrices()",
+      "source_files": [
+        "src/routes/+page.ts",
+        "src/lib/stores.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `load()` unexpectedly reaches hub `sumPrices()`"
+    },
+    {
+      "source": "emptyMessage()",
+      "target": "plural()",
+      "source_files": [
+        "src/lib/Cart.svelte",
+        "src/lib/format.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "buy()",
+      "target": "addItem()",
+      "source_files": [
+        "src/routes/+page.svelte",
+        "src/lib/stores.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

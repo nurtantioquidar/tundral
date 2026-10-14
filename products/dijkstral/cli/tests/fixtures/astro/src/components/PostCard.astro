@@ -1,0 +1,19 @@
+---
+import type { Post } from '../utils/posts'
+import { readingTime } from '../utils/posts'
+
+export interface Props {
+  post: Post
+}
+
+const { post } = Astro.props
+export const minutes = readingTime(post.title)
+
+export function cardClass(featured: boolean) {
+  return featured ? 'card featured' : 'card'
+}
+---
+<article class={cardClass(false)}>
+  <h2>{post.title}</h2>
+  <span>{minutes} min</span>
+</article>

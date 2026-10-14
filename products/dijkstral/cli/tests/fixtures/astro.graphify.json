@@ -1,0 +1,552 @@
+{
+ "nodes": [
+  {
+   "id": "src_components_header",
+   "label": "Header.astro",
+   "file_type": "code",
+   "source_file": "src/components/Header.astro",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_like",
+   "label": "Like.tsx",
+   "file_type": "code",
+   "source_file": "src/components/Like.tsx",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_like_like",
+   "label": "Like()",
+   "file_type": "code",
+   "source_file": "src/components/Like.tsx",
+   "source_location": "L3",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_like_bump",
+   "label": "bump()",
+   "file_type": "code",
+   "source_file": "src/components/Like.tsx",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_postcard",
+   "label": "PostCard.astro",
+   "file_type": "code",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_postcard_props",
+   "label": "Props",
+   "file_type": "code",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L5",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_postcard_minutes",
+   "label": "minutes",
+   "file_type": "code",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_postcard_cardclass",
+   "label": "cardClass()",
+   "file_type": "code",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_layouts_base",
+   "label": "Base.astro",
+   "file_type": "code",
+   "source_file": "src/layouts/Base.astro",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_layouts_base_props",
+   "label": "Props",
+   "file_type": "code",
+   "source_file": "src/layouts/Base.astro",
+   "source_location": "L4",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_layouts_base_pagetitle",
+   "label": "pageTitle",
+   "file_type": "code",
+   "source_file": "src/layouts/Base.astro",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_layouts_base_buildtitle",
+   "label": "buildTitle()",
+   "file_type": "code",
+   "source_file": "src/layouts/Base.astro",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_pages_about",
+   "label": "about.astro",
+   "file_type": "code",
+   "source_file": "src/pages/about.astro",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_pages_index",
+   "label": "index.astro",
+   "file_type": "code",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_pages_index_getstaticpaths",
+   "label": "getStaticPaths()",
+   "file_type": "code",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_pages_index_track",
+   "label": "track()",
+   "file_type": "code",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L22",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_posts",
+   "label": "posts.ts",
+   "file_type": "code",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_posts_post",
+   "label": "Post",
+   "file_type": "code",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L1",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_posts_sortbydate",
+   "label": "sortByDate()",
+   "file_type": "code",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_posts_readingtime",
+   "label": "readingTime()",
+   "file_type": "code",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L11",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_posts_getposts",
+   "label": "getPosts()",
+   "file_type": "code",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L15",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "ref_react",
+   "label": "ref_react",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "src_components_like",
+   "target": "ref_react",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/Like.tsx",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_like",
+   "target": "src_components_like_like",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/Like.tsx",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_like",
+   "target": "src_components_like_bump",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/Like.tsx",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_like_like",
+   "target": "src_components_like_bump",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/Like.tsx",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_postcard",
+   "target": "src_utils_posts",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_postcard",
+   "target": "src_utils_posts_post",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_postcard",
+   "target": "src_utils_posts_readingtime",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_postcard",
+   "target": "src_components_postcard_props",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_postcard",
+   "target": "src_components_postcard_minutes",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_postcard",
+   "target": "src_components_postcard_cardclass",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/PostCard.astro",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_layouts_base",
+   "target": "src_components_header",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/layouts/Base.astro",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_layouts_base",
+   "target": "src_layouts_base_props",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/layouts/Base.astro",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_layouts_base",
+   "target": "src_layouts_base_pagetitle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/layouts/Base.astro",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_layouts_base",
+   "target": "src_layouts_base_buildtitle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/layouts/Base.astro",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_about",
+   "target": "src_layouts_base",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/about.astro",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_layouts_base",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_components_postcard",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_components_like",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_utils_posts",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_utils_posts_getposts",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_utils_posts_sortbydate",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_pages_index_getstaticpaths",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_utils_posts_readingtime",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_pages_index_track",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index",
+   "target": "src_pages_index_track",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/pages/index.astro",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_posts",
+   "target": "src_utils_posts_post",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_posts",
+   "target": "src_utils_posts_sortbydate",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_posts",
+   "target": "src_utils_posts_readingtime",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_posts",
+   "target": "src_utils_posts_getposts",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_posts_getposts",
+   "target": "src_utils_posts_sortbydate",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/posts.ts",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index_getstaticpaths",
+   "target": "src_utils_posts_getposts",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/pages/index.astro",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index_getstaticpaths",
+   "target": "src_utils_posts_sortbydate",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/pages/index.astro",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_pages_index_track",
+   "target": "src_utils_posts_readingtime",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/pages/index.astro",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

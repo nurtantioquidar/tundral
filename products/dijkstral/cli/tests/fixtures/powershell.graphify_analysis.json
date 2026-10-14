@@ -1,0 +1,186 @@
+{
+  "communities": {
+    "0": [
+      "build",
+      "build_format_result",
+      "build_invoke_build",
+      "build_test_manifest",
+      "pester",
+      "scripts_common",
+      "scripts_common_get_reporoot",
+      "scripts_common_write_buildlog"
+    ],
+    "1": [
+      "generic",
+      "modules_shop_shop_get_ordertotal",
+      "modules_shop_shop_new_shoporder",
+      "modules_shop_shop_psm1_modules_shop_shop",
+      "modules_shop_shop_write_shoplog",
+      "psm1",
+      "tests_shop_tests",
+      "tests_shop_tests_new_testorder"
+    ],
+    "2": [
+      "configuration",
+      "modules_shop_private_pricing",
+      "modules_shop_private_pricing_get_discount",
+      "modules_shop_private_pricing_get_taxedamount",
+      "modules_shop_shop_psd1_modules_shop_shop",
+      "psframework",
+      "shop"
+    ],
+    "3": [
+      "modules_shop_shop_order",
+      "modules_shop_shop_order_order",
+      "modules_shop_shop_order_withtax",
+      "modules_shop_shop_psm1_decimal",
+      "string"
+    ],
+    "4": [
+      "int",
+      "modules_shop_shop_priorityorder",
+      "modules_shop_shop_priorityorder_downgrade",
+      "modules_shop_shop_priorityorder_priorityorder"
+    ],
+    "5": [
+      "modules_shop_private_pricing_psm1_decimal",
+      "modules_shop_private_pricing_taxrule",
+      "modules_shop_private_pricing_taxrule_apply",
+      "modules_shop_private_pricing_taxrule_taxrule"
+    ],
+    "6": [
+      "modules_shop_shop_orderstatus",
+      "modules_shop_shop_orderstatus_open",
+      "modules_shop_shop_orderstatus_paid",
+      "modules_shop_shop_orderstatus_shipped"
+    ],
+    "7": [
+      "modules_shop_shop_order_log",
+      "modules_shop_shop_order_markpaid",
+      "void"
+    ]
+  },
+  "cohesion": {
+    "0": 0.39285714285714285,
+    "1": 0.2857142857142857,
+    "2": 0.3333333333333333,
+    "3": 0.7,
+    "4": 0.6666666666666666,
+    "5": 0.8333333333333334,
+    "6": 0.5,
+    "7": 1.0
+  },
+  "gods": [
+    {
+      "id": "modules_shop_shop_order",
+      "label": "Order",
+      "degree": 10
+    },
+    {
+      "id": "modules_shop_shop_orderstatus",
+      "label": "OrderStatus",
+      "degree": 5
+    },
+    {
+      "id": "modules_shop_shop_priorityorder",
+      "label": "PriorityOrder",
+      "degree": 5
+    },
+    {
+      "id": "build_invoke_build",
+      "label": "Invoke-Build()",
+      "degree": 5
+    },
+    {
+      "id": "modules_shop_private_pricing_taxrule",
+      "label": "TaxRule",
+      "degree": 4
+    },
+    {
+      "id": "modules_shop_shop_new_shoporder",
+      "label": "New-ShopOrder()",
+      "degree": 4
+    },
+    {
+      "id": "scripts_common_write_buildlog",
+      "label": "Write-BuildLog()",
+      "degree": 4
+    },
+    {
+      "id": "modules_shop_private_pricing_get_taxedamount",
+      "label": "Get-TaxedAmount()",
+      "degree": 3
+    },
+    {
+      "id": "build_test_manifest",
+      "label": "Test-Manifest()",
+      "degree": 3
+    },
+    {
+      "id": "tests_shop_tests_new_testorder",
+      "label": "New-TestOrder()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Invoke-Build()",
+      "target": "New-ShopOrder()",
+      "source_files": [
+        "build.ps1",
+        "Modules/Shop/Shop.psm1"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "New-TestOrder()",
+      "target": "Write-BuildLog()",
+      "source_files": [
+        "tests/Shop.Tests.ps1",
+        "scripts/Common.ps1"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "New-TestOrder()",
+      "target": "New-ShopOrder()",
+      "source_files": [
+        "tests/Shop.Tests.ps1",
+        "Modules/Shop/Shop.psm1"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "Invoke-Build()",
+      "target": "Write-BuildLog()",
+      "source_files": [
+        "build.ps1",
+        "scripts/Common.ps1"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "Test-Manifest()",
+      "target": "Write-BuildLog()",
+      "source_files": [
+        "build.ps1",
+        "scripts/Common.ps1"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

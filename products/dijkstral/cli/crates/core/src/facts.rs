@@ -128,6 +128,7 @@ pub enum LangFacts {
     Ruby(crate::extract::ruby::RubyFacts),
     C(crate::extract::c::CFacts),
     Elixir(crate::extract::elixir::ElixirFacts),
+    PowerShell(crate::extract::powershell::PsFacts),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
