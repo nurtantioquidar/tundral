@@ -140,3 +140,41 @@ tier = "small"
 langs = ["ruby"]
 edit_file = "lib/sinatra/base.rb"
 comment = "#"
+
+# Stage 4b languages.
+
+[[repo]]
+name = "dart-http"
+url = "https://github.com/dart-lang/http"
+commit = "b661894a6c7c2750f8dd865cb3ce517a851190f6"   # http-v1.5.0
+tier = "small"
+langs = ["dart"]
+edit_file = "pkgs/http/lib/src/base_client.dart"
+comment = "//"
+
+[[repo]]
+name = "ecto"
+url = "https://github.com/elixir-ecto/ecto"
+commit = "f6eb492964dbd32bc6924d5330d1cc05b41e89a1"   # v3.14.2
+tier = "medium"
+langs = ["elixir"]
+edit_file = "lib/ecto/repo.ex"
+comment = "#"
+
+[[repo]]
+name = "penlight"
+url = "https://github.com/lunarmodules/Penlight"
+commit = "e0bc8f7fce3b6a4fdef3660066f5006bf8456b32"   # 1.15.0
+tier = "small"
+langs = ["lua"]
+edit_file = "lua/pl/utils.lua"
+comment = "--"
+
+[[repo]]
+name = "afnetworking"
+url = "https://github.com/AFNetworking/AFNetworking"
+commit = "ffae2391ab0c29dc88eb0a58d2f5b2c2c27cadbf"   # 4.0.1
+tier = "small"
+langs = ["objc"]
+edit_file = "AFNetworking/AFURLSessionManager.m"
+comment = "//"
