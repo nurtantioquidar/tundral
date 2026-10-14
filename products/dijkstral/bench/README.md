@@ -251,7 +251,9 @@ raised). Raw: `results/build-1791848836.json`, `results/build-1791848853.json`.
 |  | update | 735.97 | 4.45 | 165× | 4,713 | 1,908 |
 
 dijkstral is faster (12× to 165×) and lower in peak memory in all 21 scenarios. Graphify's build
-also writes `graph.html`, which dijkstral adds with the other exporters in stage 4. A no-change
+also writes `graph.html`; since stage 4a dijkstral's does too (2026-10-14, cold builds: erpnext
+50 ms for a 6.2 MB WebGL page, Kubernetes 544 ms for 69 MB with peak RSS unchanged, where
+Graphify's `export html` fails above 5,000 communities; `cli/docs/graphify-exports.md` §7). A no-change
 rebuild now reruns clustering, analysis and the report (Kubernetes warm 4.5 s against 2.2 s without
 them); skipping them when no input changed is the obvious next optimisation.
 

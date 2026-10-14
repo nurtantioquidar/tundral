@@ -28,7 +28,13 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   an assistant sees is in `text.rs` and is dijkstral's own. The guard runs before clap parses
   (`crates/cli/src/agents_cmd.rs`), never opens the graph, fails open, and is measured by
   `../bench/hook.py`.
-- `crates/export`, `crates/semantic`: later stages.
+- `crates/export`: exporters over dijkstral's build or any Graphify `graph.json` (`view.rs`, in
+  `graph.json` order): `graph.html` (`html.rs`; the page in `page.html` is dijkstral's own and
+  embeds Graphify's data shape, vis-network up to the node limit and sigma.js/WebGL above), the
+  Markdown wiki (`wiki.rs`) and GraphML (`graphml.rs`). Builds run them through
+  `core::pipeline::Exporter` (`crates/cli/src/export_cmd.rs`), so an unchanged build is skipped only
+  while their outputs exist.
+- `crates/semantic`: a later stage.
 
 Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's
 output, and enforced by `crates/core/tests/golden_<lang>.rs` against the goldens in
@@ -40,7 +46,10 @@ The query, MCP, hook-guard and installer surfaces are specified the same way in
 `docs/graphify-query.md`, with goldens in `tests/fixtures/query/`; `crates/cli/tests/query_goldens.rs`
 runs every CLI case on the JSON load path and on `graph.dij`, and must stay at 100%;
 `crates/cli/tests/mcp_goldens.rs` replays every MCP transcript against `dijkstral mcp` the same way,
-with its deliberate differences (§10.9) listed in the test. Query
+with its deliberate differences (§10.9) listed in the test. The exporters are specified in
+`docs/graphify-exports.md` and checked by `crates/export/tests/goldens.rs` against Graphify's own
+exports of the fixtures in `tests/fixtures/exports/` (GraphML and wiki byte for byte, page data
+record for record); `escaping.rs` keeps untrusted strings out of the page's markup. Query
 commands write nothing next to the graph (Graphify's `cache/last_query_stamp` is read by nothing).
 
 ## Ownership boundaries

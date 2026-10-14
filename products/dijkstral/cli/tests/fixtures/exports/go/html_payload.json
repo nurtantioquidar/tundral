@@ -1,0 +1,1895 @@
+{
+ "RAW_NODES": [
+  {
+   "id": "cmd_app_main",
+   "label": "main.go",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 25.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main.go",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "cmd/app/main.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "service_greeter",
+   "label": "Greeter",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Greeter",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "service_greeter_greet",
+   "label": ".Greet()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Greet()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "service_service",
+   "label": "service.go",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 40.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service.go",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 14
+  },
+  {
+   "id": "service_service_apply",
+   "label": "apply()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "apply()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "service_service_logline",
+   "label": "logLine()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "logLine()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "service_service_strings2upper",
+   "label": "strings2upper()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "strings2upper()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "cmd_app_main_main",
+   "label": "main()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 18.6,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "cmd/app/main.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "n",
+   "label": "N",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "N",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "service_service_newuserservice",
+   "label": "NewUserService()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 18.6,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "NewUserService()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "store_helpers_format",
+   "label": "Format()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Format()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "store_store_sum",
+   "label": "Sum()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 16.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Sum()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "store_helpers",
+   "label": "helpers.go",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 25.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helpers.go",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "store_helpers_clean",
+   "label": "clean()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "clean()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "store_helpers_normalize",
+   "label": "Normalize()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 18.6,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Normalize()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "go_type_testing_t",
+   "label": "testing.T",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "testing.T",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "service_service_clean",
+   "label": "clean()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "clean()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "service_service_test",
+   "label": "service_test.go",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 16.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service_test.go",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service_test.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "service_service_test_testregister",
+   "label": "TestRegister()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 18.6,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "TestRegister()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service_test.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "service_user",
+   "label": "User",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 25.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "User",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "service_userservice",
+   "label": "UserService",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 25.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "UserService",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "service_userservice_greet",
+   "label": ".Greet()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Greet()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "service_userservice_names",
+   "label": ".Names()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 16.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Names()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "service_userservice_register",
+   "label": ".Register()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 16.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Register()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "store_number",
+   "label": "Number",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Number",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "store_store_go_store_store",
+   "label": "Store",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 37.9,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Store",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 13
+  },
+  {
+   "id": "store_store_newstore",
+   "label": "NewStore()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "NewStore()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "store_store_t",
+   "label": "Store[T]",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Store[T]",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "store_store_t_get",
+   "label": ".Get()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 16.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Get()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "store_store_t_put",
+   "label": ".Put()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 16.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Put()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "t",
+   "label": "T",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 18.6,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "T",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "store_id",
+   "label": "ID",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 22.9,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "ID",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "store_model_identity",
+   "label": ".Identity()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 16.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Identity()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "store_store_go_store_model",
+   "label": "Model",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 18.6,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Model",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "store_entity",
+   "label": "Entity",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Entity",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "store_entity_identity",
+   "label": ".Identity()",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Identity()",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pkg_example_com_shop",
+   "label": "example.com/shop",
+   "color": {
+    "background": "#BAB0AC",
+    "border": "#BAB0AC",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#BAB0AC"
+    }
+   },
+   "size": 10.0,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "example.com/shop",
+   "community": 9,
+   "community_name": "Community 9",
+   "source_file": "go.mod",
+   "file_type": "code",
+   "degree": 0
+  },
+  {
+   "id": "go_pkg_fmt",
+   "label": "go_pkg_fmt",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 14.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_fmt",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "go_pkg_github_com_google_uuid",
+   "label": "go_pkg_github_com_google_uuid",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_github_com_google_uuid",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "go_pkg_os",
+   "label": "go_pkg_os",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_os",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "go_pkg_sort",
+   "label": "go_pkg_sort",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_sort",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "go_pkg_strconv",
+   "label": "go_pkg_strconv",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_strconv",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "go_pkg_strings",
+   "label": "go_pkg_strings",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_strings",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "go_pkg_testing",
+   "label": "go_pkg_testing",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_testing",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "go_pkg_errors",
+   "label": "go_pkg_errors",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 12.1,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_errors",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  }
+ ],
+ "RAW_EDGES": [
+  {
+   "from": "cmd_app_main",
+   "to": "go_pkg_fmt",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main",
+   "to": "go_pkg_os",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main",
+   "to": "service_service",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main",
+   "to": "service_service_test",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main",
+   "to": "store_helpers",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main",
+   "to": "store_store_go_store_store",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main",
+   "to": "cmd_app_main_main",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "service_greeter",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_greeter",
+   "to": "service_greeter_greet",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_greeter_greet",
+   "to": "service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "go_pkg_github_com_google_uuid",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "go_pkg_fmt",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "go_pkg_sort",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "store_helpers",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "store_store_go_store_store",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "service_user",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "service_userservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "service_service_newuserservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "service_service_logline",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "service_service_apply",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "service_service_strings2upper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service",
+   "to": "service_service_clean",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice_names",
+   "to": "service_service_apply",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main_main",
+   "to": "service_service_newuserservice",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main_main",
+   "to": "store_helpers_format",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "cmd_app_main_main",
+   "to": "store_store_sum",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_sum",
+   "to": "n",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service_newuserservice",
+   "to": "service_userservice",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service_test_testregister",
+   "to": "service_service_newuserservice",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "store_helpers",
+   "to": "store_helpers_format",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "store_store_sum",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_helpers",
+   "to": "go_pkg_strings",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_helpers",
+   "to": "go_pkg_strconv",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_helpers",
+   "to": "store_helpers_clean",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_helpers",
+   "to": "store_helpers_normalize",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_helpers_normalize",
+   "to": "store_helpers_clean",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_helpers_normalize",
+   "to": "store_id",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice_register",
+   "to": "store_helpers_normalize",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "service_service_test_testregister",
+   "to": "go_type_testing_t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service_test_testregister",
+   "to": "service_service_clean",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "service_service_test",
+   "to": "go_pkg_testing",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_service_test",
+   "to": "service_service_test_testregister",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice",
+   "to": "service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice_greet",
+   "to": "service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice_names",
+   "to": "service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice_register",
+   "to": "service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_user",
+   "to": "store_store_go_store_model",
+   "label": "embeds",
+   "title": "embeds [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice",
+   "to": "store_store_go_store_store",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice",
+   "to": "service_userservice_register",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice",
+   "to": "service_userservice_greet",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "service_userservice",
+   "to": "service_userservice_names",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "store_number",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "go_pkg_errors",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "store_id",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "store_entity",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "store_store_go_store_model",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "store_store_go_store_store",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_store",
+   "to": "store_store_newstore",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_newstore",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_t",
+   "to": "store_store_t_put",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_t",
+   "to": "store_store_t_get",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_t_get",
+   "to": "store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_t_get",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_t_put",
+   "to": "store_model_identity",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_t_put",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_model",
+   "to": "store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_entity_identity",
+   "to": "store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_model_identity",
+   "to": "store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_store_go_store_model",
+   "to": "store_model_identity",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "store_entity",
+   "to": "store_entity_identity",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  }
+ ],
+ "LEGEND": [],
+ "hyperedges": []
+}

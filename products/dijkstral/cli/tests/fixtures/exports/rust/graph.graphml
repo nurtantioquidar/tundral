@@ -1,0 +1,1524 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d19" for="edge" attr.name="context" attr.type="string" />
+  <key id="d18" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d17" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d16" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d15" for="edge" attr.name="confidence_score" attr.type="double" />
+  <key id="d14" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d13" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d12" for="node" attr.name="external" attr.type="boolean" />
+  <key id="d11" for="node" attr.name="version" attr.type="string" />
+  <key id="d10" for="node" attr.name="type" attr.type="string" />
+  <key id="d9" for="node" attr.name="ecosystem" attr.type="string" />
+  <key id="d8" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d7" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d6" for="node" attr.name="norm_label" attr.type="string" />
+  <key id="d5" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d4" for="node" attr.name="community" attr.type="long" />
+  <key id="d3" for="node" attr.name="label" attr.type="string" />
+  <key id="d2" for="graph" attr.name="hyperedges" attr.type="string" />
+  <key id="d1" for="graph" attr.name="graphify_version" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="long" />
+  <graph edgedefault="undirected">
+    <node id="src_model_named">
+      <data key="d3">Named</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">named</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L24</data>
+    </node>
+    <node id="src_model_shape">
+      <data key="d3">Shape</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">shape</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="src_model_circle">
+      <data key="d3">Circle</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">circle</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L16</data>
+    </node>
+    <node id="src_model_meters">
+      <data key="d3">Meters</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">meters</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L21</data>
+    </node>
+    <node id="src_model_kind">
+      <data key="d3">Kind</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">kind</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L37</data>
+    </node>
+    <node id="src_model_unit">
+      <data key="d3">Unit</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">unit</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L34</data>
+    </node>
+    <node id="src_model_pair">
+      <data key="d3">Pair</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">pair</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L88</data>
+    </node>
+    <node id="src_model_wrapper">
+      <data key="d3">Wrapper</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">wrapper</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L74</data>
+    </node>
+    <node id="src_model_platform">
+      <data key="d3">Platform</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">platform</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L29</data>
+    </node>
+    <node id="src_model_pair_t">
+      <data key="d3">Pair&lt;T&gt;</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">pair&lt;t&gt;</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L90</data>
+    </node>
+    <node id="src_lib_total_area">
+      <data key="d3">total_area()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">total_area()</data>
+      <data key="d7">src/lib.rs</data>
+      <data key="d8">L42</data>
+    </node>
+    <node id="src_main">
+      <data key="d3">main.rs</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">main.rs</data>
+      <data key="d7">src/main.rs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_main_main">
+      <data key="d3">main()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">main()</data>
+      <data key="d7">src/main.rs</data>
+      <data key="d8">L4</data>
+    </node>
+    <node id="src_model_named_name">
+      <data key="d3">.name()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.name()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L25</data>
+    </node>
+    <node id="src_model_shape_area">
+      <data key="d3">.area()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.area()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L7</data>
+    </node>
+    <node id="src_model_shape_describe">
+      <data key="d3">.describe()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.describe()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L10</data>
+    </node>
+    <node id="formatter">
+      <data key="d3">Formatter</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">formatter</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="src_model_circle_area">
+      <data key="d3">.area()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.area()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L63</data>
+    </node>
+    <node id="src_model_circle_fmt">
+      <data key="d3">.fmt()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.fmt()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L69</data>
+    </node>
+    <node id="src_model_circle_new">
+      <data key="d3">.new()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.new()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L46</data>
+    </node>
+    <node id="src_model_circle_scale">
+      <data key="d3">.scale()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.scale()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L57</data>
+    </node>
+    <node id="src_model_circle_unit">
+      <data key="d3">.UNIT</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.unit</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L44</data>
+    </node>
+    <node id="src_model_fixture">
+      <data key="d3">fixture()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">fixture()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L114</data>
+    </node>
+    <node id="src_util_fmt">
+      <data key="d3">fmt.rs</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">fmt.rs</data>
+      <data key="d7">src/util/fmt.rs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_util_fmt_configure">
+      <data key="d3">configure()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">configure()</data>
+      <data key="d7">src/util/fmt.rs</data>
+      <data key="d8">L16</data>
+    </node>
+    <node id="src_util_fmt_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">src/util/fmt.rs</data>
+      <data key="d8">L12</data>
+    </node>
+    <node id="src_util_fmt_render">
+      <data key="d3">render()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">render()</data>
+      <data key="d7">src/util/fmt.rs</data>
+      <data key="d8">L4</data>
+    </node>
+    <node id="src_util_fmt_rs_settings">
+      <data key="d3">Settings</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">settings</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="f">
+      <data key="d3">F</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">f</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="src_model_circle_diameter">
+      <data key="d3">.diameter()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.diameter()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L50</data>
+    </node>
+    <node id="src_util_mod">
+      <data key="d3">mod.rs</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">mod.rs</data>
+      <data key="d7">src/util/mod.rs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_util_mod_apply">
+      <data key="d3">apply()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">apply()</data>
+      <data key="d7">src/util/mod.rs</data>
+      <data key="d8">L23</data>
+    </node>
+    <node id="src_util_mod_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">src/util/mod.rs</data>
+      <data key="d8">L7</data>
+    </node>
+    <node id="src_util_mod_reconfigure">
+      <data key="d3">reconfigure()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">reconfigure()</data>
+      <data key="d7">src/util/mod.rs</data>
+      <data key="d8">L31</data>
+    </node>
+    <node id="src_util_mod_render">
+      <data key="d3">render()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">render()</data>
+      <data key="d7">src/util/mod.rs</data>
+      <data key="d8">L19</data>
+    </node>
+    <node id="src_util_mod_rs_settings">
+      <data key="d3">Settings</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">settings</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="src_util_mod_run_all">
+      <data key="d3">run_all()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">run_all()</data>
+      <data key="d7">src/util/mod.rs</data>
+      <data key="d8">L37</data>
+    </node>
+    <node id="src_util_mod_twice">
+      <data key="d3">twice()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">twice()</data>
+      <data key="d7">src/util/mod.rs</data>
+      <data key="d8">L27</data>
+    </node>
+    <node id="src_util_mod_widen">
+      <data key="d3">widen()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">widen()</data>
+      <data key="d7">src/util/mod.rs</data>
+      <data key="d8">L33</data>
+    </node>
+    <node id="src_model">
+      <data key="d3">model.rs</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">model.rs</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_model_area_is_positive">
+      <data key="d3">area_is_positive()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">area_is_positive()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L119</data>
+    </node>
+    <node id="src_model_classify">
+      <data key="d3">classify()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">classify()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L100</data>
+    </node>
+    <node id="src_model_kind_empty">
+      <data key="d3">Empty</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">empty</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L40</data>
+    </node>
+    <node id="src_model_kind_round">
+      <data key="d3">Round</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">round</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L38</data>
+    </node>
+    <node id="src_model_kind_square">
+      <data key="d3">Square</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">square</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L39</data>
+    </node>
+    <node id="src_model_round_kind">
+      <data key="d3">round_kind()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">round_kind()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L96</data>
+    </node>
+    <node id="registry">
+      <data key="d3">Registry</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">registry</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="src_lib">
+      <data key="d3">lib.rs</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">lib.rs</data>
+      <data key="d7">src/lib.rs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_lib_build">
+      <data key="d3">build()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">build()</data>
+      <data key="d7">src/lib.rs</data>
+      <data key="d8">L24</data>
+    </node>
+    <node id="src_lib_greeting">
+      <data key="d3">GREETING</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">greeting</data>
+      <data key="d7">src/lib.rs</data>
+      <data key="d8">L14</data>
+    </node>
+    <node id="src_lib_label">
+      <data key="d3">label()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">label()</data>
+      <data key="d7">src/lib.rs</data>
+      <data key="d8">L33</data>
+    </node>
+    <node id="src_lib_macro_square">
+      <data key="d3">square!</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">square!</data>
+      <data key="d7">src/lib.rs</data>
+      <data key="d8">L18</data>
+    </node>
+    <node id="src_lib_max_shapes">
+      <data key="d3">MAX_SHAPES</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">max_shapes</data>
+      <data key="d7">src/lib.rs</data>
+      <data key="d8">L13</data>
+    </node>
+    <node id="src_model_pair_t_first">
+      <data key="d3">.first()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.first()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L91</data>
+    </node>
+    <node id="src_model_wrapper_t">
+      <data key="d3">Wrapper&lt;T&gt;</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">wrapper&lt;t&gt;</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L78</data>
+    </node>
+    <node id="src_model_wrapper_t_area">
+      <data key="d3">.area()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.area()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L83</data>
+    </node>
+    <node id="src_model_wrapper_t_new">
+      <data key="d3">.new()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.new()</data>
+      <data key="d7">src/model.rs</data>
+      <data key="d8">L79</data>
+    </node>
+    <node id="t">
+      <data key="d3">T</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">t</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="tests_it">
+      <data key="d3">it.rs</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">it.rs</data>
+      <data key="d7">tests/it.rs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="tests_it_classifies_empty">
+      <data key="d3">classifies_empty()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">classifies_empty()</data>
+      <data key="d7">tests/it.rs</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="pkg_shapes">
+      <data key="d3">shapes</data>
+      <data key="d4">7</data>
+      <data key="d9">cargo</data>
+      <data key="d5">code</data>
+      <data key="d6">shapes</data>
+      <data key="d7">Cargo.toml</data>
+      <data key="d8">L1</data>
+      <data key="d10">package</data>
+      <data key="d11">0.1.0</data>
+    </node>
+    <node id="build">
+      <data key="d3">build</data>
+      <data key="d4">0</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">build</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="circle">
+      <data key="d3">circle</data>
+      <data key="d4">0</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">circle</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="label">
+      <data key="d3">label</data>
+      <data key="d4">0</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">label</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="render">
+      <data key="d3">render</data>
+      <data key="d4">0</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">render</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="round">
+      <data key="d3">round</data>
+      <data key="d4">0</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">round</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="round_kind">
+      <data key="d3">round_kind</data>
+      <data key="d4">0</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">round_kind</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="total_area">
+      <data key="d3">total_area</data>
+      <data key="d4">0</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">total_area</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="memchr">
+      <data key="d3">memchr</data>
+      <data key="d4">1</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">memchr</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="render_as_render_shape">
+      <data key="d3">render_as_render_shape</data>
+      <data key="d4">2</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">render_as_render_shape</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="serialize">
+      <data key="d3">serialize</data>
+      <data key="d4">3</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">serialize</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="super">
+      <data key="d3">super</data>
+      <data key="d4">3</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">super</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="circle_as_round">
+      <data key="d3">circle_as_round</data>
+      <data key="d4">4</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">circle_as_round</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="cow">
+      <data key="d3">cow</data>
+      <data key="d4">4</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">cow</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="hashmap">
+      <data key="d3">hashmap</data>
+      <data key="d4">4</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">hashmap</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="hashset">
+      <data key="d3">hashset</data>
+      <data key="d4">4</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">hashset</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="classify">
+      <data key="d3">classify</data>
+      <data key="d4">6</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">classify</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="kind">
+      <data key="d3">kind</data>
+      <data key="d4">6</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">kind</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="twice">
+      <data key="d3">twice</data>
+      <data key="d4">6</data>
+      <data key="d12">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">twice</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <edge source="src_model_named" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_named" target="src_model_shape">
+      <data key="d13">inherits</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_named" target="src_model_named_name">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L25</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_shape" target="src_lib_total_area">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">generic_arg</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L42</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_shape" target="src_lib">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_shape" target="src_main">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_shape" target="src_util_fmt">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/util/fmt.rs</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_shape" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_shape" target="src_model_circle">
+      <data key="d13">implements</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L62</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_shape" target="src_model_shape_describe">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_shape" target="src_model_shape_area">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model_kind">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">field</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L38</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_util_fmt">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/util/fmt.rs</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_util_fmt_render">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">parameter_type</data>
+      <data key="d16">src/util/fmt.rs</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_util_mod_render">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">parameter_type</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model_fixture">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">return_type</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L114</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model_circle_unit">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model_circle_new">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L46</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model_circle_diameter">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L50</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model_circle_scale">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L57</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model_circle_area">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L63</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle" target="src_model_circle_fmt">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L69</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_meters" target="src_model_circle_diameter">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">constructor</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L51</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_meters" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L21</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_meters" target="src_util_mod_widen">
+      <data key="d13">references</data>
+      <data key="d14">INFERRED</data>
+      <data key="d15">0.85</data>
+      <data key="d19">constructor</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_kind" target="src_model_classify">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">parameter_type</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L100</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_kind" target="src_model_round_kind">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">return_type</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L96</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_kind" target="src_model_kind_round">
+      <data key="d13">case_of</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L38</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_kind" target="src_model_kind_square">
+      <data key="d13">case_of</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L39</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_kind" target="src_model_kind_empty">
+      <data key="d13">case_of</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L40</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_kind" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_unit" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_pair" target="t">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">field</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L88</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_pair" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L88</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_wrapper" target="t">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">field</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L75</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_wrapper" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L74</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_platform" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L31</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_pair_t" target="src_model_pair_t_first">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L91</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib_total_area" target="src_lib">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L42</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib_total_area" target="src_main_main">
+      <data key="d13">calls</data>
+      <data key="d14">INFERRED</data>
+      <data key="d15">0.85</data>
+      <data key="d19">call</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main" target="circle">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main" target="round_kind">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main" target="build">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main" target="label">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main" target="render">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main" target="round">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main" target="total_area">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main" target="src_main_main">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_main" target="src_model_round_kind">
+      <data key="d13">calls</data>
+      <data key="d14">INFERRED</data>
+      <data key="d15">0.85</data>
+      <data key="d19">call</data>
+      <data key="d16">src/main.rs</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="formatter" target="src_model_circle_fmt">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">parameter_type</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L69</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle_new" target="src_model_fixture">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">call</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L115</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_circle_new" target="src_model_round_kind">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">call</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L97</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_fixture" target="src_model">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L114</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_fmt" target="src_model">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_fmt" target="memchr">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/util/fmt.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_fmt" target="src_util_fmt_helper">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/fmt.rs</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_fmt" target="src_util_fmt_configure">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/fmt.rs</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_fmt" target="src_util_fmt_render">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/fmt.rs</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_fmt_configure" target="src_util_fmt_rs_settings">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">parameter_type</data>
+      <data key="d16">src/util/fmt.rs</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="f" target="src_util_mod_apply">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">parameter_type</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="render_as_render_shape">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="src_model">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="src_util_mod_helper">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="src_util_mod_render">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="src_util_mod_apply">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="src_util_mod_twice">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L27</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="src_util_mod_reconfigure">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L31</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="src_util_mod_widen">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod" target="src_util_mod_run_all">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod_apply" target="src_util_mod_helper">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">call</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod_apply" target="src_util_mod_run_all">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">call</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L38</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod_helper" target="src_util_mod_run_all">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">call</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L38</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_util_mod_reconfigure" target="src_util_mod_rs_settings">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">parameter_type</data>
+      <data key="d16">src/util/mod.rs</data>
+      <data key="d17">L31</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model" target="super">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L112</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model" target="serialize">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model" target="src_model_classify">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L100</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model" target="src_model_area_is_positive">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L119</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model" target="src_model_round_kind">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L96</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_kind_round" target="src_model_round_kind">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">constructor</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L97</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="registry" target="src_lib_build">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">return_type</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="hashmap">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="hashset">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="circle_as_round">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="render">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="cow">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="src_lib_max_shapes">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="src_lib_greeting">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L14</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="src_lib_macro_square">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="src_lib_build">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_lib" target="src_lib_label">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/lib.rs</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_pair_t_first" target="t">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">return_type</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L91</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_wrapper_t" target="src_model_wrapper_t_new">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L79</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_wrapper_t" target="src_model_wrapper_t_area">
+      <data key="d13">method</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L83</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_model_wrapper_t_new" target="t">
+      <data key="d13">references</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">parameter_type</data>
+      <data key="d16">src/model.rs</data>
+      <data key="d17">L79</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_it" target="classify">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">tests/it.rs</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_it" target="kind">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">tests/it.rs</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_it" target="twice">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d19">import</data>
+      <data key="d16">tests/it.rs</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_it" target="tests_it_classifies_empty">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">tests/it.rs</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <data key="d0">1</data>
+    <data key="d1">0.9.86</data>
+    <data key="d2">[]</data>
+  </graph>
+</graphml>

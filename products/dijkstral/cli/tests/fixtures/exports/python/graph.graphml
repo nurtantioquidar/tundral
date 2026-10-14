@@ -1,0 +1,1425 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d18" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d17" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d16" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d15" for="edge" attr.name="context" attr.type="string" />
+  <key id="d14" for="edge" attr.name="confidence_score" attr.type="double" />
+  <key id="d13" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d12" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d11" for="node" attr.name="type" attr.type="string" />
+  <key id="d10" for="node" attr.name="external" attr.type="boolean" />
+  <key id="d9" for="node" attr.name="metadata" attr.type="string" />
+  <key id="d8" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d7" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d6" for="node" attr.name="norm_label" attr.type="string" />
+  <key id="d5" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d4" for="node" attr.name="community" attr.type="long" />
+  <key id="d3" for="node" attr.name="label" attr.type="string" />
+  <key id="d2" for="graph" attr.name="hyperedges" attr.type="string" />
+  <key id="d1" for="graph" attr.name="graphify_version" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="long" />
+  <graph edgedefault="undirected">
+    <node id="pkg_models_admin">
+      <data key="d3">Admin</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">admin</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L48</data>
+    </node>
+    <node id="pkg_models_user">
+      <data key="d3">User</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">user</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L23</data>
+    </node>
+    <node id="pkg_service_userservice">
+      <data key="d3">UserService</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">userservice</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L21</data>
+    </node>
+    <node id="pkg_models_base">
+      <data key="d3">Base</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">base</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L11</data>
+    </node>
+    <node id="pkg_models_repo">
+      <data key="d3">Repo</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d9">{"python_opaque_bases": true}</data>
+      <data key="d6">repo</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L59</data>
+    </node>
+    <node id="tests_test_service_testuserservice">
+      <data key="d3">TestUserService</data>
+      <data key="d4">7</data>
+      <data key="d5">code</data>
+      <data key="d6">testuserservice</data>
+      <data key="d7">tests/test_service.py</data>
+      <data key="d8">L7</data>
+    </node>
+    <node id="pkg_util_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">pkg/util.py</data>
+      <data key="d8">L18</data>
+    </node>
+    <node id="pkg_util_slugify">
+      <data key="d3">slugify()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">slugify()</data>
+      <data key="d7">pkg/util.py</data>
+      <data key="d8">L14</data>
+    </node>
+    <node id="pkg_util_traced">
+      <data key="d3">traced()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">traced()</data>
+      <data key="d7">pkg/util.py</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="pkg_util_traced_wrapper">
+      <data key="d3">wrapper()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">wrapper()</data>
+      <data key="d7">pkg/util.py</data>
+      <data key="d8">L7</data>
+    </node>
+    <node id="pkg_models_admin_promote">
+      <data key="d3">.promote()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.promote()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L51</data>
+    </node>
+    <node id="pkg_models_admin_promote_bump">
+      <data key="d3">bump()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">bump()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L52</data>
+    </node>
+    <node id="pkg_models_user_guest">
+      <data key="d3">.guest()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.guest()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L39</data>
+    </node>
+    <node id="pkg_service_userservice_promote">
+      <data key="d3">.promote()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.promote()</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L33</data>
+    </node>
+    <node id="pkg_models_format_name">
+      <data key="d3">format_name()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">format_name()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L76</data>
+    </node>
+    <node id="pkg_models_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L81</data>
+    </node>
+    <node id="pkg_models_user_display">
+      <data key="d3">.display()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.display()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L31</data>
+    </node>
+    <node id="main_main">
+      <data key="d3">main()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">main()</data>
+      <data key="d7">main.py</data>
+      <data key="d8">L10</data>
+    </node>
+    <node id="pkg_service_run">
+      <data key="d3">run()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">run()</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L42</data>
+    </node>
+    <node id="pkg_service_userservice_register">
+      <data key="d3">.register()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">.register()</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L26</data>
+    </node>
+    <node id="pkg_models_base_describe">
+      <data key="d3">.describe()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.describe()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L18</data>
+    </node>
+    <node id="pkg_models_base_save">
+      <data key="d3">.save()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.save()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L14</data>
+    </node>
+    <node id="pkg_models_user_save">
+      <data key="d3">.save()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.save()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L42</data>
+    </node>
+    <node id="pkg_models_validate">
+      <data key="d3">validate()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">validate()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L72</data>
+    </node>
+    <node id="pkg_models_repo_add">
+      <data key="d3">.add()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.add()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L65</data>
+    </node>
+    <node id="pkg_models_repo_get">
+      <data key="d3">.get()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.get()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L68</data>
+    </node>
+    <node id="pkg_models_repo_init">
+      <data key="d3">.__init__()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.__init__()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L62</data>
+    </node>
+    <node id="pkg_service_userservice_init">
+      <data key="d3">.__init__()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.__init__()</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L22</data>
+    </node>
+    <node id="tests_test_service_service">
+      <data key="d3">service()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">service()</data>
+      <data key="d7">tests/test_service.py</data>
+      <data key="d8">L17</data>
+    </node>
+    <node id="tests_test_service_test_run">
+      <data key="d3">test_run()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">test_run()</data>
+      <data key="d7">tests/test_service.py</data>
+      <data key="d8">L21</data>
+    </node>
+    <node id="pkg_models_user_parse">
+      <data key="d3">.parse()</data>
+      <data key="d4">7</data>
+      <data key="d5">code</data>
+      <data key="d6">.parse()</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L35</data>
+    </node>
+    <node id="tests_test_service_testuserservice_test_parse">
+      <data key="d3">.test_parse()</data>
+      <data key="d4">7</data>
+      <data key="d5">code</data>
+      <data key="d6">.test_parse()</data>
+      <data key="d7">tests/test_service.py</data>
+      <data key="d8">L12</data>
+    </node>
+    <node id="tests_test_service_testuserservice_test_register">
+      <data key="d3">.test_register()</data>
+      <data key="d4">7</data>
+      <data key="d5">code</data>
+      <data key="d6">.test_register()</data>
+      <data key="d7">tests/test_service.py</data>
+      <data key="d8">L8</data>
+    </node>
+    <node id="pkg_service_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">8</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L16</data>
+    </node>
+    <node id="pkg_service_userservice_export">
+      <data key="d3">.export()</data>
+      <data key="d4">8</data>
+      <data key="d5">code</data>
+      <data key="d6">.export()</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L36</data>
+    </node>
+    <node id="pkg_service">
+      <data key="d3">service.py</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">service.py</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="pkg_util">
+      <data key="d3">util.py</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">util.py</data>
+      <data key="d7">pkg/util.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="pkg_service_rationale_1">
+      <data key="d3">Service layer exercising every import and call form.</data>
+      <data key="d4">0</data>
+      <data key="d5">rationale</data>
+      <data key="d6">service layer exercising every import and call form.</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="pkg_init">
+      <data key="d3">__init__.py</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">__init__.py</data>
+      <data key="d7">pkg/__init__.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="pkg_init_rationale_1">
+      <data key="d3">Fixture package: re-exports the public model types.</data>
+      <data key="d4">1</data>
+      <data key="d5">rationale</data>
+      <data key="d6">fixture package: re-exports the public model types.</data>
+      <data key="d7">pkg/__init__.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="pkg_models_rationale_24">
+      <data key="d3">A person who can sign in.</data>
+      <data key="d4">1</data>
+      <data key="d5">rationale</data>
+      <data key="d6">a person who can sign in.</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L24</data>
+    </node>
+    <node id="pkg_models">
+      <data key="d3">models.py</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">models.py</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="pkg_models_rationale_15">
+      <data key="d3"># NOTE: persistence is faked in this fixture.</data>
+      <data key="d4">2</data>
+      <data key="d5">rationale</data>
+      <data key="d6"># note: persistence is faked in this fixture.</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L15</data>
+    </node>
+    <node id="pkg_models_rationale_77">
+      <data key="d3"># WHY: names are displayed title-cased everywhere.</data>
+      <data key="d4">2</data>
+      <data key="d5">rationale</data>
+      <data key="d6"># why: names are displayed title-cased everywhere.</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L77</data>
+    </node>
+    <node id="main">
+      <data key="d3">main.py</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">main.py</data>
+      <data key="d7">main.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="pkg_models_rationale_12">
+      <data key="d3">Root of the model hierarchy.</data>
+      <data key="d4">4</data>
+      <data key="d5">rationale</data>
+      <data key="d6">root of the model hierarchy.</data>
+      <data key="d7">pkg/models.py</data>
+      <data key="d8">L12</data>
+    </node>
+    <node id="t">
+      <data key="d3">T</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">t</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="fixture">
+      <data key="d3">fixture</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">fixture</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="tests_test_service">
+      <data key="d3">test_service.py</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">test_service.py</data>
+      <data key="d7">tests/test_service.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="pkg_service_rationale_17">
+      <data key="d3">Duplicate name: also defined in models and util.</data>
+      <data key="d4">8</data>
+      <data key="d5">rationale</data>
+      <data key="d6">duplicate name: also defined in models and util.</data>
+      <data key="d7">pkg/service.py</data>
+      <data key="d8">L17</data>
+    </node>
+    <node id="collections">
+      <data key="d3">collections</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">collections</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="functools">
+      <data key="d3">functools</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">functools</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="json">
+      <data key="d3">json</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">json</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="os_path">
+      <data key="d3">os_path</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">os_path</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="re">
+      <data key="d3">re</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">re</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="dataclasses">
+      <data key="d3">dataclasses</data>
+      <data key="d4">2</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">dataclasses</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="typing">
+      <data key="d3">typing</data>
+      <data key="d4">2</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">typing</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="sys">
+      <data key="d3">sys</data>
+      <data key="d4">3</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">sys</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="pytest">
+      <data key="d3">pytest</data>
+      <data key="d4">6</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">pytest</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <edge source="pkg_models_admin" target="pkg_init">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_admin" target="pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_admin" target="pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L48</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_admin" target="pkg_models_user">
+      <data key="d12">inherits</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L48</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_admin" target="pkg_models_admin_promote">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L51</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_service_userservice_init">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_init">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="tests_test_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_models_admin_promote">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L51</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_service_userservice_promote">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_service_userservice_register">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L26</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_models_base">
+      <data key="d12">inherits</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_models_user_display">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L31</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_models_user_parse">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L35</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_models_user_guest">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L39</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_models_user_save">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L42</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_models_rationale_24">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user" target="pkg_service_userservice">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pkg_models_user" target="tests_test_service_testuserservice">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L13</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="pkg_service_run">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L43</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="main">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="tests_test_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="pkg_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L21</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="pkg_service_userservice_init">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="pkg_service_userservice_register">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L26</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="pkg_service_userservice_promote">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="pkg_service_userservice_export">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L36</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="main_main">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L11</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="pkg_models_repo">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pkg_service_userservice" target="tests_test_service_testuserservice">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pkg_models_base" target="pkg_models_validate">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L72</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_base" target="pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_base" target="pkg_models_base_save">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L14</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_base" target="pkg_models_base_describe">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_base" target="pkg_models_rationale_12">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo" target="pkg_service_run">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L43</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo" target="pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo" target="pkg_service_userservice_init">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo" target="pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L59</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo" target="pkg_models_repo_init">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L62</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo" target="pkg_models_repo_add">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L65</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo" target="pkg_models_repo_get">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L68</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_test_service_testuserservice" target="tests_test_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_test_service_testuserservice" target="tests_test_service_testuserservice_test_parse">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_test_service_testuserservice" target="tests_test_service_testuserservice_test_register">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_helper" target="pkg_util_slugify">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_helper" target="pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_helper" target="pkg_util">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_slugify" target="pkg_service_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_slugify" target="re">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_slugify" target="pkg_util_traced">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">decorator</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_slugify" target="pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_slugify" target="pkg_util">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L14</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_traced" target="pkg_util">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util_traced" target="pkg_util_traced_wrapper">
+      <data key="d12">indirect_call</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">return</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_admin_promote" target="pkg_models_admin_promote_bump">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L52</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_admin_promote" target="pkg_service_userservice_promote">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_format_name" target="pkg_models_user_display">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L32</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_format_name" target="pkg_service_run">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L45</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_format_name" target="pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L76</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_helper" target="pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L81</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="main_main" target="pkg_service_run">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="main_main" target="main">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_run" target="tests_test_service_service">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_run" target="tests_test_service_testuserservice_test_register">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_run" target="main">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_run" target="pkg_init">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_run" target="tests_test_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_run" target="pkg_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L42</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_run" target="pkg_service_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_base_describe" target="pkg_models_user_save">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_base_save" target="pkg_models_validate">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_base_save" target="pkg_models_user_save">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L43</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_validate" target="pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L72</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo_add" target="t">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L65</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_repo_get" target="t">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L68</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_test_service_service" target="fixture">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">decorator</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_test_service_service" target="tests_test_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L17</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_test_service_test_run" target="tests_test_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L21</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models_user_parse" target="tests_test_service_testuserservice_test_parse">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_helper" target="pkg_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_helper" target="pkg_service_rationale_17">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L17</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service_helper" target="pkg_service_userservice_export">
+      <data key="d12">indirect_call</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">argument</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="json">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="os_path">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="main">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="pkg_util">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="collections">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="typing">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="pkg_init">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="tests_test_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="pkg_models">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">submodule_import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_service" target="pkg_service_rationale_1">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util" target="re">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_util" target="functools">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_init" target="pkg_models">
+      <data key="d12">re_exports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">export</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_init" target="main">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_init" target="pkg_init_rationale_1">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models" target="dataclasses">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models" target="typing">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models" target="tests_test_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models" target="pkg_models_rationale_15">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pkg_models" target="pkg_models_rationale_77">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L77</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="main" target="sys">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="tests_test_service" target="pytest">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <data key="d0">1</data>
+    <data key="d1">0.9.86</data>
+    <data key="d2">[]</data>
+  </graph>
+</graphml>

@@ -1,0 +1,2649 @@
+{
+ "RAW_NODES": [
+  {
+   "id": "pkg_models_admin",
+   "label": "Admin",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 18.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Admin",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 5
+  },
+  {
+   "id": "pkg_models_user",
+   "label": "User",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 38.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "User",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 17
+  },
+  {
+   "id": "pkg_service_userservice",
+   "label": "UserService",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 30.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "UserService",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 12
+  },
+  {
+   "id": "pkg_models_base",
+   "label": "Base",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Base",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "pkg_models_repo",
+   "label": "Repo",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 23.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Repo",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 8
+  },
+  {
+   "id": "tests_test_service_testuserservice",
+   "label": "TestUserService",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 18.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "TestUserService",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 5
+  },
+  {
+   "id": "pkg_util_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_util_slugify",
+   "label": "slugify()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "slugify()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "pkg_util_traced",
+   "label": "traced()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "traced()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_util_traced_wrapper",
+   "label": "wrapper()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "wrapper()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pkg_models_admin_promote",
+   "label": ".promote()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".promote()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "pkg_models_admin_promote_bump",
+   "label": "bump()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "bump()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pkg_models_user_guest",
+   "label": ".guest()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".guest()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pkg_service_userservice_promote",
+   "label": ".promote()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".promote()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_models_format_name",
+   "label": "format_name()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "format_name()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_models_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pkg_models_user_display",
+   "label": ".display()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".display()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "main_main",
+   "label": "main()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "main.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_service_run",
+   "label": "run()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 28.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "run()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 11
+  },
+  {
+   "id": "pkg_service_userservice_register",
+   "label": ".register()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".register()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "pkg_models_base_describe",
+   "label": ".describe()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".describe()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pkg_models_base_save",
+   "label": ".save()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".save()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_models_user_save",
+   "label": ".save()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".save()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_models_validate",
+   "label": "validate()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "validate()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_models_repo_add",
+   "label": ".add()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".add()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pkg_models_repo_get",
+   "label": ".get()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".get()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pkg_models_repo_init",
+   "label": ".__init__()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".__init__()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pkg_service_userservice_init",
+   "label": ".__init__()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".__init__()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "tests_test_service_service",
+   "label": "service()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "tests_test_service_test_run",
+   "label": "test_run()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "test_run()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pkg_models_user_parse",
+   "label": ".parse()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".parse()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "tests_test_service_testuserservice_test_parse",
+   "label": ".test_parse()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".test_parse()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "tests_test_service_testuserservice_test_register",
+   "label": ".test_register()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".test_register()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pkg_service_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pkg_service_userservice_export",
+   "label": ".export()",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".export()",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pkg_service",
+   "label": "service.py",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 40.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service.py",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 18
+  },
+  {
+   "id": "pkg_util",
+   "label": "util.py",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "util.py",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "pkg_service_rationale_1",
+   "label": "Service layer exercising every import and call form.",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Service layer exercising every import and call form.",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/service.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pkg_init",
+   "label": "__init__.py",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "__init__.py",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/__init__.py",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "pkg_init_rationale_1",
+   "label": "Fixture package: re-exports the public model types.",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Fixture package: re-exports the public model types.",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/__init__.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pkg_models_rationale_24",
+   "label": "A person who can sign in.",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "A person who can sign in.",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pkg_models",
+   "label": "models.py",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 33.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "models.py",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 14
+  },
+  {
+   "id": "pkg_models_rationale_15",
+   "label": "# NOTE: persistence is faked in this fixture.",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "# NOTE: persistence is faked in this fixture.",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pkg_models_rationale_77",
+   "label": "# WHY: names are displayed title-cased everywhere.",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "# WHY: names are displayed title-cased everywhere.",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "main",
+   "label": "main.py",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main.py",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "main.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "pkg_models_rationale_12",
+   "label": "Root of the model hierarchy.",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Root of the model hierarchy.",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "t",
+   "label": "T",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "T",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "fixture",
+   "label": "fixture",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "fixture",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "tests_test_service",
+   "label": "test_service.py",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 25.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "test_service.py",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 9
+  },
+  {
+   "id": "pkg_service_rationale_17",
+   "label": "Duplicate name: also defined in models and util.",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Duplicate name: also defined in models and util.",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "pkg/service.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "collections",
+   "label": "collections",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "collections",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "functools",
+   "label": "functools",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "functools",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "json",
+   "label": "json",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "json",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "os_path",
+   "label": "os_path",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "os_path",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "re",
+   "label": "re",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "re",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "dataclasses",
+   "label": "dataclasses",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "dataclasses",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "typing",
+   "label": "typing",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "typing",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "sys",
+   "label": "sys",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "sys",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "pytest",
+   "label": "pytest",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "pytest",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  }
+ ],
+ "RAW_EDGES": [
+  {
+   "from": "pkg_init",
+   "to": "pkg_models_admin",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_models_admin",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "pkg_models_admin",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_admin",
+   "to": "pkg_models_user",
+   "label": "inherits",
+   "title": "inherits [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_admin",
+   "to": "pkg_models_admin_promote",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice_init",
+   "to": "pkg_models_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_init",
+   "to": "pkg_models_user",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_models_user",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "pkg_models_user",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_admin_promote",
+   "to": "pkg_models_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice_promote",
+   "to": "pkg_models_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice_register",
+   "to": "pkg_models_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "pkg_models_user",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_user",
+   "to": "pkg_models_base",
+   "label": "inherits",
+   "title": "inherits [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_user",
+   "to": "pkg_models_user_display",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_user",
+   "to": "pkg_models_user_parse",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_user",
+   "to": "pkg_models_user_guest",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_user",
+   "to": "pkg_models_user_save",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_rationale_24",
+   "to": "pkg_models_user",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice",
+   "to": "pkg_models_user",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "tests_test_service_testuserservice",
+   "to": "pkg_models_user",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pkg_service_run",
+   "to": "pkg_service_userservice",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "main",
+   "to": "pkg_service_userservice",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "pkg_service_userservice",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_service_userservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice",
+   "to": "pkg_service_userservice_init",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice",
+   "to": "pkg_service_userservice_register",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice",
+   "to": "pkg_service_userservice_promote",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice",
+   "to": "pkg_service_userservice_export",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "main_main",
+   "to": "pkg_service_userservice",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pkg_service_userservice",
+   "to": "pkg_models_repo",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "tests_test_service_testuserservice",
+   "to": "pkg_service_userservice",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pkg_models_validate",
+   "to": "pkg_models_base",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "pkg_models_base",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_base",
+   "to": "pkg_models_base_save",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_base",
+   "to": "pkg_models_base_describe",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_rationale_12",
+   "to": "pkg_models_base",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_run",
+   "to": "pkg_models_repo",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_models_repo",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice_init",
+   "to": "pkg_models_repo",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "pkg_models_repo",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_repo",
+   "to": "pkg_models_repo_init",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_repo",
+   "to": "pkg_models_repo_add",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_repo",
+   "to": "pkg_models_repo_get",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "tests_test_service_testuserservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service_testuserservice",
+   "to": "tests_test_service_testuserservice_test_parse",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service_testuserservice",
+   "to": "tests_test_service_testuserservice_test_register",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util_slugify",
+   "to": "pkg_util_helper",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_util_helper",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util",
+   "to": "pkg_util_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice_register",
+   "to": "pkg_util_slugify",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util_slugify",
+   "to": "re",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util_slugify",
+   "to": "pkg_util_traced",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_util_slugify",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util",
+   "to": "pkg_util_slugify",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util",
+   "to": "pkg_util_traced",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util_traced",
+   "to": "pkg_util_traced_wrapper",
+   "label": "indirect_call",
+   "title": "indirect_call [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pkg_models_admin_promote",
+   "to": "pkg_models_admin_promote_bump",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice_promote",
+   "to": "pkg_models_admin_promote",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pkg_models_user_display",
+   "to": "pkg_models_format_name",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_run",
+   "to": "pkg_models_format_name",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "pkg_models_format_name",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "pkg_models_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "main_main",
+   "to": "pkg_service_run",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "main",
+   "to": "main_main",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service_service",
+   "to": "pkg_service_run",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service_testuserservice_test_register",
+   "to": "pkg_service_run",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "main",
+   "to": "pkg_service_run",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_init",
+   "to": "pkg_service_run",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "pkg_service_run",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_service_run",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_run",
+   "to": "pkg_service_userservice_register",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pkg_models_user_save",
+   "to": "pkg_models_base_describe",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_base_save",
+   "to": "pkg_models_validate",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_user_save",
+   "to": "pkg_models_base_save",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "pkg_models_validate",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_repo_add",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_repo_get",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service_service",
+   "to": "fixture",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "tests_test_service_service",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "tests_test_service_test_run",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service_testuserservice_test_parse",
+   "to": "pkg_models_user_parse",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_service_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_rationale_17",
+   "to": "pkg_service_helper",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_userservice_export",
+   "to": "pkg_service_helper",
+   "label": "indirect_call",
+   "title": "indirect_call [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "json",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "os_path",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "main",
+   "to": "pkg_service",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_util",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "collections",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "typing",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_init",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "pkg_service",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service",
+   "to": "pkg_models",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_service_rationale_1",
+   "to": "pkg_service",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util",
+   "to": "re",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_util",
+   "to": "functools",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_init",
+   "to": "pkg_models",
+   "label": "re_exports",
+   "title": "re_exports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "main",
+   "to": "pkg_init",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_init_rationale_1",
+   "to": "pkg_init",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "dataclasses",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models",
+   "to": "typing",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "pkg_models",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_rationale_15",
+   "to": "pkg_models",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pkg_models_rationale_77",
+   "to": "pkg_models",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "main",
+   "to": "sys",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_test_service",
+   "to": "pytest",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  }
+ ],
+ "LEGEND": [],
+ "hyperedges": []
+}

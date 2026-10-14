@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
-# Crates are added when their stage begins (see ../DIJKSTRAL_DESIGN.md): export, semantic.
-members = ["crates/core", "crates/serve", "crates/agents", "crates/cli"]
+# Crates are added when their stage begins (see ../DIJKSTRAL_DESIGN.md): semantic.
+members = ["crates/core", "crates/serve", "crates/agents", "crates/export", "crates/cli"]
 
 [workspace.package]
 version = "0.1.0"
@@ -13,6 +13,7 @@ publish = false
 dijkstral-core = { path = "crates/core" }
 dijkstral-serve = { path = "crates/serve" }
 dijkstral-agents = { path = "crates/agents" }
+dijkstral-export = { path = "crates/export" }
 anyhow = "1"
 blake3 = "1"
 bincode = "1.3"

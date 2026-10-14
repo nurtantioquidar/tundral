@@ -232,6 +232,7 @@ dependencies = [
  "clap",
  "dijkstral-agents",
  "dijkstral-core",
+ "dijkstral-export",
  "dijkstral-serve",
  "mimalloc",
  "serde_json",
@@ -276,6 +277,16 @@ dependencies = [
  "tree-sitter-rust",
  "tree-sitter-typescript",
  "unicode-normalization",
+]
+
+[[package]]
+name = "dijkstral-export"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "dijkstral-core",
+ "serde_json",
+ "tempfile",
 ]
 
 [[package]]

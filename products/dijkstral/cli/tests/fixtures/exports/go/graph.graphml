@@ -1,0 +1,1007 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d18" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d17" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d16" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d15" for="edge" attr.name="context" attr.type="string" />
+  <key id="d14" for="edge" attr.name="confidence_score" attr.type="double" />
+  <key id="d13" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d12" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d11" for="node" attr.name="external" attr.type="boolean" />
+  <key id="d10" for="node" attr.name="type" attr.type="string" />
+  <key id="d9" for="node" attr.name="ecosystem" attr.type="string" />
+  <key id="d8" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d7" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d6" for="node" attr.name="norm_label" attr.type="string" />
+  <key id="d5" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d4" for="node" attr.name="community" attr.type="long" />
+  <key id="d3" for="node" attr.name="label" attr.type="string" />
+  <key id="d2" for="graph" attr.name="hyperedges" attr.type="string" />
+  <key id="d1" for="graph" attr.name="graphify_version" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="long" />
+  <graph edgedefault="undirected">
+    <node id="cmd_app_main">
+      <data key="d3">main.go</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">main.go</data>
+      <data key="d7">cmd/app/main.go</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="service_greeter">
+      <data key="d3">Greeter</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">greeter</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L22</data>
+    </node>
+    <node id="service_greeter_greet">
+      <data key="d3">.Greet()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.greet()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L23</data>
+    </node>
+    <node id="service_service">
+      <data key="d3">service.go</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">service.go</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="service_service_apply">
+      <data key="d3">apply()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">apply()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L63</data>
+    </node>
+    <node id="service_service_logline">
+      <data key="d3">logLine()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">logline()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L59</data>
+    </node>
+    <node id="service_service_strings2upper">
+      <data key="d3">strings2upper()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">strings2upper()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L69</data>
+    </node>
+    <node id="cmd_app_main_main">
+      <data key="d3">main()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">main()</data>
+      <data key="d7">cmd/app/main.go</data>
+      <data key="d8">L11</data>
+    </node>
+    <node id="n">
+      <data key="d3">N</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">n</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="service_service_newuserservice">
+      <data key="d3">NewUserService()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">newuserservice()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L33</data>
+    </node>
+    <node id="store_helpers_format">
+      <data key="d3">Format()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">format()</data>
+      <data key="d7">store/helpers.go</data>
+      <data key="d8">L18</data>
+    </node>
+    <node id="store_store_sum">
+      <data key="d3">Sum()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">sum()</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L64</data>
+    </node>
+    <node id="store_helpers">
+      <data key="d3">helpers.go</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">helpers.go</data>
+      <data key="d7">store/helpers.go</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="store_helpers_clean">
+      <data key="d3">clean()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">clean()</data>
+      <data key="d7">store/helpers.go</data>
+      <data key="d8">L14</data>
+    </node>
+    <node id="store_helpers_normalize">
+      <data key="d3">Normalize()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">normalize()</data>
+      <data key="d7">store/helpers.go</data>
+      <data key="d8">L9</data>
+    </node>
+    <node id="go_type_testing_t">
+      <data key="d3">testing.T</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">testing.t</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="service_service_clean">
+      <data key="d3">clean()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">clean()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L74</data>
+    </node>
+    <node id="service_service_test">
+      <data key="d3">service_test.go</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">service_test.go</data>
+      <data key="d7">service/service_test.go</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="service_service_test_testregister">
+      <data key="d3">TestRegister()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">testregister()</data>
+      <data key="d7">service/service_test.go</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="service_user">
+      <data key="d3">User</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">user</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L15</data>
+    </node>
+    <node id="service_userservice">
+      <data key="d3">UserService</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">userservice</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L27</data>
+    </node>
+    <node id="service_userservice_greet">
+      <data key="d3">.Greet()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.greet()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L45</data>
+    </node>
+    <node id="service_userservice_names">
+      <data key="d3">.Names()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.names()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L49</data>
+    </node>
+    <node id="service_userservice_register">
+      <data key="d3">.Register()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.register()</data>
+      <data key="d7">service/service.go</data>
+      <data key="d8">L37</data>
+    </node>
+    <node id="store_number">
+      <data key="d3">Number</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">number</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L34</data>
+    </node>
+    <node id="store_store_go_store_store">
+      <data key="d3">Store</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">store</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L39</data>
+    </node>
+    <node id="store_store_newstore">
+      <data key="d3">NewStore()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">newstore()</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L44</data>
+    </node>
+    <node id="store_store_t">
+      <data key="d3">Store[T]</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">store[t]</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L49</data>
+    </node>
+    <node id="store_store_t_get">
+      <data key="d3">.Get()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">.get()</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L54</data>
+    </node>
+    <node id="store_store_t_put">
+      <data key="d3">.Put()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">.put()</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L49</data>
+    </node>
+    <node id="t">
+      <data key="d3">T</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">t</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="store_id">
+      <data key="d3">ID</data>
+      <data key="d4">7</data>
+      <data key="d5">code</data>
+      <data key="d6">id</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L12</data>
+    </node>
+    <node id="store_model_identity">
+      <data key="d3">.Identity()</data>
+      <data key="d4">7</data>
+      <data key="d5">code</data>
+      <data key="d6">.identity()</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L29</data>
+    </node>
+    <node id="store_store_go_store_model">
+      <data key="d3">Model</data>
+      <data key="d4">7</data>
+      <data key="d5">code</data>
+      <data key="d6">model</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L23</data>
+    </node>
+    <node id="store_entity">
+      <data key="d3">Entity</data>
+      <data key="d4">8</data>
+      <data key="d5">code</data>
+      <data key="d6">entity</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L18</data>
+    </node>
+    <node id="store_entity_identity">
+      <data key="d3">.Identity()</data>
+      <data key="d4">8</data>
+      <data key="d5">code</data>
+      <data key="d6">.identity()</data>
+      <data key="d7">store/store.go</data>
+      <data key="d8">L19</data>
+    </node>
+    <node id="pkg_example_com_shop">
+      <data key="d3">example.com/shop</data>
+      <data key="d4">9</data>
+      <data key="d9">go</data>
+      <data key="d5">code</data>
+      <data key="d6">example.com/shop</data>
+      <data key="d7">go.mod</data>
+      <data key="d8">L1</data>
+      <data key="d10">package</data>
+    </node>
+    <node id="go_pkg_fmt">
+      <data key="d3">go_pkg_fmt</data>
+      <data key="d4">0</data>
+      <data key="d11">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">go_pkg_fmt</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_github_com_google_uuid">
+      <data key="d3">go_pkg_github_com_google_uuid</data>
+      <data key="d4">0</data>
+      <data key="d11">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">go_pkg_github_com_google_uuid</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_os">
+      <data key="d3">go_pkg_os</data>
+      <data key="d4">0</data>
+      <data key="d11">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">go_pkg_os</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_sort">
+      <data key="d3">go_pkg_sort</data>
+      <data key="d4">0</data>
+      <data key="d11">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">go_pkg_sort</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_strconv">
+      <data key="d3">go_pkg_strconv</data>
+      <data key="d4">2</data>
+      <data key="d11">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">go_pkg_strconv</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_strings">
+      <data key="d3">go_pkg_strings</data>
+      <data key="d4">2</data>
+      <data key="d11">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">go_pkg_strings</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_testing">
+      <data key="d3">go_pkg_testing</data>
+      <data key="d4">3</data>
+      <data key="d11">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">go_pkg_testing</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_errors">
+      <data key="d3">go_pkg_errors</data>
+      <data key="d4">5</data>
+      <data key="d11">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">go_pkg_errors</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <edge source="cmd_app_main" target="go_pkg_fmt">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main" target="go_pkg_os">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main" target="service_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main" target="service_service_test">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main" target="store_helpers">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main" target="store_store_go_store_store">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main" target="cmd_app_main_main">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_greeter" target="service_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_greeter" target="service_greeter_greet">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_greeter_greet" target="service_user">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="go_pkg_github_com_google_uuid">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="go_pkg_fmt">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="go_pkg_sort">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="store_helpers">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="store_store_go_store_store">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="service_user">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="service_userservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L27</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="service_service_newuserservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="service_service_logline">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L59</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="service_service_apply">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L63</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="service_service_strings2upper">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L69</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service" target="service_service_clean">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L74</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service_apply" target="service_userservice_names">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L55</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main_main" target="service_service_newuserservice">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main_main" target="store_helpers_format">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="cmd_app_main_main" target="store_store_sum">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="n" target="store_store_sum">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L64</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service_newuserservice" target="service_userservice">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service_newuserservice" target="service_service_test_testregister">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_helpers_format" target="store_helpers">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_sum" target="store_store_go_store_store">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L64</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_helpers" target="go_pkg_strings">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_helpers" target="go_pkg_strconv">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_helpers" target="store_helpers_clean">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L14</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_helpers" target="store_helpers_normalize">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_helpers_clean" target="store_helpers_normalize">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_helpers_normalize" target="store_id">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_helpers_normalize" target="service_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L38</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_type_testing_t" target="service_service_test_testregister">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service_clean" target="service_service_test_testregister">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service_test" target="go_pkg_testing">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_service_test" target="service_service_test_testregister">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_user" target="service_userservice">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L28</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_user" target="service_userservice_greet">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L45</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_user" target="service_userservice_names">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_user" target="service_userservice_register">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_user" target="store_store_go_store_model">
+      <data key="d12">embeds</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_userservice" target="store_store_go_store_store">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L28</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_userservice" target="service_userservice_register">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_userservice" target="service_userservice_greet">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L45</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="service_userservice" target="service_userservice_names">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_number" target="store_store_go_store_store">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_go_store_store" target="t">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L40</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_go_store_store" target="go_pkg_errors">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_go_store_store" target="store_id">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_go_store_store" target="store_entity">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_go_store_store" target="store_store_go_store_model">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_go_store_store" target="store_store_go_store_store">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L39</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_go_store_store" target="store_store_newstore">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_newstore" target="t">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_t" target="store_store_t_put">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_t" target="store_store_t_get">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_t_get" target="store_id">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_t_get" target="t">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_t_put" target="store_model_identity">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L51</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_store_t_put" target="t">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_id" target="store_store_go_store_model">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_id" target="store_entity_identity">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_id" target="store_model_identity">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_model_identity" target="store_store_go_store_model">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="store_entity" target="store_entity_identity">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <data key="d0">1</data>
+    <data key="d1">0.9.86</data>
+    <data key="d2">[]</data>
+  </graph>
+</graphml>

@@ -1,0 +1,1343 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d18" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d17" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d16" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d15" for="edge" attr.name="context" attr.type="string" />
+  <key id="d14" for="edge" attr.name="confidence_score" attr.type="double" />
+  <key id="d13" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d12" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d11" for="node" attr.name="type" attr.type="string" />
+  <key id="d10" for="node" attr.name="external" attr.type="boolean" />
+  <key id="d9" for="node" attr.name="metadata" attr.type="string" />
+  <key id="d8" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d7" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d6" for="node" attr.name="norm_label" attr.type="string" />
+  <key id="d5" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d4" for="node" attr.name="community" attr.type="long" />
+  <key id="d3" for="node" attr.name="label" attr.type="string" />
+  <key id="d2" for="graph" attr.name="hyperedges" attr.type="string" />
+  <key id="d1" for="graph" attr.name="graphify_version" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="long" />
+  <graph edgedefault="undirected">
+    <node id="src_main_java_com_shop_service_userservice_formatter">
+      <data key="d3">Formatter</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">formatter</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L67</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_repository">
+      <data key="d3">Repository</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">repository</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L63</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_stats">
+      <data key="d3">Stats</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">stats</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L56</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_userservice">
+      <data key="d3">UserService</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">userservice</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L11</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_address">
+      <data key="d3">Address</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">address</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L34</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_badge">
+      <data key="d3">Badge</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">badge</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L41</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_user">
+      <data key="d3">User</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">user</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_userservice_notify_object_runnable_l38">
+      <data key="d3">Runnable</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">runnable</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L38</data>
+    </node>
+    <node id="src_main_java_com_shop_model_entity_entity">
+      <data key="d3">Entity</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">entity</data>
+      <data key="d7">src/main/java/com/shop/model/Entity.java</data>
+      <data key="d8">L4</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_model">
+      <data key="d3">Model</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">model</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L9</data>
+    </node>
+    <node id="src_test_java_com_shop_service_userservicetest_formatter">
+      <data key="d3">Formatter</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">formatter</data>
+      <data key="d7">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d8">L24</data>
+    </node>
+    <node id="src_test_java_com_shop_service_userservicetest_userservicetest">
+      <data key="d3">UserServiceTest</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">userservicetest</data>
+      <data key="d7">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d8">L9</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_status">
+      <data key="d3">Status</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">status</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L32</data>
+    </node>
+    <node id="src_main_java_com_shop_service_audited_audited">
+      <data key="d3">Audited</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">audited</data>
+      <data key="d7">src/main/java/com/shop/service/Audited.java</data>
+      <data key="d8">L7</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_formatter_format">
+      <data key="d3">.format()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.format()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L68</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_formatter_shout">
+      <data key="d3">.shout()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.shout()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L72</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_formatter_slug">
+      <data key="d3">.slug()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.slug()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L76</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_repository_save">
+      <data key="d3">.save()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.save()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L64</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_stats_count">
+      <data key="d3">.count()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.count()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L57</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_userservice_names">
+      <data key="d3">.names()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d9">{"unresolved_calls": [{"callee": "sort", "lang": "java", "line": "L52", "receiver_type": "Collections"}]}</data>
+      <data key="d6">.names()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L47</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_address_label">
+      <data key="d3">.label()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.label()</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L35</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_badge_text">
+      <data key="d3">.text()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.text()</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L42</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_user_getname">
+      <data key="d3">.getName()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.getname()</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L25</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_user_of">
+      <data key="d3">.of()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.of()</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L29</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_user_user">
+      <data key="d3">.User()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.user()</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L10</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_userservice_notify">
+      <data key="d3">.notify()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.notify()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L37</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_userservice_notify_object_runnable_l38_run">
+      <data key="d3">.run()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.run()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L39</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d3">.register()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.register()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L15</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_userservice_save">
+      <data key="d3">.save()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">.save()</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L32</data>
+    </node>
+    <node id="src_main_java_com_shop_model_entity_entity_describe">
+      <data key="d3">.describe()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.describe()</data>
+      <data key="d7">src/main/java/com/shop/model/Entity.java</data>
+      <data key="d8">L7</data>
+    </node>
+    <node id="src_main_java_com_shop_model_entity_entity_id">
+      <data key="d3">.id()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.id()</data>
+      <data key="d7">src/main/java/com/shop/model/Entity.java</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_model_compareto">
+      <data key="d3">.compareTo()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.compareto()</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L25</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_model_id">
+      <data key="d3">.id()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.id()</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L18</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_model_model">
+      <data key="d3">.Model()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d9">{"unresolved_calls": [{"callee": "requireNonNull", "lang": "java", "line": "L14", "receiver_type": "Objects"}, {"callee": "now", "lang": "java", "line": "L15", "receiver_type": "Instant"}]}</data>
+      <data key="d6">.model()</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L13</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_model_status">
+      <data key="d3">.status()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.status()</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L23</data>
+    </node>
+    <node id="src_test_java_com_shop_service_userservicetest_formatter_format">
+      <data key="d3">.format()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">.format()</data>
+      <data key="d7">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d8">L25</data>
+    </node>
+    <node id="src_test_java_com_shop_service_userservicetest_userservicetest_registersuser">
+      <data key="d3">.registersUser()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">.registersuser()</data>
+      <data key="d7">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d8">L17</data>
+    </node>
+    <node id="src_test_java_com_shop_service_userservicetest_userservicetest_setup">
+      <data key="d3">.setUp()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">.setup()</data>
+      <data key="d7">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d8">L12</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_status_islive">
+      <data key="d3">.isLive()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.islive()</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L35</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_user_status">
+      <data key="d3">.status()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">.status()</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L20</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice">
+      <data key="d3">UserService.java</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">userservice.java</data>
+      <data key="d7">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_main_java_com_shop_service_userservice_java_override">
+      <data key="d3">Override</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">override</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="src_main_java_com_shop_model_entity">
+      <data key="d3">Entity.java</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">entity.java</data>
+      <data key="d7">src/main/java/com/shop/model/Entity.java</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model">
+      <data key="d3">Model.java</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">model.java</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_java_override">
+      <data key="d3">Override</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">override</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="org_junit_jupiter_api_beforeeach">
+      <data key="d3">org.junit.jupiter.api.BeforeEach</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">org.junit.jupiter.api.beforeeach</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="org_junit_jupiter_api_test">
+      <data key="d3">org.junit.jupiter.api.Test</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">org.junit.jupiter.api.test</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="src_test_java_com_shop_service_userservicetest">
+      <data key="d3">UserServiceTest.java</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">userservicetest.java</data>
+      <data key="d7">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_status_active">
+      <data key="d3">ACTIVE</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">active</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L33</data>
+    </node>
+    <node id="src_main_java_com_shop_model_model_status_suspended">
+      <data key="d3">SUSPENDED</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">suspended</data>
+      <data key="d7">src/main/java/com/shop/model/Model.java</data>
+      <data key="d8">L33</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user_java_override">
+      <data key="d3">Override</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">override</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="java_lang_annotation_retention">
+      <data key="d3">java.lang.annotation.Retention</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">java.lang.annotation.retention</data>
+      <data key="d7" />
+      <data key="d8" />
+    </node>
+    <node id="src_main_java_com_shop_service_audited">
+      <data key="d3">Audited.java</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">audited.java</data>
+      <data key="d7">src/main/java/com/shop/service/Audited.java</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="src_main_java_com_shop_model_user">
+      <data key="d3">User.java</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">user.java</data>
+      <data key="d7">src/main/java/com/shop/model/User.java</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="function">
+      <data key="d3">function</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">function</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="requirenonnull">
+      <data key="d3">requirenonnull</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">requirenonnull</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="slug">
+      <data key="d3">slug</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">slug</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="util">
+      <data key="d3">util</data>
+      <data key="d4">0</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">util</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="instant">
+      <data key="d3">instant</data>
+      <data key="d4">2</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">instant</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="objects">
+      <data key="d3">objects</data>
+      <data key="d4">2</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">objects</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="assertequals">
+      <data key="d3">assertequals</data>
+      <data key="d4">3</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">assertequals</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="retentionpolicy">
+      <data key="d3">retentionpolicy</data>
+      <data key="d4">5</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">retentionpolicy</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="arraylist">
+      <data key="d3">arraylist</data>
+      <data key="d4">6</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">arraylist</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <node id="list">
+      <data key="d3">list</data>
+      <data key="d4">6</data>
+      <data key="d10">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">list</data>
+      <data key="d7" />
+      <data key="d11">external</data>
+    </node>
+    <edge source="src_main_java_com_shop_service_userservice_formatter" target="src_main_java_com_shop_service_userservice_userservice">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_formatter" target="src_main_java_com_shop_service_userservice">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_formatter" target="src_main_java_com_shop_service_userservice_formatter_format">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L68</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_formatter" target="src_main_java_com_shop_service_userservice_formatter_shout">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L72</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_formatter" target="src_main_java_com_shop_service_userservice_formatter_slug">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L76</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_repository" target="src_main_java_com_shop_service_userservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L63</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_repository" target="src_main_java_com_shop_service_userservice_userservice">
+      <data key="d12">implements</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_repository" target="src_main_java_com_shop_service_userservice_repository_save">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L64</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_stats" target="src_main_java_com_shop_service_userservice_userservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L56</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_stats" target="src_main_java_com_shop_service_userservice_stats_count">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L57</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice" target="src_test_java_com_shop_service_userservicetest_userservicetest">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice" target="src_main_java_com_shop_model_user_user">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice" target="src_main_java_com_shop_service_userservice_stats_count">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L57</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice" target="src_main_java_com_shop_service_userservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice" target="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L25</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice" target="src_main_java_com_shop_service_userservice_userservice_save">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L32</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice" target="src_main_java_com_shop_service_userservice_userservice_notify">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice" target="src_main_java_com_shop_service_userservice_userservice_names">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L47</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_address" target="src_main_java_com_shop_service_userservice">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_address" target="src_main_java_com_shop_model_user_user_user">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_address" target="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L25</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_address" target="src_main_java_com_shop_model_user_user">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_address" target="src_main_java_com_shop_model_user_address_label">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L35</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_badge" target="src_main_java_com_shop_model_user_user">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L41</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_badge" target="src_main_java_com_shop_model_user_badge_text">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L42</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_test_java_com_shop_service_userservicetest">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_service_userservice_userservice_notify">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_service_userservice_userservice_save">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L32</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L25</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_model_user">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_model_model_model">
+      <data key="d12">inherits</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_model_user_user_user">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_model_user_user_status">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L20</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_model_user_user_getname">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L25</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user" target="src_main_java_com_shop_model_user_user_of">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice_notify_object_runnable_l38" target="src_main_java_com_shop_service_userservice_userservice_notify">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L38</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice_notify_object_runnable_l38" target="src_main_java_com_shop_service_userservice_userservice_notify_object_runnable_l38_run">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L39</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_entity_entity" target="src_main_java_com_shop_model_entity">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Entity.java</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_entity_entity" target="src_main_java_com_shop_model_model_model">
+      <data key="d12">implements</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_entity_entity" target="src_main_java_com_shop_model_entity_entity_id">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Entity.java</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_entity_entity" target="src_main_java_com_shop_model_entity_entity_describe">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Entity.java</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model" target="src_main_java_com_shop_service_userservice">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model" target="src_main_java_com_shop_model_model">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model" target="src_main_java_com_shop_model_model_status">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L32</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model" target="src_main_java_com_shop_model_model_model_model">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model" target="src_main_java_com_shop_model_model_model_id">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model" target="src_main_java_com_shop_model_model_model_status">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model" target="src_main_java_com_shop_model_model_model_compareto">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L25</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest_formatter" target="src_test_java_com_shop_service_userservicetest_userservicetest">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest_formatter" target="src_main_java_com_shop_service_userservice">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest_formatter" target="src_test_java_com_shop_service_userservicetest_formatter_format">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L25</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest_userservicetest" target="src_test_java_com_shop_service_userservicetest">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest_userservicetest" target="src_test_java_com_shop_service_userservicetest_userservicetest_setup">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest_userservicetest" target="src_test_java_com_shop_service_userservicetest_userservicetest_registersuser">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L17</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_status" target="src_main_java_com_shop_model_model_model_status">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_status" target="src_main_java_com_shop_model_user_user_status">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L20</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_status" target="src_main_java_com_shop_model_model_status_active">
+      <data key="d12">case_of</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_status" target="src_main_java_com_shop_model_model_status_suspended">
+      <data key="d12">case_of</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_status" target="src_main_java_com_shop_model_model_status_islive">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L35</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_audited_audited" target="java_lang_annotation_retention">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/main/java/com/shop/service/Audited.java</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_audited_audited" target="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_audited_audited" target="src_main_java_com_shop_service_audited">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">src/main/java/com/shop/service/Audited.java</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_formatter_slug" target="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L21</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_stats_count" target="src_main_java_com_shop_service_userservice_userservice_names">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L58</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_badge_text" target="src_main_java_com_shop_model_user_user_getname">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L43</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user_getname" target="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L20</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user_of" target="src_main_java_com_shop_model_user_user_user">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L30</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user_of" target="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L17</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice_notify" target="src_main_java_com_shop_service_userservice_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice_notify_object_runnable_l38_run" target="src_main_java_com_shop_service_userservice_java_override">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L39</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice_register" target="src_main_java_com_shop_service_userservice_userservice_save">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice_register" target="src_test_java_com_shop_service_userservicetest_userservicetest_registersuser">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice_save" target="src_main_java_com_shop_service_userservice_java_override">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L32</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice_userservice_save" target="src_main_java_com_shop_model_model_model_id">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model_compareto" target="src_main_java_com_shop_model_model_java_override">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L25</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model_id" target="src_main_java_com_shop_model_model_java_override">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model_model_id" target="src_test_java_com_shop_service_userservicetest_userservicetest_registersuser">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L20</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest_userservicetest_registersuser" target="org_junit_jupiter_api_test">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L17</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest_userservicetest_setup" target="org_junit_jupiter_api_beforeeach">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user_user_status" target="src_main_java_com_shop_model_user_java_override">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">attribute</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L20</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice" target="util">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice" target="function">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice" target="requirenonnull">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_userservice" target="slug">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/service/UserService.java</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model" target="instant">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_model" target="objects">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/model/Model.java</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="org_junit_jupiter_api_beforeeach" target="src_test_java_com_shop_service_userservicetest">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="org_junit_jupiter_api_test" target="src_test_java_com_shop_service_userservicetest">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_test_java_com_shop_service_userservicetest" target="assertequals">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/test/java/com/shop/service/UserServiceTest.java</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="java_lang_annotation_retention" target="src_main_java_com_shop_service_audited">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/service/Audited.java</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_service_audited" target="retentionpolicy">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/service/Audited.java</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user" target="list">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="src_main_java_com_shop_model_user" target="arraylist">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">src/main/java/com/shop/model/User.java</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <data key="d0">1</data>
+    <data key="d1">0.9.86</data>
+    <data key="d2">[]</data>
+  </graph>
+</graphml>

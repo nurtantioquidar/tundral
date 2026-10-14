@@ -1,0 +1,762 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d17" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d16" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d15" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d14" for="edge" attr.name="context" attr.type="string" />
+  <key id="d13" for="edge" attr.name="confidence_score" attr.type="double" />
+  <key id="d12" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d11" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d10" for="node" attr.name="type" attr.type="string" />
+  <key id="d9" for="node" attr.name="external" attr.type="boolean" />
+  <key id="d8" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d7" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d6" for="node" attr.name="norm_label" attr.type="string" />
+  <key id="d5" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d4" for="node" attr.name="community" attr.type="long" />
+  <key id="d3" for="node" attr.name="label" attr.type="string" />
+  <key id="d2" for="graph" attr.name="hyperedges" attr.type="string" />
+  <key id="d1" for="graph" attr.name="graphify_version" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="long" />
+  <graph edgedefault="undirected">
+    <node id="lib_store_store">
+      <data key="d3">Store</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">store</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="lib_store_cachedstore">
+      <data key="d3">CachedStore</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">cachedstore</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L24</data>
+    </node>
+    <node id="components_app_app">
+      <data key="d3">App</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">app</data>
+      <data key="d7">components/App.jsx</data>
+      <data key="d8">L18</data>
+    </node>
+    <node id="lib_store_store_add">
+      <data key="d3">.add()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.add()</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L14</data>
+    </node>
+    <node id="lib_store_store_constructor">
+      <data key="d3">.constructor()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.constructor()</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="lib_store_store_create">
+      <data key="d3">.create()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.create()</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L10</data>
+    </node>
+    <node id="lib_store_store_size">
+      <data key="d3">.size()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">.size()</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L19</data>
+    </node>
+    <node id="test_store_test_fixture">
+      <data key="d3">fixture()</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">fixture()</data>
+      <data key="d7">test/store.test.js</data>
+      <data key="d8">L10</data>
+    </node>
+    <node id="lib_format_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">lib/format.mjs</data>
+      <data key="d8">L19</data>
+    </node>
+    <node id="lib_store_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L36</data>
+    </node>
+    <node id="lib_store_cachedstore_add">
+      <data key="d3">.add()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">.add()</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L25</data>
+    </node>
+    <node id="lib_store_clear">
+      <data key="d3">clear()</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">clear()</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L32</data>
+    </node>
+    <node id="components_app_app_render">
+      <data key="d3">.render()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">.render()</data>
+      <data key="d7">components/App.jsx</data>
+      <data key="d8">L29</data>
+    </node>
+    <node id="components_app_list">
+      <data key="d3">List()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">list()</data>
+      <data key="d7">components/App.jsx</data>
+      <data key="d8">L10</data>
+    </node>
+    <node id="components_app_row">
+      <data key="d3">Row()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">row()</data>
+      <data key="d7">components/App.jsx</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="lib_default_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">lib/default.cjs</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="components_app_app_constructor">
+      <data key="d3">.constructor()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.constructor()</data>
+      <data key="d7">components/App.jsx</data>
+      <data key="d8">L19</data>
+    </node>
+    <node id="components_app_app_onclick">
+      <data key="d3">.onClick()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">.onclick()</data>
+      <data key="d7">components/App.jsx</data>
+      <data key="d8">L25</data>
+    </node>
+    <node id="lib_format_formatall">
+      <data key="d3">formatAll()</data>
+      <data key="d4">5</data>
+      <data key="d5">code</data>
+      <data key="d6">formatall()</data>
+      <data key="d7">lib/format.mjs</data>
+      <data key="d8">L15</data>
+    </node>
+    <node id="lib_format_formatlabel">
+      <data key="d3">formatLabel()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">formatlabel()</data>
+      <data key="d7">lib/format.mjs</data>
+      <data key="d8">L8</data>
+    </node>
+    <node id="lib_format_formatlabel_pad">
+      <data key="d3">pad()</data>
+      <data key="d4">6</data>
+      <data key="d5">code</data>
+      <data key="d6">pad()</data>
+      <data key="d7">lib/format.mjs</data>
+      <data key="d8">L9</data>
+    </node>
+    <node id="test_store_test">
+      <data key="d3">store.test.js</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">store.test.js</data>
+      <data key="d7">test/store.test.js</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="test_store_test_store">
+      <data key="d3">{ Store }</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">{ store }</data>
+      <data key="d7">test/store.test.js</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="lib_format">
+      <data key="d3">format.mjs</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d6">format.mjs</data>
+      <data key="d7">lib/format.mjs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="lib_format_rationale_7">
+      <data key="d3">WHY: labels are shown in a fixed-width column.</data>
+      <data key="d4">1</data>
+      <data key="d5">rationale</data>
+      <data key="d6">why: labels are shown in a fixed-width column.</data>
+      <data key="d7">lib/format.mjs</data>
+      <data key="d8">L7</data>
+    </node>
+    <node id="lib_store">
+      <data key="d3">store.js</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">store.js</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="lib_store_utils">
+      <data key="d3">utils</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">utils</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L40</data>
+    </node>
+    <node id="lib_store_rationale_26">
+      <data key="d3">NOTE: invalidates the cache on every write.</data>
+      <data key="d4">2</data>
+      <data key="d5">rationale</data>
+      <data key="d6">note: invalidates the cache on every write.</data>
+      <data key="d7">lib/store.js</data>
+      <data key="d8">L26</data>
+    </node>
+    <node id="components_app">
+      <data key="d3">App.jsx</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">app.jsx</data>
+      <data key="d7">components/App.jsx</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="lib_default">
+      <data key="d3">default.cjs</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">default.cjs</data>
+      <data key="d7">lib/default.cjs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="lib_default_lodash">
+      <data key="d3">lodash</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">lodash</data>
+      <data key="d7">lib/default.cjs</data>
+      <data key="d8">L3</data>
+    </node>
+    <node id="lib_default_store">
+      <data key="d3">{ Store }</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">{ store }</data>
+      <data key="d7">lib/default.cjs</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="ref_node_fs">
+      <data key="d3">ref_node_fs</data>
+      <data key="d4">1</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_node_fs</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_path">
+      <data key="d3">ref_path</data>
+      <data key="d4">1</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_path</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_react">
+      <data key="d3">ref_react</data>
+      <data key="d4">3</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_react</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <node id="ref_lodash">
+      <data key="d3">ref_lodash</data>
+      <data key="d4">4</data>
+      <data key="d9">True</data>
+      <data key="d5">concept</data>
+      <data key="d6">ref_lodash</data>
+      <data key="d7" />
+      <data key="d10">external</data>
+    </node>
+    <edge source="lib_store_store" target="test_store_test_fixture">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">test/store.test.js</data>
+      <data key="d16">L11</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_store" target="lib_default">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">lib/default.cjs</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_store" target="test_store_test">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">test/store.test.js</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_store" target="lib_store_cachedstore">
+      <data key="d11">inherits</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">type</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L24</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_store" target="lib_store">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L5</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_store" target="lib_store_store_create">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L10</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_store" target="lib_store_store_add">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L14</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_store" target="lib_store_store_size">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L19</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_store" target="lib_store_store_constructor">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L6</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_cachedstore" target="components_app_app_constructor">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L21</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_cachedstore" target="components_app">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_cachedstore" target="lib_store">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L24</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_cachedstore" target="lib_store_cachedstore_add">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L25</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_app" target="components_app">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L18</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_app" target="components_app_app_constructor">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L19</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_app" target="components_app_app_onclick">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L25</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_app" target="components_app_app_render">
+      <data key="d11">method</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L29</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="test_store_test_fixture" target="test_store_test">
+      <data key="d11">indirect_call</data>
+      <data key="d12">INFERRED</data>
+      <data key="d13">0.85</data>
+      <data key="d14">collection</data>
+      <data key="d15">test/store.test.js</data>
+      <data key="d16">L14</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format_helper" target="lib_format">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L19</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_helper" target="lib_format">
+      <data key="d11">re_exports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">re-export</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L5</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_helper" target="lib_store">
+      <data key="d11">indirect_call</data>
+      <data key="d12">INFERRED</data>
+      <data key="d13">0.85</data>
+      <data key="d14">collection</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L47</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_cachedstore_add" target="lib_store_clear">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L28</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store_clear" target="lib_store">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L32</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_app_render" target="components_app_list">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L30</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_list" target="components_app_row">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L13</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_list" target="components_app">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L10</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_row" target="lib_format_formatlabel">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L7</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_row" target="components_app">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L6</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_default_helper" target="lib_default">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/default.cjs</data>
+      <data key="d16">L5</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app_app_onclick" target="lib_format_formatall">
+      <data key="d11">calls</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L26</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format_formatall" target="components_app">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format_formatall" target="lib_format">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L15</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format_formatall" target="lib_format_formatlabel">
+      <data key="d11">indirect_call</data>
+      <data key="d12">INFERRED</data>
+      <data key="d13">0.85</data>
+      <data key="d14">argument</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L16</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format_formatlabel" target="lib_format_formatlabel_pad">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">call</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L9</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format_formatlabel" target="components_app">
+      <data key="d11">imports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format_formatlabel" target="lib_format">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L8</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="test_store_test" target="lib_store">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">test/store.test.js</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="test_store_test" target="test_store_test_store">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">test/store.test.js</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format" target="lib_store">
+      <data key="d11">re_exports</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">export</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L4</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format" target="components_app">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format" target="ref_path">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format" target="ref_node_fs">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format" target="lib_default">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_format" target="lib_format_rationale_7">
+      <data key="d11">rationale_for</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/format.mjs</data>
+      <data key="d16">L7</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store" target="components_app">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store" target="lib_default">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">lib/default.cjs</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store" target="lib_store_utils">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L40</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_store" target="lib_store_rationale_26">
+      <data key="d11">rationale_for</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/store.js</data>
+      <data key="d16">L26</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="components_app" target="ref_react">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">components/App.jsx</data>
+      <data key="d16">L1</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_default" target="ref_lodash">
+      <data key="d11">imports_from</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d14">import</data>
+      <data key="d15">lib/default.cjs</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_default" target="lib_default_store">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/default.cjs</data>
+      <data key="d16">L2</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <edge source="lib_default" target="lib_default_lodash">
+      <data key="d11">contains</data>
+      <data key="d12">EXTRACTED</data>
+      <data key="d13">1.0</data>
+      <data key="d15">lib/default.cjs</data>
+      <data key="d16">L3</data>
+      <data key="d17">1.0</data>
+    </edge>
+    <data key="d0">1</data>
+    <data key="d1">0.9.86</data>
+    <data key="d2">[]</data>
+  </graph>
+</graphml>

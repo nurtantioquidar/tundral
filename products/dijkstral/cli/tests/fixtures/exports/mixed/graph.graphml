@@ -1,0 +1,548 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d19" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d18" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d17" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d16" for="edge" attr.name="context" attr.type="string" />
+  <key id="d15" for="edge" attr.name="confidence_score" attr.type="double" />
+  <key id="d14" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d13" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d12" for="node" attr.name="version" attr.type="string" />
+  <key id="d11" for="node" attr.name="type" attr.type="string" />
+  <key id="d10" for="node" attr.name="ecosystem" attr.type="string" />
+  <key id="d9" for="node" attr.name="metadata" attr.type="string" />
+  <key id="d8" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d7" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d6" for="node" attr.name="norm_label" attr.type="string" />
+  <key id="d5" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d4" for="node" attr.name="community" attr.type="long" />
+  <key id="d3" for="node" attr.name="label" attr.type="string" />
+  <key id="d2" for="graph" attr.name="hyperedges" attr.type="string" />
+  <key id="d1" for="graph" attr.name="graphify_version" attr.type="string" />
+  <key id="d0" for="graph" attr.name="schema_version" attr.type="long" />
+  <graph edgedefault="undirected">
+    <node id="app_main_helper">
+      <data key="d3">helper()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">helper()</data>
+      <data key="d7">app/main.py</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="app_main_main">
+      <data key="d3">main()</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">main()</data>
+      <data key="d7">app/main.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="package">
+      <data key="d3">package.json</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">package.json</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="package_devdependencies">
+      <data key="d3">devDependencies</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">devdependencies</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="package_devdependencies_typescript">
+      <data key="d3">typescript</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">typescript</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="package_name">
+      <data key="d3">name</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">name</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L2</data>
+    </node>
+    <node id="package_scripts">
+      <data key="d3">scripts</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">scripts</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L4</data>
+    </node>
+    <node id="package_scripts_build">
+      <data key="d3">build</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">build</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L4</data>
+    </node>
+    <node id="package_version">
+      <data key="d3">version</data>
+      <data key="d4">0</data>
+      <data key="d5">code</data>
+      <data key="d6">version</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L3</data>
+    </node>
+    <node id="ref_react">
+      <data key="d3">react</data>
+      <data key="d4">0</data>
+      <data key="d5">concept</data>
+      <data key="d6">react</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="ref_typescript">
+      <data key="d3">typescript</data>
+      <data key="d4">0</data>
+      <data key="d5">concept</data>
+      <data key="d6">typescript</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="ref_zod">
+      <data key="d3">zod</data>
+      <data key="d4">0</data>
+      <data key="d5">concept</data>
+      <data key="d6">zod</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="scripts_build">
+      <data key="d3">build.sh</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d9">{"kind": "file", "language": "bash"}</data>
+      <data key="d6">build.sh</data>
+      <data key="d7">scripts/build.sh</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="scripts_build_build">
+      <data key="d3">build()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d9">{"kind": "bash_function", "language": "bash"}</data>
+      <data key="d6">build()</data>
+      <data key="d7">scripts/build.sh</data>
+      <data key="d8">L11</data>
+    </node>
+    <node id="scripts_build_clean">
+      <data key="d3">clean()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d9">{"kind": "bash_function", "language": "bash"}</data>
+      <data key="d6">clean()</data>
+      <data key="d7">scripts/build.sh</data>
+      <data key="d8">L6</data>
+    </node>
+    <node id="scripts_build_compile_all">
+      <data key="d3">compile_all()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d9">{"kind": "bash_function", "language": "bash"}</data>
+      <data key="d6">compile_all()</data>
+      <data key="d7">scripts/build.sh</data>
+      <data key="d8">L17</data>
+    </node>
+    <node id="scripts_build_sh__entry">
+      <data key="d3">build.sh script</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d9">{"kind": "bash_entrypoint", "language": "bash"}</data>
+      <data key="d6">build.sh script</data>
+      <data key="d7">scripts/build.sh</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="scripts_common">
+      <data key="d3">common.sh</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d9">{"kind": "file", "language": "bash"}</data>
+      <data key="d6">common.sh</data>
+      <data key="d7">scripts/common.sh</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="scripts_common_log">
+      <data key="d3">log()</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d9">{"kind": "bash_function", "language": "bash"}</data>
+      <data key="d6">log()</data>
+      <data key="d7">scripts/common.sh</data>
+      <data key="d8">L2</data>
+    </node>
+    <node id="scripts_common_sh__entry">
+      <data key="d3">common.sh script</data>
+      <data key="d4">1</data>
+      <data key="d5">code</data>
+      <data key="d9">{"kind": "bash_entrypoint", "language": "bash"}</data>
+      <data key="d6">common.sh script</data>
+      <data key="d7">scripts/common.sh</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="tsconfig">
+      <data key="d3">tsconfig.json</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">tsconfig.json</data>
+      <data key="d7">tsconfig.json</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="tsconfig_compileroptions">
+      <data key="d3">compilerOptions</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">compileroptions</data>
+      <data key="d7">tsconfig.json</data>
+      <data key="d8">L2</data>
+    </node>
+    <node id="tsconfig_compileroptions_strict">
+      <data key="d3">strict</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">strict</data>
+      <data key="d7">tsconfig.json</data>
+      <data key="d8">L2</data>
+    </node>
+    <node id="tsconfig_compileroptions_target">
+      <data key="d3">target</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">target</data>
+      <data key="d7">tsconfig.json</data>
+      <data key="d8">L2</data>
+    </node>
+    <node id="tsconfig_include">
+      <data key="d3">include</data>
+      <data key="d4">2</data>
+      <data key="d5">code</data>
+      <data key="d6">include</data>
+      <data key="d7">tsconfig.json</data>
+      <data key="d8">L3</data>
+    </node>
+    <node id="app_main">
+      <data key="d3">main.py</data>
+      <data key="d4">3</data>
+      <data key="d5">code</data>
+      <data key="d6">main.py</data>
+      <data key="d7">app/main.py</data>
+      <data key="d8">L1</data>
+    </node>
+    <node id="package_dependencies">
+      <data key="d3">dependencies</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">dependencies</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="package_dependencies_react">
+      <data key="d3">react</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">react</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="package_dependencies_zod">
+      <data key="d3">zod</data>
+      <data key="d4">4</data>
+      <data key="d5">code</data>
+      <data key="d6">zod</data>
+      <data key="d7">package.json</data>
+      <data key="d8">L5</data>
+    </node>
+    <node id="cargo_toml_pkg_mixed_fixture">
+      <data key="d3">mixed-fixture</data>
+      <data key="d4">5</data>
+      <data key="d10">cargo</data>
+      <data key="d5">code</data>
+      <data key="d6">mixed-fixture</data>
+      <data key="d7">Cargo.toml</data>
+      <data key="d8">L1</data>
+      <data key="d11">package</data>
+      <data key="d12">0.1.0</data>
+    </node>
+    <node id="pyproject_toml_pkg_mixed_fixture">
+      <data key="d3">mixed-fixture</data>
+      <data key="d4">6</data>
+      <data key="d10">python</data>
+      <data key="d5">code</data>
+      <data key="d6">mixed-fixture</data>
+      <data key="d7">pyproject.toml</data>
+      <data key="d8">L1</data>
+      <data key="d11">package</data>
+      <data key="d12">0.1.0</data>
+    </node>
+    <edge source="app_main_helper" target="app_main_main">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">call</data>
+      <data key="d17">app/main.py</data>
+      <data key="d18">L2</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="app_main_helper" target="app_main">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">app/main.py</data>
+      <data key="d18">L5</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="app_main_main" target="app_main">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">app/main.py</data>
+      <data key="d18">L1</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package" target="ref_react">
+      <data key="d13">imports</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">import</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L5</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package" target="ref_zod">
+      <data key="d13">imports</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">import</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L5</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package" target="ref_typescript">
+      <data key="d13">imports</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">import</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L6</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package" target="package_name">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L2</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package" target="package_version">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L3</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package" target="package_scripts">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L4</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package" target="package_dependencies">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L5</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package" target="package_devdependencies">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L6</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package_devdependencies" target="package_devdependencies_typescript">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L6</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package_scripts" target="package_scripts_build">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L4</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build" target="scripts_common">
+      <data key="d13">imports_from</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">import</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L4</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build" target="scripts_build_sh__entry">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L1</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build" target="scripts_build_build">
+      <data key="d13">defines</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L11</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build" target="scripts_build_compile_all">
+      <data key="d13">defines</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L17</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build" target="scripts_build_clean">
+      <data key="d13">defines</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L6</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build_build" target="scripts_build_clean">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">call</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L12</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build_build" target="scripts_common_log">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">call</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L13</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build_build" target="scripts_build_compile_all">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">call</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L14</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build_build" target="scripts_build_sh__entry">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">call</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L21</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_build_clean" target="scripts_common_log">
+      <data key="d13">calls</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d16">call</data>
+      <data key="d17">scripts/build.sh</data>
+      <data key="d18">L7</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_common" target="scripts_common_sh__entry">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">scripts/common.sh</data>
+      <data key="d18">L1</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="scripts_common" target="scripts_common_log">
+      <data key="d13">defines</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">scripts/common.sh</data>
+      <data key="d18">L2</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="tsconfig" target="tsconfig_compileroptions">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">tsconfig.json</data>
+      <data key="d18">L2</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="tsconfig" target="tsconfig_include">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">tsconfig.json</data>
+      <data key="d18">L3</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="tsconfig_compileroptions" target="tsconfig_compileroptions_strict">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">tsconfig.json</data>
+      <data key="d18">L2</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="tsconfig_compileroptions" target="tsconfig_compileroptions_target">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">tsconfig.json</data>
+      <data key="d18">L2</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package_dependencies" target="package_dependencies_react">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L5</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <edge source="package_dependencies" target="package_dependencies_zod">
+      <data key="d13">contains</data>
+      <data key="d14">EXTRACTED</data>
+      <data key="d15">1.0</data>
+      <data key="d17">package.json</data>
+      <data key="d18">L5</data>
+      <data key="d19">1.0</data>
+    </edge>
+    <data key="d0">1</data>
+    <data key="d1">0.9.86</data>
+    <data key="d2">[]</data>
+  </graph>
+</graphml>

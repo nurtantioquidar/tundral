@@ -1,0 +1,3013 @@
+{
+ "RAW_NODES": [
+  {
+   "id": "src_model_named",
+   "label": "Named",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 15.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Named",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "src_model_shape",
+   "label": "Shape",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 25.9,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Shape",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 9
+  },
+  {
+   "id": "src_model_circle",
+   "label": "Circle",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 32.9,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Circle",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 13
+  },
+  {
+   "id": "src_model_meters",
+   "label": "Meters",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 15.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Meters",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "src_model_kind",
+   "label": "Kind",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 22.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Kind",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "src_model_unit",
+   "label": "Unit",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Unit",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_pair",
+   "label": "Pair",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Pair",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_model_wrapper",
+   "label": "Wrapper",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Wrapper",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_model_platform",
+   "label": "Platform",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Platform",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_pair_t",
+   "label": "Pair<T>",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Pair<T>",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_lib_total_area",
+   "label": "total_area()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 15.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "total_area()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "src/lib.rs",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "src_main",
+   "label": "main.rs",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 25.9,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main.rs",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "src/main.rs",
+   "file_type": "code",
+   "degree": 9
+  },
+  {
+   "id": "src_main_main",
+   "label": "main()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 15.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "src/main.rs",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "src_model_named_name",
+   "label": ".name()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".name()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_shape_area",
+   "label": ".area()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".area()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_shape_describe",
+   "label": ".describe()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".describe()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "formatter",
+   "label": "Formatter",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Formatter",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_circle_area",
+   "label": ".area()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".area()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_circle_fmt",
+   "label": ".fmt()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".fmt()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_model_circle_new",
+   "label": ".new()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 15.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".new()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "src_model_circle_scale",
+   "label": ".scale()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".scale()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_circle_unit",
+   "label": ".UNIT",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".UNIT",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_fixture",
+   "label": "fixture()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 15.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "fixture()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "src_util_fmt",
+   "label": "fmt.rs",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 22.4,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "fmt.rs",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/util/fmt.rs",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "src_util_fmt_configure",
+   "label": "configure()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "configure()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/util/fmt.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_util_fmt_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/util/fmt.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_util_fmt_render",
+   "label": "render()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "render()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "src/util/fmt.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_util_fmt_rs_settings",
+   "label": "Settings",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Settings",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "f",
+   "label": "F",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "F",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_circle_diameter",
+   "label": ".diameter()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".diameter()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_util_mod",
+   "label": "mod.rs",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 25.9,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "mod.rs",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/util/mod.rs",
+   "file_type": "code",
+   "degree": 9
+  },
+  {
+   "id": "src_util_mod_apply",
+   "label": "apply()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 17.1,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "apply()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/util/mod.rs",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "src_util_mod_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 15.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/util/mod.rs",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "src_util_mod_reconfigure",
+   "label": "reconfigure()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "reconfigure()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/util/mod.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_util_mod_render",
+   "label": "render()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "render()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/util/mod.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_util_mod_rs_settings",
+   "label": "Settings",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Settings",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_util_mod_run_all",
+   "label": "run_all()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 15.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "run_all()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/util/mod.rs",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "src_util_mod_twice",
+   "label": "twice()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "twice()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/util/mod.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_util_mod_widen",
+   "label": "widen()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "widen()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "src/util/mod.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_model",
+   "label": "model.rs",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 40.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "model.rs",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 17
+  },
+  {
+   "id": "src_model_area_is_positive",
+   "label": "area_is_positive()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "area_is_positive()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_classify",
+   "label": "classify()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "classify()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_model_kind_empty",
+   "label": "Empty",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Empty",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_kind_round",
+   "label": "Round",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Round",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_model_kind_square",
+   "label": "Square",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Square",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_round_kind",
+   "label": "round_kind()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 18.8,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "round_kind()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 5
+  },
+  {
+   "id": "registry",
+   "label": "Registry",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Registry",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_lib",
+   "label": "lib.rs",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 31.2,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "lib.rs",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "src/lib.rs",
+   "file_type": "code",
+   "degree": 12
+  },
+  {
+   "id": "src_lib_build",
+   "label": "build()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "build()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "src/lib.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_lib_greeting",
+   "label": "GREETING",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "GREETING",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "src/lib.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_lib_label",
+   "label": "label()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "label()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "src/lib.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_lib_macro_square",
+   "label": "square!",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "square!",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "src/lib.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_lib_max_shapes",
+   "label": "MAX_SHAPES",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "MAX_SHAPES",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "src/lib.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_pair_t_first",
+   "label": ".first()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".first()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_model_wrapper_t",
+   "label": "Wrapper<T>",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Wrapper<T>",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "src_model_wrapper_t_area",
+   "label": ".area()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".area()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "src_model_wrapper_t_new",
+   "label": ".new()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".new()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "src/model.rs",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "t",
+   "label": "T",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 17.1,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "T",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "tests_it",
+   "label": "it.rs",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 17.1,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "it.rs",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "tests/it.rs",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "tests_it_classifies_empty",
+   "label": "classifies_empty()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "classifies_empty()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "tests/it.rs",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pkg_shapes",
+   "label": "shapes",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 10.0,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "shapes",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "Cargo.toml",
+   "file_type": "code",
+   "degree": 0
+  },
+  {
+   "id": "build",
+   "label": "build",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "build",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "circle",
+   "label": "circle",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "circle",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "label",
+   "label": "label",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "label",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "render",
+   "label": "render",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.5,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "render",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "round",
+   "label": "round",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "round",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "round_kind",
+   "label": "round_kind",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "round_kind",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "total_area",
+   "label": "total_area",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "total_area",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "memchr",
+   "label": "memchr",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "memchr",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "render_as_render_shape",
+   "label": "render_as_render_shape",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "render_as_render_shape",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "serialize",
+   "label": "serialize",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "serialize",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "super",
+   "label": "super",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "super",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "circle_as_round",
+   "label": "circle_as_round",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "circle_as_round",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "cow",
+   "label": "cow",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "cow",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "hashmap",
+   "label": "hashmap",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "hashmap",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "hashset",
+   "label": "hashset",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "hashset",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "classify",
+   "label": "classify",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "classify",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "kind",
+   "label": "kind",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "kind",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "twice",
+   "label": "twice",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.8,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "twice",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  }
+ ],
+ "RAW_EDGES": [
+  {
+   "from": "src_model",
+   "to": "src_model_named",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_named",
+   "to": "src_model_shape",
+   "label": "inherits",
+   "title": "inherits [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_named",
+   "to": "src_model_named_name",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib_total_area",
+   "to": "src_model_shape",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "src_model_shape",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main",
+   "to": "src_model_shape",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_fmt",
+   "to": "src_model_shape",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_shape",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_circle",
+   "to": "src_model_shape",
+   "label": "implements",
+   "title": "implements [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_shape",
+   "to": "src_model_shape_describe",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_shape",
+   "to": "src_model_shape_area",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_kind",
+   "to": "src_model_circle",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_fmt",
+   "to": "src_model_circle",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_fmt_render",
+   "to": "src_model_circle",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod_render",
+   "to": "src_model_circle",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_fixture",
+   "to": "src_model_circle",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_circle",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_circle",
+   "to": "src_model_circle_unit",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_circle",
+   "to": "src_model_circle_new",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_circle",
+   "to": "src_model_circle_diameter",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_circle",
+   "to": "src_model_circle_scale",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_circle",
+   "to": "src_model_circle_area",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_circle",
+   "to": "src_model_circle_fmt",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_circle_diameter",
+   "to": "src_model_meters",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_meters",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod_widen",
+   "to": "src_model_meters",
+   "label": "references",
+   "title": "references [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "src_model_classify",
+   "to": "src_model_kind",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_round_kind",
+   "to": "src_model_kind",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_kind",
+   "to": "src_model_kind_round",
+   "label": "case_of",
+   "title": "case_of [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_kind",
+   "to": "src_model_kind_square",
+   "label": "case_of",
+   "title": "case_of [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_kind",
+   "to": "src_model_kind_empty",
+   "label": "case_of",
+   "title": "case_of [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_kind",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_unit",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_pair",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_pair",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_wrapper",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_wrapper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_platform",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_pair_t",
+   "to": "src_model_pair_t_first",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "src_lib_total_area",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main_main",
+   "to": "src_lib_total_area",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "src_main",
+   "to": "circle",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main",
+   "to": "round_kind",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main",
+   "to": "build",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main",
+   "to": "label",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main",
+   "to": "render",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main",
+   "to": "round",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main",
+   "to": "total_area",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main",
+   "to": "src_main_main",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_main_main",
+   "to": "src_model_round_kind",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "src_model_circle_fmt",
+   "to": "formatter",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_fixture",
+   "to": "src_model_circle_new",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_round_kind",
+   "to": "src_model_circle_new",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_fixture",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_util_fmt",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_fmt",
+   "to": "memchr",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_fmt",
+   "to": "src_util_fmt_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_fmt",
+   "to": "src_util_fmt_configure",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_fmt",
+   "to": "src_util_fmt_render",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_fmt_configure",
+   "to": "src_util_fmt_rs_settings",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod_apply",
+   "to": "f",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "render_as_render_shape",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "src_model",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "src_util_mod_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "src_util_mod_render",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "src_util_mod_apply",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "src_util_mod_twice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "src_util_mod_reconfigure",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "src_util_mod_widen",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod",
+   "to": "src_util_mod_run_all",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod_apply",
+   "to": "src_util_mod_helper",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod_run_all",
+   "to": "src_util_mod_apply",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod_run_all",
+   "to": "src_util_mod_helper",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_util_mod_reconfigure",
+   "to": "src_util_mod_rs_settings",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "super",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "serialize",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_classify",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_area_is_positive",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model",
+   "to": "src_model_round_kind",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_round_kind",
+   "to": "src_model_kind_round",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib_build",
+   "to": "registry",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "hashmap",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "hashset",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "circle_as_round",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "render",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "cow",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "src_lib_max_shapes",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "src_lib_greeting",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "src_lib_macro_square",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "src_lib_build",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_lib",
+   "to": "src_lib_label",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_pair_t_first",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_wrapper_t",
+   "to": "src_model_wrapper_t_new",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_wrapper_t",
+   "to": "src_model_wrapper_t_area",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "src_model_wrapper_t_new",
+   "to": "t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_it",
+   "to": "classify",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_it",
+   "to": "kind",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_it",
+   "to": "twice",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "tests_it",
+   "to": "tests_it_classifies_empty",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  }
+ ],
+ "LEGEND": [],
+ "hyperedges": []
+}

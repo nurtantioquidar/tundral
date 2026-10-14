@@ -1,4 +1,5 @@
 mod agents_cmd;
+mod export_cmd;
 mod mcp_cmd;
 mod query_cmds;
 
@@ -8,7 +9,7 @@ use std::time::Instant;
 
 use clap::{Args, Parser, Subcommand};
 use dijkstral_core::pipeline::cluster_only_files;
-use dijkstral_core::{build, BuildOptions, BuildReport};
+use dijkstral_core::{build_with, BuildOptions, BuildReport};
 
 // mimalloc keeps fragmentation and the retained high-water mark well below the system allocator's
 // on large builds (Kubernetes: measured in bench/README.md).
@@ -37,6 +38,8 @@ enum Command {
     Query(query_cmds::QueryCommand),
     /// Serve the graph to AI assistants over MCP (stdio): Graphify's graphify-mcp tools.
     Mcp(mcp_cmd::McpArgs),
+    /// Export a graph as interactive HTML, a Markdown wiki or GraphML.
+    Export(export_cmd::ExportArgs),
     #[command(flatten)]
     Agents(agents_cmd::AgentCommand),
 }
@@ -73,6 +76,8 @@ struct BuildArgs {
     /// Print per-phase timings to stderr.
     #[arg(long)]
     timings: bool,
+    #[command(flatten)]
+    exports: export_cmd::BuildExports,
 }
 
 fn main() -> ExitCode {
@@ -85,6 +90,7 @@ fn main() -> ExitCode {
         Command::Extract(args) | Command::Update(args) => args,
         Command::Query(cmd) => return query_cmds::run(cmd),
         Command::Mcp(args) => return mcp_cmd::run(args),
+        Command::Export(args) => return export_cmd::run(args),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {
@@ -102,13 +108,15 @@ fn main() -> ExitCode {
         .threads
         .unwrap_or_else(|| std::thread::available_parallelism().map_or(1, |n| n.get()));
     let started = Instant::now();
+    let exporters = export_cmd::exporters(&args.exports, &args.path);
     let opts = BuildOptions {
         root: args.path,
         out: args.out,
         threads,
         cluster: !args.no_cluster,
     };
-    match build(&opts) {
+    let exporters: Vec<_> = exporters.iter().map(|e| e.as_ref()).collect();
+    match build_with(&opts, &exporters) {
         Ok(report) => {
             print_report(&report, args.timings, started);
             ExitCode::SUCCESS
