@@ -1,0 +1,193 @@
+{
+  "communities": {
+    "0": [
+      "bin_app",
+      "bin_app_main",
+      "invalidargumentexception",
+      "psr_log_loggerinterface",
+      "src_service_userservice",
+      "src_service_userservice_helper",
+      "src_service_userservice_userservice",
+      "src_service_userservice_userservice_ban",
+      "src_service_userservice_userservice_construct",
+      "src_service_userservice_userservice_log",
+      "src_service_userservice_userservice_register"
+    ],
+    "1": [
+      "src_models_repository",
+      "src_models_repository_repository",
+      "src_models_repository_repository_add",
+      "src_models_repository_repository_find",
+      "src_models_repository_timestamps",
+      "src_models_repository_timestamps_touch",
+      "src_service_userservice_userservice_make",
+      "static"
+    ],
+    "2": [
+      "jsonserializable",
+      "src_models_model",
+      "src_models_model_model",
+      "src_models_model_model_jsonserialize",
+      "src_models_model_model_save",
+      "src_models_model_model_table",
+      "src_models_model_model_validate"
+    ],
+    "3": [
+      "self",
+      "src_models_user_user",
+      "src_models_user_user_display",
+      "src_models_user_user_parse",
+      "src_models_user_user_save",
+      "src_models_user_user_table"
+    ],
+    "4": [
+      "phpunit_framework_testcase",
+      "tests_userservicetest",
+      "tests_userservicetest_userservicetest",
+      "tests_userservicetest_userservicetest_testparse",
+      "tests_userservicetest_userservicetest_testregister"
+    ],
+    "5": [
+      "src_models_status",
+      "src_models_status_status",
+      "src_models_status_status_active",
+      "src_models_status_status_banned",
+      "src_models_status_status_label"
+    ],
+    "6": [
+      "default_role",
+      "shop_support_str",
+      "slugify",
+      "src_models_user"
+    ],
+    "7": [
+      "src_helpers",
+      "src_helpers_helper",
+      "src_helpers_slugify",
+      "src_models_user_user_construct"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2909090909090909,
+    "1": 0.25,
+    "2": 0.3333333333333333,
+    "3": 0.3333333333333333,
+    "4": 0.5,
+    "5": 0.4,
+    "6": 0.5,
+    "7": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "src_models_user_user",
+      "label": "User",
+      "degree": 15
+    },
+    {
+      "id": "src_service_userservice_userservice",
+      "label": "UserService",
+      "degree": 12
+    },
+    {
+      "id": "src_models_model_model",
+      "label": "Model",
+      "degree": 9
+    },
+    {
+      "id": "src_models_repository_repository",
+      "label": "Repository",
+      "degree": 7
+    },
+    {
+      "id": "src_models_status_status",
+      "label": "Status",
+      "degree": 6
+    },
+    {
+      "id": "tests_userservicetest_userservicetest",
+      "label": "UserServiceTest",
+      "degree": 4
+    },
+    {
+      "id": "src_models_repository_timestamps",
+      "label": "Timestamps",
+      "degree": 3
+    },
+    {
+      "id": "src_helpers_slugify",
+      "label": "slugify()",
+      "degree": 3
+    },
+    {
+      "id": "bin_app_main",
+      "label": "main()",
+      "degree": 2
+    },
+    {
+      "id": "src_service_userservice_helper",
+      "label": "helper()",
+      "degree": 2
+    }
+  ],
+  "surprises": [
+    {
+      "source": "main()",
+      "target": "UserService",
+      "source_files": [
+        "bin/app.php",
+        "src/Service/UserService.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; peripheral node `main()` unexpectedly reaches hub `UserService`"
+    },
+    {
+      "source": "User",
+      "target": "Model",
+      "source_files": [
+        "src/Models/User.php",
+        "src/Models/Model.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "UserService",
+      "target": "Repository",
+      "source_files": [
+        "src/Service/UserService.php",
+        "src/Models/Repository.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "User",
+      "target": "Timestamps",
+      "source_files": [
+        "src/Models/User.php",
+        "src/Models/Repository.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "mixes_in",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "User",
+      "target": "Status",
+      "source_files": [
+        "src/Models/User.php",
+        "src/Models/Status.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

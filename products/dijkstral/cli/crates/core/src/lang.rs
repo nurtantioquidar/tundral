@@ -24,6 +24,8 @@ pub enum Lang {
     GoMod,
     /// `.sh`, `.bash`, and sh/bash/zsh shebang scripts.
     Shell,
+    Php,
+    Ruby,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -36,10 +38,12 @@ pub enum Family {
     Java,
     Data,
     Shell,
+    Php,
+    Ruby,
 }
 
 impl Lang {
-    pub const COUNT: usize = 11;
+    pub const COUNT: usize = 13;
 
     /// Classify a path. `shebang` is consulted only for extensionless files.
     pub fn classify(path: &Path) -> Option<Lang> {
@@ -63,6 +67,8 @@ impl Lang {
             "java" => Lang::Java,
             "json" => Lang::Json,
             "sh" | "bash" => Lang::Shell,
+            "php" => Lang::Php,
+            "rb" | "rake" => Lang::Ruby,
             _ => return None,
         })
     }
@@ -76,6 +82,8 @@ impl Lang {
             Lang::Java => Family::Java,
             Lang::Json | Lang::Toml => Family::Data,
             Lang::Shell => Family::Shell,
+            Lang::Php => Family::Php,
+            Lang::Ruby => Family::Ruby,
         }
     }
 
@@ -88,6 +96,8 @@ impl Lang {
             Lang::Rust => tree_sitter_rust::LANGUAGE.into(),
             Lang::Go => tree_sitter_go::LANGUAGE.into(),
             Lang::Java => tree_sitter_java::LANGUAGE.into(),
+            Lang::Php => tree_sitter_php::LANGUAGE_PHP.into(),
+            Lang::Ruby => tree_sitter_ruby::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }
@@ -108,6 +118,8 @@ fn shebang(path: &Path) -> Option<Lang> {
         Some(Lang::Python)
     } else if matches!(prog, "sh" | "bash" | "zsh") {
         Some(Lang::Shell)
+    } else if prog.starts_with("ruby") {
+        Some(Lang::Ruby)
     } else {
         None
     }

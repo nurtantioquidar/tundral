@@ -1,0 +1,1587 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1,
+  "graphify_version": "0.9.86"
+ },
+ "nodes": [
+  {
+   "id": "lib_shop_models_user_shop",
+   "label": "Shop",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "shop",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L3"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models",
+   "label": "Shop::Models",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "shop::models",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L4"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_guest",
+   "label": "Shop::Models::Guest",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "shop::models::guest",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L48"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_user",
+   "label": "Shop::Models::User",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "metadata": {
+    "ruby_lookup_unsafe": true
+   },
+   "norm_label": "shop::models::user",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L6"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_user_admin",
+   "label": "Shop::Models::User::Admin",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "shop::models::user::admin",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L38"
+  },
+  {
+   "id": "lib_shop_models_base_shop",
+   "label": "Shop",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "shop",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L1"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models",
+   "label": "Shop::Models",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "shop::models",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L2"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_repo",
+   "label": "Shop::Models::Repo",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "ruby_lookup_unsafe": true
+   },
+   "norm_label": "shop::models::repo",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L27"
+  },
+  {
+   "id": "lib_shop_shop",
+   "label": "Shop",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "shop",
+   "source_file": "lib/shop.rb",
+   "source_location": "L9"
+  },
+  {
+   "id": "lib_shop_service_shop_service",
+   "label": "Shop::Service",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "shop::service",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L4"
+  },
+  {
+   "id": "lib_shop_service_shop_service_userservice",
+   "label": "Shop::Service::UserService",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_lookup_unsafe": true
+   },
+   "norm_label": "shop::service::userservice",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L5"
+  },
+  {
+   "id": "test_service_test_servicetest",
+   "label": "ServiceTest",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "servicetest",
+   "source_file": "test/service_test.rb",
+   "source_location": "L4"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_base",
+   "label": "Shop::Models::Base",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "metadata": {
+    "ruby_lookup_unsafe": true
+   },
+   "norm_label": "shop::models::base",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L6"
+  },
+  {
+   "id": "lib_shop_util_shop_util",
+   "label": "Shop::Util",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "shop::util",
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L2"
+  },
+  {
+   "id": "lib_shop_util_shop",
+   "label": "Shop",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "norm_label": "shop",
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L1"
+  },
+  {
+   "id": "lib_shop_util_shop_loggable",
+   "label": "Shop::Loggable",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "norm_label": "shop::loggable",
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L16"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_guest_display",
+   "label": ".display()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".display()",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L49"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_user_display",
+   "label": ".display()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".display()",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L30"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_repo_add",
+   "label": ".add()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".add()",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L34"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_repo_each",
+   "label": ".each()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".each()",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L38"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_repo_initialize",
+   "label": ".initialize()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".initialize()",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L30"
+  },
+  {
+   "id": "lib_shop_shop_boot",
+   "label": ".boot()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "singleton"
+   },
+   "norm_label": ".boot()",
+   "source_file": "lib/shop.rb",
+   "source_location": "L12"
+  },
+  {
+   "id": "lib_shop_service_shop_service_build",
+   "label": ".build()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "singleton"
+   },
+   "norm_label": ".build()",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L42"
+  },
+  {
+   "id": "lib_shop_service_shop_service_userservice_audit",
+   "label": ".audit()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".audit()",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L33"
+  },
+  {
+   "id": "lib_shop_service_shop_service_userservice_export",
+   "label": ".export()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".export()",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L27"
+  },
+  {
+   "id": "lib_shop_service_shop_service_userservice_helper",
+   "label": ".helper()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".helper()",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L37"
+  },
+  {
+   "id": "lib_shop_service_shop_service_userservice_initialize",
+   "label": ".initialize()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".initialize()",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L8"
+  },
+  {
+   "id": "lib_shop_service_shop_service_userservice_register",
+   "label": ".register()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".register()",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L13"
+  },
+  {
+   "id": "test_service_test_servicetest_setup",
+   "label": ".setup()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".setup()",
+   "source_file": "test/service_test.rb",
+   "source_location": "L5"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_user_parse",
+   "label": ".parse()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "singleton"
+   },
+   "norm_label": ".parse()",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L20"
+  },
+  {
+   "id": "lib_shop_service_shop_service_userservice_promote",
+   "label": ".promote()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".promote()",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L22"
+  },
+  {
+   "id": "test_service_test_servicetest_test_parse",
+   "label": ".test_parse()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".test_parse()",
+   "source_file": "test/service_test.rb",
+   "source_location": "L14"
+  },
+  {
+   "id": "test_service_test_servicetest_test_register",
+   "label": ".test_register()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".test_register()",
+   "source_file": "test/service_test.rb",
+   "source_location": "L9"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_base_initialize",
+   "label": ".initialize()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".initialize()",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L9"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_base_save",
+   "label": ".save()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".save()",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L13"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_base_table",
+   "label": ".table()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "singleton"
+   },
+   "norm_label": ".table()",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L22"
+  },
+  {
+   "id": "lib_shop_models_base_shop_models_base_validate",
+   "label": ".validate()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".validate()",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L18"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_user_save",
+   "label": ".save()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".save()",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L24"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_user_initialize",
+   "label": ".initialize()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".initialize()",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L14"
+  },
+  {
+   "id": "lib_shop_util_shop_util_helper",
+   "label": ".helper()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".helper()",
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L10"
+  },
+  {
+   "id": "lib_shop_util_shop_util_slugify",
+   "label": ".slugify()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".slugify()",
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L6"
+  },
+  {
+   "id": "tasks_release_bump",
+   "label": "bump()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "bump()",
+   "source_file": "tasks/release.rake",
+   "source_location": "L9"
+  },
+  {
+   "id": "lib_shop_models_user_shop_models_user_admin_promote",
+   "label": ".promote()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".promote()",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L39"
+  },
+  {
+   "id": "lib_shop_util_shop_loggable_log",
+   "label": ".log()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "metadata": {
+    "ruby_method_kind": "instance"
+   },
+   "norm_label": ".log()",
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L17"
+  },
+  {
+   "id": "bin_shop_main",
+   "label": "main()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 7,
+   "file_type": "code",
+   "norm_label": "main()",
+   "source_file": "bin/shop",
+   "source_location": "L4"
+  },
+  {
+   "id": "base",
+   "label": "Base",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "base",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "lib_shop_models_user",
+   "label": "user.rb",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "metadata": {
+    "ruby_resolution_schema": 1,
+    "ruby_external_method_owners": [
+     "Shop::Models::Guest"
+    ]
+   },
+   "norm_label": "user.rb",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L1"
+  },
+  {
+   "id": "user",
+   "label": "User",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "user",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "lib_shop",
+   "label": "shop.rb",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "ruby_resolution_schema": 1,
+    "ruby_external_method_owners": [
+     "VERSION::*"
+    ]
+   },
+   "norm_label": "shop.rb",
+   "source_file": "lib/shop.rb",
+   "source_location": "L1"
+  },
+  {
+   "id": "lib_shop_models_base",
+   "label": "base.rb",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "metadata": {
+    "ruby_resolution_schema": 1
+   },
+   "norm_label": "base.rb",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L1"
+  },
+  {
+   "id": "lib_shop_service",
+   "label": "service.rb",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "metadata": {
+    "ruby_resolution_schema": 1,
+    "ruby_external_method_owners": [
+     "Shop::Service"
+    ]
+   },
+   "norm_label": "service.rb",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L1"
+  },
+  {
+   "id": "test",
+   "label": "Test",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "test",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "test_service_test",
+   "label": "service_test.rb",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "metadata": {
+    "ruby_resolution_schema": 1
+   },
+   "norm_label": "service_test.rb",
+   "source_file": "test/service_test.rb",
+   "source_location": "L1"
+  },
+  {
+   "id": "tasks_release",
+   "label": "release.rake",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "metadata": {
+    "ruby_resolution_schema": 1,
+    "ruby_lookup_unsafe": true
+   },
+   "norm_label": "release.rake",
+   "source_file": "tasks/release.rake",
+   "source_location": "L1"
+  },
+  {
+   "id": "lib_shop_util",
+   "label": "util.rb",
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "metadata": {
+    "ruby_resolution_schema": 1
+   },
+   "norm_label": "util.rb",
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L1"
+  },
+  {
+   "id": "bin_shop",
+   "label": "shop",
+   "_origin": "ast",
+   "community": 7,
+   "file_type": "code",
+   "metadata": {
+    "ruby_resolution_schema": 1
+   },
+   "norm_label": "shop",
+   "source_file": "bin/shop",
+   "source_location": "L1"
+  }
+ ],
+ "links": [
+  {
+   "source": "lib_shop_models_base_shop_models_base_save",
+   "target": "lib_shop_models_base_shop_models_base_validate",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L15",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user_initialize",
+   "target": "lib_shop_util_shop_util_slugify",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L16",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_build",
+   "target": "lib_shop_models_base_shop_models_repo",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L43",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_build",
+   "target": "lib_shop_service_shop_service_userservice",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L43",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice_audit",
+   "target": "lib_shop_service_shop_service_userservice_helper",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L34",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice_export",
+   "target": "lib_shop_service_shop_service_userservice_helper",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L28",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice_promote",
+   "target": "lib_shop_service_shop_service_userservice_promote",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L23",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice_promote",
+   "target": "lib_shop_models_user_shop_models_user_parse",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L24",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice_register",
+   "target": "lib_shop_models_user_shop_models_user",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L14",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice_register",
+   "target": "lib_shop_util_shop_util_slugify",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L16",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice_register",
+   "target": "lib_shop_service_shop_service_userservice_audit",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L17",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_shop_boot",
+   "target": "lib_shop_models_base_shop_models_repo",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop.rb",
+   "source_location": "L13",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_shop_boot",
+   "target": "lib_shop_service_shop_service_userservice",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop.rb",
+   "source_location": "L13",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_util_shop_util_helper",
+   "target": "lib_shop_util_shop_util_slugify",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L12",
+   "weight": 1.0
+  },
+  {
+   "source": "tasks_release_bump",
+   "target": "lib_shop_util_shop_util_helper",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "tasks/release.rake",
+   "source_location": "L10",
+   "weight": 1.0
+  },
+  {
+   "source": "test_service_test_servicetest_setup",
+   "target": "lib_shop_service_shop_service_build",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "test/service_test.rb",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "test_service_test_servicetest_test_parse",
+   "target": "lib_shop_models_user_shop_models_user_parse",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "test/service_test.rb",
+   "source_location": "L15",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user",
+   "target": "lib_shop_util_shop_loggable",
+   "relation": "mixes_in",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "mixin",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L9",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice",
+   "target": "lib_shop_util_shop_loggable",
+   "relation": "mixes_in",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "mixin",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user",
+   "target": "base",
+   "relation": "inherits",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "metadata": {
+    "ruby_superclass_ref": "Base",
+    "ruby_lexical_scopes": [
+     "Shop::Models",
+     "Shop"
+    ]
+   },
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user_admin",
+   "target": "user",
+   "relation": "inherits",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "metadata": {
+    "ruby_superclass_ref": "User",
+    "ruby_lexical_scopes": [
+     "Shop::Models::User",
+     "Shop::Models",
+     "Shop"
+    ]
+   },
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L38",
+   "weight": 1.0
+  },
+  {
+   "source": "test_service_test_servicetest",
+   "target": "test",
+   "relation": "inherits",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "metadata": {
+    "ruby_superclass_ref": "Minitest::Test",
+    "ruby_lexical_scopes": []
+   },
+   "source_file": "test/service_test.rb",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_guest",
+   "target": "user",
+   "relation": "inherits",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "metadata": {
+    "ruby_superclass_ref": "Shop::Models::User",
+    "ruby_lexical_scopes": []
+   },
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L48",
+   "weight": 1.0
+  },
+  {
+   "source": "bin_shop",
+   "target": "bin_shop_main",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "bin/shop",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_shop",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.rb",
+   "source_location": "L9",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base",
+   "target": "lib_shop_models_base_shop",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L1",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop",
+   "target": "lib_shop_models_base_shop_models",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models",
+   "target": "lib_shop_models_base_shop_models_repo",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L27",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models",
+   "target": "lib_shop_models_base_shop_models_base",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user",
+   "target": "lib_shop_models_user_shop",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L3",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user",
+   "target": "lib_shop_models_user_shop_models_guest",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L48",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop",
+   "target": "lib_shop_models_user_shop_models",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models",
+   "target": "lib_shop_models_user_shop_models_user",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user",
+   "target": "lib_shop_models_user_shop_models_user_admin",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L38",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "lib_shop_service_shop_service",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service",
+   "target": "lib_shop_service_shop_service_userservice",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_util",
+   "target": "lib_shop_util_shop",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L1",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_util_shop",
+   "target": "lib_shop_util_shop_loggable",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L16",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_util_shop",
+   "target": "lib_shop_util_shop_util",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "tasks_release",
+   "target": "tasks_release_bump",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tasks/release.rake",
+   "source_location": "L9",
+   "weight": 1.0
+  },
+  {
+   "source": "test_service_test",
+   "target": "test_service_test_servicetest",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/service_test.rb",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models_base",
+   "target": "lib_shop_models_base_shop_models_base_save",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L13",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models_base",
+   "target": "lib_shop_models_base_shop_models_base_validate",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L18",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models_base",
+   "target": "lib_shop_models_base_shop_models_base_table",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L22",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models_base",
+   "target": "lib_shop_models_base_shop_models_base_initialize",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L9",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models_repo",
+   "target": "lib_shop_models_base_shop_models_repo_initialize",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L30",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models_repo",
+   "target": "lib_shop_models_base_shop_models_repo_add",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L34",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_base_shop_models_repo",
+   "target": "lib_shop_models_base_shop_models_repo_each",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/base.rb",
+   "source_location": "L38",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_guest",
+   "target": "lib_shop_models_user_shop_models_guest_display",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L49",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user",
+   "target": "lib_shop_models_user_shop_models_user_initialize",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L14",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user",
+   "target": "lib_shop_models_user_shop_models_user_parse",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L20",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user",
+   "target": "lib_shop_models_user_shop_models_user_save",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L24",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user",
+   "target": "lib_shop_models_user_shop_models_user_display",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L30",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user_admin",
+   "target": "lib_shop_models_user_shop_models_user_admin_promote",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L39",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service",
+   "target": "lib_shop_service_shop_service_build",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L42",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice",
+   "target": "lib_shop_service_shop_service_userservice_register",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L13",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice",
+   "target": "lib_shop_service_shop_service_userservice_promote",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L22",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice",
+   "target": "lib_shop_service_shop_service_userservice_export",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L27",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice",
+   "target": "lib_shop_service_shop_service_userservice_audit",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L33",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice",
+   "target": "lib_shop_service_shop_service_userservice_helper",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L37",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice",
+   "target": "lib_shop_service_shop_service_userservice_initialize",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L8",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_shop",
+   "target": "lib_shop_shop_boot",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.rb",
+   "source_location": "L12",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_util_shop_loggable",
+   "target": "lib_shop_util_shop_loggable_log",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L17",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_util_shop_util",
+   "target": "lib_shop_util_shop_util_helper",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L10",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_util_shop_util",
+   "target": "lib_shop_util_shop_util_slugify",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/util.rb",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "test_service_test_servicetest",
+   "target": "test_service_test_servicetest_test_parse",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/service_test.rb",
+   "source_location": "L14",
+   "weight": 1.0
+  },
+  {
+   "source": "test_service_test_servicetest",
+   "target": "test_service_test_servicetest_setup",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/service_test.rb",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "test_service_test_servicetest",
+   "target": "test_service_test_servicetest_test_register",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/service_test.rb",
+   "source_location": "L9",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user_admin_promote",
+   "target": "lib_shop_util_shop_loggable_log",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L41",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_models_user_shop_models_user_save",
+   "target": "lib_shop_models_base_shop_models_base_validate",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "lib/shop/models/user.rb",
+   "source_location": "L27",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_shop_service_shop_service_userservice_register",
+   "target": "lib_shop_util_shop_loggable_log",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "lib/shop/service.rb",
+   "source_location": "L18",
+   "weight": 1.0
+  }
+ ],
+ "hyperedges": []
+}

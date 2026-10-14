@@ -120,6 +120,8 @@ pub enum LangFacts {
     Go(crate::extract::go::GoFacts),
     Java(crate::extract::java::JavaFacts),
     Data(crate::extract::data::DataFacts),
+    Php(crate::extract::php::PhpFacts),
+    Ruby(crate::extract::ruby::RubyFacts),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

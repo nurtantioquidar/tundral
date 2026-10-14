@@ -35,6 +35,8 @@ Status labels used below:
 15. Quirks summary and open questions
 16. Addenda from implementation
 17. Clustering, analysis and `GRAPH_REPORT.md`
+18. PHP
+19. Ruby
 
 ---
 
@@ -49,6 +51,8 @@ Status labels used below:
 | `go/` | `go.mod`, `store/{store,helpers}.go`, `service/{service,service_test}.go`, `cmd/app/main.go` | `go.graphify.json` | `go.clustered.graphify.json` |
 | `java/` | `src/main/java/com/shop/{model,service}/*.java`, `src/test/java/com/shop/service/UserServiceTest.java` | `java.graphify.json` | `java.clustered.graphify.json` |
 | `mixed/` | `package.json`, `tsconfig.json`, `Cargo.toml`, `pyproject.toml`, `scripts/{build,common}.sh`, `README.md`, `app/main.py` | `mixed.graphify.json` | `mixed.clustered.graphify.json` |
+| `php/` | `src/Models/{Model,Repository,Status,User}.php`, `src/Service/UserService.php`, `src/helpers.php`, `bin/app.php`, `tests/UserServiceTest.php` | `php.graphify.json` | `php.clustered.graphify.json` |
+| `ruby/` | `lib/shop.rb`, `lib/shop/{util,service}.rb`, `lib/shop/models/{base,user}.rb`, `bin/shop` (ruby shebang), `tasks/release.rake`, `test/service_test.rb` | `ruby.graphify.json` | `ruby.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -2068,3 +2072,195 @@ need no normalisation.
   `networkx.simple_cycles` over the arcs in link or `G.edges()` order (tested).
 - **Words** count the code files dijkstral indexes; `update` also counts markdown and other
   documents, and lists unclassified files, which dijkstral does not.
+
+---
+
+## 18. PHP
+
+Fixture `php/`; goldens `php.graphify.json` and `php.clustered.graphify.json` (50 nodes, 71
+links). Derived from the fixture, about forty probe repositories and guzzle. Graphify parses
+`.php` with tree-sitter-php's PHP-with-HTML grammar (text before `<?php` is skipped, a file of
+only HTML or `<?= ?>` keeps its file node); `.phtml .php5 .phps .php8` are not classified, `.inc`
+is code that yields nothing.
+
+### 18.1 Nodes
+
+| Construct | Id | Label | Fields |
+|---|---|---|---|
+| class, interface, trait, enum (any namespace, any depth) | `file_name` | `User` | `_callable`, `_callable_class` |
+| method (abstract and interface methods included) | `type_name` (`__construct` → `construct`) | `.__construct()` | `_callable` |
+| function at any depth (in `if (!function_exists())`, nested in a function, in a braced namespace) | `file_name` | `slugify()` | `_callable` |
+| method of an anonymous class | `file_name` (a function) | `am()` | `_callable` |
+| closure / arrow function | `file_closure_<n>`, numbered per file in pre-order | `{closure#n}()` | `_callable` |
+| enum case | `enum_case` | `Active` | — |
+| per-file type stub (§18.3) | `slug(last segment)` | as written, without namespace | stub shape |
+| shared import / supertype stub (§18.3) | `slug(fqn)` / `slug(name)` | the FQN / the name | stub shape |
+| `use function A\f;` / `use const A\C;` | external `slug(last segment)` | same as id | external shape |
+
+Not emitted (**Rule**): namespaces, properties, class constants, `require`/`include` (literal or
+not), PHPDoc and `// NOTE:` comments (no rationale nodes at all), anonymous classes themselves.
+
+### 18.2 Edges
+
+| Relation | Source → target | When | Confidence | Context | Location |
+|---|---|---|---|---|---|
+| `contains` | file → class, function, closure | always (closures and nested functions too) | EXTRACTED | — | definition line |
+| `method` | type → method | always | EXTRACTED | — | method line |
+| `case_of` | enum → case | always | EXTRACTED | — | case line |
+| `inherits` | class → `extends`; interface → each `extends` | always | EXTRACTED | — | class line |
+| `implements` | class or enum → each interface | always | EXTRACTED | — | class line |
+| `mixes_in` | class or trait → each trait of `use T1, T2 { … }` | always | EXTRACTED | — | `use` line |
+| `references` | function / method / closure → type | parameter and return types (union, intersection, nullable, DNF members each) | EXTRACTED | `parameter_type`, `return_type` | the function's line |
+| `references` | class → type | typed properties and promoted constructor parameters (each member: parameter ref, then field ref) | EXTRACTED | `field` | property line; constructor line for promotion |
+| `imports` | file → class or import stub | `use A\B [as C]`, grouped `use A\{B, C}` | EXTRACTED | `import` | statement line |
+| `imports` | file → external | `use function` / `use const` (never resolved to a function) | EXTRACTED | `import` | statement line |
+| `calls` | caller → callable / class | §18.4 | EXTRACTED (in file), EXTRACTED 1.0 or INFERRED 0.85 | `call` | first call line |
+| `references_constant` | caller → class | `X::CONST`, `X::class` inside a function (§18.4) | EXTRACTED 1.0 | — | first use |
+| `uses_static_prop` | caller → class | `X::$prop` inside a function | EXTRACTED 1.0 | — | first use |
+
+- **Rule.** Skipped types are tree-sitter's `primitive_type` (`array bool callable false float
+  int iterable mixed null object string true void`) and the `never` return type. `self`,
+  `static`, `parent`, `never` as a parameter type, `resource`, `integer`, `boolean`, `double`,
+  `list`, `Closure` all become stubs. `catch (X $e)`, `instanceof X` and PHPDoc types produce
+  nothing.
+- **Rule (fold).** `references_constant` ranks above `calls` and below `uses_static_prop`
+  (dijkstral: 35 and 36, §8.2): `L::X; new L();` keeps `references_constant` with the call's
+  context.
+
+### 18.3 Name resolution
+
+- **Imports.** `use A\B` targets the class whose FQN (namespace + name) is `A\B`, else the
+  shared stub `slug("A\B")` labelled `A\B`; never renamed per file. `use A\B as C` maps `C` for
+  types (not for calls, below). A qualified type `Psr7\Stream` under a non-aliased
+  `use GuzzleHttp\Psr7` names `GuzzleHttp\Psr7\Stream`; an aliased namespace (`use A as P;
+  P\X`) is not expanded.
+- **Types** (parameters, returns, properties): an imported name → the import target; a class of
+  the file → that class; anything else (also `\Fully\Qualified\X`) → a per-file stub of the last
+  segment, which the build binds to the only class of that label in the repository.
+- **Supertypes and traits** not imported or declared in the file → a stub shared by every file
+  (`countable`, `unknown`, never collision-renamed), bound the same way.
+- **Quirk (stub reservation).** Every name a file writes in a signature or supertype list
+  reserves the per-file id `slug(name)` even when nothing links to it, so two files writing
+  `StreamInterface` rename a linked stub to `src_authmiddleware_php_streaminterface` (§4.5)
+  although the other file emits no such node.
+
+### 18.4 Calls and constant uses
+
+Calls are attributed to the innermost function, method, closure or anonymous-class method;
+top-level code and class bodies have no caller. Deduplicated per (caller, target), first line.
+
+| Form | Result |
+|---|---|
+| `f()`, `$x->m()`, `$this->m()` with a definition named `f`/`m` in the file | EXTRACTED to the **last** function or method of that name in the file (any class, quirk like Q8) |
+| `$x?->m()`, `self::m()`, `static::m()`, `parent::m()`, `\Ns\f()` | dropped |
+| `new X` / `X::m()` with class `X` in the file | EXTRACTED to the class (never to the method) |
+| `new X` / `X::m()` where `X`'s last segment is a non-aliased import of a class | EXTRACTED 1.0 to the class |
+| otherwise (also `new A\B`, `new \X`), unless the file writes `X` as a type | INFERRED 0.85 to the nearest class `X` (§18.5) |
+| `X::m()` with a qualified `X`; an aliased `new C` | dropped |
+| bare `f()` not in the file | INFERRED 0.85 to the nearest function or method `f` |
+| a builtin-like name (`Proxy`, `Promise`, `Map`, `len`, `sorted`, … the Q15 list) as `f()`, `new X` or `X::` | dropped |
+| a cross-file call whose caller already links to the target in the file (type reference, constant use) | dropped |
+
+`X::CONST`/`X::class`/`X::$p` link only when the file declares `X` or writes it in a signature
+(→ its per-file stub) or a supertype list (→ the shared supertype stub); unqualified names only;
+`self::`/`static::`/`parent::` and class-body initialisers produce nothing.
+
+### 18.5 Nearest candidate (PHP and Ruby)
+
+A name bound across files (INFERRED) picks the candidate with the greatest key
+(**the candidate is a test file exactly when the caller is**, shared leading directories, same
+directory, same file); an equal best binds nothing. Test files: a `test`, `tests`, `spec`, `specs`
+or `__tests__` directory, or `*_test`, `*_spec`, `test_*`, `*.test.*`, `*.spec.*`. Measured
+pairwise from `rack-protection/spec/support/x.rb`: `test/` beats `rack-protection/lib/rack/`,
+`rack-protection/spec/` beats `test/`, `test/` ties `spec/`.
+
+### 18.6 Quirks and open questions (PHP)
+
+- **Quirk.** A class `extends`/`implements` link and a property `field` reference on the same pair
+  keep no context in Graphify; dijkstral's fold keeps `field` (guzzle: 2 links).
+- **Open.** `use GuzzleHttp\Server\Server;` inside a braced namespace becomes the external
+  `server` when a later namespace block of the file defines a function (guzzle
+  `tests/bootstrap.php`); dijkstral keeps the class import.
+- **Parity (2026-10-14, guzzle, `--ext .php`).** Nodes 4151/4152 (the `server` external), links
+  9634/9635 recall and precision; def nodes 100%.
+
+---
+
+## 19. Ruby
+
+Fixture `ruby/`; goldens `ruby.graphify.json` and `ruby.clustered.graphify.json` (56 nodes, 71
+links). `.rb`, `.rake` and `ruby` shebang scripts are code (`Gemfile`, `Rakefile`, `.gemspec` are
+not). Derived from the fixture, about thirty probes and sinatra.
+
+### 19.1 Nodes
+
+| Construct | Id | Label | Fields |
+|---|---|---|---|
+| file | `file` | as §5.1 | `metadata.ruby_resolution_schema: 1`, then `ruby_lookup_unsafe`, `ruby_external_method_owners` when set |
+| module / class | `file_<slug(qualified name)>` | qualified name: enclosing labels + `::` + the name as written (`Shop::Models::User`, `M::A::B`, `::Rooted`, `HelpersTest::::HelperTwo`) | `_callable`, `_callable_class`; `metadata.ruby_reopened`, `ruby_lookup_unsafe` |
+| `X = Class.new(…) [do … end]`, `X = Struct.new(…) [do … end]` | as a class | qualified `M::X` | as a class, always `ruby_lookup_unsafe` |
+| method directly in a module/class body or `class << self` | `owner_<method slug>` | `.name()` | `_callable`, `metadata.ruby_method_kind` |
+| any other `def` (top level, in a block, under `if`/`begin`, `private def x`, `def obj.x` at top level, in `Module.new do`) | `file_<method slug>` | `name()` | `_callable` |
+| per-file superclass stub | `slug(last segment)` | last segment | stub shape |
+
+- **Method slug (Rule).** A trailing `?`, `!`, `=` becomes `_pred`, `_bang`, `_eq` before
+  slugging: `valid?` → `valid_pred`, `save!` → `save_bang`, `name=` → `name_eq`, `==`/`===`/`!=`/
+  `[]=` → `eq` (so they merge), `!` → `bang`; names that slug to nothing (`<=>`, `+`, `[]`, `<<`,
+  `=~`, `-@`) produce no node.
+- **`ruby_method_kind`.** `instance`; `singleton` for `def self.x` and defs in `class << self`;
+  `ambiguous` for `def Const.x` / `def obj.x` in a body and for any id defined twice (`def a` and
+  `def self.a`, `===` and `!=`).
+- **Merging (Rule).** One node per id per file, first label and location kept, flags and
+  metadata merged: a class reopened in the file gets `ruby_reopened: true`; a module that takes a
+  method's id (`def stream` then `module Stream`) keeps `.stream()` with `_callable_class`
+  added and gets no `contains` link; a method taking a class's id adds `ruby_method_kind`.
+- **`ruby_lookup_unsafe`** is set on the innermost module/class (or the file, at top level)
+  whose body, outside any `def` and nested module/class, contains `include`, `extend`,
+  `prepend`, `attr`, `attr_reader`, `attr_writer`, `attr_accessor`, `define_method`,
+  `define_singleton_method`, `alias_method`, `module_function` with arguments, an `alias`, or a
+  `def` that is not a direct method (in a block, `if`, call argument, `Class.new` block). Also
+  on `::Rooted` modules and constant-assigned classes. Not: `private`, `delegate`,
+  `def_delegators`, bare `module_function`, `method_missing`.
+- **`ruby_external_method_owners`** (file, sorted): every module/class name written with `::`
+  (`Shop::Service`, `::HelperOne`), every `def Const.m` receiver, and `X::*` for every constant
+  assignment `X = …` (plus `Y::*` when the value is a constant `Y`).
+- Not emitted: `require`/`require_relative` (no import edges at all), comments and `=begin`
+  blocks (no rationale), `attr_*`, `alias`, `define_method`, constants, a `def` inside a method
+  body.
+
+### 19.2 Edges
+
+| Relation | Source → target | When | Confidence | Context |
+|---|---|---|---|---|
+| `contains` | file or enclosing module/class → module/class; file → function, constant class, a module/class defined in a block | always | EXTRACTED | — |
+| `method` | owner → method | always | EXTRACTED | — |
+| `inherits` | class → superclass | constant superclass: the file's top-level class labelled like its last segment, else the per-file stub (`class User < Base` → `base` even with `Shop::Models::Base` in the repo); `metadata: {"ruby_superclass_ref": written, "ruby_lexical_scopes": [enclosing labels, innermost first]}` | EXTRACTED | — |
+| `mixes_in` | module/class → module | `include`/`extend`/`prepend X` directly in the body, `X` resolved lexically (enclosing scopes innermost first, then as below) | EXTRACTED 1.0 | `mixin` |
+| `calls` | method/function → method/function/class | §19.3 | EXTRACTED, EXTRACTED 1.0, INFERRED 0.85 | `call` |
+
+### 19.3 Calls
+
+Attributed to the enclosing `def`; class bodies and top-level code have no caller. A bare
+identifier that is not a parameter or assigned local is a call; an identifier used as a
+receiver (`settings.x`) is not. Builtin-like names (the Q15 list: `print`, `filter`, `hash`,
+`len`, `sorted`, …) never bind, `puts` does. Names match the merged node labels (a def whose id
+an earlier node took answers to that node's label only).
+
+| Form | Result |
+|---|---|
+| `m`, `m()`, `self.m` in a method | EXTRACTED to the owner's method `m`, else a function `m` of the file |
+| `x.m`, `@x.m`, `::IO.m`, `call.m` | EXTRACTED to the **last** definition named `m` in the file (quirk like Q8: `admin.promote` → the caller itself) |
+| any call inside a function | EXTRACTED to the last definition of that name in the file |
+| bare `m` not bound in the file | INFERRED 0.85 to the nearest method or function `m` (§18.5) |
+| `Foo.new`, `Foo::Bar.new` | EXTRACTED 1.0 to the only module/class labelled `Foo` or `…::Foo` (no lexical lookup: `Request` is ambiguous with `Sinatra::WebDAV::Request` from `Sinatra::Base`) |
+| `Foo.m` | EXTRACTED 1.0 to `Foo`'s method `m` of any kind (`module_function` or not), else to `Foo` itself |
+| `self.m` / `x.m` not bound in the file, `super` | dropped |
+
+### 19.4 Quirks and open questions (Ruby)
+
+- **Quirk.** `def self.run(server, port)` merged with a later `def run` loses its parameters as
+  locals, so `port` becomes a bare call (sinatra: 1 link); dijkstral keeps the parameters.
+- **Open.** The location of a deduplicated self-call (`call` → `call`) differs in 3 sinatra
+  links.
+- **Parity (2026-10-14, sinatra, `--ext .rb`).** Nodes 1343/1343, links 2054/2055 recall and
+  precision, identical communities (NMI 1.0), no node field differences.
