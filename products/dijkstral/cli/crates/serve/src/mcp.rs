@@ -892,7 +892,7 @@ const RESOURCES: &[(&str, &str, &str, &str)] = &[
 fn project_path_schema() -> Value {
     json!({
         "type": "string",
-        "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
+        "description": "Absolute path to a project directory containing dijkstral-out/ (or a Graphify graphify-out/graph.json). Optional — defaults to the graph this server was started with."
     })
 }
 

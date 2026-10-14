@@ -17,8 +17,9 @@ outside the source tree under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstr
 | `parity.py` | Compares two `graph.json` files as sets: nodes by kind, links by relation, field agreement, samples of each difference; for clustered graphs, community agreement (same id, NMI, ARI) and array order |
 | `accuracy/` | Stage-2 SCIP oracle: precision and recall of both tools' graphs against compiler-grade indexes ([accuracy/README.md](accuracy/README.md)) |
 | `query.py` | Stage-3 query benchmark: `latency` (fresh process per call, p50/p95, peak RSS; Graphify on its reference graph, dijkstral on its own `graph.dij` and on Graphify's `graph.json`) → `results/query-<epoch>.json`; `parity` (both tools on Graphify's reference graph, seeds, NODE lists, EDGE sets and full output compared) → `results/query-parity-<epoch>.json`; `mcp` (MCP servers over stdio: spawn → `tools/list`, first and warm `query_graph` calls, peak RSS) → `results/mcp-<epoch>.json`; `report` prints the tables |
+| `hook.py` | Hook-guard latency: one fresh process per Claude Code `PreToolUse` payload for both tools, interleaved with the exec floor (`/usr/bin/true`) → `results/hook-<epoch>.json` |
 
-Later stages add query and hook latency, graph parity, SCIP precision/recall, and the paid
+Later stages add query latency, graph parity, SCIP precision/recall, and the paid
 agent-outcome runs (see `../DIJKSTRAL_DESIGN.md`).
 
 ## Run
@@ -29,6 +30,7 @@ bench/setup.sh                       # idempotent; `bench/setup.sh fastapi` for 
 uv run --no-project bench/run.py run --tools graphify --runs 3
 uv run --no-project bench/run.py run --tools graphify,dijkstral --repos fastapi,ripgrep
 uv run --no-project bench/run.py report bench/results/build-<epoch>.json
+uv run --no-project bench/hook.py    # hook-guard latency, both tools (needs a release build)
 bench/reference.sh fastapi           # freeze Graphify's graph for parity
 cli/target/release/dijkstral extract ~/.cache/dijkstral-bench/corpus/fastapi --out /tmp/fa
 uv run --no-project bench/parity.py /tmp/fa/dijkstral-out/graph.json \
@@ -353,3 +355,29 @@ first call carries the load.
   matched on all seven fixtures and on the fastapi (500 calls), ripgrep, excalidraw, graphify,
   monet, erpnext (240 each) and kubernetes (162) references, comparing EDGE lines as a set and
   ambiguity texts case-folded.
+### Stage 3: hook guard latency — 2026-10-14
+
+`hook.py`, 5 warm-up + 100 timed fresh-process runs per case, Graphify, dijkstral and the exec
+floor (`/usr/bin/true`) interleaved run by run; python fixture project; Apple M5 (10 cores),
+macOS 27.0; graphifyy 0.9.86, dijkstral 0.1.0 release build. p50 / p95 ms:
+
+| case | decision | Graphify | dijkstral | exec floor |
+|---|---|---|---|---|
+| search: Bash `git status` | silent | 69.9 / 76.8 | 11.0 / 14.5 | 6.2 / 8.3 |
+| search: Bash `rg` pipeline | nudge | 69.6 / 75.2 | 10.7 / 15.1 | 5.9 / 8.2 |
+| search: Grep | nudge | 70.3 / 77.0 | 10.7 / 14.9 | 6.0 / 7.9 |
+| read: Read `.py` | nudge | 68.7 / 74.0 | 13.4 / 15.5 | 7.0 / 8.5 |
+| read: Read `.json` | silent | 68.8 / 72.6 | 13.9 / 15.2 | 6.9 / 8.2 |
+| read: Glob `**/*.py` | nudge | 68.1 / 73.2 | 13.2 / 15.1 | 7.1 / 8.6 |
+| read --strict, session already denied | nudge | 64.2 / 78.3 | 8.4 / 12.1 | 4.9 / 7.2 |
+| search: Grep, no graph | silent | 64.7 / 76.4 | 8.9 / 12.4 | 5.1 / 8.2 |
+| `hook-check` (Codex no-op) | silent | 65.7 / 78.4 | 8.7 / 13.9 | 5.2 / 8.2 |
+
+Both tools return the same decision class in every case. dijkstral is 5–8× faster but misses the
+5 ms p50 target on this machine, where spawning any process is slow: `/usr/bin/true` alone costs
+5–7 ms p50 (an endpoint-security agent inspects every exec). The guard's own work is microseconds
+(`cargo test --release -p dijkstral-agents decision_cost -- --ignored --nocapture`: 1.6–3.7 µs per
+decision). The rest of dijkstral's margin over the floor is exec and load cost that a minimal Rust
+binary also pays (+2.5–4 ms over `/usr/bin/true`), about 1.5 ms of it from binary size (a 12 MB
+binary measured against a 0.5 MB one); a separate small hook binary would recover that part.
+

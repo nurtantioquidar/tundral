@@ -7,7 +7,9 @@ license.workspace = true
 publish.workspace = true
 
 [dependencies]
+anyhow.workspace = true
 clap.workspace = true
+dijkstral-agents.workspace = true
 dijkstral-core.workspace = true
 dijkstral-serve.workspace = true
 mimalloc.workspace = true

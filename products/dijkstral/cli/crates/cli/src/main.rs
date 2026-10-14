@@ -1,3 +1,4 @@
+mod agents_cmd;
 mod mcp_cmd;
 mod query_cmds;
 
@@ -36,6 +37,8 @@ enum Command {
     Query(query_cmds::QueryCommand),
     /// Serve the graph to AI assistants over MCP (stdio): Graphify's graphify-mcp tools.
     Mcp(mcp_cmd::McpArgs),
+    #[command(flatten)]
+    Agents(agents_cmd::AgentCommand),
 }
 
 #[derive(Args, Debug)]
@@ -73,8 +76,12 @@ struct BuildArgs {
 }
 
 fn main() -> ExitCode {
+    if let Some(code) = agents_cmd::early_dispatch() {
+        return code;
+    }
     let cli = Cli::parse();
     let args = match cli.command {
+        Command::Agents(cmd) => return agents_cmd::run(cmd),
         Command::Extract(args) | Command::Update(args) => args,
         Command::Query(cmd) => return query_cmds::run(cmd),
         Command::Mcp(args) => return mcp_cmd::run(args),
@@ -154,5 +161,12 @@ mod tests {
     #[test]
     fn cli_definition_is_valid() {
         Cli::command().debug_assert();
+    }
+
+    #[test]
+    fn hook_guard_watches_the_files_builds_write() {
+        use dijkstral_core::pipeline;
+        assert_eq!(dijkstral_agents::OUT_DIR, pipeline::OUT_DIR);
+        assert_eq!(dijkstral_agents::DIGEST_FILE, pipeline::DIGEST_FILE);
     }
 }
