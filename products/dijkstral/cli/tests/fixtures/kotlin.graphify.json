@@ -1,0 +1,1964 @@
+{
+ "nodes": [
+  {
+   "id": "build_gradle",
+   "label": "build.gradle.kts",
+   "file_type": "code",
+   "source_file": "build.gradle.kts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "build_gradle_shopversion",
+   "label": "shopVersion()",
+   "file_type": "code",
+   "source_file": "build.gradle.kts",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_main",
+   "label": "Main.kt",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/Main.kt",
+   "source_location": "L1",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_main_main",
+   "label": "main()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/Main.kt",
+   "source_location": "L4",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model",
+   "label": "Model.kt",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_entity",
+   "label": "Entity",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L6",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "k",
+   "label": "K",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_entity_describe",
+   "label": ".describe()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_model",
+   "label": "Model",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L16",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_model_validate",
+   "label": ".validate()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_model_touch",
+   "label": ".touch()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L21",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_status",
+   "label": "Status",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L27",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_status_active",
+   "label": "ACTIVE",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L28",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_status_inactive",
+   "label": "INACTIVE",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_status_label",
+   "label": ".label()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L31",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_result",
+   "label": "Result",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L34",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_ok",
+   "label": "Ok",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L35",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_fail",
+   "label": "Fail",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L37",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user",
+   "label": "User.kt",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user_address",
+   "label": "Address",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L3",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user_user",
+   "label": "User",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L6",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "comparable",
+   "label": "Comparable",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user_user_validate",
+   "label": ".validate()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user_user_greet",
+   "label": ".greet()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L11",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user_user_compareto",
+   "label": ".compareTo()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L16",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user_user_of",
+   "label": ".of()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L21",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user_user_guest",
+   "label": ".guest()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L23",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_user_displayname",
+   "label": "displayName()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L27",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_audit",
+   "label": "Audit.kt",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_audit_audited",
+   "label": "Audited",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L3",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_audit_auditable",
+   "label": "Auditable",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L5",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_audit_auditable_audit",
+   "label": ".audit()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "label": "InMemoryRepository",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L9",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_audit_kt_t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_save",
+   "label": ".save()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_all",
+   "label": ".all()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L16",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice",
+   "label": "UserService.kt",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_repository",
+   "label": "Repository",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L11",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_repository_save",
+   "label": ".save()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_kt_t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_repository_all",
+   "label": ".all()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "label": "UserService",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L18",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "customer",
+   "label": "Customer",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "flow",
+   "label": "Flow",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "label": ".register()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L23",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_userservice_save",
+   "label": ".save()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L40",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_userservice_notify",
+   "label": ".notify()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L44",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_userservice_notify_object_runnable_l45",
+   "label": "Runnable",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L45",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_userservice_notify_object_runnable_l45_run",
+   "label": ".run()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L46",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_userservice_names",
+   "label": ".names()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L53",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_userservice_audit",
+   "label": ".audit()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L55",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_stats",
+   "label": "Stats",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L57",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_stats_count",
+   "label": ".count()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L58",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_registry",
+   "label": "Registry",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L62",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_registry_remember",
+   "label": ".remember()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L65",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_service_userservice_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L71",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_util_strings",
+   "label": "Strings.kt",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_util_strings_slugify",
+   "label": "slugify()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L4",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_util_strings_formatter",
+   "label": "Formatter",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L6",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_util_strings_formatter_shout",
+   "label": ".shout()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_util_strings_formatter_whisper",
+   "label": ".whisper()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_util_strings_words",
+   "label": "words()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_util_strings_second",
+   "label": "second()",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_util_strings_kt_t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_test_kotlin_com_shop_service_userservicetest",
+   "label": "UserServiceTest.kt",
+   "file_type": "code",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_test_kotlin_com_shop_service_userservicetest_userservicetest",
+   "label": "UserServiceTest",
+   "file_type": "code",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L7",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_test_kotlin_com_shop_service_userservicetest_userservicetest_registersuser",
+   "label": ".registersUser()",
+   "file_type": "code",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "test",
+   "label": "Test",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_test_kotlin_com_shop_service_userservicetest_formatter",
+   "label": "Formatter",
+   "file_type": "code",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L17",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_test_kotlin_com_shop_service_userservicetest_formatter_shout",
+   "label": ".shout()",
+   "file_type": "code",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L18",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "jvmtarget",
+   "label": "jvmtarget",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "instant",
+   "label": "instant",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "loggerfactory",
+   "label": "loggerfactory",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "assertequals",
+   "label": "assertequals",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "build_gradle",
+   "target": "jvmtarget",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "build.gradle.kts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "org.jetbrains.kotlin.gradle.dsl.JvmTarget"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "build_gradle",
+   "target": "build_gradle_shopversion",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "build.gradle.kts",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_main",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/Main.kt",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "com.shop.service.UserService"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_main",
+   "target": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/Main.kt",
+   "source_location": "L2",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "com.shop.service.InMemoryRepository"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_main",
+   "target": "src_main_kotlin_main_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/Main.kt",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_main",
+   "target": "src_main_kotlin_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/Main.kt",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model",
+   "target": "instant",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L3",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "java.time.Instant"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model",
+   "target": "src_main_kotlin_com_shop_model_model_entity",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_entity",
+   "target": "k",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_entity",
+   "target": "src_main_kotlin_com_shop_model_model_entity_describe",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model",
+   "target": "src_main_kotlin_com_shop_model_model_model",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_model",
+   "target": "src_main_kotlin_com_shop_model_model_entity",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_model",
+   "target": "src_main_kotlin_com_shop_model_model_model_validate",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_model",
+   "target": "src_main_kotlin_com_shop_model_model_model_touch",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_model_touch",
+   "target": "src_main_kotlin_com_shop_model_model_model",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L21",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model",
+   "target": "src_main_kotlin_com_shop_model_model_status",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_status",
+   "target": "src_main_kotlin_com_shop_model_model_status_active",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_status",
+   "target": "src_main_kotlin_com_shop_model_model_status_inactive",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_status",
+   "target": "src_main_kotlin_com_shop_model_model_status_label",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model",
+   "target": "src_main_kotlin_com_shop_model_model_result",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L34",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_result",
+   "target": "src_main_kotlin_com_shop_model_model_ok",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_ok",
+   "target": "src_main_kotlin_com_shop_model_model_result",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_result",
+   "target": "src_main_kotlin_com_shop_model_model_fail",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_fail",
+   "target": "src_main_kotlin_com_shop_model_model_result",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model_model_touch",
+   "target": "src_main_kotlin_com_shop_model_model_model_validate",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user",
+   "target": "src_main_kotlin_com_shop_model_user_address",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user",
+   "target": "src_main_kotlin_com_shop_model_user_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_model_model",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "comparable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_user_address",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_model_status",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_user_user_validate",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_user_user_greet",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_user_user_compareto",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user_compareto",
+   "target": "src_main_kotlin_com_shop_model_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L16",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_user_user_of",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user_of",
+   "target": "src_main_kotlin_com_shop_model_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L21",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user",
+   "target": "src_main_kotlin_com_shop_model_user_user_guest",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user_guest",
+   "target": "src_main_kotlin_com_shop_model_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user",
+   "target": "src_main_kotlin_com_shop_model_user_displayname",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user_compareto",
+   "target": "src_main_kotlin_com_shop_model_user_user_compareto",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user_of",
+   "target": "src_main_kotlin_com_shop_model_user_user",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user_guest",
+   "target": "src_main_kotlin_com_shop_model_user_user_of",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_user_guest",
+   "target": "src_main_kotlin_com_shop_model_user_user_validate",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user_displayname",
+   "target": "src_main_kotlin_com_shop_model_user_user_greet",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_user",
+   "target": "src_main_kotlin_com_shop_model_user_user_of",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/User.kt",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit",
+   "target": "src_main_kotlin_com_shop_service_audit_audited",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit",
+   "target": "src_main_kotlin_com_shop_service_audit_auditable",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit_auditable",
+   "target": "src_main_kotlin_com_shop_service_audit_auditable_audit",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit",
+   "target": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "target": "src_main_kotlin_com_shop_service_userservice_repository",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "target": "src_main_kotlin_com_shop_service_audit_kt_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "target": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_save",
+   "target": "src_main_kotlin_com_shop_service_audit_kt_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "target": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_all",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_all",
+   "target": "src_main_kotlin_com_shop_service_audit_kt_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
+   "source_location": "L16",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "src_main_kotlin_com_shop_model_user_address",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L3",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "com.shop.model.Address"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "src_main_kotlin_com_shop_model_model_entity",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L4",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "com.shop.model.Entity"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "src_main_kotlin_com_shop_model_user_user",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L5",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "com.shop.model.User",
+    "alias": "Customer"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "src_main_kotlin_com_shop_model_user_displayname",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "com.shop.model.displayName"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "flow",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L8",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "kotlinx.coroutines.flow.Flow"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "loggerfactory",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L9",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "org.slf4j.LoggerFactory"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_repository",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_repository",
+   "target": "src_main_kotlin_com_shop_service_userservice_repository_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_repository_save",
+   "target": "src_main_kotlin_com_shop_service_userservice_kt_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_repository",
+   "target": "src_main_kotlin_com_shop_service_userservice_repository_all",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_repository_all",
+   "target": "src_main_kotlin_com_shop_service_userservice_kt_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L14",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "src_main_kotlin_com_shop_service_audit_auditable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_repository",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L18",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "customer",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L18",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "flow",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L21",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "target": "customer",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "target": "src_main_kotlin_com_shop_service_audit_audited",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "attribute",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "target": "src_main_kotlin_com_shop_model_user_address",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L33",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L40",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_save",
+   "target": "customer",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L40",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_notify",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L44",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_notify",
+   "target": "customer",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L44",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_notify",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_notify_object_runnable_l45",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L45",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_notify_object_runnable_l45",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_notify_object_runnable_l45",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L45",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_notify_object_runnable_l45",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_notify_object_runnable_l45_run",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L46",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_names",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L53",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_audit",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L55",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_stats",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L57",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_stats",
+   "target": "src_main_kotlin_com_shop_service_userservice_stats_count",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L58",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_registry",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L62",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_registry",
+   "target": "src_main_kotlin_com_shop_service_userservice_registry_remember",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L65",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_registry_remember",
+   "target": "customer",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L65",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice",
+   "target": "src_main_kotlin_com_shop_service_userservice_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L71",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_save",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_notify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "target": "src_main_kotlin_com_shop_service_userservice_registry_remember",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_notify",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_notify_object_runnable_l45_run",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L50",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_stats_count",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice_names",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L58",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_registry_remember",
+   "target": "src_main_kotlin_com_shop_service_userservice_helper",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L67",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_util_strings",
+   "target": "src_main_kotlin_com_shop_util_strings_slugify",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_util_strings",
+   "target": "src_main_kotlin_com_shop_util_strings_formatter",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_util_strings_formatter",
+   "target": "src_main_kotlin_com_shop_util_strings_formatter_shout",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_util_strings_formatter",
+   "target": "src_main_kotlin_com_shop_util_strings_formatter_whisper",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_util_strings",
+   "target": "src_main_kotlin_com_shop_util_strings_words",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_util_strings",
+   "target": "src_main_kotlin_com_shop_util_strings_second",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_util_strings_second",
+   "target": "src_main_kotlin_com_shop_util_strings_kt_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L14",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_util_strings_formatter_whisper",
+   "target": "src_main_kotlin_com_shop_util_strings_slugify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest",
+   "target": "src_main_kotlin_com_shop_model_user_user",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L3",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "com.shop.model.User"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest",
+   "target": "assertequals",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L4",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "kotlin.test.assertEquals"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest",
+   "target": "test",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L5",
+   "weight": 1.0,
+   "metadata": {
+    "target_fqn": "org.junit.jupiter.api.Test"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest",
+   "target": "src_test_kotlin_com_shop_service_userservicetest_userservicetest",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest_userservicetest",
+   "target": "src_test_kotlin_com_shop_service_userservicetest_userservicetest_registersuser",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest_userservicetest_registersuser",
+   "target": "test",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "attribute",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest_userservicetest",
+   "target": "src_test_kotlin_com_shop_service_userservicetest_formatter",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest_formatter",
+   "target": "src_test_kotlin_com_shop_service_userservicetest_formatter_shout",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_main_main",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/main/kotlin/Main.kt",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_main_main",
+   "target": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/main/kotlin/Main.kt",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_service_userservice_userservice_register",
+   "target": "src_main_kotlin_com_shop_util_strings_slugify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest_userservicetest",
+   "target": "src_main_kotlin_com_shop_service_userservice_userservice",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_test_kotlin_com_shop_service_userservicetest_userservicetest",
+   "target": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/test/kotlin/com/shop/service/UserServiceTest.kt",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

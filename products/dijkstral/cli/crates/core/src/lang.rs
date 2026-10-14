@@ -24,6 +24,10 @@ pub enum Lang {
     GoMod,
     /// `.sh`, `.bash`, and sh/bash/zsh shebang scripts.
     Shell,
+    /// `.kt`, `.kts`.
+    Kotlin,
+    /// `.scala` (`.sc` and `.sbt` are not classified).
+    Scala,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -36,10 +40,12 @@ pub enum Family {
     Java,
     Data,
     Shell,
+    Kotlin,
+    Scala,
 }
 
 impl Lang {
-    pub const COUNT: usize = 11;
+    pub const COUNT: usize = 13;
 
     /// Classify a path. `shebang` is consulted only for extensionless files.
     pub fn classify(path: &Path) -> Option<Lang> {
@@ -63,6 +69,8 @@ impl Lang {
             "java" => Lang::Java,
             "json" => Lang::Json,
             "sh" | "bash" => Lang::Shell,
+            "kt" | "kts" => Lang::Kotlin,
+            "scala" => Lang::Scala,
             _ => return None,
         })
     }
@@ -76,6 +84,8 @@ impl Lang {
             Lang::Java => Family::Java,
             Lang::Json | Lang::Toml => Family::Data,
             Lang::Shell => Family::Shell,
+            Lang::Kotlin => Family::Kotlin,
+            Lang::Scala => Family::Scala,
         }
     }
 
@@ -88,6 +98,8 @@ impl Lang {
             Lang::Rust => tree_sitter_rust::LANGUAGE.into(),
             Lang::Go => tree_sitter_go::LANGUAGE.into(),
             Lang::Java => tree_sitter_java::LANGUAGE.into(),
+            Lang::Kotlin => tree_sitter_kotlin_ng::LANGUAGE.into(),
+            Lang::Scala => tree_sitter_scala::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }

@@ -12,8 +12,10 @@
 pub mod data;
 pub mod go;
 pub mod java;
+pub mod kotlin;
 pub mod python;
 pub mod rust;
+pub mod scala;
 pub mod script;
 
 use std::collections::{HashMap, HashSet};
@@ -92,12 +94,14 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         file_ids,
     };
 
-    let passes: [fn(&[View], &Index) -> Resolution; 6] = [
+    let passes: [fn(&[View], &Index) -> Resolution; 8] = [
         python::resolve,
         script::resolve,
         rust::resolve,
         go::resolve,
         java::resolve,
+        kotlin::resolve,
+        scala::resolve,
         data::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {

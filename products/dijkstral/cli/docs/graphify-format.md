@@ -1,7 +1,8 @@
 # Graphify `graph.json` format: black-box specification
 
 This document specifies what `graphify extract <dir> --code-only` writes to `graph.json` for Python,
-TypeScript/TSX, JavaScript/JSX, Rust, Go and Java, plus what JSON, TOML and shell files contribute.
+TypeScript/TSX, JavaScript/JSX, Rust, Go, Java, Kotlin and Scala, plus what JSON, TOML and shell files
+contribute.
 The reference is PyPI `graphifyy` 0.9.86. It was derived only by running that binary on inputs and
 reading the outputs: the fixtures under `tests/fixtures/`, small probe repositories, and scratch
 copies of the benchmark corpus (`~/.cache/dijkstral-bench/corpus/<repo>/graphify-out/graph.json`).
@@ -35,6 +36,8 @@ Status labels used below:
 15. Quirks summary and open questions
 16. Addenda from implementation
 17. Clustering, analysis and `GRAPH_REPORT.md`
+18. Kotlin
+19. Scala
 
 ---
 
@@ -49,6 +52,8 @@ Status labels used below:
 | `go/` | `go.mod`, `store/{store,helpers}.go`, `service/{service,service_test}.go`, `cmd/app/main.go` | `go.graphify.json` | `go.clustered.graphify.json` |
 | `java/` | `src/main/java/com/shop/{model,service}/*.java`, `src/test/java/com/shop/service/UserServiceTest.java` | `java.graphify.json` | `java.clustered.graphify.json` |
 | `mixed/` | `package.json`, `tsconfig.json`, `Cargo.toml`, `pyproject.toml`, `scripts/{build,common}.sh`, `README.md`, `app/main.py` | `mixed.graphify.json` | `mixed.clustered.graphify.json` |
+| `kotlin/` | `build.gradle.kts`, `src/main/kotlin/Main.kt`, `src/main/kotlin/com/shop/{model,service,util}/*.kt`, `src/test/kotlin/com/shop/service/UserServiceTest.kt` | `kotlin.graphify.json` | `kotlin.clustered.graphify.json` |
+| `scala/` | `build.sbt` (not classified), `src/main/scala/Main.scala`, `src/main/scala/shop/{model,service,util}/*.scala`, `src/test/scala/shop/service/UserServiceSuite.scala` | `scala.graphify.json` | `scala.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -185,7 +190,7 @@ once clustering matches.
 The full probe tables are in §14 and in the mixed fixture notes. In summary:
 
 - **Code extensions** (case-insensitive):
-  - This spec: `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .rs .go .java`.
+  - This spec: `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .rs .go .java .kt .kts .scala`.
   - Also counted as code but out of scope here: `.json` (allowlisted manifests only, §14.1),
     `Cargo.toml`/`pyproject.toml` (only those names, §14.2), `.sh .bash` (§14.3), and `.rb .c .h
     .cpp .cc .cxx .hpp .cu .cs .kt .kts .swift .php .scala .groovy .gradle .dart .lua .zig .ex .exs
@@ -574,6 +579,10 @@ pair.
 - If the ranks differ, the higher-ranked edge survives.
 - If the ranks are equal, the edge whose **source id is lexicographically smaller** survives,
   regardless of extraction order (probe `rev1`: `x_alpha→x_zeta` and `x_beta→x_gamma` both survive).
+  **Except in rank 4** (`contains`, `method`, `inherits`, `implements`…), where the **larger**
+  source survives: a nested class that inherits its outer class keeps `contains` when its id sorts
+  first (`f_result -contains-> f_ok`, Java `r_r -contains-> r_o`) and `inherits` otherwise
+  (okhttp `…connectionevent_connectstart -inherits-> …connectionevent_connectionevent`).
 
 **Validation.** Replaying this model on raw edges reproduced 759 of 769 multi-edge pairs (all six
 language fixtures plus scratch `extract` runs of ripgrep and fastapi). The ten misses:
@@ -1688,7 +1697,8 @@ Code (by extension, observed): `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .go .j
 `.d.ts` and `.min.js` are code (not filtered).
 
 - `.r`, `.sql`, `.tf` count as code but contribute nothing (stderr: optional grammar missing).
-- Some code files "yield no symbols" (warning lists them): e.g. `fun kt() {}` in `.kt`,
+- Some code files "yield no symbols" (warning lists them): e.g. `fun kt() {}` in `.kt` (the
+  function's id `<file>_kt` is the file's internal id, so it merges into the file node, §18.1),
   `fn = () => 1` in `.jsx`, any `.vue`/`.svelte`/`.lua`/`.zig` stub, root workspace `Cargo.toml`.
   Such files still get a **file node** unless noted (JSON/TOML below are exceptions).
 - `*.toml`: only files named `Cargo.toml` and `pyproject.toml` are code; `config.toml` is
@@ -1777,6 +1787,10 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 | Q16 | JSON key ids use only the immediate parent key (`package_c_d` for `deep.a.b.c.d`). TOML package files are reported as "yielded no symbols" yet emit a node. | §14 |
 | Q17 | `dynamic_import` edges have no `weight` and no `source_location`. | §7.1 |
 | Q18 | Python: `from . import x` inside `pkg/__init__.py` produces an `imports_from` self-loop, which the build then drops. | §8.3 |
+| Q19 | Kotlin/Scala: a definition named like the file's extension (`fun kt()` in `a.kt`, `def scala()` in `Main.scala`) merges into the file node, which gains `_callable` and a `contains` self-loop. | §18.1, §19.1 |
+| Q20 | Kotlin: declarations found inside `init` blocks, secondary constructors, misparsed headers and anonymous objects outside functions become top-level functions of the file; Scala does the same for `def`s in expression blocks of a class body. | §18.1, §19.1 |
+| Q21 | Kotlin: references to a qualified type use its **first** segment (`Interceptor.Chain` → `Interceptor`, `java.io.File` → `java`). | §18.2 |
+| Q22 | Scala: imports link to the first path segment (`import shop.model.User` → `shop`). | §19.2 |
 
 ### 15.2 Open questions
 
@@ -2068,3 +2082,208 @@ need no normalisation.
   `networkx.simple_cycles` over the arcs in link or `G.edges()` order (tested).
 - **Words** count the code files dijkstral indexes; `update` also counts markdown and other
   documents, and lists unclassified files, which dijkstral does not.
+
+---
+
+## 18. Kotlin
+
+Fixture `tests/fixtures/kotlin/` (Gradle layout, packages `com.shop.{model,service,util}`, a test
+under `src/test/kotlin`, a root `Main.kt` and `build.gradle.kts`). Goldens `kotlin.graphify.json`,
+`kotlin.clustered.graphify.json` and the §17.6 report goldens; Graphify's per-file cache
+(`graphify-out/cache/ast/<version>/*.json`, which also lists each file's unresolved `raw_calls`
+and its `kotlin_package`) was the main oracle. Grammar: `tree-sitter-kotlin` 1.1.0 (the crate
+`tree-sitter-kotlin-ng` 1.1.0, same parse trees). `.kt` and `.kts` are both Kotlin; file ids drop
+only the final extension (`build.gradle.kts` → `build_gradle`). Validated on okhttp (§18.5).
+
+### 18.1 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| class, interface, `object`, `data`/`sealed`/`value`/`enum`/`annotation` class, `fun interface`, `data object` — nested at any depth | `file_slug(Name)`, flat | `Name` | `_callable`, `_callable_class` |
+| companion object (named or not) | none: its members belong to the enclosing class | | |
+| top-level function, extension function (`fun User.displayName()`) | `file_slug(name)` | `name()` | `_callable` |
+| method (class, object, companion, interface with or without body, enum entry) | `owner_slug(name)`; overloads merge (first line) | `.name()` | `_callable` |
+| enum entry | `enum_slug(NAME)`; its body's methods `entry_m` | `NAME` | none |
+| anonymous object in a function body | `<function>_object_slug(Type)_l<line>` (first supertype, last segment) | `Type` | `_callable`, `_callable_class` |
+| type referenced but not declared earlier in the file | per-file stub `slug(Name)` | `Name` | §4.4 |
+| unresolved import | external `slug(last segment)` | | §4.4 |
+
+- Not emitted: properties (top-level or member), type aliases, constructors (primary or
+  secondary), `init` blocks, accessors, local functions and classes, script statements of `.kts`
+  files, and rationale (KDoc, `// NOTE:` comments).
+- **Rule (walk).** Declarations are found through any non-declaration node, except function
+  bodies: functions inside a misparsed region (a class whose header failed to parse, an
+  `annotated_expression` swallowing a class) become top-level functions. Inside a class body,
+  declarations nested in other nodes (`init { body = object : Sink { override fun close() } }`,
+  local `val`s in a secondary constructor) are taken as **top-level** declarations of the file:
+  `close()` is `file_close`, `contains` from the file (Q20).
+- **Quirk Q19.** A definition whose id equals the file's internal id `slug(path with
+  extension)` merges into the file node: `fun kt() {}` in `Main.kt` (`src_main_kotlin_main_kt`)
+  adds `_callable` to the file node and a `contains` self-loop; `class Kt` adds
+  `_callable_class` too, and its methods keep the unmerged prefix (`a_kt_kt`). This is §14.5's
+  "yields no symbols".
+
+### 18.2 Edges
+
+All in-file edges: EXTRACTED, no score, weight 1.0, `source_file` of the source construct.
+
+| relation | source → target | when | context | location |
+|---|---|---|---|---|
+| `contains` | file → top-level class/function; class → nested class; function → anonymous object | always | none | declaration line (annotations included) |
+| `method` | class/object/entry/anonymous object → method | always | none | method line |
+| `case_of` | enum → entry | always | none | entry line |
+| `inherits` | class → supertype written as a constructor call (`Base()`, `Result()`) | | none | class line |
+| `implements` | class → any other supertype (`Iface`, `Comparable<User>`, `Iface by impl`) | | none | class line |
+| `references` | class → type of a `val`/`var` constructor parameter | plain parameters excluded | `field` | the parameter's line |
+| `references` | class → type of a member property (class body, companion; anonymous object properties to the object) | | `field` | property line |
+| `references` | function → parameter types / return type | receiver types excluded | `parameter_type` / `return_type` | function line |
+| `references` | any of the above → type arguments, recursively (`Map<String, List<Deep>>` → `deep`), and supertypes' arguments (not for anonymous objects) | | `generic_arg` | as above |
+| `references` | class/function/property owner → every annotation (`@Throws`, `@get:JvmName`, `@field:Json`; constructor-parameter annotations to the class); class annotations also → their `X::class` arguments (`@RunWith(AndroidJUnit4::class)`) | | `attribute` | annotated declaration's line |
+| `imports` | file → import target (§18.3), `metadata: {"target_fqn": …[, "alias": …]}` | every non-wildcard import | `import` | import line |
+| `calls` | function/method → function/method/class/anonymous object; class or file → … from property initializers | §18.4 | `call` | call line |
+
+- **Type names.** A reference to a qualified type uses its **first** segment
+  (`Interceptor.Chain` → `Interceptor`, `java.io.File` → `java`; quirk Q21); supertypes and
+  annotations use the last (`b.Base<T>` → `Base`). Nullable types count; function types
+  (`(Foo) -> Bar`, `Foo.() -> Unit`), star projections, bounds and `where` clauses produce
+  nothing. Type parameters are stubs (`T` → `t`, per file).
+- **Denied types.** About 100 common Kotlin and JDK names never produce a reference or stub
+  (`String`, `Int`, `List`, `MutableMap`, `Exception`, `IOException`, `Instant`, `File`,
+  `TimeUnit`, `Runnable`, `Random`, `Executor`…; the list is in `extract/kotlin.rs`). The list
+  does **not** apply to supertypes (`: Closeable`, `object : Runnable`) or annotations.
+- **Local types** bind by name to a class declared **earlier** in the file (or the class being
+  declared): a nested `Builder` referenced before its declaration is a stub.
+- References dedupe per (source, target, context, line).
+- No `uses`, `indirect_call` or `rationale_for`.
+
+### 18.3 Imports
+
+The per-file target is `slug(last segment)` (aliases ignored; `import a.b.*` produces nothing).
+Graphify then binds it, in order:
+
+1. by **FQN** to the only definition whose `package + "." + label` equals it, over every
+   non-method node of Kotlin and Java files: classes, objects, nested classes by their flat
+   label, anonymous objects, **enum entries** and top-level functions. `okhttp3.Dns` stays
+   unbound because a test enum in package `okhttp3` has an entry `Dns`; nested FQNs
+   (`okhttp3.CallEvent.CallStart`) never match.
+2. to the file's own stub of that name (a type the file uses), which then binds like any stub;
+3. to any other node with that id (another file's unrenamed stub);
+4. to the only file whose stem slugs to it (§8.1): `import okhttp3.Request` with
+   `Request` ambiguous → `Request.kt`; the edge is dropped when that file is not Kotlin;
+5. else the external node `slug(last)`.
+
+### 18.4 Calls
+
+In the file, calls bind by name to the **last** function, method, class or anonymous object of
+that name in the file, whatever the receiver (`repo.save(u)` → the file's last `save`,
+`name.compareTo(…)` inside `compareTo` → itself). Enum entries do not bind. One edge per
+(caller, callee), first line kept. Names in the call denylist never bind: the Python builtins
+`abs all any bool bytes callable delattr dict dir enumerate filter float getattr hasattr hash id
+int isinstance iter len list map max min next object open print range repr reversed round set
+setattr sorted str sum super tuple type vars zip`, the JS globals `isNaN isFinite parseInt
+parseFloat decodeURI decodeURIComponent encodeURI encodeURIComponent`, and the constructor names
+`String Error Date JSON Array Map Set Object Promise Math Number Boolean Symbol URL Int Float
+Bool Int32 Int64 RegExp Proxy Reflect File Response Request Headers Color Font UUID Uuid Data
+BigInt WeakMap WeakSet URLSearchParams FormData Blob Intl Character Double Decimal EvalError
+TypeError RangeError SyntaxError Locale` (probed one by one).
+
+Walked: function bodies first (pre-order: `a.b().c()` visits `c`, `b`), then property
+initializers (caller: the class, or the file at the top level; `by lazy {}` included). Not
+walked: local functions, accessors, `init` blocks, constructors, default arguments, `.kts`
+statements other than property declarations.
+
+Across files (`confidence_score` set), skipping any (caller, target) pair that already has an
+edge (`f(x: Foo) { Foo() }` keeps only the reference):
+
+1. **Bare calls** `name(…)`: an import whose last segment is `name` and whose FQN binds (§18.3)
+   → EXTRACTED 1.0 (`UserService(…)` imported in `Main.kt`). Otherwise, unless the file uses a
+   type of that name (`via_stub` in Graphify's cache), the nearest definition of that name
+   (enum entries and anonymous objects included) → INFERRED 0.85: most shared leading
+   directories, then same directory; a tie binds nothing, a sole candidate binds even with no
+   shared directory. When that fails, a member import `import okhttp3.TestUtil.assumeNetwork`
+   binds `assumeNetwork()` to that object's method (INFERRED 0.85).
+2. **Object receivers** `Type.m(…)` (a capitalised identifier receiver): when `Type` names exactly
+   one Kotlin class and that class (companion included) has exactly one method `m` → EXTRACTED
+   1.0. Overloaded `m`, `Named.Factory.m()` and Java receivers bind nothing; the denylist does
+   not apply (`Adapters.any(…)` binds).
+3. Calls on any other receiver (`x.m()`, `this.m()`, `super.m()`) never bind across files.
+
+### 18.5 Parity
+
+Fixture: 100% of nodes and links, communities and array order exact, report goldens exact.
+Corpus okhttp (`.kt`/`.kts`, frozen reference): file and def nodes 100%/100%; all nodes 99.9%
+recall / 100.0% precision; links 99.8%/99.8% (`calls` 99.7/99.8, `imports` 99.8/99.8,
+`references` 99.9/99.7, all other relations ≥ 99.6). Remaining: in-file call targets where
+Graphify prefers a cross-file import over a same-file anonymous object of the same name, a few
+proximity ties, and Java-side effects (Graphify's Java pass sees Kotlin nodes, dijkstral's does
+not; §16 externals as collision emitters).
+
+---
+
+## 19. Scala
+
+Fixture `tests/fixtures/scala/` (packages `shop.{model,service,util}`, Scala 3 top-level `def`s,
+`enum`, `extension`, a self type, a munit suite). Grammar `tree-sitter-scala` 0.26.2. Only
+`.scala` is code: `.sc` and `.sbt` are "not classified" (probe `s0`). Validated on munit (§19.4).
+
+### 19.1 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| `class`, `case class`, `trait`, `object`, `case object`, `enum`, named `given` — nested at any depth | `file_slug(Name)`, flat; a companion object shares its class's id (second `contains`) | `Name` (the given's name) | `_callable`, `_callable_class` |
+| `def` (abstract or not, `def this(…)` too) in a class/trait/object/enum | `owner_slug(name)`; overloads merge | `.name()` | `_callable` |
+| top-level `def`, `def` in a package object or `extension` | `file_slug(name)` | `name()` | `_callable` |
+| enum case | `enum_slug(Case)` | `Case` | none |
+| any type name not declared in the file | per-file stub `slug(Name)` — **no denylist**: `String`, `Int`, `Unit`, `List`, `Option` are stubs | `Name` | §4.4 |
+| import | external `slug(first path segment)` | | §19.2 |
+
+Not emitted: `val`/`var`, type aliases, anonymous classes (`new Runnable { … }`), local `def`s,
+annotations, rationale. Q19 applies (`def scala()` in `Main.scala`). Declarations found inside
+expressions of a class body or in a `val`'s value are top-level declarations of the file
+(`test("…") { val user: User = … }` gives `file -references-> user field`; `val anon = new
+Base { def m() }` gives the function `file_m`).
+
+### 19.2 Edges
+
+| relation | source → target | context | location |
+|---|---|---|---|
+| `contains` | file → top-level class/def; class → nested class/given | none | declaration line |
+| `method`, `case_of` | class → `def`; enum → case | none | its line |
+| `inherits` | class → first type of `extends` (trait or class alike) | none | that type's line |
+| `mixes_in` | class → each `with` type | none | that type's line |
+| `requires` | trait → every type named in its self type (`this: Base[Int] with M =>` → `base`, `int`, `m`) | none | self-type line |
+| `references` | class → every primary-constructor parameter type (all parameter lists, `val` or not); typed `val`/`var` and type alias of a class body (file for top-level ones) | `field` | parameter / declaration line |
+| `references` | `def` → first parameter list's types / return type | `parameter_type` / `return_type` | `def` line |
+| `references` | → type arguments, recursively | `generic_arg` | as above |
+| `references` | `def` → context bound (`[T: Type]`) | `type_bound` | `def` line |
+| `imports` | file → `slug(first segment)` (`import shop.model.{A, B => C}` → `shop`; one edge per import, also inside class bodies) | `import` | import line |
+| `calls` | `def` → `def`/class/case | `call` | call line |
+
+- Supertypes carry no type-argument references, and a supertype naming the class itself
+  (`object Assertions extends Assertions`) is dropped; references never point at their source.
+- Type forms: tuple and compound types reference each part, a projection `A#B` both names, a
+  function type only its result (`() => Future[T]` → `future`, `t`), by-name (`=> T`) and
+  repeated (`T*`) parameters nothing; a qualified type (`mutable.Map[K, V]`) references only its
+  arguments; supertypes use the last segment (`scala.annotation.StaticAnnotation`).
+- **Local types** bind when `file_slug(Name)` is a node emitted earlier in the file — any class,
+  object, `given` or top-level `def` (`Ordering[Foo]` binds to `given ordering`; a parameter
+  `context: AfterEach` binds to an earlier top-level `def afterEach`).
+- Import targets bind to an existing node with that id (another file's stub `diff` → its class),
+  else to the only file with that stem (§8.1), else an external; an import of the file itself
+  (`import JUnitReporter._` in `JUnitReporter.scala`) is dropped.
+
+### 19.3 Calls
+
+In-file binding as Kotlin (§18.4: last definition of that name, same denylist), over `def` bodies
+only: `val` initializers, object bodies and anonymous class bodies are not walked, and
+`new X(…)` and generic calls `f[T](…)` are not calls. Across files only bare calls bind,
+INFERRED 0.85 by the §18.4 proximity rule (no import-based binding, no object receivers).
+
+### 19.4 Parity
+
+Fixture: 100% nodes and links, communities and order exact, analysis and cluster-only goldens
+exact (the `update` report lists `build.sbt` as unclassified, §17.7). Corpus munit (`.scala`):
+nodes 99.9%/99.9%, links 99.9%/99.9% (calls, imports, references, method, mixes_in, requires
+100%). Remaining: two stubs Graphify renames because a Java file's external import node of the
+same id counts as a collision emitter (§16), and one self-`contains` of nested same-slug
+classes (`object a { case class A() }`).
