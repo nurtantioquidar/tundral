@@ -1,0 +1,30 @@
+{
+  "communities": {
+    "0": [
+      "scripts_deploy_deployer",
+      "scripts_deploy_deployer_deploy",
+      "scripts_deploy_deployer_load",
+      "scripts_deploy_deployer_run"
+    ],
+    "1": [
+      "pathlib",
+      "scripts_deploy"
+    ]
+  },
+  "cohesion": {
+    "0": 0.8333333333333334,
+    "1": 1.0
+  },
+  "gods": [
+    {
+      "id": "scripts_deploy_deployer",
+      "label": "Deployer",
+      "degree": 4
+    }
+  ],
+  "surprises": [],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

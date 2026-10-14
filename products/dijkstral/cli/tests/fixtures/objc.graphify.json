@@ -1,0 +1,1076 @@
+{
+ "nodes": [
+  {
+   "id": "shop_bridge",
+   "label": "Bridge.mm",
+   "file_type": "code",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_bridge_bridge",
+   "label": "Bridge",
+   "file_type": "code",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_bridge_mm_nsobject",
+   "label": "NSObject",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_bridge_bridge_run",
+   "label": "-run",
+   "file_type": "code",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_circle_h_shop_models_circle",
+   "label": "Circle.h",
+   "file_type": "code",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_circle_circle",
+   "label": "Circle",
+   "file_type": "code",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L3",
+   "definition_file": "Shop/Models/Circle.m",
+   "definition_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_circle_circle_area",
+   "label": "-area",
+   "file_type": "code",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L5",
+   "definition_file": "Shop/Models/Circle.m",
+   "definition_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_circle_m_shop_models_circle",
+   "label": "Circle.m",
+   "file_type": "code",
+   "source_file": "Shop/Models/Circle.m",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_circle_circle_draw",
+   "label": "-draw",
+   "file_type": "code",
+   "source_file": "Shop/Models/Circle.m",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_h_shop_models_shape",
+   "label": "Shape.h",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_drawable",
+   "label": "<Drawable>",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_h_nsobject",
+   "label": "NSObject",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_drawable_draw",
+   "label": "-draw",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_drawable_caption",
+   "label": "-caption",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shapekind",
+   "label": "ShapeKind",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shapekind_shapekindcircle",
+   "label": "ShapeKindCircle",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shapekind_shapekindsquare",
+   "label": "ShapeKindSquare",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shape",
+   "label": "Shape",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L18",
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_h_nsstring",
+   "label": "NSString",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "nsarray",
+   "label": "NSArray",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shape_initwithname",
+   "label": "-initWithName",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L22",
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shape_area",
+   "label": "-area",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L23",
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L19",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shape_draw",
+   "label": "-draw",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L24",
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L28",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shape_shapenamed",
+   "label": "+shapeNamed",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L25",
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L32",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_m_shop_models_shape",
+   "label": "Shape.m",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_m_nsstring",
+   "label": "NSString",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_shape_shape_refresh",
+   "label": "-refresh",
+   "file_type": "code",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "self",
+   "label": "self",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_util",
+   "label": "Util.h",
+   "file_type": "code",
+   "source_file": "Shop/Models/Util.h",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_models_util_twice",
+   "label": "twice()",
+   "file_type": "code",
+   "source_file": "Shop/Models/Util.h",
+   "source_location": "L4",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_services_repo_h_shop_services_repo",
+   "label": "Repo.h",
+   "file_type": "code",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_services_repo_repo",
+   "label": "Repo",
+   "file_type": "code",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L6",
+   "definition_file": "Shop/Services/Repo.m",
+   "definition_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_services_repo_h_nsobject",
+   "label": "NSObject",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_services_repo_repo_add",
+   "label": "-add",
+   "file_type": "code",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L10",
+   "definition_file": "Shop/Services/Repo.m",
+   "definition_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_services_repo_repo_find",
+   "label": "-find",
+   "file_type": "code",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L11",
+   "definition_file": "Shop/Services/Repo.m",
+   "definition_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_services_repo_repo_report",
+   "label": "-report",
+   "file_type": "code",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L12",
+   "definition_file": "Shop/Services/Repo.m",
+   "definition_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop_services_repo_m_shop_services_repo",
+   "label": "Repo.m",
+   "file_type": "code",
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "main",
+   "label": "main.m",
+   "file_type": "code",
+   "source_file": "main.m",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "vector",
+   "label": "vector",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "foundation",
+   "label": "foundation",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "uikit",
+   "label": "uikit",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "shop_bridge",
+   "target": "shop_services_repo_h_shop_services_repo",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_bridge",
+   "target": "vector",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_bridge",
+   "target": "shop_bridge_bridge",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_bridge_bridge",
+   "target": "shop_bridge_mm_nsobject",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_bridge_bridge",
+   "target": "shop_bridge_bridge_run",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_circle_h_shop_models_circle",
+   "target": "shop_models_shape_h_shop_models_shape",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_circle_h_shop_models_circle",
+   "target": "shop_models_circle_circle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_circle_circle",
+   "target": "shop_models_shape_shape",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_circle_circle",
+   "target": "shop_models_circle_circle_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_circle_m_shop_models_circle",
+   "target": "shop_models_circle_h_shop_models_circle",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Circle.m",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_circle_m_shop_models_circle",
+   "target": "shop_models_circle_circle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Circle.m",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_circle_circle",
+   "target": "shop_models_circle_circle_draw",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Circle.m",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_h_shop_models_shape",
+   "target": "foundation",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_h_shop_models_shape",
+   "target": "shop_models_util",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_h_shop_models_shape",
+   "target": "shop_models_shape_drawable",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_drawable",
+   "target": "shop_models_shape_h_nsobject",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_drawable",
+   "target": "shop_models_shape_drawable_draw",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_drawable",
+   "target": "shop_models_shape_drawable_caption",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_h_shop_models_shape",
+   "target": "shop_models_shape_shapekind",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shapekind",
+   "target": "shop_models_shape_shapekind_shapekindcircle",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shapekind",
+   "target": "shop_models_shape_shapekind_shapekindsquare",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_h_shop_models_shape",
+   "target": "shop_models_shape_shape",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_h_nsobject",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_drawable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_h_nsstring",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_shapekind",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "nsarray",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_shape_initwithname",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_shape_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_shape_draw",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_shape_shapenamed",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_m_shop_models_shape",
+   "target": "shop_models_shape_h_shop_models_shape",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_m_shop_models_shape",
+   "target": "shop_models_shape_shape",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape",
+   "target": "shop_models_shape_shape_refresh",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape_initwithname",
+   "target": "shop_models_shape_shape_refresh",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L14",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape_refresh",
+   "target": "shop_models_shape_shape_area",
+   "relation": "accesses",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape_draw",
+   "target": "shop_models_shape_shape_refresh",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L29",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape_shapenamed",
+   "target": "shop_models_shape_shape_initwithname",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L33",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape_shapenamed",
+   "target": "self",
+   "relation": "references",
+   "context": "type",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L33",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_util",
+   "target": "shop_models_util_twice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Models/Util.h",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_h_shop_services_repo",
+   "target": "foundation",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_h_shop_services_repo",
+   "target": "shop_models_shape_h_shop_models_shape",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_h_shop_services_repo",
+   "target": "shop_services_repo_repo",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo",
+   "target": "shop_services_repo_h_nsobject",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo",
+   "target": "shop_models_circle_circle",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo",
+   "target": "shop_services_repo_repo_add",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo",
+   "target": "shop_services_repo_repo_find",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo",
+   "target": "shop_services_repo_repo_report",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_m_shop_services_repo",
+   "target": "shop_services_repo_h_shop_services_repo",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_m_shop_services_repo",
+   "target": "shop_models_circle_circle",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_m_shop_services_repo",
+   "target": "uikit",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_m_shop_services_repo",
+   "target": "shop_services_repo_repo",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_report",
+   "target": "shop_models_circle_circle",
+   "relation": "references",
+   "context": "type",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_report",
+   "target": "shop_services_repo_repo_find",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L25",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "foundation",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "main.m",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "shop_services_repo_h_shop_services_repo",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "main.m",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_bridge_bridge_run",
+   "target": "shop_services_repo_repo",
+   "relation": "references",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_bridge_bridge_run",
+   "target": "shop_services_repo_repo_report",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape_initwithname",
+   "target": "shop_models_shape_shape",
+   "relation": "references",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_models_shape_shape_shapenamed",
+   "target": "shop_models_shape_shape",
+   "relation": "references",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L33",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_add",
+   "target": "shop_models_shape_shape_refresh",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_find",
+   "target": "shop_models_shape_shape_shapenamed",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_find",
+   "target": "shop_models_shape_shape_area",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_find",
+   "target": "shop_models_shape_shape",
+   "relation": "references",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_report",
+   "target": "shop_models_circle_circle_area",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_report",
+   "target": "shop_models_circle_circle_draw",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "shop_services_repo_repo_report",
+   "target": "shop_services_repo_repo",
+   "relation": "references",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

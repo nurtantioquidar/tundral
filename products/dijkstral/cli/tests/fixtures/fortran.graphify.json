@@ -1,0 +1,1180 @@
+{
+ "nodes": [
+  {
+   "id": "app_main",
+   "label": "main.f90",
+   "file_type": "code",
+   "source_file": "app/main.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "app_main_main",
+   "label": "main",
+   "file_type": "code",
+   "source_file": "app/main.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "app_main_f90_geometry",
+   "label": "geometry",
+   "file_type": "code",
+   "source_file": "app/main.f90",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "shapes",
+   "label": "shapes",
+   "file_type": "code",
+   "source_file": "app/main.f90",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "app_main_summarize",
+   "label": "summarize()",
+   "file_type": "code",
+   "source_file": "app/main.f90",
+   "source_location": "L19",
+   "_origin": "ast"
+  },
+  {
+   "id": "app_main_print_summary",
+   "label": "print_summary()",
+   "file_type": "code",
+   "source_file": "app/main.f90",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "app_main_print_summary_inner",
+   "label": "print_summary_inner()",
+   "file_type": "code",
+   "source_file": "app/main.f90",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "legacy_solver",
+   "label": "solver.f90",
+   "file_type": "code",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "legacy_solver_solve",
+   "label": "solve()",
+   "file_type": "code",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "legacy_solver_step",
+   "label": "step()",
+   "file_type": "code",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "legacy_solver_trace",
+   "label": "trace()",
+   "file_type": "code",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "legacy_solver_legacy_types",
+   "label": "legacy_types",
+   "file_type": "code",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L25",
+   "_origin": "ast"
+  },
+  {
+   "id": "legacy_solver_options",
+   "label": "options",
+   "file_type": "code",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "legacy_solver_label",
+   "label": "label",
+   "file_type": "code",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_constants",
+   "label": "constants.f90",
+   "file_type": "code",
+   "source_file": "src/constants.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_constants_constants",
+   "label": "constants",
+   "file_type": "code",
+   "source_file": "src/constants.f90",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_constants_deg2rad",
+   "label": "deg2rad()",
+   "file_type": "code",
+   "source_file": "src/constants.f90",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry",
+   "label": "geometry.f90",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_geometry",
+   "label": "geometry",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "constants",
+   "label": "constants",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "iso_fortran_env",
+   "label": "iso_fortran_env",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_point",
+   "label": "point",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_point3",
+   "label": "point3",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_distance",
+   "label": "distance()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L19",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_point_norm",
+   "label": "point_norm()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_shift",
+   "label": "shift()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L35",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_distance_points",
+   "label": "distance_points()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L42",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_distance_coords",
+   "label": "distance_coords()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L48",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_add_points",
+   "label": "add_points()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L54",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_origin",
+   "label": "origin()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L60",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_report_circle",
+   "label": "report_circle()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L66",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_geometry_circumference",
+   "label": "circumference()",
+   "file_type": "code",
+   "source_file": "src/geometry.f90",
+   "source_location": "L71",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes",
+   "label": "shapes.f90",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_shapes",
+   "label": "shapes",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_f90_geometry",
+   "label": "geometry",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_f90_utils",
+   "label": "utils",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_circle",
+   "label": "circle",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_area_fn",
+   "label": "area_fn()",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_external_draw",
+   "label": "external_draw()",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "canvas",
+   "label": "canvas",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_circle_area",
+   "label": "circle_area()",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_make_circle",
+   "label": "make_circle()",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L35",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_describe",
+   "label": "describe()",
+   "file_type": "code",
+   "source_file": "src/shapes.f90",
+   "source_location": "L43",
+   "_origin": "ast"
+  },
+  {
+   "id": "label",
+   "label": "label",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "utils_f90_utils",
+   "label": "utils.f90",
+   "file_type": "code",
+   "source_file": "utils.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "utils_utils",
+   "label": "utils",
+   "file_type": "code",
+   "source_file": "utils.f90",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "utils_label",
+   "label": "label",
+   "file_type": "code",
+   "source_file": "utils.f90",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "utils_log_value",
+   "label": "log_value()",
+   "file_type": "code",
+   "source_file": "utils.f90",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "utils_factorial",
+   "label": "factorial()",
+   "file_type": "code",
+   "source_file": "utils.f90",
+   "source_location": "L15",
+   "_origin": "ast"
+  }
+ ],
+ "edges": [
+  {
+   "source": "app_main",
+   "target": "app_main_main",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_main",
+   "target": "app_main_f90_geometry",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "use",
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_main",
+   "target": "shapes",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "use",
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_main",
+   "target": "app_main_summarize",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_summarize",
+   "target": "src_shapes_circle",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L20",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_main",
+   "target": "app_main_print_summary",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_print_summary",
+   "target": "app_main_print_summary_inner",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_main",
+   "target": "app_main_summarize",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_main",
+   "target": "app_main_print_summary",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L14",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_print_summary",
+   "target": "app_main_print_summary_inner",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L27",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "app_main_print_summary_inner",
+   "target": "app_main_summarize",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L30",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver",
+   "target": "legacy_solver_solve",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver",
+   "target": "legacy_solver_step",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver",
+   "target": "legacy_solver_trace",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver",
+   "target": "legacy_solver_legacy_types",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver_legacy_types",
+   "target": "legacy_solver_options",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver_legacy_types",
+   "target": "legacy_solver_label",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver_solve",
+   "target": "legacy_solver_step",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver_solve",
+   "target": "legacy_solver_trace",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_constants",
+   "target": "src_constants_constants",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/constants.f90",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_constants_constants",
+   "target": "src_constants_deg2rad",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/constants.f90",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry",
+   "target": "src_geometry_geometry",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "constants",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "use",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "iso_fortran_env",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "use",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_point",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_point3",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_distance",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_point_norm",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_point_norm",
+   "target": "src_geometry_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L30",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_shift",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_shift",
+   "target": "src_geometry_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L36",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_distance_points",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L42",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_distance_points",
+   "target": "src_geometry_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L43",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_distance_coords",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L48",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_add_points",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L54",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_add_points",
+   "target": "src_geometry_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L55",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_origin",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L60",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_origin",
+   "target": "src_geometry_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L61",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_geometry",
+   "target": "src_geometry_report_circle",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L66",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_report_circle",
+   "target": "src_geometry_circumference",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L71",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_point",
+   "target": "src_geometry_point_norm",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "type_bound_procedure",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_point",
+   "target": "src_geometry_shift",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "type_bound_procedure",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_distance",
+   "target": "src_geometry_distance_points",
+   "relation": "dispatches_to",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L20",
+   "weight": 1.0,
+   "context": "generic_interface",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_distance",
+   "target": "src_geometry_distance_coords",
+   "relation": "dispatches_to",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L20",
+   "weight": 1.0,
+   "context": "generic_interface",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_distance_points",
+   "target": "src_geometry_distance_coords",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L45",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_add_points",
+   "target": "src_geometry_point",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L57",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_origin",
+   "target": "src_geometry_point",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L62",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_report_circle",
+   "target": "src_geometry_circumference",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L68",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_geometry_circumference",
+   "target": "src_geometry_report_circle",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L73",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "src_shapes_shapes",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shapes",
+   "target": "src_shapes_f90_geometry",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "use",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shapes",
+   "target": "src_shapes_f90_utils",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "use",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shapes",
+   "target": "src_shapes_circle",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shapes",
+   "target": "src_shapes_area_fn",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_area_fn",
+   "target": "src_shapes_circle",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L14",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shapes",
+   "target": "src_shapes_external_draw",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_external_draw",
+   "target": "src_shapes_circle",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L22",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_external_draw",
+   "target": "canvas",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shapes",
+   "target": "src_shapes_circle_area",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_circle_area",
+   "target": "src_shapes_circle",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L30",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shapes",
+   "target": "src_shapes_make_circle",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_make_circle",
+   "target": "src_geometry_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L36",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_make_circle",
+   "target": "src_shapes_circle",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L38",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shapes",
+   "target": "src_shapes_describe",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L43",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_describe",
+   "target": "src_shapes_circle",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L44",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_describe",
+   "target": "label",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L45",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_describe",
+   "target": "legacy_solver_options",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L46",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_make_circle",
+   "target": "src_shapes_circle",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L39",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_describe",
+   "target": "src_shapes_circle_area",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L47",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_describe",
+   "target": "src_shapes_external_draw",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L48",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "utils_f90_utils",
+   "target": "utils_utils",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "utils.f90",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "utils_utils",
+   "target": "utils_label",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "utils.f90",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "utils_utils",
+   "target": "utils_log_value",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "utils.f90",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "utils_utils",
+   "target": "utils_factorial",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "utils.f90",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

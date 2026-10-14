@@ -53,6 +53,11 @@ Status labels used below:
 40. Astro
 41. PowerShell
 42. Visual Basic
+33. Zig
+34. Objective-C
+35. Fortran
+36. Verilog (`.v`)
+37. Solidity
 
 ---
 
@@ -84,6 +89,11 @@ Status labels used below:
 | `astro/` | `src/utils/posts.ts`, `src/layouts/Base.astro`, `src/components/{Header,PostCard}.astro`, `src/components/Like.tsx`, `src/pages/{index,about}.astro` | `astro.graphify.json` | `astro.clustered.graphify.json` |
 | `powershell/` | `build.ps1`, `scripts/Common.ps1`, `Modules/Shop/{Shop.psd1,Shop.psm1}`, `Modules/Shop/Private/Pricing.psm1`, `tests/Shop.Tests.ps1` | `powershell.graphify.json` | `powershell.clustered.graphify.json` |
 | `vb/` | `Shop/Program.vb`, `Shop/Models/{Entity,User}.vb`, `Shop/Services/UserService.vb` | `vb.graphify.json` (empty) | none (Graphify stops: "graph is empty") |
+| `zig/` | `main.zig`, `util.zig`, `src/{shapes,hue,lonely}.zig`, `tests/main_test.zig` | `zig.graphify.json` | `zig.clustered.graphify.json` |
+| `objc/` | `main.m`, `Shop/Bridge.mm`, `Shop/Models/{Shape,Circle}.{h,m}`, `Shop/Models/Util.h` (C), `Shop/Services/Repo.{h,m}` | `objc.graphify.json` | `objc.clustered.graphify.json` |
+| `fortran/` | `utils.f90`, `src/{constants,geometry,shapes}.f90`, `legacy/solver.f90`, `app/main.f90` | `fortran.graphify.json` | `fortran.clustered.graphify.json` |
+| `verilog/` | `rtl/{top,alu,fifo}.v`, `mem/ram.v`, `counter.v`, `tb/tb_top.v`, `tb/model.py`, `vlang/main.v` (a V-language file), `empty.v` (0 bytes) | `verilog.graphify.json` | `verilog.clustered.graphify.json` |
+| `solidity/` | `contracts/{Base,Token}.sol`, `scripts/deploy.py` | `solidity.graphify.json` | `solidity.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -3485,3 +3495,637 @@ Related extensions: `.cls` is code in Graphify but extracted as **Apex** (the gr
 `sample.cls`: `AccountService`, `.createAccounts()`, DML `uses`), not VB6, and is not implemented
 here; `.vbproj` is code (an MSBuild file, like `.csproj` §18.5, not implemented); `.bas`, `.frm`
 and `.vbs` are not classified.
+## 33. Zig
+
+Fixture `tests/fixtures/zig/`; goldens `zig.*` (§1, §17.6). Extension `.zig`; tree-sitter-zig 1.1.2
+(Graphify's version). Rules were isolated with probe repositories and checked on zls, libxev,
+http.zig and zig-clap (identical node and link sets) and on the Graphify repository's
+`tests/fixtures/sample.zig`. Graphify does extract Zig symbols: §14.5's "yields no symbols" holds
+only for a stub without declarations. Implementation: `crates/core/src/{extract,resolve}/zig.rs`.
+
+### 33.1 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| file | file id | §5.1 | — |
+| `const`/`var` holding a `struct`, `enum`, `union` (any layout keyword) or error set | `file_slug(Name)`, **flat** (also when nested in another container) | `Name` | — |
+| function (`pub`, `extern`, `export`, `inline` alike) | `file_slug(name)` | `name()` | — |
+| function of a named container | `container_slug(name)` | `.name()` | — |
+| enum field, tagged-union field, error-set name | `container_slug(NAME)` | `NAME` | — |
+| `@import` target with no node or file (§33.3) | `slug(name)` | id | external |
+
+- **Rule.** Declarations are read outside function bodies: at file level, in container bodies,
+  and anywhere inside `test` and `comptime` blocks (nested `if` blocks included), where
+  containers are file-level containers. Containers declared inside a function (generic
+  `return struct {...}`, local `const L = struct {...}`) give nothing, nor do their functions.
+- The container may sit in the type position (`const t: struct { a: i32 } = .{}` gives `t`),
+  but a declaration that also holds a field chain gives no container: `var s: enum { a } = .a;`
+  (an enum literal is a field expression), `const P = @import("x.zig").P;`.
+- Functions of an anonymous container in a `test` block's **statement**
+  (`loop.timer(..., (struct { fn callback(...) ... }).callback)`) are file-level functions
+  `callback()`; same-named ones merge (§8.1). An anonymous container inside a variable
+  declaration's value (`_ = run(struct { fn cb() ... })`, also at file level) is not walked.
+- A struct (or plain union) field whose type contains an inline container hands that
+  container's members to the struct: `kind: enum { file, dir }` gives cases `S_file`, `S_dir` of
+  `S`; `opt: ?enum { maybe }` too; an inline `struct { flag: enum { on, off }, fn im() }` gives
+  cases `on`, `off` and method `.im()` of `S`. Fields of an enum or tagged union are cases and
+  their types are not walked (`slow: struct { depth: enum {...} }` inside a `union(enum)` adds
+  nothing).
+- A union is tagged when `(` follows `union` (`union(enum)`, `union(enum(u8))`, `union(Tag)`);
+  plain and `extern` unions give no cases. Struct fields never give nodes.
+- Not emitted: `opaque` declarations (with their functions), type aliases (`const T = u32`),
+  merged error sets (`error{A} || error{B}`), `usingnamespace`, `test` and `comptime` blocks
+  themselves, globals and constants, comments (`// NOTE:`, `///` doc comments: no rationale),
+  type references. No node carries `_callable`.
+- Nested containers are flat (`const Outer = struct { const Inner = ... }` → `file_inner`,
+  contained by the file); two same-named nested containers of one file merge (§8.1, ZG1).
+
+### 33.2 Edges
+
+| relation | source → target | context | confidence | location |
+|---|---|---|---|---|
+| `contains` | file → container / function | — | EXTRACTED | declaration line |
+| `method` | container → function | — | EXTRACTED | function line |
+| `case_of` | container → member | — | EXTRACTED | member line |
+| `imports_from` | file → file / node / external (§33.3) | — | EXTRACTED | declaration line |
+| `calls` | function → function, in the file | — | EXTRACTED, no score | call line |
+| `calls` | function → definition, across files (§33.4) | `call` | EXTRACTED 1.0 / INFERRED 0.85 | call line |
+
+- The non-exhaustive marker `_` slugs to nothing, so it is a `case_of` self-loop on the enum.
+  **Rule (build).** When a node has two such self-loops (two same-named enums with `_` in one
+  file), the build keeps the **first** (§33.6).
+
+### 33.3 Imports
+
+- **Rule.** `@import("p")` counts when it is a direct child of a variable declaration, alone or
+  as the innermost object of a field chain (`@import("std").mem`, `var w: i32 =
+  @import("v.zig").val`), outside function bodies (in `test`/`comptime` blocks too). Not inside
+  call arguments, conditionals, `usingnamespace`, functions; `@cImport`/`@embedFile` give
+  nothing. Every occurrence is an edge, so `@import("std")` twice folds to the later line.
+- The target id is `slug` of the first dot-separated part of the path's last segment:
+  `"std"` → `std`, `"sub/deep.zig"` → `deep`, `"x.y.zig"` → `x`, `"build.zig.zon"` → `build`,
+  `"Upper.zig"` → `upper`. The edge lands on, in order:
+  1. any node with that id (a root-level file: `"util.zig"` → file `util`; `"q_b.zig"` →
+     file `q/b.zig`, whose id is `q_b`);
+  2. the only file whose stem (up to the last dot) slugs to the id, **in any language**
+     (§8.1; `@import("xev")` → `include/xev.h`);
+  3. the external node of that id (also when two files share the stem).
+- An import that lands on the importing file itself is dropped by the build (raw output keeps
+  the self-loop).
+
+### 33.4 Calls
+
+- **In the file.** Calls are read from function bodies, including the fields and constants of
+  containers declared there (`return struct { items: Buffer(T), const K = if (pick()) ... }`
+  calls `Buffer()` and `pick()` from the generic function) but not the bodies of their
+  functions. The callee is the identifier or the last member of a field chain (`a.b.f()` →
+  `f`); builtins (`@as`), calls through other expressions and calls at file level or directly in
+  `test` blocks give nothing.
+- **Rule.** A call binds to the **first** function or method of that name in declaration order,
+  whatever the receiver (`x.run()` and `B.run`'s own `go()` both bind to `A.run`/`A.go` when
+  `A` comes first). A function whose id an earlier node already took (`fn sentinel` after
+  `const Sentinel`, `fn help` after `const Help`) answers to no call, but its own calls count,
+  from that shared id. A call that binds to its caller is dropped (no recursion self-loops, also
+  `self.run()` in `run`). One edge per (caller, callee), first line kept. Containers, members
+  and error names never bind in the file.
+- **Across files.** A **bare** call that binds nothing in its file (member calls never do)
+  binds to the Zig definitions answering to that name: functions, methods (`norm()` → `.norm()`),
+  containers, enum and error members, the caller's own file included (`Bar()` on a struct
+  `Bar`, `red()` on an enum member). Only the node each id keeps counts (`Sentinel`, not the
+  merged `sentinel()`).
+  1. Exactly one candidate in a file the caller's file imports **directly** (§33.3 step 1:
+     the import id is that file's id) → EXTRACTED 1.0.
+  2. Otherwise the nearest candidate by path: most shared leading directories, a tie binding
+     nothing, depth below the common directory ignored (`src/x/f.zig` and `src/y/z/f.zig` tie
+     from `src/a.zig`); a candidate sharing no directory binds only from the same directory
+     (two root files) or when it is the only one → INFERRED 0.85.
+
+### 33.5 Parity
+
+- Fixture: node, link, community, analysis and report goldens all exact.
+- Probes and real repositories (`graphify extract --code-only` on scratch copies, `.zig` only):
+  zls (1,998 nodes, 3,743 links), http.zig (761, 1,039), libxev (1,212, 1,606), zig-clap (110,
+  177) identical node and link sets and fields, except one zig-clap `method` link (ZG3).
+- Graphify corpus (`--ext .zig`): 12 of 14 nodes and 10 of 15 links. `Point` and `Shape` are
+  renamed by Graphify because `sample.jl`, `sample.ps1` and `sample.f90` emit the same ids
+  (§4.5); dijkstral does not index `.jl`/`.ps1`. The `std` import keeps L1 (ZG2).
+
+### 33.6 Quirks (Zig)
+
+- **ZG1** Flat container ids: same-named nested containers of one file merge, and so do their
+  same-named members; a function and a container whose names slug alike (`Sentinel`/`sentinel`,
+  `add`/`add_`) share one node.
+- **ZG2** When the build performs any declaration/definition merge (§25.5, e.g. a C++
+  `Logger.h`/`Logger.cpp` pair anywhere in the repository), every duplicate
+  (source, target, relation) keeps its **first** occurrence instead of the last: the Graphify
+  repository's `sample.zig` keeps `imports_from std` at L1 where a Zig-only build has L2.
+  Not reproduced (a build-wide rule, not Zig's).
+- **ZG3** A context-less in-file `calls` folded into a `method` link on the same pair leaves the
+  link without context (Graphify copies the call's context, which Zig calls lack); dijkstral's
+  fold writes `call`. Seen once in zig-clap (`fn help` sharing the id of `Help`, calling
+  `Help.description`); kept out of the fixture.
+- **ZG4** In-file binding by first definition ignores receivers and the caller's own container;
+  imports never bind member calls.
+
+---
+
+## 34. Objective-C
+
+Fixture `tests/fixtures/objc/`; goldens `objc.*` (§1, §17.6). Extensions `.m`, `.mm` and
+Objective-C headers (§34.1); tree-sitter-objc 3.0.2 (Graphify's version), also for `.mm`, so the
+C++ of Objective-C++ gives nothing. Rules were isolated with probe repositories; the corpus check is
+AFNetworking. Implementation: `crates/core/src/{extract,resolve}/objc.rs`.
+
+### 34.1 Which language a `.h` is
+
+- **Rule.** A `.h` is Objective-C when its bytes contain `@interface`, `@implementation`,
+  `@protocol`, `#import` or `@import` anywhere (plain substrings, comments included:
+  `// #import` and `x@interface` count; `# import`, `@INTERFACE`, `@class`, `@end`, `@property`,
+  `@"..."`, `NSObject` and `#include <Foundation/...>` do not). This test runs before C++'s (§24.1):
+  a header with `@interface` and `class ` in a comment is Objective-C. Every other `.h` is C or C++
+  by §24.1, also beside a `.m` of the same stem.
+- `NS_ASSUME_NONNULL_BEGIN`/`END` and `NS_HEADER_AUDIT_BEGIN`/`END(...)` are removed before
+  parsing (lines unchanged; tree-sitter-objc misreads the rest of the file otherwise). Other macros
+  (`CF_ASSUME_NONNULL_BEGIN`, `NS_SWIFT_UI_ACTOR`, `CF_EXTERN_C_BEGIN`, `__BEGIN_DECLS`, custom
+  ones) are not, and the parse breaks wherever they break it.
+
+### 34.2 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| `@interface`/`@implementation X`, class extension `X ()`, category `X (C)` | `file_slug(X)`, one node for all of them in a file (first wins) | `X` | — |
+| the same, as a category or extension in a file whose stem is exactly `Before+After` | `slug(abs_root/dir/Before)_slug(X)` (OC1) | `X` | — |
+| `@protocol P` | `file_slug(P)` | `<P>` | — |
+| method `- (T)a:(U)x b:(V)y` / `+ ...` | `owner_slug(selector)` | `-ab` / `+ab` | — |
+| method outside any class (error recovery) | `slug(path with extension)_slug(selector)` | as above | — |
+| `typedef enum { ... } E;`, `enum E { ... }` with a body | `file_slug(E)` | `E` | — |
+| enumerator | `enum_slug(NAME)` | `NAME` | — |
+| type stub (superclass, protocol, property type, `[X alloc]`) | `slug(name)`, per file | name | stub |
+
+- **Selector**: the method's direct identifiers concatenated (keywords without colons, plus any
+  trailing macro: `-fooNS_REQUIRES_SUPER`, `-initWithXNS_DESIGNATED_INITIALIZER`); attributes in
+  their own node (`API_AVAILABLE(...)`, `__attribute__`) are not part of it. A broken parse can
+  fold body text into it (`-deallocdownloadProgressremoveObserverforKeyPathfractionCompleted`).
+- **Bodies.** An `@interface` contributes only its direct members: methods, properties and the
+  instance-variable block; anything under `#if` in an interface is ignored. An `@implementation`
+  and a `@protocol` contribute their methods at any depth (`#if` included, also `@optional` /
+  `@required`). Protocol properties give nothing.
+- Not emitted: C functions and anything in their bodies (`main`), structs, unions, typedefs of
+  non-enums, `NS_ENUM`/`NS_OPTIONS` (the macro defeats the parse), `@class`, globals, macros,
+  properties, instance variables, comments (no rationale: `NOTE:`/`WHY:` are ignored), and the C++
+  of `.mm` files.
+- A method label `-Bar` beside `-bar` merges into the first (same slug, §8.1).
+
+### 34.3 Edges
+
+| relation | source → target | context | location |
+|---|---|---|---|
+| `contains` | file → class (every `@interface`; an `@implementation` only when it creates the node), protocol, enum | — | declaration line |
+| `method` | class or protocol → method, for every declaration and definition; file → method outside a class | — | method line |
+| `inherits` | class → superclass | — | class line |
+| `implements` | class or category → adopted protocol; protocol → protocol it extends | — | declaration line |
+| `references` | class → every type identifier of a property's type (`NSSet <NSData *>` → both, `Sub <P> *` → both; not `id<P>`, not block parameters) | `field` | property line |
+| `case_of` | enum → enumerator | — | enumerator line |
+| `references` | method → `X` for `[X alloc]` (also `[self alloc]` → stub `self`) | `type` | message line |
+| `calls` | method → in-file node (§34.4) | `call` | message line |
+| `accesses` | method → method of its own class named exactly like `x.name` (any receiver) | — | expression line |
+| `imports` | file → §34.6 | `import` | directive line |
+| `calls` / `references` | method → method / class (§34.5) | `call` | message line |
+
+Type names bind to the file's class, protocol or enum of that name (also one declared later in the
+file), else to a per-file stub. Stubs then bind to the only Objective-C class, protocol or enum with
+that name in the repository (protocols by `P`, not `<P>`); an ambiguous name stays a stub (two
+classes named `Foo`, a class and a category elsewhere).
+
+Fold differences from §8.2 (reproduced in the extractor and resolver):
+
+- A property `references` on a pair that also has `inherits` or `implements` (`@interface A : B`
+  with `@property B *b`) leaves no `context` on the survivor, in either order.
+- A repeated self-loop of one relation keeps the first (`@property Impl *a` then
+  `NSArray<Impl *> *b` inside `Impl`).
+
+### 34.4 Calls inside the file
+
+- `[r sel ...]` in a method body (blocks included) binds to **every** node of the file whose id
+  ends with the lower-cased selector, except the file node, the caller itself and stubs first
+  created by a `[X alloc]` in a body: `[self bar]` calls `-bar`, `-fooBar`, `-foo_bar`, `-setBar`
+  and `J`'s `-jbar` (OC2); `[self type]` calls a stub `LaterType`; `[self far]` calls the stub
+  `Far`. The receiver is ignored.
+- `@selector(name)` calls the file's methods whose selector is exactly `name`.
+- One edge per (caller, target) across `calls` and `accesses`, the first kept (`self.r5; [self r5]`
+  gives `accesses`). `references` from `[X alloc]` are separate.
+- Body edges follow every structural edge of the file, in method and source order. Graphify's
+  order among the several targets of one message varies between runs (hash order); only raw output
+  shows it.
+
+### 34.5 Messages across files
+
+Each message with a typed receiver, in source order, after the in-file pass:
+
+| receiver | class | confidence |
+|---|---|---|
+| `self`, `super` | the enclosing `@implementation`'s class (`super` too) | EXTRACTED 1.0 |
+| an identifier declared `T *x` anywhere in the file (first declaration wins, other methods and classes included; not parameters, `for (T *x in ...)`, block parameters or `id`) | `T` | INFERRED 0.85 |
+| another capitalised identifier | itself (case-insensitive: `[FOO base]` finds `Foo`) | EXTRACTED 1.0 |
+| another lower-case identifier | the instance variable of that name on the class or a superclass, any file | INFERRED 0.85 |
+| `self.prop` | the property's type on the class or a superclass, any file; a generic or protocol-qualified type (`T<P> *`) gives nothing | INFERRED 0.85 |
+
+The class must be the only Objective-C class with that name. If it has a method of that selector
+(`class_slug(selector)`: instance or class method, no inheritance walk), the caller `calls` it,
+else it `references` the class with context `call`. A pair the file already links (in-file call,
+access or `alloc` reference, after stub binding) is skipped, the first edge of a pair wins, and a
+method never calls itself.
+
+### 34.6 Imports
+
+`#import`/`#include "p"` names the file at `p` relative to the importing file when it is indexed
+(its id before collision renaming), else, like `<p>` and `@import M`, `slug(stem of p)`. That id
+lands, in order, on:
+
+1. a node with exactly that id (an unrenamed file, stub, class, external);
+2. the node with that id of the first header (`.h`, by path) that emitted it before collision
+   renaming: the header of a header/implementation pair (`#import "Shape.h"` from `Shape.m` →
+   `shape_h_shape`), a header's renamed type stub (`#import "AFURLSessionManager.h"` from another
+   directory → `afnetworking_afhttpsessionmanager_h_afurlsessionmanager`), followed through stub
+   binding (`#import "Helper.h"` → class `Helper` through `Base.h`'s stub);
+3. for a non-relative path only, the importing file's own renamed node with that id (a test
+   file's stub of the imported class);
+4. the only file whose stem slugs to that id (`<AFNetworking/AFCompatibilityMacros.h>` → that C
+   header, §8.1);
+5. an external node.
+
+An import whose target is another language's node is dropped: Swift's module nodes
+(`import Foundation`, `import UIKit`) swallow every Objective-C `#import <Foundation/...>`.
+
+### 34.7 Header and implementation merge
+
+A definition id (class, protocol, method, enum, enumerator) emitted by an Objective-C header and by
+the `.m`/`.mm` with the same directory and stem is not renamed apart (§4.5): the header's node
+stays and gains `definition_file` and `definition_location` (the implementation's first node of
+that id: a class extension's line before the `@implementation`'s). File nodes and stubs the two
+share are renamed as usual.
+
+- Edges the implementation adds from a merged definition are dropped when the header, or an earlier
+  edge of the implementation, has the same source, relation and target as written (before
+  renaming): the header's `method` lines survive, and a class extension's property typed like a
+  header property leaves its own renamed stub isolated.
+- **Once any definition merges**, every Objective-C edge keeps the first of its (source, target,
+  relation) instead of the last, and Objective-C self-loops are dropped; a repository without a
+  merge keeps the last (an `@interface` method line loses to its `@implementation` line). Other
+  languages are not affected (Python keeps the last).
+- An Objective-C stub named like a Swift supertype stub (`UIApplicationDelegate`,
+  `UIViewController` in a mixed iOS project) is renamed `slug(path)_id`, as if the Swift file had
+  emitted it too.
+
+### 34.8 Quirks (Objective-C)
+
+- **OC1** In a file whose stem is exactly `Before+After` (`UIButton+AFNetworking.h`), categories
+  and class extensions get the id `slug(absolute scan root/dir/Before)_slug(Class)`: the absolute
+  path of the checkout (`/private/tmp/...` resolved) leaks into the ids of the class node and its
+  methods. Dijkstral emits `slug(dir/Before)_slug(Class)`, the same id without the root prefix, so a
+  reference graph compares after stripping `slug(root)_` (51 AFNetworking nodes). Stems with no or
+  two `+` (`A+B+C.h`, `+L.h`, `T+.h`) use the file id.
+- **OC2** In-file messages bind by id suffix, regardless of receiver, so one message fans out to
+  every method, class, protocol or structural stub whose id ends like its selector.
+- **OC3** `.h` classification is a substring test that also reads comments (§24.1 is the C/C++
+  analogue).
+- **OC4** A method that sends to the same class through a typed variable and through its name
+  (`[serializer isKindOfClass:[AFHTTPResponseSerializer class]]`) keeps whichever edge Graphify
+  processes first, and that order changes with unrelated files in the repository (AFNetworking:
+  EXTRACTED with its tvOS Swift example present, INFERRED without). Dijkstral keeps source order.
+- **OC5** Methods whose parse lands outside any class become file-owned with ids that keep the
+  file's extension (`afnetworking_afurlsessionmanager_m_dealloc`); in AFURLSessionManager.m the
+  whole file is one `ERROR` node, so 73 methods hang off the file with body text in their names.
+
+### 34.9 Parity (AFNetworking, Graphify's frozen reference, `.m .h`)
+
+After stripping the OC1 root prefix (`users_hades_cache_dijkstral_bench_corpus_afnetworking_`):
+nodes 1137/1137 and links 2494/2494 (recall and precision 100%), one link field differing (OC4).
+Raw, without stripping: 51 category nodes and their links differ by id only. Two Graphify runs on
+fresh copies are identical, so the reference is stable. The `objc` golden matches at 1.0 with exact
+communities; its extract-time surprise order is not compared (§17.7). Two analysis differences
+surfaced on Graphify's own graphs and are not Objective-C extraction: Graphify does not count a
+merged node's `definition_file` pair (`Shape` and a method defined only in `Shape.m`) as a
+cross-file surprise, and it stops bridge questions at the first top-5 candidate without
+cross-community neighbours.
+
+### 34.10 Open (Objective-C)
+
+- Whether the keep-first and self-loop rules of §34.7 are triggered by C++ declaration merges
+  (§25.5) too; the Zig probes saw keep-first across languages after a C++ merge (§33).
+- `@import M.Sub` beyond the stem rule; properties of protocols with a class type; nested `#if` in
+  an `@interface` that contains its `@end`.
+
+---
+
+## 35. Fortran
+
+Fixture `tests/fixtures/fortran/`; goldens `fortran.*` (raw, clustered, analysis and report goldens
+of §17.6). tree-sitter-fortran 0.6.0 (Graphify's version). Rules were isolated with probe
+repositories through `graphify extract --code-only`, and checked on the graphify corpus's
+`tests/fixtures/sample.f90` and on the 88 Fortran test sources of numpy's `f2py` (free and fixed
+form). Implementation: `crates/core/src/{extract,resolve}/fortran.rs`.
+
+### 35.1 Which files
+
+- **Rule.** `.f90 .f95 .f03 .f08 .f` (case-insensitive: `.F90`, `.F`) are Fortran; `.for`, `.f77`,
+  `.fpp`, `.f18`, `.ftn`, `.pf` are not classified. Fixed-form `.f` goes through the same grammar.
+- No rationale nodes: `! NOTE:` / `! WHY:` comments are ignored. No `_callable` on any node.
+
+### 35.2 Nodes
+
+Every name is lower-cased (`module Geometry` → label `geometry`); ids are flat, whatever the
+nesting.
+
+| Construct | id | label |
+|---|---|---|
+| `module m` | `file_slug(m)` | `m` |
+| `program p` | `file_slug(p)` | `p` (no parentheses) |
+| `subroutine s` / `function f` (any prefix: `pure`, `recursive`, `real`, `type(T)`, `module`), internal procedures, procedures in unnamed or `abstract` interface blocks | `file_slug(name)` | `name()` |
+| named interface `interface g` | `file_slug(g)` | `g()` |
+| derived type `type :: T` (also `extends(...)`) | `file_slug(t)` | `t` |
+| `use m` (any form: `use, intrinsic ::`, `only:`) | `slug(m)` — **not** file-prefixed | `m`; `source_file` and `source_location` of the `use` statement, not a stub |
+| type stub | `slug(t)`, per file | `t` |
+
+- Not emitted: `submodule` (nothing inside it either), operator and assignment interfaces,
+  bodies of named interfaces, components, parameters and variables, `generic`/`final` bindings,
+  `block data`.
+- A `use` node is per file; two files using the same module both emit `slug(m)` and are renamed
+  apart by §4.5 (`app_main_f90_geometry`, `src_shapes_f90_geometry`). It also collides with a
+  file whose id is `slug(m)` (`use utils` beside `utils.f90` renames both), and it never binds to
+  the module's own node (quirk **FO1**).
+- Preprocessor branches (`#ifdef`/`#else`) are walked like their parent; a procedure defined in
+  both branches is one node at the first line (§8.1).
+
+### 35.3 Edges
+
+| relation | source → target | context | location |
+|---|---|---|---|
+| `defines` | file → module / program / free procedure; module, program or host procedure → type, procedure, interface | — | definition line |
+| `imports` | enclosing module, program or procedure → `use` node | `use` | statement line |
+| `references` | procedure → type, for a `type(T)`/`class(T)` declaration of a dummy argument | `parameter_type` | declaration line |
+| `references` | the same, for the result variable (`result(r)`, else the function name) | `return_type` | declaration line |
+| `method` | type → implementation of a type-bound `procedure` | `type_bound_procedure` | binding line |
+| `dispatches_to` | named interface → every procedure its `procedure` / `module procedure` statements list | `generic_interface` | statement line |
+| `calls` | procedure or program → procedure, type or module of the same file | `call` | call line |
+
+- A procedure emits `defines`, then its `references` (declarations in order, one edge per plain
+  identifier declarator: `a(:)`, `b(10)`, `c => null()` and `class(*)` give nothing; locals give
+  nothing), then its other children in source order (`use`, interface blocks, internal
+  procedures). Modules and programs walk their children in source order. Type-bound `method`
+  edges follow the walk, then `dispatches_to`, then calls.
+- A type-bound `procedure` statement uses only its **first** declarator (`procedure :: a, b` →
+  `a`; `procedure :: c => cc, d` → `cc`); a named interface's statement lists every name.
+- Type names bind to a node **emitted earlier in the file** with id `file_slug(T)` (a type, but
+  also the enclosing module); a reference to the procedure itself gives no edge; a type defined
+  later in the file, or elsewhere, goes through a per-file stub (§35.4). Type-bound and generic
+  targets bind to any node of the file (also defined later), else a stub.
+- `function_result` prefixes (`type(T) function f()`) give no reference.
+
+### 35.4 Cross-file binding
+
+Nothing else crosses files: calls, `use` and type-bound targets stay in their file.
+
+- **Rule.** A per-file stub binds to the only node, of **any language**, labelled exactly `t`,
+  else the only function labelled `t()` — a Fortran module, type, procedure or `use` node, a
+  Python class or function, a JSON key (`type(name)` → `package_name`). Methods (`.m()`) do not
+  count; labels compare case-sensitively, so the lower-cased stub `widget` never takes a Python
+  class `Widget`. An ambiguous name (`label` defined in two modules) or an unknown one stays a
+  stub.
+
+### 35.5 Calls
+
+- `call s(...)` always targets `file_slug(s)`; an `s` the file does not define dangles and the
+  build drops it (§8.1). `call x%m()` gives nothing.
+- A function reference or array element `f(...)` (also inside `print`, conditions, keyword
+  arguments) is a call only when the file has a node `file_slug(f)`: a procedure, an interface, a
+  type (`Point(1.0, 2.0)` calls the type) or a module. A function naming itself in an expression
+  (`f = n * factorial(n - 1)`) is not a call; `call s` inside `s` keeps its self-loop.
+- The caller is the innermost procedure or the program; calls at module level (parameter
+  initializers) give nothing. Every call site gives an edge (duplicates fold, the later line
+  wins).
+
+### 35.6 Build-stage behaviour of `defines`
+
+**Rule (observed).** `defines` does not fold like `contains` (§8.2) against `calls` and
+`references` on the same pair. The probes fit: fold each direction first (a `defines` keeps
+itself and takes a same-direction call's `context`; `calls` beats `references`; otherwise the
+later edge wins), then fold the edge whose source id is **larger** over the other, keeping the
+earlier edge's `context` when the survivor has none — except that a `defines` from the smaller
+source ignores a reversed `references`.
+
+| Edges on the pair (in order) | Survivor |
+|---|---|
+| `aa -defines-> bb`; `bb -calls-> aa` | `bb -calls-> aa` |
+| `zz -defines-> bb`; `bb -calls-> zz` | `zz -defines-> bb`, context `call` |
+| `zz -defines-> bb`; `bb -references-> zz` (parameter_type) | `zz -defines-> bb`, context `parameter_type` |
+| `aa -defines-> zz`; `zz -references-> aa` | `aa -defines-> zz`, no context |
+| `aa -defines-> bb`; `aa -calls-> bb` | `aa -defines-> bb`, context `call` (as §8.2) |
+
+`method` against a reversed `calls` follows §8.2 (the `method` survives whatever the ids).
+dijkstral's generic fold ranks `defines` like `contains`, so `extract/fortran.rs` folds each such
+in-file pair itself and emits one edge; the reproduction covers an internal procedure calling its
+host and a procedure calling or referencing its module.
+
+### 35.7 Quirks (Fortran)
+
+- **FO1** `use m` creates a separate per-file node `m` instead of linking to module `m`, so
+  every using file gets its own renamed node and the import never reaches the module.
+- **FO2** Cross-file calls are never resolved; `call s` to a procedure of another file dangles.
+- **FO3** Type stubs bind by exact label across languages (a JSON key `name`, a Python class).
+- **FO4** Only the first declarator of a type-bound `procedure` statement is bound.
+- **FO5** A type used before its definition in the same file goes through a stub (and binds back
+  only when the label is unique in the repository).
+- **FO6** `defines` folds against reversed `calls` and `references` by source id order (§35.6).
+
+### 35.8 Parity
+
+- Fixture: nodes and links 100%, communities and array order exact, extract and cluster-only
+  analysis and report goldens equal.
+- graphify corpus `tests/fixtures/sample.f90` alone: 13/13 nodes, 17/17 links, communities exact.
+  Inside the full corpus its four renamed ids (`…_sample_f90_…_point`, `geometry`, `distance`,
+  `circle_area`) depend on same-stem files in languages dijkstral does not extract yet
+  (`sample.jl`, `sample.ps1`; `sample.zig` with §33).
+- numpy `f2py` test sources: 62 `.f90` files, 244 nodes / 192 links, 100% and communities exact;
+  all 88 Fortran files (`.f .f90 .f95 …`) 344 / 266, 100%, with the §35.1 extensions.
+
+---
+
+## 36. Verilog (`.v`)
+
+Fixture `tests/fixtures/verilog/`; goldens `verilog.*` and the report goldens of §17.6. Graphify
+reads `.v` as Verilog/SystemVerilog, not V, with tree-sitter-verilog 1.0.3 (same version in
+dijkstral). Probes were run through `graphify extract --code-only` on scratch copies. The corpus
+check uses two open-source repositories, alexforencich/verilog-axi and YosysHQ/picorv32 (§36.7).
+Implementation: `crates/core/src/{extract,resolve}/verilog.rs`.
+
+### 36.1 Which files
+
+- **Rule.** `.v`, `.sv`, `.svh` and `.vh` are Verilog (case-insensitive: `.V`, `.SV`). `.vams`,
+  `.veo`, `.verilog`, `.vhd` are not classified. Dijkstral currently classifies `.v` only
+  (`lang.rs`); the other three are a one-arm addition.
+- A V-language file (`fn main() {}`) parses to error nodes and yields only its file node
+  (Graphify warns "yielded no symbols").
+- **V8** The file node is at `L1` even for a 0-byte file (§3 says `null` for other languages).
+
+### 36.2 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| file | file id | §5.1 | `confidence_score: 1.0` |
+| module (also nested, `macromodule`, `extern module`) | `file_slug(name)` | `name` | `confidence_score: 1.0` |
+| function inside a module | `module_slug(name)` | `name()` | same |
+| task inside a module | `module_slug(name)` | `name` (no parentheses) | same |
+| function or task outside every module (package, interface, program, file scope) | `slug(path with extension)_slug(name)` (`rtl_alu_v_scale`) | as above | same |
+| instantiated module not declared in the file | `slug(name)` (shared, §36.4) | name as written | stub, same |
+| SystemVerilog class (§36.5) | `file_slug(Name)` | `Name` | same |
+| class base / interface (§36.5) | `file_slug(Base)` | `Base` | same, at the class's line |
+| class method (§36.5) | `class_slug(name)` | `name` (no parentheses) | same |
+
+- **V1** Every Verilog node, file nodes and stubs included, carries the node field
+  `confidence_score: 1.0` (raw and clustered); every in-file edge carries `confidence_score: 1.0`
+  in raw output too.
+- **V2** A module's name is the first identifier anywhere in its header, so an attribute comes
+  first: `(* keep_hierarchy *) module wide_path` is module `keep_hierarchy`.
+- **V3** Definitions outside modules hang off the file's internal id, which keeps the extension
+  (`a.v` → `a_v_twice`); they are contained by the file node `a`.
+- A function's name is the identifier of its `function_identifier` (`function void Cx::m()`
+  gives `Cx()`); the line is the `function`/`task` keyword's.
+- Not emitted: packages, interfaces, programs, primitives (UDPs), ports, nets, variables,
+  parameters, `always`/`initial`/`assign`, `` `include ``/`` `define ``, DPI imports, and comments
+  (`NOTE:`/`WHY:` give no rationale nodes).
+
+### 36.3 Edges
+
+| relation | source → target | location |
+|---|---|---|
+| `defines` | file → module, file → class | definition line |
+| `contains` | module → function/task; file → function/task outside modules | definition line |
+| `instantiates` | innermost module → module or stub | instantiation line |
+| `method` | class → method | method line (§36.5) |
+| `inherits` / `implements` | class → base node | class line |
+
+No `calls`, `references` or `imports`: function calls, task enables and `` `include `` give
+nothing. Context is never set.
+
+- **V4** An instantiation counts only where tree-sitter reads it as a `module_instantiation` or a
+  `checker_instantiation`, anywhere in the module (generate regions, `if` blocks, nested
+  modules use the innermost module). The grammar reads `name inst(a, b, c);` (positional
+  ports, no parameters) as a UDP instance, an instance inside a `for` generate loop as an
+  interface instance, and primitives (`and a0(...)`) as gates: none of these give an edge.
+  Instantiations inside interfaces and programs give nothing.
+- Every instantiation gives an edge (the same module twice: two edges, the later line survives
+  the fold). A module instantiating itself gives a self-loop.
+- **Fold rank.** `instantiates` outranks `contains`: a module that instantiates `m_x` and contains
+  a function `x` whose id is also `file_m_x` keeps `instantiates` whatever the order (probe).
+  `graph.rs` gives unknown relations rank 4, so dijkstral keeps the later edge here; the rank is
+  a one-line addition there.
+
+### 36.4 Instantiation targets
+
+- **Rule.** A name declared as a module anywhere in the same file (the module-name rule of V2
+  applies, before or after the instantiation) is the target directly. Any other name gets a
+  stub `slug(name)`, label as written, one per file.
+- **Rule.** The stub binds across the repository to the only node, in any language, whose label
+  without a trailing `()` equals the stub's label exactly (case-sensitive): a module, a function
+  (`twice` → `twice()`), a task, a class, a Python class (`ref_model`). Two candidates, or a
+  label differing in case (`Leaf2` vs `leaf2`), leave the stub. Even a function of the
+  instantiating file binds this way.
+- **V9** Verilog stubs are not file emitters in the §4.5 rename: two files instantiating `ghost`
+  share one node `ghost`. A stub whose id equals a node id of another file renames only that
+  node (`counter.v` → file `counter_v_counter` next to stub `counter`, which then binds to module
+  `counter_counter`; an unbound `vlang` stub stays `vlang` beside file `vlang_v_vlang`).
+
+### 36.5 SystemVerilog classes
+
+**Rule.** Classes do not come from the tree but from a text scan, over the source with `//...`
+(to the end of the line, the newline kept) and `/*...*/` (newlines included) removed, of
+`\bclass\s+(\w+)([^;]*);(.*?)endclass` (non-overlapping, across lines):
+
+- the header (`[^;]*`) gives `extends (\w+)` → `inherits`, and `implements A, B` → one
+  `implements` per item (its leading word); each target is a node `file_slug(Base)` labelled
+  `Base` at the class's line, created unless the id exists (a class of the same file, first
+  wins); it never binds to the real class elsewhere (V6). `extends P #(int)` → `P`,
+  `extends pkg::Q` → `pkg`;
+- the body gives methods for `\bfunction\s+\w+\s+(\w+)\s*\(`: exactly one return-type word, so
+  `function void f()`, `virtual function void f()`, `static function int f(int x)` and an
+  `extern` prototype count, while `function new()`, `function automatic void f()`,
+  `function bit [7:0] f()`, `function void f;` and tasks do not;
+- nodes come after every tree-derived node of the file; edges in the order `defines`, `inherits`,
+  `implements`, `method`s.
+
+The tree walk skips class bodies, so class methods appear only through the scan; a class without
+`endclass` is no class, and the tree's error recovery may then expose its functions as
+file-level functions.
+
+- **V5** The scan matches inside strings (`$display("class Fake;")` is a class), and a
+  `typedef class X;` or any unmatched `class` header swallows the text up to the next
+  `endclass`: `typedef class F; class A; ... endclass` yields class `F` with `A`'s methods, and
+  no `A`.
+- **V7** A class's line is computed from its offset in the stripped text applied to the
+  original text, so every comment character before it moves it up (the fixture's two comment
+  lines put `base_txn`, at L3, on L1). A method's line is its class's line plus the
+  newlines of the stripped body before the `function` keyword.
+
+### 36.6 Quirks (Verilog)
+
+- **V1** `confidence_score: 1.0` as a node field on every Verilog node.
+- **V2** Attributes name modules.
+- **V3** Out-of-module functions and tasks keep the extension in their id prefix.
+- **V4** Instantiations depend on tree-sitter's ambiguous reading (UDP/interface/gate instances
+  are lost).
+- **V5** Class scan over raw text: classes in strings, `typedef class` swallowing.
+- **V6** Class bases are per-file nodes, never the real class.
+- **V7** Class and method lines drift after comments.
+- **V8** 0-byte files at `L1`.
+- **V9** Stubs shared across files and exempt from collision renaming.
+
+All nine are reproduced (they decide ids and lines).
+
+### 36.7 Parity
+
+`dijkstral extract` against Graphify's cold `extract --code-only` on scratch copies, `--ext .v`
+(`parity.py`), node and link sets as recall / precision:
+
+| repo | `.v` files | nodes | links | communities (NMI) |
+|---|---|---|---|---|
+| verilog-axi (master, 2026-10-14) | 83 | 170: 100% / 100% | 147: 100% / 100% | 1.000 |
+| picorv32 (main, 2026-10-14) | 41 | 135: 100% / 100% | 141: 100% / 100% | 1.000 |
+| 14 probe repositories | — | 100% / 100% | 100% / 100% except two links of one probe (fold rank, §36.3) | 1.000 |
+
+Field values agree on every shared node and link. Community ids differ on the whole-repository
+graphs only through their Python and C files (verilog-axi's cocotb benches: 468 extra Python
+`calls` in dijkstral). Cold build: verilog-axi 0.42 s vs Graphify 7.3 s (144 files), picorv32
+0.32 s vs 6.9 s.
+
+### 36.8 Open
+
+- The comment-stripping order for overlapping `//` and `/*` (left to right is assumed) and
+  `implements` items written with a scope (`pkg::I`).
+- The rank of `instantiates` relative to `imports`/`calls` (no Verilog pair can show it).
+- **Not reproduced: SystemVerilog class members.** On the Graphify repository's
+  `tests/fixtures/sample.sv` (the same output as `.sv` or `.v`), Graphify also emits field
+  `references` (`rand Config m_cfg` → `Config`, context `field`; `Result #(Payload) current` →
+  `Result` and `Payload`, `generic_arg`), method signature `references` (`parameter_type`,
+  `return_type`), a method whose return type is parameterised (`function Result #(Payload)
+  build(...)`, which the class scan misses), and `import math_pkg::*` as `imports_from` to a node
+  `math_pkg` (located at the import). Dijkstral has 100% precision there and 11 of 13 nodes, 13 of
+  20 links.
+
+---
+
+## 37. Solidity
+
+Fixture `tests/fixtures/solidity/` (`contracts/{Base,Token}.sol` beside `scripts/deploy.py`);
+goldens `solidity.*`. Implementation: `Lang::Solidity` in `crates/core/src/lang.rs`, no extractor.
+
+- **Rule.** `.sol` counts as code (§3) but Graphify 0.9.86 ships without its optional
+  `tree-sitter-solidity` extra, so every `.sol` file contributes nothing: no file node, no
+  symbols, no edges. `extract` warns `N .sol file(s) contributed nothing to the graph because a
+  dependency is missing` (the other "count but contribute nothing" extensions are `.r .sql .tf`).
+- The files still count: `GRAPH_REPORT.md`'s corpus check lists them in its file and word totals
+  (`3 files · ~105 words` for two contracts and one Python file). A repository of `.sol` files
+  only gives an empty graph with a non-zero corpus check.
+- Dijkstral classifies `.sol` (`Lang::Solidity`, no grammar) and emits nothing for it, so the
+  totals match. A Rust Solidity grammar exists (`tree-sitter-solidity` 1.2.x), but using it would
+  diverge from the reference until Graphify installs its extra.

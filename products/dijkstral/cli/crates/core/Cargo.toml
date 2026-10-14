@@ -40,6 +40,10 @@ tree-sitter-rust.workspace = true
 tree-sitter-scala.workspace = true
 tree-sitter-swift.workspace = true
 tree-sitter-typescript.workspace = true
+tree-sitter-objc.workspace = true
+tree-sitter-zig.workspace = true
+tree-sitter-fortran.workspace = true
+tree-sitter-verilog.workspace = true
 unicode-normalization.workspace = true
 
 [dev-dependencies]

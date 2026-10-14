@@ -54,6 +54,10 @@ tree-sitter-rust = "0.24"
 tree-sitter-scala = "0.26.2"
 tree-sitter-swift = "0.7.4"
 tree-sitter-typescript = "0.23"
+tree-sitter-objc = "3.0.2"
+tree-sitter-zig = "1.1.2"
+tree-sitter-fortran = "0.6.0"
+tree-sitter-verilog = "1.0.3"
 unicode-normalization = "0.1"
 
 [profile.release]

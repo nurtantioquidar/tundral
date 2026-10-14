@@ -129,6 +129,10 @@ pub enum LangFacts {
     C(crate::extract::c::CFacts),
     Elixir(crate::extract::elixir::ElixirFacts),
     PowerShell(crate::extract::powershell::PsFacts),
+    Zig(crate::extract::zig::ZigFacts),
+    ObjC(crate::extract::objc::ObjcFacts),
+    Fortran(crate::extract::fortran::FortranFacts),
+    Verilog(crate::extract::verilog::VerilogFacts),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

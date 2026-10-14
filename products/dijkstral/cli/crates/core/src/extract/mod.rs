@@ -8,10 +8,12 @@ pub mod c;
 pub mod csharp;
 pub mod data;
 pub mod elixir;
+pub mod fortran;
 pub mod go;
 pub mod java;
 pub mod julia;
 pub mod kotlin;
+pub mod objc;
 pub mod php;
 pub mod powershell;
 pub mod python;
@@ -21,6 +23,8 @@ pub mod scala;
 pub mod script;
 pub mod sfc;
 pub mod swift;
+pub mod verilog;
+pub mod zig;
 
 use tree_sitter::Node as TsNode;
 
@@ -54,6 +58,12 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::PowerShell => powershell::extract(&mut cx, tree.as_ref()),
         // No file node and no symbols: Graphify's reference install has no VB.NET grammar (§42).
         Lang::VisualBasic => {}
+        Lang::Zig => zig::extract(&mut cx, tree.as_ref()),
+        Lang::ObjC => objc::extract(&mut cx, tree.as_ref()),
+        Lang::Fortran => fortran::extract(&mut cx, tree.as_ref()),
+        Lang::Verilog => verilog::extract(&mut cx, tree.as_ref()),
+        // Graphify counts `.sol` files but has no grammar for them: no nodes at all (§37).
+        Lang::Solidity => {}
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }
