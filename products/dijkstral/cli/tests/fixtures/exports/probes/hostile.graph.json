@@ -1,0 +1,174 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "id": "a",
+      "label": "it's \"quoted\" \\ back",
+      "file_type": "code",
+      "source_file": "src/a.py",
+      "source_location": "L1",
+      "community": 0
+    },
+    {
+      "id": "b'x",
+      "label": "line\nbreak\ttab\r\u0000nul\u0007bel",
+      "file_type": "Code",
+      "source_file": "src/b.py",
+      "community": 0
+    },
+    {
+      "id": "c",
+      "label": "</script><script>alert(1)</script>",
+      "file_type": "code file",
+      "source_file": "src/c.js",
+      "community": 1
+    },
+    {
+      "id": "d",
+      "label": "[[wiki]] | #tag ^block %% $x$ *e* _u_ `code`",
+      "file_type": "",
+      "source_file": "",
+      "community": 1
+    },
+    {
+      "id": "e",
+      "file_type": "c++",
+      "source_file": "src/e.cpp",
+      "community": 2
+    },
+    {
+      "id": "f",
+      "label": "\u00fcn\u00efc\u00f8d\u00e9 \u2014 \u6f22\u5b57 \u2028sep",
+      "source_file": "src/f.go",
+      "community": 2
+    },
+    {
+      "id": "g",
+      "label": "Foo",
+      "file_type": "rationale",
+      "source_file": "src/a.py",
+      "community": 0
+    },
+    {
+      "id": "h",
+      "label": "foo",
+      "file_type": "CONCEPT",
+      "source_file": "src/a.py",
+      "community": 0
+    },
+    {
+      "id": "i",
+      "label": "a/b\\c:d*e?f\"g<h>i|j",
+      "file_type": "code",
+      "source_file": "x/y.py",
+      "community": 3
+    },
+    {
+      "id": "j",
+      "label": "}) DETACH DELETE n //",
+      "file_type": "code",
+      "source_file": "x/y.py",
+      "community": 3
+    },
+    {
+      "id": "k",
+      "label": "${x} {{y}} & &amp; <b>",
+      "file_type": "document",
+      "source_file": "doc/k.md"
+    },
+    {
+      "id": "l",
+      "label": "...",
+      "file_type": "code",
+      "source_file": "x/y.py",
+      "community": 3,
+      "extra": [
+        1,
+        2
+      ],
+      "weight": 2.5
+    }
+  ],
+  "links": [
+    {
+      "source": "a",
+      "target": "b'x",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/a.py"
+    },
+    {
+      "source": "c",
+      "target": "a",
+      "relation": "imports from",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "a",
+      "target": "c",
+      "relation": "has-part.x",
+      "confidence": "AMBIGUOUS"
+    },
+    {
+      "source": "d",
+      "target": "e",
+      "relation": "rel`); MATCH (n) DETACH DELETE n //",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "e",
+      "target": "f",
+      "relation": "",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "f",
+      "target": "g"
+    },
+    {
+      "source": "g",
+      "target": "g",
+      "relation": "self",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "h",
+      "target": "a",
+      "relation": "\u00fcn\u00ef",
+      "confidence": "INFERRED"
+    },
+    {
+      "source": "i",
+      "target": "j",
+      "relation": "calls",
+      "confidence": "it's"
+    },
+    {
+      "source": "j",
+      "target": "k",
+      "relation": "1starts_digit",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "k",
+      "target": "l",
+      "relation": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "l",
+      "target": "missing",
+      "relation": "calls",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "b'x",
+      "target": "h",
+      "relation": "references",
+      "confidence": "EXTRACTED"
+    }
+  ],
+  "hyperedges": []
+}

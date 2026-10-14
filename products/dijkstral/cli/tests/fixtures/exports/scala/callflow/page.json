@@ -1,0 +1,831 @@
+{
+ "title": "scala — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 94 nodes, 150 edges, 9 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "cli-skills",
+   "CLI & Skill Installers"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    CLI_SKILLS_9964CBB8(\"CLI & Skill Installers<br/><small>94 nodes</small>\")",
+     "    class CLI_SKILLS_9964CBB8 module;"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "CLI & Skill Installers"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "CLI & Skill Installers",
+      "94",
+      "0, 1, 2, 3, 4, 5, 6, 7, 8"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "cli-skills",
+   "heading": "2. CLI & Skill Installers",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: CLI & Skill Installers (94 nodes, 150 edges)",
+     "    subgraph cli_skills_shop_model_Model_scala_25b0c622[\"shop/model/Model.scala\"]",
+     "        src_main_scala_shop_model_model_entity_892a453c(\"Entity<br/><small>shop/model/Model.scala</small>\")",
+     "        src_main_scala_shop_model_model_color_e42ae5b8(\"Color<br/><small>shop/model/Model.scala</small>\")",
+     "        src_main_scala_shop_model_model_color_label_7d58e73f(\"label()<br/><small>shop/model/Model.scala</small>\")",
+     "        src_main_scala_shop_model_model_entity_id_4557b492(\"id()<br/><small>shop/model/Model.scala</small>\")",
+     "        src_main_scala_shop_model_model_entity_describe_38981c16(\"describe()<br/><small>shop/model/Model.scala</small>\")",
+     "        src_main_scala_shop_model_model_model_ee00d986(\"Model<br/><small>shop/model/Model.scala</small>\")",
+     "        src_main_scala_shop_model_model_model_validate_7d7dd7df(\"validate()<br/><small>shop/model/Model.scala</small>\")",
+     "        src_main_scala_shop_model_model_model_touch_978a9c45(\"touch()<br/><small>shop/model/Model.scala</small>\")",
+     "    end",
+     "    subgraph cli_skills_shop_model_User_scala_f4730dad[\"shop/model/User.scala\"]",
+     "        src_main_scala_shop_model_user_user_57f20e74(\"User<br/><small>shop/model/User.scala</small>\")",
+     "        src_main_scala_shop_model_user_user_validate_86e6da18(\"validate()<br/><small>shop/model/User.scala</small>\")",
+     "        src_main_scala_shop_model_user_user_greet_dd39f13e(\"greet()<br/><small>shop/model/User.scala</small>\")",
+     "        src_main_scala_shop_model_user_user_compare_9bf7eaae(\"compare()<br/><small>shop/model/User.scala</small>\")",
+     "        src_main_scala_shop_model_user_user_of_92e3ca23(\"of()<br/><small>shop/model/User.scala</small>\")",
+     "        src_main_scala_shop_model_user_user_guest_829f7536(\"guest()<br/><small>shop/model/User.scala</small>\")",
+     "    end",
+     "    subgraph cli_skills_shop_service_UserService_scala_047c31a5[\"shop/service/UserService.scala\"]",
+     "        src_main_scala_shop_service_userservice_userserv_5d392250(\"UserService<br/><small>shop/service/UserService.scala</small>\")",
+     "        src_main_scala_shop_service_userservice_userserv_4af8e73e(\"register()<br/><small>shop/service/UserService.scala</small>\")",
+     "        src_main_scala_shop_service_userservice_986feea8(\"UserService.scala\")",
+     "    end",
+     "    src_main_scala_shop_service_audit_inmemoryreposi_ba27ef70(\"InMemoryRepository<br/><small>shop/service/Audit.scala</small>\")",
+     "    src_main_scala_shop_model_model_color_e42ae5b8 -->|method| src_main_scala_shop_model_model_color_label_7d58e73f",
+     "    src_main_scala_shop_model_model_entity_892a453c -->|method| src_main_scala_shop_model_model_entity_id_4557b492",
+     "    src_main_scala_shop_model_model_entity_892a453c -->|method| src_main_scala_shop_model_model_entity_describe_38981c16",
+     "    src_main_scala_shop_model_model_model_ee00d986 -->|method| src_main_scala_shop_model_model_model_validate_7d7dd7df",
+     "    src_main_scala_shop_model_model_model_ee00d986 -->|method| src_main_scala_shop_model_model_model_touch_978a9c45",
+     "    src_main_scala_shop_model_user_user_57f20e74 -->|method| src_main_scala_shop_model_user_user_validate_86e6da18",
+     "    src_main_scala_shop_model_user_user_57f20e74 -->|method| src_main_scala_shop_model_user_user_greet_dd39f13e",
+     "    src_main_scala_shop_model_user_user_57f20e74 -->|method| src_main_scala_shop_model_user_user_compare_9bf7eaae",
+     "    src_main_scala_shop_model_user_user_57f20e74 -->|method| src_main_scala_shop_model_user_user_of_92e3ca23",
+     "    src_main_scala_shop_model_user_user_57f20e74 -->|method| src_main_scala_shop_model_user_user_guest_829f7536",
+     "    src_main_scala_shop_service_userservice_userserv_5d392250 -->|method| src_main_scala_shop_service_userservice_userserv_4af8e73e",
+     "    src_main_scala_shop_model_model_model_touch_978a9c45 -->|calls| src_main_scala_shop_model_model_model_validate_7d7dd7df",
+     "    src_main_scala_shop_model_user_user_compare_9bf7eaae -->|calls| src_main_scala_shop_model_user_user_compare_9bf7eaae",
+     "    src_main_scala_shop_model_user_user_guest_829f7536 -->|calls| src_main_scala_shop_model_user_user_of_92e3ca23",
+     "    %% Omitted for readability: 76 nodes, 0 edges",
+     "    class src_main_scala_shop_model_model_entity_892a453c klass;",
+     "    class src_main_scala_shop_model_model_color_e42ae5b8 klass;",
+     "    class src_main_scala_shop_model_model_color_label_7d58e73f function;",
+     "    class src_main_scala_shop_model_model_entity_id_4557b492 function;",
+     "    class src_main_scala_shop_model_model_entity_describe_38981c16 function;",
+     "    class src_main_scala_shop_model_model_model_ee00d986 klass;",
+     "    class src_main_scala_shop_model_model_model_validate_7d7dd7df function;",
+     "    class src_main_scala_shop_model_model_model_touch_978a9c45 function;",
+     "    class src_main_scala_shop_model_user_user_57f20e74 klass;",
+     "    class src_main_scala_shop_model_user_user_validate_86e6da18 function;",
+     "    class src_main_scala_shop_model_user_user_greet_dd39f13e function;",
+     "    class src_main_scala_shop_model_user_user_compare_9bf7eaae function;",
+     "    class src_main_scala_shop_model_user_user_of_92e3ca23 function;",
+     "    class src_main_scala_shop_model_user_user_guest_829f7536 function;",
+     "    class src_main_scala_shop_service_userservice_userserv_5d392250 klass;",
+     "    class src_main_scala_shop_service_userservice_userserv_4af8e73e function;",
+     "    class src_main_scala_shop_service_userservice_986feea8 klass;",
+     "    class src_main_scala_shop_service_audit_inmemoryreposi_ba27ef70 klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "CLI & Skill Installers groups implementation around scala, shop, service, model, mostly in shop/service/UserService.scala, shop/model/Model.scala, shop/model/User.scala. This section covers 94 nodes and 150 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: references x61, method x29, contains x25, calls x13. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Active",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Active node in shop/model/Model.scala."
+     ],
+     [
+      "2",
+      [
+       [
+        "Color",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "label()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Color node in shop/model/Model.scala."
+     ],
+     [
+      "3",
+      [
+       [
+        "Entity",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "describe()",
+        "shop/model/Model.scala"
+       ],
+       [
+        "id()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Entity node in shop/model/Model.scala."
+     ],
+     [
+      "4",
+      [
+       [
+        "Inactive",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Inactive node in shop/model/Model.scala."
+     ],
+     [
+      "5",
+      [
+       [
+        "Model",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "touch()",
+        "shop/model/Model.scala"
+       ],
+       [
+        "validate()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Model node in shop/model/Model.scala."
+     ],
+     [
+      "6",
+      [
+       [
+        "Status",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Status node in shop/model/Model.scala."
+     ],
+     [
+      "7",
+      [
+       [
+        ".label()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Color",
+        "shop/model/Model.scala"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".label() node in shop/model/Model.scala."
+     ],
+     [
+      "8",
+      [
+       [
+        ".describe()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Entity",
+        "shop/model/Model.scala"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".describe() node in shop/model/Model.scala."
+     ],
+     [
+      "9",
+      [
+       [
+        ".id()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Entity",
+        "shop/model/Model.scala"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".id() node in shop/model/Model.scala."
+     ],
+     [
+      "10",
+      [
+       [
+        ".touch()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "shop/model/Model.scala"
+       ]
+      ],
+      [
+       [
+        "validate()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      ".touch() node in shop/model/Model.scala."
+     ],
+     [
+      "11",
+      [
+       [
+        ".validate()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "shop/model/Model.scala"
+       ],
+       [
+        "touch()",
+        "shop/model/Model.scala"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".validate() node in shop/model/Model.scala."
+     ],
+     [
+      "12",
+      [
+       [
+        "K",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "K node in project."
+     ],
+     [
+      "13",
+      [
+       [
+        "Model.scala",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "java"
+       ]
+      ],
+      "Model.scala node in shop/model/Model.scala."
+     ],
+     [
+      "14",
+      [
+       [
+        "Green",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Green node in shop/model/Model.scala."
+     ],
+     [
+      "15",
+      [
+       [
+        "Red",
+        "shop/model/Model.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Red node in shop/model/Model.scala."
+     ],
+     [
+      "16",
+      [
+       [
+        "Boolean",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Boolean node in project."
+     ],
+     [
+      "17",
+      [
+       [
+        "Instant",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Instant node in project."
+     ],
+     [
+      "18",
+      [
+       [
+        "String",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "String node in project."
+     ],
+     [
+      "19",
+      [
+       [
+        "Address",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Address node in shop/model/User.scala."
+     ],
+     [
+      "20",
+      [
+       [
+        "User",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "compare()",
+        "shop/model/User.scala"
+       ],
+       [
+        "greet()",
+        "shop/model/User.scala"
+       ],
+       [
+        "guest()",
+        "shop/model/User.scala"
+       ],
+       "+2 more"
+      ],
+      "User node in shop/model/User.scala."
+     ],
+     [
+      "21",
+      [
+       [
+        "UserOps",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "displayName()",
+        "shop/model/User.scala"
+       ]
+      ],
+      "UserOps node in shop/model/User.scala."
+     ],
+     [
+      "22",
+      [
+       [
+        ".compare()",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "compare()",
+        "shop/model/User.scala"
+       ],
+       [
+        "User",
+        "shop/model/User.scala"
+       ]
+      ],
+      [
+       [
+        "compare()",
+        "shop/model/User.scala"
+       ]
+      ],
+      ".compare() node in shop/model/User.scala."
+     ],
+     [
+      "23",
+      [
+       [
+        ".greet()",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "displayName()",
+        "shop/model/User.scala"
+       ],
+       [
+        "User",
+        "shop/model/User.scala"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".greet() node in shop/model/User.scala."
+     ],
+     [
+      "24",
+      [
+       [
+        ".guest()",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "shop/model/User.scala"
+       ]
+      ],
+      [
+       [
+        "of()",
+        "shop/model/User.scala"
+       ]
+      ],
+      ".guest() node in shop/model/User.scala."
+     ],
+     [
+      "25",
+      [
+       [
+        ".of()",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "guest()",
+        "shop/model/User.scala"
+       ],
+       [
+        "User",
+        "shop/model/User.scala"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".of() node in shop/model/User.scala."
+     ],
+     [
+      "26",
+      [
+       [
+        ".validate()",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "shop/model/User.scala"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".validate() node in shop/model/User.scala."
+     ],
+     [
+      "27",
+      [
+       [
+        ".displayName()",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserOps",
+        "shop/model/User.scala"
+       ]
+      ],
+      [
+       [
+        "greet()",
+        "shop/model/User.scala"
+       ]
+      ],
+      ".displayName() node in shop/model/User.scala."
+     ],
+     [
+      "28",
+      [
+       [
+        "Option",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Option node in project."
+     ],
+     [
+      "29",
+      [
+       [
+        "Ordered",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Ordered node in project."
+     ],
+     [
+      "30",
+      [
+       [
+        "User.scala",
+        "shop/model/User.scala"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "User.scala node in shop/model/User.scala."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "shop/service/UserService.scala",
+      "15 nodes"
+     ],
+     [
+      "shop/model/Model.scala",
+      "14 nodes"
+     ],
+     [
+      "shop/model/User.scala",
+      "10 nodes"
+     ],
+     [
+      "shop/service/Audit.scala",
+      "10 nodes"
+     ],
+     [
+      "shop/util/Strings.scala",
+      "6 nodes"
+     ],
+     [
+      "shop/service/UserServiceSuite.scala",
+      "4 nodes"
+     ],
+     [
+      "main/scala/Main.scala",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "scala — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "94"
+     ],
+     [
+      "Edges",
+      "150"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "9"
+     ],
+     [
+      "Documented Sections",
+      "1"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "149"
+     ],
+     [
+      "INFERRED",
+      "1"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

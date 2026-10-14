@@ -1,0 +1,1 @@
+{"nodes": [{"id": "a", "file_type": "code"}, {"id": "b", "file_type": "code"}, {"id": "c", "file_type": "code"}], "links": [{"source": "b", "target": "a", "relation": "r1"}, {"source": "a", "target": "b", "relation": "r2"}, {"source": "c", "target": "a", "relation": "r3"}, {"source": "a", "target": "b", "relation": "r4"}], "directed": true}

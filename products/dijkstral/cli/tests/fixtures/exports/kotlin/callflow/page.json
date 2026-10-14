@@ -1,0 +1,1242 @@
+{
+ "title": "kotlin — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 74 nodes, 112 edges, 9 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "build-graph",
+   "Graph Build"
+  ],
+  [
+   "cli-skills",
+   "CLI & Skill Installers"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    BUILD_GRAPH_321CBB04(\"Graph Build<br/><small>3 nodes</small>\")",
+     "    class BUILD_GRAPH_321CBB04 module;",
+     "    CLI_SKILLS_9964CBB8(\"CLI & Skill Installers<br/><small>64 nodes</small>\")",
+     "    class CLI_SKILLS_9964CBB8 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>7 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls x3| CLI_SKILLS_9964CBB8"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Graph Build -> CLI & Skill Installers -> Tests & Fixtures"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Graph Build",
+      "3",
+      "8"
+     ],
+     [
+      "CLI & Skill Installers",
+      "64",
+      "0, 1, 2, 3, 4, 6, 7"
+     ],
+     [
+      "Tests & Fixtures",
+      "7",
+      "5"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "build-graph",
+   "heading": "2. Graph Build",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Graph Build (3 nodes, 2 edges)",
+     "    subgraph build_graph_build_gradle_kts_68981f58[\"build.gradle.kts\"]",
+     "        build_gradle_877734b9(\"build.gradle.kts\")",
+     "        build_gradle_shopversion_e50a5b2f(\"shopVersion()<br/><small>build.gradle.kts</small>\")",
+     "    end",
+     "    jvmtarget_40191a17(\"jvmtarget\")",
+     "    build_gradle_877734b9 -->|imports| jvmtarget_40191a17",
+     "    class build_gradle_877734b9 function;",
+     "    class build_gradle_shopversion_e50a5b2f function;",
+     "    class jvmtarget_40191a17 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Graph Build groups implementation around buildgradlekts, shopversion, jvmtarget, mostly in build.gradle.kts. This section covers 3 nodes and 2 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x1, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "shopVersion()",
+        "build.gradle.kts"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "shopVersion() node in build.gradle.kts."
+     ],
+     [
+      "2",
+      [
+       [
+        "build.gradle.kts",
+        "build.gradle.kts"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "jvmtarget"
+       ]
+      ],
+      "build.gradle.kts node in build.gradle.kts."
+     ],
+     [
+      "3",
+      [
+       [
+        "jvmtarget",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "build.gradle.kts",
+        "build.gradle.kts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "jvmtarget node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "build.gradle.kts",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "cli-skills",
+   "heading": "3. CLI & Skill Installers",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: CLI & Skill Installers (64 nodes, 100 edges)",
+     "    subgraph cli_skills_shop_service_UserService_kt_fabf8279[\"shop/service/UserService.kt\"]",
+     "        src_main_kotlin_com_shop_service_userservice_bc1d8952(\"UserService.kt\")",
+     "        src_main_kotlin_com_shop_service_userservice_use_d38e2c97(\"UserService<br/><small>shop/service/UserService.kt</small>\")",
+     "        src_main_kotlin_com_shop_service_userservice_use_f37332df(\"register()<br/><small>shop/service/UserService.kt</small>\")",
+     "        src_main_kotlin_com_shop_service_userservice_rep_c2c9e178(\"Repository<br/><small>shop/service/UserService.kt</small>\")",
+     "        src_main_kotlin_com_shop_service_userservice_sta_08f84eaf(\"Stats<br/><small>shop/service/UserService.kt</small>\")",
+     "        src_main_kotlin_com_shop_service_userservice_sta_582ca29b(\"count()<br/><small>shop/service/UserService.kt</small>\")",
+     "        src_main_kotlin_com_shop_service_userservice_use_03af02d6(\"save()<br/><small>shop/service/UserService.kt</small>\")",
+     "        src_main_kotlin_com_shop_service_userservice_use_7d7d6889(\"notify()<br/><small>shop/service/UserService.kt</small>\")",
+     "        src_main_kotlin_com_shop_service_userservice_use_57bc69f1(\"names()<br/><small>shop/service/UserService.kt</small>\")",
+     "        src_main_kotlin_com_shop_service_userservice_use_d241f2ef(\"audit()<br/><small>shop/service/UserService.kt</small>\")",
+     "    end",
+     "    subgraph cli_skills_shop_model_Model_kt_55dd3039[\"shop/model/Model.kt\"]",
+     "        src_main_kotlin_com_shop_model_model_model_334e410b(\"Model<br/><small>shop/model/Model.kt</small>\")",
+     "        src_main_kotlin_com_shop_model_model_entity_4a7df888(\"Entity<br/><small>shop/model/Model.kt</small>\")",
+     "        src_main_kotlin_com_shop_model_model_entity_desc_53a572cc(\"describe()<br/><small>shop/model/Model.kt</small>\")",
+     "        src_main_kotlin_com_shop_model_model_model_valid_ef4159a1(\"validate()<br/><small>shop/model/Model.kt</small>\")",
+     "        src_main_kotlin_com_shop_model_model_model_touch_23d49515(\"touch()<br/><small>shop/model/Model.kt</small>\")",
+     "        src_main_kotlin_com_shop_model_model_status_10e366fa(\"Status<br/><small>shop/model/Model.kt</small>\")",
+     "        src_main_kotlin_com_shop_model_model_status_labe_8214203a(\"label()<br/><small>shop/model/Model.kt</small>\")",
+     "    end",
+     "    src_main_kotlin_com_shop_model_user_user_2505c6bd(\"User<br/><small>shop/model/User.kt</small>\")",
+     "    src_main_kotlin_com_shop_model_model_entity_4a7df888 -->|method| src_main_kotlin_com_shop_model_model_entity_desc_53a572cc",
+     "    src_main_kotlin_com_shop_model_model_model_334e410b -->|method| src_main_kotlin_com_shop_model_model_model_valid_ef4159a1",
+     "    src_main_kotlin_com_shop_model_model_model_334e410b -->|method| src_main_kotlin_com_shop_model_model_model_touch_23d49515",
+     "    src_main_kotlin_com_shop_model_model_status_10e366fa -->|method| src_main_kotlin_com_shop_model_model_status_labe_8214203a",
+     "    src_main_kotlin_com_shop_service_userservice_sta_08f84eaf -->|method| src_main_kotlin_com_shop_service_userservice_sta_582ca29b",
+     "    src_main_kotlin_com_shop_service_userservice_use_d38e2c97 -->|method| src_main_kotlin_com_shop_service_userservice_use_f37332df",
+     "    src_main_kotlin_com_shop_service_userservice_use_d38e2c97 -->|method| src_main_kotlin_com_shop_service_userservice_use_03af02d6",
+     "    src_main_kotlin_com_shop_service_userservice_use_d38e2c97 -->|method| src_main_kotlin_com_shop_service_userservice_use_7d7d6889",
+     "    src_main_kotlin_com_shop_service_userservice_use_d38e2c97 -->|method| src_main_kotlin_com_shop_service_userservice_use_57bc69f1",
+     "    src_main_kotlin_com_shop_service_userservice_use_d38e2c97 -->|method| src_main_kotlin_com_shop_service_userservice_use_d241f2ef",
+     "    src_main_kotlin_com_shop_model_model_model_touch_23d49515 -->|calls| src_main_kotlin_com_shop_model_model_model_valid_ef4159a1",
+     "    src_main_kotlin_com_shop_service_userservice_sta_582ca29b -->|calls| src_main_kotlin_com_shop_service_userservice_use_57bc69f1",
+     "    src_main_kotlin_com_shop_service_userservice_use_f37332df -->|calls| src_main_kotlin_com_shop_service_userservice_use_03af02d6",
+     "    src_main_kotlin_com_shop_service_userservice_use_f37332df -->|calls| src_main_kotlin_com_shop_service_userservice_use_7d7d6889",
+     "    src_main_kotlin_com_shop_service_userservice_bc1d8952 -->|imports| src_main_kotlin_com_shop_model_user_user_2505c6bd",
+     "    src_main_kotlin_com_shop_service_userservice_bc1d8952 -->|imports| src_main_kotlin_com_shop_model_model_entity_4a7df888",
+     "    %% Omitted for readability: 46 nodes, 0 edges",
+     "    class src_main_kotlin_com_shop_service_userservice_bc1d8952 klass;",
+     "    class src_main_kotlin_com_shop_service_userservice_use_d38e2c97 klass;",
+     "    class src_main_kotlin_com_shop_service_userservice_use_f37332df function;",
+     "    class src_main_kotlin_com_shop_service_userservice_rep_c2c9e178 klass;",
+     "    class src_main_kotlin_com_shop_service_userservice_sta_08f84eaf klass;",
+     "    class src_main_kotlin_com_shop_service_userservice_sta_582ca29b function;",
+     "    class src_main_kotlin_com_shop_service_userservice_use_03af02d6 function;",
+     "    class src_main_kotlin_com_shop_service_userservice_use_7d7d6889 function;",
+     "    class src_main_kotlin_com_shop_service_userservice_use_57bc69f1 function;",
+     "    class src_main_kotlin_com_shop_service_userservice_use_d241f2ef function;",
+     "    class src_main_kotlin_com_shop_model_model_model_334e410b klass;",
+     "    class src_main_kotlin_com_shop_model_model_entity_4a7df888 klass;",
+     "    class src_main_kotlin_com_shop_model_model_entity_desc_53a572cc function;",
+     "    class src_main_kotlin_com_shop_model_model_model_valid_ef4159a1 function;",
+     "    class src_main_kotlin_com_shop_model_model_model_touch_23d49515 function;",
+     "    class src_main_kotlin_com_shop_model_model_status_10e366fa klass;",
+     "    class src_main_kotlin_com_shop_model_model_status_labe_8214203a function;",
+     "    class src_main_kotlin_com_shop_model_user_user_2505c6bd klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "CLI & Skill Installers groups implementation around kotlin, com, shop, service, mostly in shop/service/UserService.kt, shop/model/Model.kt, shop/model/User.kt. This section covers 64 nodes and 100 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x24, contains x24, references x19, calls x16. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Entity",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.kt",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       [
+        "describe()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Entity node in shop/model/Model.kt."
+     ],
+     [
+      "2",
+      [
+       [
+        "Fail",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Fail node in shop/model/Model.kt."
+     ],
+     [
+      "3",
+      [
+       [
+        "Model",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "touch()",
+        "shop/model/Model.kt"
+       ],
+       [
+        "validate()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Model node in shop/model/Model.kt."
+     ],
+     [
+      "4",
+      [
+       [
+        "Ok",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Ok node in shop/model/Model.kt."
+     ],
+     [
+      "5",
+      [
+       [
+        "Result",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Result node in shop/model/Model.kt."
+     ],
+     [
+      "6",
+      [
+       [
+        "Status",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "label()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Status node in shop/model/Model.kt."
+     ],
+     [
+      "7",
+      [
+       [
+        ".describe()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Entity",
+        "shop/model/Model.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".describe() node in shop/model/Model.kt."
+     ],
+     [
+      "8",
+      [
+       [
+        ".touch()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "shop/model/Model.kt"
+       ]
+      ],
+      [
+       [
+        "validate()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      ".touch() node in shop/model/Model.kt."
+     ],
+     [
+      "9",
+      [
+       [
+        ".validate()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "shop/model/Model.kt"
+       ],
+       [
+        "touch()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".validate() node in shop/model/Model.kt."
+     ],
+     [
+      "10",
+      [
+       [
+        ".label()",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Status",
+        "shop/model/Model.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".label() node in shop/model/Model.kt."
+     ],
+     [
+      "11",
+      [
+       [
+        "K",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "K node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "Model.kt",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "instant"
+       ]
+      ],
+      "Model.kt node in shop/model/Model.kt."
+     ],
+     [
+      "13",
+      [
+       [
+        "ACTIVE",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ACTIVE node in shop/model/Model.kt."
+     ],
+     [
+      "14",
+      [
+       [
+        "INACTIVE",
+        "shop/model/Model.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "INACTIVE node in shop/model/Model.kt."
+     ],
+     [
+      "15",
+      [
+       [
+        "instant",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model.kt",
+        "shop/model/Model.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "instant node in project."
+     ],
+     [
+      "16",
+      [
+       [
+        "Stats",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "count()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Stats node in shop/service/UserService.kt."
+     ],
+     [
+      "17",
+      [
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "main()",
+        "main/kotlin/Main.kt"
+       ],
+       [
+        "Main.kt",
+        "main/kotlin/Main.kt"
+       ],
+       [
+        "UserServiceTest",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      [
+       [
+        "audit()",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "names()",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "notify()",
+        "shop/service/UserService.kt"
+       ],
+       "+2 more"
+      ],
+      "UserService node in shop/service/UserService.kt."
+     ],
+     [
+      "18",
+      [
+       [
+        "Runnable",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "run()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Runnable node in shop/service/UserService.kt."
+     ],
+     [
+      "19",
+      [
+       [
+        ".count()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Stats",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       [
+        "names()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      ".count() node in shop/service/UserService.kt."
+     ],
+     [
+      "20",
+      [
+       [
+        ".audit()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".audit() node in shop/service/UserService.kt."
+     ],
+     [
+      "21",
+      [
+       [
+        ".names()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "count()",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".names() node in shop/service/UserService.kt."
+     ],
+     [
+      "22",
+      [
+       [
+        ".notify()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       [
+        "run()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      ".notify() node in shop/service/UserService.kt."
+     ],
+     [
+      "23",
+      [
+       [
+        ".run()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "notify()",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "Runnable",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".run() node in shop/service/UserService.kt."
+     ],
+     [
+      "24",
+      [
+       [
+        ".register()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       [
+        "notify()",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "remember()",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "save()",
+        "shop/service/UserService.kt"
+       ],
+       "+1 more"
+      ],
+      ".register() node in shop/service/UserService.kt."
+     ],
+     [
+      "25",
+      [
+       [
+        ".save()",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".save() node in shop/service/UserService.kt."
+     ],
+     [
+      "26",
+      [
+       [
+        "Main.kt",
+        "main/kotlin/Main.kt"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "InMemoryRepository",
+        "shop/service/Audit.kt"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Main.kt node in main/kotlin/Main.kt."
+     ],
+     [
+      "27",
+      [
+       [
+        "main()",
+        "main/kotlin/Main.kt"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "InMemoryRepository",
+        "shop/service/Audit.kt"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "main() node in main/kotlin/Main.kt."
+     ],
+     [
+      "28",
+      [
+       [
+        "Customer",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Customer node in project."
+     ],
+     [
+      "29",
+      [
+       [
+        "Address",
+        "shop/model/User.kt"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.kt",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Address node in shop/model/User.kt."
+     ],
+     [
+      "30",
+      [
+       [
+        "User",
+        "shop/model/User.kt"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.kt",
+        "shop/service/UserService.kt"
+       ],
+       [
+        "UserServiceTest.kt",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      [
+       [
+        "compareTo()",
+        "shop/model/User.kt"
+       ],
+       [
+        "greet()",
+        "shop/model/User.kt"
+       ],
+       [
+        "guest()",
+        "shop/model/User.kt"
+       ],
+       "+2 more"
+      ],
+      "User node in shop/model/User.kt."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "shop/service/UserService.kt",
+      "17 nodes"
+     ],
+     [
+      "shop/model/Model.kt",
+      "13 nodes"
+     ],
+     [
+      "shop/model/User.kt",
+      "9 nodes"
+     ],
+     [
+      "shop/service/Audit.kt",
+      "7 nodes"
+     ],
+     [
+      "shop/util/Strings.kt",
+      "7 nodes"
+     ],
+     [
+      "main/kotlin/Main.kt",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "4. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (7 nodes, 7 edges)",
+     "    subgraph tests_fixtures_shop_service_UserServiceTest_kt_ee20a666[\"shop/service/UserServiceTest.kt\"]",
+     "        src_test_kotlin_com_shop_service_userservicetest_e4c0d867(\"UserServiceTest.kt\")",
+     "        src_test_kotlin_com_shop_service_userservicetest_9e713aba(\"Formatter<br/><small>shop/service/UserServiceTest.kt</small>\")",
+     "        src_test_kotlin_com_shop_service_userservicetest_b5c58d8b(\"UserServiceTest<br/><small>shop/service/UserServiceTest.kt</small>\")",
+     "        src_test_kotlin_com_shop_service_userservicetest_ccce3f4e(\"shout()<br/><small>shop/service/UserServiceTest.kt</small>\")",
+     "        src_test_kotlin_com_shop_service_userservicetest_7fda3125(\"registersUser()<br/><small>shop/service/UserServiceTest.kt</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_External_generated_473753cb[\"External / generated\"]",
+     "        assertequals_f1a2e8af(\"assertequals\")",
+     "        test_a94a8fe5(\"Test\")",
+     "    end",
+     "    src_test_kotlin_com_shop_service_userservicetest_9e713aba -->|method| src_test_kotlin_com_shop_service_userservicetest_ccce3f4e",
+     "    src_test_kotlin_com_shop_service_userservicetest_b5c58d8b -->|method| src_test_kotlin_com_shop_service_userservicetest_7fda3125",
+     "    src_test_kotlin_com_shop_service_userservicetest_e4c0d867 -->|imports| assertequals_f1a2e8af",
+     "    src_test_kotlin_com_shop_service_userservicetest_e4c0d867 -->|imports| test_a94a8fe5",
+     "    class src_test_kotlin_com_shop_service_userservicetest_e4c0d867 test;",
+     "    class src_test_kotlin_com_shop_service_userservicetest_9e713aba test;",
+     "    class src_test_kotlin_com_shop_service_userservicetest_b5c58d8b test;",
+     "    class src_test_kotlin_com_shop_service_userservicetest_ccce3f4e test;",
+     "    class src_test_kotlin_com_shop_service_userservicetest_7fda3125 test;",
+     "    class assertequals_f1a2e8af async;",
+     "    class test_a94a8fe5 klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around test, userservicetestkt, kotlin, com, mostly in shop/service/UserServiceTest.kt. This section covers 7 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x2, contains x2, imports x2, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Formatter",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "shout()",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      "Formatter node in shop/service/UserServiceTest.kt."
+     ],
+     [
+      "2",
+      [
+       [
+        "UserServiceTest",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "InMemoryRepository",
+        "shop/service/Audit.kt"
+       ],
+       [
+        "registersUser()",
+        "shop/service/UserServiceTest.kt"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.kt"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "3",
+      [
+       [
+        ".shout()",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "Formatter",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".shout() node in shop/service/UserServiceTest.kt."
+     ],
+     [
+      "4",
+      [
+       [
+        ".registersUser()",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "UserServiceTest",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".registersUser() node in shop/service/UserServiceTest.kt."
+     ],
+     [
+      "5",
+      [
+       [
+        "UserServiceTest.kt",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "assertequals"
+       ],
+       [
+        "Test"
+       ],
+       [
+        "User",
+        "shop/model/User.kt"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "6",
+      [
+       [
+        "Test",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserServiceTest.kt",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "7",
+      [
+       [
+        "assertequals",
+        ""
+       ]
+      ],
+      "Async",
+      [
+       [
+        "UserServiceTest.kt",
+        "shop/service/UserServiceTest.kt"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "assertequals node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "shop/service/UserServiceTest.kt",
+      "5 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "kotlin — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "74"
+     ],
+     [
+      "Edges",
+      "112"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "9"
+     ],
+     [
+      "Documented Sections",
+      "3"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "109"
+     ],
+     [
+      "INFERRED",
+      "3"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

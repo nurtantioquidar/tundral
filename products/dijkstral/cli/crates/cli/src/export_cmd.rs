@@ -1,5 +1,6 @@
-//! `dijkstral export html|wiki|graphml` on any Graphify-format `graph.json`, and the exporters
-//! `extract`/`update` run (`docs/graphify-exports.md`).
+//! `dijkstral export html|wiki|graphml|cypher|neo4j|falkordb|obsidian|svg|callflow-html` on any
+//! Graphify-format `graph.json`, and the exporters `extract`/`update` run
+//! (`docs/graphify-exports.md`). The stage-4b formats live in `crate::exports`.
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -8,6 +9,7 @@ use anyhow::{Context, Result};
 use clap::{Args, Subcommand};
 use dijkstral_core::pipeline::{Exporter, OUT_DIR};
 use dijkstral_export::html::{self, HtmlOptions};
+use dijkstral_export::nx::NxGraph;
 use dijkstral_export::{
     graphml, wiki, HtmlExport, Loaded, Names, WikiExport, DEFAULT_NODE_LIMIT, HTML_FILE,
     LABELS_FILE, WIKI_DIR,
@@ -67,27 +69,39 @@ enum Format {
     Wiki(Common),
     /// graph.graphml next to the graph (Gephi, yEd, any GraphML tool).
     Graphml(GraphOnly),
+    /// cypher.txt next to the graph (OpenCypher, for Neo4j or FalkorDB).
+    Cypher(GraphOnly),
+    /// cypher.txt for Neo4j, or --push the graph to a Neo4j server over Bolt.
+    Neo4j(crate::exports::cypher::PushArgs),
+    /// cypher.txt for FalkorDB, or --push the graph to a FalkorDB server.
+    Falkordb(crate::exports::cypher::PushArgs),
+    /// Obsidian vault: one note per node and per community, plus graph.canvas.
+    Obsidian(crate::exports::obsidian::ObsidianArgs),
+    /// graph.svg next to the graph: a static drawing coloured by community.
+    Svg(Common),
+    /// Mermaid architecture and call-flow HTML page.
+    CallflowHtml(crate::exports::callflow::CallflowArgs),
 }
 
 #[derive(Args, Debug)]
-struct GraphOnly {
+pub(crate) struct GraphOnly {
     /// Graph to export (any Graphify-format graph.json). Default: dijkstral-out/graph.json, else
     /// graphify-out/graph.json.
     #[arg(long, value_name = "PATH")]
-    graph: Option<PathBuf>,
+    pub(crate) graph: Option<PathBuf>,
 }
 
 #[derive(Args, Debug)]
-struct Common {
+pub(crate) struct Common {
     #[command(flatten)]
-    graph: GraphOnly,
+    pub(crate) graph: GraphOnly,
     /// Community names (Graphify's .graphify_labels.json format). Default: that file next to the
     /// graph, else each community's best-connected member, as in GRAPH_REPORT.md.
     #[arg(long, value_name = "PATH")]
-    labels: Option<PathBuf>,
+    pub(crate) labels: Option<PathBuf>,
     /// Name communities "Community N", as Graphify does without a labels file.
     #[arg(long)]
-    no_label: bool,
+    pub(crate) no_label: bool,
 }
 
 #[derive(Args, Debug)]
@@ -115,7 +129,7 @@ pub fn run(a: ExportArgs) -> ExitCode {
     }
 }
 
-fn graph_path(g: &GraphOnly) -> PathBuf {
+pub(crate) fn graph_path(g: &GraphOnly) -> PathBuf {
     match &g.graph {
         Some(p) => p.clone(),
         None => {
@@ -143,8 +157,31 @@ fn names(c: &Common, loaded: &Loaded, dir: &Path) -> Result<Names> {
     Ok(loaded.view(Names::Placeholder).hub_names())
 }
 
+/// Community names for the stage-4b exporters (same precedence as `names`).
+pub(crate) fn nx_names(c: &Common, g: &NxGraph, dir: &Path) -> Result<Names> {
+    if let Some(p) = &c.labels {
+        return Names::read(p);
+    }
+    if c.no_label {
+        return Ok(Names::Placeholder);
+    }
+    let sidecar = dir.join(LABELS_FILE);
+    if sidecar.is_file() {
+        return Names::read(&sidecar);
+    }
+    Ok(g.hub_names())
+}
+
 fn export(a: ExportArgs) -> Result<String> {
     match a.format {
+        Format::Cypher(g) => crate::exports::cypher::run_file(&g),
+        Format::Neo4j(p) => crate::exports::cypher::run(p, crate::exports::cypher::Target::Neo4j),
+        Format::Falkordb(p) => {
+            crate::exports::cypher::run(p, crate::exports::cypher::Target::FalkorDb)
+        }
+        Format::Obsidian(o) => crate::exports::obsidian::run(o),
+        Format::Svg(c) => crate::exports::svg::run(c),
+        Format::CallflowHtml(c) => crate::exports::callflow::run(c),
         Format::Graphml(g) => {
             let path = graph_path(&g);
             let (_, doc) = Loaded::read(&path)?;
@@ -195,7 +232,7 @@ fn export(a: ExportArgs) -> Result<String> {
 }
 
 /// `name` in the graph's directory.
-fn sibling(graph: &Path, name: &str) -> PathBuf {
+pub(crate) fn sibling(graph: &Path, name: &str) -> PathBuf {
     let dir = graph.parent().unwrap_or(Path::new(""));
     if name.is_empty() {
         dir.to_path_buf()
@@ -206,7 +243,7 @@ fn sibling(graph: &Path, name: &str) -> PathBuf {
 
 /// The project a graph describes: the directory holding its `dijkstral-out/` or
 /// `graphify-out/`, else the graph's own directory.
-fn project_name(graph: &Path) -> String {
+pub(crate) fn project_name(graph: &Path) -> String {
     let dir = graph
         .canonicalize()
         .ok()

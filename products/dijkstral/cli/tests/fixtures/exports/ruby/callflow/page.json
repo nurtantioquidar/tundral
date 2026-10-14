@@ -1,0 +1,1929 @@
+{
+ "title": "ruby — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 56 nodes, 71 edges, 8 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "shop-userrb-models",
+   "Shop Userrb Models"
+  ],
+  [
+   "shop-baserb-models",
+   "Shop Baserb Models"
+  ],
+  [
+   "shop-models-baserb",
+   "Shop Models Baserb"
+  ],
+  [
+   "shop-utilrb-releaserake",
+   "Shop Utilrb Releaserake"
+  ],
+  [
+   "shop-utilrb-shoploggable",
+   "Shop Utilrb Shoploggable"
+  ],
+  [
+   "shop-bin",
+   "Shop Bin"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>17 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    SHOP_USERRB_MODELS_A76CAF97(\"Shop Userrb Models<br/><small>10 nodes</small>\")",
+     "    class SHOP_USERRB_MODELS_A76CAF97 module;",
+     "    SHOP_BASERB_MODELS_82729FE8(\"Shop Baserb Models<br/><small>10 nodes</small>\")",
+     "    class SHOP_BASERB_MODELS_82729FE8 module;",
+     "    SHOP_MODELS_BASERB_9E95E787(\"Shop Models Baserb<br/><small>6 nodes</small>\")",
+     "    class SHOP_MODELS_BASERB_9E95E787 module;",
+     "    SHOP_UTILRB_RELEASERAKE_D5553B78(\"Shop Utilrb Releaserake<br/><small>6 nodes</small>\")",
+     "    class SHOP_UTILRB_RELEASERAKE_D5553B78 module;",
+     "    SHOP_UTILRB_SHOPLOGGABLE_AC795844(\"Shop Utilrb Shoploggable<br/><small>5 nodes</small>\")",
+     "    class SHOP_UTILRB_SHOPLOGGABLE_AC795844 module;",
+     "    SHOP_BIN_2632DE42(\"Shop Bin<br/><small>2 nodes</small>\")",
+     "    class SHOP_BIN_2632DE42 module;",
+     "    SHOP_USERRB_MODELS_A76CAF97 -->|mixes in x2| SHOP_UTILRB_SHOPLOGGABLE_AC795844",
+     "    TESTS_FIXTURES_B84B1DCC -->|mixes in x2| SHOP_UTILRB_SHOPLOGGABLE_AC795844",
+     "    SHOP_USERRB_MODELS_A76CAF97 -->|method| SHOP_UTILRB_RELEASERAKE_D5553B78",
+     "    SHOP_USERRB_MODELS_A76CAF97 -->|method| TESTS_FIXTURES_B84B1DCC",
+     "    SHOP_USERRB_MODELS_A76CAF97 -->|method| SHOP_MODELS_BASERB_9E95E787",
+     "    SHOP_BASERB_MODELS_82729FE8 -->|contains| SHOP_MODELS_BASERB_9E95E787",
+     "    SHOP_UTILRB_SHOPLOGGABLE_AC795844 -->|contains| SHOP_UTILRB_RELEASERAKE_D5553B78",
+     "    SHOP_BASERB_MODELS_82729FE8 -->|calls| TESTS_FIXTURES_B84B1DCC",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls| SHOP_BASERB_MODELS_82729FE8",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls| SHOP_USERRB_MODELS_A76CAF97",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls| SHOP_UTILRB_RELEASERAKE_D5553B78"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Shop Bin -> Tests & Fixtures -> Shop Utilrb Shoploggable -> Shop Utilrb Releaserake -> Shop Userrb Models -> Shop Models Baserb -> Shop Baserb Models"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Tests & Fixtures",
+      "17",
+      "2, 3"
+     ],
+     [
+      "Shop Userrb Models",
+      "10",
+      "0"
+     ],
+     [
+      "Shop Baserb Models",
+      "10",
+      "1"
+     ],
+     [
+      "Shop Models Baserb",
+      "6",
+      "4"
+     ],
+     [
+      "Shop Utilrb Releaserake",
+      "6",
+      "5"
+     ],
+     [
+      "Shop Utilrb Shoploggable",
+      "5",
+      "6"
+     ],
+     [
+      "Shop Bin",
+      "2",
+      "7"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "2. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (17 nodes, 22 edges)",
+     "    subgraph tests_fixtures_lib_shop_service_rb_25dbeb2b[\"lib/shop/service.rb\"]",
+     "        lib_shop_service_shop_service_userservice_a08254ab(\"Shop::Service::UserService<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_shop_service_596c9e10(\"Shop::Service<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_shop_service_userservice_promot_83a2dfe1(\"promote()<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_shop_service_userservice_export_11dab4c9(\"export()<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_shop_service_userservice_regist_c7918025(\"register()<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_shop_service_build_a124df7c(\"build()<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_shop_service_userservice_audit_86f66aeb(\"audit()<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_shop_service_userservice_helper_58afcbde(\"helper()<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_shop_service_userservice_initia_f9cfb183(\"initialize()<br/><small>lib/shop/service.rb</small>\")",
+     "        lib_shop_service_60d0647a(\"service.rb\")",
+     "    end",
+     "    subgraph tests_fixtures_test_service_test_rb_b89d8697[\"test/service_test.rb\"]",
+     "        test_service_test_servicetest_12a160f2(\"ServiceTest<br/><small>test/service_test.rb</small>\")",
+     "        test_service_test_servicetest_test_parse_a7120f10(\"test_parse()<br/><small>test/service_test.rb</small>\")",
+     "        test_service_test_servicetest_setup_a7bb0932(\"setup()<br/><small>test/service_test.rb</small>\")",
+     "        test_service_test_servicetest_test_register_4709e0bf(\"test_register()<br/><small>test/service_test.rb</small>\")",
+     "        test_service_test_81cff7e0(\"service_test.rb\")",
+     "    end",
+     "    test_a94a8fe5(\"Test\")",
+     "    lib_shop_models_user_shop_models_user_parse_5d7aeeda(\"parse()<br/><small>shop/models/user.rb</small>\")",
+     "    lib_shop_service_shop_service_596c9e10 -->|method| lib_shop_service_shop_service_build_a124df7c",
+     "    lib_shop_service_shop_service_userservice_a08254ab -->|method| lib_shop_service_shop_service_userservice_regist_c7918025",
+     "    lib_shop_service_shop_service_userservice_a08254ab -->|method| lib_shop_service_shop_service_userservice_promot_83a2dfe1",
+     "    lib_shop_service_shop_service_userservice_a08254ab -->|method| lib_shop_service_shop_service_userservice_export_11dab4c9",
+     "    lib_shop_service_shop_service_userservice_a08254ab -->|method| lib_shop_service_shop_service_userservice_audit_86f66aeb",
+     "    lib_shop_service_shop_service_userservice_a08254ab -->|method| lib_shop_service_shop_service_userservice_helper_58afcbde",
+     "    lib_shop_service_shop_service_userservice_a08254ab -->|method| lib_shop_service_shop_service_userservice_initia_f9cfb183",
+     "    test_service_test_servicetest_12a160f2 -->|method| test_service_test_servicetest_test_parse_a7120f10",
+     "    test_service_test_servicetest_12a160f2 -->|method| test_service_test_servicetest_setup_a7bb0932",
+     "    test_service_test_servicetest_12a160f2 -->|method| test_service_test_servicetest_test_register_4709e0bf",
+     "    lib_shop_service_shop_service_build_a124df7c -->|calls| lib_shop_service_shop_service_userservice_a08254ab",
+     "    lib_shop_service_shop_service_userservice_audit_86f66aeb -->|calls| lib_shop_service_shop_service_userservice_helper_58afcbde",
+     "    lib_shop_service_shop_service_userservice_export_11dab4c9 -->|calls| lib_shop_service_shop_service_userservice_helper_58afcbde",
+     "    lib_shop_service_shop_service_userservice_regist_c7918025 -->|calls| lib_shop_service_shop_service_userservice_audit_86f66aeb",
+     "    test_service_test_servicetest_setup_a7bb0932 -->|calls| lib_shop_service_shop_service_build_a124df7c",
+     "    lib_shop_service_shop_service_userservice_promot_83a2dfe1 -->|calls| lib_shop_service_shop_service_userservice_promot_83a2dfe1",
+     "    lib_shop_service_shop_service_userservice_promot_83a2dfe1 -->|calls| lib_shop_models_user_shop_models_user_parse_5d7aeeda",
+     "    test_service_test_servicetest_test_parse_a7120f10 -->|calls| lib_shop_models_user_shop_models_user_parse_5d7aeeda",
+     "    class lib_shop_service_shop_service_userservice_a08254ab klass;",
+     "    class lib_shop_service_shop_service_596c9e10 klass;",
+     "    class lib_shop_service_shop_service_userservice_promot_83a2dfe1 function;",
+     "    class lib_shop_service_shop_service_userservice_export_11dab4c9 function;",
+     "    class lib_shop_service_shop_service_userservice_regist_c7918025 function;",
+     "    class lib_shop_service_shop_service_build_a124df7c function;",
+     "    class lib_shop_service_shop_service_userservice_audit_86f66aeb function;",
+     "    class lib_shop_service_shop_service_userservice_helper_58afcbde function;",
+     "    class lib_shop_service_shop_service_userservice_initia_f9cfb183 function;",
+     "    class lib_shop_service_60d0647a module;",
+     "    class test_service_test_servicetest_12a160f2 test;",
+     "    class test_service_test_servicetest_test_parse_a7120f10 test;",
+     "    class test_service_test_servicetest_setup_a7bb0932 test;",
+     "    class test_service_test_servicetest_test_register_4709e0bf test;",
+     "    class test_service_test_81cff7e0 test;",
+     "    class test_a94a8fe5 klass;",
+     "    class lib_shop_models_user_shop_models_user_parse_5d7aeeda function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around shop, servicerb, test, service, mostly in lib/shop/service.rb, test/service_test.rb, shop/models/user.rb. This section covers 17 nodes and 22 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x10, calls x8, contains x3, inherits x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Shop::Service",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "build()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Shop::Service node in lib/shop/service.rb."
+     ],
+     [
+      "2",
+      [
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "boot()",
+        "lib/shop.rb"
+       ],
+       [
+        "build()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       [
+        "audit()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "export()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "helper()",
+        "lib/shop/service.rb"
+       ],
+       "+3 more"
+      ],
+      "Shop::Service::UserService node in lib/shop/service.rb."
+     ],
+     [
+      "3",
+      [
+       [
+        ".build()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "setup()",
+        "test/service_test.rb"
+       ],
+       [
+        "Shop::Service",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       [
+        "Shop::Models::Repo",
+        "shop/models/base.rb"
+       ],
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      ".build() node in lib/shop/service.rb."
+     ],
+     [
+      "4",
+      [
+       [
+        ".audit()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      ".audit() node in lib/shop/service.rb."
+     ],
+     [
+      "5",
+      [
+       [
+        ".export()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Exports documentation data to a target format."
+     ],
+     [
+      "6",
+      [
+       [
+        ".helper()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "audit()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "export()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".helper() node in lib/shop/service.rb."
+     ],
+     [
+      "7",
+      [
+       [
+        ".initialize()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".initialize() node in lib/shop/service.rb."
+     ],
+     [
+      "8",
+      [
+       [
+        ".register()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       [
+        "audit()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "log()",
+        "lib/shop/util.rb"
+       ],
+       [
+        "Shop::Models::User",
+        "shop/models/user.rb"
+       ],
+       "+1 more"
+      ],
+      ".register() node in lib/shop/service.rb."
+     ],
+     [
+      "9",
+      [
+       [
+        ".setup()",
+        "test/service_test.rb"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "ServiceTest",
+        "test/service_test.rb"
+       ]
+      ],
+      [
+       [
+        "build()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      ".setup() node in test/service_test.rb."
+     ],
+     [
+      "10",
+      [
+       [
+        "service.rb",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "service.rb node in lib/shop/service.rb."
+     ],
+     [
+      "11",
+      [
+       [
+        "ServiceTest",
+        "test/service_test.rb"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "setup()",
+        "test/service_test.rb"
+       ],
+       [
+        "test_parse()",
+        "test/service_test.rb"
+       ],
+       [
+        "test_register()",
+        "test/service_test.rb"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "12",
+      [
+       [
+        ".parse()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "promote()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "Shop::Models::User",
+        "shop/models/user.rb"
+       ],
+       [
+        "test_parse()",
+        "test/service_test.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".parse() node in shop/models/user.rb."
+     ],
+     [
+      "13",
+      [
+       [
+        ".promote()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "promote()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       [
+        "parse()",
+        "shop/models/user.rb"
+       ],
+       [
+        "promote()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      ".promote() node in lib/shop/service.rb."
+     ],
+     [
+      "14",
+      [
+       [
+        ".test_parse()",
+        "test/service_test.rb"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "ServiceTest",
+        "test/service_test.rb"
+       ]
+      ],
+      [
+       [
+        "parse()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "15",
+      [
+       [
+        ".test_register()",
+        "test/service_test.rb"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "ServiceTest",
+        "test/service_test.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "16",
+      [
+       [
+        "Test",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "17",
+      [
+       [
+        "service_test.rb",
+        "test/service_test.rb"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "lib/shop/service.rb",
+      "10 nodes"
+     ],
+     [
+      "test/service_test.rb",
+      "5 nodes"
+     ],
+     [
+      "shop/models/user.rb",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-userrb-models",
+   "heading": "3. Shop Userrb Models",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Userrb Models (10 nodes, 10 edges)",
+     "    subgraph shop_userrb_models_shop_models_user_rb_a72e9e00[\"shop/models/user.rb\"]",
+     "        lib_shop_models_user_shop_models_guest_7f9f9370(\"Shop::Models::Guest<br/><small>shop/models/user.rb</small>\")",
+     "        lib_shop_models_user_shop_models_user_aca79ae6(\"Shop::Models::User<br/><small>shop/models/user.rb</small>\")",
+     "        lib_shop_models_user_shop_models_guest_display_2c8155fc(\"display()<br/><small>shop/models/user.rb</small>\")",
+     "        lib_shop_models_user_shop_models_user_display_e43f5046(\"display()<br/><small>shop/models/user.rb</small>\")",
+     "        lib_shop_models_user_shop_67292bd1(\"Shop<br/><small>shop/models/user.rb</small>\")",
+     "        lib_shop_models_user_shop_models_f27b5e44(\"Shop::Models<br/><small>shop/models/user.rb</small>\")",
+     "        lib_shop_models_user_shop_models_user_admin_4e0bb8ae(\"Shop::Models::User::Admin<br/><small>shop/models/user.rb</small>\")",
+     "        lib_shop_models_user_756d6e92(\"user.rb\")",
+     "    end",
+     "    subgraph shop_userrb_models_External_generated_19892cb4[\"External / generated\"]",
+     "        base_1405df66(\"Base\")",
+     "        user_12dea96f(\"User\")",
+     "    end",
+     "    lib_shop_models_user_shop_models_guest_7f9f9370 -->|method| lib_shop_models_user_shop_models_guest_display_2c8155fc",
+     "    lib_shop_models_user_shop_models_user_aca79ae6 -->|method| lib_shop_models_user_shop_models_user_display_e43f5046",
+     "    class lib_shop_models_user_shop_models_guest_7f9f9370 klass;",
+     "    class lib_shop_models_user_shop_models_user_aca79ae6 klass;",
+     "    class lib_shop_models_user_shop_models_guest_display_2c8155fc function;",
+     "    class lib_shop_models_user_shop_models_user_display_e43f5046 function;",
+     "    class lib_shop_models_user_shop_67292bd1 klass;",
+     "    class lib_shop_models_user_shop_models_f27b5e44 klass;",
+     "    class lib_shop_models_user_shop_models_user_admin_4e0bb8ae klass;",
+     "    class lib_shop_models_user_756d6e92 module;",
+     "    class base_1405df66 klass;",
+     "    class user_12dea96f klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Userrb Models groups implementation around shop, userrb, models, display, mostly in shop/models/user.rb. This section covers 10 nodes and 10 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x5, inherits x3, method x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Shop",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop node in shop/models/user.rb."
+     ],
+     [
+      "2",
+      [
+       [
+        "Shop::Models",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop::Models node in shop/models/user.rb."
+     ],
+     [
+      "3",
+      [
+       [
+        "Shop::Models::Guest",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "display()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Shop::Models::Guest node in shop/models/user.rb."
+     ],
+     [
+      "4",
+      [
+       [
+        "Shop::Models::User",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "register()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       [
+        "display()",
+        "shop/models/user.rb"
+       ],
+       [
+        "initialize()",
+        "shop/models/user.rb"
+       ],
+       [
+        "parse()",
+        "shop/models/user.rb"
+       ],
+       "+1 more"
+      ],
+      "Shop::Models::User node in shop/models/user.rb."
+     ],
+     [
+      "5",
+      [
+       [
+        "Shop::Models::User::Admin",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "promote()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Shop::Models::User::Admin node in shop/models/user.rb."
+     ],
+     [
+      "6",
+      [
+       [
+        ".display()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::Guest",
+        "shop/models/user.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".display() node in shop/models/user.rb."
+     ],
+     [
+      "7",
+      [
+       [
+        ".display()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::User",
+        "shop/models/user.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".display() node in shop/models/user.rb."
+     ],
+     [
+      "8",
+      [
+       [
+        "Base",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Base node in project."
+     ],
+     [
+      "9",
+      [
+       [
+        "user.rb",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "user.rb node in shop/models/user.rb."
+     ],
+     [
+      "10",
+      [
+       [
+        "User",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "User node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "shop/models/user.rb",
+      "8 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-baserb-models",
+   "heading": "4. Shop Baserb Models",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Baserb Models (10 nodes, 9 edges)",
+     "    subgraph shop_baserb_models_shop_models_base_rb_aca89b93[\"shop/models/base.rb\"]",
+     "        lib_shop_models_base_shop_models_repo_18f611e0(\"Shop::Models::Repo<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_models_repo_initialize_c754dc10(\"initialize()<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_models_repo_add_79de0d10(\"add()<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_models_repo_each_429065e6(\"each()<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_5746ff2a(\"Shop<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_models_4ed5024e(\"Shop::Models<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_13ffdb89(\"base.rb\")",
+     "    end",
+     "    subgraph shop_baserb_models_lib_shop_rb_bc6774f3[\"lib/shop.rb\"]",
+     "        lib_shop_shop_d19d8784(\"Shop<br/><small>lib/shop.rb</small>\")",
+     "        lib_shop_shop_boot_b6660461(\"boot()<br/><small>lib/shop.rb</small>\")",
+     "        lib_shop_831cac8f(\"shop.rb\")",
+     "    end",
+     "    lib_shop_models_base_shop_models_repo_18f611e0 -->|method| lib_shop_models_base_shop_models_repo_initialize_c754dc10",
+     "    lib_shop_models_base_shop_models_repo_18f611e0 -->|method| lib_shop_models_base_shop_models_repo_add_79de0d10",
+     "    lib_shop_models_base_shop_models_repo_18f611e0 -->|method| lib_shop_models_base_shop_models_repo_each_429065e6",
+     "    lib_shop_shop_d19d8784 -->|method| lib_shop_shop_boot_b6660461",
+     "    lib_shop_shop_boot_b6660461 -->|calls| lib_shop_models_base_shop_models_repo_18f611e0",
+     "    class lib_shop_models_base_shop_models_repo_18f611e0 klass;",
+     "    class lib_shop_models_base_shop_models_repo_initialize_c754dc10 function;",
+     "    class lib_shop_models_base_shop_models_repo_add_79de0d10 function;",
+     "    class lib_shop_models_base_shop_models_repo_each_429065e6 function;",
+     "    class lib_shop_models_base_shop_5746ff2a klass;",
+     "    class lib_shop_models_base_shop_models_4ed5024e klass;",
+     "    class lib_shop_models_base_13ffdb89 module;",
+     "    class lib_shop_shop_d19d8784 klass;",
+     "    class lib_shop_shop_boot_b6660461 function;",
+     "    class lib_shop_831cac8f module;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Baserb Models groups implementation around shop, baserb, models, shoprb, mostly in shop/models/base.rb, lib/shop.rb. This section covers 10 nodes and 9 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x4, method x4, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Shop",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop node in shop/models/base.rb."
+     ],
+     [
+      "2",
+      [
+       [
+        "Shop::Models",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop::Models node in shop/models/base.rb."
+     ],
+     [
+      "3",
+      [
+       [
+        "Shop::Models::Repo",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "boot()",
+        "lib/shop.rb"
+       ],
+       [
+        "build()",
+        "lib/shop/service.rb"
+       ]
+      ],
+      [
+       [
+        "add()",
+        "shop/models/base.rb"
+       ],
+       [
+        "each()",
+        "shop/models/base.rb"
+       ],
+       [
+        "initialize()",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Shop::Models::Repo node in shop/models/base.rb."
+     ],
+     [
+      "4",
+      [
+       [
+        "Shop",
+        "lib/shop.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "boot()",
+        "lib/shop.rb"
+       ]
+      ],
+      "Shop node in lib/shop.rb."
+     ],
+     [
+      "5",
+      [
+       [
+        ".add()",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::Repo",
+        "shop/models/base.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".add() node in shop/models/base.rb."
+     ],
+     [
+      "6",
+      [
+       [
+        ".each()",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::Repo",
+        "shop/models/base.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".each() node in shop/models/base.rb."
+     ],
+     [
+      "7",
+      [
+       [
+        ".initialize()",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::Repo",
+        "shop/models/base.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".initialize() node in shop/models/base.rb."
+     ],
+     [
+      "8",
+      [
+       [
+        ".boot()",
+        "lib/shop.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop",
+        "lib/shop.rb"
+       ]
+      ],
+      [
+       [
+        "Shop::Models::Repo",
+        "shop/models/base.rb"
+       ],
+       [
+        "Shop::Service::UserService",
+        "lib/shop/service.rb"
+       ]
+      ],
+      ".boot() node in lib/shop.rb."
+     ],
+     [
+      "9",
+      [
+       [
+        "shop.rb",
+        "lib/shop.rb"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "shop.rb node in lib/shop.rb."
+     ],
+     [
+      "10",
+      [
+       [
+        "base.rb",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "base.rb node in shop/models/base.rb."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "shop/models/base.rb",
+      "7 nodes"
+     ],
+     [
+      "lib/shop.rb",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-models-baserb",
+   "heading": "5. Shop Models Baserb",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Models Baserb (6 nodes, 6 edges)",
+     "    subgraph shop_models_baserb_shop_models_base_rb_549c26ed[\"shop/models/base.rb\"]",
+     "        lib_shop_models_base_shop_models_base_ac0c9c5f(\"Shop::Models::Base<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_models_base_save_ab87aa8d(\"save()<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_models_base_validate_6c5bc76c(\"validate()<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_models_base_table_555a234a(\"table()<br/><small>shop/models/base.rb</small>\")",
+     "        lib_shop_models_base_shop_models_base_initialize_e157a86d(\"initialize()<br/><small>shop/models/base.rb</small>\")",
+     "    end",
+     "    lib_shop_models_user_shop_models_user_save_8d64d9b6(\"save()<br/><small>shop/models/user.rb</small>\")",
+     "    lib_shop_models_base_shop_models_base_ac0c9c5f -->|method| lib_shop_models_base_shop_models_base_save_ab87aa8d",
+     "    lib_shop_models_base_shop_models_base_ac0c9c5f -->|method| lib_shop_models_base_shop_models_base_validate_6c5bc76c",
+     "    lib_shop_models_base_shop_models_base_ac0c9c5f -->|method| lib_shop_models_base_shop_models_base_table_555a234a",
+     "    lib_shop_models_base_shop_models_base_ac0c9c5f -->|method| lib_shop_models_base_shop_models_base_initialize_e157a86d",
+     "    lib_shop_models_base_shop_models_base_save_ab87aa8d -->|calls| lib_shop_models_base_shop_models_base_validate_6c5bc76c",
+     "    lib_shop_models_user_shop_models_user_save_8d64d9b6 -->|calls| lib_shop_models_base_shop_models_base_validate_6c5bc76c",
+     "    class lib_shop_models_base_shop_models_base_ac0c9c5f klass;",
+     "    class lib_shop_models_base_shop_models_base_save_ab87aa8d function;",
+     "    class lib_shop_models_base_shop_models_base_validate_6c5bc76c function;",
+     "    class lib_shop_models_base_shop_models_base_table_555a234a function;",
+     "    class lib_shop_models_base_shop_models_base_initialize_e157a86d function;",
+     "    class lib_shop_models_user_shop_models_user_save_8d64d9b6 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Models Baserb groups implementation around shop, models, baserb, save, mostly in shop/models/base.rb, shop/models/user.rb. This section covers 6 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x4, calls x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Shop::Models::Base",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "initialize()",
+        "shop/models/base.rb"
+       ],
+       [
+        "save()",
+        "shop/models/base.rb"
+       ],
+       [
+        "table()",
+        "shop/models/base.rb"
+       ],
+       "+1 more"
+      ],
+      "Shop::Models::Base node in shop/models/base.rb."
+     ],
+     [
+      "2",
+      [
+       [
+        ".initialize()",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::Base",
+        "shop/models/base.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".initialize() node in shop/models/base.rb."
+     ],
+     [
+      "3",
+      [
+       [
+        ".save()",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::Base",
+        "shop/models/base.rb"
+       ]
+      ],
+      [
+       [
+        "validate()",
+        "shop/models/base.rb"
+       ]
+      ],
+      ".save() node in shop/models/base.rb."
+     ],
+     [
+      "4",
+      [
+       [
+        ".table()",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::Base",
+        "shop/models/base.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".table() node in shop/models/base.rb."
+     ],
+     [
+      "5",
+      [
+       [
+        ".validate()",
+        "shop/models/base.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "save()",
+        "shop/models/base.rb"
+       ],
+       [
+        "save()",
+        "shop/models/user.rb"
+       ],
+       [
+        "Shop::Models::Base",
+        "shop/models/base.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".validate() node in shop/models/base.rb."
+     ],
+     [
+      "6",
+      [
+       [
+        ".save()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::User",
+        "shop/models/user.rb"
+       ]
+      ],
+      [
+       [
+        "validate()",
+        "shop/models/base.rb"
+       ]
+      ],
+      ".save() node in shop/models/user.rb."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "shop/models/base.rb",
+      "5 nodes"
+     ],
+     [
+      "shop/models/user.rb",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-utilrb-releaserake",
+   "heading": "6. Shop Utilrb Releaserake",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Utilrb Releaserake (6 nodes, 6 edges)",
+     "    subgraph shop_utilrb_releaserake_lib_shop_util_rb_0bcf3f8a[\"lib/shop/util.rb\"]",
+     "        lib_shop_util_shop_util_ca1c7256(\"Shop::Util<br/><small>lib/shop/util.rb</small>\")",
+     "        lib_shop_util_shop_util_helper_5518df3a(\"helper()<br/><small>lib/shop/util.rb</small>\")",
+     "        lib_shop_util_shop_util_slugify_78832bba(\"slugify()<br/><small>lib/shop/util.rb</small>\")",
+     "    end",
+     "    subgraph shop_utilrb_releaserake_tasks_release_rake_a6ed41c9[\"tasks/release.rake\"]",
+     "        tasks_release_bump_926f08b5(\"bump()<br/><small>tasks/release.rake</small>\")",
+     "        tasks_release_756ac1c3(\"release.rake\")",
+     "    end",
+     "    lib_shop_models_user_shop_models_user_initialize_f05dcaa1(\"initialize()<br/><small>shop/models/user.rb</small>\")",
+     "    lib_shop_util_shop_util_ca1c7256 -->|method| lib_shop_util_shop_util_helper_5518df3a",
+     "    lib_shop_util_shop_util_ca1c7256 -->|method| lib_shop_util_shop_util_slugify_78832bba",
+     "    lib_shop_models_user_shop_models_user_initialize_f05dcaa1 -->|calls| lib_shop_util_shop_util_slugify_78832bba",
+     "    lib_shop_util_shop_util_helper_5518df3a -->|calls| lib_shop_util_shop_util_slugify_78832bba",
+     "    tasks_release_bump_926f08b5 -->|calls| lib_shop_util_shop_util_helper_5518df3a",
+     "    class lib_shop_util_shop_util_ca1c7256 klass;",
+     "    class lib_shop_util_shop_util_helper_5518df3a function;",
+     "    class lib_shop_util_shop_util_slugify_78832bba function;",
+     "    class tasks_release_bump_926f08b5 function;",
+     "    class tasks_release_756ac1c3 function;",
+     "    class lib_shop_models_user_shop_models_user_initialize_f05dcaa1 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Utilrb Releaserake groups implementation around shop, utilrb, releaserake, tasks, mostly in lib/shop/util.rb, tasks/release.rake, shop/models/user.rb. This section covers 6 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: calls x3, method x2, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Shop::Util",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "helper()",
+        "lib/shop/util.rb"
+       ],
+       [
+        "slugify()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Shop::Util node in lib/shop/util.rb."
+     ],
+     [
+      "2",
+      [
+       [
+        ".initialize()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::User",
+        "shop/models/user.rb"
+       ]
+      ],
+      [
+       [
+        "slugify()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      ".initialize() node in shop/models/user.rb."
+     ],
+     [
+      "3",
+      [
+       [
+        ".helper()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "bump()",
+        "tasks/release.rake"
+       ],
+       [
+        "Shop::Util",
+        "lib/shop/util.rb"
+       ]
+      ],
+      [
+       [
+        "slugify()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      ".helper() node in lib/shop/util.rb."
+     ],
+     [
+      "4",
+      [
+       [
+        ".slugify()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "helper()",
+        "lib/shop/util.rb"
+       ],
+       [
+        "initialize()",
+        "shop/models/user.rb"
+       ],
+       [
+        "register()",
+        "lib/shop/service.rb"
+       ],
+       "+1 more"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".slugify() node in lib/shop/util.rb."
+     ],
+     [
+      "5",
+      [
+       [
+        "bump()",
+        "tasks/release.rake"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "helper()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "bump() node in tasks/release.rake."
+     ],
+     [
+      "6",
+      [
+       [
+        "release.rake",
+        "tasks/release.rake"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "release.rake node in tasks/release.rake."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "lib/shop/util.rb",
+      "3 nodes"
+     ],
+     [
+      "tasks/release.rake",
+      "2 nodes"
+     ],
+     [
+      "shop/models/user.rb",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-utilrb-shoploggable",
+   "heading": "7. Shop Utilrb Shoploggable",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Utilrb Shoploggable (5 nodes, 4 edges)",
+     "    subgraph shop_utilrb_shoploggable_lib_shop_util_rb_6181b70a[\"lib/shop/util.rb\"]",
+     "        lib_shop_util_shop_loggable_6de83059(\"Shop::Loggable<br/><small>lib/shop/util.rb</small>\")",
+     "        lib_shop_util_shop_loggable_log_c7f7ba51(\"log()<br/><small>lib/shop/util.rb</small>\")",
+     "        lib_shop_util_shop_899bd8ee(\"Shop<br/><small>lib/shop/util.rb</small>\")",
+     "        lib_shop_util_3a43ecdf(\"util.rb\")",
+     "    end",
+     "    lib_shop_models_user_shop_models_user_admin_prom_e26df2af(\"promote()<br/><small>shop/models/user.rb</small>\")",
+     "    lib_shop_util_shop_loggable_6de83059 -->|method| lib_shop_util_shop_loggable_log_c7f7ba51",
+     "    lib_shop_models_user_shop_models_user_admin_prom_e26df2af -->|calls| lib_shop_util_shop_loggable_log_c7f7ba51",
+     "    class lib_shop_util_shop_loggable_6de83059 klass;",
+     "    class lib_shop_util_shop_loggable_log_c7f7ba51 function;",
+     "    class lib_shop_util_shop_899bd8ee klass;",
+     "    class lib_shop_util_3a43ecdf module;",
+     "    class lib_shop_models_user_shop_models_user_admin_prom_e26df2af function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Utilrb Shoploggable groups implementation around shop, utilrb, shoploggable, promote, mostly in lib/shop/util.rb, shop/models/user.rb. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x2, method x1, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Shop",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop node in lib/shop/util.rb."
+     ],
+     [
+      "2",
+      [
+       [
+        "Shop::Loggable",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "log()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Shop::Loggable node in lib/shop/util.rb."
+     ],
+     [
+      "3",
+      [
+       [
+        ".promote()",
+        "shop/models/user.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shop::Models::User::Admin",
+        "shop/models/user.rb"
+       ]
+      ],
+      [
+       [
+        "log()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      ".promote() node in shop/models/user.rb."
+     ],
+     [
+      "4",
+      [
+       [
+        ".log()",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "promote()",
+        "shop/models/user.rb"
+       ],
+       [
+        "register()",
+        "lib/shop/service.rb"
+       ],
+       [
+        "Shop::Loggable",
+        "lib/shop/util.rb"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".log() node in lib/shop/util.rb."
+     ],
+     [
+      "5",
+      [
+       [
+        "util.rb",
+        "lib/shop/util.rb"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "util.rb node in lib/shop/util.rb."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "lib/shop/util.rb",
+      "4 nodes"
+     ],
+     [
+      "shop/models/user.rb",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-bin",
+   "heading": "8. Shop Bin",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Bin (2 nodes, 1 edges)",
+     "    bin_shop_5b694093(\"shop\")",
+     "    bin_shop_main_d96239a7(\"main()<br/><small>bin/shop</small>\")",
+     "    bin_shop_5b694093 -->|contains| bin_shop_main_d96239a7",
+     "    class bin_shop_5b694093 function;",
+     "    class bin_shop_main_d96239a7 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Bin groups implementation around shop, bin, mostly in bin/shop. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "main()",
+        "bin/shop"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "main() node in bin/shop."
+     ],
+     [
+      "2",
+      [
+       [
+        "shop",
+        "bin/shop"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "shop node in bin/shop."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "bin/shop",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "ruby — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "56"
+     ],
+     [
+      "Edges",
+      "71"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "8"
+     ],
+     [
+      "Documented Sections",
+      "7"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "68"
+     ],
+     [
+      "INFERRED",
+      "3"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

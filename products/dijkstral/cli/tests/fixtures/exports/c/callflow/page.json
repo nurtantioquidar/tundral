@@ -1,0 +1,1289 @@
+{
+ "title": "c — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 36 nodes, 56 edges, 5 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "cli-skills",
+   "CLI & Skill Installers"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "utilc-utilh-util",
+   "Utilc Utilh Util"
+  ],
+  [
+   "shapec-area-circle",
+   "Shapec Area Circle"
+  ],
+  [
+   "shapec-pick-area",
+   "Shapec Pick Area"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    CLI_SKILLS_9964CBB8(\"CLI & Skill Installers<br/><small>8 nodes</small>\")",
+     "    class CLI_SKILLS_9964CBB8 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>6 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    UTILC_UTILH_UTIL_4217ECCB(\"Utilc Utilh Util<br/><small>9 nodes</small>\")",
+     "    class UTILC_UTILH_UTIL_4217ECCB module;",
+     "    SHAPEC_AREA_CIRCLE_2D05DD21(\"Shapec Area Circle<br/><small>8 nodes</small>\")",
+     "    class SHAPEC_AREA_CIRCLE_2D05DD21 module;",
+     "    SHAPEC_PICK_AREA_BDD9DBCF(\"Shapec Pick Area<br/><small>5 nodes</small>\")",
+     "    class SHAPEC_PICK_AREA_BDD9DBCF module;",
+     "    CLI_SKILLS_9964CBB8 -->|calls x2| UTILC_UTILH_UTIL_4217ECCB",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls x2| UTILC_UTILH_UTIL_4217ECCB",
+     "    SHAPEC_AREA_CIRCLE_2D05DD21 -->|contains x2| SHAPEC_PICK_AREA_BDD9DBCF",
+     "    UTILC_UTILH_UTIL_4217ECCB -->|references| SHAPEC_AREA_CIRCLE_2D05DD21",
+     "    CLI_SKILLS_9964CBB8 -->|calls| SHAPEC_PICK_AREA_BDD9DBCF",
+     "    CLI_SKILLS_9964CBB8 -->|references| SHAPEC_AREA_CIRCLE_2D05DD21",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls| SHAPEC_PICK_AREA_BDD9DBCF",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls| CLI_SKILLS_9964CBB8",
+     "    SHAPEC_PICK_AREA_BDD9DBCF -->|references| SHAPEC_AREA_CIRCLE_2D05DD21",
+     "    SHAPEC_PICK_AREA_BDD9DBCF -->|calls| UTILC_UTILH_UTIL_4217ECCB",
+     "    UTILC_UTILH_UTIL_4217ECCB -->|imports| CLI_SKILLS_9964CBB8",
+     "    CLI_SKILLS_9964CBB8 -->|imports| TESTS_FIXTURES_B84B1DCC"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Tests & Fixtures -> Utilc Utilh Util -> Shapec Area Circle -> Shapec Pick Area -> CLI & Skill Installers"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "CLI & Skill Installers",
+      "8",
+      "1"
+     ],
+     [
+      "Tests & Fixtures",
+      "6",
+      "3"
+     ],
+     [
+      "Utilc Utilh Util",
+      "9",
+      "0"
+     ],
+     [
+      "Shapec Area Circle",
+      "8",
+      "2"
+     ],
+     [
+      "Shapec Pick Area",
+      "5",
+      "4"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "cli-skills",
+   "heading": "2. CLI & Skill Installers",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: CLI & Skill Installers (8 nodes, 8 edges)",
+     "    subgraph cli_skills_main_c_eb12bbf4[\"main.c\"]",
+     "        main_b28b7af6(\"main.c\")",
+     "        main_main_4d9daec5(\"main()<br/><small>main.c</small>\")",
+     "        main_apply_4efc7bbe(\"apply()<br/><small>main.c</small>\")",
+     "        main_twice_42da65b2(\"twice()<br/><small>main.c</small>\")",
+     "    end",
+     "    subgraph cli_skills_External_generated_0c226fa1[\"External / generated\"]",
+     "        stdio_25716a9a(\"stdio\")",
+     "        missing_5a013c49(\"missing\")",
+     "        callback_b4d5b37b(\"Callback\")",
+     "    end",
+     "    src_shape_shape_area_1121b0a4(\"shape_area()<br/><small>src/shape.c</small>\")",
+     "    main_main_4d9daec5 -->|calls| main_apply_4efc7bbe",
+     "    main_b28b7af6 -->|imports| stdio_25716a9a",
+     "    main_b28b7af6 -->|imports| missing_5a013c49",
+     "    main_main_4d9daec5 -->|calls| src_shape_shape_area_1121b0a4",
+     "    class main_b28b7af6 function;",
+     "    class main_main_4d9daec5 function;",
+     "    class main_apply_4efc7bbe function;",
+     "    class main_twice_42da65b2 function;",
+     "    class stdio_25716a9a function;",
+     "    class missing_5a013c49 function;",
+     "    class callback_b4d5b37b klass;",
+     "    class src_shape_shape_area_1121b0a4 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "CLI & Skill Installers groups implementation around mainc, apply, twice, shape, mostly in main.c, src/shape.c. This section covers 8 nodes and 8 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x3, calls x2, imports x2, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "apply()",
+        "main.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "main.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "apply() node in main.c."
+     ],
+     [
+      "2",
+      [
+       [
+        "main()",
+        "main.c"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "apply()",
+        "main.c"
+       ],
+       [
+        "shape_area()",
+        "src/shape.c"
+       ],
+       [
+        "shape_free()",
+        "src/shape.c"
+       ],
+       "+2 more"
+      ],
+      "main() node in main.c."
+     ],
+     [
+      "3",
+      [
+       [
+        "twice()",
+        "main.c"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "twice() node in main.c."
+     ],
+     [
+      "4",
+      [
+       [
+        "shape_area()",
+        "src/shape.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "main.c"
+       ],
+       [
+        "test_area()",
+        "tests/test_shape.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "shape_area() node in src/shape.c."
+     ],
+     [
+      "5",
+      [
+       [
+        "Callback",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Callback node in project."
+     ],
+     [
+      "6",
+      [
+       [
+        "main.c",
+        "main.c"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "missing"
+       ],
+       [
+        "shape.h",
+        "include/shape.h"
+       ],
+       [
+        "stdio"
+       ]
+      ],
+      "main.c node in main.c."
+     ],
+     [
+      "7",
+      [
+       [
+        "missing",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.c",
+        "main.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "missing node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "stdio",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.c",
+        "main.c"
+       ],
+       [
+        "util.c",
+        "src/util.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "stdio node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "main.c",
+      "4 nodes"
+     ],
+     [
+      "src/shape.c",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "3. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (6 nodes, 6 edges)",
+     "    subgraph tests_fixtures_tests_test_shape_c_065db5d4[\"tests/test_shape.c\"]",
+     "        tests_test_shape_53fc2fc4(\"test_shape.c\")",
+     "        tests_test_shape_main_afedb690(\"main()<br/><small>tests/test_shape.c</small>\")",
+     "        tests_test_shape_test_area_1c260a19(\"test_area()<br/><small>tests/test_shape.c</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_External_generated_473753cb[\"External / generated\"]",
+     "        stddef_e05df904(\"stddef\")",
+     "        assert_64b5daad(\"assert\")",
+     "    end",
+     "    include_shape_d8f15357(\"shape.h\")",
+     "    tests_test_shape_main_afedb690 -->|calls| tests_test_shape_test_area_1c260a19",
+     "    include_shape_d8f15357 -->|imports| stddef_e05df904",
+     "    tests_test_shape_53fc2fc4 -->|imports| assert_64b5daad",
+     "    tests_test_shape_53fc2fc4 -->|imports| include_shape_d8f15357",
+     "    class tests_test_shape_53fc2fc4 test;",
+     "    class tests_test_shape_main_afedb690 test;",
+     "    class tests_test_shape_test_area_1c260a19 test;",
+     "    class stddef_e05df904 function;",
+     "    class assert_64b5daad async;",
+     "    class include_shape_d8f15357 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around test, shapec, tests, shapeh, mostly in tests/test_shape.c, include/shape.h. This section covers 6 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x3, contains x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "main()",
+        "tests/test_shape.c"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "test_area()",
+        "tests/test_shape.c"
+       ]
+      ],
+      "main() node in tests/test_shape.c."
+     ],
+     [
+      "2",
+      [
+       [
+        "test_area()",
+        "tests/test_shape.c"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "main()",
+        "tests/test_shape.c"
+       ]
+      ],
+      [
+       [
+        "shape_area()",
+        "src/shape.c"
+       ],
+       [
+        "shape_free()",
+        "src/shape.c"
+       ],
+       [
+        "shape_new()",
+        "src/shape.c"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "3",
+      [
+       [
+        "shape.h",
+        "include/shape.h"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.c",
+        "main.c"
+       ],
+       [
+        "test_shape.c",
+        "tests/test_shape.c"
+       ]
+      ],
+      [
+       [
+        "stddef"
+       ],
+       [
+        "util.h",
+        "include/util.h"
+       ]
+      ],
+      "shape.h node in include/shape.h."
+     ],
+     [
+      "4",
+      [
+       [
+        "test_shape.c",
+        "tests/test_shape.c"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "assert"
+       ],
+       [
+        "shape.h",
+        "include/shape.h"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "5",
+      [
+       [
+        "assert",
+        ""
+       ]
+      ],
+      "Async",
+      [
+       [
+        "test_shape.c",
+        "tests/test_shape.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "assert node in project."
+     ],
+     [
+      "6",
+      [
+       [
+        "stddef",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape.h",
+        "include/shape.h"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "stddef node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "tests/test_shape.c",
+      "3 nodes"
+     ],
+     [
+      "include/shape.h",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "utilc-utilh-util",
+   "heading": "4. Utilc Utilh Util",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Utilc Utilh Util (9 nodes, 11 edges)",
+     "    subgraph utilc_utilh_util_src_util_c_47e57a63[\"src/util.c\"]",
+     "        src_util_6ec36e5a(\"util.c\")",
+     "        src_util_util_report_be855bc2(\"util_report()<br/><small>src/util.c</small>\")",
+     "        src_util_clamp_f92c2f89(\"clamp()<br/><small>src/util.c</small>\")",
+     "        src_util_log_line_fc2af812(\"log_line()<br/><small>src/util.c</small>\")",
+     "        src_util_xmalloc_c2e1efb0(\"xmalloc()<br/><small>src/util.c</small>\")",
+     "    end",
+     "    subgraph utilc_utilh_util_include_util_h_efa2c54d[\"include/util.h\"]",
+     "        include_util_c15fb2ae(\"util.h\")",
+     "        include_util_util_max_b6534e6b(\"util_max()<br/><small>include/util.h</small>\")",
+     "    end",
+     "    stdlib_d5e655cd(\"stdlib\")",
+     "    src_shape_shape_free_aee24480(\"shape_free()<br/><small>src/shape.c</small>\")",
+     "    src_util_util_report_be855bc2 -->|calls| src_util_log_line_fc2af812",
+     "    include_util_c15fb2ae -->|imports| stdlib_d5e655cd",
+     "    src_util_6ec36e5a -->|imports| stdlib_d5e655cd",
+     "    src_util_6ec36e5a -->|imports| include_util_c15fb2ae",
+     "    src_shape_shape_free_aee24480 -->|calls| src_util_clamp_f92c2f89",
+     "    src_util_clamp_f92c2f89 -->|calls| include_util_util_max_b6534e6b",
+     "    class src_util_6ec36e5a function;",
+     "    class src_util_util_report_be855bc2 function;",
+     "    class src_util_clamp_f92c2f89 function;",
+     "    class src_util_log_line_fc2af812 function;",
+     "    class src_util_xmalloc_c2e1efb0 function;",
+     "    class include_util_c15fb2ae function;",
+     "    class include_util_util_max_b6534e6b function;",
+     "    class stdlib_d5e655cd function;",
+     "    class src_shape_shape_free_aee24480 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Utilc Utilh Util groups implementation around utilc, utilh, util, include, mostly in src/util.c, include/util.h, src/shape.c. This section covers 9 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x5, calls x3, imports x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "util_max()",
+        "include/util.h"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "clamp()",
+        "src/util.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "util_max() node in include/util.h."
+     ],
+     [
+      "2",
+      [
+       [
+        "shape_free()",
+        "src/shape.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "main.c"
+       ],
+       [
+        "test_area()",
+        "tests/test_shape.c"
+       ]
+      ],
+      [
+       [
+        "clamp()",
+        "src/util.c"
+       ]
+      ],
+      "shape_free() node in src/shape.c."
+     ],
+     [
+      "3",
+      [
+       [
+        "clamp()",
+        "src/util.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape_free()",
+        "src/shape.c"
+       ]
+      ],
+      [
+       [
+        "util_max()",
+        "include/util.h"
+       ]
+      ],
+      "clamp() node in src/util.c."
+     ],
+     [
+      "4",
+      [
+       [
+        "log_line()",
+        "src/util.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "util_report()",
+        "src/util.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "log_line() node in src/util.c."
+     ],
+     [
+      "5",
+      [
+       [
+        "util_report()",
+        "src/util.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "main.c"
+       ]
+      ],
+      [
+       [
+        "log_line()",
+        "src/util.c"
+       ]
+      ],
+      "util_report() node in src/util.c."
+     ],
+     [
+      "6",
+      [
+       [
+        "xmalloc()",
+        "src/util.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape_new()",
+        "src/shape.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "xmalloc() node in src/util.c."
+     ],
+     [
+      "7",
+      [
+       [
+        "util.h",
+        "include/util.h"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape.h",
+        "include/shape.h"
+       ],
+       [
+        "util.c",
+        "src/util.c"
+       ]
+      ],
+      [
+       [
+        "stdlib"
+       ]
+      ],
+      "util.h node in include/util.h."
+     ],
+     [
+      "8",
+      [
+       [
+        "util.c",
+        "src/util.c"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "stdio"
+       ],
+       [
+        "stdlib"
+       ],
+       [
+        "util.h",
+        "include/util.h"
+       ]
+      ],
+      "util.c node in src/util.c."
+     ],
+     [
+      "9",
+      [
+       [
+        "stdlib",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "util.c",
+        "src/util.c"
+       ],
+       [
+        "util.h",
+        "include/util.h"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "stdlib node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/util.c",
+      "5 nodes"
+     ],
+     [
+      "include/util.h",
+      "2 nodes"
+     ],
+     [
+      "src/shape.c",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shapec-area-circle",
+   "heading": "5. Shapec Area Circle",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shapec Area Circle (8 nodes, 9 edges)",
+     "    subgraph shapec_area_circle_External_generated_1831ead4[\"External / generated\"]",
+     "        math_7a488390(\"math\")",
+     "        string_ecb25204(\"string\")",
+     "        shape_5080fd62(\"Shape\")",
+     "        util_281811fa(\"util\")",
+     "    end",
+     "    subgraph shapec_area_circle_src_shape_c_23c2f107[\"src/shape.c\"]",
+     "        src_shape_db93368e(\"shape.c\")",
+     "        src_shape_circle_area_ec20d397(\"circle_area()<br/><small>src/shape.c</small>\")",
+     "        src_shape_rect_area_5c6dd08f(\"rect_area()<br/><small>src/shape.c</small>\")",
+     "        src_shape_registry_add_2c7543d4(\"registry_add()<br/><small>src/shape.c</small>\")",
+     "    end",
+     "    src_shape_db93368e -->|imports| math_7a488390",
+     "    src_shape_db93368e -->|imports| string_ecb25204",
+     "    src_shape_db93368e -->|imports| shape_5080fd62",
+     "    src_shape_db93368e -->|imports| util_281811fa",
+     "    class math_7a488390 function;",
+     "    class string_ecb25204 function;",
+     "    class shape_5080fd62 klass;",
+     "    class util_281811fa function;",
+     "    class src_shape_db93368e function;",
+     "    class src_shape_circle_area_ec20d397 function;",
+     "    class src_shape_rect_area_5c6dd08f function;",
+     "    class src_shape_registry_add_2c7543d4 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shapec Area Circle groups implementation around shapec, area, circle, rect, mostly in src/shape.c. This section covers 8 nodes and 9 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x4, contains x3, references x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "circle_area()",
+        "src/shape.c"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "circle_area() node in src/shape.c."
+     ],
+     [
+      "2",
+      [
+       [
+        "rect_area()",
+        "src/shape.c"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "rect_area() node in src/shape.c."
+     ],
+     [
+      "3",
+      [
+       [
+        "registry_add()",
+        "src/shape.c"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "registry_add() node in src/shape.c."
+     ],
+     [
+      "4",
+      [
+       [
+        "Shape",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       [
+        "shape.c",
+        "src/shape.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shape node in project."
+     ],
+     [
+      "5",
+      [
+       [
+        "shape.c",
+        "src/shape.c"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "math"
+       ],
+       [
+        "Shape"
+       ],
+       [
+        "string"
+       ],
+       "+1 more"
+      ],
+      "shape.c node in src/shape.c."
+     ],
+     [
+      "6",
+      [
+       [
+        "math",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape.c",
+        "src/shape.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "math node in project."
+     ],
+     [
+      "7",
+      [
+       [
+        "string",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape.c",
+        "src/shape.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "string node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "util",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape.c",
+        "src/shape.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "util node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/shape.c",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shapec-pick-area",
+   "heading": "6. Shapec Pick Area",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shapec Pick Area (5 nodes, 5 edges)",
+     "    subgraph shapec_pick_area_External_generated_46402456[\"External / generated\"]",
+     "        areafn_653001b5(\"AreaFn\")",
+     "        point_71a7ca85(\"Point\")",
+     "        shapekind_48d27db6(\"ShapeKind\")",
+     "    end",
+     "    subgraph shapec_pick_area_src_shape_c_23c62e2e[\"src/shape.c\"]",
+     "        src_shape_shape_new_803bc5de(\"shape_new()<br/><small>src/shape.c</small>\")",
+     "        src_shape_pick_area_1c2f7be1(\"pick_area()<br/><small>src/shape.c</small>\")",
+     "    end",
+     "    src_shape_shape_new_803bc5de -->|calls| src_shape_pick_area_1c2f7be1",
+     "    class areafn_653001b5 klass;",
+     "    class point_71a7ca85 klass;",
+     "    class shapekind_48d27db6 klass;",
+     "    class src_shape_shape_new_803bc5de function;",
+     "    class src_shape_pick_area_1c2f7be1 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shapec Pick Area groups implementation around shapec, pick, area, shape, mostly in src/shape.c. This section covers 5 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: references x4, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "pick_area()",
+        "src/shape.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape_new()",
+        "src/shape.c"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "pick_area() node in src/shape.c."
+     ],
+     [
+      "2",
+      [
+       [
+        "shape_new()",
+        "src/shape.c"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "main.c"
+       ],
+       [
+        "test_area()",
+        "tests/test_shape.c"
+       ]
+      ],
+      [
+       [
+        "pick_area()",
+        "src/shape.c"
+       ],
+       [
+        "xmalloc()",
+        "src/util.c"
+       ]
+      ],
+      "shape_new() node in src/shape.c."
+     ],
+     [
+      "3",
+      [
+       [
+        "AreaFn",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "AreaFn node in project."
+     ],
+     [
+      "4",
+      [
+       [
+        "Point",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Point node in project."
+     ],
+     [
+      "5",
+      [
+       [
+        "ShapeKind",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ShapeKind node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/shape.c",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "c — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "36"
+     ],
+     [
+      "Edges",
+      "56"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "5"
+     ],
+     [
+      "Documented Sections",
+      "5"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "46"
+     ],
+     [
+      "INFERRED",
+      "10"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

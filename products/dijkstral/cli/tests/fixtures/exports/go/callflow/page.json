@@ -1,0 +1,943 @@
+{
+ "title": "go — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 45 nodes, 71 edges, 10 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "extract-pipeline",
+   "Extraction Pipeline"
+  ],
+  [
+   "examplecom-shop-gomod",
+   "Examplecom Shop Gomod"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    EXTRACT_PIPELINE_5F350230(\"Extraction Pipeline<br/><small>44 nodes</small>\")",
+     "    class EXTRACT_PIPELINE_5F350230 module;",
+     "    EXAMPLECOM_SHOP_GOMOD_08834304(\"Examplecom Shop Gomod<br/><small>1 nodes</small>\")",
+     "    class EXAMPLECOM_SHOP_GOMOD_08834304 module;",
+     "    EXTRACT_PIPELINE_5F350230 -.-> EXAMPLECOM_SHOP_GOMOD_08834304"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Extraction Pipeline -> Examplecom Shop Gomod"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Extraction Pipeline",
+      "44",
+      "0, 1, 2, 3, 4, 5, 6, 7, 8"
+     ],
+     [
+      "Examplecom Shop Gomod",
+      "1",
+      "9"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "extract-pipeline",
+   "heading": "2. Extraction Pipeline",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Extraction Pipeline (44 nodes, 71 edges)",
+     "    subgraph extract_pipeline_service_service_go_385e692d[\"service/service.go\"]",
+     "        service_service_d63c902e(\"service.go\")",
+     "        service_userservice_db97d932(\"UserService<br/><small>service/service.go</small>\")",
+     "        service_greeter_5e61dc45(\"Greeter<br/><small>service/service.go</small>\")",
+     "        service_greeter_greet_6b07d4b7(\"Greet()<br/><small>service/service.go</small>\")",
+     "        service_service_newuserservice_128492cd(\"NewUserService()<br/><small>service/service.go</small>\")",
+     "        service_userservice_register_e83d5d99(\"Register()<br/><small>service/service.go</small>\")",
+     "        service_userservice_greet_9e5204b3(\"Greet()<br/><small>service/service.go</small>\")",
+     "        service_userservice_names_163b377b(\"Names()<br/><small>service/service.go</small>\")",
+     "        service_service_apply_e06b6ad3(\"apply()<br/><small>service/service.go</small>\")",
+     "    end",
+     "    subgraph extract_pipeline_store_helpers_go_e1eb3dea[\"store/helpers.go\"]",
+     "        store_helpers_format_07e47f81(\"Format()<br/><small>store/helpers.go</small>\")",
+     "        store_helpers_normalize_c4acb619(\"Normalize()<br/><small>store/helpers.go</small>\")",
+     "        store_helpers_clean_5f50b316(\"clean()<br/><small>store/helpers.go</small>\")",
+     "    end",
+     "    subgraph extract_pipeline_store_store_go_f2dd8fe1[\"store/store.go\"]",
+     "        store_store_t_3ef7326d(\"Store[T]<br/><small>store/store.go</small>\")",
+     "        store_store_sum_a12fe8e8(\"Sum()<br/><small>store/store.go</small>\")",
+     "        store_id_f3172007(\"ID<br/><small>store/store.go</small>\")",
+     "    end",
+     "    subgraph extract_pipeline_cmd_app_main_go_6e718efb[\"cmd/app/main.go\"]",
+     "        cmd_app_main_1b841bbc(\"main.go\")",
+     "        cmd_app_main_main_8603ae48(\"main()<br/><small>cmd/app/main.go</small>\")",
+     "    end",
+     "    service_service_test_testregister_2d6c52fe(\"TestRegister()<br/><small>service/service_test.go</small>\")",
+     "    service_greeter_5e61dc45 -->|method| service_greeter_greet_6b07d4b7",
+     "    cmd_app_main_main_8603ae48 -->|calls| service_service_newuserservice_128492cd",
+     "    cmd_app_main_main_8603ae48 -->|calls| store_helpers_format_07e47f81",
+     "    cmd_app_main_main_8603ae48 -->|calls| store_store_sum_a12fe8e8",
+     "    store_helpers_normalize_c4acb619 -->|calls| store_helpers_clean_5f50b316",
+     "    store_helpers_normalize_c4acb619 -->|calls| store_id_f3172007",
+     "    service_userservice_db97d932 -->|method| service_userservice_register_e83d5d99",
+     "    service_userservice_db97d932 -->|method| service_userservice_greet_9e5204b3",
+     "    service_userservice_db97d932 -->|method| service_userservice_names_163b377b",
+     "    service_userservice_names_163b377b -->|calls| service_service_apply_e06b6ad3",
+     "    cmd_app_main_1b841bbc -->|imports| service_service_d63c902e",
+     "    service_service_test_testregister_2d6c52fe -->|calls| service_service_newuserservice_128492cd",
+     "    service_userservice_register_e83d5d99 -->|calls| store_helpers_normalize_c4acb619",
+     "    %% Omitted for readability: 26 nodes, 0 edges",
+     "    class service_service_d63c902e module;",
+     "    class service_userservice_db97d932 klass;",
+     "    class service_greeter_5e61dc45 klass;",
+     "    class service_greeter_greet_6b07d4b7 function;",
+     "    class service_service_newuserservice_128492cd function;",
+     "    class service_userservice_register_e83d5d99 function;",
+     "    class service_userservice_greet_9e5204b3 function;",
+     "    class service_userservice_names_163b377b function;",
+     "    class service_service_apply_e06b6ad3 function;",
+     "    class store_helpers_format_07e47f81 function;",
+     "    class store_helpers_normalize_c4acb619 function;",
+     "    class store_helpers_clean_5f50b316 function;",
+     "    class store_store_t_3ef7326d ui;",
+     "    class store_store_sum_a12fe8e8 function;",
+     "    class store_id_f3172007 klass;",
+     "    class cmd_app_main_1b841bbc module;",
+     "    class cmd_app_main_main_8603ae48 function;",
+     "    class service_service_test_testregister_2d6c52fe test;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Extraction Pipeline groups implementation around service, store, servicego, storego, mostly in service/service.go, store/store.go, store/helpers.go. This section covers 44 nodes and 71 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x20, references x17, imports x15, calls x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "go_pkg_fmt"
+       ],
+       [
+        "go_pkg_os"
+       ],
+       [
+        "helpers.go",
+        "store/helpers.go"
+       ],
+       "+3 more"
+      ],
+      "main.go node in cmd/app/main.go."
+     ],
+     [
+      "2",
+      [
+       [
+        "Greeter",
+        "service/service.go"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Greet()",
+        "service/service.go"
+       ]
+      ],
+      "Greeter node in service/service.go."
+     ],
+     [
+      "3",
+      [
+       [
+        ".Greet()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Greeter",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Greet() node in service/service.go."
+     ],
+     [
+      "4",
+      [
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      [
+       [
+        "com google uuid"
+       ],
+       [
+        "go_pkg_fmt"
+       ],
+       [
+        "go_pkg_sort"
+       ],
+       "+2 more"
+      ],
+      "service.go node in service/service.go."
+     ],
+     [
+      "5",
+      [
+       [
+        "apply()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Names()",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "apply() node in service/service.go."
+     ],
+     [
+      "6",
+      [
+       [
+        "logLine()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "logLine() node in service/service.go."
+     ],
+     [
+      "7",
+      [
+       [
+        "strings2upper()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "strings2upper() node in service/service.go."
+     ],
+     [
+      "8",
+      [
+       [
+        "go_pkg_fmt",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ],
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "go_pkg_fmt node in project."
+     ],
+     [
+      "9",
+      [
+       [
+        "go_pkg_github_com_google_uuid",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Turns a local path or remote repository into analysis context."
+     ],
+     [
+      "10",
+      [
+       [
+        "go_pkg_os",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "go_pkg_os node in project."
+     ],
+     [
+      "11",
+      [
+       [
+        "go_pkg_sort",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "go_pkg_sort node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "main()",
+        "cmd/app/main.go"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Format()",
+        "store/helpers.go"
+       ],
+       [
+        "NewUserService()",
+        "service/service.go"
+       ],
+       [
+        "Sum()",
+        "store/store.go"
+       ]
+      ],
+      "main() node in cmd/app/main.go."
+     ],
+     [
+      "13",
+      [
+       [
+        "N",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "N node in project."
+     ],
+     [
+      "14",
+      [
+       [
+        "NewUserService()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "cmd/app/main.go"
+       ],
+       [
+        "TestRegister()",
+        "service/service_test.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "NewUserService() node in service/service.go."
+     ],
+     [
+      "15",
+      [
+       [
+        "Format()",
+        "store/helpers.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "cmd/app/main.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Format() node in store/helpers.go."
+     ],
+     [
+      "16",
+      [
+       [
+        "Sum()",
+        "store/store.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "cmd/app/main.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Sum() node in store/store.go."
+     ],
+     [
+      "17",
+      [
+       [
+        "helpers.go",
+        "store/helpers.go"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ],
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      [
+       [
+        "go_pkg_strconv"
+       ],
+       [
+        "go_pkg_strings"
+       ]
+      ],
+      "helpers.go node in store/helpers.go."
+     ],
+     [
+      "18",
+      [
+       [
+        "clean()",
+        "store/helpers.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Normalize()",
+        "store/helpers.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "clean() node in store/helpers.go."
+     ],
+     [
+      "19",
+      [
+       [
+        "Normalize()",
+        "store/helpers.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Register()",
+        "service/service.go"
+       ]
+      ],
+      [
+       [
+        "clean()",
+        "store/helpers.go"
+       ],
+       [
+        "ID",
+        "store/store.go"
+       ]
+      ],
+      "Normalize() node in store/helpers.go."
+     ],
+     [
+      "20",
+      [
+       [
+        "go_pkg_strconv",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "helpers.go",
+        "store/helpers.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "go_pkg_strconv node in project."
+     ],
+     [
+      "21",
+      [
+       [
+        "go_pkg_strings",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "helpers.go",
+        "store/helpers.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "go_pkg_strings node in project."
+     ],
+     [
+      "22",
+      [
+       [
+        "testing.T",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "23",
+      [
+       [
+        "clean()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "TestRegister()",
+        "service/service_test.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "clean() node in service/service.go."
+     ],
+     [
+      "24",
+      [
+       [
+        "service_test.go",
+        "service/service_test.go"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      [
+       [
+        "go_pkg_testing"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "25",
+      [
+       [
+        "TestRegister()",
+        "service/service_test.go"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "clean()",
+        "service/service.go"
+       ],
+       [
+        "NewUserService()",
+        "service/service.go"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "26",
+      [
+       [
+        "go_pkg_testing",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service_test.go",
+        "service/service_test.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "27",
+      [
+       [
+        "User",
+        "service/service.go"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "User node in service/service.go."
+     ],
+     [
+      "28",
+      [
+       [
+        "UserService",
+        "service/service.go"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Greet()",
+        "service/service.go"
+       ],
+       [
+        "Names()",
+        "service/service.go"
+       ],
+       [
+        "Register()",
+        "service/service.go"
+       ]
+      ],
+      "UserService node in service/service.go."
+     ],
+     [
+      "29",
+      [
+       [
+        ".Greet()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Greet() node in service/service.go."
+     ],
+     [
+      "30",
+      [
+       [
+        ".Names()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "service/service.go"
+       ]
+      ],
+      [
+       [
+        "apply()",
+        "service/service.go"
+       ]
+      ],
+      ".Names() node in service/service.go."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "service/service.go",
+      "13 nodes"
+     ],
+     [
+      "store/store.go",
+      "12 nodes"
+     ],
+     [
+      "store/helpers.go",
+      "4 nodes"
+     ],
+     [
+      "cmd/app/main.go",
+      "2 nodes"
+     ],
+     [
+      "service/service_test.go",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "examplecom-shop-gomod",
+   "heading": "3. Examplecom Shop Gomod",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Examplecom Shop Gomod (1 nodes, 0 edges)",
+     "    pkg_example_com_shop_816ea37c(\"example.com/shop<br/><small>go.mod</small>\")",
+     "    class pkg_example_com_shop_816ea37c module;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Examplecom Shop Gomod groups implementation around examplecom, shop, gomod, mostly in go.mod. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "example.com/shop",
+        "go.mod"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "example.com/shop node in go.mod."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "go.mod",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "go — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "45"
+     ],
+     [
+      "Edges",
+      "71"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "10"
+     ],
+     [
+      "Documented Sections",
+      "2"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "68"
+     ],
+     [
+      "INFERRED",
+      "3"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

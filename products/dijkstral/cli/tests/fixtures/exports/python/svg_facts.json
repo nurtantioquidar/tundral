@@ -1,0 +1,308 @@
+{
+ "source": "graphify 0.9.86 export svg (matplotlib 3.11.2); positions are not stored",
+ "canvas_pt": [
+  1432.8,
+  1000.8
+ ],
+ "background": "#1a1a2e",
+ "links_solid": 98,
+ "links_dashed": 9,
+ "legend": false,
+ "nodes": [
+  {
+   "colour": "#f28e2b",
+   "radius": 12.58,
+   "label": "Admin"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 18.93,
+   "label": "User"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 16.58,
+   "label": "UserService"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 13.23,
+   "label": "Base"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 14.43,
+   "label": "Repo"
+  },
+  {
+   "colour": "#ff9da7",
+   "radius": 12.58,
+   "label": "TestUserService"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 11.18,
+   "label": "helper()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 13.23,
+   "label": "slugify()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 11.18,
+   "label": "traced()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.57,
+   "label": "wrapper()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.9,
+   "label": ".promote()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.57,
+   "label": "bump()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.57,
+   "label": ".guest()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.18,
+   "label": ".promote()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.18,
+   "label": "format_name()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.57,
+   "label": "helper()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.41,
+   "label": ".display()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.18,
+   "label": "main()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 16.07,
+   "label": "run()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.9,
+   "label": ".register()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.41,
+   "label": ".describe()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 11.18,
+   "label": ".save()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 11.18,
+   "label": ".save()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 11.18,
+   "label": "validate()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.41,
+   "label": ".add()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.41,
+   "label": ".get()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.57,
+   "label": ".__init__()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 11.18,
+   "label": ".__init__()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 11.18,
+   "label": "service()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.57,
+   "label": "test_run()"
+  },
+  {
+   "colour": "#ff9da7",
+   "radius": 10.41,
+   "label": ".parse()"
+  },
+  {
+   "colour": "#ff9da7",
+   "radius": 10.41,
+   "label": ".test_parse()"
+  },
+  {
+   "colour": "#ff9da7",
+   "radius": 10.41,
+   "label": ".test_register()"
+  },
+  {
+   "colour": "#9c755f",
+   "radius": 11.18,
+   "label": "helper()"
+  },
+  {
+   "colour": "#9c755f",
+   "radius": 10.41,
+   "label": ".export()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 19.36,
+   "label": "service.py"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 13.23,
+   "label": "util.py"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.57,
+   "label": "Service layer exercising every import and call form."
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 13.84,
+   "label": "__init__.py"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.57,
+   "label": "Fixture package: re-exports the public model types."
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.57,
+   "label": "A person who can sign in."
+  },
+  {
+   "colour": "#e15759",
+   "radius": 17.56,
+   "label": "models.py"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.57,
+   "label": "# NOTE: persistence is faked in this fixture."
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.57,
+   "label": "# WHY: names are displayed title-cased everywhere."
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 13.23,
+   "label": "main.py"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.57,
+   "label": "Root of the model hierarchy."
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.41,
+   "label": "T"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.57,
+   "label": "fixture"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 15.0,
+   "label": "test_service.py"
+  },
+  {
+   "colour": "#9c755f",
+   "radius": 9.57,
+   "label": "Duplicate name: also defined in models and util."
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.57,
+   "label": "collections"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.57,
+   "label": "functools"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.57,
+   "label": "json"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.57,
+   "label": "os_path"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.41,
+   "label": "re"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.57,
+   "label": "dataclasses"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.41,
+   "label": "typing"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.57,
+   "label": "sys"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.57,
+   "label": "pytest"
+  }
+ ]
+}

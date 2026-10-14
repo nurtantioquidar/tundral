@@ -293,7 +293,9 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "dijkstral-core",
+ "serde",
  "serde_json",
+ "sha1_smol",
  "tempfile",
 ]
 

@@ -1,5 +1,6 @@
 mod agents_cmd;
 mod export_cmd;
+mod exports;
 mod mcp_cmd;
 mod query_cmds;
 
@@ -38,8 +39,11 @@ enum Command {
     Query(query_cmds::QueryCommand),
     /// Serve the graph to AI assistants over MCP (stdio): Graphify's graphify-mcp tools.
     Mcp(mcp_cmd::McpArgs),
-    /// Export a graph as interactive HTML, a Markdown wiki or GraphML.
+    /// Export a graph: interactive HTML, Markdown wiki, GraphML, Cypher (Neo4j, FalkorDB),
+    /// Obsidian vault, SVG or Mermaid call-flow HTML.
     Export(export_cmd::ExportArgs),
+    /// Write a D3 collapsible-tree HTML page of the graph (files, then their symbols).
+    Tree(exports::tree::TreeArgs),
     #[command(flatten)]
     Agents(agents_cmd::AgentCommand),
 }
@@ -91,6 +95,7 @@ fn main() -> ExitCode {
         Command::Query(cmd) => return query_cmds::run(cmd),
         Command::Mcp(args) => return mcp_cmd::run(args),
         Command::Export(args) => return export_cmd::run(args),
+        Command::Tree(args) => return exports::tree::run_cmd(args),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {

@@ -1,0 +1,1269 @@
+{
+  "nodes": [
+    {
+      "id": "g0",
+      "type": "group",
+      "label": "Community 0",
+      "x": 0,
+      "y": 0,
+      "width": 880,
+      "height": 420,
+      "color": "1"
+    },
+    {
+      "id": "n_pkg_service_rationale_1",
+      "type": "file",
+      "file": "Service layer exercising every import and call form..md",
+      "x": 20,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_collections",
+      "type": "file",
+      "file": "collections.md",
+      "x": 220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_functools",
+      "type": "file",
+      "file": "functools.md",
+      "x": 420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_util_helper",
+      "type": "file",
+      "file": "helper().md",
+      "x": 620,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_json",
+      "type": "file",
+      "file": "json.md",
+      "x": 20,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_os_path",
+      "type": "file",
+      "file": "os_path.md",
+      "x": 220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_re",
+      "type": "file",
+      "file": "re.md",
+      "x": 420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_service",
+      "type": "file",
+      "file": "service.py.md",
+      "x": 620,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_util_slugify",
+      "type": "file",
+      "file": "slugify().md",
+      "x": 20,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_util_traced",
+      "type": "file",
+      "file": "traced().md",
+      "x": 220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_util",
+      "type": "file",
+      "file": "util.py.md",
+      "x": 420,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_util_traced_wrapper",
+      "type": "file",
+      "file": "wrapper().md",
+      "x": 620,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g1",
+      "type": "group",
+      "label": "Community 1",
+      "x": 960,
+      "y": 0,
+      "width": 660,
+      "height": 420,
+      "color": "2"
+    },
+    {
+      "id": "n_pkg_models_user_guest",
+      "type": "file",
+      "file": "dot-guest().md",
+      "x": 980,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_admin_promote",
+      "type": "file",
+      "file": "dot-promote().md",
+      "x": 1180,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_service_userservice_promote",
+      "type": "file",
+      "file": "dot-promote()_1.md",
+      "x": 1380,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_rationale_24",
+      "type": "file",
+      "file": "A person who can sign in..md",
+      "x": 980,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_admin",
+      "type": "file",
+      "file": "Admin.md",
+      "x": 1180,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_init_rationale_1",
+      "type": "file",
+      "file": "Fixture package re-exports the public model types..md",
+      "x": 1380,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_user",
+      "type": "file",
+      "file": "User.md",
+      "x": 980,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_init",
+      "type": "file",
+      "file": "__init__.py.md",
+      "x": 1180,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_admin_promote_bump",
+      "type": "file",
+      "file": "bump().md",
+      "x": 1380,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g2",
+      "type": "group",
+      "label": "Community 2",
+      "x": 1700,
+      "y": 0,
+      "width": 660,
+      "height": 420,
+      "color": "3"
+    },
+    {
+      "id": "n_pkg_models_rationale_15",
+      "type": "file",
+      "file": "NOTE persistence is faked in this fixture..md",
+      "x": 1720,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_rationale_77",
+      "type": "file",
+      "file": "WHY names are displayed title-cased everywhere..md",
+      "x": 1920,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_user_display",
+      "type": "file",
+      "file": "dot-display().md",
+      "x": 2120,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_dataclasses",
+      "type": "file",
+      "file": "dataclasses.md",
+      "x": 1720,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_format_name",
+      "type": "file",
+      "file": "format_name().md",
+      "x": 1920,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_helper",
+      "type": "file",
+      "file": "helper()_1.md",
+      "x": 2120,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models",
+      "type": "file",
+      "file": "models.py.md",
+      "x": 1720,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_typing",
+      "type": "file",
+      "file": "typing.md",
+      "x": 1920,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g3",
+      "type": "group",
+      "label": "Community 3",
+      "x": 0,
+      "y": 500,
+      "width": 660,
+      "height": 400,
+      "color": "4"
+    },
+    {
+      "id": "n_pkg_service_userservice_register",
+      "type": "file",
+      "file": "dot-register().md",
+      "x": 20,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_service_userservice",
+      "type": "file",
+      "file": "UserService.md",
+      "x": 220,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_main_main",
+      "type": "file",
+      "file": "main().md",
+      "x": 420,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_main",
+      "type": "file",
+      "file": "main.py.md",
+      "x": 20,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_service_run",
+      "type": "file",
+      "file": "run().md",
+      "x": 220,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sys",
+      "type": "file",
+      "file": "sys.md",
+      "x": 420,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g4",
+      "type": "group",
+      "label": "Community 4",
+      "x": 960,
+      "y": 500,
+      "width": 660,
+      "height": 400,
+      "color": "5"
+    },
+    {
+      "id": "n_pkg_models_base_describe",
+      "type": "file",
+      "file": "dot-describe().md",
+      "x": 980,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_base_save",
+      "type": "file",
+      "file": "dot-save().md",
+      "x": 1180,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_user_save",
+      "type": "file",
+      "file": "dot-save()_1.md",
+      "x": 1380,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_base",
+      "type": "file",
+      "file": "Base.md",
+      "x": 980,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_rationale_12",
+      "type": "file",
+      "file": "Root of the model hierarchy..md",
+      "x": 1180,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_validate",
+      "type": "file",
+      "file": "validate().md",
+      "x": 1380,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g5",
+      "type": "group",
+      "label": "Community 5",
+      "x": 1700,
+      "y": 500,
+      "width": 660,
+      "height": 400,
+      "color": "6"
+    },
+    {
+      "id": "n_pkg_models_repo_init",
+      "type": "file",
+      "file": "dot-__init__().md",
+      "x": 1720,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_service_userservice_init",
+      "type": "file",
+      "file": "dot-__init__()_1.md",
+      "x": 1920,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_repo_add",
+      "type": "file",
+      "file": "dot-add().md",
+      "x": 2120,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_repo_get",
+      "type": "file",
+      "file": "dot-get().md",
+      "x": 1720,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_models_repo",
+      "type": "file",
+      "file": "Repo.md",
+      "x": 1920,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_t",
+      "type": "file",
+      "file": "T.md",
+      "x": 2120,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g6",
+      "type": "group",
+      "label": "Community 6",
+      "x": 0,
+      "y": 980,
+      "width": 660,
+      "height": 400,
+      "color": "1"
+    },
+    {
+      "id": "n_fixture",
+      "type": "file",
+      "file": "fixture.md",
+      "x": 20,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pytest",
+      "type": "file",
+      "file": "pytest.md",
+      "x": 220,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_service_service",
+      "type": "file",
+      "file": "service().md",
+      "x": 420,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_service_test_run",
+      "type": "file",
+      "file": "test_run().md",
+      "x": 20,
+      "y": 1140,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_service",
+      "type": "file",
+      "file": "test_service.py.md",
+      "x": 220,
+      "y": 1140,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g7",
+      "type": "group",
+      "label": "Community 7",
+      "x": 960,
+      "y": 980,
+      "width": 600,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_pkg_models_user_parse",
+      "type": "file",
+      "file": "dot-parse().md",
+      "x": 980,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_service_testuserservice_test_parse",
+      "type": "file",
+      "file": "dot-test_parse().md",
+      "x": 1180,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_service_testuserservice_test_register",
+      "type": "file",
+      "file": "dot-test_register().md",
+      "x": 980,
+      "y": 1140,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_service_testuserservice",
+      "type": "file",
+      "file": "TestUserService.md",
+      "x": 1180,
+      "y": 1140,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g8",
+      "type": "group",
+      "label": "Community 8",
+      "x": 1700,
+      "y": 980,
+      "width": 600,
+      "height": 400,
+      "color": "3"
+    },
+    {
+      "id": "n_pkg_service_userservice_export",
+      "type": "file",
+      "file": "dot-export().md",
+      "x": 1720,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_service_rationale_17",
+      "type": "file",
+      "file": "Duplicate name also defined in models and util..md",
+      "x": 1920,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_pkg_service_helper",
+      "type": "file",
+      "file": "helper()_2.md",
+      "x": 1720,
+      "y": 1140,
+      "width": 180,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_pkg_init_pkg_models_admin",
+      "fromNode": "n_pkg_init",
+      "toNode": "n_pkg_models_admin",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_models_admin",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_models_admin",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_pkg_models_admin",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_pkg_models_admin",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_admin_pkg_models_user",
+      "fromNode": "n_pkg_models_admin",
+      "toNode": "n_pkg_models_user",
+      "label": "inherits [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_admin_pkg_models_admin_promote",
+      "fromNode": "n_pkg_models_admin",
+      "toNode": "n_pkg_models_admin_promote",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_init_pkg_models_user",
+      "fromNode": "n_pkg_service_userservice_init",
+      "toNode": "n_pkg_models_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_init_pkg_models_user",
+      "fromNode": "n_pkg_init",
+      "toNode": "n_pkg_models_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_models_user",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_models_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_pkg_models_user",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_pkg_models_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_admin_promote_pkg_models_user",
+      "fromNode": "n_pkg_models_admin_promote",
+      "toNode": "n_pkg_models_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_promote_pkg_models_user",
+      "fromNode": "n_pkg_service_userservice_promote",
+      "toNode": "n_pkg_models_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_register_pkg_models_user",
+      "fromNode": "n_pkg_service_userservice_register",
+      "toNode": "n_pkg_models_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_pkg_models_user",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_pkg_models_user",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_user_pkg_models_base",
+      "fromNode": "n_pkg_models_user",
+      "toNode": "n_pkg_models_base",
+      "label": "inherits [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_user_pkg_models_user_display",
+      "fromNode": "n_pkg_models_user",
+      "toNode": "n_pkg_models_user_display",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_user_pkg_models_user_parse",
+      "fromNode": "n_pkg_models_user",
+      "toNode": "n_pkg_models_user_parse",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_user_pkg_models_user_guest",
+      "fromNode": "n_pkg_models_user",
+      "toNode": "n_pkg_models_user_guest",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_user_pkg_models_user_save",
+      "fromNode": "n_pkg_models_user",
+      "toNode": "n_pkg_models_user_save",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_rationale_24_pkg_models_user",
+      "fromNode": "n_pkg_models_rationale_24",
+      "toNode": "n_pkg_models_user",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_run_pkg_service_userservice",
+      "fromNode": "n_pkg_service_run",
+      "toNode": "n_pkg_service_userservice",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_main_pkg_service_userservice",
+      "fromNode": "n_main",
+      "toNode": "n_pkg_service_userservice",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_pkg_service_userservice",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_pkg_service_userservice",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_service_userservice",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_service_userservice",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_pkg_service_userservice_init",
+      "fromNode": "n_pkg_service_userservice",
+      "toNode": "n_pkg_service_userservice_init",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_pkg_service_userservice_register",
+      "fromNode": "n_pkg_service_userservice",
+      "toNode": "n_pkg_service_userservice_register",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_pkg_service_userservice_promote",
+      "fromNode": "n_pkg_service_userservice",
+      "toNode": "n_pkg_service_userservice_promote",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_pkg_service_userservice_export",
+      "fromNode": "n_pkg_service_userservice",
+      "toNode": "n_pkg_service_userservice_export",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_validate_pkg_models_base",
+      "fromNode": "n_pkg_models_validate",
+      "toNode": "n_pkg_models_base",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_pkg_models_base",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_pkg_models_base",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_base_pkg_models_base_save",
+      "fromNode": "n_pkg_models_base",
+      "toNode": "n_pkg_models_base_save",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_base_pkg_models_base_describe",
+      "fromNode": "n_pkg_models_base",
+      "toNode": "n_pkg_models_base_describe",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_rationale_12_pkg_models_base",
+      "fromNode": "n_pkg_models_rationale_12",
+      "toNode": "n_pkg_models_base",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_run_pkg_models_repo",
+      "fromNode": "n_pkg_service_run",
+      "toNode": "n_pkg_models_repo",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_models_repo",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_models_repo",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_init_pkg_models_repo",
+      "fromNode": "n_pkg_service_userservice_init",
+      "toNode": "n_pkg_models_repo",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_pkg_models_repo",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_pkg_models_repo",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_repo_pkg_models_repo_init",
+      "fromNode": "n_pkg_models_repo",
+      "toNode": "n_pkg_models_repo_init",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_repo_pkg_models_repo_add",
+      "fromNode": "n_pkg_models_repo",
+      "toNode": "n_pkg_models_repo_add",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_repo_pkg_models_repo_get",
+      "fromNode": "n_pkg_models_repo",
+      "toNode": "n_pkg_models_repo_get",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_tests_test_service_testuserservice",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_tests_test_service_testuserservice",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_testuserservice_tests_test_service_testuserservice_test_parse",
+      "fromNode": "n_tests_test_service_testuserservice",
+      "toNode": "n_tests_test_service_testuserservice_test_parse",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_testuserservice_tests_test_service_testuserservice_test_register",
+      "fromNode": "n_tests_test_service_testuserservice",
+      "toNode": "n_tests_test_service_testuserservice_test_register",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_slugify_pkg_util_helper",
+      "fromNode": "n_pkg_util_slugify",
+      "toNode": "n_pkg_util_helper",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_util_helper",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_util_helper",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_pkg_util_helper",
+      "fromNode": "n_pkg_util",
+      "toNode": "n_pkg_util_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_register_pkg_util_slugify",
+      "fromNode": "n_pkg_service_userservice_register",
+      "toNode": "n_pkg_util_slugify",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_slugify_re",
+      "fromNode": "n_pkg_util_slugify",
+      "toNode": "n_re",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_slugify_pkg_util_traced",
+      "fromNode": "n_pkg_util_slugify",
+      "toNode": "n_pkg_util_traced",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_util_slugify",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_util_slugify",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_pkg_util_slugify",
+      "fromNode": "n_pkg_util",
+      "toNode": "n_pkg_util_slugify",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_pkg_util_traced",
+      "fromNode": "n_pkg_util",
+      "toNode": "n_pkg_util_traced",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_traced_pkg_util_traced_wrapper",
+      "fromNode": "n_pkg_util_traced",
+      "toNode": "n_pkg_util_traced_wrapper",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_pkg_models_admin_promote_pkg_models_admin_promote_bump",
+      "fromNode": "n_pkg_models_admin_promote",
+      "toNode": "n_pkg_models_admin_promote_bump",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_promote_pkg_models_admin_promote",
+      "fromNode": "n_pkg_service_userservice_promote",
+      "toNode": "n_pkg_models_admin_promote",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_pkg_models_user_display_pkg_models_format_name",
+      "fromNode": "n_pkg_models_user_display",
+      "toNode": "n_pkg_models_format_name",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_run_pkg_models_format_name",
+      "fromNode": "n_pkg_service_run",
+      "toNode": "n_pkg_models_format_name",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_pkg_models_format_name",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_pkg_models_format_name",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_pkg_models_helper",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_pkg_models_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_main_main_pkg_service_run",
+      "fromNode": "n_main_main",
+      "toNode": "n_pkg_service_run",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_main_main_main",
+      "fromNode": "n_main",
+      "toNode": "n_main_main",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_service_pkg_service_run",
+      "fromNode": "n_tests_test_service_service",
+      "toNode": "n_pkg_service_run",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_testuserservice_test_register_pkg_service_run",
+      "fromNode": "n_tests_test_service_testuserservice_test_register",
+      "toNode": "n_pkg_service_run",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_main_pkg_service_run",
+      "fromNode": "n_main",
+      "toNode": "n_pkg_service_run",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_init_pkg_service_run",
+      "fromNode": "n_pkg_init",
+      "toNode": "n_pkg_service_run",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_pkg_service_run",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_pkg_service_run",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_service_run",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_service_run",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_run_pkg_service_userservice_register",
+      "fromNode": "n_pkg_service_run",
+      "toNode": "n_pkg_service_userservice_register",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_pkg_models_user_save_pkg_models_base_describe",
+      "fromNode": "n_pkg_models_user_save",
+      "toNode": "n_pkg_models_base_describe",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_base_save_pkg_models_validate",
+      "fromNode": "n_pkg_models_base_save",
+      "toNode": "n_pkg_models_validate",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_user_save_pkg_models_base_save",
+      "fromNode": "n_pkg_models_user_save",
+      "toNode": "n_pkg_models_base_save",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_pkg_models_validate",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_pkg_models_validate",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_repo_add_t",
+      "fromNode": "n_pkg_models_repo_add",
+      "toNode": "n_t",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_repo_get_t",
+      "fromNode": "n_pkg_models_repo_get",
+      "toNode": "n_t",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_service_fixture",
+      "fromNode": "n_tests_test_service_service",
+      "toNode": "n_fixture",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_tests_test_service_service",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_tests_test_service_service",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_tests_test_service_test_run",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_tests_test_service_test_run",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_testuserservice_test_parse_pkg_models_user_parse",
+      "fromNode": "n_tests_test_service_testuserservice_test_parse",
+      "toNode": "n_pkg_models_user_parse",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_service_helper",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_service_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_rationale_17_pkg_service_helper",
+      "fromNode": "n_pkg_service_rationale_17",
+      "toNode": "n_pkg_service_helper",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_export_pkg_service_helper",
+      "fromNode": "n_pkg_service_userservice_export",
+      "toNode": "n_pkg_service_helper",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_pkg_service_json",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_json",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_os_path",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_os_path",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_main_pkg_service",
+      "fromNode": "n_main",
+      "toNode": "n_pkg_service",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_util",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_util",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_collections",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_collections",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_typing",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_typing",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_init",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_init",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_pkg_service",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_pkg_service",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_pkg_models",
+      "fromNode": "n_pkg_service",
+      "toNode": "n_pkg_models",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_rationale_1_pkg_service",
+      "fromNode": "n_pkg_service_rationale_1",
+      "toNode": "n_pkg_service",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_re",
+      "fromNode": "n_pkg_util",
+      "toNode": "n_re",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_util_functools",
+      "fromNode": "n_pkg_util",
+      "toNode": "n_functools",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_init_pkg_models",
+      "fromNode": "n_pkg_init",
+      "toNode": "n_pkg_models",
+      "label": "re_exports [EXTRACTED]"
+    },
+    {
+      "id": "e_main_pkg_init",
+      "fromNode": "n_main",
+      "toNode": "n_pkg_init",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_init_rationale_1_pkg_init",
+      "fromNode": "n_pkg_init_rationale_1",
+      "toNode": "n_pkg_init",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_dataclasses",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_dataclasses",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_typing",
+      "fromNode": "n_pkg_models",
+      "toNode": "n_typing",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_pkg_models",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_pkg_models",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_rationale_15_pkg_models",
+      "fromNode": "n_pkg_models_rationale_15",
+      "toNode": "n_pkg_models",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_models_rationale_77_pkg_models",
+      "fromNode": "n_pkg_models_rationale_77",
+      "toNode": "n_pkg_models",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_main_sys",
+      "fromNode": "n_main",
+      "toNode": "n_sys",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_tests_test_service_pytest",
+      "fromNode": "n_tests_test_service",
+      "toNode": "n_pytest",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_pkg_models_user",
+      "fromNode": "n_pkg_service_userservice",
+      "toNode": "n_pkg_models_user",
+      "label": "uses [INFERRED]"
+    },
+    {
+      "id": "e_tests_test_service_testuserservice_pkg_models_user",
+      "fromNode": "n_tests_test_service_testuserservice",
+      "toNode": "n_pkg_models_user",
+      "label": "uses [INFERRED]"
+    },
+    {
+      "id": "e_main_main_pkg_service_userservice",
+      "fromNode": "n_main_main",
+      "toNode": "n_pkg_service_userservice",
+      "label": "uses [INFERRED]"
+    },
+    {
+      "id": "e_pkg_service_userservice_pkg_models_repo",
+      "fromNode": "n_pkg_service_userservice",
+      "toNode": "n_pkg_models_repo",
+      "label": "uses [INFERRED]"
+    },
+    {
+      "id": "e_tests_test_service_testuserservice_pkg_service_userservice",
+      "fromNode": "n_tests_test_service_testuserservice",
+      "toNode": "n_pkg_service_userservice",
+      "label": "uses [INFERRED]"
+    }
+  ]
+}

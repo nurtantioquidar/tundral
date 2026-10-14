@@ -9,7 +9,9 @@ publish.workspace = true
 [dependencies]
 anyhow.workspace = true
 dijkstral-core.workspace = true
+serde.workspace = true
 serde_json.workspace = true
+sha1_smol.workspace = true
 
 [dev-dependencies]
 tempfile.workspace = true

@@ -1,0 +1,2862 @@
+{
+ "title": "swift — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 91 nodes, 173 edges, 9 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "cli-skills",
+   "CLI & Skill Installers"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "sources-shop-userserviceswift",
+   "Sources Shop Userserviceswift"
+  ],
+  [
+   "sources-shapeswift-shop",
+   "Sources Shapeswift Shop"
+  ],
+  [
+   "sources-shop-models",
+   "Sources Shop Models"
+  ],
+  [
+   "sources-shop-services",
+   "Sources Shop Services"
+  ],
+  [
+   "userswift-sources-shop",
+   "Userswift Sources Shop"
+  ],
+  [
+   "sources-shop-models-c0125e",
+   "Sources Shop Models"
+  ],
+  [
+   "userformatswift-sources-shop",
+   "Userformatswift Sources Shop"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    CLI_SKILLS_9964CBB8(\"CLI & Skill Installers<br/><small>8 nodes</small>\")",
+     "    class CLI_SKILLS_9964CBB8 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>13 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    SOURCES_SHOP_USERSERVICESWIFT_2BFD0390(\"Sources Shop Userserviceswift<br/><small>20 nodes</small>\")",
+     "    class SOURCES_SHOP_USERSERVICESWIFT_2BFD0390 module;",
+     "    SOURCES_SHAPESWIFT_SHOP_7618A2F1(\"Sources Shapeswift Shop<br/><small>14 nodes</small>\")",
+     "    class SOURCES_SHAPESWIFT_SHOP_7618A2F1 module;",
+     "    SOURCES_SHOP_MODELS_CD46A368(\"Sources Shop Models<br/><small>10 nodes</small>\")",
+     "    class SOURCES_SHOP_MODELS_CD46A368 module;",
+     "    SOURCES_SHOP_SERVICES_10E3A237(\"Sources Shop Services<br/><small>10 nodes</small>\")",
+     "    class SOURCES_SHOP_SERVICES_10E3A237 module;",
+     "    USERSWIFT_SOURCES_SHOP_55FEB1D9(\"Userswift Sources Shop<br/><small>9 nodes</small>\")",
+     "    class USERSWIFT_SOURCES_SHOP_55FEB1D9 module;",
+     "    SOURCES_SHOP_MODELS_C0125E_4CD2D99C(\"Sources Shop Models<br/><small>4 nodes</small>\")",
+     "    class SOURCES_SHOP_MODELS_C0125E_4CD2D99C module;",
+     "    USERFORMATSWIFT_SOURCES_SHOP_4445CAFF(\"Userformatswift Sources Shop<br/><small>3 nodes</small>\")",
+     "    class USERFORMATSWIFT_SOURCES_SHOP_4445CAFF module;",
+     "    SOURCES_SHOP_USERSERVICESWIFT_2BFD0390 -->|references x12| SOURCES_SHOP_SERVICES_10E3A237",
+     "    SOURCES_SHOP_USERSERVICESWIFT_2BFD0390 -->|references x7| SOURCES_SHOP_MODELS_CD46A368",
+     "    SOURCES_SHOP_SERVICES_10E3A237 -->|references x5| SOURCES_SHOP_MODELS_CD46A368",
+     "    SOURCES_SHOP_MODELS_CD46A368 -->|references x4| SOURCES_SHOP_SERVICES_10E3A237",
+     "    SOURCES_SHAPESWIFT_SHOP_7618A2F1 -->|references x3| SOURCES_SHOP_SERVICES_10E3A237",
+     "    TESTS_FIXTURES_B84B1DCC -->|references x3| SOURCES_SHOP_USERSERVICESWIFT_2BFD0390",
+     "    SOURCES_SHOP_MODELS_CD46A368 -->|references x3| USERSWIFT_SOURCES_SHOP_55FEB1D9",
+     "    USERSWIFT_SOURCES_SHOP_55FEB1D9 -->|references x3| SOURCES_SHOP_SERVICES_10E3A237",
+     "    SOURCES_SHAPESWIFT_SHOP_7618A2F1 -->|implements x2| CLI_SKILLS_9964CBB8",
+     "    TESTS_FIXTURES_B84B1DCC -->|references x2| SOURCES_SHOP_SERVICES_10E3A237",
+     "    SOURCES_SHOP_MODELS_CD46A368 -->|implements x2| CLI_SKILLS_9964CBB8",
+     "    USERSWIFT_SOURCES_SHOP_55FEB1D9 -->|references x2| SOURCES_SHOP_MODELS_CD46A368"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Userformatswift Sources Shop -> Sources Shop Models -> Sources Shop Services -> CLI & Skill Installers -> Sources Shapeswift Shop -> Sources Shop Userserviceswift -> Userswift Sources Shop"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "CLI & Skill Installers",
+      "8",
+      "6"
+     ],
+     [
+      "Tests & Fixtures",
+      "13",
+      "2"
+     ],
+     [
+      "Sources Shop Userserviceswift",
+      "20",
+      "0"
+     ],
+     [
+      "Sources Shapeswift Shop",
+      "14",
+      "1"
+     ],
+     [
+      "Sources Shop Models",
+      "10",
+      "3"
+     ],
+     [
+      "Sources Shop Services",
+      "10",
+      "4"
+     ],
+     [
+      "Userswift Sources Shop",
+      "9",
+      "5"
+     ],
+     [
+      "Sources Shop Models",
+      "4",
+      "7"
+     ],
+     [
+      "Userformatswift Sources Shop",
+      "3",
+      "8"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "cli-skills",
+   "heading": "2. CLI & Skill Installers",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: CLI & Skill Installers (8 nodes, 7 edges)",
+     "    subgraph cli_skills_Shop_Models_Entity_swift_3297cfcd[\"Shop/Models/Entity.swift\"]",
+     "        sources_shop_models_entity_733d4736(\"Entity.swift\")",
+     "        sources_shop_models_entity_entity_03974469(\"Entity<br/><small>Shop/Models/Entity.swift</small>\")",
+     "        sources_shop_models_entity_entity_validate_12d2df8c(\"validate()<br/><small>Shop/Models/Entity.swift</small>\")",
+     "        foundation_ec9624c8(\"Foundation<br/><small>Shop/Models/Entity.swift</small>\")",
+     "        sources_shop_models_entity_describable_eddb85b8(\"Describable<br/><small>Shop/Models/Entity.swift</small>\")",
+     "    end",
+     "    sources_shop_models_entity_swift_bool_bd180232(\"Bool\")",
+     "    sources_app_main_7eb948a7(\"main.swift\")",
+     "    shop_5042d146(\"Shop<br/><small>Tests/ShopTests/UserServiceTests.swift</small>\")",
+     "    sources_shop_models_entity_entity_03974469 -->|method| sources_shop_models_entity_entity_validate_12d2df8c",
+     "    sources_app_main_7eb948a7 -->|imports| foundation_ec9624c8",
+     "    sources_app_main_7eb948a7 -->|imports| shop_5042d146",
+     "    sources_shop_models_entity_733d4736 -->|imports| foundation_ec9624c8",
+     "    class sources_shop_models_entity_733d4736 klass;",
+     "    class sources_shop_models_entity_entity_03974469 klass;",
+     "    class sources_shop_models_entity_entity_validate_12d2df8c function;",
+     "    class foundation_ec9624c8 module;",
+     "    class sources_shop_models_entity_describable_eddb85b8 klass;",
+     "    class sources_shop_models_entity_swift_bool_bd180232 klass;",
+     "    class sources_app_main_7eb948a7 module;",
+     "    class shop_5042d146 module;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "CLI & Skill Installers groups implementation around sources, shop, entityswift, models, mostly in Shop/Models/Entity.swift, Tests/ShopTests/UserServiceTests.swift, Sources/App/main.swift. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x3, contains x2, method x1, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Describable",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Describable node in Shop/Models/Entity.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        "Entity",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "validate()",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "Entity node in Shop/Models/Entity.swift."
+     ],
+     [
+      "3",
+      [
+       [
+        ".validate()",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Entity",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".validate() node in Shop/Models/Entity.swift."
+     ],
+     [
+      "4",
+      [
+       [
+        "Foundation",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "Entity.swift",
+        "Shop/Models/Entity.swift"
+       ],
+       [
+        "main.swift",
+        "Sources/App/main.swift"
+       ],
+       [
+        "Shape.swift",
+        "Shop/Models/Shape.swift"
+       ],
+       "+3 more"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Foundation node in Shop/Models/Entity.swift."
+     ],
+     [
+      "5",
+      [
+       [
+        "Shop",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "main.swift",
+        "Sources/App/main.swift"
+       ],
+       [
+        "UserServiceTests.swift",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop node in Tests/ShopTests/UserServiceTests.swift."
+     ],
+     [
+      "6",
+      [
+       [
+        "main.swift",
+        "Sources/App/main.swift"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Foundation",
+        "Shop/Models/Entity.swift"
+       ],
+       [
+        "Shop",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "main.swift node in Sources/App/main.swift."
+     ],
+     [
+      "7",
+      [
+       [
+        "Entity.swift",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Foundation",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "Entity.swift node in Shop/Models/Entity.swift."
+     ],
+     [
+      "8",
+      [
+       [
+        "Bool",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Bool node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/Entity.swift",
+      "5 nodes"
+     ],
+     [
+      "Sources/App/main.swift",
+      "1 nodes"
+     ],
+     [
+      "Tests/ShopTests/UserServiceTests.swift",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "3. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (13 nodes, 12 edges)",
+     "    subgraph tests_fixtures_Shop_Models_User_swift_b89e81f8[\"Shop/Models/User.swift\"]",
+     "        sources_shop_models_user_payment_13578747(\"Payment<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_payment_describe_fcb7ce88(\"describe()<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_payment_failed_46ae47ff(\"failed<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_payment_paid_08b50c4f(\"paid<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_payment_pending_595106e5(\"pending<br/><small>Shop/Models/User.swift</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_Tests_ShopTests_UserServiceTests_e1c9ee9d[\"Tests/ShopTests/UserServiceTests.swift\"]",
+     "        tests_shoptests_userservicetests_userservicetest_59986f42(\"UserServiceTests<br/><small>Tests/ShopTests/UserServiceTests.swift</small>\")",
+     "        tests_shoptests_userservicetests_4204aba0(\"UserServiceTests.swift\")",
+     "        tests_shoptests_userservicetests_userservicetest_dc6565c8(\"testPaymentDescription()<br/><small>Tests/ShopTests/UserServiceTests.swift</small>\")",
+     "        tests_shoptests_userservicetests_userservicetest_64d55492(\"setUp()<br/><small>Tests/ShopTests/UserServiceTests.swift</small>\")",
+     "        xctest_107b98bf(\"XCTest<br/><small>Tests/ShopTests/UserServiceTests.swift</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_External_generated_473753cb[\"External / generated\"]",
+     "        date_e927d067(\"Date\")",
+     "        int_46f8ab7c(\"Int\")",
+     "        xctestcase_ec95fdd2(\"XCTestCase\")",
+     "    end",
+     "    sources_shop_models_user_payment_13578747 -->|method| sources_shop_models_user_payment_describe_fcb7ce88",
+     "    tests_shoptests_userservicetests_userservicetest_59986f42 -->|method| tests_shoptests_userservicetests_userservicetest_dc6565c8",
+     "    tests_shoptests_userservicetests_userservicetest_59986f42 -->|method| tests_shoptests_userservicetests_userservicetest_64d55492",
+     "    tests_shoptests_userservicetests_4204aba0 -->|imports| xctest_107b98bf",
+     "    class sources_shop_models_user_payment_13578747 klass;",
+     "    class sources_shop_models_user_payment_describe_fcb7ce88 function;",
+     "    class sources_shop_models_user_payment_failed_46ae47ff function;",
+     "    class sources_shop_models_user_payment_paid_08b50c4f function;",
+     "    class sources_shop_models_user_payment_pending_595106e5 function;",
+     "    class tests_shoptests_userservicetests_userservicetest_59986f42 test;",
+     "    class tests_shoptests_userservicetests_4204aba0 test;",
+     "    class tests_shoptests_userservicetests_userservicetest_dc6565c8 test;",
+     "    class tests_shoptests_userservicetests_userservicetest_64d55492 test;",
+     "    class xctest_107b98bf module;",
+     "    class date_e927d067 klass;",
+     "    class int_46f8ab7c klass;",
+     "    class xctestcase_ec95fdd2 klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around userservicetestsswift, sources, shop, models, mostly in Shop/Models/User.swift, Tests/ShopTests/UserServiceTests.swift. This section covers 13 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: references x3, case of x3, method x3, inherits x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Payment",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "describe()",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Payment node in Shop/Models/User.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        "UserServiceTests",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "setUp()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ],
+       [
+        "testPaymentDescription()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ],
+       [
+        "testRegisterStoresUser()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "3",
+      [
+       [
+        ".describe()",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Payment",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".describe() node in Shop/Models/User.swift."
+     ],
+     [
+      "4",
+      [
+       [
+        ".setUp()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "UserServiceTests",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      [
+       [
+        "UserRepository",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      ".setUp() node in Tests/ShopTests/UserServiceTests.swift."
+     ],
+     [
+      "5",
+      [
+       [
+        ".testPaymentDescription()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "UserServiceTests",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "6",
+      [
+       [
+        "Date",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Date node in project."
+     ],
+     [
+      "7",
+      [
+       [
+        "Int",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Int node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "failed",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "failed node in Shop/Models/User.swift."
+     ],
+     [
+      "9",
+      [
+       [
+        "paid",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "paid node in Shop/Models/User.swift."
+     ],
+     [
+      "10",
+      [
+       [
+        "pending",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "pending node in Shop/Models/User.swift."
+     ],
+     [
+      "11",
+      [
+       [
+        "UserServiceTests.swift",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Shop",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ],
+       [
+        "XCTest",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "12",
+      [
+       [
+        "XCTest",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "UserServiceTests.swift",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "13",
+      [
+       [
+        "XCTestCase",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/User.swift",
+      "5 nodes"
+     ],
+     [
+      "Tests/ShopTests/UserServiceTests.swift",
+      "5 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "sources-shop-userserviceswift",
+   "heading": "4. Sources Shop Userserviceswift",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Sources Shop Userserviceswift (20 nodes, 30 edges)",
+     "    subgraph sources_shop_userserviceswift_Shop_Services_User_8f41ffdd[\"Shop/Services/UserService.swift\"]",
+     "        sources_shop_services_userservice_userservice_eb49e0af(\"UserService<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_userrepository_9f653b6b(\"UserRepository<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_userservice_re_80c9e906(\"register()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_f1f65ba3(\"UserService.swift\")",
+     "        sources_shop_services_userservice_repository_009a2584(\"Repository<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_repository_sav_bfdcaa15(\"save()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_userrepository_42961dbe(\"save()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_userrepository_337b6b20(\"all()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_userservice_in_fc611bea(\"init()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_userservice_no_d24f071b(\"notify()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_userservice_na_eae7dd16(\"names()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_log_87c559e2(\"log()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        combine_815f9798(\"Combine<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_shoperror_ef77aac8(\"ShopError<br/><small>Shop/Services/UserService.swift</small>\")",
+     "    end",
+     "    subgraph sources_shop_userserviceswift_External_generated_8b6fdb96[\"External / generated\"]",
+     "        error_11f9578d(\"Error\")",
+     "        void_e9cede9b(\"Void\")",
+     "    end",
+     "    sources_shop_models_user_user_make_ce88e3b6(\"make()<br/><small>Shop/Models/User.swift</small>\")",
+     "    tests_shoptests_userservicetests_userservicetest_f97b1225(\"testRegisterStoresUser()<br/><small>Tests/ShopTests/UserServiceTests.swift</small>\")",
+     "    sources_shop_services_userservice_repository_009a2584 -->|method| sources_shop_services_userservice_repository_sav_bfdcaa15",
+     "    sources_shop_services_userservice_userrepository_9f653b6b -->|method| sources_shop_services_userservice_userrepository_42961dbe",
+     "    sources_shop_services_userservice_userrepository_9f653b6b -->|method| sources_shop_services_userservice_userrepository_337b6b20",
+     "    sources_shop_services_userservice_userservice_eb49e0af -->|method| sources_shop_services_userservice_userservice_in_fc611bea",
+     "    sources_shop_services_userservice_userservice_eb49e0af -->|method| sources_shop_services_userservice_userservice_re_80c9e906",
+     "    sources_shop_services_userservice_userservice_eb49e0af -->|method| sources_shop_services_userservice_userservice_no_d24f071b",
+     "    sources_shop_services_userservice_userservice_eb49e0af -->|method| sources_shop_services_userservice_userservice_na_eae7dd16",
+     "    sources_shop_services_userservice_userservice_no_d24f071b -->|calls| sources_shop_services_userservice_log_87c559e2",
+     "    sources_shop_services_userservice_userservice_re_80c9e906 -->|calls| sources_shop_models_user_user_make_ce88e3b6",
+     "    sources_shop_services_userservice_userservice_re_80c9e906 -->|calls| sources_shop_services_userservice_userrepository_42961dbe",
+     "    sources_shop_services_userservice_userservice_re_80c9e906 -->|calls| sources_shop_services_userservice_userservice_no_d24f071b",
+     "    tests_shoptests_userservicetests_userservicetest_f97b1225 -->|calls| sources_shop_models_user_user_make_ce88e3b6",
+     "    sources_shop_services_userservice_f1f65ba3 -->|imports| combine_815f9798",
+     "    sources_shop_services_userservice_userservice_na_eae7dd16 -->|calls| sources_shop_services_userservice_userrepository_337b6b20",
+     "    tests_shoptests_userservicetests_userservicetest_f97b1225 -->|calls| sources_shop_services_userservice_userservice_re_80c9e906",
+     "    tests_shoptests_userservicetests_userservicetest_f97b1225 -->|calls| sources_shop_services_userservice_userservice_na_eae7dd16",
+     "    %% Omitted for readability: 2 nodes, 0 edges",
+     "    class sources_shop_services_userservice_userservice_eb49e0af klass;",
+     "    class sources_shop_services_userservice_userrepository_9f653b6b klass;",
+     "    class sources_shop_services_userservice_userservice_re_80c9e906 function;",
+     "    class sources_shop_services_userservice_f1f65ba3 klass;",
+     "    class sources_shop_services_userservice_repository_009a2584 klass;",
+     "    class sources_shop_services_userservice_repository_sav_bfdcaa15 function;",
+     "    class sources_shop_services_userservice_userrepository_42961dbe function;",
+     "    class sources_shop_services_userservice_userrepository_337b6b20 function;",
+     "    class sources_shop_services_userservice_userservice_in_fc611bea function;",
+     "    class sources_shop_services_userservice_userservice_no_d24f071b function;",
+     "    class sources_shop_services_userservice_userservice_na_eae7dd16 function;",
+     "    class sources_shop_services_userservice_log_87c559e2 function;",
+     "    class combine_815f9798 module;",
+     "    class sources_shop_services_userservice_shoperror_ef77aac8 klass;",
+     "    class error_11f9578d klass;",
+     "    class void_e9cede9b klass;",
+     "    class sources_shop_models_user_user_make_ce88e3b6 function;",
+     "    class tests_shoptests_userservicetests_userservicetest_f97b1225 test;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Sources Shop Userserviceswift groups implementation around sources, shop, userserviceswift, services, mostly in Shop/Services/UserService.swift, Shop/Models/User.swift, Tests/ShopTests/UserServiceTests.swift. This section covers 20 nodes and 30 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: calls x8, method x7, contains x5, references x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Repository",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "find()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "save()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Repository node in Shop/Services/UserService.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        "ShopError",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ShopError node in Shop/Services/UserService.swift."
+     ],
+     [
+      "3",
+      [
+       [
+        "UserRepository",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "setUp()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      [
+       [
+        "all()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "find()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "save()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "UserRepository node in Shop/Services/UserService.swift."
+     ],
+     [
+      "4",
+      [
+       [
+        "UserService",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Cache",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "init()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "lookup()",
+        "Shop/Services/UserService.swift"
+       ],
+       "+3 more"
+      ],
+      "UserService node in Shop/Services/UserService.swift."
+     ],
+     [
+      "5",
+      [
+       [
+        ".make()",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "testRegisterStoresUser()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ],
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".make() node in Shop/Models/User.swift."
+     ],
+     [
+      "6",
+      [
+       [
+        "log()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "notify()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "run()",
+        "Sources/App/main.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "log() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "7",
+      [
+       [
+        ".save()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repository",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".save() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "8",
+      [
+       [
+        ".all()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "names()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "UserRepository",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".all() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "9",
+      [
+       [
+        ".save()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "UserRepository",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".save() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "10",
+      [
+       [
+        ".init()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".init() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "11",
+      [
+       [
+        ".names()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "testRegisterStoresUser()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ],
+       [
+        "UserService",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       [
+        "all()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      ".names() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "12",
+      [
+       [
+        ".notify()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "UserService",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       [
+        "formatted()",
+        "Shop/Extensions/User+Format.swift"
+       ],
+       [
+        "log()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      ".notify() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "13",
+      [
+       [
+        ".register()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "testRegisterStoresUser()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ],
+       [
+        "UserService",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       [
+        "make()",
+        "Shop/Models/User.swift"
+       ],
+       [
+        "notify()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "save()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      ".register() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "14",
+      [
+       [
+        ".testRegisterStoresUser()",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "UserServiceTests",
+        "Tests/ShopTests/UserServiceTests.swift"
+       ]
+      ],
+      [
+       [
+        "make()",
+        "Shop/Models/User.swift"
+       ],
+       [
+        "names()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "register()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "15",
+      [
+       [
+        "Combine",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "UserService.swift",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Combine node in Shop/Services/UserService.swift."
+     ],
+     [
+      "16",
+      [
+       [
+        "Error",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Error node in project."
+     ],
+     [
+      "17",
+      [
+       [
+        "UserService.swift",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Combine",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "Foundation",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "UserService.swift node in Shop/Services/UserService.swift."
+     ],
+     [
+      "18",
+      [
+       [
+        "invalid",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "invalid node in Shop/Services/UserService.swift."
+     ],
+     [
+      "19",
+      [
+       [
+        "missing",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "missing node in Shop/Services/UserService.swift."
+     ],
+     [
+      "20",
+      [
+       [
+        "Void",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Void node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Services/UserService.swift",
+      "16 nodes"
+     ],
+     [
+      "Shop/Models/User.swift",
+      "1 nodes"
+     ],
+     [
+      "Tests/ShopTests/UserServiceTests.swift",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "sources-shapeswift-shop",
+   "heading": "5. Sources Shapeswift Shop",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Sources Shapeswift Shop (14 nodes, 20 edges)",
+     "    subgraph sources_shapeswift_shop_Shop_Models_Shape_swift_ba038519[\"Shop/Models/Shape.swift\"]",
+     "        sources_shop_models_shape_shape_a5cb8b9b(\"Shape<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_circle_6f7406a6(\"Circle<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_circle_init_6ba4d782(\"init()<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_circle_area_ae2bcb89(\"area()<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_circle_summary_ce0ec24d(\".summary<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_shape_area_9f0d530f(\"area()<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_shape_unit_e1b9616b(\"unit()<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_shape_init_21d3b881(\"init()<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_pair_d8a13274(\"Pair<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_92fe2691(\"Shape.swift\")",
+     "    end",
+     "    subgraph sources_shapeswift_shop_External_generated_672eb735[\"External / generated\"]",
+     "        double_bdb36bb2(\"Double\")",
+     "        key_a62f2225(\"Key\")",
+     "        value_f32b67c7(\"Value\")",
+     "    end",
+     "    sources_app_main_run_b784ffbc(\"run()<br/><small>Sources/App/main.swift</small>\")",
+     "    sources_shop_models_shape_circle_6f7406a6 -->|method| sources_shop_models_shape_circle_init_6ba4d782",
+     "    sources_shop_models_shape_circle_6f7406a6 -->|method| sources_shop_models_shape_circle_area_ae2bcb89",
+     "    sources_shop_models_shape_circle_6f7406a6 -->|method| sources_shop_models_shape_circle_summary_ce0ec24d",
+     "    sources_shop_models_shape_shape_a5cb8b9b -->|method| sources_shop_models_shape_shape_area_9f0d530f",
+     "    sources_shop_models_shape_shape_a5cb8b9b -->|method| sources_shop_models_shape_shape_unit_e1b9616b",
+     "    sources_shop_models_shape_shape_a5cb8b9b -->|method| sources_shop_models_shape_shape_init_21d3b881",
+     "    sources_app_main_run_b784ffbc -->|calls| sources_shop_models_shape_shape_unit_e1b9616b",
+     "    sources_shop_models_shape_circle_init_6ba4d782 -->|calls| sources_shop_models_shape_shape_init_21d3b881",
+     "    sources_app_main_run_b784ffbc -->|calls| sources_shop_models_shape_circle_area_ae2bcb89",
+     "    sources_app_main_run_b784ffbc -->|calls| sources_shop_models_shape_circle_6f7406a6",
+     "    class sources_shop_models_shape_shape_a5cb8b9b klass;",
+     "    class sources_shop_models_shape_circle_6f7406a6 klass;",
+     "    class sources_shop_models_shape_circle_init_6ba4d782 function;",
+     "    class sources_shop_models_shape_circle_area_ae2bcb89 function;",
+     "    class sources_shop_models_shape_circle_summary_ce0ec24d function;",
+     "    class sources_shop_models_shape_shape_area_9f0d530f function;",
+     "    class sources_shop_models_shape_shape_unit_e1b9616b function;",
+     "    class sources_shop_models_shape_shape_init_21d3b881 function;",
+     "    class sources_shop_models_shape_pair_d8a13274 klass;",
+     "    class sources_shop_models_shape_92fe2691 klass;",
+     "    class double_bdb36bb2 klass;",
+     "    class key_a62f2225 klass;",
+     "    class value_f32b67c7 klass;",
+     "    class sources_app_main_run_b784ffbc function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Sources Shapeswift Shop groups implementation around sources, shapeswift, shop, models, mostly in Shop/Models/Shape.swift, Sources/App/main.swift. This section covers 14 nodes and 20 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: references x6, method x6, calls x4, contains x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Circle",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "run()",
+        "Sources/App/main.swift"
+       ]
+      ],
+      [
+       [
+        ".summary",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "area()",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "init()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Circle node in Shop/Models/Shape.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        "Pair",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Pair node in Shop/Models/Shape.swift."
+     ],
+     [
+      "3",
+      [
+       [
+        "Shape",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "area()",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "init()",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "unit()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Shape node in Shop/Models/Shape.swift."
+     ],
+     [
+      "4",
+      [
+       [
+        "run()",
+        "Sources/App/main.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "area()",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "Circle",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "log()",
+        "Shop/Services/UserService.swift"
+       ],
+       "+1 more"
+      ],
+      "run() node in Sources/App/main.swift."
+     ],
+     [
+      "5",
+      [
+       [
+        ".area()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "run()",
+        "Sources/App/main.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".area() node in Shop/Models/Shape.swift."
+     ],
+     [
+      "6",
+      [
+       [
+        ".init()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      [
+       [
+        "init()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      ".init() node in Shop/Models/Shape.swift."
+     ],
+     [
+      "7",
+      [
+       [
+        ".area()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shape",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".area() node in Shop/Models/Shape.swift."
+     ],
+     [
+      "8",
+      [
+       [
+        ".init()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "init()",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "Shape",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".init() node in Shop/Models/Shape.swift."
+     ],
+     [
+      "9",
+      [
+       [
+        ".unit()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "run()",
+        "Sources/App/main.swift"
+       ],
+       [
+        "Shape",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".unit() node in Shop/Models/Shape.swift."
+     ],
+     [
+      "10",
+      [
+       [
+        "Double",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Double node in project."
+     ],
+     [
+      "11",
+      [
+       [
+        "Key",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Key node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "Shape.swift",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Foundation",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "Shape.swift node in Shop/Models/Shape.swift."
+     ],
+     [
+      "13",
+      [
+       [
+        ".summary",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".summary node in Shop/Models/Shape.swift."
+     ],
+     [
+      "14",
+      [
+       [
+        "Value",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Value node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/Shape.swift",
+      "10 nodes"
+     ],
+     [
+      "Sources/App/main.swift",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "sources-shop-models",
+   "heading": "6. Sources Shop Models",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Sources Shop Models (10 nodes, 13 edges)",
+     "    subgraph sources_shop_models_Shop_Models_User_swift_35581b42[\"Shop/Models/User.swift\"]",
+     "        sources_shop_models_user_user_cc843419(\"User<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_user_matches_a541a900(\"matches()<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_user_displayname_9fe36204(\".displayName<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_user_normalized_68c31622(\"normalized()<br/><small>Shop/Models/User.swift</small>\")",
+     "    end",
+     "    subgraph sources_shop_models_External_generated_d1f55b20[\"External / generated\"]",
+     "        sources_shop_models_user_swift_bool_f4695645(\"Bool\")",
+     "        customstringconvertible_1c361f55(\"CustomStringConvertible\")",
+     "        equatable_359bd218(\"Equatable\")",
+     "    end",
+     "    subgraph sources_shop_models_Shop_Extensions_User_Format_5f4452bd[\"Shop/Extensions/User+Format.swift\"]",
+     "        sources_shop_extensions_user_format_user_descrip_2a7ce3d2(\".description<br/><small>Shop/Extensions/User+Format.swift</small>\")",
+     "        sources_shop_extensions_user_format_user_summary_510f0274(\".summary<br/><small>Shop/Extensions/User+Format.swift</small>\")",
+     "        sources_shop_extensions_user_format_user_formatt_8934050c(\"formatted()<br/><small>Shop/Extensions/User+Format.swift</small>\")",
+     "    end",
+     "    sources_shop_models_user_user_cc843419 -->|calls| sources_shop_models_user_user_cc843419",
+     "    sources_shop_models_user_user_cc843419 -->|method| sources_shop_extensions_user_format_user_summary_510f0274",
+     "    sources_shop_models_user_user_cc843419 -->|method| sources_shop_extensions_user_format_user_descrip_2a7ce3d2",
+     "    sources_shop_models_user_user_cc843419 -->|method| sources_shop_extensions_user_format_user_formatt_8934050c",
+     "    sources_shop_models_user_user_cc843419 -->|method| sources_shop_models_user_user_displayname_9fe36204",
+     "    sources_shop_models_user_user_cc843419 -->|method| sources_shop_models_user_user_matches_a541a900",
+     "    sources_shop_models_user_user_cc843419 -->|method| sources_shop_models_user_user_normalized_68c31622",
+     "    sources_shop_models_user_user_matches_a541a900 -->|calls| sources_shop_models_user_user_normalized_68c31622",
+     "    sources_shop_extensions_user_format_user_descrip_2a7ce3d2 -->|calls| sources_shop_extensions_user_format_user_formatt_8934050c",
+     "    sources_shop_extensions_user_format_user_summary_510f0274 -->|calls| sources_shop_extensions_user_format_user_formatt_8934050c",
+     "    class sources_shop_models_user_user_cc843419 klass;",
+     "    class sources_shop_models_user_user_matches_a541a900 function;",
+     "    class sources_shop_models_user_user_displayname_9fe36204 function;",
+     "    class sources_shop_models_user_user_normalized_68c31622 function;",
+     "    class sources_shop_models_user_swift_bool_f4695645 klass;",
+     "    class customstringconvertible_1c361f55 klass;",
+     "    class equatable_359bd218 klass;",
+     "    class sources_shop_extensions_user_format_user_descrip_2a7ce3d2 function;",
+     "    class sources_shop_extensions_user_format_user_summary_510f0274 function;",
+     "    class sources_shop_extensions_user_format_user_formatt_8934050c function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Sources Shop Models groups implementation around sources, shop, models, userswift, mostly in Shop/Models/User.swift, Shop/Extensions/User+Format.swift. This section covers 10 nodes and 13 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x6, calls x4, implements x2, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       [
+        ".description",
+        "Shop/Extensions/User+Format.swift"
+       ],
+       [
+        ".displayName",
+        "Shop/Models/User.swift"
+       ],
+       [
+        ".summary",
+        "Shop/Extensions/User+Format.swift"
+       ],
+       "+7 more"
+      ],
+      "User node in Shop/Models/User.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        ".formatted()",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        ".description",
+        "Shop/Extensions/User+Format.swift"
+       ],
+       [
+        ".summary",
+        "Shop/Extensions/User+Format.swift"
+       ],
+       [
+        "notify()",
+        "Shop/Services/UserService.swift"
+       ],
+       "+1 more"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".formatted() node in Shop/Extensions/User+Format.swift."
+     ],
+     [
+      "3",
+      [
+       [
+        ".matches()",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       [
+        "normalized()",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      ".matches() node in Shop/Models/User.swift."
+     ],
+     [
+      "4",
+      [
+       [
+        ".normalized()",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "matches()",
+        "Shop/Models/User.swift"
+       ],
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".normalized() node in Shop/Models/User.swift."
+     ],
+     [
+      "5",
+      [
+       [
+        "CustomStringConvertible",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "CustomStringConvertible node in project."
+     ],
+     [
+      "6",
+      [
+       [
+        "Equatable",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Equatable node in project."
+     ],
+     [
+      "7",
+      [
+       [
+        ".description",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       [
+        "formatted()",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      ".description node in Shop/Extensions/User+Format.swift."
+     ],
+     [
+      "8",
+      [
+       [
+        ".summary",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       [
+        "formatted()",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      ".summary node in Shop/Extensions/User+Format.swift."
+     ],
+     [
+      "9",
+      [
+       [
+        "Bool",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Bool node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        ".displayName",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".displayName node in Shop/Models/User.swift."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/User.swift",
+      "4 nodes"
+     ],
+     [
+      "Shop/Extensions/User+Format.swift",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "sources-shop-services",
+   "heading": "7. Sources Shop Services",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Sources Shop Services (10 nodes, 14 edges)",
+     "    subgraph sources_shop_services_Shop_Services_UserService_5b51ca80[\"Shop/Services/UserService.swift\"]",
+     "        sources_shop_services_userservice_userservice_lo_26701e79(\"lookup()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_cache_74683c0c(\"Cache<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_cache_lookup_eab158e0(\"lookup()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_cache_remember_e850b9b9(\"remember()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_userrepository_262ba55f(\"find()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "        sources_shop_services_userservice_repository_fin_c63ecf3b(\"find()<br/><small>Shop/Services/UserService.swift</small>\")",
+     "    end",
+     "    subgraph sources_shop_services_Shop_Extensions_User_Forma_eababfdc[\"Shop/Extensions/User+Format.swift\"]",
+     "        sources_shop_extensions_user_format_string_276f404f(\"String<br/><small>Shop/Extensions/User+Format.swift</small>\")",
+     "        sources_shop_extensions_user_format_string_shout_58ad5d19(\"shout()<br/><small>Shop/Extensions/User+Format.swift</small>\")",
+     "    end",
+     "    item_3a7d9767(\"Item\")",
+     "    sources_shop_models_user_user_rename_ec251d97(\"rename()<br/><small>Shop/Models/User.swift</small>\")",
+     "    sources_shop_extensions_user_format_string_276f404f -->|method| sources_shop_extensions_user_format_string_shout_58ad5d19",
+     "    sources_shop_services_userservice_cache_74683c0c -->|method| sources_shop_services_userservice_cache_lookup_eab158e0",
+     "    sources_shop_services_userservice_cache_74683c0c -->|method| sources_shop_services_userservice_cache_remember_e850b9b9",
+     "    sources_shop_services_userservice_userservice_lo_26701e79 -->|calls| sources_shop_services_userservice_userservice_lo_26701e79",
+     "    sources_shop_services_userservice_userservice_lo_26701e79 -->|calls| sources_shop_services_userservice_userrepository_262ba55f",
+     "    sources_shop_services_userservice_userservice_lo_26701e79 -->|calls| sources_shop_services_userservice_cache_remember_e850b9b9",
+     "    class sources_shop_services_userservice_userservice_lo_26701e79 function;",
+     "    class sources_shop_services_userservice_cache_74683c0c klass;",
+     "    class sources_shop_services_userservice_cache_lookup_eab158e0 function;",
+     "    class sources_shop_services_userservice_cache_remember_e850b9b9 function;",
+     "    class sources_shop_services_userservice_userrepository_262ba55f function;",
+     "    class sources_shop_services_userservice_repository_fin_c63ecf3b function;",
+     "    class sources_shop_extensions_user_format_string_276f404f klass;",
+     "    class sources_shop_extensions_user_format_string_shout_58ad5d19 function;",
+     "    class item_3a7d9767 klass;",
+     "    class sources_shop_models_user_user_rename_ec251d97 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Sources Shop Services groups implementation around sources, shop, services, userserviceswift, mostly in Shop/Services/UserService.swift, Shop/Extensions/User+Format.swift, Shop/Models/User.swift. This section covers 10 nodes and 14 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: references x7, method x3, calls x3, dispatches to x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "String",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "shout()",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "String node in Shop/Extensions/User+Format.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        "Cache",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       [
+        "lookup()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "remember()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Caches analysis results or computes cache keys."
+     ],
+     [
+      "3",
+      [
+       [
+        ".shout()",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "String",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".shout() node in Shop/Extensions/User+Format.swift."
+     ],
+     [
+      "4",
+      [
+       [
+        ".rename()",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".rename() node in Shop/Models/User.swift."
+     ],
+     [
+      "5",
+      [
+       [
+        ".lookup()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Cache",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".lookup() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "6",
+      [
+       [
+        ".remember()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Cache",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "lookup()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".remember() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "7",
+      [
+       [
+        ".find()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repository",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".find() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "8",
+      [
+       [
+        ".find()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "lookup()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "UserRepository",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".find() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "9",
+      [
+       [
+        ".lookup()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "lookup()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "UserService",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      [
+       [
+        "find()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "lookup()",
+        "Shop/Services/UserService.swift"
+       ],
+       [
+        "remember()",
+        "Shop/Services/UserService.swift"
+       ]
+      ],
+      ".lookup() node in Shop/Services/UserService.swift."
+     ],
+     [
+      "10",
+      [
+       [
+        "Item",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Item node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Services/UserService.swift",
+      "6 nodes"
+     ],
+     [
+      "Shop/Extensions/User+Format.swift",
+      "2 nodes"
+     ],
+     [
+      "Shop/Models/User.swift",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "userswift-sources-shop",
+   "heading": "8. Userswift Sources Shop",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Userswift Sources Shop (9 nodes, 9 edges)",
+     "    subgraph userswift_sources_shop_Shop_Models_User_swift_a0cb8df7[\"Shop/Models/User.swift\"]",
+     "        sources_shop_models_user_role_3a0ee837(\"Role<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_role_isprivileged_4a0e8b19(\".isPrivileged<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_address_e605e529(\"Address<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_6fef0fcc(\"User.swift\")",
+     "        sources_shop_models_user_role_admin_cbfa495c(\"admin<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_role_customer_c77d6eb5(\"customer<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_role_guest_fae86e81(\"guest<br/><small>Shop/Models/User.swift</small>\")",
+     "        sources_shop_models_user_user_init_a73f5616(\"init()<br/><small>Shop/Models/User.swift</small>\")",
+     "    end",
+     "    codable_aa6baba3(\"Codable\")",
+     "    sources_shop_models_user_role_3a0ee837 -->|method| sources_shop_models_user_role_isprivileged_4a0e8b19",
+     "    class sources_shop_models_user_role_3a0ee837 klass;",
+     "    class sources_shop_models_user_role_isprivileged_4a0e8b19 function;",
+     "    class sources_shop_models_user_address_e605e529 klass;",
+     "    class sources_shop_models_user_6fef0fcc klass;",
+     "    class sources_shop_models_user_role_admin_cbfa495c function;",
+     "    class sources_shop_models_user_role_customer_c77d6eb5 function;",
+     "    class sources_shop_models_user_role_guest_fae86e81 function;",
+     "    class sources_shop_models_user_user_init_a73f5616 function;",
+     "    class codable_aa6baba3 klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Userswift Sources Shop groups implementation around userswift, sources, shop, models, mostly in Shop/Models/User.swift. This section covers 9 nodes and 9 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: case of x3, implements x2, contains x2, method x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Address",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Address node in Shop/Models/User.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        "Role",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        ".isPrivileged",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Role node in Shop/Models/User.swift."
+     ],
+     [
+      "3",
+      [
+       [
+        ".init()",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".init() node in Shop/Models/User.swift."
+     ],
+     [
+      "4",
+      [
+       [
+        "Codable",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Codable node in project."
+     ],
+     [
+      "5",
+      [
+       [
+        "User.swift",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Foundation",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "User.swift node in Shop/Models/User.swift."
+     ],
+     [
+      "6",
+      [
+       [
+        "admin",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "admin node in Shop/Models/User.swift."
+     ],
+     [
+      "7",
+      [
+       [
+        "customer",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "customer node in Shop/Models/User.swift."
+     ],
+     [
+      "8",
+      [
+       [
+        "guest",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "guest node in Shop/Models/User.swift."
+     ],
+     [
+      "9",
+      [
+       [
+        ".isPrivileged",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Role",
+        "Shop/Models/User.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".isPrivileged node in Shop/Models/User.swift."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/User.swift",
+      "8 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "sources-shop-models-c0125e",
+   "heading": "9. Sources Shop Models",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Sources Shop Models (4 nodes, 5 edges)",
+     "    subgraph sources_shop_models_c0125e_Shop_Models_Shape_swi_af8b0701[\"Shop/Models/Shape.swift\"]",
+     "        sources_shop_models_shape_box_9676aad1(\"Box<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_box_put_be9fd02c(\"put()<br/><small>Shop/Models/Shape.swift</small>\")",
+     "        sources_shop_models_shape_box_first_ba338572(\"first()<br/><small>Shop/Models/Shape.swift</small>\")",
+     "    end",
+     "    t_8efd86fb(\"T\")",
+     "    sources_shop_models_shape_box_9676aad1 -->|method| sources_shop_models_shape_box_put_be9fd02c",
+     "    sources_shop_models_shape_box_9676aad1 -->|method| sources_shop_models_shape_box_first_ba338572",
+     "    class sources_shop_models_shape_box_9676aad1 klass;",
+     "    class sources_shop_models_shape_box_put_be9fd02c function;",
+     "    class sources_shop_models_shape_box_first_ba338572 function;",
+     "    class t_8efd86fb klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Sources Shop Models groups implementation around sources, shop, models, shapeswift, mostly in Shop/Models/Shape.swift. This section covers 4 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: references x3, method x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Box",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "first()",
+        "Shop/Models/Shape.swift"
+       ],
+       [
+        "put()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Box node in Shop/Models/Shape.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        ".first()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Box",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".first() node in Shop/Models/Shape.swift."
+     ],
+     [
+      "3",
+      [
+       [
+        ".put()",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Box",
+        "Shop/Models/Shape.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".put() node in Shop/Models/Shape.swift."
+     ],
+     [
+      "4",
+      [
+       [
+        "T",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "T node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/Shape.swift",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "userformatswift-sources-shop",
+   "heading": "10. Userformatswift Sources Shop",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Userformatswift Sources Shop (3 nodes, 2 edges)",
+     "    sources_shop_extensions_user_format_array_ed233fd4(\"Array<br/><small>Shop/Extensions/User+Format.swift</small>\")",
+     "    sources_shop_extensions_user_format_array_sorted_12bb5e1c(\"sortedByName()<br/><small>Shop/Extensions/User+Format.swift</small>\")",
+     "    sources_shop_extensions_user_format_6fd7f20f(\"User+Format.swift\")",
+     "    sources_shop_extensions_user_format_array_ed233fd4 -->|method| sources_shop_extensions_user_format_array_sorted_12bb5e1c",
+     "    class sources_shop_extensions_user_format_array_ed233fd4 klass;",
+     "    class sources_shop_extensions_user_format_array_sorted_12bb5e1c function;",
+     "    class sources_shop_extensions_user_format_6fd7f20f klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Userformatswift Sources Shop groups implementation around userformatswift, sources, shop, extensions, mostly in Shop/Extensions/User+Format.swift. This section covers 3 nodes and 2 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x1, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Array",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "sortedByName()",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Array node in Shop/Extensions/User+Format.swift."
+     ],
+     [
+      "2",
+      [
+       [
+        ".sortedByName()",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Array",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".sortedByName() node in Shop/Extensions/User+Format.swift."
+     ],
+     [
+      "3",
+      [
+       [
+        "User+Format.swift",
+        "Shop/Extensions/User+Format.swift"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Foundation",
+        "Shop/Models/Entity.swift"
+       ]
+      ],
+      "User+Format.swift node in Shop/Extensions/User+Format.swift."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Extensions/User+Format.swift",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "swift — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "91"
+     ],
+     [
+      "Edges",
+      "173"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "9"
+     ],
+     [
+      "Documented Sections",
+      "9"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "163"
+     ],
+     [
+      "INFERRED",
+      "10"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

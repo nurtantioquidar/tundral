@@ -1,0 +1,193 @@
+{
+ "source": "graphify 0.9.86 export svg (matplotlib 3.11.2); positions are not stored",
+ "canvas_pt": [
+  1432.8,
+  1000.8
+ ],
+ "background": "#1a1a2e",
+ "links_solid": 49,
+ "links_dashed": 3,
+ "legend": false,
+ "nodes": [
+  {
+   "colour": "#4e79a7",
+   "radius": 18.57,
+   "label": "Store"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 15.0,
+   "label": "CachedStore"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 13.96,
+   "label": "App"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.25,
+   "label": ".add()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.25,
+   "label": ".constructor()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.25,
+   "label": ".create()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.25,
+   "label": ".size()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 11.62,
+   "label": "fixture()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.25,
+   "label": "helper()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.62,
+   "label": "helper()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.62,
+   "label": ".add()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.62,
+   "label": "clear()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.62,
+   "label": ".render()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 12.85,
+   "label": "List()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 12.85,
+   "label": "Row()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.25,
+   "label": "helper()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 11.62,
+   "label": ".constructor()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 11.62,
+   "label": ".onClick()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 13.96,
+   "label": "formatAll()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 15.0,
+   "label": "formatLabel()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 10.25,
+   "label": "pad()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 13.96,
+   "label": "store.test.js"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.25,
+   "label": "{ Store }"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 19.36,
+   "label": "format.mjs"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.25,
+   "label": "WHY: labels are shown in a fixed-width column."
+  },
+  {
+   "colour": "#e15759",
+   "radius": 19.36,
+   "label": "store.js"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.25,
+   "label": "utils"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.25,
+   "label": "NOTE: invalidates the cache on every write."
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 18.57,
+   "label": "App.jsx"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 16.88,
+   "label": "default.cjs"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.25,
+   "label": "lodash"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.25,
+   "label": "{ Store }"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.25,
+   "label": "ref_node_fs"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.25,
+   "label": "ref_path"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 10.25,
+   "label": "ref_react"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.25,
+   "label": "ref_lodash"
+  }
+ ]
+}

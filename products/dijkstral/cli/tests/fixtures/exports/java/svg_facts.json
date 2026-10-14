@@ -1,0 +1,333 @@
+{
+ "source": "graphify 0.9.86 export svg (matplotlib 3.11.2); positions are not stored",
+ "canvas_pt": [
+  1432.8,
+  1000.8
+ ],
+ "background": "#1a1a2e",
+ "links_solid": 88,
+ "links_dashed": 5,
+ "legend": false,
+ "nodes": [
+  {
+   "colour": "#4e79a7",
+   "radius": 13.8,
+   "label": "Formatter"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 12.01,
+   "label": "Repository"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 11.01,
+   "label": "Stats"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 18.13,
+   "label": "UserService"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 13.8,
+   "label": "Address"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.01,
+   "label": "Badge"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 19.36,
+   "label": "User"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.01,
+   "label": "Runnable"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 12.93,
+   "label": "Entity"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 16.81,
+   "label": "Model"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 12.01,
+   "label": "Formatter"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 13.8,
+   "label": "UserServiceTest"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 14.61,
+   "label": "Status"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 12.01,
+   "label": "Audited"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.9,
+   "label": ".format()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.9,
+   "label": ".shout()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 11.01,
+   "label": ".slug()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.9,
+   "label": ".save()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 12.01,
+   "label": ".count()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 11.01,
+   "label": ".names()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.9,
+   "label": ".label()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.01,
+   "label": ".text()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 12.01,
+   "label": ".getName()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 12.01,
+   "label": ".of()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 12.01,
+   "label": ".User()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 12.93,
+   "label": ".notify()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.01,
+   "label": ".run()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 17.49,
+   "label": ".register()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 13.8,
+   "label": ".save()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.9,
+   "label": ".describe()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.9,
+   "label": ".id()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.01,
+   "label": ".compareTo()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 12.93,
+   "label": ".id()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.9,
+   "label": ".Model()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.01,
+   "label": ".status()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.9,
+   "label": ".format()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 12.93,
+   "label": ".registersUser()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.01,
+   "label": ".setUp()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.9,
+   "label": ".isLive()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 12.01,
+   "label": ".status()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 17.49,
+   "label": "UserService.java"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.01,
+   "label": "Override"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.9,
+   "label": "Entity.java"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 12.01,
+   "label": "Model.java"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.01,
+   "label": "Override"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.01,
+   "label": "org.junit.jupiter.api.BeforeEach"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.01,
+   "label": "org.junit.jupiter.api.Test"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 13.8,
+   "label": "UserServiceTest.java"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.9,
+   "label": "ACTIVE"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.9,
+   "label": "SUSPENDED"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.9,
+   "label": "Override"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 11.01,
+   "label": "java.lang.annotation.Retention"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 12.01,
+   "label": "Audited.java"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 12.01,
+   "label": "User.java"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.9,
+   "label": "function"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.9,
+   "label": "requirenonnull"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.9,
+   "label": "slug"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.9,
+   "label": "util"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.9,
+   "label": "instant"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.9,
+   "label": "objects"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.9,
+   "label": "assertequals"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.9,
+   "label": "retentionpolicy"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.9,
+   "label": "arraylist"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.9,
+   "label": "list"
+  }
+ ]
+}

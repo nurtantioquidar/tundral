@@ -1,0 +1,2126 @@
+{
+ "title": "python — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 59 nodes, 107 edges, 9 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "cli-skills",
+   "CLI & Skill Installers"
+  ],
+  [
+   "security-global",
+   "Security & Global Graph"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "pkg-utilpy-servicepy",
+   "Pkg Utilpy Servicepy"
+  ],
+  [
+   "pkg-modelspy-promote",
+   "Pkg Modelspy Promote"
+  ],
+  [
+   "modelspy-pkg-format",
+   "Modelspy Pkg Format"
+  ],
+  [
+   "pkg-modelspy-save",
+   "Pkg Modelspy Save"
+  ],
+  [
+   "pkg-servicepy-helper",
+   "Pkg Servicepy Helper"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    CLI_SKILLS_9964CBB8(\"CLI & Skill Installers<br/><small>6 nodes</small>\")",
+     "    class CLI_SKILLS_9964CBB8 module;",
+     "    SECURITY_GLOBAL_5B9C6A04(\"Security & Global Graph<br/><small>6 nodes</small>\")",
+     "    class SECURITY_GLOBAL_5B9C6A04 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>9 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    PKG_UTILPY_SERVICEPY_81EC3AD2(\"Pkg Utilpy Servicepy<br/><small>12 nodes</small>\")",
+     "    class PKG_UTILPY_SERVICEPY_81EC3AD2 module;",
+     "    PKG_MODELSPY_PROMOTE_466AE5A1(\"Pkg Modelspy Promote<br/><small>9 nodes</small>\")",
+     "    class PKG_MODELSPY_PROMOTE_466AE5A1 module;",
+     "    MODELSPY_PKG_FORMAT_B788D35B(\"Modelspy Pkg Format<br/><small>8 nodes</small>\")",
+     "    class MODELSPY_PKG_FORMAT_B788D35B module;",
+     "    PKG_MODELSPY_SAVE_951CE159(\"Pkg Modelspy Save<br/><small>6 nodes</small>\")",
+     "    class PKG_MODELSPY_SAVE_951CE159 module;",
+     "    PKG_SERVICEPY_HELPER_B5DF5659(\"Pkg Servicepy Helper<br/><small>3 nodes</small>\")",
+     "    class PKG_SERVICEPY_HELPER_B5DF5659 module;",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls x5| CLI_SKILLS_9964CBB8",
+     "    CLI_SKILLS_9964CBB8 -->|method x4| PKG_MODELSPY_PROMOTE_466AE5A1",
+     "    CLI_SKILLS_9964CBB8 -->|method x3| SECURITY_GLOBAL_5B9C6A04",
+     "    PKG_UTILPY_SERVICEPY_81EC3AD2 -->|imports x3| PKG_MODELSPY_PROMOTE_466AE5A1",
+     "    PKG_MODELSPY_PROMOTE_466AE5A1 -->|inherits x2| PKG_MODELSPY_SAVE_951CE159",
+     "    PKG_MODELSPY_PROMOTE_466AE5A1 -->|method x2| MODELSPY_PKG_FORMAT_B788D35B",
+     "    TESTS_FIXTURES_B84B1DCC -->|uses x2| PKG_MODELSPY_PROMOTE_466AE5A1",
+     "    CLI_SKILLS_9964CBB8 -->|calls x2| PKG_UTILPY_SERVICEPY_81EC3AD2",
+     "    PKG_UTILPY_SERVICEPY_81EC3AD2 -->|imports x2| MODELSPY_PKG_FORMAT_B788D35B",
+     "    PKG_UTILPY_SERVICEPY_81EC3AD2 -->|contains x2| CLI_SKILLS_9964CBB8",
+     "    MODELSPY_PKG_FORMAT_B788D35B -->|contains x2| PKG_MODELSPY_SAVE_951CE159",
+     "    MODELSPY_PKG_FORMAT_B788D35B -->|contains x2| PKG_MODELSPY_PROMOTE_466AE5A1"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Tests & Fixtures -> CLI & Skill Installers -> Pkg Modelspy Promote -> Pkg Modelspy Save -> Security & Global Graph -> Pkg Utilpy Servicepy -> Modelspy Pkg Format"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "CLI & Skill Installers",
+      "6",
+      "3"
+     ],
+     [
+      "Security & Global Graph",
+      "6",
+      "5"
+     ],
+     [
+      "Tests & Fixtures",
+      "9",
+      "6, 7"
+     ],
+     [
+      "Pkg Utilpy Servicepy",
+      "12",
+      "0"
+     ],
+     [
+      "Pkg Modelspy Promote",
+      "9",
+      "1"
+     ],
+     [
+      "Modelspy Pkg Format",
+      "8",
+      "2"
+     ],
+     [
+      "Pkg Modelspy Save",
+      "6",
+      "4"
+     ],
+     [
+      "Pkg Servicepy Helper",
+      "3",
+      "8"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "cli-skills",
+   "heading": "2. CLI & Skill Installers",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: CLI & Skill Installers (6 nodes, 9 edges)",
+     "    subgraph cli_skills_pkg_service_py_a51c6cdc[\"pkg/service.py\"]",
+     "        pkg_service_run_677d7a66(\"run()<br/><small>pkg/service.py</small>\")",
+     "        pkg_service_userservice_2189d255(\"UserService<br/><small>pkg/service.py</small>\")",
+     "        pkg_service_userservice_register_8c5b0e3e(\"register()<br/><small>pkg/service.py</small>\")",
+     "    end",
+     "    subgraph cli_skills_main_py_9040bb1f[\"main.py\"]",
+     "        main_b28b7af6(\"main.py\")",
+     "        main_main_4d9daec5(\"main()<br/><small>main.py</small>\")",
+     "    end",
+     "    sys_b4c56ee8(\"sys\")",
+     "    pkg_service_userservice_2189d255 -->|method| pkg_service_userservice_register_8c5b0e3e",
+     "    main_main_4d9daec5 -->|calls| pkg_service_run_677d7a66",
+     "    pkg_service_run_677d7a66 -->|calls| pkg_service_userservice_2189d255",
+     "    main_b28b7af6 -->|imports| sys_b4c56ee8",
+     "    main_b28b7af6 -->|imports| pkg_service_run_677d7a66",
+     "    main_b28b7af6 -->|imports| pkg_service_userservice_2189d255",
+     "    main_main_4d9daec5 -->|uses| pkg_service_userservice_2189d255",
+     "    pkg_service_run_677d7a66 -->|calls| pkg_service_userservice_register_8c5b0e3e",
+     "    class pkg_service_run_677d7a66 function;",
+     "    class pkg_service_userservice_2189d255 klass;",
+     "    class pkg_service_userservice_register_8c5b0e3e function;",
+     "    class main_b28b7af6 module;",
+     "    class main_main_4d9daec5 function;",
+     "    class sys_b4c56ee8 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "CLI & Skill Installers groups implementation around pkg, servicepy, mainpy, userservice, mostly in pkg/service.py, main.py. This section covers 6 nodes and 9 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: calls x3, imports x3, method x1, uses x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "UserService",
+        "pkg/service.py"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "main()",
+        "main.py"
+       ],
+       [
+        "main.py",
+        "main.py"
+       ],
+       [
+        "run()",
+        "pkg/service.py"
+       ],
+       "+2 more"
+      ],
+      [
+       [
+        "__init__()",
+        "pkg/service.py"
+       ],
+       [
+        "export()",
+        "pkg/service.py"
+       ],
+       [
+        "promote()",
+        "pkg/service.py"
+       ],
+       "+3 more"
+      ],
+      "UserService node in pkg/service.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "main()",
+        "main.py"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "run()",
+        "pkg/service.py"
+       ],
+       [
+        "UserService",
+        "pkg/service.py"
+       ]
+      ],
+      "main() node in main.py."
+     ],
+     [
+      "3",
+      [
+       [
+        "run()",
+        "pkg/service.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "__init__.py",
+        "pkg/__init__.py"
+       ],
+       [
+        "main()",
+        "main.py"
+       ],
+       [
+        "main.py",
+        "main.py"
+       ],
+       "+3 more"
+      ],
+      [
+       [
+        "format_name()",
+        "pkg/models.py"
+       ],
+       [
+        "register()",
+        "pkg/service.py"
+       ],
+       [
+        "Repo",
+        "pkg/models.py"
+       ],
+       "+1 more"
+      ],
+      "run() node in pkg/service.py."
+     ],
+     [
+      "4",
+      [
+       [
+        ".register()",
+        "pkg/service.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "run()",
+        "pkg/service.py"
+       ],
+       [
+        "UserService",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "slugify()",
+        "pkg/util.py"
+       ]
+      ],
+      ".register() node in pkg/service.py."
+     ],
+     [
+      "5",
+      [
+       [
+        "main.py",
+        "main.py"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "__init__.py",
+        "pkg/__init__.py"
+       ],
+       [
+        "run()",
+        "pkg/service.py"
+       ],
+       [
+        "service.py",
+        "pkg/service.py"
+       ],
+       "+2 more"
+      ],
+      "Module file in main.py."
+     ],
+     [
+      "6",
+      [
+       [
+        "sys",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.py",
+        "main.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "sys node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "pkg/service.py",
+      "3 nodes"
+     ],
+     [
+      "main.py",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "security-global",
+   "heading": "3. Security & Global Graph",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Security & Global Graph (6 nodes, 6 edges)",
+     "    subgraph security_global_pkg_models_py_b8fe19cf[\"pkg/models.py\"]",
+     "        pkg_models_repo_e0261834(\"Repo<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_repo_init_6c177ec9(\"__init__()<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_repo_add_aad216e0(\"add()<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_repo_get_b47318d1(\"get()<br/><small>pkg/models.py</small>\")",
+     "    end",
+     "    t_8efd86fb(\"T\")",
+     "    pkg_service_userservice_init_ac2cb376(\"__init__()<br/><small>pkg/service.py</small>\")",
+     "    pkg_models_repo_e0261834 -->|method| pkg_models_repo_init_6c177ec9",
+     "    pkg_models_repo_e0261834 -->|method| pkg_models_repo_add_aad216e0",
+     "    pkg_models_repo_e0261834 -->|method| pkg_models_repo_get_b47318d1",
+     "    class pkg_models_repo_e0261834 klass;",
+     "    class pkg_models_repo_init_6c177ec9 function;",
+     "    class pkg_models_repo_add_aad216e0 function;",
+     "    class pkg_models_repo_get_b47318d1 function;",
+     "    class t_8efd86fb klass;",
+     "    class pkg_service_userservice_init_ac2cb376 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Security & Global Graph groups implementation around pkg, modelspy, repo, add, mostly in pkg/models.py, pkg/service.py. This section covers 6 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x3, references x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Repo",
+        "pkg/models.py"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "run()",
+        "pkg/service.py"
+       ],
+       [
+        "service.py",
+        "pkg/service.py"
+       ],
+       [
+        "UserService",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "__init__()",
+        "pkg/models.py"
+       ],
+       [
+        "add()",
+        "pkg/models.py"
+       ],
+       [
+        "get()",
+        "pkg/models.py"
+       ]
+      ],
+      "Repo node in pkg/models.py."
+     ],
+     [
+      "2",
+      [
+       [
+        ".add()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repo",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".add() node in pkg/models.py."
+     ],
+     [
+      "3",
+      [
+       [
+        ".get()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repo",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".get() node in pkg/models.py."
+     ],
+     [
+      "4",
+      [
+       [
+        ".__init__()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repo",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".__init__() node in pkg/models.py."
+     ],
+     [
+      "5",
+      [
+       [
+        ".__init__()",
+        "pkg/service.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".__init__() node in pkg/service.py."
+     ],
+     [
+      "6",
+      [
+       [
+        "T",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "T node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "pkg/models.py",
+      "4 nodes"
+     ],
+     [
+      "pkg/service.py",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "4. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (9 nodes, 8 edges)",
+     "    subgraph tests_fixtures_tests_test_service_py_532580bc[\"tests/test_service.py\"]",
+     "        tests_test_service_testuserservice_ffe3a0e2(\"TestUserService<br/><small>tests/test_service.py</small>\")",
+     "        tests_test_service_0e7561ab(\"test_service.py\")",
+     "        tests_test_service_testuserservice_test_parse_e8e4360f(\"test_parse()<br/><small>tests/test_service.py</small>\")",
+     "        tests_test_service_testuserservice_test_register_8ebc3bbd(\"test_register()<br/><small>tests/test_service.py</small>\")",
+     "        tests_test_service_service_1e5e2454(\"service()<br/><small>tests/test_service.py</small>\")",
+     "        tests_test_service_test_run_1eeb1a0e(\"test_run()<br/><small>tests/test_service.py</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_External_generated_473753cb[\"External / generated\"]",
+     "        pytest_0eaa389e(\"pytest\")",
+     "        fixture_51cff3c1(\"fixture\")",
+     "    end",
+     "    pkg_models_user_parse_3cd03895(\"parse()<br/><small>pkg/models.py</small>\")",
+     "    tests_test_service_testuserservice_ffe3a0e2 -->|method| tests_test_service_testuserservice_test_parse_e8e4360f",
+     "    tests_test_service_testuserservice_ffe3a0e2 -->|method| tests_test_service_testuserservice_test_register_8ebc3bbd",
+     "    tests_test_service_testuserservice_test_parse_e8e4360f -->|calls| pkg_models_user_parse_3cd03895",
+     "    tests_test_service_0e7561ab -->|imports| pytest_0eaa389e",
+     "    class tests_test_service_testuserservice_ffe3a0e2 test;",
+     "    class tests_test_service_0e7561ab test;",
+     "    class tests_test_service_testuserservice_test_parse_e8e4360f test;",
+     "    class tests_test_service_testuserservice_test_register_8ebc3bbd test;",
+     "    class tests_test_service_service_1e5e2454 test;",
+     "    class tests_test_service_test_run_1eeb1a0e test;",
+     "    class pytest_0eaa389e function;",
+     "    class fixture_51cff3c1 function;",
+     "    class pkg_models_user_parse_3cd03895 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around test, servicepy, tests, parse, mostly in tests/test_service.py, pkg/models.py. This section covers 9 nodes and 8 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x3, method x2, references x1, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "service()",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "run()",
+        "pkg/service.py"
+       ]
+      ],
+      "service() node in tests/test_service.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "test_run()",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "3",
+      [
+       [
+        "fixture",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "fixture node in project."
+     ],
+     [
+      "4",
+      [
+       [
+        "test_service.py",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "models.py",
+        "pkg/models.py"
+       ],
+       [
+        "pytest"
+       ],
+       [
+        "run()",
+        "pkg/service.py"
+       ],
+       "+3 more"
+      ],
+      "Module file in tests/test_service.py."
+     ],
+     [
+      "5",
+      [
+       [
+        "pytest",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "test_service.py",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "6",
+      [
+       [
+        "TestUserService",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "test_parse()",
+        "tests/test_service.py"
+       ],
+       [
+        "test_register()",
+        "tests/test_service.py"
+       ],
+       [
+        "User",
+        "pkg/models.py"
+       ],
+       "+1 more"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "7",
+      [
+       [
+        ".parse()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "test_parse()",
+        "tests/test_service.py"
+       ],
+       [
+        "User",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".parse() node in pkg/models.py."
+     ],
+     [
+      "8",
+      [
+       [
+        ".test_parse()",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "TestUserService",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       [
+        "parse()",
+        "pkg/models.py"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "9",
+      [
+       [
+        ".test_register()",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "TestUserService",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       [
+        "run()",
+        "pkg/service.py"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "tests/test_service.py",
+      "6 nodes"
+     ],
+     [
+      "pkg/models.py",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "pkg-utilpy-servicepy",
+   "heading": "5. Pkg Utilpy Servicepy",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Pkg Utilpy Servicepy (12 nodes, 16 edges)",
+     "    subgraph pkg_utilpy_servicepy_External_generated_5b844329[\"External / generated\"]",
+     "        re_c387c982(\"re\")",
+     "        json_05d97e6e(\"json\")",
+     "        os_path_7aa5d79d(\"os_path\")",
+     "        collections_fa4b9d69(\"collections\")",
+     "        functools_080913a9(\"functools\")",
+     "    end",
+     "    subgraph pkg_utilpy_servicepy_pkg_util_py_deb88e5c[\"pkg/util.py\"]",
+     "        pkg_util_4a0bfc9d(\"util.py\")",
+     "        pkg_util_slugify_dfd3f706(\"slugify()<br/><small>pkg/util.py</small>\")",
+     "        pkg_util_helper_90ae5123(\"helper()<br/><small>pkg/util.py</small>\")",
+     "        pkg_util_traced_8db44649(\"traced()<br/><small>pkg/util.py</small>\")",
+     "        pkg_util_traced_wrapper_c48e82a0(\"wrapper()<br/><small>pkg/util.py</small>\")",
+     "    end",
+     "    subgraph pkg_utilpy_servicepy_pkg_service_py_c7ffc660[\"pkg/service.py\"]",
+     "        pkg_service_11723e5d(\"service.py\")",
+     "        pkg_service_rationale_1_50e9d1e9(\"Service layer exercising every import a...<br/><small>pkg/service.py</small>\")",
+     "    end",
+     "    pkg_util_slugify_dfd3f706 -->|calls| pkg_util_helper_90ae5123",
+     "    pkg_util_slugify_dfd3f706 -->|calls| re_c387c982",
+     "    pkg_service_11723e5d -->|imports| pkg_util_helper_90ae5123",
+     "    pkg_service_11723e5d -->|imports| pkg_util_slugify_dfd3f706",
+     "    pkg_service_11723e5d -->|imports| json_05d97e6e",
+     "    pkg_service_11723e5d -->|imports| os_path_7aa5d79d",
+     "    pkg_service_11723e5d -->|imports| pkg_util_4a0bfc9d",
+     "    pkg_service_11723e5d -->|imports| collections_fa4b9d69",
+     "    pkg_util_4a0bfc9d -->|imports| re_c387c982",
+     "    pkg_util_4a0bfc9d -->|imports| functools_080913a9",
+     "    class re_c387c982 function;",
+     "    class json_05d97e6e function;",
+     "    class os_path_7aa5d79d function;",
+     "    class collections_fa4b9d69 function;",
+     "    class functools_080913a9 function;",
+     "    class pkg_util_4a0bfc9d module;",
+     "    class pkg_util_slugify_dfd3f706 function;",
+     "    class pkg_util_helper_90ae5123 function;",
+     "    class pkg_util_traced_8db44649 function;",
+     "    class pkg_util_traced_wrapper_c48e82a0 function;",
+     "    class pkg_service_11723e5d module;",
+     "    class pkg_service_rationale_1_50e9d1e9 concept;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Pkg Utilpy Servicepy groups implementation around pkg, utilpy, servicepy, helper, mostly in pkg/util.py, pkg/service.py. This section covers 12 nodes and 16 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x5, imports x3, contains x3, calls x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "helper()",
+        "pkg/util.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ],
+       [
+        "slugify()",
+        "pkg/util.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in pkg/util.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "slugify()",
+        "pkg/util.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "pkg/service.py"
+       ],
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "pkg/util.py"
+       ],
+       [
+        "re"
+       ]
+      ],
+      "slugify() node in pkg/util.py."
+     ],
+     [
+      "3",
+      [
+       [
+        "traced()",
+        "pkg/util.py"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "wrapper()",
+        "pkg/util.py"
+       ]
+      ],
+      "traced() node in pkg/util.py."
+     ],
+     [
+      "4",
+      [
+       [
+        "wrapper()",
+        "pkg/util.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "traced()",
+        "pkg/util.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "wrapper() node in pkg/util.py."
+     ],
+     [
+      "5",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "main.py",
+        "main.py"
+       ],
+       [
+        "test_service.py",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       [
+        "__init__.py",
+        "pkg/__init__.py"
+       ],
+       [
+        "Admin",
+        "pkg/models.py"
+       ],
+       [
+        "collections"
+       ],
+       "+9 more"
+      ],
+      "Module file in pkg/service.py."
+     ],
+     [
+      "6",
+      [
+       [
+        "util.py",
+        "pkg/util.py"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "functools"
+       ],
+       [
+        "re"
+       ]
+      ],
+      "Module file in pkg/util.py."
+     ],
+     [
+      "7",
+      [
+       [
+        "Service layer exercising every import and call form.",
+        "pkg/service.py"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for Service layer exercising every import and call form.."
+     ],
+     [
+      "8",
+      [
+       [
+        "collections",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "collections node in project."
+     ],
+     [
+      "9",
+      [
+       [
+        "functools",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "util.py",
+        "pkg/util.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "functools node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        "json",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "json node in project."
+     ],
+     [
+      "11",
+      [
+       [
+        "os_path",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "os_path node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "re",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "slugify()",
+        "pkg/util.py"
+       ],
+       [
+        "util.py",
+        "pkg/util.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "re node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "pkg/util.py",
+      "5 nodes"
+     ],
+     [
+      "pkg/service.py",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "pkg-modelspy-promote",
+   "heading": "6. Pkg Modelspy Promote",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Pkg Modelspy Promote (9 nodes, 11 edges)",
+     "    subgraph pkg_modelspy_promote_pkg_models_py_e1a608fa[\"pkg/models.py\"]",
+     "        pkg_models_admin_616e37d6(\"Admin<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_user_ba992405(\"User<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_admin_promote_e3258850(\"promote()<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_user_guest_9f4dcec0(\"guest()<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_admin_promote_bump_2ecc48a1(\"bump()<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_rationale_24_7ba4512d(\"A person who can sign in.<br/><small>pkg/models.py</small>\")",
+     "    end",
+     "    subgraph pkg_modelspy_promote_pkg_init_py_e714b494[\"pkg/__init__.py\"]",
+     "        pkg_init_8ae4deff(\"__init__.py\")",
+     "        pkg_init_rationale_1_97aed43e(\"Fixture package: re-exports the public...<br/><small>pkg/__init__.py</small>\")",
+     "    end",
+     "    pkg_service_userservice_promote_0ebf77be(\"promote()<br/><small>pkg/service.py</small>\")",
+     "    pkg_models_admin_616e37d6 -->|method| pkg_models_admin_promote_e3258850",
+     "    pkg_models_user_ba992405 -->|method| pkg_models_user_guest_9f4dcec0",
+     "    pkg_init_8ae4deff -->|imports| pkg_models_admin_616e37d6",
+     "    pkg_init_8ae4deff -->|imports| pkg_models_user_ba992405",
+     "    pkg_service_userservice_promote_0ebf77be -->|calls| pkg_models_admin_promote_e3258850",
+     "    class pkg_models_admin_616e37d6 klass;",
+     "    class pkg_models_user_ba992405 klass;",
+     "    class pkg_models_admin_promote_e3258850 function;",
+     "    class pkg_models_user_guest_9f4dcec0 function;",
+     "    class pkg_models_admin_promote_bump_2ecc48a1 function;",
+     "    class pkg_models_rationale_24_7ba4512d concept;",
+     "    class pkg_init_8ae4deff module;",
+     "    class pkg_init_rationale_1_97aed43e concept;",
+     "    class pkg_service_userservice_promote_0ebf77be function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Pkg Modelspy Promote groups implementation around pkg, modelspy, promote, admin, mostly in pkg/models.py, pkg/__init__.py, pkg/service.py. This section covers 9 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x2, references x2, imports x2, explains x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Admin",
+        "pkg/models.py"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "__init__.py",
+        "pkg/__init__.py"
+       ],
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "promote()",
+        "pkg/models.py"
+       ]
+      ],
+      "Admin node in pkg/models.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "User",
+        "pkg/models.py"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "__init__.py",
+        "pkg/__init__.py"
+       ],
+       [
+        "service.py",
+        "pkg/service.py"
+       ],
+       [
+        "test_service.py",
+        "tests/test_service.py"
+       ],
+       "+2 more"
+      ],
+      [
+       [
+        "display()",
+        "pkg/models.py"
+       ],
+       [
+        "guest()",
+        "pkg/models.py"
+       ],
+       [
+        "parse()",
+        "pkg/models.py"
+       ],
+       "+1 more"
+      ],
+      "User node in pkg/models.py."
+     ],
+     [
+      "3",
+      [
+       [
+        ".promote()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Admin",
+        "pkg/models.py"
+       ],
+       [
+        "promote()",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".promote() node in pkg/models.py."
+     ],
+     [
+      "4",
+      [
+       [
+        "bump()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "bump() node in pkg/models.py."
+     ],
+     [
+      "5",
+      [
+       [
+        ".guest()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".guest() node in pkg/models.py."
+     ],
+     [
+      "6",
+      [
+       [
+        ".promote()",
+        "pkg/service.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "promote()",
+        "pkg/models.py"
+       ]
+      ],
+      ".promote() node in pkg/service.py."
+     ],
+     [
+      "7",
+      [
+       [
+        "__init__.py",
+        "pkg/__init__.py"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "main.py",
+        "main.py"
+       ],
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "Admin",
+        "pkg/models.py"
+       ],
+       [
+        "run()",
+        "pkg/service.py"
+       ],
+       [
+        "User",
+        "pkg/models.py"
+       ]
+      ],
+      "Module file in pkg/__init__.py."
+     ],
+     [
+      "8",
+      [
+       [
+        "Fixture package: re-exports the public model types.",
+        "pkg/__init__.py"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for Fixture package: re-exports the public model types.."
+     ],
+     [
+      "9",
+      [
+       [
+        "A person who can sign in.",
+        "pkg/models.py"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for A person who can sign in.."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "pkg/models.py",
+      "6 nodes"
+     ],
+     [
+      "pkg/__init__.py",
+      "2 nodes"
+     ],
+     [
+      "pkg/service.py",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "modelspy-pkg-format",
+   "heading": "7. Modelspy Pkg Format",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Modelspy Pkg Format (8 nodes, 7 edges)",
+     "    subgraph modelspy_pkg_format_pkg_models_py_70be10cd[\"pkg/models.py\"]",
+     "        pkg_models_c3c04fb9(\"models.py\")",
+     "        pkg_models_user_display_b543527c(\"display()<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_format_name_13a40a6b(\"format_name()<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_helper_76a5479b(\"helper()<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_rationale_15_865a7baf(\"NOTE: persistence is faked in this fi...<br/><small>pkg/models.py</small>\")",
+     "        pkg_models_rationale_77_30f06e36(\"WHY: names are displayed title-cased...<br/><small>pkg/models.py</small>\")",
+     "    end",
+     "    subgraph modelspy_pkg_format_External_generated_90f6bd68[\"External / generated\"]",
+     "        dataclasses_cebf6197(\"dataclasses\")",
+     "        typing_02d7d347(\"typing\")",
+     "    end",
+     "    pkg_models_user_display_b543527c -->|calls| pkg_models_format_name_13a40a6b",
+     "    pkg_models_c3c04fb9 -->|imports| dataclasses_cebf6197",
+     "    pkg_models_c3c04fb9 -->|imports| typing_02d7d347",
+     "    class pkg_models_c3c04fb9 module;",
+     "    class pkg_models_user_display_b543527c function;",
+     "    class pkg_models_format_name_13a40a6b function;",
+     "    class pkg_models_helper_76a5479b function;",
+     "    class pkg_models_rationale_15_865a7baf concept;",
+     "    class pkg_models_rationale_77_30f06e36 concept;",
+     "    class dataclasses_cebf6197 async;",
+     "    class typing_02d7d347 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Modelspy Pkg Format groups implementation around modelspy, pkg, format, name, mostly in pkg/models.py. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x2, contains x2, explains x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "format_name()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "display()",
+        "pkg/models.py"
+       ],
+       [
+        "run()",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "format_name() node in pkg/models.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "helper()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in pkg/models.py."
+     ],
+     [
+      "3",
+      [
+       [
+        ".display()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       [
+        "format_name()",
+        "pkg/models.py"
+       ]
+      ],
+      ".display() node in pkg/models.py."
+     ],
+     [
+      "4",
+      [
+       [
+        "models.py",
+        "pkg/models.py"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ],
+       [
+        "test_service.py",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       [
+        "dataclasses"
+       ],
+       [
+        "typing"
+       ]
+      ],
+      "Module file in pkg/models.py."
+     ],
+     [
+      "5",
+      [
+       [
+        "# NOTE: persistence is faked in this fixture.",
+        "pkg/models.py"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for # NOTE: persistence is faked in this fixture.."
+     ],
+     [
+      "6",
+      [
+       [
+        "# WHY: names are displayed title-cased everywhere.",
+        "pkg/models.py"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for # WHY: names are displayed title-cased everywhere.."
+     ],
+     [
+      "7",
+      [
+       [
+        "dataclasses",
+        ""
+       ]
+      ],
+      "Async",
+      [
+       [
+        "models.py",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "dataclasses node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "typing",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "models.py",
+        "pkg/models.py"
+       ],
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "typing node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "pkg/models.py",
+      "6 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "pkg-modelspy-save",
+   "heading": "8. Pkg Modelspy Save",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Pkg Modelspy Save (6 nodes, 7 edges)",
+     "    pkg_models_base_f370e51f(\"Base<br/><small>pkg/models.py</small>\")",
+     "    pkg_models_user_save_78791d7f(\"save()<br/><small>pkg/models.py</small>\")",
+     "    pkg_models_base_save_847c6ae7(\"save()<br/><small>pkg/models.py</small>\")",
+     "    pkg_models_base_describe_46ff7379(\"describe()<br/><small>pkg/models.py</small>\")",
+     "    pkg_models_validate_41e791af(\"validate()<br/><small>pkg/models.py</small>\")",
+     "    pkg_models_rationale_12_bf48a6cd(\"Root of the model hierarchy.<br/><small>pkg/models.py</small>\")",
+     "    pkg_models_base_f370e51f -->|method| pkg_models_base_save_847c6ae7",
+     "    pkg_models_base_f370e51f -->|method| pkg_models_base_describe_46ff7379",
+     "    pkg_models_base_save_847c6ae7 -->|calls| pkg_models_validate_41e791af",
+     "    pkg_models_user_save_78791d7f -->|calls| pkg_models_base_save_847c6ae7",
+     "    pkg_models_user_save_78791d7f -->|calls| pkg_models_base_describe_46ff7379",
+     "    class pkg_models_base_f370e51f klass;",
+     "    class pkg_models_user_save_78791d7f function;",
+     "    class pkg_models_base_save_847c6ae7 function;",
+     "    class pkg_models_base_describe_46ff7379 function;",
+     "    class pkg_models_validate_41e791af function;",
+     "    class pkg_models_rationale_12_bf48a6cd concept;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Pkg Modelspy Save groups implementation around pkg, modelspy, save, base, mostly in pkg/models.py. This section covers 6 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: calls x3, method x2, references x1, explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Base",
+        "pkg/models.py"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "describe()",
+        "pkg/models.py"
+       ],
+       [
+        "save()",
+        "pkg/models.py"
+       ]
+      ],
+      "Base node in pkg/models.py."
+     ],
+     [
+      "2",
+      [
+       [
+        ".describe()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Base",
+        "pkg/models.py"
+       ],
+       [
+        "save()",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".describe() node in pkg/models.py."
+     ],
+     [
+      "3",
+      [
+       [
+        ".save()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Base",
+        "pkg/models.py"
+       ],
+       [
+        "save()",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       [
+        "validate()",
+        "pkg/models.py"
+       ]
+      ],
+      ".save() node in pkg/models.py."
+     ],
+     [
+      "4",
+      [
+       [
+        ".save()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       [
+        "describe()",
+        "pkg/models.py"
+       ],
+       [
+        "save()",
+        "pkg/models.py"
+       ]
+      ],
+      ".save() node in pkg/models.py."
+     ],
+     [
+      "5",
+      [
+       [
+        "validate()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "save()",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "validate() node in pkg/models.py."
+     ],
+     [
+      "6",
+      [
+       [
+        "Root of the model hierarchy.",
+        "pkg/models.py"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for Root of the model hierarchy.."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "pkg/models.py",
+      "6 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "pkg-servicepy-helper",
+   "heading": "9. Pkg Servicepy Helper",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Pkg Servicepy Helper (3 nodes, 2 edges)",
+     "    pkg_service_rationale_17_5acdacb4(\"Duplicate name: also defined in models...<br/><small>pkg/service.py</small>\")",
+     "    pkg_service_userservice_export_d2710234(\"export()<br/><small>pkg/service.py</small>\")",
+     "    pkg_service_helper_0e424ef5(\"helper()<br/><small>pkg/service.py</small>\")",
+     "    pkg_service_rationale_17_5acdacb4 -->|explains| pkg_service_helper_0e424ef5",
+     "    pkg_service_userservice_export_d2710234 -->|indirect call| pkg_service_helper_0e424ef5",
+     "    class pkg_service_rationale_17_5acdacb4 concept;",
+     "    class pkg_service_userservice_export_d2710234 function;",
+     "    class pkg_service_helper_0e424ef5 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Pkg Servicepy Helper groups implementation around pkg, servicepy, helper, export, mostly in pkg/service.py. This section covers 3 nodes and 2 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: indirect call x1, explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "helper()",
+        "pkg/service.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "export()",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in pkg/service.py."
+     ],
+     [
+      "2",
+      [
+       [
+        ".export()",
+        "pkg/service.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "pkg/service.py"
+       ]
+      ],
+      "Exports documentation data to a target format."
+     ],
+     [
+      "3",
+      [
+       [
+        "Duplicate name: also defined in models and util.",
+        "pkg/service.py"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for Duplicate name: also defined in models and util.."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "pkg/service.py",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "python — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "59"
+     ],
+     [
+      "Edges",
+      "107"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "9"
+     ],
+     [
+      "Documented Sections",
+      "8"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "98"
+     ],
+     [
+      "INFERRED",
+      "9"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

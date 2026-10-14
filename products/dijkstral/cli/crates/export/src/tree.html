@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@@TITLE@@ · dijkstral tree</title>
+<style>
+:root {
+  --bg: #f7f6f2; --panel: #ffffff; --ink: #1d1f24; --muted: #6a6f78; --line: #d9d6cc;
+  --dir: #3d6b8c; --file: #b0602a; --sym: #4f7d4a; --more: #8a7a9c; --accent: #c2410c;
+  --link: #b9b4a6; --hit: #fde68a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15171b; --panel: #1d2026; --ink: #e6e3dc; --muted: #9399a3; --line: #30343c;
+    --dir: #7fb0d4; --file: #e39a62; --sym: #93c48b; --more: #b9a8cf; --accent: #fb923c;
+    --link: #3f444d; --hit: #6b5b16;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 13px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  display: grid; grid-template-rows: auto 1fr; overflow: hidden;
+}
+header {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+  padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel);
+}
+header h1 { font-size: 15px; margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+header .stats { color: var(--muted); }
+header .tools { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+input[type=search] {
+  width: 220px; max-width: 60vw; padding: 5px 8px; border: 1px solid var(--line);
+  border-radius: 6px; background: var(--bg); color: var(--ink); font: inherit;
+}
+button {
+  padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); color: var(--ink); font: inherit; cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+main { display: grid; grid-template-columns: 1fr 340px; min-height: 0; }
+#canvas { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+#canvas svg { width: 100%; height: 100%; display: block; cursor: grab; }
+#canvas svg:active { cursor: grabbing; }
+aside {
+  border-left: 1px solid var(--line); background: var(--panel); overflow: auto;
+  padding: 12px 14px; min-height: 0;
+}
+aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 14px 0 6px; }
+aside h2:first-child { margin-top: 0; }
+#detail .name { font-weight: 600; font-size: 14px; overflow-wrap: anywhere; }
+#detail dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0; }
+#detail dt { color: var(--muted); }
+#detail dd { margin: 0; overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+ul.plain { list-style: none; margin: 0; padding: 0; }
+ul.plain li { padding: 3px 0; border-bottom: 1px dashed var(--line); overflow-wrap: anywhere; }
+ul.plain li .rel { color: var(--muted); font-size: 11px; margin-right: 6px; }
+ul.plain li .where { display: block; color: var(--muted); font-size: 11px; font-family: ui-monospace, Menlo, monospace; }
+#results li { cursor: pointer; }
+#results li:hover { color: var(--accent); }
+.empty { color: var(--muted); }
+g.node { cursor: pointer; }
+g.node text { font-size: 12px; fill: var(--ink); paint-order: stroke; stroke: var(--bg); stroke-width: 3px; }
+g.node text .count { fill: var(--muted); }
+g.node.selected text { fill: var(--accent); font-weight: 600; }
+g.node.hit text { stroke: var(--hit); }
+path.edge { fill: none; stroke: var(--link); stroke-width: 1.2px; }
+@media (max-width: 760px) {
+  main { grid-template-columns: 1fr; grid-template-rows: 1fr 40%; }
+  aside { border-left: 0; border-top: 1px solid var(--line); }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1>
+  <span class="stats" id="stats"></span>
+  <div class="tools">
+    <input type="search" id="search" placeholder="Find a file or symbol" aria-label="Find a file or symbol">
+    <button type="button" id="expand">Expand level</button>
+    <button type="button" id="collapse">Collapse all</button>
+    <button type="button" id="fit">Recenter</button>
+  </div>
+</header>
+<main>
+  <div id="canvas"><svg id="tree" role="img" aria-label="Collapsible tree of files and symbols"></svg></div>
+  <aside>
+    <h2>Selection</h2>
+    <div id="detail"><p class="empty">Click a directory or file to open it; click a symbol to inspect it.</p></div>
+    <h2 id="results-head" hidden>Matches</h2>
+    <ul class="plain" id="results"></ul>
+  </aside>
+</main>
+<script id="tree-data" type="application/json">@@TREE@@</script>
+<script id="tree-inspector" type="application/json">@@INSPECTOR@@</script>
+@@SCRIPTS@@
+<script>
+(function () {
+  "use strict";
+  var data = JSON.parse(document.getElementById("tree-data").textContent);
+  var info = JSON.parse(document.getElementById("tree-inspector").textContent);
+  var titleEl = document.getElementById("title");
+  var statsEl = document.getElementById("stats");
+  var detail = document.getElementById("detail");
+  titleEl.textContent = info.title;
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = String(text);
+    return e;
+  }
+
+  // Leaves in pre-order line up with info.leaves.
+  // Leaves in pre-order line up with info.leaves; every entry with info.kinds.
+  var leafNo = 0, entryNo = 0, files = 0, symbols = 0;
+  var kindOf = { d: "dir", f: "file", s: "sym", m: "more" };
+  (function number(n) {
+    var kids = n.children || [];
+    n.kind = kindOf[info.kinds.charAt(entryNo++)] || "dir";
+    if (n.kind === "file") files++;
+    if (n.kind === "sym" || n.kind === "more") symbols += n.total_count;
+    if (!kids.length) { n.leaf = leafNo++; }
+    for (var i = 0; i < kids.length; i++) number(kids[i]);
+  })(data);
+
+  if (typeof d3 === "undefined") {
+    detail.replaceChildren(el("p", "empty", "The D3 library could not be loaded (offline?). The data is embedded in this page as JSON."));
+    statsEl.textContent = files + " files · " + symbols + " symbols";
+    return;
+  }
+
+  var root = d3.hierarchy(data, function (d) { return d.children; });
+  root.each(function (d) {
+    d.rec = d.data.leaf !== undefined ? info.leaves[d.data.leaf] : null;
+    d.kind = d.data.kind;
+  });
+  statsEl.textContent = files.toLocaleString() + " files · " + symbols.toLocaleString() + " symbols";
+
+  var color = { dir: "var(--dir)", file: "var(--file)", sym: "var(--sym)", more: "var(--more)" };
+  var nextId = 0;
+  // Every entry, for search (collected before anything is collapsed).
+  var all = [];
+  root.each(function (d) { d.uid = ++nextId; all.push(d); });
+  function collapse(d) {
+    if (d.children) { d._children = d.children; d._children.forEach(collapse); d.children = null; }
+  }
+  if (root.children) root.children.forEach(collapse);
+
+  var svg = d3.select("#tree");
+  var view = svg.append("g");
+  var gLinks = view.append("g");
+  var gNodes = view.append("g");
+  var zoom = d3.zoom().scaleExtent([0.1, 3]).on("zoom", function (ev) { view.attr("transform", ev.transform); });
+  svg.call(zoom).on("dblclick.zoom", null);
+  var layout = d3.tree().nodeSize([22, 230]);
+  var selected = null, hits = new Set();
+
+  function label(d) {
+    return d.data.name === "" ? "(unnamed)" : d.data.name;
+  }
+
+  function update(source) {
+    layout(root);
+    var nodes = root.descendants(), links = root.links();
+    var t = svg.transition().duration(nodes.length > 2000 ? 0 : 250);
+
+    var link = gLinks.selectAll("path.edge").data(links, function (l) { return l.target.uid; });
+    var diag = d3.linkHorizontal().x(function (p) { return p.y; }).y(function (p) { return p.x; });
+    link.enter().append("path").attr("class", "edge")
+      .attr("d", function () { var o = { x: source.x0 || 0, y: source.y0 || 0 }; return diag({ source: o, target: o }); })
+      .merge(link).transition(t).attr("d", diag);
+    link.exit().remove();
+
+    var node = gNodes.selectAll("g.node").data(nodes, function (d) { return d.uid; });
+    var enter = node.enter().append("g").attr("class", "node")
+      .attr("transform", function () { return "translate(" + (source.y0 || 0) + "," + (source.x0 || 0) + ")"; })
+      .on("click", function (ev, d) { activate(d); });
+    enter.append("circle").attr("r", 5);
+    var text = enter.append("text").attr("dy", "0.32em");
+    text.append("tspan").attr("class", "name");
+    text.append("tspan").attr("class", "count");
+    var shown = enter.merge(node);
+    shown.classed("selected", function (d) { return d === selected; })
+      .classed("hit", function (d) { return hits.has(d); });
+    shown.select("circle")
+      .attr("fill", function (d) { return d._children ? color[d.kind] : "var(--panel)"; })
+      .attr("stroke", function (d) { return color[d.kind]; })
+      .attr("stroke-width", 2);
+    shown.select("text")
+      .attr("x", function (d) { return d.children || d._children ? -9 : 9; })
+      .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; });
+    shown.select("tspan.name").text(label);
+    shown.select("tspan.count").text(function (d) {
+      return d.children || d._children ? "  " + d.data.total_count.toLocaleString() : "";
+    });
+    shown.transition(t).attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
+    node.exit().remove();
+    root.each(function (d) { d.x0 = d.x; d.y0 = d.y; });
+  }
+
+  function center(d) {
+    var box = svg.node().getBoundingClientRect();
+    var k = d3.zoomTransform(svg.node()).k;
+    svg.transition().duration(300).call(zoom.transform,
+      d3.zoomIdentity.translate(box.width / 3 - d.y * k, box.height / 2 - d.x * k).scale(k));
+  }
+
+  function row(dl, k, v) {
+    if (v === "" || v === null || v === undefined) return;
+    dl.append(el("dt", null, k), el("dd", null, v));
+  }
+
+  function pathOf(d) {
+    return d.ancestors().reverse().slice(1).map(function (a) { return a.data.name; }).join(" / ");
+  }
+
+  function show(d) {
+    var box = document.createDocumentFragment();
+    box.append(el("div", "name", label(d)));
+    var dl = el("dl");
+    if (d.rec) {
+      var r = d.rec;
+      row(dl, "id", r[0]);
+      row(dl, "kind", r[1]);
+      row(dl, "file", r[2] + (r[3] ? ":" + String(r[3]).replace(/^L/, "") : ""));
+      row(dl, "community", r[4]);
+      row(dl, "degree", r[5]);
+      box.append(dl);
+      var outs = r[7];
+      box.append(el("h2", null, "Outbound links (" + outs.length + " of " + r[6] + ")"));
+      if (!outs.length) box.append(el("p", "empty", "No outbound links."));
+      var ul = el("ul", "plain");
+      outs.forEach(function (o) {
+        var tgt = info.targets[o[1]];
+        var li = el("li");
+        li.append(el("span", "rel", o[0] || "related"), el("span", null, tgt[0]));
+        if (tgt[1]) li.append(el("span", "where", tgt[1] + (tgt[2] ? ":" + String(tgt[2]).replace(/^L/, "") : "")));
+        ul.append(li);
+      });
+      box.append(ul);
+    } else {
+      row(dl, "path", pathOf(d) || "/");
+      row(dl, "kind", d.kind === "more" ? "hidden symbols (raise --max-children)" : d.kind === "dir" && d.depth === 0 ? "root" : d.kind);
+      row(dl, "symbols", d.data.total_count.toLocaleString());
+      var n = (d.children || d._children || []).length;
+      if (n) row(dl, "entries", n.toLocaleString());
+      box.append(dl);
+    }
+    detail.replaceChildren(box);
+  }
+
+  function activate(d) {
+    if (d.children) { d._children = d.children; d.children = null; }
+    else if (d._children) { d.children = d._children; d._children = null; }
+    selected = d;
+    show(d);
+    update(d);
+  }
+
+  function reveal(d) {
+    d.ancestors().slice(1).forEach(function (a) {
+      if (a._children) { a.children = a._children; a._children = null; }
+    });
+    selected = d;
+    show(d);
+    update(d);
+    center(d);
+  }
+
+  var results = document.getElementById("results");
+  var resultsHead = document.getElementById("results-head");
+  var pending = 0;
+  document.getElementById("search").addEventListener("input", function (ev) {
+    clearTimeout(pending);
+    var q = ev.target.value.trim().toLowerCase();
+    pending = setTimeout(function () {
+      hits = new Set();
+      results.replaceChildren();
+      resultsHead.hidden = !q;
+      if (!q) { update(root); return; }
+      var found = [];
+      for (var i = 0; i < all.length && found.length < 200; i++) {
+        if (all[i].depth > 0 && all[i].data.name.toLowerCase().indexOf(q) !== -1) found.push(all[i]);
+      }
+      found.forEach(function (d) {
+        hits.add(d);
+        var li = el("li");
+        li.append(el("span", "rel", d.kind), el("span", null, label(d)));
+        li.append(el("span", "where", pathOf(d.parent) || "/"));
+        li.addEventListener("click", function () { reveal(d); });
+        results.append(li);
+      });
+      if (!found.length) results.append(el("li", "empty", "No match."));
+      update(root);
+    }, 150);
+  });
+
+  document.getElementById("expand").addEventListener("click", function () {
+    // Open the shallowest closed level, at most a few thousand new entries at a time.
+    var depth = Infinity;
+    root.each(function (d) { if (d._children && d.depth < depth) depth = d.depth; });
+    var budget = 4000;
+    root.each(function (d) {
+      if (d._children && d.depth === depth && budget > 0) {
+        budget -= d._children.length;
+        d.children = d._children; d._children = null;
+      }
+    });
+    update(root);
+  });
+  document.getElementById("collapse").addEventListener("click", function () {
+    if (root.children) root.children.forEach(collapse);
+    update(root);
+    center(root);
+  });
+  document.getElementById("fit").addEventListener("click", function () { center(selected || root); });
+
+  root.x0 = 0; root.y0 = 0;
+  update(root);
+  selected = root;
+  show(root);
+  var box = svg.node().getBoundingClientRect();
+  svg.call(zoom.transform, d3.zoomIdentity.translate(Math.min(box.width / 3, 260), box.height / 2));
+})();
+</script>
+</body>
+</html>
