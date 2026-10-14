@@ -383,3 +383,66 @@ decision). The rest of dijkstral's margin over the floor is exec and load cost t
 binary also pays (+2.5–4 ms over `/usr/bin/true`), about 1.5 ms of it from binary size (a 12 MB
 binary measured against a 0.5 MB one); a separate small hook binary would recover that part.
 
+### Stage 4a: C, C++, C#, Kotlin, Scala, Swift, PHP, Ruby and the exporters — 2026-10-14
+
+Eight corpus repos were added (`corpus.toml`: jq, fmt, serilog, okhttp, munit, Alamofire, guzzle,
+sinatra) with frozen Graphify references. dijkstral at `c59ab6e` (clustering, report and
+`graph.html` on; Graphify's `extract` writes no HTML), 10 threads, 3 runs, quiet machine. Raw:
+`results/build-1791952480.json`.
+
+| repo | scenario | Graphify s | dijkstral s | speedup | Graphify RSS MB | dijkstral RSS MB |
+|---|---|---|---|---|---|---|
+| jq | cold | 1.68 | 0.13 | 13× | 645 | 50 |
+|  | warm | 0.75 | 0.05 | 15× | 82 | 11 |
+|  | update | 0.81 | 0.08 | 10× | 83 | 11 |
+| fmt | cold | 2.61 | 0.20 | 13× | 702 | 109 |
+|  | warm | 1.22 | 0.05 | 24× | 118 | 10 |
+|  | update | 1.46 | 0.12 | 12× | 156 | 73 |
+| serilog | cold | 1.90 | 0.14 | 14× | 634 | 54 |
+|  | warm | 0.91 | 0.05 | 17× | 102 | 12 |
+|  | update | 1.00 | 0.10 | 10× | 98 | 12 |
+| okhttp | cold | 5.46 | 0.48 | 11× | 750 | 196 |
+|  | warm | 3.54 | 0.06 | 57× | 280 | 10 |
+|  | update | 3.87 | 0.25 | 16× | 323 | 163 |
+| munit | cold | 1.89 | 0.17 | 11× | 608 | 34 |
+|  | warm | 0.85 | 0.05 | 16× | 88 | 10 |
+|  | update | 0.92 | 0.09 | 10× | 88 | 10 |
+| alamofire | cold | 2.86 | 0.20 | 15× | 722 | 98 |
+|  | warm | 1.29 | 0.05 | 25× | 111 | 9 |
+|  | update | 1.92 | 0.12 | 16× | 145 | 66 |
+| guzzle | cold | 2.93 | 0.22 | 13× | 721 | 113 |
+|  | warm | 1.05 | 0.05 | 20× | 102 | 8 |
+|  | update | 1.58 | 0.12 | 13× | 128 | 64 |
+| sinatra | cold | 1.65 | 0.11 | 15× | 616 | 43 |
+|  | warm | 0.59 | 0.05 | 12× | 72 | 8 |
+|  | update | 0.74 | 0.09 | 9× | 78 | 8 |
+
+dijkstral is faster (9× to 57×) and lower in peak memory in all 24 scenarios.
+
+Graph parity on the merged build, all 15 corpus repos (`parity.py`, all extensions; recall /
+precision %, community NMI). The original seven did not regress; the graphify repo's definition
+recall rose from 95.9 to 97.6 because its fixtures include the new languages.
+
+| repo | def nodes | all nodes | all links | NMI |
+|---|---|---|---|---|
+| monet | 99.8 / 99.9 | 98.2 / 99.3 | 97.2 / 95.9 | 0.945 |
+| graphify | 97.6 / 99.9 | 97.9 / 99.4 | 98.0 / 95.9 | 0.937 |
+| fastapi | 100.0 / 100.0 | 98.7 / 97.9 | 93.8 / 94.0 | 0.915 |
+| ripgrep | 100.0 / 100.0 | 97.3 / 99.2 | 94.9 / 95.2 | 0.911 |
+| excalidraw | 100.0 / 100.0 | 98.2 / 99.9 | 97.3 / 99.5 | 0.831 |
+| erpnext | 100.0 / 100.0 | 99.8 / 99.6 | 94.1 / 91.1 | 0.905 |
+| kubernetes | 99.9 / 100.0 | 99.9 / 100.0 | 99.9 / 99.8 | 0.875 |
+| jq (C) | 100.0 / 100.0 | 100.0 / 100.0 | 100.0 / 99.9 | 0.957 |
+| fmt (C++) | 98.6 / 99.4 | 98.0 / 98.2 | 96.3 / 95.9 | 0.900 |
+| serilog (C#) | 97.3 / 100.0 | 97.4 / 100.0 | 98.4 / 99.9 | 0.841 |
+| okhttp (Kotlin) | 100.0 / 100.0 | 99.9 / 99.6 | 98.7 / 98.9 | 0.944 |
+| munit (Scala) | 100.0 / 100.0 | 99.9 / 99.6 | 99.2 / 98.7 | 0.921 |
+| alamofire (Swift) | 99.9 / 100.0 | 99.9 / 100.0 | 99.1 / 99.2 | 0.935 |
+| guzzle (PHP) | 100.0 / 100.0 | 100.0 / 100.0 | 100.0 / 100.0 | 0.940 |
+| sinatra (Ruby) | 100.0 / 100.0 | 100.0 / 100.0 | 100.0 / 100.0 | 1.000 |
+
+serilog's whole-repo gap is non-`.cs` files (`.csproj`, `.razor`) that Graphify extracts and
+dijkstral defers to stage 4b; on `.cs` alone definitions are at 100%. fmt's gaps are listed in
+`cli/docs/graphify-format.md` §25 (self-calls Graphify drops in large files, include-target rules
+only partly pinned).
+
