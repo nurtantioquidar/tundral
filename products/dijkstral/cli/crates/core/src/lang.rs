@@ -36,6 +36,16 @@ pub enum Lang {
     C,
     /// `.cpp .cc .cxx .hpp .cu`, and `.h` with C++ markers (§19).
     Cpp,
+    /// `.vue` single-file components (script blocks only, §38).
+    Vue,
+    /// `.svelte` components (script blocks only, §39).
+    Svelte,
+    /// `.astro` components (frontmatter and script blocks, §40).
+    Astro,
+    /// `.ps1`, `.psm1`, `.psd1` (§41).
+    PowerShell,
+    /// `.vb`: counted as code, contributes nothing (the reference lacks its grammar, §42).
+    VisualBasic,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -55,6 +65,8 @@ pub enum Family {
     Kotlin,
     Scala,
     C,
+    PowerShell,
+    VisualBasic,
 }
 
 impl Lang {
@@ -89,6 +101,11 @@ impl Lang {
             "c" => Lang::C,
             "cpp" | "cc" | "cxx" | "hpp" | "cu" => Lang::Cpp,
             "h" => return crate::extract::c::header_lang(path),
+            "vue" => Lang::Vue,
+            "svelte" => Lang::Svelte,
+            "astro" => Lang::Astro,
+            "ps1" | "psm1" | "psd1" => Lang::PowerShell,
+            "vb" => Lang::VisualBasic,
             _ => return None,
         })
     }
@@ -109,6 +126,9 @@ impl Lang {
             Lang::Kotlin => Family::Kotlin,
             Lang::Scala => Family::Scala,
             Lang::C | Lang::Cpp => Family::C,
+            Lang::Vue | Lang::Svelte | Lang::Astro => Family::Script,
+            Lang::PowerShell => Family::PowerShell,
+            Lang::VisualBasic => Family::VisualBasic,
         }
     }
 
@@ -129,6 +149,9 @@ impl Lang {
             Lang::Swift => tree_sitter_swift::LANGUAGE.into(),
             Lang::C => tree_sitter_c::LANGUAGE.into(),
             Lang::Cpp => tree_sitter_cpp::LANGUAGE.into(),
+            Lang::PowerShell => tree_sitter_powershell::LANGUAGE.into(),
+            // Single-file components are masked and parsed as TSX by `extract::sfc`.
+            Lang::Vue | Lang::Svelte | Lang::Astro | Lang::VisualBasic => return None,
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }

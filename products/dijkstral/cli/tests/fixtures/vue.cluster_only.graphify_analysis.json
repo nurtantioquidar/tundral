@@ -1,0 +1,189 @@
+{
+  "communities": {
+    "0": [
+      "src_components_legacycounter",
+      "src_components_legacycounter_commentedout",
+      "src_components_legacycounter_data",
+      "src_components_legacycounter_increment",
+      "src_components_todoheader",
+      "src_components_todoheader_header_id",
+      "src_components_todoheader_label",
+      "src_components_todoheader_props",
+      "src_utils_format",
+      "src_utils_format_capitalize",
+      "src_utils_format_pluralize"
+    ],
+    "1": [
+      "src_components_todoitem_props",
+      "src_main",
+      "src_main_mount",
+      "src_main_rationale_5",
+      "src_store",
+      "src_store_createstore",
+      "src_store_storestate",
+      "src_store_todostore",
+      "src_store_todostore_add",
+      "src_store_todostore_toggle",
+      "src_types_todo"
+    ],
+    "2": [
+      "ref_vue",
+      "src_components_todoitem",
+      "src_components_todoitem_text",
+      "src_components_todolist",
+      "src_components_todolist_titles",
+      "src_components_todolist_toggle",
+      "src_utils_format_formattitle"
+    ],
+    "3": [
+      "ref_vitest",
+      "ref_vue_test_utils",
+      "src_components_todoitem_isdone",
+      "src_tests_format_spec",
+      "src_tests_format_spec_sample"
+    ],
+    "4": [
+      "src_app",
+      "src_app_logtoggle",
+      "src_app_ontoggle",
+      "src_app_visible",
+      "src_components_emptystate"
+    ],
+    "5": [
+      "src_composables_usefilter",
+      "src_composables_usefilter_applyfilter",
+      "src_composables_usefilter_usefilter",
+      "src_types",
+      "src_types_filter"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2909090909090909,
+    "1": 0.2727272727272727,
+    "2": 0.47619047619047616,
+    "3": 0.5,
+    "4": 0.5,
+    "5": 0.6
+  },
+  "gods": [
+    {
+      "id": "src_types_todo",
+      "label": "Todo",
+      "degree": 9
+    },
+    {
+      "id": "src_store_todostore",
+      "label": "TodoStore",
+      "degree": 5
+    },
+    {
+      "id": "src_utils_format_pluralize",
+      "label": "pluralize()",
+      "degree": 5
+    },
+    {
+      "id": "src_utils_format_formattitle",
+      "label": "formatTitle()",
+      "degree": 5
+    },
+    {
+      "id": "src_main_mount",
+      "label": "mount()",
+      "degree": 4
+    },
+    {
+      "id": "src_store_createstore",
+      "label": "createStore()",
+      "degree": 4
+    },
+    {
+      "id": "src_components_todoheader_label",
+      "label": "label()",
+      "degree": 3
+    },
+    {
+      "id": "src_utils_format_capitalize",
+      "label": "capitalize()",
+      "degree": 3
+    },
+    {
+      "id": "src_components_todoitem_isdone",
+      "label": "isDone()",
+      "degree": 3
+    },
+    {
+      "id": "src_composables_usefilter_usefilter",
+      "label": "useFilter()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Props",
+      "target": "Todo",
+      "source_files": [
+        "src/components/TodoItem.vue",
+        "src/types.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Props` unexpectedly reaches hub `Todo`"
+    },
+    {
+      "source": "StoreState",
+      "target": "Todo",
+      "source_files": [
+        "src/store.ts",
+        "src/types.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `StoreState` unexpectedly reaches hub `Todo`"
+    },
+    {
+      "source": "increment()",
+      "target": "pluralize()",
+      "source_files": [
+        "src/components/LegacyCounter.vue",
+        "src/utils/format.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `increment()` unexpectedly reaches hub `pluralize()`"
+    },
+    {
+      "source": "titles()",
+      "target": "formatTitle()",
+      "source_files": [
+        "src/components/TodoList.vue",
+        "src/utils/format.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `titles()` unexpectedly reaches hub `formatTitle()`"
+    },
+    {
+      "source": "text",
+      "target": "formatTitle()",
+      "source_files": [
+        "src/components/TodoItem.vue",
+        "src/utils/format.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `text` unexpectedly reaches hub `formatTitle()`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Todo` connect `Community 1` to `Community 0`, `Community 2`, `Community 5`?",
+      "why": "High betweenness centrality (0.115) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `TodoStore` connect `Community 1` to `Community 4`?",
+      "why": "High betweenness centrality (0.065) - this node is a cross-community bridge."
+    }
+  ]
+}

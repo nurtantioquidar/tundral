@@ -1,0 +1,750 @@
+{
+ "nodes": [
+  {
+   "id": "src_lib_badge",
+   "label": "lib/Badge.svelte",
+   "file_type": "code",
+   "source_file": "src/lib/Badge.svelte",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cart",
+   "label": "lib/Cart.svelte",
+   "file_type": "code",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cart_cart_key",
+   "label": "CART_KEY",
+   "file_type": "code",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cart_emptymessage",
+   "label": "emptyMessage()",
+   "file_type": "code",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L3",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cart_title",
+   "label": "title",
+   "file_type": "code",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cart_compact",
+   "label": "compact",
+   "file_type": "code",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cart_label",
+   "label": "label()",
+   "file_type": "code",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cart_clear",
+   "label": "clear()",
+   "file_type": "code",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L23",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cart_announce",
+   "label": "announce()",
+   "file_type": "code",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L28",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cartrow",
+   "label": "CartRow.svelte",
+   "file_type": "code",
+   "source_file": "src/lib/CartRow.svelte",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_cartrow_price",
+   "label": "price()",
+   "file_type": "code",
+   "source_file": "src/lib/CartRow.svelte",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_format",
+   "label": "format.js",
+   "file_type": "code",
+   "source_file": "src/lib/format.js",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_format_money",
+   "label": "money()",
+   "file_type": "code",
+   "source_file": "src/lib/format.js",
+   "source_location": "L2",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_format_plural",
+   "label": "plural()",
+   "file_type": "code",
+   "source_file": "src/lib/format.js",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_format_rationale_1",
+   "label": "NOTE: prices are integer cents",
+   "file_type": "rationale",
+   "source_file": "src/lib/format.js",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_stores",
+   "label": "stores.ts",
+   "file_type": "code",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_stores_item",
+   "label": "Item",
+   "file_type": "code",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L3",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_stores_cart",
+   "label": "cart",
+   "file_type": "code",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_stores_total",
+   "label": "total",
+   "file_type": "code",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_stores_sumprices",
+   "label": "sumPrices()",
+   "file_type": "code",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L13",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lib_stores_additem",
+   "label": "addItem()",
+   "file_type": "code",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L17",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_routes_page_svelte_src_routes_page",
+   "label": "+page.svelte",
+   "file_type": "code",
+   "source_file": "src/routes/+page.svelte",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_routes_page_buy",
+   "label": "buy()",
+   "file_type": "code",
+   "source_file": "src/routes/+page.svelte",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "cart_svelte",
+   "label": "$lib/Cart.svelte",
+   "file_type": "code",
+   "source_file": "$lib/Cart.svelte",
+   "confidence": "EXTRACTED",
+   "_origin": "ast"
+  },
+  {
+   "id": "badge_svelte",
+   "label": "$lib/Badge.svelte",
+   "file_type": "code",
+   "source_file": "$lib/Badge.svelte",
+   "confidence": "EXTRACTED",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_routes_page_ts_src_routes_page",
+   "label": "+page.ts",
+   "file_type": "code",
+   "source_file": "src/routes/+page.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_routes_page_load",
+   "label": "load()",
+   "file_type": "code",
+   "source_file": "src/routes/+page.ts",
+   "source_location": "L4",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "ref_svelte",
+   "label": "ref_svelte",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "ref_lib",
+   "label": "ref_lib",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_cart_cart_key",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_cart_emptymessage",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_stores",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_stores_cart",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_stores_total",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_stores_sumprices",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_format",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_format_money",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_format_plural",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_cartrow",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_cart_title",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_cart_compact",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_cart_label",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_cart_clear",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart",
+   "target": "src_lib_cart_announce",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart_clear",
+   "target": "src_lib_cart_announce",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart_announce",
+   "target": "src_lib_cart_label",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cartrow",
+   "target": "src_lib_stores",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/CartRow.svelte",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cartrow",
+   "target": "src_lib_stores_item",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/CartRow.svelte",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cartrow",
+   "target": "src_lib_format",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/CartRow.svelte",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cartrow",
+   "target": "src_lib_format_money",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/CartRow.svelte",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cartrow",
+   "target": "src_lib_cartrow_price",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/CartRow.svelte",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_format",
+   "target": "src_lib_format_money",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/format.js",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_format",
+   "target": "src_lib_format_plural",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/format.js",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_format_rationale_1",
+   "target": "src_lib_format",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/format.js",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_stores",
+   "target": "ref_svelte",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_stores",
+   "target": "src_lib_stores_item",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_stores",
+   "target": "src_lib_stores_cart",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_stores",
+   "target": "src_lib_stores_total",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_stores",
+   "target": "src_lib_stores_sumprices",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_stores",
+   "target": "src_lib_stores_additem",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_stores_total",
+   "target": "src_lib_stores_sumprices",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/stores.ts",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_svelte_src_routes_page",
+   "target": "ref_lib",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.svelte",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_svelte_src_routes_page",
+   "target": "src_lib_stores",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.svelte",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_svelte_src_routes_page",
+   "target": "src_lib_stores_additem",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.svelte",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_svelte_src_routes_page",
+   "target": "src_routes_page_buy",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.svelte",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_svelte_src_routes_page",
+   "target": "cart_svelte",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.svelte",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_svelte_src_routes_page",
+   "target": "badge_svelte",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.svelte",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_ts_src_routes_page",
+   "target": "src_lib_stores",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_ts_src_routes_page",
+   "target": "src_lib_stores_item",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_ts_src_routes_page",
+   "target": "src_lib_stores_sumprices",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.ts",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_ts_src_routes_page",
+   "target": "src_routes_page_load",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.ts",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart_label",
+   "target": "src_lib_format_money",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_load",
+   "target": "src_lib_stores_sumprices",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/routes/+page.ts",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cart_emptymessage",
+   "target": "src_lib_format_plural",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/lib/Cart.svelte",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib_cartrow_price",
+   "target": "src_lib_format_money",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/lib/CartRow.svelte",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_routes_page_buy",
+   "target": "src_lib_stores_additem",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/routes/+page.svelte",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

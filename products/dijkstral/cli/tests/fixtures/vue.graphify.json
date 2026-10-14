@@ -1,0 +1,1304 @@
+{
+ "nodes": [
+  {
+   "id": "src_app",
+   "label": "App.vue",
+   "file_type": "code",
+   "source_file": "src/App.vue",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_visible",
+   "label": "{ visible }",
+   "file_type": "code",
+   "source_file": "src/App.vue",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_ontoggle",
+   "label": "onToggle()",
+   "file_type": "code",
+   "source_file": "src/App.vue",
+   "source_location": "L21",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_logtoggle",
+   "label": "logToggle()",
+   "file_type": "code",
+   "source_file": "src/App.vue",
+   "source_location": "L26",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_tests_format_spec",
+   "label": "format.spec.ts",
+   "file_type": "code",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_tests_format_spec_sample",
+   "label": "sample()",
+   "file_type": "code",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_emptystate",
+   "label": "EmptyState.vue",
+   "file_type": "code",
+   "source_file": "src/components/EmptyState.vue",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_legacycounter",
+   "label": "LegacyCounter.vue",
+   "file_type": "code",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_legacycounter_commentedout",
+   "label": "commentedOut()",
+   "file_type": "code",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L2",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_legacycounter_data",
+   "label": "data()",
+   "file_type": "code",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_legacycounter_increment",
+   "label": "increment()",
+   "file_type": "code",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todoheader",
+   "label": "TodoHeader.vue",
+   "file_type": "code",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todoheader_header_id",
+   "label": "HEADER_ID",
+   "file_type": "code",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todoheader_props",
+   "label": "props",
+   "file_type": "code",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todoheader_label",
+   "label": "label()",
+   "file_type": "code",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todoitem",
+   "label": "TodoItem.vue",
+   "file_type": "code",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todoitem_props",
+   "label": "Props",
+   "file_type": "code",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L6",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todoitem_text",
+   "label": "text",
+   "file_type": "code",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todoitem_isdone",
+   "label": "isDone()",
+   "file_type": "code",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L13",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todolist",
+   "label": "TodoList.vue",
+   "file_type": "code",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todolist_toggle",
+   "label": "toggle()",
+   "file_type": "code",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L21",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_components_todolist_titles",
+   "label": "titles()",
+   "file_type": "code",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L24",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_composables_usefilter",
+   "label": "useFilter.ts",
+   "file_type": "code",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_composables_usefilter_usefilter",
+   "label": "useFilter()",
+   "file_type": "code",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L4",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_composables_usefilter_applyfilter",
+   "label": "applyFilter()",
+   "file_type": "code",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main",
+   "label": "main.ts",
+   "file_type": "code",
+   "source_file": "src/main.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_mount",
+   "label": "mount()",
+   "file_type": "code",
+   "source_file": "src/main.ts",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_rationale_5",
+   "label": "NOTE: one app instance per page",
+   "file_type": "rationale",
+   "source_file": "src/main.ts",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_store",
+   "label": "store.ts",
+   "file_type": "code",
+   "source_file": "src/store.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_store_storestate",
+   "label": "StoreState",
+   "file_type": "code",
+   "source_file": "src/store.ts",
+   "source_location": "L4",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_store_todostore",
+   "label": "TodoStore",
+   "file_type": "code",
+   "source_file": "src/store.ts",
+   "source_location": "L8",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_store_todostore_add",
+   "label": ".add()",
+   "file_type": "code",
+   "source_file": "src/store.ts",
+   "source_location": "L11",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_store_todostore_toggle",
+   "label": ".toggle()",
+   "file_type": "code",
+   "source_file": "src/store.ts",
+   "source_location": "L17",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_store_createstore",
+   "label": "createStore()",
+   "file_type": "code",
+   "source_file": "src/store.ts",
+   "source_location": "L23",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_types",
+   "label": "types.ts",
+   "file_type": "code",
+   "source_file": "src/types.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_types_todo",
+   "label": "Todo",
+   "file_type": "code",
+   "source_file": "src/types.ts",
+   "source_location": "L1",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_types_filter",
+   "label": "Filter",
+   "file_type": "code",
+   "source_file": "src/types.ts",
+   "source_location": "L7",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_format",
+   "label": "format.ts",
+   "file_type": "code",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_format_formattitle",
+   "label": "formatTitle()",
+   "file_type": "code",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L3",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_format_pluralize",
+   "label": "pluralize()",
+   "file_type": "code",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_utils_format_capitalize",
+   "label": "capitalize()",
+   "file_type": "code",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L11",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "ref_vue",
+   "label": "ref_vue",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "ref_vitest",
+   "label": "ref_vitest",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "ref_vue_test_utils",
+   "label": "ref_vue_test_utils",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "src_app",
+   "target": "ref_vue",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_components_todoheader",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_components_todolist",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_components_emptystate",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_composables_usefilter",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_composables_usefilter_usefilter",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_store",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_store_todostore",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_app_visible",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_app_ontoggle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app",
+   "target": "src_app_logtoggle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_ontoggle",
+   "target": "src_app_logtoggle",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/App.vue",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_tests_format_spec",
+   "target": "ref_vitest",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_tests_format_spec",
+   "target": "ref_vue_test_utils",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_tests_format_spec",
+   "target": "src_components_todoheader",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_tests_format_spec",
+   "target": "src_components_todoitem",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_tests_format_spec",
+   "target": "src_components_todoitem_isdone",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_tests_format_spec",
+   "target": "src_tests_format_spec_sample",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_legacycounter",
+   "target": "src_components_legacycounter_commentedout",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_legacycounter",
+   "target": "src_utils_format",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_legacycounter",
+   "target": "src_utils_format_pluralize",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_legacycounter",
+   "target": "src_components_legacycounter_data",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_legacycounter",
+   "target": "src_components_legacycounter_increment",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoheader",
+   "target": "src_components_todoheader_header_id",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoheader",
+   "target": "src_utils_format",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoheader",
+   "target": "src_utils_format_pluralize",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoheader",
+   "target": "src_components_todoheader_props",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoheader",
+   "target": "src_components_todoheader_label",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem",
+   "target": "ref_vue",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem",
+   "target": "src_utils_format",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem",
+   "target": "src_utils_format_formattitle",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem",
+   "target": "src_types",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L4",
+   "weight": 1.0,
+   "type_only": true,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem",
+   "target": "src_types_todo",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem",
+   "target": "src_components_todoitem_props",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem",
+   "target": "src_components_todoitem_text",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem",
+   "target": "src_components_todoitem_isdone",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist",
+   "target": "ref_vue",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist",
+   "target": "src_components_todoitem",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist",
+   "target": "src_utils_format",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist",
+   "target": "src_utils_format_formattitle",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist",
+   "target": "src_types",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L11",
+   "weight": 1.0,
+   "type_only": true,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist",
+   "target": "src_types_todo",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist",
+   "target": "src_components_todolist_toggle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist",
+   "target": "src_components_todolist_titles",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_composables_usefilter",
+   "target": "ref_vue",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_composables_usefilter",
+   "target": "src_types",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L2",
+   "weight": 1.0,
+   "type_only": true,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_composables_usefilter",
+   "target": "src_types_todo",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_composables_usefilter",
+   "target": "src_types_filter",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_composables_usefilter",
+   "target": "src_composables_usefilter_usefilter",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_composables_usefilter",
+   "target": "src_composables_usefilter_applyfilter",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_composables_usefilter_usefilter",
+   "target": "src_composables_usefilter_applyfilter",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/composables/useFilter.ts",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "ref_vue",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "src_app",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.ts",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "src_store",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.ts",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "src_store_createstore",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.ts",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "src_main_mount",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.ts",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_mount",
+   "target": "src_main_mount",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.ts",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_rationale_5",
+   "target": "src_main",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.ts",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store",
+   "target": "ref_vue",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store",
+   "target": "src_types",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L2",
+   "weight": 1.0,
+   "type_only": true,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store",
+   "target": "src_types_todo",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store",
+   "target": "src_store_storestate",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store",
+   "target": "src_store_todostore",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store_todostore",
+   "target": "src_store_todostore_add",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store_todostore",
+   "target": "src_store_todostore_toggle",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store",
+   "target": "src_store_createstore",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store_createstore",
+   "target": "src_store_todostore",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_types",
+   "target": "src_types_todo",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/types.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_types",
+   "target": "src_types_filter",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/types.ts",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_format",
+   "target": "src_types",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "type_only": true,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_format",
+   "target": "src_types_todo",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_format",
+   "target": "src_utils_format_formattitle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_format",
+   "target": "src_utils_format_pluralize",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_utils_format",
+   "target": "src_utils_format_capitalize",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/utils/format.ts",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoheader",
+   "target": "src_utils_format_capitalize",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_tests_format_spec_sample",
+   "target": "src_components_todoitem_isdone",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/__tests__/format.spec.ts",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoheader_label",
+   "target": "src_utils_format_capitalize",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoheader_label",
+   "target": "src_utils_format_pluralize",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoHeader.vue",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_mount",
+   "target": "src_store_createstore",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.ts",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem_props",
+   "target": "src_types_todo",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store_storestate",
+   "target": "src_types_todo",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_store_todostore_add",
+   "target": "src_types_todo",
+   "relation": "references",
+   "context": "return_type",
+   "confidence": "EXTRACTED",
+   "source_file": "src/store.ts",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_legacycounter_increment",
+   "target": "src_utils_format_pluralize",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/components/LegacyCounter.vue",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todoitem_text",
+   "target": "src_utils_format_formattitle",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/components/TodoItem.vue",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_components_todolist_titles",
+   "target": "src_utils_format_formattitle",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/components/TodoList.vue",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

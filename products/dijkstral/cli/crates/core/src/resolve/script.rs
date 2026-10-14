@@ -32,6 +32,7 @@ use crate::extract::script::{
 };
 use crate::extract::{external_node, origin, slug};
 use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc};
+use crate::lang::Lang;
 
 /// Extensions tried after a specifier, in order. Declaration-only `.d.ts` targets are not
 /// probed (Graphify leaves such imports unresolved).
@@ -763,6 +764,11 @@ impl<'a> Resolver<'a> {
                     continue;
                 };
                 let cvi = self.classes[&class].0;
+                if confidence == Confidence::Inferred
+                    && !inferred_member_kept(self.views[vi].file.lang, self.views[cvi].file.lang)
+                {
+                    continue;
+                }
                 let t = self.local_id(cvi, mid).to_string();
                 let src = self.local_id(vi, caller);
                 if called.insert((src.to_string(), t.clone())) {
@@ -824,15 +830,18 @@ impl<'a> Resolver<'a> {
                 }
                 _ => "import",
             };
-            let e = self.extracted(vi, owner, &tid, "imports_from", imp.line, Some(context));
-            if imp.type_only
-                && imp.kind == ImportKind::Import
-                && !value_imports.contains(&(imp.owner.as_deref(), target.clone()))
-            {
-                e.attrs.push(("type_only".into(), Attr::Bool(true)));
-            }
-            if imp.kind == ImportKind::Dynamic {
-                e.attrs.push(("deferred".into(), Attr::Bool(true)));
+            // A module importing itself keeps its `imports` but loses the self-loop (§38.2).
+            if !(imp.owner.is_none() && target == Target::Local(vi)) {
+                let e = self.extracted(vi, owner, &tid, "imports_from", imp.line, Some(context));
+                if imp.type_only
+                    && imp.kind == ImportKind::Import
+                    && !value_imports.contains(&(imp.owner.as_deref(), target.clone()))
+                {
+                    e.attrs.push(("type_only".into(), Attr::Bool(true)));
+                }
+                if imp.kind == ImportKind::Dynamic {
+                    e.attrs.push(("deferred".into(), Attr::Bool(true)));
+                }
             }
             let (Target::Local(ti), None) = (&target, &imp.owner) else {
                 continue;
@@ -964,6 +973,18 @@ fn dot(p: &str) -> String {
         format!("./{rest}")
     } else {
         format!("./{p}")
+    }
+}
+
+/// Graphify's clustered build keeps an INFERRED member call that touches a component file only
+/// between Vue files or from a Vue or Svelte file into a Svelte file (§38.3).
+fn inferred_member_kept(from: Lang, to: Lang) -> bool {
+    use Lang::{Astro, Svelte, Vue};
+    match (from, to) {
+        (Vue | Svelte | Astro, _) | (_, Vue | Svelte | Astro) => {
+            matches!((from, to), (Vue, Vue) | (Vue | Svelte, Svelte))
+        }
+        _ => true,
     }
 }
 

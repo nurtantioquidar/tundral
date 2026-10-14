@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro'
+import PostCard from '../components/PostCard.astro'
+import Like from '../components/Like.tsx'
+import { getPosts, sortByDate } from '../utils/posts'
+
+const posts = await getPosts()
+
+export async function getStaticPaths() {
+  const all = await getPosts()
+  return sortByDate(all).map((p) => ({ params: { slug: p.slug } }))
+}
+---
+<Base title="Home">
+  {posts.map((post) => <PostCard post={post} />)}
+  <Like client:load initial={0} />
+</Base>
+
+<script>
+  import { readingTime } from '../utils/posts'
+
+  function track(event: string) {
+    console.log(event, readingTime(event))
+  }
+
+  document.addEventListener('click', () => track('click'))
+</script>
+
+<style>
+  article { margin: 1rem 0; }
+</style>

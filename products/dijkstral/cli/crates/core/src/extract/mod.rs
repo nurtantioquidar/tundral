@@ -11,11 +11,13 @@ pub mod go;
 pub mod java;
 pub mod kotlin;
 pub mod php;
+pub mod powershell;
 pub mod python;
 pub mod ruby;
 pub mod rust;
 pub mod scala;
 pub mod script;
+pub mod sfc;
 pub mod swift;
 
 use tree_sitter::Node as TsNode;
@@ -42,6 +44,10 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Scala => scala::extract(&mut cx, tree.as_ref()),
         Lang::Swift => swift::extract(&mut cx, tree.as_ref()),
         Lang::C | Lang::Cpp => c::extract(&mut cx, tree.as_ref()),
+        Lang::Vue | Lang::Svelte | Lang::Astro => sfc::extract(&mut cx),
+        Lang::PowerShell => powershell::extract(&mut cx, tree.as_ref()),
+        // No file node and no symbols: Graphify's reference install has no VB.NET grammar (§42).
+        Lang::VisualBasic => {}
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }

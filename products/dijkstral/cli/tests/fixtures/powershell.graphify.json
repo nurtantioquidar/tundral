@@ -1,0 +1,1032 @@
+{
+ "nodes": [
+  {
+   "id": "modules_shop_private_pricing",
+   "label": "Pricing.psm1",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_private_pricing_taxrule",
+   "label": "TaxRule",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_private_pricing_psm1_decimal",
+   "label": "decimal",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_private_pricing_taxrule_taxrule",
+   "label": ".TaxRule()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_private_pricing_taxrule_apply",
+   "label": ".Apply()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_private_pricing_get_taxedamount",
+   "label": "Get-TaxedAmount()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_private_pricing_get_discount",
+   "label": "Get-Discount()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_psd1_modules_shop_shop",
+   "label": "Shop.psd1",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psd1",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_psm1_modules_shop_shop",
+   "label": "Shop.psm1",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_orderstatus",
+   "label": "OrderStatus",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_orderstatus_open",
+   "label": "Open",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_orderstatus_paid",
+   "label": "Paid",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_orderstatus_shipped",
+   "label": "Shipped",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_order",
+   "label": "Order",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "string",
+   "label": "string",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_psm1_decimal",
+   "label": "decimal",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_order_order",
+   "label": ".Order()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L16",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_order_withtax",
+   "label": ".WithTax()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_order_markpaid",
+   "label": ".MarkPaid()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "void",
+   "label": "void",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_order_log",
+   "label": ".Log()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L31",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_priorityorder",
+   "label": "PriorityOrder",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L36",
+   "_origin": "ast"
+  },
+  {
+   "id": "int",
+   "label": "int",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_priorityorder_priorityorder",
+   "label": ".PriorityOrder()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L39",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_priorityorder_downgrade",
+   "label": ".Downgrade()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L43",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_new_shoporder",
+   "label": "New-ShopOrder()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L48",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_get_ordertotal",
+   "label": "Get-OrderTotal()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L58",
+   "_origin": "ast"
+  },
+  {
+   "id": "modules_shop_shop_write_shoplog",
+   "label": "Write-ShopLog()",
+   "file_type": "code",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L63",
+   "_origin": "ast"
+  },
+  {
+   "id": "build",
+   "label": "build.ps1",
+   "file_type": "code",
+   "source_file": "build.ps1",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "build_invoke_build",
+   "label": "Invoke-Build()",
+   "file_type": "code",
+   "source_file": "build.ps1",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "build_format_result",
+   "label": "Format-Result()",
+   "file_type": "code",
+   "source_file": "build.ps1",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "build_test_manifest",
+   "label": "Test-Manifest()",
+   "file_type": "code",
+   "source_file": "build.ps1",
+   "source_location": "L25",
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_common",
+   "label": "Common.ps1",
+   "file_type": "code",
+   "source_file": "scripts/Common.ps1",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_common_write_buildlog",
+   "label": "Write-BuildLog()",
+   "file_type": "code",
+   "source_file": "scripts/Common.ps1",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_common_get_reporoot",
+   "label": "Get-RepoRoot()",
+   "file_type": "code",
+   "source_file": "scripts/Common.ps1",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests",
+   "label": "Shop.Tests.ps1",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests.ps1",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_new_testorder",
+   "label": "New-TestOrder()",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests.ps1",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "shop",
+   "label": "shop",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "pricing",
+   "label": "pricing",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "psframework",
+   "label": "psframework",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "configuration",
+   "label": "configuration",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "generic",
+   "label": "generic",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "psm1",
+   "label": "psm1",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "pester",
+   "label": "pester",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "common",
+   "label": "common",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "modules_shop_private_pricing",
+   "target": "modules_shop_private_pricing_taxrule",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_private_pricing_taxrule",
+   "target": "modules_shop_private_pricing_psm1_decimal",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_private_pricing_taxrule",
+   "target": "modules_shop_private_pricing_taxrule_taxrule",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_private_pricing_taxrule_taxrule",
+   "target": "modules_shop_private_pricing_psm1_decimal",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_private_pricing_taxrule",
+   "target": "modules_shop_private_pricing_taxrule_apply",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_private_pricing_taxrule_apply",
+   "target": "modules_shop_private_pricing_psm1_decimal",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_private_pricing",
+   "target": "modules_shop_private_pricing_get_taxedamount",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_private_pricing",
+   "target": "modules_shop_private_pricing_get_discount",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_private_pricing_get_discount",
+   "target": "modules_shop_private_pricing_get_taxedamount",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Private/Pricing.psm1",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psd1_modules_shop_shop",
+   "target": "shop",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psd1",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psd1_modules_shop_shop",
+   "target": "pricing",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psd1",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psd1_modules_shop_shop",
+   "target": "psframework",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psd1",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psd1_modules_shop_shop",
+   "target": "configuration",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psd1",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psm1_modules_shop_shop",
+   "target": "generic",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psm1_modules_shop_shop",
+   "target": "psm1",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psm1_modules_shop_shop",
+   "target": "modules_shop_shop_orderstatus",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_orderstatus",
+   "target": "modules_shop_shop_orderstatus_open",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_orderstatus",
+   "target": "modules_shop_shop_orderstatus_paid",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_orderstatus",
+   "target": "modules_shop_shop_orderstatus_shipped",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psm1_modules_shop_shop",
+   "target": "modules_shop_shop_order",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order",
+   "target": "string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order",
+   "target": "modules_shop_shop_psm1_decimal",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order",
+   "target": "modules_shop_shop_orderstatus",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order",
+   "target": "modules_shop_shop_order_order",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order_order",
+   "target": "string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L16",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order_order",
+   "target": "modules_shop_shop_psm1_decimal",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L16",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order",
+   "target": "modules_shop_shop_order_withtax",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order_withtax",
+   "target": "modules_shop_shop_psm1_decimal",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L22",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order",
+   "target": "modules_shop_shop_order_markpaid",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order_markpaid",
+   "target": "void",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L26",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order",
+   "target": "modules_shop_shop_order_log",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order_log",
+   "target": "void",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L31",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order_log",
+   "target": "string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L31",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psm1_modules_shop_shop",
+   "target": "modules_shop_shop_priorityorder",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_priorityorder",
+   "target": "modules_shop_shop_order",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_priorityorder",
+   "target": "int",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L37",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_priorityorder",
+   "target": "modules_shop_shop_priorityorder_priorityorder",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L39",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_priorityorder_priorityorder",
+   "target": "string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L39",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_priorityorder_priorityorder",
+   "target": "modules_shop_shop_psm1_decimal",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L39",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_priorityorder_priorityorder",
+   "target": "int",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L39",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_priorityorder",
+   "target": "modules_shop_shop_priorityorder_downgrade",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L43",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_priorityorder_downgrade",
+   "target": "modules_shop_shop_order",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L43",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psm1_modules_shop_shop",
+   "target": "modules_shop_shop_new_shoporder",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L48",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psm1_modules_shop_shop",
+   "target": "modules_shop_shop_get_ordertotal",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L58",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_psm1_modules_shop_shop",
+   "target": "modules_shop_shop_write_shoplog",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L63",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order_markpaid",
+   "target": "modules_shop_shop_order_log",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_new_shoporder",
+   "target": "modules_shop_shop_write_shoplog",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L54",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build",
+   "target": "pester",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "build.ps1",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build",
+   "target": "common",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "build.ps1",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build",
+   "target": "build_invoke_build",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "build.ps1",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build",
+   "target": "build_format_result",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "build.ps1",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build",
+   "target": "build_test_manifest",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "build.ps1",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build_invoke_build",
+   "target": "build_format_result",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "build.ps1",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build_invoke_build",
+   "target": "build_test_manifest",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "build.ps1",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "scripts_common",
+   "target": "scripts_common_write_buildlog",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "scripts/Common.ps1",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "scripts_common",
+   "target": "scripts_common_get_reporoot",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "scripts/Common.ps1",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests",
+   "target": "tests_shop_tests_new_testorder",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests.ps1",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "modules_shop_shop_order_withtax",
+   "target": "modules_shop_private_pricing_get_taxedamount",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "Modules/Shop/Shop.psm1",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build_invoke_build",
+   "target": "scripts_common_write_buildlog",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "build.ps1",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build_invoke_build",
+   "target": "modules_shop_shop_new_shoporder",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "build.ps1",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "build_test_manifest",
+   "target": "scripts_common_write_buildlog",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "build.ps1",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_new_testorder",
+   "target": "modules_shop_shop_new_shoporder",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "tests/Shop.Tests.ps1",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_new_testorder",
+   "target": "scripts_common_write_buildlog",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "tests/Shop.Tests.ps1",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

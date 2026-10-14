@@ -1,0 +1,22 @@
+---
+import Header from '../components/Header.astro'
+
+interface Props {
+  title: string
+}
+
+const { title } = Astro.props
+// NOTE: the title is also the og:title
+const pageTitle = buildTitle(title)
+
+function buildTitle(t: string) {
+  return `${t} | Blog`
+}
+---
+<html>
+  <head><title>{pageTitle}</title></head>
+  <body>
+    <Header />
+    <slot />
+  </body>
+</html>
