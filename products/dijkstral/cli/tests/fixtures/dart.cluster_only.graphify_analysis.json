@@ -1,0 +1,206 @@
+{
+  "communities": {
+    "0": [
+      "base_dart",
+      "lib_src_models_user",
+      "lib_src_models_user_address",
+      "lib_src_models_user_city",
+      "lib_src_models_user_compareto",
+      "lib_src_models_user_display",
+      "lib_src_models_user_guest",
+      "lib_src_models_user_home",
+      "lib_src_models_user_id",
+      "lib_src_models_user_label",
+      "lib_src_models_user_maxlen",
+      "lib_src_models_user_name",
+      "lib_src_models_user_role",
+      "lib_src_models_user_validator",
+      "package_meta_meta_dart",
+      "package_shop_src_util_format_dart",
+      "static_const_int",
+      "typedef"
+    ],
+    "1": [
+      "dart_collection",
+      "lib_src_service",
+      "lib_src_service_all",
+      "lib_src_service_everything",
+      "lib_src_service_find",
+      "lib_src_service_isuser",
+      "lib_src_service_owner",
+      "lib_src_service_register",
+      "lib_src_service_repository",
+      "lib_src_service_save",
+      "lib_src_service_store",
+      "lib_src_service_users",
+      "lib_src_service_userservice",
+      "map",
+      "models_user_dart",
+      "t",
+      "util_format_dart"
+    ],
+    "2": [
+      "annotation_immutable",
+      "lib_src_models_base",
+      "lib_src_models_base_comparable2",
+      "lib_src_models_base_describe",
+      "lib_src_models_base_entity",
+      "lib_src_models_base_id",
+      "lib_src_models_base_printable",
+      "lib_src_models_base_printme",
+      "lib_src_models_base_sameas",
+      "lib_src_models_user_account",
+      "lib_src_models_user_user",
+      "lib_src_models_user_userlabels",
+      "string_get"
+    ],
+    "3": [
+      "dart_async",
+      "lib_shop",
+      "lib_shop_loadlibrary",
+      "lib_shop_run",
+      "lib_shop_service",
+      "lib_shop_shop",
+      "lib_src_shop_part",
+      "library",
+      "src_models_user_dart",
+      "src_service_dart",
+      "src_util_format_dart"
+    ],
+    "4": [
+      "lib_src_util_format",
+      "lib_src_util_format_defaultwidth",
+      "lib_src_util_format_log",
+      "lib_src_util_format_stamp",
+      "lib_src_util_format_title"
+    ],
+    "5": [
+      "package_shop_shop_dart",
+      "package_test_test_dart",
+      "test_service_test",
+      "test_service_test_main"
+    ]
+  },
+  "cohesion": {
+    "0": 0.1111111111111111,
+    "1": 0.125,
+    "2": 0.19230769230769232,
+    "3": 0.18181818181818182,
+    "4": 0.4,
+    "5": 0.5
+  },
+  "gods": [
+    {
+      "id": "lib_src_models_user_user",
+      "label": "User",
+      "degree": 9
+    },
+    {
+      "id": "lib_src_models_base_entity",
+      "label": "Entity",
+      "degree": 3
+    },
+    {
+      "id": "lib_src_models_base_printable",
+      "label": "Printable",
+      "degree": 3
+    },
+    {
+      "id": "lib_src_models_user_account",
+      "label": "Account",
+      "degree": 3
+    },
+    {
+      "id": "lib_src_service_repository",
+      "label": "Repository",
+      "degree": 2
+    },
+    {
+      "id": "lib_src_service_userservice",
+      "label": "UserService",
+      "degree": 2
+    },
+    {
+      "id": "lib_src_models_base_comparable2",
+      "label": "Comparable2",
+      "degree": 2
+    },
+    {
+      "id": "lib_src_models_user_userlabels",
+      "label": "UserLabels",
+      "degree": 2
+    },
+    {
+      "id": "lib_src_models_user_address",
+      "label": "Address",
+      "degree": 1
+    },
+    {
+      "id": "lib_src_models_user_city",
+      "label": "city",
+      "degree": 1
+    }
+  ],
+  "surprises": [
+    {
+      "source": "User",
+      "target": "Comparable2",
+      "source_files": [
+        "lib/src/models/user.dart",
+        "lib/src/models/base.dart"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "implements",
+      "why": "peripheral node `Comparable2` unexpectedly reaches hub `User`"
+    },
+    {
+      "source": "User",
+      "target": "Entity",
+      "source_files": [
+        "lib/src/models/user.dart",
+        "lib/src/models/base.dart"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "User",
+      "target": "Printable",
+      "source_files": [
+        "lib/src/models/user.dart",
+        "lib/src/models/base.dart"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "mixes_in",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `User` connect `Community 2` to `Community 0`, `Community 1`, `Community 5`?",
+      "why": "High betweenness centrality (0.279) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Address`, `city`, `compareTo` to the rest of the system?",
+      "why": "34 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Account` connect `Community 2` to `Community 0`, `Community 1`?",
+      "why": "High betweenness centrality (0.073) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.125 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

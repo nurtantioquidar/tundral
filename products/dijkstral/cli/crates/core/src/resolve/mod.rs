@@ -11,10 +11,13 @@
 
 pub mod c;
 pub mod csharp;
+pub mod dart;
 pub mod data;
 pub mod go;
+pub mod groovy;
 pub mod java;
 pub mod kotlin;
+pub mod lua;
 pub mod php;
 pub mod python;
 pub mod ruby;
@@ -113,6 +116,9 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         php::resolve,
         ruby::resolve,
         c::resolve,
+        groovy::resolve,
+        dart::resolve,
+        lua::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {
         let handles: Vec<_> = passes

@@ -1,0 +1,1379 @@
+{
+ "nodes": [
+  {
+   "id": "lib_shop",
+   "label": "shop.dart",
+   "file_type": "code",
+   "source_file": "lib/shop.dart",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_shop",
+   "label": "shop",
+   "file_type": "code",
+   "source_file": "lib/shop.dart",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "library",
+   "label": "library",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_service",
+   "label": "service",
+   "file_type": "code",
+   "source_file": "lib/shop.dart",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_run",
+   "label": "run",
+   "file_type": "code",
+   "source_file": "lib/shop.dart",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_loadlibrary",
+   "label": "loadLibrary",
+   "file_type": "code",
+   "source_file": "lib/shop.dart",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "dart_async",
+   "label": "dart:async",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_util_format_dart",
+   "label": "src/util/format.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models_user_dart",
+   "label": "src/models/user.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service_dart",
+   "label": "src/service.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_base",
+   "label": "base.dart",
+   "file_type": "code",
+   "source_file": "lib/src/models/base.dart",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_base_entity",
+   "label": "Entity",
+   "file_type": "code",
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_base_printable",
+   "label": "Printable",
+   "file_type": "code",
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_base_comparable2",
+   "label": "Comparable2",
+   "file_type": "code",
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_base_id",
+   "label": "id",
+   "file_type": "code",
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "string_get",
+   "label": "String get",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_base_sameas",
+   "label": "sameAs",
+   "file_type": "code",
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_base_printme",
+   "label": "printMe",
+   "file_type": "code",
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_base_describe",
+   "label": "describe",
+   "file_type": "code",
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user",
+   "label": "user.dart",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_user",
+   "label": "User",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_address",
+   "label": "Address",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_role",
+   "label": "Role",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "annotation_immutable",
+   "label": "@immutable",
+   "file_type": "concept",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_account",
+   "label": "Account",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L35",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_userlabels",
+   "label": "UserLabels",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L31",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_home",
+   "label": "home",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_maxlen",
+   "label": "maxLen",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "static_const_int",
+   "label": "static const int",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_id",
+   "label": "id",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_city",
+   "label": "city",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L25",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_label",
+   "label": "label",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L32",
+   "_origin": "ast"
+  },
+  {
+   "id": "typedef",
+   "label": "typedef",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_validator",
+   "label": "Validator",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L36",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_guest",
+   "label": "guest",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_display",
+   "label": "display",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L17",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_models_user_compareto",
+   "label": "compareTo",
+   "file_type": "code",
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L21",
+   "_origin": "ast"
+  },
+  {
+   "id": "package_meta_meta_dart",
+   "label": "package:meta/meta.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "base_dart",
+   "label": "base.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "package_shop_src_util_format_dart",
+   "label": "package:shop/src/util/format.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service",
+   "label": "service.dart",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_repository",
+   "label": "Repository",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_userservice",
+   "label": "UserService",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_users",
+   "label": "_users",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "map",
+   "label": "Map",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_owner",
+   "label": "owner",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_store",
+   "label": "store",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_everything",
+   "label": "everything",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_save",
+   "label": "save",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_all",
+   "label": "all",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_register",
+   "label": "register",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_find",
+   "label": "find",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L25",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_service_isuser",
+   "label": "isUser",
+   "file_type": "code",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "dart_collection",
+   "label": "dart:collection",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "models_user_dart",
+   "label": "models/user.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "util_format_dart",
+   "label": "util/format.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_shop_part",
+   "label": "shop_part.dart",
+   "file_type": "code",
+   "source_file": "lib/src/shop_part.dart",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_util_format",
+   "label": "format.dart",
+   "file_type": "code",
+   "source_file": "lib/src/util/format.dart",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_util_format_stamp",
+   "label": "stamp",
+   "file_type": "code",
+   "source_file": "lib/src/util/format.dart",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_util_format_defaultwidth",
+   "label": "defaultWidth",
+   "file_type": "code",
+   "source_file": "lib/src/util/format.dart",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_util_format_title",
+   "label": "title",
+   "file_type": "code",
+   "source_file": "lib/src/util/format.dart",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_src_util_format_log",
+   "label": "log",
+   "file_type": "code",
+   "source_file": "lib/src/util/format.dart",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_service_test",
+   "label": "service_test.dart",
+   "file_type": "code",
+   "source_file": "test/service_test.dart",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "test_service_test_main",
+   "label": "main",
+   "file_type": "code",
+   "source_file": "test/service_test.dart",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "package_shop_shop_dart",
+   "label": "package:shop/shop.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "package_test_test_dart",
+   "label": "package:test/test.dart",
+   "file_type": "code",
+   "source_file": null,
+   "source_location": null,
+   "_origin": "ast"
+  }
+ ],
+ "edges": [
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_shop",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "library",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "variable_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_service",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_run",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_loadlibrary",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "dart_async",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "src_util_format_dart",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "src_models_user_dart",
+   "relation": "exports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "src_service_dart",
+   "relation": "exports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.dart",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base",
+   "target": "lib_src_models_base_entity",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base",
+   "target": "lib_src_models_base_printable",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base_printable",
+   "target": "lib_src_models_base_entity",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base",
+   "target": "lib_src_models_base_comparable2",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base",
+   "target": "lib_src_models_base_id",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base",
+   "target": "string_get",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "variable_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base",
+   "target": "lib_src_models_base_sameas",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base",
+   "target": "lib_src_models_base_printme",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_base",
+   "target": "lib_src_models_base_describe",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/base.dart",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_user",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user_user",
+   "target": "lib_src_models_base_entity",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user_user",
+   "target": "lib_src_models_base_printable",
+   "relation": "mixes_in",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user_user",
+   "target": "lib_src_models_base_comparable2",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_address",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_role",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user_user",
+   "target": "annotation_immutable",
+   "relation": "configures",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_account",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user_account",
+   "target": "lib_src_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L35",
+   "weight": 1.0,
+   "context": "typedef",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_userlabels",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user_userlabels",
+   "target": "lib_src_models_user_user",
+   "relation": "extends",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_name",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_home",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_address",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "variable_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_maxlen",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "static_const_int",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "variable_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_id",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "string_get",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "variable_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_city",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_label",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L32",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "typedef",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L35",
+   "weight": 1.0,
+   "context": "variable_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_validator",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_guest",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_display",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "lib_src_models_user_compareto",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "package_meta_meta_dart",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "base_dart",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_models_user",
+   "target": "package_shop_src_util_format_dart",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/models/user.dart",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_repository",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_userservice",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service_userservice",
+   "target": "lib_src_service_repository",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_users",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "map",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "variable_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_owner",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_models_user_account",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "variable_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_store",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_everything",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_save",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_all",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_register",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_find",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_service_isuser",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "dart_collection",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "models_user_dart",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "util_format_dart",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "lib_src_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L27",
+   "weight": 1.0,
+   "context": "type_lookup",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_service",
+   "target": "t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/service.dart",
+   "source_location": "L30",
+   "weight": 1.0,
+   "context": "type_lookup",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_src_shop_part",
+   "relation": "includes",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/shop_part.dart",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_util_format",
+   "target": "lib_src_util_format_stamp",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/util/format.dart",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_util_format",
+   "target": "lib_src_util_format_defaultwidth",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/util/format.dart",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_util_format",
+   "target": "lib_src_util_format_title",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/util/format.dart",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_src_util_format",
+   "target": "lib_src_util_format_log",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/src/util/format.dart",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_service_test",
+   "target": "test_service_test_main",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/service_test.dart",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_service_test",
+   "target": "package_shop_shop_dart",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/service_test.dart",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_service_test",
+   "target": "package_test_test_dart",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/service_test.dart",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_service_test",
+   "target": "lib_src_models_user_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "test/service_test.dart",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "type_lookup",
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

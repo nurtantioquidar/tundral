@@ -36,6 +36,12 @@ pub enum Lang {
     C,
     /// `.cpp .cc .cxx .hpp .cu`, and `.h` with C++ markers (§19).
     Cpp,
+    /// `.groovy`, `.gradle` (§26).
+    Groovy,
+    /// `.dart` (§27).
+    Dart,
+    /// `.lua`, `.luau`, and `lua` shebang scripts (§28).
+    Lua,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -55,6 +61,9 @@ pub enum Family {
     Kotlin,
     Scala,
     C,
+    Groovy,
+    Dart,
+    Lua,
 }
 
 impl Lang {
@@ -89,6 +98,9 @@ impl Lang {
             "c" => Lang::C,
             "cpp" | "cc" | "cxx" | "hpp" | "cu" => Lang::Cpp,
             "h" => return crate::extract::c::header_lang(path),
+            "groovy" | "gradle" => Lang::Groovy,
+            "dart" => Lang::Dart,
+            "lua" | "luau" => Lang::Lua,
             _ => return None,
         })
     }
@@ -109,6 +121,9 @@ impl Lang {
             Lang::Kotlin => Family::Kotlin,
             Lang::Scala => Family::Scala,
             Lang::C | Lang::Cpp => Family::C,
+            Lang::Groovy => Family::Groovy,
+            Lang::Dart => Family::Dart,
+            Lang::Lua => Family::Lua,
         }
     }
 
@@ -129,6 +144,9 @@ impl Lang {
             Lang::Swift => tree_sitter_swift::LANGUAGE.into(),
             Lang::C => tree_sitter_c::LANGUAGE.into(),
             Lang::Cpp => tree_sitter_cpp::LANGUAGE.into(),
+            Lang::Groovy => tree_sitter_groovy::LANGUAGE.into(),
+            Lang::Lua => tree_sitter_lua::LANGUAGE.into(),
+            Lang::Dart => return None,
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }
@@ -151,6 +169,8 @@ fn shebang(path: &Path) -> Option<Lang> {
         Some(Lang::Shell)
     } else if prog.starts_with("ruby") {
         Some(Lang::Ruby)
+    } else if prog == "lua" {
+        Some(Lang::Lua)
     } else {
         None
     }
