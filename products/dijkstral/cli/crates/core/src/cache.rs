@@ -63,6 +63,14 @@ impl Cache {
         let create = || Builder::new().set_cache_size(CACHE_BYTES).create(path);
         let db = match create() {
             Ok(db) => db,
+            // Another dijkstral process holds the cache (e.g. a hook-triggered `update` during an
+            // `extract`): never delete it from under that process.
+            Err(redb::DatabaseError::DatabaseAlreadyOpen) => {
+                anyhow::bail!(
+                    "{} is in use by another dijkstral build; retry when it finishes",
+                    path.display()
+                )
+            }
             // A corrupt or incompatible cache is disposable: start over.
             Err(_) => {
                 std::fs::remove_file(path).ok();
@@ -227,11 +235,15 @@ mod tests {
             let mut stats = HashMap::new();
             stats.insert("a.py".to_string(), (stat, key));
             cache.commit(&[(key, &facts)], stats, u64::MAX).unwrap();
-            assert_eq!(
-                Cache::open(&path).unwrap().stats.get("a.py"),
-                Some(&(stat, key))
+            assert!(
+                Cache::open(&path).is_err(),
+                "a second open must not clobber the cache"
             );
         }
+        assert_eq!(
+            Cache::open(&path).unwrap().stats.get("a.py"),
+            Some(&(stat, key))
+        );
         // Simulate a cache written by another extractor build.
         {
             let db = Builder::new().create(&path).unwrap();
