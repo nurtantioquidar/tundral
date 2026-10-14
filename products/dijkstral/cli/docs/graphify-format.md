@@ -41,6 +41,7 @@ Status labels used below:
 20. Ruby
 21. Kotlin
 22. Scala
+23. Swift
 
 ---
 
@@ -60,6 +61,7 @@ Status labels used below:
 | `ruby/` | `lib/shop.rb`, `lib/shop/{util,service}.rb`, `lib/shop/models/{base,user}.rb`, `bin/shop` (ruby shebang), `tasks/release.rake`, `test/service_test.rb` | `ruby.graphify.json` | `ruby.clustered.graphify.json` |
 | `kotlin/` | `build.gradle.kts`, `src/main/kotlin/Main.kt`, `src/main/kotlin/com/shop/{model,service,util}/*.kt`, `src/test/kotlin/com/shop/service/UserServiceTest.kt` | `kotlin.graphify.json` | `kotlin.clustered.graphify.json` |
 | `scala/` | `build.sbt` (not classified), `src/main/scala/Main.scala`, `src/main/scala/shop/{model,service,util}/*.scala`, `src/test/scala/shop/service/UserServiceSuite.scala` | `scala.graphify.json` | `scala.clustered.graphify.json` |
+| `swift/` | `Sources/App/main.swift`, `Sources/Shop/{Models/{Entity,User,Shape},Services/UserService,Extensions/User+Format}.swift`, `Tests/ShopTests/UserServiceTests.swift` | `swift.graphify.json` | `swift.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -2617,3 +2619,190 @@ nodes 99.9%/99.9%, links 99.9%/99.9% (calls, imports, references, method, mixes_
 100%). Remaining: two stubs Graphify renames because a Java file's external import node of the
 same id counts as a collision emitter (§16), and one self-`contains` of nested same-slug
 classes (`object a { case class A() }`).
+
+## 23. Swift
+
+Derived black-box (2026-10-14) from the fixture `tests/fixtures/swift/`, small probe repositories
+and a scratch copy of the Alamofire corpus. Graphify parses `.swift` with tree-sitter-swift 0.7.4
+(dijkstral uses the same grammar version). Its per-file cache (`graphify-out/cache/ast/…/*.json`)
+also records, for Swift, `raw_calls` (calls the file could not bind), `swift_type_table` (the
+variable-type table and `factory`) and `swift_extensions`; dijkstral reproduces those facts per file
+exactly on Alamofire (134 files), and they are the oracle for the rules below. Implementation:
+`crates/core/src/{extract,resolve}/swift.rs`.
+
+### 23.1 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| file | `fileid` | unique suffix (§5.1) | — |
+| `class`, `struct`, `enum`, `actor`, `protocol`, at any depth (nested types are flat) | `fileid_slug(Name)` | `Name` | `_callable`, `_callable_class` |
+| `extension T` | `fileid_slug(text of T)` (`extension Swift.Array` → `…_swift_array`, `extension [String]` → `…_string`) | the type text (`Swift.Array`, `[String]`, `AFError.ServerTrustFailureReason`) | `_callable`, `_callable_class` |
+| method, `init`, `deinit`, `subscript`, protocol requirement (with or without body) | `typeid_slug(name)` (`…_init`, `…_subscript`) | `.name()` | `_callable` |
+| computed property (`{ get … }`, `{ … }`) and observed property (`willSet`/`didSet`) | `typeid_slug(name)` | `.name` | none |
+| top-level function | `fileid_slug(name)` | `name()` | `_callable` |
+| enum case, one per name (`case a, b(Int)`) | `enumid_slug(name)`, line of the name | `name` | none |
+| `import M` / `import struct M.T` | `slug(M)`, shared, never collision-renamed | `M` as written (`Foundation.Date`) | `type: "module"`, `source_file`/`source_location` of the importer whose **basename** sorts first (then path), **Rule** |
+| undeclared type in a supertype list | `slug(Name)`, shared by every file (no collision rename) | `Name` | stub shape (§4.4) |
+| undeclared type anywhere else | `slug(Name)`, per file (§4.5 rename applies) | `Name` | stub shape |
+
+Not emitted: stored properties, protocol property requirements, typealiases, associated types,
+operators (`static func ==`), nested functions, closures, global variables and top-level
+statements, types declared inside function bodies, and **no rationale nodes** (`///` doc comments
+and `// NOTE:`/`// WHY:` are ignored). Generic parameters are ordinary undeclared types (`T` stub).
+
+- **Rule: same-id definitions merge, first node wins, later ones only add missing fields.** An
+  overloaded `init` keeps the first line; a case `convertToSnakeCase` merged with a later
+  `static func convertToSnakeCase` keeps the case's label and gains `_callable`; a method
+  `singleValueContainer()` and a later extension `_URLEncodedFormEncoder.SingleValueContainer`
+  share one id and the node gains `_callable_class`.
+- **Rule: one pass.** A type name refers to a node of the file defined *so far*: its id is
+  `fileid_slug(Name)`. Otherwise the first use makes a stub — shared when that use is a supertype,
+  per file otherwise — and later uses reuse it until the file declares or extends that name, from
+  which point they target the file's node. Forward references therefore make stubs, which the
+  cross-file pass usually binds (23.4). `Swift.Error` names `Swift`, whose id
+  `fileid_swift` is Graphify's internal id of the file node itself: such references and
+  supertypes target the **file node** (**Quirk S1**).
+
+### 23.2 Edges
+
+All `EXTRACTED`, `weight 1.0`, `_origin ast`, `source_file` = the file of the source construct.
+Structural edges carry no `context` key.
+
+| relation | source → target | context | line |
+|---|---|---|---|
+| `imports` | file → module node | `import` | import line |
+| `contains` | file → top-level type, extension or function; type → nested type | none | declaration (start of the node, attributes included) |
+| `method` | type or extension → method, `init`, `subscript`, `deinit`, computed/observed property | none | member line |
+| `case_of` | enum → case | none | line of the case name |
+| `inherits` | protocol → each supertype; class/actor → first supertype unless it is a protocol the file defined so far; later supertypes when they are classes; struct → a class of the file | none | declaration |
+| `implements` | enum, extension → every supertype; class/actor → later supertypes and a known protocol first; struct → non-class supertypes | none | declaration |
+| `references` | type → stored or computed property type | `field` | property line |
+| `references` | function → parameter type / return type | `parameter_type` / `return_type` | function line |
+| `references` | enum → associated value types | `type` | case line |
+| `references` | any of the above → type arguments (also a supertype's: `WKHostingController<ContentView>`) | `generic_arg` | as above |
+| `calls` | function, property or type (stored property value) → member, function or type | `call` | call line |
+
+- **Rule: type names.** A `user_type` names its *first* identifier (`Outer.Inner` → `Outer`,
+  `T.Type` → `T`); type arguments become `generic_arg`; attributes in types (`@Sendable`) are
+  types too, `@escaping`/`@autoclosure` parameter modifiers are not. A parameter written with
+  attributes (`h: @escaping @Sendable (Int) -> Void`) names **only** the attributes: Graphify reads
+  the grammar's `type` field, which holds just the `type_modifiers`. Self-references are skipped
+  (`indirect case nested(EI)`). References dedupe per declaration by (target, context).
+- **Rule: `metadata.swift_plain_return`.** On the first `return_type` reference when the return
+  type is written as a plain named type (`-> User`, `-> Result<A, B>`, `-> Outer.Kind`,
+  `-> Self`, `-> Base!`), not for `T?`, `[T]`, tuples, functions or `some P`. The cross-file pass
+  uses it to type `let x = Type.make()`.
+- **Rule: per-file edge order.** Structure in pre-order, then every in-file `calls` edge of
+  function bodies in walk order, then those of stored-property values.
+
+### 23.3 Calls inside the file
+
+Members are found by the kept node's label (`.name()`/`.name` stripped): `_response()` merged
+into `.response()` is no member `_response`. Cases are no members (they have no `method` edge).
+
+| call | binds to |
+|---|---|
+| `name(…)` | a member of the caller's type or its superclasses in the file, else a type of the file with exactly that label (its initializer → the type node), else the file's last definition of `name` when that is a top-level function; else recorded |
+| `super.m(…)` | the superclass's member (superclass declared in the file), else recorded with no receiver |
+| `self.m(…)` | the own type's member, else recorded with no receiver |
+| `x.m(…)`, `T.m(…)`, any receiver | the file's **last** function, member or type named `m`, regardless of the receiver (**Quirk S2**, like Q8), else recorded |
+
+- Builtin-like names never bind in the file: Python builtins and JavaScript globals as for Go
+  (but `pow` binds), plus `Bundle Calendar Data DateFormatter DispatchGroup DispatchQueue Double
+  JSONDecoder JSONEncoder NSError NSLock NumberFormatter OperationQueue TimeZone UInt32 UInt64
+  UInt8 URLComponents URLRequest URLSession UUID` (observed). Bare calls with them are dropped;
+  member calls are recorded.
+- One edge per (caller, target), first line. Self-loops are kept (`cancel()` inside `cancel()`).
+- Scanned: function, initializer and computed/observed property bodies, closures inside them and
+  types declared inside them. Not scanned: nested functions, subscript bodies. A stored
+  property's value is scanned only when it is a call (`= Cache()`, `= { … }()`), with the type as
+  the caller; a closure or literal value is not.
+- Recorded calls carry the receiver `x` of `x.m()`, `x.y.m()` and `self.x.m()`; longer chains,
+  calls and literals give none. `via_stub` marks a bare call whose name the file uses as an
+  undeclared type.
+
+**Variable-type table** (one flat map per file, by variable name): parameters (any function,
+protocol requirements included) and typed properties, last write wins; over locals initialised
+by `Type(...)` or `Type.member` (capitalised identifier), first write wins. The value is the
+first type name of the annotation in the 18.2 sense. `let x = Type.m(...)` records
+`factory[x] = (Type, m)` when `x` has no entry yet. Locals with only a type annotation, closure
+parameters, `for`/`if let`/`guard let` bindings and top-level statements are not recorded.
+
+### 23.4 Cross-file pass
+
+1. **Extensions merge** into the one declaration of their label (a redirect; methods keep their
+   extension-scoped ids). An extension the declaring file writes itself shares the declaration's
+   id and makes that id an extension too, so a type extended in its own file is **no merge target**
+   (**Quirk S3**: Alamofire's `Request`, `AFError`, `Protected` keep separate extension nodes).
+2. **Stubs** (per-file and shared) bind to the one class-like node of their label, declaration or
+   extension, after merging. Unbound shared stubs become one node each.
+3. **Bare calls** (all files, before member calls): the definition of that name — function,
+   member, property, case or type, by stripped label — nearest to the caller's file (same file,
+   then most shared leading directories); a tie binds nothing. INFERRED 0.85. A `via_stub` call is
+   dropped.
+4. **Member calls**: the receiver's type comes from the table, or for a `factory` variable from
+   the plain return type of `Type.m`. It must name exactly one class-like node that is a
+   declaration or lies in the caller's file; then the member `m` → `calls` INFERRED 0.85, or, when
+   the type has no such member, `references` to the type INFERRED 0.85 (context `call`). Without
+   a table entry, a capitalised receiver is the type itself (`User.make()`) and the same edges are
+   EXTRACTED 1.0. A type that no class-like node has is recorded once per (caller, callee, type) in
+   the caller's `metadata.unresolved_calls` (`lang: "swift"`), except builtin-like types (the
+   list above, `Int`, `Set`, `Sendable`, `Locale`). Ambiguous or extension-only types elsewhere
+   give nothing.
+5. A cross-file edge is skipped when the caller already links to the target (any relation), which
+   is why an INFERRED edge can shadow a later EXTRACTED one.
+6. **`dispatches_to`**: a protocol with exactly one conforming type (`implements`) links each
+   requirement to that type's member of the same name, INFERRED 0.85, context `call`, at the
+   conforming type's node (`source_file`, `source_location`).
+
+### 23.5 Build-stage observations
+
+- Swift structural edges lack a `context` key, so a folded edge keeps the other edge's context:
+  `contains` + a later `references field` on the same pair gives `contains` with
+  `context: "field"`, and in the opposite orientation `implements` + `references field` keeps
+  `implements` with `context: "field"`; a `calls` edge folded over a `references return_type` loses
+  `swift_plain_return`. dijkstral's fold (§8.2) merges no keys into a surviving `contains`/`method`
+  and none across orientations (**Quirk S4**; 61 link fields on Alamofire).
+- Opposite-orientation ties compare Graphify's internal ids, where a file node is
+  `fileid_swift`: for `extension Alamofire.HTTPHeader: Swift.Decodable` the extension's
+  `implements → file` beats the file's `contains` (dijkstral keeps `contains`; 4 links).
+- A per-file stub whose id equals a shared supertype stub of another file is collision-renamed
+  by Graphify (`…_swift_codingkey`); dijkstral exempts shared stubs from §4.5 counting and merges
+  them (3 nodes, ~12 links). A renamed stub that collides with an extension id
+  (`…_swift_bool` vs `extension Swift.Bool`) gets no sha1 suffix in Graphify (1 node).
+
+### 23.6 Quirks
+
+| # | Quirk | dijkstral |
+|---|---|---|
+| S1 | `Swift.X` resolves to the file node | reproduced |
+| S2 | `x.m()` binds to the file's last `m` whatever `x` is | reproduced |
+| S3 | a type extended in its own file is no merge target for other files' extensions | reproduced |
+| S4 | key merging on folded Swift edges (23.5) | not reproduced (shared fold) |
+| S5 | module nodes take the location of the importer with the smallest basename | reproduced |
+
+### 23.7 Parity (Alamofire, Graphify's frozen reference, `.swift` only)
+
+Nodes: def 2635/2635 both ways, stubs 648 shared (+1/−3); links: calls, case_of, dispatches_to,
+imports, inherits and method 100%/100%, references 99.4%/99.4%, implements 97.8% recall,
+contains 99.2% precision. Per-file facts (nodes, edges in order, raw calls, tables) match
+Graphify's cache for all 134 files.
+
+### 23.8 Open
+
+- Whether an extension constructing its own type from its body binds in general: the only such
+  call Alamofire has outside the denylist (`CharacterSet(...)` in a property closure of
+  `extension CharacterSet`) binds; `DispatchQueue(...)` and `Bundle(...)` are denylisted.
+- The full builtin-type denylists (calls and `unresolved_calls`) are known only for the names
+  Alamofire exercises.
+
+### 23.9 Analysis
+
+The god-node noise labels (§17.4) keep `String` out of the god nodes, but Graphify still lets an
+`extension String` symbol be a surprise endpoint and a bridge (fixture `swift`, `cluster-only`).
+dijkstral's analysis applies the noise labels to all three, so `dijkstral cluster-only` on the
+Swift golden differs in surprises and bridge questions (verified by making `String` eligible: only
+the god list then differs). The test `swift_cluster_only_matches_graphify` is ignored until the
+analysis distinguishes the two lists. Equal-score surprise ties also follow insertion order, where
+Graphify inserts module nodes at their first import and shared stubs at first use; dijkstral adds
+both after all files.

@@ -15,6 +15,7 @@ pub mod ruby;
 pub mod rust;
 pub mod scala;
 pub mod script;
+pub mod swift;
 
 use tree_sitter::Node as TsNode;
 
@@ -38,6 +39,7 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Ruby => ruby::extract(&mut cx, tree.as_ref()),
         Lang::Kotlin => kotlin::extract(&mut cx, tree.as_ref()),
         Lang::Scala => scala::extract(&mut cx, tree.as_ref()),
+        Lang::Swift => swift::extract(&mut cx, tree.as_ref()),
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }

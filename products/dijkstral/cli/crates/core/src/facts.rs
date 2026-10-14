@@ -122,6 +122,7 @@ pub enum LangFacts {
     CSharp(crate::extract::csharp::CsFacts),
     Kotlin(crate::extract::kotlin::KotlinFacts),
     Scala(crate::extract::scala::ScalaFacts),
+    Swift(crate::extract::swift::SwiftFacts),
     Data(crate::extract::data::DataFacts),
     Php(crate::extract::php::PhpFacts),
     Ruby(crate::extract::ruby::RubyFacts),

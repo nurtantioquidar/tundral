@@ -16,6 +16,7 @@ pub enum Lang {
     Rust,
     Go,
     Java,
+    Swift,
     /// `.json` manifests (allowlist decided at extraction, §14.1).
     Json,
     /// `Cargo.toml` and `pyproject.toml` only.
@@ -41,6 +42,7 @@ pub enum Family {
     Rust,
     Go,
     Java,
+    Swift,
     Data,
     Shell,
     CSharp,
@@ -71,6 +73,7 @@ impl Lang {
             "rs" => Lang::Rust,
             "go" => Lang::Go,
             "java" => Lang::Java,
+            "swift" => Lang::Swift,
             "json" => Lang::Json,
             "sh" | "bash" => Lang::Shell,
             "cs" => Lang::CSharp,
@@ -89,6 +92,7 @@ impl Lang {
             Lang::Rust => Family::Rust,
             Lang::Go | Lang::GoMod => Family::Go,
             Lang::Java => Family::Java,
+            Lang::Swift => Family::Swift,
             Lang::Json | Lang::Toml => Family::Data,
             Lang::Shell => Family::Shell,
             Lang::CSharp => Family::CSharp,
@@ -113,6 +117,7 @@ impl Lang {
             Lang::Ruby => tree_sitter_ruby::LANGUAGE.into(),
             Lang::Kotlin => tree_sitter_kotlin_ng::LANGUAGE.into(),
             Lang::Scala => tree_sitter_scala::LANGUAGE.into(),
+            Lang::Swift => tree_sitter_swift::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }

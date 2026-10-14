@@ -20,6 +20,7 @@ pub mod ruby;
 pub mod rust;
 pub mod scala;
 pub mod script;
+pub mod swift;
 
 use std::collections::{HashMap, HashSet};
 
@@ -105,6 +106,7 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         java::resolve,
         kotlin::resolve,
         scala::resolve,
+        swift::resolve,
         data::resolve,
         csharp::resolve,
         php::resolve,
