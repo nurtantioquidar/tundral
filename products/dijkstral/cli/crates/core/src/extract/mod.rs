@@ -6,15 +6,18 @@
 
 pub mod c;
 pub mod csharp;
+pub mod dart;
 pub mod data;
 pub mod dotnet;
 pub mod elixir;
 pub mod fortran;
 pub mod go;
+pub mod groovy;
 pub mod java;
 pub mod julia;
 pub mod kotlin;
 pub mod legacy;
+pub mod lua;
 pub mod objc;
 pub mod php;
 pub mod powershell;
@@ -67,6 +70,9 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Verilog => verilog::extract(&mut cx, tree.as_ref()),
         // Graphify counts `.sol` files but has no grammar for them: no nodes at all (§37).
         Lang::Solidity => {}
+        Lang::Groovy => groovy::extract(&mut cx, tree.as_ref()),
+        Lang::Dart => dart::extract(&mut cx),
+        Lang::Lua => lua::extract(&mut cx, tree.as_ref()),
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
         Lang::MsBuild | Lang::Sln | Lang::Slnx | Lang::Razor | Lang::Xaml => {

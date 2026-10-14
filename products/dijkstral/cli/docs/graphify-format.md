@@ -60,6 +60,9 @@ Status labels used below:
 37. Solidity
 43. C# project and markup files
 44. Other code-counted files
+26. Groovy
+27. Dart
+28. Lua
 
 ---
 
@@ -98,6 +101,9 @@ Status labels used below:
 | `solidity/` | `contracts/{Base,Token}.sol`, `scripts/deploy.py` | `solidity.graphify.json` | `solidity.clustered.graphify.json` |
 | `csproj/` | `Shop.sln`, `Shop.slnx`, `src/{Shop,Core}/*.csproj`, `tests/Shop.Tests/Shop.Tests.csproj`, `legacy/{Legacy.vbproj,Broken.csproj}`, `src/Shop/Pages/{Index,Widget,_Imports}.razor`, `src/Shop/Views/{Home.cshtml,*.xaml,MainWindow.xaml.cs}`, view model and C# models (§43) | `csproj.graphify.json` | `csproj.clustered.graphify.json` |
 | `misc/` | `pascal/` (`.pas .dpr .dpk .inc .dfm .lfm .lpk`), `apex/` (`.cls .trigger`), `cobol/` (`.cbl .cpy`), `byond/` (`.dmf .dmi .dmm`), `gpu/kernels.metal`, `inert/` (`.r .sql .tf .ejs`), `scripts/` (shebangs) (§44) | `misc.graphify.json` | `misc.clustered.graphify.json` |
+| `groovy/` | `build.gradle`, `settings.gradle`, `src/main/groovy/com/shop/{App,model/{Base,User},service/UserService,util/Format}.groovy`, `src/main/java/com/shop/{util/Logger,model/Auditable}.java`, `src/test/groovy/com/shop/UserServiceSpec.groovy` | `groovy.graphify.json` | `groovy.clustered.graphify.json` |
+| `dart/` | `lib/shop.dart`, `lib/src/{shop_part,service}.dart`, `lib/src/models/{base,user}.dart`, `lib/src/util/format.dart`, `test/service_test.dart` | `dart.graphify.json` | `dart.clustered.graphify.json` |
+| `lua/` | `lib/shop/{init,util,service}.lua`, `lib/shop/models/{base,user}.lua`, `spec/service_spec.lua`, `bin/shop` (lua shebang), `plugins/server.luau` | `lua.graphify.json` | `lua.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -4429,3 +4435,256 @@ PowerShell `.ps1 .psd1 .psm1`, Svelte, Verilog `.v .sv .svh .vh`, Vue, Zig). She
 by exact interpreter name after `env` and its flags: `python python2 python3` (not `python3.11`,
 `Python3`, `pypy3`), `sh bash zsh ksh dash`, `ruby` (not `ruby2.7`), `node nodejs` (JavaScript),
 `php`, and the inert `perl fish tcsh`; a BOM or a blank first line hides the shebang.
+## 26. Groovy (2026-10-15)
+
+Fixture `tests/fixtures/groovy/` (Gradle layout, Groovy sources under `src/main/groovy`, two Java
+files the Groovy code uses, a Spock specification, `build.gradle` and `settings.gradle`); goldens
+`groovy.graphify.json`, `groovy.clustered.graphify.json` and the §17.6 report goldens. `.groovy`
+and `.gradle` are Groovy (`build.gradle.kts` stays Kotlin). Graphify parses them with
+tree-sitter-groovy 0.1.2 (amaanq's Java-derived grammar; identified by matching the per-file
+cache's `parse_errors.first_error_line` on every probe), and its error recovery decides much of
+the output: a field without `;`, `s.trim()` as a last expression or a ternary are parse errors,
+and declarations swallowed by an error node are lost. Derived from the fixture, about ten probes
+and Graphify's own fixtures `sample.groovy`/`sample_spock.groovy`.
+
+### 26.1 Nodes
+
+| Construct | Id | Label | Fields |
+|---|---|---|---|
+| class, interface, enum — nested at any depth outside method bodies | `file_slug(Name)`, flat | `Name` | `_callable`, `_callable_class` |
+| method, constructor (overloads merge, first line) | `<type id>_slug(name)` | `.name()` | `_callable` |
+| method the grammar left outside any type (after an error) | `file_slug(name)` | `name()` | `_callable` |
+| enum constant | `<enum id>_slug(NAME)` | `NAME` | none |
+| supertype or annotation not declared earlier in the file | per-file stub `slug(Name)` | last segment of the name | §4.4 |
+
+Not emitted: `trait`, `record`, `@interface`, top-level `def f()` (`function_definition`), script
+statements, closures, fields, properties, and rationale (Groovydoc, `// NOTE:`). Gradle DSL
+blocks (`plugins {}`, `dependencies {}`, `task x {}`) produce nothing; a class in a `.gradle` file
+is an ordinary class.
+
+### 26.2 Edges
+
+All in-file edges: EXTRACTED, no score, weight 1.0.
+
+| relation | source → target | when | context |
+|---|---|---|---|
+| `contains` | file or enclosing type → type; file → stray method | always | — |
+| `method` | type → method | one edge per overload | — |
+| `case_of` | enum → constant | always | — |
+| `inherits` | class → superclass; interface → each `extends` type | generic `Base<T>` → `Base`, `a.b.Name` → `Name` | — |
+| `implements` | class or enum → each interface | | — |
+| `references` | type → each annotation (`@CompileStatic`, `@ToString(…)`) | type annotations only; `@Override` on a method produces nothing | `attribute` |
+| `imports` | file → `slug(last segment)` (static member, wildcard package, aliased type) | every import, `L<n>` location | `import` |
+| `calls` | method → method | §26.3 | `call` |
+
+- **Denied supertypes (Rule).** About 170 JDK names never produce an edge or stub (`Comparable`,
+  `Serializable`, `Cloneable`, `Runnable`, `Iterable`, `Exception`, `List`, `Map`, …; probed one
+  by one, the list is in `extract/groovy.rs`). Annotations are not filtered.
+- **Stub binding (Rule).** A stub binds to the class labelled with its name when exactly one
+  class of *any* language carries that label and it is a Groovy, Java, Kotlin or Scala class
+  (`KIface`, `JIface` bind; a Python-only, Swift or C# class, or a Groovy and a Python class of
+  the same name, leave the stub). Annotation stubs bind the same way (`@Anno` → class `Anno`).
+- **Imports.** In order: the importer's own stub of that id; the only Java class named so that
+  Java code uses as a type (Java quirk J3, which reaches Groovy through the shared stub id:
+  `import com.x.Processor` → the Java class); any node with that id; the only file node whose id
+  equals it or ends with `_<it>` (§8.1), kept for a Groovy/Java/Kotlin/Scala file and dropped
+  for another language; else an external node.
+
+### 26.3 Calls
+
+A method invocation inside a method (closures included) is recorded by its name, whatever the
+receiver (`x.foo()`, `this.foo()`, `Format.pretty()`, `super.go()` all give `foo`/`pretty`/`go`).
+Juxtaposed calls (`println "x"`), `new X()`, `this(…)`/`super(…)` and the Lua denylist (§28.3)
+produce nothing; calls in field initializers or script statements have no caller.
+
+1. **In the file**: the **last** method of that name in the file, any type (quirk GR1:
+   `processor.reset()` binds the last `.reset()`; a method calling `x.reset()` inside the last
+   `reset` is a self-loop). EXTRACTED, no score; one edge per (caller, callee).
+2. **Across files**: the nearest (§19.5) method or function labelled `.name()` or `name()` in a
+   Groovy, Java, Kotlin or Scala file (line-read Spock methods included); two candidates in the
+   nearest file (a class's and its interface's `.count()`) bind nothing. INFERRED 0.85.
+
+### 26.4 Spock specifications (quirk GR2)
+
+A file with a line `def "…"(` or `def '…'(` is not parsed. Line by line: `import [static] a.b.C`
+gives an import of `slug(C)`; `[@Anno] [modifiers] class Name` gives a class without `_callable`
+flags (`contains` from the file); `def name(` and `def "text"(` / `def 'text'(` at the start of a
+line give methods of the last class seen (`.name()`, or `"text"` with double quotes), no flags;
+a `def` before any class is dropped, `void x()`, `private def x()`, interfaces, enums and
+`extends` produce nothing.
+
+### 26.5 Parity
+
+Fixture: 100% of nodes and links, communities and array order exact, report goldens exact.
+Corpus: Graphify's own fixtures (`sample.groovy`, `sample_spock.groovy`, `--ext .groovy,.gradle`)
+100%/100% nodes and links; probes 100% except a Java-side stub (`class Ext2 extends Ext` gives
+Graphify a Java stub `ext` that a Groovy import then targets; dijkstral's Java pass has no such
+stub).
+
+---
+
+## 27. Dart (2026-10-15)
+
+Fixture `tests/fixtures/dart/` (a library with an empty `part` file, models with a mixin,
+extension, typedefs and an enum, a service, utilities and a test); goldens `dart.graphify.json`,
+`dart.clustered.graphify.json` and the §17.6 report goldens. Graphify reads Dart with regular
+expressions, not a grammar: the per-file cache has no `raw_calls` or `parse_errors`, labels keep
+line breaks from multi-line matches, and `library shop;` is a "variable" of type `library`.
+Derived from the fixture, three probes and the per-file cache of dart-http (322 files), against
+which a Python model of the passes was iterated to 99.9% before the Rust port.
+
+### 27.1 Passes
+
+Each pass runs one pattern over the whole text (`\s` crosses lines) and counts a match only when
+the line holding its name is at brace depth 0 or 1, braces counted naively per line (strings and
+comments included). Edges come out pass by pass, in this order:
+
+1. **Types**: `class`/`mixin`/`enum` declarations by position. `defines` from the file; for a
+   class, `inherits` (`extends`), `mixes_in` (`with`), `implements`, each to the type's leading
+   `[\w.]` run (`_i1.Mock` kept whole, `jni$_.JObject` → `jni`, `class _$X` → `_`), and
+   `references` (no context) from the class to the base of each generic argument of the
+   superclass (`extends State<BookList>` → `BookList`; `implements X<Y>` references nothing); a
+   mixin's `on` types → `inherits`.
+2. **Annotations**: a run of `@name…` lines directly above a class, an extension type or a
+   method gives `configures` from that declaration to `@name` (id `annotation_<slug>`,
+   `file_type: concept`); `@override` is skipped. Annotations above fields configure nothing.
+3. **Typedefs**: `typedef X = T;` → `defines X` and `references` (context `typedef`) from `X` to
+   `T`'s last dotted segment (`ffi.Pointer<…>` → `Pointer`); function typedefs (`Function`) are
+   not matched.
+4. **Extensions**: `extension X on T` → `defines X` and `extends` from `X` to `T`'s first word
+   (`objc.ObjCBlock<…>` → `objc`), at the line of `T`; `extension type X` → `defines X`.
+5. **Variables**: `TYPE NAME` followed by `=`, `;` or the end of a line, `TYPE` any run of word
+   characters, `<>?,[].` and whitespace (line breaks included): fields, locals of top-level
+   functions, getters (`T get x =>`), `library x;`, `return x == y` (type `return`), `as x;`.
+   `defines NAME` and `references` (context `variable_type`) from the file to the type: leading
+   `late final`/`late`/`final`/`const`/`var` dropped, the part before `<`, then the last dotted
+   segment (`late final ffi.Pointer<K>` → `Pointer`, `String? get`, `static const int`,
+   `external int` kept as written); `int double bool String num dynamic void Object`, `as` and
+   `show` reference nothing.
+6. **Methods**: `[modifiers] TYPE [x.]name(` with a lowercase `name` that is not a keyword
+   (`get`, `set`, `if`, `Function`…), and `factory C.name(`; `defines`. Constructors, generic
+   methods `f<T>(`, `void Name(` and names after a `$` are not matched.
+7. **Imports**: `import`/`export 'uri' …;` → `imports`/`exports` to a shared node `slug(uri)`
+   labelled with the URI; each `if (…) 'uri'` alternative adds one with context
+   `conditional_uri`. URIs are never resolved to files.
+8. **Generic calls**: every `f<T>(` in the file (any depth) → `references` (context
+   `type_lookup`) from the file to `T`'s last dotted segment (`_lookup<ffi.Pointer<ffi.Char>>(`
+   → `Char>`); types with `?` or `$` and the builtins above are skipped.
+
+All edges are EXTRACTED with `confidence_score: 1.0`. A repeated (source, target, relation) in a
+file keeps its first occurrence (quirk DA2; which line Graphify keeps for duplicates is not
+fully pinned: two of three fixture cases keep the first, one keeps the last).
+
+### 27.2 Nodes
+
+- **File**: `source_location: null` even when the file is not empty.
+- **Definitions**: `file_slug(name)`, label as written, no flags; one node per id, first wins.
+- **Shared nodes** (types, URIs, annotations): `{"id": slug(label), "label": …, "file_type":
+  "code"|"concept", "source_file": null, "source_location": null, "_origin": "ast"}`; shared
+  across files and exempt from §4.5 renaming. dijkstral writes them as external-kind nodes with
+  null fields.
+- **Parts (quirk DA1)**: a file with `part of 'lib.dart'` defines its names under the library's
+  id from the library file node (`lib_lib -defines-> …`), adds `lib -includes-> part` at the
+  `part of` line and `part -contains-> …` for each definition. Graphify then writes those ids with
+  the slug of the canonical scan root in front (`users_hades_…_dart_http_pkgs_http2_lib_src_frames_frames_frame`),
+  so they depend on where the repository is checked out; dijkstral reproduces this from the
+  canonical root (the fixture's part file has no declarations for that reason). `part of name;`
+  is only a variable (`references part of`).
+
+### 27.3 Cross-file pass
+
+A shared type node binds to the only Dart definition labelled with its name (`?` ignored), of any
+kind (`objc` binds to the `as objc;` "variable"; `@ffi` annotations bind to it the same way);
+otherwise it stays. The binding is global per node id.
+
+### 27.4 Parity and open questions
+
+Fixture: 100% of nodes and links, communities exact, report goldens exact; three field
+differences remain (two reference locations, quirk DA2; one `context`, below). Corpus dart-http
+(`--ext .dart`, frozen reference): def nodes 99.9% recall / 99.7% precision, links 99.7% / 99.2%
+(`defines` 99.9/99.7, `imports`, `exports`, `includes`, `contains`, `extends`, `mixes_in` 100%,
+`inherits` 100/98.9, `implements` 100/91.5, `references` 97.2/95.2), NMI 0.964.
+
+- **`defines` collapse (shared rule).** When a file both defines `X` and references the type `X`
+  (bound to that definition), Graphify keeps the `defines` link without the reference's context,
+  as for `contains`/`method`; `graph.rs` merges the context in (88 corpus links, one fixture
+  link). Treating `defines` as structural in the fold would match.
+- Same-file preference in type binding (Graphify binds some types to a same-file definition when
+  several files define the name), the `bloc_lookup` references (`context.read<T>()`, 12 corpus
+  edges), a few parameter-list "definitions" and the first-wins label of shared nodes are not
+  reproduced.
+
+---
+
+## 28. Lua (2026-10-15)
+
+Fixture `tests/fixtures/lua/` (a `lib/shop` package with `init.lua`, models with metatables, a
+busted spec, an extensionless `#!/usr/bin/env lua` script and a Luau module); goldens
+`lua.graphify.json`, `lua.clustered.graphify.json` and the §17.6 report goldens. `.lua`, `.luau`
+and extensionless files whose shebang program is exactly `lua` are Lua (`lua5.1`, `luajit` are
+not); Luau uses the Lua grammar (tree-sitter-lua; 0.2.0, 0.4.1 and 0.5.0 match Graphify's
+`first_error_line` on all of penlight and the probes) and keeps whatever its error recovery
+leaves. Derived from the fixture, about twenty probes and penlight.
+
+### 28.1 Nodes
+
+- **File**: as §5.1; nothing else per file (no rationale: comments, `---` doc comments and
+  `NOTE:`/`WHY:` are ignored).
+- **Function**: every `function name(…)` statement (`local function f`, `function M.f`,
+  `function M.sub:f`) that is neither inside a named function's body nor inside a `local`
+  declaration, at any depth otherwise (`if`, `do`, loops, and anonymous functions passed as
+  arguments, returned or assigned, as in busted `describe`/`it` blocks): id
+  `file_slug(name as written)`, label `name()` with the name's text (`M.sub:f()`,
+  `M . spaced()`), `_callable`, `contains` from the file at the statement line. Duplicate ids
+  (`M:f` and `M.f`) merge, first label kept, one `contains` per statement.
+- Not nodes: anonymous functions (`local f = function`, `M.f = function`, table fields), named
+  functions inside function bodies or `local` declarations.
+
+### 28.2 Imports (`require`)
+
+- **Where.** Outside named function bodies only. A `local` declaration is searched as text for
+  the first `require` (so `myrequire("x")`, `x.require("x")` and `"require('x')"` inside a string
+  count, at the declaration's first line, and only the first of `require "a" or require "b"`);
+  any other call named `require` (statement, argument, `return`, condition, assignment) is read
+  the same way at its own line. Comments do not count.
+- **Pattern.** `require`, optional space, then `(` with an optional `[[`, `"` or `'`, or a bare
+  `"`/`'`; optional space; then the longest run of word characters, `.`, `-`, `/`. So
+  `require(x)` → `x`, `require("a" .. b)` → `a`, `require "s13 x"` → `s13`; `require [[m]]`,
+  `require(("m"))` and `require ""` name nothing.
+- **Edge (quirk LU1).** `imports`, EXTRACTED, `confidence_score: 1.0`, context `import`, and a
+  bare-number `source_location` (`"3"`, not `"L3"`).
+- **Target.** With `.` read as `/`, Graphify checks the disk from the importer's directory up to
+  the root: `<dir>/<path>.lua`, then `<dir>/<path>/init.lua`, nearest directory first (`pl.` →
+  `pl/init.lua`). A hit links that file; an existing file that is not indexed drops the edge.
+  Otherwise the target is the external `slug(module)`, which the build then remaps (§8.1) when
+  exactly one file node's id equals it or ends with `_<it>` (`pl_utils` → `lua/pl/utils.lua`,
+  `zz_top` → `lib/zz/top.lua`): a Lua/Luau file is linked, the importer itself or a file of
+  another language drops the edge, two candidates keep the external.
+
+### 28.3 Calls
+
+Calls belong to the enclosing node function (calls in anonymous functions included); calls at
+the top level, in anonymous functions outside a node, or in nested named functions are dropped.
+The callee is the call's name as written: `f`, `M.f`, `a.b.c`, `f()` for `f()()`. Bare names in
+this denylist never bind and are not recorded: the Q15 Python builtins except `object`, the JS
+globals, the constructor list except `Uuid`, and `console` (`print`, `type`, `len`, `map`, `next`,
+`open`, `str`…; Lua's own `tostring`, `pairs`, `require`, `setmetatable` bind).
+
+1. **In the file** (EXTRACTED, no score, one edge per (caller, callee), first line): a name equal
+   to a function's label without `()`; `self:m()` inside a function named on a table `T` binds
+   `T:m` or `T.m`. Other method calls (`x:m()`, `Obj:m()`, `self.k:m()`) never bind, in the file
+   or across files.
+2. **Across files**: a name equal to the label of a file the caller's file requires
+   (`lexer.lua(…)` with `require "pl.lexer"`) links that file, EXTRACTED 1.0. Otherwise the
+   nearest (§19.5) Lua function labelled with the name, or Lua file named so (`p.lua()` → `p.lua`),
+   INFERRED 0.85; a tie binds nothing. Only Lua and Luau files are candidates.
+
+### 28.4 Parity
+
+Fixture: 100% of nodes and links, communities and node order exact, report goldens exact.
+Corpus penlight (`--ext .lua`, frozen reference): 905/905 nodes, 1800/1800 links, communities and
+array order identical. Graphify's `sample.luau`: 100%.
+
+- **Open (shared loader).** The `graph.json` loader behind `dijkstral cluster-only` reads only
+  `L<n>` locations, so re-clustering Graphify's own Lua graph sorts the bare-number import links
+  by an empty location; `golden_lua.rs` checks everything else the cluster-only check covers.

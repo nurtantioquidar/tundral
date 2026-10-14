@@ -11,15 +11,18 @@
 
 pub mod c;
 pub mod csharp;
+pub mod dart;
 pub mod data;
 pub mod dotnet;
 pub mod elixir;
 pub mod fortran;
 pub mod go;
+pub mod groovy;
 pub mod java;
 pub mod julia;
 pub mod kotlin;
 pub mod legacy;
+pub mod lua;
 pub mod objc;
 pub mod php;
 pub mod powershell;
@@ -135,6 +138,9 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         verilog::resolve,
         dotnet::resolve,
         legacy::resolve,
+        groovy::resolve,
+        dart::resolve,
+        lua::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {
         let handles: Vec<_> = passes

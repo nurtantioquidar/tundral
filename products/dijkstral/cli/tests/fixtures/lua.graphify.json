@@ -1,0 +1,865 @@
+{
+ "nodes": [
+  {
+   "id": "bin_shop",
+   "label": "shop",
+   "file_type": "code",
+   "source_file": "bin/shop",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "bin_shop_main",
+   "label": "main()",
+   "file_type": "code",
+   "source_file": "bin/shop",
+   "source_location": "L5",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_init",
+   "label": "init.lua",
+   "file_type": "code",
+   "source_file": "lib/shop/init.lua",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_init_m_new",
+   "label": "M.new()",
+   "file_type": "code",
+   "source_file": "lib/shop/init.lua",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_init_m_version",
+   "label": "M.version()",
+   "file_type": "code",
+   "source_file": "lib/shop/init.lua",
+   "source_location": "L16",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_base",
+   "label": "base.lua",
+   "file_type": "code",
+   "source_file": "lib/shop/models/base.lua",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_base_base_new",
+   "label": "Base.new()",
+   "file_type": "code",
+   "source_file": "lib/shop/models/base.lua",
+   "source_location": "L4",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_base_base_describe",
+   "label": "Base:describe()",
+   "file_type": "code",
+   "source_file": "lib/shop/models/base.lua",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_base_base_id",
+   "label": "Base:id()",
+   "file_type": "code",
+   "source_file": "lib/shop/models/base.lua",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_user",
+   "label": "user.lua",
+   "file_type": "code",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_user_user_new",
+   "label": "User.new()",
+   "file_type": "code",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_user_user_display",
+   "label": "User:display()",
+   "file_type": "code",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L16",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_user_user_id",
+   "label": "User:id()",
+   "file_type": "code",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L20",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_models_user_user_admin_promote",
+   "label": "User.Admin.promote()",
+   "file_type": "code",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L24",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_service",
+   "label": "service.lua",
+   "file_type": "code",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_service_service_new",
+   "label": "Service.new()",
+   "file_type": "code",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_service_service_add",
+   "label": "Service:add()",
+   "file_type": "code",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L11",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_service_service_log",
+   "label": "Service:log()",
+   "file_type": "code",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L16",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_service_service_names",
+   "label": "Service:names()",
+   "file_type": "code",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L20",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_service_service_export",
+   "label": "Service:export()",
+   "file_type": "code",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L31",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_service_service_promote_all",
+   "label": "Service:promote_all()",
+   "file_type": "code",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L38",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util",
+   "label": "util.lua",
+   "file_type": "code",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util_clamp",
+   "label": "clamp()",
+   "file_type": "code",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L5",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util_m_format_price",
+   "label": "M.format_price()",
+   "file_type": "code",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L11",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util_m_round",
+   "label": "M.round()",
+   "file_type": "code",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L15",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util_slugify",
+   "label": "slugify()",
+   "file_type": "code",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L23",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "plugins_server",
+   "label": "server.luau",
+   "file_type": "code",
+   "source_file": "plugins/server.luau",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "plugins_server_server_new",
+   "label": "Server.new()",
+   "file_type": "code",
+   "source_file": "plugins/server.luau",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "plugins_server_server_start",
+   "label": "Server:start()",
+   "file_type": "code",
+   "source_file": "plugins/server.luau",
+   "source_location": "L15",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "plugins_server_boot",
+   "label": "boot()",
+   "file_type": "code",
+   "source_file": "plugins/server.luau",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "spec_service_spec",
+   "label": "service_spec.lua",
+   "file_type": "code",
+   "source_file": "spec/service_spec.lua",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "spec_service_spec_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "spec/service_spec.lua",
+   "source_location": "L11",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "spec_service_spec_make_service",
+   "label": "make_service()",
+   "file_type": "code",
+   "source_file": "spec/service_spec.lua",
+   "source_location": "L15",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "shop",
+   "label": "shop",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "dkjson",
+   "label": "dkjson",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "shop_service",
+   "label": "shop_service",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "bin_shop",
+   "target": "shop",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "bin/shop",
+   "source_location": "3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "bin_shop",
+   "target": "bin_shop_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "bin/shop",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_init",
+   "target": "lib_shop_util",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/init.lua",
+   "source_location": "2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_init",
+   "target": "lib_shop_models_user",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/init.lua",
+   "source_location": "3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_init",
+   "target": "lib_shop_service",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/init.lua",
+   "source_location": "4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_init",
+   "target": "lib_shop_init_m_new",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/init.lua",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_init",
+   "target": "lib_shop_init_m_version",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/init.lua",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_base",
+   "target": "lib_shop_models_base_base_new",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/models/base.lua",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_base",
+   "target": "lib_shop_models_base_base_describe",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/models/base.lua",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_base",
+   "target": "lib_shop_models_base_base_id",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/models/base.lua",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_base_base_describe",
+   "target": "lib_shop_models_base_base_id",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/models/base.lua",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_user",
+   "target": "lib_shop_models_base",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_user",
+   "target": "lib_shop_util",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_user",
+   "target": "lib_shop_models_user_user_new",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_user",
+   "target": "lib_shop_models_user_user_display",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_user",
+   "target": "lib_shop_models_user_user_id",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_user",
+   "target": "lib_shop_models_user_user_admin_promote",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "lib_shop_models_user",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.lua",
+   "source_location": "1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "dkjson",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/service.lua",
+   "source_location": "2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "lib_shop_service_service_new",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "lib_shop_service_service_add",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "lib_shop_service_service_log",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "lib_shop_service_service_names",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "lib_shop_service_service_export",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service",
+   "target": "lib_shop_service_service_promote_all",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L38",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service_service_add",
+   "target": "lib_shop_service_service_log",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service_service_export",
+   "target": "lib_shop_service_service_names",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util",
+   "target": "lib_shop_util_clamp",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util",
+   "target": "lib_shop_util_m_format_price",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util",
+   "target": "lib_shop_util_m_round",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util",
+   "target": "lib_shop_util_slugify",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util_m_format_price",
+   "target": "lib_shop_util_clamp",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util_m_round",
+   "target": "lib_shop_util_clamp",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.lua",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "plugins_server",
+   "target": "plugins_server_server_new",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "plugins/server.luau",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "plugins_server",
+   "target": "plugins_server_server_start",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "plugins/server.luau",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "plugins_server",
+   "target": "plugins_server_boot",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "plugins/server.luau",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "plugins_server_boot",
+   "target": "plugins_server_server_new",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "plugins/server.luau",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "spec_service_spec",
+   "target": "shop_service",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "spec/service_spec.lua",
+   "source_location": "1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "spec_service_spec",
+   "target": "lib_shop_init",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "spec/service_spec.lua",
+   "source_location": "2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "spec_service_spec",
+   "target": "spec_service_spec_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "spec/service_spec.lua",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "spec_service_spec",
+   "target": "spec_service_spec_make_service",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "spec/service_spec.lua",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "spec_service_spec_make_service",
+   "target": "spec_service_spec_helper",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "spec/service_spec.lua",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "bin_shop_main",
+   "target": "lib_shop_util_slugify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "bin/shop",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_init_m_new",
+   "target": "lib_shop_service_service_new",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "lib/shop/init.lua",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_user_user_new",
+   "target": "lib_shop_models_base_base_new",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_models_user_user_display",
+   "target": "lib_shop_util_m_format_price",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "lib/shop/models/user.lua",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service_service_names",
+   "target": "lib_shop_util_slugify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_service_service_promote_all",
+   "target": "lib_shop_models_user_user_admin_promote",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "lib/shop/service.lua",
+   "source_location": "L40",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "spec_service_spec_helper",
+   "target": "lib_shop_service_service_new",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "spec/service_spec.lua",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "spec_service_spec_make_service",
+   "target": "lib_shop_models_user_user_new",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "spec/service_spec.lua",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

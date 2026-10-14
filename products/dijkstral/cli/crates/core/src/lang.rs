@@ -89,6 +89,12 @@ pub enum Lang {
     Cobol,
     /// `.dmf .dmi .dmm` (§44.6).
     Byond,
+    /// `.groovy`, `.gradle` (§26).
+    Groovy,
+    /// `.dart` (§27).
+    Dart,
+    /// `.lua`, `.luau`, and `lua` shebang scripts (§28).
+    Lua,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -125,6 +131,9 @@ pub enum Family {
     Inert,
     /// Grammar-less scanners (§44).
     Legacy,
+    Groovy,
+    Dart,
+    Lua,
 }
 
 impl Lang {
@@ -186,6 +195,9 @@ impl Lang {
             "cls" | "trigger" => Lang::Apex,
             "cob" | "cbl" | "cpy" => Lang::Cobol,
             "dmf" | "dmi" | "dmm" => Lang::Byond,
+            "groovy" | "gradle" => Lang::Groovy,
+            "dart" => Lang::Dart,
+            "lua" | "luau" => Lang::Lua,
             _ => return None,
         })
     }
@@ -225,6 +237,9 @@ impl Lang {
             | Lang::Apex
             | Lang::Cobol
             | Lang::Byond => Family::Legacy,
+            Lang::Groovy => Family::Groovy,
+            Lang::Dart => Family::Dart,
+            Lang::Lua => Family::Lua,
         }
     }
 
@@ -255,6 +270,9 @@ impl Lang {
             Lang::ObjC => tree_sitter_objc::LANGUAGE.into(),
             Lang::Fortran => tree_sitter_fortran::LANGUAGE.into(),
             Lang::Verilog => tree_sitter_verilog::LANGUAGE.into(),
+            Lang::Groovy => tree_sitter_groovy::LANGUAGE.into(),
+            Lang::Lua => tree_sitter_lua::LANGUAGE.into(),
+            Lang::Dart => return None,
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
             Lang::Solidity => return None,
             Lang::MsBuild
@@ -291,6 +309,7 @@ fn shebang(path: &Path) -> Option<Lang> {
         "ruby" => Lang::Ruby,
         "node" | "nodejs" => Lang::JavaScript,
         "php" => Lang::Php,
+        "lua" => Lang::Lua,
         "perl" | "fish" | "tcsh" => Lang::Inert,
         _ => return None,
     })

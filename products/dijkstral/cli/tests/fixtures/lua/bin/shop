@@ -1,0 +1,14 @@
+#!/usr/bin/env lua
+package.path = "lib/?.lua;lib/?/init.lua;" .. package.path
+local shop = require("shop")
+
+local function main(args)
+  local svc = shop.new(args[1] or "guest")
+  for _, n in ipairs(svc:names()) do
+    print(n)
+  end
+  slugify("x")
+  format_price(1)
+end
+
+main(arg)

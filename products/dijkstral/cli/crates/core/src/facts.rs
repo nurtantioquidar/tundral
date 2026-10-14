@@ -135,6 +135,9 @@ pub enum LangFacts {
     Verilog(crate::extract::verilog::VerilogFacts),
     Dotnet(crate::extract::dotnet::DotnetFacts),
     Legacy(crate::extract::legacy::LegacyFacts),
+    Groovy(crate::extract::groovy::GroovyFacts),
+    Dart(crate::extract::dart::DartFacts),
+    Lua(crate::extract::lua::LuaFacts),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
