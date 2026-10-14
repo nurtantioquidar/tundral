@@ -1,0 +1,2464 @@
+{
+ "title": "cpp — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 84 nodes, 118 edges, 7 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "cli-skills",
+   "CLI & Skill Installers"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "legacycxx-counter-run",
+   "Legacycxx Counter Run"
+  ],
+  [
+   "include-geo-pointh",
+   "Include Geo Pointh"
+  ],
+  [
+   "shapehpp-include-geo",
+   "Shapehpp Include Geo"
+  ],
+  [
+   "shapecpp-circlearea-circlecircle",
+   "Shapecpp Circlearea Circlecircle"
+  ],
+  [
+   "include-geo-shapehpp",
+   "Include Geo Shapehpp"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    CLI_SKILLS_9964CBB8(\"CLI & Skill Installers<br/><small>12 nodes</small>\")",
+     "    class CLI_SKILLS_9964CBB8 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>13 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    LEGACYCXX_COUNTER_RUN_E522B81C(\"Legacycxx Counter Run<br/><small>15 nodes</small>\")",
+     "    class LEGACYCXX_COUNTER_RUN_E522B81C module;",
+     "    INCLUDE_GEO_POINTH_4A878EAC(\"Include Geo Pointh<br/><small>12 nodes</small>\")",
+     "    class INCLUDE_GEO_POINTH_4A878EAC module;",
+     "    SHAPEHPP_INCLUDE_GEO_FF23D6C2(\"Shapehpp Include Geo<br/><small>11 nodes</small>\")",
+     "    class SHAPEHPP_INCLUDE_GEO_FF23D6C2 module;",
+     "    SHAPECPP_CIRCLEAREA_CIRCLECIRCLE_EF260AB6(\"Shapecpp Circlearea Circlecircle<br/><small>11 nodes</small>\")",
+     "    class SHAPECPP_CIRCLEAREA_CIRCLECIRCLE_EF260AB6 module;",
+     "    INCLUDE_GEO_SHAPEHPP_A40642CD(\"Include Geo Shapehpp<br/><small>10 nodes</small>\")",
+     "    class INCLUDE_GEO_SHAPEHPP_A40642CD module;",
+     "    SHAPECPP_CIRCLEAREA_CIRCLECIRCLE_EF260AB6 -->|contains x3| INCLUDE_GEO_SHAPEHPP_A40642CD",
+     "    CLI_SKILLS_9964CBB8 -->|calls x2| INCLUDE_GEO_SHAPEHPP_A40642CD",
+     "    SHAPEHPP_INCLUDE_GEO_FF23D6C2 -->|imports x2| INCLUDE_GEO_POINTH_4A878EAC",
+     "    SHAPEHPP_INCLUDE_GEO_FF23D6C2 -->|contains x2| INCLUDE_GEO_SHAPEHPP_A40642CD",
+     "    TESTS_FIXTURES_B84B1DCC -->|method| LEGACYCXX_COUNTER_RUN_E522B81C",
+     "    TESTS_FIXTURES_B84B1DCC -->|inherits| INCLUDE_GEO_SHAPEHPP_A40642CD",
+     "    INCLUDE_GEO_POINTH_4A878EAC -->|inherits| INCLUDE_GEO_SHAPEHPP_A40642CD",
+     "    INCLUDE_GEO_POINTH_4A878EAC -->|method| CLI_SKILLS_9964CBB8",
+     "    INCLUDE_GEO_SHAPEHPP_A40642CD -->|references| SHAPEHPP_INCLUDE_GEO_FF23D6C2",
+     "    LEGACYCXX_COUNTER_RUN_E522B81C -->|imports| INCLUDE_GEO_POINTH_4A878EAC",
+     "    INCLUDE_GEO_POINTH_4A878EAC -->|contains| TESTS_FIXTURES_B84B1DCC",
+     "    CLI_SKILLS_9964CBB8 -->|imports| SHAPEHPP_INCLUDE_GEO_FF23D6C2"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Legacycxx Counter Run -> Include Geo Pointh -> Tests & Fixtures -> Include Geo Shapehpp -> Shapehpp Include Geo -> Shapecpp Circlearea Circlecircle -> CLI & Skill Installers"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "CLI & Skill Installers",
+      "12",
+      "3"
+     ],
+     [
+      "Tests & Fixtures",
+      "13",
+      "1"
+     ],
+     [
+      "Legacycxx Counter Run",
+      "15",
+      "0"
+     ],
+     [
+      "Include Geo Pointh",
+      "12",
+      "2"
+     ],
+     [
+      "Shapehpp Include Geo",
+      "11",
+      "4"
+     ],
+     [
+      "Shapecpp Circlearea Circlecircle",
+      "11",
+      "5"
+     ],
+     [
+      "Include Geo Shapehpp",
+      "10",
+      "6"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "cli-skills",
+   "heading": "2. CLI & Skill Installers",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: CLI & Skill Installers (12 nodes, 14 edges)",
+     "    subgraph cli_skills_src_main_cc_74c2ff4c[\"src/main.cc\"]",
+     "        src_main_main_24787d5c(\"main()<br/><small>src/main.cc</small>\")",
+     "        src_main_3231ff52(\"main.cc\")",
+     "        src_main_print_area_a3c4c59f(\"print_area()<br/><small>src/main.cc</small>\")",
+     "        src_main_helper_738307ef(\"helper()<br/><small>src/main.cc</small>\")",
+     "    end",
+     "    subgraph cli_skills_External_generated_0c226fa1[\"External / generated\"]",
+     "        iostream_cedda28b(\"iostream\")",
+     "        memory_81c5d49b(\"memory\")",
+     "        global_9027cc5a(\"__global__\")",
+     "    end",
+     "    subgraph cli_skills_src_kernels_cu_d13a9ba8[\"src/kernels.cu\"]",
+     "        src_kernels_cu_src_kernels_8df05158(\"kernels.cu\")",
+     "        src_kernels_launch_scale_e7874144(\"launch_scale()<br/><small>src/kernels.cu</small>\")",
+     "        src_kernels_scale_kernel_e22c4bf0(\"scale_kernel()<br/><small>src/kernels.cu</small>\")",
+     "    end",
+     "    include_geo_shape_rect_square_56724ead(\"square()<br/><small>include/geo/shape.hpp</small>\")",
+     "    src_kernels_h_src_kernels_14fbfc2a(\"kernels.h\")",
+     "    src_main_main_24787d5c -->|calls| include_geo_shape_rect_square_56724ead",
+     "    src_main_main_24787d5c -->|calls| src_main_print_area_a3c4c59f",
+     "    src_main_main_24787d5c -->|calls| src_main_helper_738307ef",
+     "    src_kernels_cu_src_kernels_8df05158 -->|imports| src_kernels_h_src_kernels_14fbfc2a",
+     "    src_main_3231ff52 -->|imports| iostream_cedda28b",
+     "    src_main_3231ff52 -->|imports| memory_81c5d49b",
+     "    src_main_3231ff52 -->|imports| src_kernels_h_src_kernels_14fbfc2a",
+     "    src_main_main_24787d5c -->|calls| src_kernels_launch_scale_e7874144",
+     "    class src_main_main_24787d5c function;",
+     "    class src_main_3231ff52 function;",
+     "    class src_main_print_area_a3c4c59f function;",
+     "    class src_main_helper_738307ef function;",
+     "    class iostream_cedda28b async;",
+     "    class memory_81c5d49b function;",
+     "    class global_9027cc5a function;",
+     "    class src_kernels_cu_src_kernels_8df05158 function;",
+     "    class src_kernels_launch_scale_e7874144 function;",
+     "    class src_kernels_scale_kernel_e22c4bf0 function;",
+     "    class include_geo_shape_rect_square_56724ead function;",
+     "    class src_kernels_h_src_kernels_14fbfc2a function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "CLI & Skill Installers groups implementation around maincc, kernelscu, scale, kernelsh, mostly in src/main.cc, src/kernels.cu, include/geo/shape.hpp. This section covers 12 nodes and 14 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x5, calls x4, imports x4, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        ".square()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "src/main.cc"
+       ],
+       [
+        "Rect",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".square() node in include/geo/shape.hpp."
+     ],
+     [
+      "2",
+      [
+       [
+        "launch_scale()",
+        "src/kernels.cu"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "src/main.cc"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "launch_scale() node in src/kernels.cu."
+     ],
+     [
+      "3",
+      [
+       [
+        "scale_kernel()",
+        "src/kernels.cu"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "scale_kernel() node in src/kernels.cu."
+     ],
+     [
+      "4",
+      [
+       [
+        "helper()",
+        "src/main.cc"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "src/main.cc"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in src/main.cc."
+     ],
+     [
+      "5",
+      [
+       [
+        "main()",
+        "src/main.cc"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "helper()",
+        "src/main.cc"
+       ],
+       [
+        "launch_scale()",
+        "src/kernels.cu"
+       ],
+       [
+        "print_area()",
+        "src/main.cc"
+       ],
+       "+2 more"
+      ],
+      "main() node in src/main.cc."
+     ],
+     [
+      "6",
+      [
+       [
+        "print_area()",
+        "src/main.cc"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "src/main.cc"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "print_area() node in src/main.cc."
+     ],
+     [
+      "7",
+      [
+       [
+        "__global__",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "__global__ node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "kernels.cu",
+        "src/kernels.cu"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "kernels.h",
+        "src/kernels.h"
+       ]
+      ],
+      "kernels.cu node in src/kernels.cu."
+     ],
+     [
+      "9",
+      [
+       [
+        "kernels.h",
+        "src/kernels.h"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "kernels.cu",
+        "src/kernels.cu"
+       ],
+       [
+        "main.cc",
+        "src/main.cc"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "kernels.h node in src/kernels.h."
+     ],
+     [
+      "10",
+      [
+       [
+        "main.cc",
+        "src/main.cc"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "iostream"
+       ],
+       [
+        "kernels.h",
+        "src/kernels.h"
+       ],
+       [
+        "memory"
+       ],
+       "+1 more"
+      ],
+      "main.cc node in src/main.cc."
+     ],
+     [
+      "11",
+      [
+       [
+        "iostream",
+        ""
+       ]
+      ],
+      "Async",
+      [
+       [
+        "main.cc",
+        "src/main.cc"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "iostream node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "memory",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.cc",
+        "src/main.cc"
+       ],
+       [
+        "shape.hpp",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "memory node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/main.cc",
+      "4 nodes"
+     ],
+     [
+      "src/kernels.cu",
+      "3 nodes"
+     ],
+     [
+      "include/geo/shape.hpp",
+      "1 nodes"
+     ],
+     [
+      "src/kernels.h",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "3. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (13 nodes, 13 edges)",
+     "    subgraph tests_fixtures_include_geo_shape_hpp_375a2738[\"include/geo/shape.hpp\"]",
+     "        include_geo_shape_circle_ff6212f0(\"Circle<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_circle_area_9fdfe223(\"area()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_circle_center_c61cd1b0(\"center_<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_circle_r_6564d4b3(\"r_<br/><small>include/geo/shape.hpp</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_include_geo_point_h_3c7f24db[\"include/geo/point.h\"]",
+     "        include_geo_point_point_c72e9360(\"Point<br/><small>include/geo/point.h</small>\")",
+     "        include_geo_point_point_x_d1040b8e(\"x<br/><small>include/geo/point.h</small>\")",
+     "        include_geo_point_point_y_50769fc5(\"y<br/><small>include/geo/point.h</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_tests_shape_test_cc_9db07c4e[\"tests/shape_test.cc\"]",
+     "        tests_shape_test_62536890(\"shape_test.cc\")",
+     "        tests_shape_test_main_f0a463cf(\"main()<br/><small>tests/shape_test.cc</small>\")",
+     "        tests_shape_test_test_circle_267b8432(\"test_circle()<br/><small>tests/shape_test.cc</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_External_generated_473753cb[\"External / generated\"]",
+     "        cassert_768a46a5(\"cassert\")",
+     "        shape_5080fd62(\"shape\")",
+     "    end",
+     "    src_shape_geo_point_dist_68b86f0f(\"geo::Point::dist()<br/><small>src/shape.cpp</small>\")",
+     "    include_geo_shape_circle_ff6212f0 -->|method| include_geo_shape_circle_area_9fdfe223",
+     "    tests_shape_test_main_f0a463cf -->|calls| tests_shape_test_test_circle_267b8432",
+     "    tests_shape_test_62536890 -->|imports| cassert_768a46a5",
+     "    tests_shape_test_62536890 -->|imports| shape_5080fd62",
+     "    tests_shape_test_test_circle_267b8432 -->|calls| include_geo_shape_circle_area_9fdfe223",
+     "    class include_geo_shape_circle_ff6212f0 klass;",
+     "    class include_geo_shape_circle_area_9fdfe223 function;",
+     "    class include_geo_shape_circle_center_c61cd1b0 function;",
+     "    class include_geo_shape_circle_r_6564d4b3 function;",
+     "    class include_geo_point_point_c72e9360 klass;",
+     "    class include_geo_point_point_x_d1040b8e function;",
+     "    class include_geo_point_point_y_50769fc5 function;",
+     "    class tests_shape_test_62536890 test;",
+     "    class tests_shape_test_main_f0a463cf test;",
+     "    class tests_shape_test_test_circle_267b8432 test;",
+     "    class cassert_768a46a5 async;",
+     "    class shape_5080fd62 function;",
+     "    class src_shape_geo_point_dist_68b86f0f function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around include, geo, shape, shapehpp, mostly in include/geo/shape.hpp, include/geo/point.h, tests/shape_test.cc. This section covers 13 nodes and 13 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: defines x4, references x2, calls x2, imports x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Point",
+        "include/geo/point.h"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "dist()",
+        "include/geo/point.h"
+       ]
+      ],
+      "Point node in include/geo/point.h."
+     ],
+     [
+      "2",
+      [
+       [
+        "Circle",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "area()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Circle node in include/geo/shape.hpp."
+     ],
+     [
+      "3",
+      [
+       [
+        ".area()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "test_circle()",
+        "tests/shape_test.cc"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".area() node in include/geo/shape.hpp."
+     ],
+     [
+      "4",
+      [
+       [
+        "geo::Point::dist()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "geo::Point::dist() node in src/shape.cpp."
+     ],
+     [
+      "5",
+      [
+       [
+        "main()",
+        "tests/shape_test.cc"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "test_circle()",
+        "tests/shape_test.cc"
+       ]
+      ],
+      "main() node in tests/shape_test.cc."
+     ],
+     [
+      "6",
+      [
+       [
+        "test_circle()",
+        "tests/shape_test.cc"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "main()",
+        "tests/shape_test.cc"
+       ]
+      ],
+      [
+       [
+        "area()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "7",
+      [
+       [
+        "x",
+        "include/geo/point.h"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "x node in include/geo/point.h."
+     ],
+     [
+      "8",
+      [
+       [
+        "y",
+        "include/geo/point.h"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "y node in include/geo/point.h."
+     ],
+     [
+      "9",
+      [
+       [
+        "center_",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "center_ node in include/geo/shape.hpp."
+     ],
+     [
+      "10",
+      [
+       [
+        "r_",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "r_ node in include/geo/shape.hpp."
+     ],
+     [
+      "11",
+      [
+       [
+        "shape_test.cc",
+        "tests/shape_test.cc"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "cassert"
+       ],
+       [
+        "shape"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "12",
+      [
+       [
+        "cassert",
+        ""
+       ]
+      ],
+      "Async",
+      [
+       [
+        "shape_test.cc",
+        "tests/shape_test.cc"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "cassert node in project."
+     ],
+     [
+      "13",
+      [
+       [
+        "shape",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape_test.cc",
+        "tests/shape_test.cc"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "shape node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "include/geo/shape.hpp",
+      "4 nodes"
+     ],
+     [
+      "include/geo/point.h",
+      "3 nodes"
+     ],
+     [
+      "tests/shape_test.cc",
+      "3 nodes"
+     ],
+     [
+      "src/shape.cpp",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "legacycxx-counter-run",
+   "heading": "4. Legacycxx Counter Run",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Legacycxx Counter Run (15 nodes, 22 edges)",
+     "    subgraph legacycxx_counter_run_src_legacy_cxx_87361039[\"src/legacy.cxx\"]",
+     "        src_legacy_use_point_a811a4cf(\"use_point()<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_counter_d94f37c7(\"Counter<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_base_395db316(\"Base<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_derived_0ecbed5c(\"Derived<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_base_run_e1d9e0a0(\"run()<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_counter_get_2be2493a(\"get()<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_counter_bump_35c11055(\"bump()<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_derived_run_d29d8747(\"run()<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_legacy_add_8831a570(\"legacy_add()<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_clamp_to_c8d7c774(\"clamp_to()<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_derived_counter_4d0090bd(\"counter<br/><small>src/legacy.cxx</small>\")",
+     "        src_legacy_fe25e620(\"legacy.cxx\")",
+     "        src_legacy_counter_n_7ca2b00a(\"n<br/><small>src/legacy.cxx</small>\")",
+     "    end",
+     "    src_legacy_cxx_t_eacc107d(\"T\")",
+     "    include_geo_point_point_dist_ad8df378(\"dist()<br/><small>include/geo/point.h</small>\")",
+     "    src_legacy_base_395db316 -->|method| src_legacy_base_run_e1d9e0a0",
+     "    src_legacy_counter_d94f37c7 -->|method| src_legacy_counter_get_2be2493a",
+     "    src_legacy_counter_d94f37c7 -->|method| src_legacy_counter_bump_35c11055",
+     "    src_legacy_derived_0ecbed5c -->|method| src_legacy_derived_run_d29d8747",
+     "    src_legacy_counter_bump_35c11055 -->|calls| src_legacy_legacy_add_8831a570",
+     "    src_legacy_derived_run_d29d8747 -->|calls| src_legacy_counter_bump_35c11055",
+     "    src_legacy_use_point_a811a4cf -->|calls| src_legacy_derived_run_d29d8747",
+     "    src_legacy_use_point_a811a4cf -->|calls| src_legacy_clamp_to_c8d7c774",
+     "    src_legacy_use_point_a811a4cf -->|calls| src_legacy_legacy_add_8831a570",
+     "    src_legacy_use_point_a811a4cf -->|calls| include_geo_point_point_dist_ad8df378",
+     "    class src_legacy_use_point_a811a4cf ui;",
+     "    class src_legacy_counter_d94f37c7 klass;",
+     "    class src_legacy_base_395db316 klass;",
+     "    class src_legacy_derived_0ecbed5c klass;",
+     "    class src_legacy_base_run_e1d9e0a0 function;",
+     "    class src_legacy_counter_get_2be2493a function;",
+     "    class src_legacy_counter_bump_35c11055 function;",
+     "    class src_legacy_derived_run_d29d8747 function;",
+     "    class src_legacy_legacy_add_8831a570 function;",
+     "    class src_legacy_clamp_to_c8d7c774 function;",
+     "    class src_legacy_derived_counter_4d0090bd function;",
+     "    class src_legacy_fe25e620 function;",
+     "    class src_legacy_counter_n_7ca2b00a function;",
+     "    class src_legacy_cxx_t_eacc107d klass;",
+     "    class include_geo_point_point_dist_ad8df378 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Legacycxx Counter Run groups implementation around legacycxx, counter, run, base, mostly in src/legacy.cxx, include/geo/point.h. This section covers 15 nodes and 22 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x7, calls x6, method x4, defines x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Base",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "run()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Base node in src/legacy.cxx."
+     ],
+     [
+      "2",
+      [
+       [
+        "Counter",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "bump()",
+        "src/legacy.cxx"
+       ],
+       [
+        "get()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Counter node in src/legacy.cxx."
+     ],
+     [
+      "3",
+      [
+       [
+        "Derived",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "run()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Derived node in src/legacy.cxx."
+     ],
+     [
+      "4",
+      [
+       [
+        ".dist()",
+        "include/geo/point.h"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Point",
+        "include/geo/point.h"
+       ],
+       [
+        "use_point()",
+        "src/legacy.cxx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".dist() node in include/geo/point.h."
+     ],
+     [
+      "5",
+      [
+       [
+        ".run()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Base",
+        "src/legacy.cxx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".run() node in src/legacy.cxx."
+     ],
+     [
+      "6",
+      [
+       [
+        "clamp_to()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "use_point()",
+        "src/legacy.cxx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "clamp_to() node in src/legacy.cxx."
+     ],
+     [
+      "7",
+      [
+       [
+        ".bump()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Counter",
+        "src/legacy.cxx"
+       ],
+       [
+        "run()",
+        "src/legacy.cxx"
+       ]
+      ],
+      [
+       [
+        "legacy_add()",
+        "src/legacy.cxx"
+       ]
+      ],
+      ".bump() node in src/legacy.cxx."
+     ],
+     [
+      "8",
+      [
+       [
+        ".get()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Counter",
+        "src/legacy.cxx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".get() node in src/legacy.cxx."
+     ],
+     [
+      "9",
+      [
+       [
+        ".run()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Derived",
+        "src/legacy.cxx"
+       ],
+       [
+        "use_point()",
+        "src/legacy.cxx"
+       ]
+      ],
+      [
+       [
+        "bump()",
+        "src/legacy.cxx"
+       ]
+      ],
+      ".run() node in src/legacy.cxx."
+     ],
+     [
+      "10",
+      [
+       [
+        "legacy_add()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "bump()",
+        "src/legacy.cxx"
+       ],
+       [
+        "use_point()",
+        "src/legacy.cxx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "legacy_add() node in src/legacy.cxx."
+     ],
+     [
+      "11",
+      [
+       [
+        "use_point()",
+        "src/legacy.cxx"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "clamp_to()",
+        "src/legacy.cxx"
+       ],
+       [
+        "dist()",
+        "include/geo/point.h"
+       ],
+       [
+        "legacy_add()",
+        "src/legacy.cxx"
+       ],
+       "+1 more"
+      ],
+      "use_point() node in src/legacy.cxx."
+     ],
+     [
+      "12",
+      [
+       [
+        "legacy.cxx",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "point.h",
+        "include/geo/point.h"
+       ]
+      ],
+      "legacy.cxx node in src/legacy.cxx."
+     ],
+     [
+      "13",
+      [
+       [
+        "n",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "n node in src/legacy.cxx."
+     ],
+     [
+      "14",
+      [
+       [
+        "T",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "T node in project."
+     ],
+     [
+      "15",
+      [
+       [
+        "counter",
+        "src/legacy.cxx"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "counter node in src/legacy.cxx."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/legacy.cxx",
+      "13 nodes"
+     ],
+     [
+      "include/geo/point.h",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "include-geo-pointh",
+   "heading": "5. Include Geo Pointh",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Include Geo Pointh (12 nodes, 11 edges)",
+     "    subgraph include_geo_pointh_include_geo_point_h_73724be7[\"include/geo/point.h\"]",
+     "        include_geo_point_8e73d1ae(\"point.h\")",
+     "        include_geo_point_bits_670d60eb(\"Bits<br/><small>include/geo/point.h</small>\")",
+     "        include_geo_point_named_b647778f(\"Named<br/><small>include/geo/point.h</small>\")",
+     "        include_geo_point_bits_f_a27d5432(\"f<br/><small>include/geo/point.h</small>\")",
+     "        include_geo_point_named_label_a3437406(\"label<br/><small>include/geo/point.h</small>\")",
+     "        include_geo_point_near_9da901b0(\"near()<br/><small>include/geo/point.h</small>\")",
+     "        include_geo_point_bits_u_8f7edc7e(\"u<br/><small>include/geo/point.h</small>\")",
+     "    end",
+     "    subgraph include_geo_pointh_include_geo_shape_hpp_7cd919ff[\"include/geo/shape.hpp\"]",
+     "        include_geo_shape_rect_24e88b27(\"Rect<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_rect_area_b3a8f062(\"area()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_rect_h_cba9f02b(\"h_<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_rect_w_6ddd31c6(\"w_<br/><small>include/geo/shape.hpp</small>\")",
+     "    end",
+     "    cmath_db9c549f(\"cmath\")",
+     "    include_geo_shape_rect_24e88b27 -->|method| include_geo_shape_rect_area_b3a8f062",
+     "    include_geo_point_8e73d1ae -->|imports| cmath_db9c549f",
+     "    class include_geo_point_8e73d1ae function;",
+     "    class include_geo_point_bits_670d60eb klass;",
+     "    class include_geo_point_named_b647778f klass;",
+     "    class include_geo_point_bits_f_a27d5432 function;",
+     "    class include_geo_point_named_label_a3437406 function;",
+     "    class include_geo_point_near_9da901b0 function;",
+     "    class include_geo_point_bits_u_8f7edc7e function;",
+     "    class include_geo_shape_rect_24e88b27 klass;",
+     "    class include_geo_shape_rect_area_b3a8f062 function;",
+     "    class include_geo_shape_rect_h_cba9f02b function;",
+     "    class include_geo_shape_rect_w_6ddd31c6 function;",
+     "    class cmath_db9c549f function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Include Geo Pointh groups implementation around include, geo, pointh, shapehpp, mostly in include/geo/point.h, include/geo/shape.hpp. This section covers 12 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: defines x5, contains x3, inherits x1, method x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Bits",
+        "include/geo/point.h"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Bits node in include/geo/point.h."
+     ],
+     [
+      "2",
+      [
+       [
+        "Named",
+        "include/geo/point.h"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Named node in include/geo/point.h."
+     ],
+     [
+      "3",
+      [
+       [
+        "Rect",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "area()",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "square()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Rect node in include/geo/shape.hpp."
+     ],
+     [
+      "4",
+      [
+       [
+        "near()",
+        "include/geo/point.h"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "near() node in include/geo/point.h."
+     ],
+     [
+      "5",
+      [
+       [
+        ".area()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Rect",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".area() node in include/geo/shape.hpp."
+     ],
+     [
+      "6",
+      [
+       [
+        "point.h",
+        "include/geo/point.h"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "legacy.cxx",
+        "src/legacy.cxx"
+       ],
+       [
+        "shape.hpp",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       [
+        "cmath"
+       ]
+      ],
+      "point.h node in include/geo/point.h."
+     ],
+     [
+      "7",
+      [
+       [
+        "f",
+        "include/geo/point.h"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "f node in include/geo/point.h."
+     ],
+     [
+      "8",
+      [
+       [
+        "u",
+        "include/geo/point.h"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "u node in include/geo/point.h."
+     ],
+     [
+      "9",
+      [
+       [
+        "label",
+        "include/geo/point.h"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "label node in include/geo/point.h."
+     ],
+     [
+      "10",
+      [
+       [
+        "h_",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "h_ node in include/geo/shape.hpp."
+     ],
+     [
+      "11",
+      [
+       [
+        "w_",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "w_ node in include/geo/shape.hpp."
+     ],
+     [
+      "12",
+      [
+       [
+        "cmath",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "point.h",
+        "include/geo/point.h"
+       ],
+       [
+        "shape.cpp",
+        "src/shape.cpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "cmath node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "include/geo/point.h",
+      "7 nodes"
+     ],
+     [
+      "include/geo/shape.hpp",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shapehpp-include-geo",
+   "heading": "6. Shapehpp Include Geo",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shapehpp Include Geo (11 nodes, 15 edges)",
+     "    subgraph shapehpp_include_geo_include_geo_shape_hpp_53c6ec37[\"include/geo/shape.hpp\"]",
+     "        include_geo_shape_registry_b49e61b5(\"Registry<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_33810fff(\"shape.hpp\")",
+     "        include_geo_shape_registry_add_4ce5b2a3(\"add()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_registry_size_3c4b6a30(\"size()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_registry_first_79f78200(\"first()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_registry_t_first_679bbf06(\"Registry<T>::first()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_registry_items_3ee9d1ee(\"items_<br/><small>include/geo/shape.hpp</small>\")",
+     "    end",
+     "    subgraph shapehpp_include_geo_External_generated_448dfd1e[\"External / generated\"]",
+     "        vector_027c1146(\"vector\")",
+     "        include_geo_shape_hpp_t_f64eb457(\"T\")",
+     "        size_t_1470d06e(\"size_t\")",
+     "        unique_ptr_b54f4028(\"unique_ptr\")",
+     "    end",
+     "    include_geo_shape_registry_b49e61b5 -->|method| include_geo_shape_registry_add_4ce5b2a3",
+     "    include_geo_shape_registry_b49e61b5 -->|method| include_geo_shape_registry_size_3c4b6a30",
+     "    include_geo_shape_registry_b49e61b5 -->|method| include_geo_shape_registry_first_79f78200",
+     "    include_geo_shape_registry_size_3c4b6a30 -->|calls| include_geo_shape_registry_size_3c4b6a30",
+     "    include_geo_shape_33810fff -->|imports| vector_027c1146",
+     "    class include_geo_shape_registry_b49e61b5 klass;",
+     "    class include_geo_shape_33810fff function;",
+     "    class include_geo_shape_registry_add_4ce5b2a3 function;",
+     "    class include_geo_shape_registry_size_3c4b6a30 function;",
+     "    class include_geo_shape_registry_first_79f78200 function;",
+     "    class include_geo_shape_registry_t_first_679bbf06 function;",
+     "    class include_geo_shape_registry_items_3ee9d1ee function;",
+     "    class vector_027c1146 function;",
+     "    class include_geo_shape_hpp_t_f64eb457 klass;",
+     "    class size_t_1470d06e function;",
+     "    class unique_ptr_b54f4028 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shapehpp Include Geo groups implementation around shapehpp, include, geo, size, mostly in include/geo/shape.hpp. This section covers 11 nodes and 15 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: references x7, method x3, contains x2, defines x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Registry",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "add()",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "first()",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "size()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Registry node in include/geo/shape.hpp."
+     ],
+     [
+      "2",
+      [
+       [
+        ".add()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Registry",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".add() node in include/geo/shape.hpp."
+     ],
+     [
+      "3",
+      [
+       [
+        ".first()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Registry",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".first() node in include/geo/shape.hpp."
+     ],
+     [
+      "4",
+      [
+       [
+        ".size()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Registry",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "size()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       [
+        "size()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      ".size() node in include/geo/shape.hpp."
+     ],
+     [
+      "5",
+      [
+       [
+        "Registry<T>::first()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Registry<T>::first() node in include/geo/shape.hpp."
+     ],
+     [
+      "6",
+      [
+       [
+        "shape.hpp",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.cc",
+        "src/main.cc"
+       ]
+      ],
+      [
+       [
+        "memory"
+       ],
+       [
+        "point.h",
+        "include/geo/point.h"
+       ],
+       [
+        "string"
+       ],
+       "+1 more"
+      ],
+      "shape.hpp node in include/geo/shape.hpp."
+     ],
+     [
+      "7",
+      [
+       [
+        "T",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "T node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "items_",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "items_ node in include/geo/shape.hpp."
+     ],
+     [
+      "9",
+      [
+       [
+        "size_t",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "size_t node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        "unique_ptr",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "unique_ptr node in project."
+     ],
+     [
+      "11",
+      [
+       [
+        "vector",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape.hpp",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "vector node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "include/geo/shape.hpp",
+      "7 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shapecpp-circlearea-circlecircle",
+   "heading": "7. Shapecpp Circlearea Circlecircle",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shapecpp Circlearea Circlecircle (11 nodes, 10 edges)",
+     "    subgraph shapecpp_circlearea_circlecircle_src_shape_cpp_a7512e93[\"src/shape.cpp\"]",
+     "        src_shape_db93368e(\"shape.cpp\")",
+     "        src_shape_circle_circle_87896436(\"Circle::Circle()<br/><small>src/shape.cpp</small>\")",
+     "        src_shape_circle_area_ec20d397(\"Circle::area()<br/><small>src/shape.cpp</small>\")",
+     "        src_shape_rect_rect_2db689ba(\"Rect::Rect()<br/><small>src/shape.cpp</small>\")",
+     "        src_shape_rect_area_5c6dd08f(\"Rect::area()<br/><small>src/shape.cpp</small>\")",
+     "        src_shape_rect_square_13404789(\"Rect::square()<br/><small>src/shape.cpp</small>\")",
+     "        src_shape_shape_name_c4647a07(\"Shape::name()<br/><small>src/shape.cpp</small>\")",
+     "        src_shape_geo_detail_round_up_2d00fe83(\"geo::detail::round_up()<br/><small>src/shape.cpp</small>\")",
+     "    end",
+     "    subgraph shapecpp_circlearea_circlecircle_External_genera_5158ce4f[\"External / generated\"]",
+     "        sstream_4ae47e00(\"sstream\")",
+     "        rect_c6731fb7(\"Rect\")",
+     "        string_ecb25204(\"string\")",
+     "    end",
+     "    src_shape_db93368e -->|imports| sstream_4ae47e00",
+     "    class src_shape_db93368e function;",
+     "    class src_shape_circle_circle_87896436 function;",
+     "    class src_shape_circle_area_ec20d397 function;",
+     "    class src_shape_rect_rect_2db689ba function;",
+     "    class src_shape_rect_area_5c6dd08f function;",
+     "    class src_shape_rect_square_13404789 function;",
+     "    class src_shape_shape_name_c4647a07 function;",
+     "    class src_shape_geo_detail_round_up_2d00fe83 function;",
+     "    class sstream_4ae47e00 async;",
+     "    class rect_c6731fb7 klass;",
+     "    class string_ecb25204 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shapecpp Circlearea Circlecircle groups implementation around shapecpp, circlearea, circlecircle, geodetailround, mostly in src/shape.cpp. This section covers 11 nodes and 10 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x7, references x2, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Circle::area()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Circle::area() node in src/shape.cpp."
+     ],
+     [
+      "2",
+      [
+       [
+        "Circle::Circle()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Circle::Circle() node in src/shape.cpp."
+     ],
+     [
+      "3",
+      [
+       [
+        "geo::detail::round_up()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "geo::detail::round_up() node in src/shape.cpp."
+     ],
+     [
+      "4",
+      [
+       [
+        "Rect::area()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Rect::area() node in src/shape.cpp."
+     ],
+     [
+      "5",
+      [
+       [
+        "Rect::Rect()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Rect::Rect() node in src/shape.cpp."
+     ],
+     [
+      "6",
+      [
+       [
+        "Rect::square()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Rect::square() node in src/shape.cpp."
+     ],
+     [
+      "7",
+      [
+       [
+        "Shape::name()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shape::name() node in src/shape.cpp."
+     ],
+     [
+      "8",
+      [
+       [
+        "Rect",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Rect node in project."
+     ],
+     [
+      "9",
+      [
+       [
+        "shape.cpp",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "cmath"
+       ],
+       [
+        "Shape",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "sstream"
+       ]
+      ],
+      "shape.cpp node in src/shape.cpp."
+     ],
+     [
+      "10",
+      [
+       [
+        "string",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "shape.hpp",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "string node in project."
+     ],
+     [
+      "11",
+      [
+       [
+        "sstream",
+        ""
+       ]
+      ],
+      "Async",
+      [
+       [
+        "shape.cpp",
+        "src/shape.cpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "sstream node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/shape.cpp",
+      "8 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "include-geo-shapehpp",
+   "heading": "8. Include Geo Shapehpp",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Include Geo Shapehpp (10 nodes, 11 edges)",
+     "    subgraph include_geo_shapehpp_include_geo_shape_hpp_5d68cdaf[\"include/geo/shape.hpp\"]",
+     "        include_geo_shape_shape_44a3f53a(\"Shape<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_shape_kind_dcf5f2d1(\"kind()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_shape_shape_b3c66976(\"~Shape()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_shape_area_536a871e(\"area()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_shape_name_d0d1715f(\"name()<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_kind_circle_0ab0a028(\"Circle<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_kind_4aff1dfe(\"Kind<br/><small>include/geo/shape.hpp</small>\")",
+     "        include_geo_shape_kind_rect_d932fd50(\"Rect<br/><small>include/geo/shape.hpp</small>\")",
+     "    end",
+     "    subgraph include_geo_shapehpp_src_shape_cpp_a94b81a0[\"src/shape.cpp\"]",
+     "        src_shape_total_area_52200b60(\"total_area()<br/><small>src/shape.cpp</small>\")",
+     "        src_shape_shape_shape_5fca7e82(\"Shape::Shape()<br/><small>src/shape.cpp</small>\")",
+     "    end",
+     "    include_geo_shape_shape_44a3f53a -->|method| include_geo_shape_shape_kind_dcf5f2d1",
+     "    include_geo_shape_shape_44a3f53a -->|method| include_geo_shape_shape_shape_b3c66976",
+     "    include_geo_shape_shape_44a3f53a -->|method| include_geo_shape_shape_area_536a871e",
+     "    include_geo_shape_shape_44a3f53a -->|method| include_geo_shape_shape_name_d0d1715f",
+     "    src_shape_total_area_52200b60 -->|calls| include_geo_shape_shape_area_536a871e",
+     "    class include_geo_shape_shape_44a3f53a klass;",
+     "    class include_geo_shape_shape_kind_dcf5f2d1 function;",
+     "    class include_geo_shape_shape_shape_b3c66976 function;",
+     "    class include_geo_shape_shape_area_536a871e function;",
+     "    class include_geo_shape_shape_name_d0d1715f function;",
+     "    class include_geo_shape_kind_circle_0ab0a028 klass;",
+     "    class include_geo_shape_kind_4aff1dfe klass;",
+     "    class include_geo_shape_kind_rect_d932fd50 klass;",
+     "    class src_shape_total_area_52200b60 function;",
+     "    class src_shape_shape_shape_5fca7e82 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Include Geo Shapehpp groups implementation around include, geo, shapehpp, kind, mostly in include/geo/shape.hpp, src/shape.cpp. This section covers 10 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x4, references x4, case of x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Kind",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Kind node in include/geo/shape.hpp."
+     ],
+     [
+      "2",
+      [
+       [
+        "Shape",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "shape.cpp",
+        "src/shape.cpp"
+       ]
+      ],
+      [
+       [
+        "area()",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "kind()",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "name()",
+        "include/geo/shape.hpp"
+       ],
+       "+1 more"
+      ],
+      "Shape node in include/geo/shape.hpp."
+     ],
+     [
+      "3",
+      [
+       [
+        ".area()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shape",
+        "include/geo/shape.hpp"
+       ],
+       [
+        "total_area()",
+        "src/shape.cpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".area() node in include/geo/shape.hpp."
+     ],
+     [
+      "4",
+      [
+       [
+        ".kind()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shape",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".kind() node in include/geo/shape.hpp."
+     ],
+     [
+      "5",
+      [
+       [
+        ".name()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shape",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".name() node in include/geo/shape.hpp."
+     ],
+     [
+      "6",
+      [
+       [
+        ".~Shape()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shape",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".~Shape() node in include/geo/shape.hpp."
+     ],
+     [
+      "7",
+      [
+       [
+        "Shape::Shape()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shape::Shape() node in src/shape.cpp."
+     ],
+     [
+      "8",
+      [
+       [
+        "total_area()",
+        "src/shape.cpp"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "src/main.cc"
+       ]
+      ],
+      [
+       [
+        "area()",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "total_area() node in src/shape.cpp."
+     ],
+     [
+      "9",
+      [
+       [
+        "Circle",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Circle node in include/geo/shape.hpp."
+     ],
+     [
+      "10",
+      [
+       [
+        "Rect",
+        "include/geo/shape.hpp"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Rect node in include/geo/shape.hpp."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "include/geo/shape.hpp",
+      "8 nodes"
+     ],
+     [
+      "src/shape.cpp",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "cpp — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "84"
+     ],
+     [
+      "Edges",
+      "118"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "7"
+     ],
+     [
+      "Documented Sections",
+      "7"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "113"
+     ],
+     [
+      "INFERRED",
+      "5"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

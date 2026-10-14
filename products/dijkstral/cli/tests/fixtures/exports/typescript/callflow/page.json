@@ -1,0 +1,2213 @@
+{
+ "title": "typescript — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 68 nodes, 119 edges, 7 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "security-global",
+   "Security & Global Graph"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "userts-models-base",
+   "Userts Models Base"
+  ],
+  [
+   "servicets-ref-models",
+   "Servicets Ref Models"
+  ],
+  [
+   "models-userts-promote",
+   "Models Userts Promote"
+  ],
+  [
+   "utilts-legacy-ref",
+   "Utilts Legacy Ref"
+  ],
+  [
+   "apptsx-app-badgeprops",
+   "Apptsx App Badgeprops"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    SECURITY_GLOBAL_5B9C6A04(\"Security & Global Graph<br/><small>10 nodes</small>\")",
+     "    class SECURITY_GLOBAL_5B9C6A04 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>9 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    USERTS_MODELS_BASE_36A6F3D0(\"Userts Models Base<br/><small>14 nodes</small>\")",
+     "    class USERTS_MODELS_BASE_36A6F3D0 module;",
+     "    SERVICETS_REF_MODELS_37F1ADF1(\"Servicets Ref Models<br/><small>10 nodes</small>\")",
+     "    class SERVICETS_REF_MODELS_37F1ADF1 module;",
+     "    MODELS_USERTS_PROMOTE_EE87A1DC(\"Models Userts Promote<br/><small>9 nodes</small>\")",
+     "    class MODELS_USERTS_PROMOTE_EE87A1DC module;",
+     "    UTILTS_LEGACY_REF_E0C64B9F(\"Utilts Legacy Ref<br/><small>8 nodes</small>\")",
+     "    class UTILTS_LEGACY_REF_E0C64B9F module;",
+     "    APPTSX_APP_BADGEPROPS_BF8B6E58(\"Apptsx App Badgeprops<br/><small>8 nodes</small>\")",
+     "    class APPTSX_APP_BADGEPROPS_BF8B6E58 module;",
+     "    TESTS_FIXTURES_B84B1DCC -->|references x6| MODELS_USERTS_PROMOTE_EE87A1DC",
+     "    TESTS_FIXTURES_B84B1DCC -->|references x4| SECURITY_GLOBAL_5B9C6A04",
+     "    APPTSX_APP_BADGEPROPS_BF8B6E58 -->|imports x4| TESTS_FIXTURES_B84B1DCC",
+     "    USERTS_MODELS_BASE_36A6F3D0 -->|implements x3| SECURITY_GLOBAL_5B9C6A04",
+     "    USERTS_MODELS_BASE_36A6F3D0 -->|contains x3| MODELS_USERTS_PROMOTE_EE87A1DC",
+     "    SERVICETS_REF_MODELS_37F1ADF1 -->|contains x3| TESTS_FIXTURES_B84B1DCC",
+     "    SERVICETS_REF_MODELS_37F1ADF1 -->|imports x3| MODELS_USERTS_PROMOTE_EE87A1DC",
+     "    TESTS_FIXTURES_B84B1DCC -->|method x2| SERVICETS_REF_MODELS_37F1ADF1",
+     "    MODELS_USERTS_PROMOTE_EE87A1DC -->|inherits x2| USERTS_MODELS_BASE_36A6F3D0",
+     "    APPTSX_APP_BADGEPROPS_BF8B6E58 -->|references x2| MODELS_USERTS_PROMOTE_EE87A1DC",
+     "    TESTS_FIXTURES_B84B1DCC -->|imports x2| UTILTS_LEGACY_REF_E0C64B9F",
+     "    SERVICETS_REF_MODELS_37F1ADF1 -->|imports x2| SECURITY_GLOBAL_5B9C6A04"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Apptsx App Badgeprops -> Tests & Fixtures -> Models Userts Promote -> Userts Models Base -> Security & Global Graph -> Servicets Ref Models -> Utilts Legacy Ref"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Security & Global Graph",
+      "10",
+      "2"
+     ],
+     [
+      "Tests & Fixtures",
+      "9",
+      "3"
+     ],
+     [
+      "Userts Models Base",
+      "14",
+      "0"
+     ],
+     [
+      "Servicets Ref Models",
+      "10",
+      "1"
+     ],
+     [
+      "Models Userts Promote",
+      "9",
+      "4"
+     ],
+     [
+      "Utilts Legacy Ref",
+      "8",
+      "5"
+     ],
+     [
+      "Apptsx App Badgeprops",
+      "8",
+      "6"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "security-global",
+   "heading": "2. Security & Global Graph",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Security & Global Graph (10 nodes, 12 edges)",
+     "    subgraph security_global_src_models_repo_ts_f45c0eb1[\"src/models/repo.ts\"]",
+     "        src_models_repo_repo_2956ee01(\"Repo<br/><small>src/models/repo.ts</small>\")",
+     "        src_models_repo_repo_add_9ad8cbfd(\"add()<br/><small>src/models/repo.ts</small>\")",
+     "        src_models_repo_repo_get_e372a8b2(\"get()<br/><small>src/models/repo.ts</small>\")",
+     "        src_models_repo_repo_all_d5a35863(\"all()<br/><small>src/models/repo.ts</small>\")",
+     "        src_models_repo_entity_96fe4c6e(\"Entity<br/><small>src/models/repo.ts</small>\")",
+     "        src_models_repo_storage_72e6b4db(\"Storage<br/><small>src/models/repo.ts</small>\")",
+     "        src_models_repo_key_1c1fb92f(\"key()<br/><small>src/models/repo.ts</small>\")",
+     "        src_models_repo_c8102381(\"repo.ts\")",
+     "        src_models_repo_sealed_be56b241(\"sealed()<br/><small>src/models/repo.ts</small>\")",
+     "    end",
+     "    src_models_index_fe9ec608(\"index.ts\")",
+     "    src_models_repo_repo_2956ee01 -->|method| src_models_repo_repo_add_9ad8cbfd",
+     "    src_models_repo_repo_2956ee01 -->|method| src_models_repo_repo_get_e372a8b2",
+     "    src_models_repo_repo_2956ee01 -->|method| src_models_repo_repo_all_d5a35863",
+     "    class src_models_repo_repo_2956ee01 klass;",
+     "    class src_models_repo_repo_add_9ad8cbfd function;",
+     "    class src_models_repo_repo_get_e372a8b2 function;",
+     "    class src_models_repo_repo_all_d5a35863 function;",
+     "    class src_models_repo_entity_96fe4c6e klass;",
+     "    class src_models_repo_storage_72e6b4db klass;",
+     "    class src_models_repo_key_1c1fb92f function;",
+     "    class src_models_repo_c8102381 module;",
+     "    class src_models_repo_sealed_be56b241 function;",
+     "    class src_models_index_fe9ec608 module;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Security & Global Graph groups implementation around models, repots, indexts, entity, mostly in src/models/repo.ts, src/models/index.ts. This section covers 10 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x5, method x3, re exports x3, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Entity",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "user.ts",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Entity node in src/models/repo.ts."
+     ],
+     [
+      "2",
+      [
+       [
+        "Repo",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "run()",
+        "src/service.ts"
+       ],
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "add()",
+        "src/models/repo.ts"
+       ],
+       [
+        "all()",
+        "src/models/repo.ts"
+       ],
+       [
+        "get()",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Repo node in src/models/repo.ts."
+     ],
+     [
+      "3",
+      [
+       [
+        "key()",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "key() node in src/models/repo.ts."
+     ],
+     [
+      "4",
+      [
+       [
+        ".add()",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repo",
+        "src/models/repo.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".add() node in src/models/repo.ts."
+     ],
+     [
+      "5",
+      [
+       [
+        ".all()",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repo",
+        "src/models/repo.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".all() node in src/models/repo.ts."
+     ],
+     [
+      "6",
+      [
+       [
+        ".get()",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repo",
+        "src/models/repo.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".get() node in src/models/repo.ts."
+     ],
+     [
+      "7",
+      [
+       [
+        "sealed()",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "sealed() node in src/models/repo.ts."
+     ],
+     [
+      "8",
+      [
+       [
+        "index.ts",
+        "src/models/index.ts"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "App.tsx",
+        "src/ui/App.tsx"
+       ],
+       [
+        "service.test.ts",
+        "src/__tests__/service.test.ts"
+       ],
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Module file in src/models/index.ts."
+     ],
+     [
+      "9",
+      [
+       [
+        "repo.ts",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "user.ts",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Module file in src/models/repo.ts."
+     ],
+     [
+      "10",
+      [
+       [
+        "Storage",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Supports retrieval-augmented Q&A or streaming chat."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/models/repo.ts",
+      "9 nodes"
+     ],
+     [
+      "src/models/index.ts",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "3. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (9 nodes, 12 edges)",
+     "    subgraph tests_fixtures_src_service_ts_ea22a393[\"src/service.ts\"]",
+     "        src_service_userservice_d9a335c6(\"UserService<br/><small>src/service.ts</small>\")",
+     "        src_service_run_f190a988(\"run()<br/><small>src/service.ts</small>\")",
+     "        src_service_userservice_register_802a7e36(\"register()<br/><small>src/service.ts</small>\")",
+     "        src_service_userservice_constructor_cd16f4b9(\"constructor()<br/><small>src/service.ts</small>\")",
+     "        src_service_userservice_log_b10cfcda(\"log()<br/><small>src/service.ts</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_External_generated_473753cb[\"External / generated\"]",
+     "        src_models_index_user_8da4d6c6(\"src_models_index_user\")",
+     "        ref_vitest_28bb1904(\"ref_vitest\")",
+     "    end",
+     "    subgraph tests_fixtures_src_tests_service_test_ts_b6aef62d[\"src/__tests__/service.test.ts\"]",
+     "        src_tests_service_test_643068ed(\"service.test.ts\")",
+     "        src_tests_service_test_makeuser_0bdeb00c(\"makeUser()<br/><small>src/__tests__/service.test.ts</small>\")",
+     "    end",
+     "    src_service_userservice_d9a335c6 -->|method| src_service_userservice_constructor_cd16f4b9",
+     "    src_service_userservice_d9a335c6 -->|method| src_service_userservice_register_802a7e36",
+     "    src_service_userservice_d9a335c6 -->|method| src_service_userservice_log_b10cfcda",
+     "    src_service_run_f190a988 -->|calls| src_service_userservice_d9a335c6",
+     "    src_service_run_f190a988 -->|calls| src_service_userservice_register_802a7e36",
+     "    src_service_userservice_log_b10cfcda -->|calls| src_service_userservice_log_b10cfcda",
+     "    src_service_userservice_register_802a7e36 -->|calls| src_service_userservice_log_b10cfcda",
+     "    src_tests_service_test_643068ed -->|imports| src_service_run_f190a988",
+     "    src_tests_service_test_643068ed -->|imports| src_service_userservice_d9a335c6",
+     "    src_tests_service_test_643068ed -->|imports| src_models_index_user_8da4d6c6",
+     "    src_tests_service_test_643068ed -->|imports| ref_vitest_28bb1904",
+     "    class src_service_userservice_d9a335c6 klass;",
+     "    class src_service_run_f190a988 function;",
+     "    class src_service_userservice_register_802a7e36 function;",
+     "    class src_service_userservice_constructor_cd16f4b9 function;",
+     "    class src_service_userservice_log_b10cfcda function;",
+     "    class src_models_index_user_8da4d6c6 function;",
+     "    class ref_vitest_28bb1904 function;",
+     "    class src_tests_service_test_643068ed test;",
+     "    class src_tests_service_test_makeuser_0bdeb00c test;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around servicets, servicetestts, tests, userservice, mostly in src/service.ts, src/__tests__/service.test.ts. This section covers 9 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: calls x4, method x3, imports x3, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "UserService",
+        "src/service.ts"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "App.tsx",
+        "src/ui/App.tsx"
+       ],
+       [
+        "run()",
+        "src/service.ts"
+       ],
+       [
+        "service.test.ts",
+        "src/__tests__/service.test.ts"
+       ]
+      ],
+      [
+       [
+        "constructor()",
+        "src/service.ts"
+       ],
+       [
+        "export()",
+        "src/service.ts"
+       ],
+       [
+        "log()",
+        "src/service.ts"
+       ],
+       "+2 more"
+      ],
+      "UserService node in src/service.ts."
+     ],
+     [
+      "2",
+      [
+       [
+        "run()",
+        "src/service.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "App.tsx",
+        "src/ui/App.tsx"
+       ],
+       [
+        "handleClick()",
+        "src/ui/App.tsx"
+       ],
+       [
+        "service.test.ts",
+        "src/__tests__/service.test.ts"
+       ]
+      ],
+      [
+       [
+        "register()",
+        "src/service.ts"
+       ],
+       [
+        "Repo",
+        "src/models/repo.ts"
+       ],
+       [
+        "UserService",
+        "src/service.ts"
+       ],
+       "+1 more"
+      ],
+      "run() node in src/service.ts."
+     ],
+     [
+      "3",
+      [
+       [
+        ".constructor()",
+        "src/service.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".constructor() node in src/service.ts."
+     ],
+     [
+      "4",
+      [
+       [
+        ".log()",
+        "src/service.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "log()",
+        "src/service.ts"
+       ],
+       [
+        "register()",
+        "src/service.ts"
+       ],
+       [
+        "UserService",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "log()",
+        "src/service.ts"
+       ]
+      ],
+      ".log() node in src/service.ts."
+     ],
+     [
+      "5",
+      [
+       [
+        ".register()",
+        "src/service.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "run()",
+        "src/service.ts"
+       ],
+       [
+        "UserService",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "log()",
+        "src/service.ts"
+       ],
+       [
+        "slugify()",
+        "src/util.ts"
+       ]
+      ],
+      ".register() node in src/service.ts."
+     ],
+     [
+      "6",
+      [
+       [
+        "makeUser()",
+        "src/__tests__/service.test.ts"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "User",
+        "src/models/user.ts"
+       ]
+      ],
+      "makeUser() node in src/__tests__/service.test.ts."
+     ],
+     [
+      "7",
+      [
+       [
+        "service.test.ts",
+        "src/__tests__/service.test.ts"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "index.ts",
+        "src/models/index.ts"
+       ],
+       [
+        "ref_vitest"
+       ],
+       [
+        "run()",
+        "src/service.ts"
+       ],
+       "+4 more"
+      ],
+      "Module file in src/__tests__/service.test.ts."
+     ],
+     [
+      "8",
+      [
+       [
+        "ref_vitest",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.test.ts",
+        "src/__tests__/service.test.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "9",
+      [
+       [
+        "src_models_index_user",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "App.tsx",
+        "src/ui/App.tsx"
+       ],
+       [
+        "service.test.ts",
+        "src/__tests__/service.test.ts"
+       ],
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "src_models_index_user node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/service.ts",
+      "5 nodes"
+     ],
+     [
+      "src/__tests__/service.test.ts",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "userts-models-base",
+   "heading": "4. Userts Models Base",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Userts Models Base (14 nodes, 14 edges)",
+     "    src_models_user_base_ade6addd(\"Base<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_user_display_ce45e4db(\"display()<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_base_save_b516c430(\"save()<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_base_describe_e70e4cf2(\"describe()<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_validate_19ebc1e1(\"validate()<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_formatname_cb4c7f13(\"formatName()<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_role_admin_ef46e6e7(\"Admin<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_role_member_6fd036f2(\"Member<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_role_9e7f3d1a(\"Role<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_userid_2caeda37(\"UserId<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_helper_96fb5b09(\"helper()<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_e59d5d33(\"user.ts\")",
+     "    src_models_user_rationale_21_a13ad1b3(\"NOTE: persistence is faked in this fixt...<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_rationale_61_3adf07d7(\"WHY: names are displayed title-cased ev...<br/><small>src/models/user.ts</small>\")",
+     "    src_models_user_base_ade6addd -->|method| src_models_user_base_describe_e70e4cf2",
+     "    src_models_user_base_ade6addd -->|method| src_models_user_base_save_b516c430",
+     "    src_models_user_base_save_b516c430 -->|calls| src_models_user_validate_19ebc1e1",
+     "    src_models_user_user_display_ce45e4db -->|calls| src_models_user_formatname_cb4c7f13",
+     "    class src_models_user_base_ade6addd klass;",
+     "    class src_models_user_user_display_ce45e4db function;",
+     "    class src_models_user_base_save_b516c430 function;",
+     "    class src_models_user_base_describe_e70e4cf2 function;",
+     "    class src_models_user_validate_19ebc1e1 function;",
+     "    class src_models_user_formatname_cb4c7f13 function;",
+     "    class src_models_user_role_admin_ef46e6e7 klass;",
+     "    class src_models_user_role_member_6fd036f2 klass;",
+     "    class src_models_user_role_9e7f3d1a klass;",
+     "    class src_models_user_userid_2caeda37 klass;",
+     "    class src_models_user_helper_96fb5b09 function;",
+     "    class src_models_user_e59d5d33 module;",
+     "    class src_models_user_rationale_21_a13ad1b3 concept;",
+     "    class src_models_user_rationale_61_3adf07d7 concept;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Userts Models Base groups implementation around userts, models, base, role, mostly in src/models/user.ts. This section covers 14 nodes and 14 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x6, method x2, case of x2, calls x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Base",
+        "src/models/user.ts"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "describe()",
+        "src/models/user.ts"
+       ],
+       [
+        "save()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Base node in src/models/user.ts."
+     ],
+     [
+      "2",
+      [
+       [
+        "Role",
+        "src/models/user.ts"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Role node in src/models/user.ts."
+     ],
+     [
+      "3",
+      [
+       [
+        "UserId",
+        "src/models/user.ts"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "UserId node in src/models/user.ts."
+     ],
+     [
+      "4",
+      [
+       [
+        ".describe()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Base",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".describe() node in src/models/user.ts."
+     ],
+     [
+      "5",
+      [
+       [
+        ".save()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Base",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       [
+        "validate()",
+        "src/models/user.ts"
+       ]
+      ],
+      ".save() node in src/models/user.ts."
+     ],
+     [
+      "6",
+      [
+       [
+        "formatName()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "display()",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "formatName() node in src/models/user.ts."
+     ],
+     [
+      "7",
+      [
+       [
+        "helper()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in src/models/user.ts."
+     ],
+     [
+      "8",
+      [
+       [
+        ".display()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       [
+        "formatName()",
+        "src/models/user.ts"
+       ]
+      ],
+      ".display() node in src/models/user.ts."
+     ],
+     [
+      "9",
+      [
+       [
+        "validate()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "save()",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "validate() node in src/models/user.ts."
+     ],
+     [
+      "10",
+      [
+       [
+        "user.ts",
+        "src/models/user.ts"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "Entity",
+        "src/models/repo.ts"
+       ],
+       [
+        "repo.ts",
+        "src/models/repo.ts"
+       ]
+      ],
+      "Module file in src/models/user.ts."
+     ],
+     [
+      "11",
+      [
+       [
+        "Admin",
+        "src/models/user.ts"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Admin node in src/models/user.ts."
+     ],
+     [
+      "12",
+      [
+       [
+        "Member",
+        "src/models/user.ts"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Member node in src/models/user.ts."
+     ],
+     [
+      "13",
+      [
+       [
+        "NOTE: persistence is faked in this fixture.",
+        "src/models/user.ts"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for NOTE: persistence is faked in this fixture.."
+     ],
+     [
+      "14",
+      [
+       [
+        "WHY: names are displayed title-cased everywhere.",
+        "src/models/user.ts"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for WHY: names are displayed title-cased everywhere.."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/models/user.ts",
+      "14 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "servicets-ref-models",
+   "heading": "5. Servicets Ref Models",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Servicets Ref Models (10 nodes, 10 edges)",
+     "    subgraph servicets_ref_models_External_generated_63fe855a[\"External / generated\"]",
+     "        src_models_index_admin_a6329959(\"src_models_index_admin\")",
+     "        src_models_index_helper_56161b3c(\"src_models_index_helper\")",
+     "        src_models_index_storage_d538a411(\"src_models_index_storage\")",
+     "        ref_polyfill_994fd643(\"ref_polyfill\")",
+     "        ref_fs_8204e0dd(\"ref_fs\")",
+     "        ref_node_path_350e6c64(\"ref_node_path\")",
+     "    end",
+     "    subgraph servicets_ref_models_src_service_ts_e26865fd[\"src/service.ts\"]",
+     "        src_service_d8129df7(\"service.ts\")",
+     "        src_service_comparenames_afa5077c(\"compareNames()<br/><small>src/service.ts</small>\")",
+     "        src_service_userservice_export_fad71aba(\"export()<br/><small>src/service.ts</small>\")",
+     "        src_service_helper_bdff2475(\"helper()<br/><small>src/service.ts</small>\")",
+     "    end",
+     "    src_service_d8129df7 -->|imports| src_models_index_admin_a6329959",
+     "    src_service_d8129df7 -->|imports| src_models_index_helper_56161b3c",
+     "    src_service_d8129df7 -->|imports| src_models_index_storage_d538a411",
+     "    src_service_d8129df7 -->|imports| ref_polyfill_994fd643",
+     "    src_service_d8129df7 -->|imports| ref_fs_8204e0dd",
+     "    src_service_d8129df7 -->|imports| ref_node_path_350e6c64",
+     "    class src_models_index_admin_a6329959 function;",
+     "    class src_models_index_helper_56161b3c function;",
+     "    class src_models_index_storage_d538a411 function;",
+     "    class ref_polyfill_994fd643 function;",
+     "    class ref_fs_8204e0dd function;",
+     "    class ref_node_path_350e6c64 function;",
+     "    class src_service_d8129df7 module;",
+     "    class src_service_comparenames_afa5077c function;",
+     "    class src_service_userservice_export_fad71aba function;",
+     "    class src_service_helper_bdff2475 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Servicets Ref Models groups implementation around servicets, ref, models, helper, mostly in src/service.ts. This section covers 10 nodes and 10 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x3, imports x3, indirect call x2, contains x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "compareNames()",
+        "src/service.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "export()",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "compareNames() node in src/service.ts."
+     ],
+     [
+      "2",
+      [
+       [
+        "helper()",
+        "src/service.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "export()",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in src/service.ts."
+     ],
+     [
+      "3",
+      [
+       [
+        ".export()",
+        "src/service.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "compareNames()",
+        "src/service.ts"
+       ],
+       [
+        "helper()",
+        "src/service.ts"
+       ]
+      ],
+      "Exports documentation data to a target format."
+     ],
+     [
+      "4",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "App.tsx",
+        "src/ui/App.tsx"
+       ],
+       [
+        "service.test.ts",
+        "src/__tests__/service.test.ts"
+       ]
+      ],
+      [
+       [
+        "Admin",
+        "src/models/user.ts"
+       ],
+       [
+        "helper()",
+        "src/models/user.ts"
+       ],
+       [
+        "index.ts",
+        "src/models/index.ts"
+       ],
+       "+13 more"
+      ],
+      "Module file in src/service.ts."
+     ],
+     [
+      "5",
+      [
+       [
+        "ref_fs",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_fs node in project."
+     ],
+     [
+      "6",
+      [
+       [
+        "ref_node_path",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_node_path node in project."
+     ],
+     [
+      "7",
+      [
+       [
+        "ref_polyfill",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_polyfill node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "src_models_index_admin",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "src_models_index_admin node in project."
+     ],
+     [
+      "9",
+      [
+       [
+        "src_models_index_helper",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "src_models_index_helper node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        "src_models_index_storage",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Supports retrieval-augmented Q&A or streaming chat."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/service.ts",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "models-userts-promote",
+   "heading": "6. Models Userts Promote",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Models Userts Promote (9 nodes, 11 edges)",
+     "    subgraph models_userts_promote_src_models_user_ts_04407679[\"src/models/user.ts\"]",
+     "        src_models_user_user_65b36526(\"User<br/><small>src/models/user.ts</small>\")",
+     "        src_models_user_admin_7164eeaa(\"Admin<br/><small>src/models/user.ts</small>\")",
+     "        src_models_user_admin_promote_7c53518e(\"promote()<br/><small>src/models/user.ts</small>\")",
+     "        src_models_user_user_constructor_2fe69d99(\"constructor()<br/><small>src/models/user.ts</small>\")",
+     "        src_models_user_user_parse_f5a781de(\"parse()<br/><small>src/models/user.ts</small>\")",
+     "        src_models_user_user_describe_90a91ee8(\"describe()<br/><small>src/models/user.ts</small>\")",
+     "        src_models_user_named_6e710647(\"Named<br/><small>src/models/user.ts</small>\")",
+     "        src_models_user_admin_promote_bump_b0cc9807(\"bump()<br/><small>src/models/user.ts</small>\")",
+     "    end",
+     "    src_service_userservice_promote_bf3fc076(\"promote()<br/><small>src/service.ts</small>\")",
+     "    src_models_user_admin_7164eeaa -->|method| src_models_user_admin_promote_7c53518e",
+     "    src_models_user_user_65b36526 -->|method| src_models_user_user_constructor_2fe69d99",
+     "    src_models_user_user_65b36526 -->|method| src_models_user_user_parse_f5a781de",
+     "    src_models_user_user_65b36526 -->|method| src_models_user_user_describe_90a91ee8",
+     "    src_service_userservice_promote_bf3fc076 -->|calls| src_service_userservice_promote_bf3fc076",
+     "    class src_models_user_user_65b36526 klass;",
+     "    class src_models_user_admin_7164eeaa klass;",
+     "    class src_models_user_admin_promote_7c53518e function;",
+     "    class src_models_user_user_constructor_2fe69d99 function;",
+     "    class src_models_user_user_parse_f5a781de function;",
+     "    class src_models_user_user_describe_90a91ee8 function;",
+     "    class src_models_user_named_6e710647 klass;",
+     "    class src_models_user_admin_promote_bump_b0cc9807 function;",
+     "    class src_service_userservice_promote_bf3fc076 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Models Userts Promote groups implementation around models, userts, promote, admin, mostly in src/models/user.ts, src/service.ts. This section covers 9 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x4, references x3, inherits x1, implements x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Admin",
+        "src/models/user.ts"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "promote()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Admin node in src/models/user.ts."
+     ],
+     [
+      "2",
+      [
+       [
+        "Named",
+        "src/models/user.ts"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Named node in src/models/user.ts."
+     ],
+     [
+      "3",
+      [
+       [
+        "User",
+        "src/models/user.ts"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "App.tsx",
+        "src/ui/App.tsx"
+       ],
+       [
+        "makeUser()",
+        "src/__tests__/service.test.ts"
+       ],
+       [
+        "service.test.ts",
+        "src/__tests__/service.test.ts"
+       ],
+       "+1 more"
+      ],
+      [
+       [
+        "constructor()",
+        "src/models/user.ts"
+       ],
+       [
+        "describe()",
+        "src/models/user.ts"
+       ],
+       [
+        "display()",
+        "src/models/user.ts"
+       ],
+       "+1 more"
+      ],
+      "User node in src/models/user.ts."
+     ],
+     [
+      "4",
+      [
+       [
+        ".promote()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Admin",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".promote() node in src/models/user.ts."
+     ],
+     [
+      "5",
+      [
+       [
+        "bump()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "bump() node in src/models/user.ts."
+     ],
+     [
+      "6",
+      [
+       [
+        ".constructor()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".constructor() node in src/models/user.ts."
+     ],
+     [
+      "7",
+      [
+       [
+        ".describe()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".describe() node in src/models/user.ts."
+     ],
+     [
+      "8",
+      [
+       [
+        ".parse()",
+        "src/models/user.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/models/user.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".parse() node in src/models/user.ts."
+     ],
+     [
+      "9",
+      [
+       [
+        ".promote()",
+        "src/service.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "promote()",
+        "src/service.ts"
+       ],
+       [
+        "UserService",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "promote()",
+        "src/service.ts"
+       ]
+      ],
+      ".promote() node in src/service.ts."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/models/user.ts",
+      "8 nodes"
+     ],
+     [
+      "src/service.ts",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "utilts-legacy-ref",
+   "heading": "7. Utilts Legacy Ref",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Utilts Legacy Ref (8 nodes, 8 edges)",
+     "    subgraph utilts_legacy_ref_src_util_ts_dc4c340f[\"src/util.ts\"]",
+     "        src_util_6ec36e5a(\"util.ts\")",
+     "        src_util_slugify_564658e0(\"slugify()<br/><small>src/util.ts</small>\")",
+     "        src_util_helper_547374e4(\"helper()<br/><small>src/util.ts</small>\")",
+     "        src_util_legacy_2649bef5(\"legacy<br/><small>src/util.ts</small>\")",
+     "        src_util_traced_d2510b9d(\"traced()<br/><small>src/util.ts</small>\")",
+     "        src_util_join_8cb73acc(\"join<br/><small>src/util.ts</small>\")",
+     "    end",
+     "    subgraph utilts_legacy_ref_External_generated_2ca5b20f[\"External / generated\"]",
+     "        ref_path_6ea4f7de(\"ref_path\")",
+     "        ref_legacy_7afeb1e8(\"ref_legacy\")",
+     "    end",
+     "    src_util_slugify_564658e0 -->|calls| src_util_helper_547374e4",
+     "    src_util_6ec36e5a -->|imports| ref_path_6ea4f7de",
+     "    src_util_6ec36e5a -->|imports| ref_legacy_7afeb1e8",
+     "    class src_util_6ec36e5a module;",
+     "    class src_util_slugify_564658e0 function;",
+     "    class src_util_helper_547374e4 function;",
+     "    class src_util_legacy_2649bef5 function;",
+     "    class src_util_traced_d2510b9d function;",
+     "    class src_util_join_8cb73acc function;",
+     "    class ref_path_6ea4f7de function;",
+     "    class ref_legacy_7afeb1e8 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Utilts Legacy Ref groups implementation around utilts, legacy, ref, helper, mostly in src/util.ts. This section covers 8 nodes and 8 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x5, imports x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "helper()",
+        "src/util.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "slugify()",
+        "src/util.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in src/util.ts."
+     ],
+     [
+      "2",
+      [
+       [
+        "slugify()",
+        "src/util.ts"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "src/service.ts"
+       ],
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "src/util.ts"
+       ]
+      ],
+      "slugify() node in src/util.ts."
+     ],
+     [
+      "3",
+      [
+       [
+        "traced()",
+        "src/util.ts"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "traced() node in src/util.ts."
+     ],
+     [
+      "4",
+      [
+       [
+        "util.ts",
+        "src/util.ts"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "run()",
+        "src/service.ts"
+       ],
+       [
+        "service.ts",
+        "src/service.ts"
+       ]
+      ],
+      [
+       [
+        "ref_legacy"
+       ],
+       [
+        "ref_path"
+       ]
+      ],
+      "Module file in src/util.ts."
+     ],
+     [
+      "5",
+      [
+       [
+        "{ join }",
+        "src/util.ts"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "{ join } node in src/util.ts."
+     ],
+     [
+      "6",
+      [
+       [
+        "legacy",
+        "src/util.ts"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "legacy node in src/util.ts."
+     ],
+     [
+      "7",
+      [
+       [
+        "ref_legacy",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "util.ts",
+        "src/util.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_legacy node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "ref_path",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "util.ts",
+        "src/util.ts"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_path node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/util.ts",
+      "6 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "apptsx-app-badgeprops",
+   "heading": "8. Apptsx App Badgeprops",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Apptsx App Badgeprops (8 nodes, 9 edges)",
+     "    subgraph apptsx_app_badgeprops_src_ui_App_tsx_dd2fd92a[\"src/ui/App.tsx\"]",
+     "        src_ui_app_app_a1915290(\"App<br/><small>src/ui/App.tsx</small>\")",
+     "        src_ui_app_b7d1cf71(\"App.tsx\")",
+     "        src_ui_app_app_render_07f2681e(\"render()<br/><small>src/ui/App.tsx</small>\")",
+     "        src_ui_app_userlist_1af56fd4(\"UserList()<br/><small>src/ui/App.tsx</small>\")",
+     "        src_ui_app_app_handleclick_78ff965d(\"handleClick()<br/><small>src/ui/App.tsx</small>\")",
+     "        src_ui_app_badge_3b3fc750(\"Badge()<br/><small>src/ui/App.tsx</small>\")",
+     "        src_ui_app_badgeprops_4f032d36(\"BadgeProps<br/><small>src/ui/App.tsx</small>\")",
+     "    end",
+     "    ref_react_47bfb9fb(\"ref_react\")",
+     "    src_ui_app_app_a1915290 -->|method| src_ui_app_app_handleclick_78ff965d",
+     "    src_ui_app_app_a1915290 -->|method| src_ui_app_app_render_07f2681e",
+     "    src_ui_app_app_render_07f2681e -->|calls| src_ui_app_userlist_1af56fd4",
+     "    src_ui_app_userlist_1af56fd4 -->|calls| src_ui_app_badge_3b3fc750",
+     "    src_ui_app_b7d1cf71 -->|imports| ref_react_47bfb9fb",
+     "    class src_ui_app_app_a1915290 ui;",
+     "    class src_ui_app_b7d1cf71 ui;",
+     "    class src_ui_app_app_render_07f2681e ui;",
+     "    class src_ui_app_userlist_1af56fd4 ui;",
+     "    class src_ui_app_app_handleclick_78ff965d entry;",
+     "    class src_ui_app_badge_3b3fc750 ui;",
+     "    class src_ui_app_badgeprops_4f032d36 ui;",
+     "    class ref_react_47bfb9fb function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Apptsx App Badgeprops groups implementation around apptsx, app, badgeprops, handleclick, mostly in src/ui/App.tsx. This section covers 8 nodes and 9 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x4, method x2, calls x2, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "App",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "handleClick()",
+        "src/ui/App.tsx"
+       ],
+       [
+        "render()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "App node in src/ui/App.tsx."
+     ],
+     [
+      "2",
+      [
+       [
+        "BadgeProps",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "BadgeProps node in src/ui/App.tsx."
+     ],
+     [
+      "3",
+      [
+       [
+        ".handleClick()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "Entry",
+      [
+       [
+        "App",
+        "src/ui/App.tsx"
+       ]
+      ],
+      [
+       [
+        "run()",
+        "src/service.ts"
+       ]
+      ],
+      ".handleClick() node in src/ui/App.tsx."
+     ],
+     [
+      "4",
+      [
+       [
+        ".render()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "App",
+        "src/ui/App.tsx"
+       ]
+      ],
+      [
+       [
+        "UserList()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      ".render() node in src/ui/App.tsx."
+     ],
+     [
+      "5",
+      [
+       [
+        "Badge()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "UserList()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Badge() node in src/ui/App.tsx."
+     ],
+     [
+      "6",
+      [
+       [
+        "UserList()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "render()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      [
+       [
+        "Badge()",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "UserList() node in src/ui/App.tsx."
+     ],
+     [
+      "7",
+      [
+       [
+        "App.tsx",
+        "src/ui/App.tsx"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "index.ts",
+        "src/models/index.ts"
+       ],
+       [
+        "ref_react"
+       ],
+       [
+        "run()",
+        "src/service.ts"
+       ],
+       "+4 more"
+      ],
+      "Module file in src/ui/App.tsx."
+     ],
+     [
+      "8",
+      [
+       [
+        "ref_react",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "App.tsx",
+        "src/ui/App.tsx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_react node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/ui/App.tsx",
+      "7 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "typescript — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "68"
+     ],
+     [
+      "Edges",
+      "119"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "7"
+     ],
+     [
+      "Documented Sections",
+      "7"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "117"
+     ],
+     [
+      "INFERRED",
+      "2"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

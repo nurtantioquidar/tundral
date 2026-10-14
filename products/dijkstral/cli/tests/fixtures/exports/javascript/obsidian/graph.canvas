@@ -1,0 +1,712 @@
+{
+  "nodes": [
+    {
+      "id": "g0",
+      "type": "group",
+      "label": "Community 0",
+      "x": 0,
+      "y": 0,
+      "width": 660,
+      "height": 420,
+      "color": "1"
+    },
+    {
+      "id": "n_lib_store_store_add",
+      "type": "file",
+      "file": "dot-add().md",
+      "x": 20,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_store_constructor",
+      "type": "file",
+      "file": "dot-constructor().md",
+      "x": 220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_store_create",
+      "type": "file",
+      "file": "dot-create().md",
+      "x": 420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_store_size",
+      "type": "file",
+      "file": "dot-size().md",
+      "x": 20,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_store",
+      "type": "file",
+      "file": "Store.md",
+      "x": 220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_store_test_fixture",
+      "type": "file",
+      "file": "fixture().md",
+      "x": 420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_store_test",
+      "type": "file",
+      "file": "store.test.js.md",
+      "x": 20,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_store_test_store",
+      "type": "file",
+      "file": "{ Store }.md",
+      "x": 220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g1",
+      "type": "group",
+      "label": "Community 1",
+      "x": 740,
+      "y": 0,
+      "width": 660,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_lib_format_rationale_7",
+      "type": "file",
+      "file": "WHY labels are shown in a fixed-width column..md",
+      "x": 760,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_format",
+      "type": "file",
+      "file": "format.mjs.md",
+      "x": 960,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_format_helper",
+      "type": "file",
+      "file": "helper().md",
+      "x": 1160,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_helper",
+      "type": "file",
+      "file": "helper()_1.md",
+      "x": 760,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_node_fs",
+      "type": "file",
+      "file": "ref_node_fs.md",
+      "x": 960,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_path",
+      "type": "file",
+      "file": "ref_path.md",
+      "x": 1160,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g2",
+      "type": "group",
+      "label": "Community 2",
+      "x": 1480,
+      "y": 0,
+      "width": 660,
+      "height": 400,
+      "color": "3"
+    },
+    {
+      "id": "n_lib_store_cachedstore_add",
+      "type": "file",
+      "file": "dot-add()_1.md",
+      "x": 1500,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_cachedstore",
+      "type": "file",
+      "file": "CachedStore.md",
+      "x": 1700,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_rationale_26",
+      "type": "file",
+      "file": "NOTE invalidates the cache on every write..md",
+      "x": 1900,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_clear",
+      "type": "file",
+      "file": "clear().md",
+      "x": 1500,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store",
+      "type": "file",
+      "file": "store.js.md",
+      "x": 1700,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_store_utils",
+      "type": "file",
+      "file": "utils.md",
+      "x": 1900,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g3",
+      "type": "group",
+      "label": "Community 3",
+      "x": 0,
+      "y": 500,
+      "width": 660,
+      "height": 400,
+      "color": "4"
+    },
+    {
+      "id": "n_components_app_app_render",
+      "type": "file",
+      "file": "dot-render().md",
+      "x": 20,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_components_app",
+      "type": "file",
+      "file": "App.jsx.md",
+      "x": 220,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_components_app_list",
+      "type": "file",
+      "file": "List().md",
+      "x": 420,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_components_app_row",
+      "type": "file",
+      "file": "Row().md",
+      "x": 20,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_react",
+      "type": "file",
+      "file": "ref_react.md",
+      "x": 220,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g4",
+      "type": "group",
+      "label": "Community 4",
+      "x": 740,
+      "y": 500,
+      "width": 660,
+      "height": 400,
+      "color": "5"
+    },
+    {
+      "id": "n_lib_default",
+      "type": "file",
+      "file": "default.cjs.md",
+      "x": 760,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_default_helper",
+      "type": "file",
+      "file": "helper()_2.md",
+      "x": 960,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_default_lodash",
+      "type": "file",
+      "file": "lodash.md",
+      "x": 1160,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_lodash",
+      "type": "file",
+      "file": "ref_lodash.md",
+      "x": 760,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_default_store",
+      "type": "file",
+      "file": "{ Store }_1.md",
+      "x": 960,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g5",
+      "type": "group",
+      "label": "Community 5",
+      "x": 1480,
+      "y": 500,
+      "width": 600,
+      "height": 400,
+      "color": "6"
+    },
+    {
+      "id": "n_components_app_app_constructor",
+      "type": "file",
+      "file": "dot-constructor()_1.md",
+      "x": 1500,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_components_app_app_onclick",
+      "type": "file",
+      "file": "dot-onClick().md",
+      "x": 1700,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_components_app_app",
+      "type": "file",
+      "file": "App.md",
+      "x": 1500,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_format_formatall",
+      "type": "file",
+      "file": "formatAll().md",
+      "x": 1700,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g6",
+      "type": "group",
+      "label": "Community 6",
+      "x": 0,
+      "y": 980,
+      "width": 600,
+      "height": 400,
+      "color": "1"
+    },
+    {
+      "id": "n_lib_format_formatlabel",
+      "type": "file",
+      "file": "formatLabel().md",
+      "x": 20,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_lib_format_formatlabel_pad",
+      "type": "file",
+      "file": "pad().md",
+      "x": 220,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_test_store_test_fixture_lib_store_store",
+      "fromNode": "n_test_store_test_fixture",
+      "toNode": "n_lib_store_store",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_default_lib_store_store",
+      "fromNode": "n_lib_default",
+      "toNode": "n_lib_store_store",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_test_store_test_lib_store_store",
+      "fromNode": "n_test_store_test",
+      "toNode": "n_lib_store_store",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_cachedstore_lib_store_store",
+      "fromNode": "n_lib_store_cachedstore",
+      "toNode": "n_lib_store_store",
+      "label": "inherits [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_lib_store_store",
+      "fromNode": "n_lib_store",
+      "toNode": "n_lib_store_store",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_store_lib_store_store_create",
+      "fromNode": "n_lib_store_store",
+      "toNode": "n_lib_store_store_create",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_store_lib_store_store_add",
+      "fromNode": "n_lib_store_store",
+      "toNode": "n_lib_store_store_add",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_store_lib_store_store_size",
+      "fromNode": "n_lib_store_store",
+      "toNode": "n_lib_store_store_size",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_store_lib_store_store_constructor",
+      "fromNode": "n_lib_store_store",
+      "toNode": "n_lib_store_store_constructor",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_app_constructor_lib_store_cachedstore",
+      "fromNode": "n_components_app_app_constructor",
+      "toNode": "n_lib_store_cachedstore",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_lib_store_cachedstore",
+      "fromNode": "n_components_app",
+      "toNode": "n_lib_store_cachedstore",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_lib_store_cachedstore",
+      "fromNode": "n_lib_store",
+      "toNode": "n_lib_store_cachedstore",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_cachedstore_lib_store_cachedstore_add",
+      "fromNode": "n_lib_store_cachedstore",
+      "toNode": "n_lib_store_cachedstore_add",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_components_app_app",
+      "fromNode": "n_components_app",
+      "toNode": "n_components_app_app",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_app_components_app_app_constructor",
+      "fromNode": "n_components_app_app",
+      "toNode": "n_components_app_app_constructor",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_app_components_app_app_onclick",
+      "fromNode": "n_components_app_app",
+      "toNode": "n_components_app_app_onclick",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_app_components_app_app_render",
+      "fromNode": "n_components_app_app",
+      "toNode": "n_components_app_app_render",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_test_store_test_test_store_test_fixture",
+      "fromNode": "n_test_store_test",
+      "toNode": "n_test_store_test_fixture",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_lib_format_lib_format_helper",
+      "fromNode": "n_lib_format",
+      "toNode": "n_lib_format_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_lib_store_helper",
+      "fromNode": "n_lib_format",
+      "toNode": "n_lib_store_helper",
+      "label": "re_exports [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_lib_store_helper",
+      "fromNode": "n_lib_store",
+      "toNode": "n_lib_store_helper",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_lib_store_cachedstore_add_lib_store_clear",
+      "fromNode": "n_lib_store_cachedstore_add",
+      "toNode": "n_lib_store_clear",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_lib_store_clear",
+      "fromNode": "n_lib_store",
+      "toNode": "n_lib_store_clear",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_app_render_components_app_list",
+      "fromNode": "n_components_app_app_render",
+      "toNode": "n_components_app_list",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_list_components_app_row",
+      "fromNode": "n_components_app_list",
+      "toNode": "n_components_app_row",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_components_app_list",
+      "fromNode": "n_components_app",
+      "toNode": "n_components_app_list",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_row_lib_format_formatlabel",
+      "fromNode": "n_components_app_row",
+      "toNode": "n_lib_format_formatlabel",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_components_app_row",
+      "fromNode": "n_components_app",
+      "toNode": "n_components_app_row",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_default_lib_default_helper",
+      "fromNode": "n_lib_default",
+      "toNode": "n_lib_default_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_app_onclick_lib_format_formatall",
+      "fromNode": "n_components_app_app_onclick",
+      "toNode": "n_lib_format_formatall",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_lib_format_formatall",
+      "fromNode": "n_components_app",
+      "toNode": "n_lib_format_formatall",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_lib_format_formatall",
+      "fromNode": "n_lib_format",
+      "toNode": "n_lib_format_formatall",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_formatall_lib_format_formatlabel",
+      "fromNode": "n_lib_format_formatall",
+      "toNode": "n_lib_format_formatlabel",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_lib_format_formatlabel_lib_format_formatlabel_pad",
+      "fromNode": "n_lib_format_formatlabel",
+      "toNode": "n_lib_format_formatlabel_pad",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_lib_format_formatlabel",
+      "fromNode": "n_components_app",
+      "toNode": "n_lib_format_formatlabel",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_lib_format_formatlabel",
+      "fromNode": "n_lib_format",
+      "toNode": "n_lib_format_formatlabel",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_test_store_test_lib_store",
+      "fromNode": "n_test_store_test",
+      "toNode": "n_lib_store",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_test_store_test_test_store_test_store",
+      "fromNode": "n_test_store_test",
+      "toNode": "n_test_store_test_store",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_lib_store",
+      "fromNode": "n_lib_format",
+      "toNode": "n_lib_store",
+      "label": "re_exports [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_lib_format",
+      "fromNode": "n_components_app",
+      "toNode": "n_lib_format",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_ref_path",
+      "fromNode": "n_lib_format",
+      "toNode": "n_ref_path",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_ref_node_fs",
+      "fromNode": "n_lib_format",
+      "toNode": "n_ref_node_fs",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_lib_default",
+      "fromNode": "n_lib_format",
+      "toNode": "n_lib_default",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_format_rationale_7_lib_format",
+      "fromNode": "n_lib_format_rationale_7",
+      "toNode": "n_lib_format",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_lib_store",
+      "fromNode": "n_components_app",
+      "toNode": "n_lib_store",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_default_lib_store",
+      "fromNode": "n_lib_default",
+      "toNode": "n_lib_store",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_lib_store_utils",
+      "fromNode": "n_lib_store",
+      "toNode": "n_lib_store_utils",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_store_rationale_26_lib_store",
+      "fromNode": "n_lib_store_rationale_26",
+      "toNode": "n_lib_store",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_components_app_ref_react",
+      "fromNode": "n_components_app",
+      "toNode": "n_ref_react",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_default_ref_lodash",
+      "fromNode": "n_lib_default",
+      "toNode": "n_ref_lodash",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_default_lib_default_store",
+      "fromNode": "n_lib_default",
+      "toNode": "n_lib_default_store",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_lib_default_lib_default_lodash",
+      "fromNode": "n_lib_default",
+      "toNode": "n_lib_default_lodash",
+      "label": "contains [EXTRACTED]"
+    }
+  ]
+}

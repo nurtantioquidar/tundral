@@ -1,0 +1,541 @@
+{
+  "nodes": [
+    {
+      "id": "g0",
+      "type": "group",
+      "label": "Community 0",
+      "x": 0,
+      "y": 0,
+      "width": 880,
+      "height": 420,
+      "color": "1"
+    },
+    {
+      "id": "n_package_scripts_build",
+      "type": "file",
+      "file": "build.md",
+      "x": 20,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies",
+      "type": "file",
+      "file": "devDependencies.md",
+      "x": 220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_name",
+      "type": "file",
+      "file": "name.md",
+      "x": 420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package",
+      "type": "file",
+      "file": "package.json.md",
+      "x": 620,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_react",
+      "type": "file",
+      "file": "react.md",
+      "x": 20,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_scripts",
+      "type": "file",
+      "file": "scripts.md",
+      "x": 220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_typescript",
+      "type": "file",
+      "file": "typescript.md",
+      "x": 420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_typescript",
+      "type": "file",
+      "file": "typescript_1.md",
+      "x": 620,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_version",
+      "type": "file",
+      "file": "version.md",
+      "x": 20,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_zod",
+      "type": "file",
+      "file": "zod.md",
+      "x": 220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g1",
+      "type": "group",
+      "label": "Community 1",
+      "x": 960,
+      "y": 0,
+      "width": 660,
+      "height": 420,
+      "color": "2"
+    },
+    {
+      "id": "n_scripts_build_build",
+      "type": "file",
+      "file": "build().md",
+      "x": 980,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_build",
+      "type": "file",
+      "file": "build.sh.md",
+      "x": 1180,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_build_sh__entry",
+      "type": "file",
+      "file": "build.sh script.md",
+      "x": 1380,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_build_clean",
+      "type": "file",
+      "file": "clean().md",
+      "x": 980,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_common",
+      "type": "file",
+      "file": "common.sh.md",
+      "x": 1180,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_common_sh__entry",
+      "type": "file",
+      "file": "common.sh script.md",
+      "x": 1380,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_build_compile_all",
+      "type": "file",
+      "file": "compile_all().md",
+      "x": 980,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_common_log",
+      "type": "file",
+      "file": "log().md",
+      "x": 1180,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g2",
+      "type": "group",
+      "label": "Community 2",
+      "x": 1700,
+      "y": 0,
+      "width": 660,
+      "height": 400,
+      "color": "3"
+    },
+    {
+      "id": "n_tsconfig_compileroptions",
+      "type": "file",
+      "file": "compilerOptions.md",
+      "x": 1720,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_include",
+      "type": "file",
+      "file": "include.md",
+      "x": 1920,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_strict",
+      "type": "file",
+      "file": "strict.md",
+      "x": 2120,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_target",
+      "type": "file",
+      "file": "target.md",
+      "x": 1720,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig",
+      "type": "file",
+      "file": "tsconfig.json.md",
+      "x": 1920,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g3",
+      "type": "group",
+      "label": "Community 3",
+      "x": 0,
+      "y": 500,
+      "width": 600,
+      "height": 400,
+      "color": "4"
+    },
+    {
+      "id": "n_app_main_helper",
+      "type": "file",
+      "file": "helper().md",
+      "x": 20,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_app_main_main",
+      "type": "file",
+      "file": "main().md",
+      "x": 220,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_app_main",
+      "type": "file",
+      "file": "main.py.md",
+      "x": 20,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g4",
+      "type": "group",
+      "label": "Community 4",
+      "x": 960,
+      "y": 500,
+      "width": 600,
+      "height": 400,
+      "color": "5"
+    },
+    {
+      "id": "n_package_dependencies",
+      "type": "file",
+      "file": "dependencies.md",
+      "x": 980,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_react",
+      "type": "file",
+      "file": "react_1.md",
+      "x": 1180,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_zod",
+      "type": "file",
+      "file": "zod_1.md",
+      "x": 980,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g5",
+      "type": "group",
+      "label": "Community 5",
+      "x": 1700,
+      "y": 500,
+      "width": 600,
+      "height": 400,
+      "color": "6"
+    },
+    {
+      "id": "n_cargo_toml_pkg_mixed_fixture",
+      "type": "file",
+      "file": "mixed-fixture.md",
+      "x": 1720,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g6",
+      "type": "group",
+      "label": "Community 6",
+      "x": 0,
+      "y": 980,
+      "width": 600,
+      "height": 400,
+      "color": "1"
+    },
+    {
+      "id": "n_pyproject_toml_pkg_mixed_fixture",
+      "type": "file",
+      "file": "mixed-fixture_1.md",
+      "x": 20,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_app_main_main_app_main_helper",
+      "fromNode": "n_app_main_main",
+      "toNode": "n_app_main_helper",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_app_main_app_main_helper",
+      "fromNode": "n_app_main",
+      "toNode": "n_app_main_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_app_main_app_main_main",
+      "fromNode": "n_app_main",
+      "toNode": "n_app_main_main",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_ref_react",
+      "fromNode": "n_package",
+      "toNode": "n_ref_react",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_package_ref_zod",
+      "fromNode": "n_package",
+      "toNode": "n_ref_zod",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_package_ref_typescript",
+      "fromNode": "n_package",
+      "toNode": "n_ref_typescript",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_package_package_name",
+      "fromNode": "n_package",
+      "toNode": "n_package_name",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_package_version",
+      "fromNode": "n_package",
+      "toNode": "n_package_version",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_package_scripts",
+      "fromNode": "n_package",
+      "toNode": "n_package_scripts",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_package_dependencies",
+      "fromNode": "n_package",
+      "toNode": "n_package_dependencies",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_package_devdependencies",
+      "fromNode": "n_package",
+      "toNode": "n_package_devdependencies",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_devdependencies_package_devdependencies_typescript",
+      "fromNode": "n_package_devdependencies",
+      "toNode": "n_package_devdependencies_typescript",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_scripts_package_scripts_build",
+      "fromNode": "n_package_scripts",
+      "toNode": "n_package_scripts_build",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_scripts_common",
+      "fromNode": "n_scripts_build",
+      "toNode": "n_scripts_common",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_scripts_build_sh__entry",
+      "fromNode": "n_scripts_build",
+      "toNode": "n_scripts_build_sh__entry",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_scripts_build_build",
+      "fromNode": "n_scripts_build",
+      "toNode": "n_scripts_build_build",
+      "label": "defines [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_scripts_build_compile_all",
+      "fromNode": "n_scripts_build",
+      "toNode": "n_scripts_build_compile_all",
+      "label": "defines [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_scripts_build_clean",
+      "fromNode": "n_scripts_build",
+      "toNode": "n_scripts_build_clean",
+      "label": "defines [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_build_scripts_build_clean",
+      "fromNode": "n_scripts_build_build",
+      "toNode": "n_scripts_build_clean",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_build_scripts_common_log",
+      "fromNode": "n_scripts_build_build",
+      "toNode": "n_scripts_common_log",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_build_scripts_build_compile_all",
+      "fromNode": "n_scripts_build_build",
+      "toNode": "n_scripts_build_compile_all",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_sh__entry_scripts_build_build",
+      "fromNode": "n_scripts_build_sh__entry",
+      "toNode": "n_scripts_build_build",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_build_clean_scripts_common_log",
+      "fromNode": "n_scripts_build_clean",
+      "toNode": "n_scripts_common_log",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_common_scripts_common_sh__entry",
+      "fromNode": "n_scripts_common",
+      "toNode": "n_scripts_common_sh__entry",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_common_scripts_common_log",
+      "fromNode": "n_scripts_common",
+      "toNode": "n_scripts_common_log",
+      "label": "defines [EXTRACTED]"
+    },
+    {
+      "id": "e_tsconfig_tsconfig_compileroptions",
+      "fromNode": "n_tsconfig",
+      "toNode": "n_tsconfig_compileroptions",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_tsconfig_tsconfig_include",
+      "fromNode": "n_tsconfig",
+      "toNode": "n_tsconfig_include",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_tsconfig_compileroptions_tsconfig_compileroptions_strict",
+      "fromNode": "n_tsconfig_compileroptions",
+      "toNode": "n_tsconfig_compileroptions_strict",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_tsconfig_compileroptions_tsconfig_compileroptions_target",
+      "fromNode": "n_tsconfig_compileroptions",
+      "toNode": "n_tsconfig_compileroptions_target",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_dependencies_package_dependencies_react",
+      "fromNode": "n_package_dependencies",
+      "toNode": "n_package_dependencies_react",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_package_dependencies_package_dependencies_zod",
+      "fromNode": "n_package_dependencies",
+      "toNode": "n_package_dependencies_zod",
+      "label": "contains [EXTRACTED]"
+    }
+  ]
+}

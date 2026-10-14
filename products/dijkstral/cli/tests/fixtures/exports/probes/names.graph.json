@@ -1,0 +1,182 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "id": "n0",
+      "label": "L0",
+      "file_type": "x_y",
+      "community": 0
+    },
+    {
+      "id": "n1",
+      "label": "L1",
+      "file_type": "9abc",
+      "community": 0
+    },
+    {
+      "id": "n2",
+      "label": "L2",
+      "file_type": "\u00fcn\u00ef",
+      "community": 0
+    },
+    {
+      "id": "n3",
+      "label": "L3",
+      "file_type": "\u00df",
+      "community": 0
+    },
+    {
+      "id": "n4",
+      "label": "L4",
+      "file_type": "_lead",
+      "community": 0
+    },
+    {
+      "id": "n5",
+      "label": "L5",
+      "file_type": "a-b c",
+      "community": 0
+    },
+    {
+      "id": "n6",
+      "label": "L6",
+      "file_type": "code",
+      "community": 0
+    },
+    {
+      "id": "n7",
+      "label": "L7",
+      "file_type": "  ",
+      "community": 0
+    },
+    {
+      "id": "n8",
+      "label": "L8",
+      "file_type": "Ab CD",
+      "community": 0
+    },
+    {
+      "id": "n9",
+      "label": "L9",
+      "file_type": "\u00e9lan",
+      "community": 0
+    },
+    {
+      "id": "n10",
+      "label": "L10",
+      "file_type": "12",
+      "community": 0
+    },
+    {
+      "id": "ctl\nid\u0001",
+      "file_type": "code",
+      "community": 1
+    },
+    {
+      "id": "p",
+      "label": "P",
+      "file_type": "code",
+      "community": 1
+    },
+    {
+      "id": "q",
+      "label": "Q",
+      "file_type": "code",
+      "community": 1
+    }
+  ],
+  "links": [
+    {
+      "source": "n0",
+      "target": "n1",
+      "relation": "\u00df",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n1",
+      "target": "n2",
+      "relation": "_x",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n2",
+      "target": "n3",
+      "relation": "x_y z",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n3",
+      "target": "n4",
+      "relation": "9",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n4",
+      "target": "n5",
+      "relation": "a9",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n5",
+      "target": "n6",
+      "relation": "\u00fcn\u00ef",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n6",
+      "target": "n7",
+      "relation": "IMPORTS",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n7",
+      "target": "n8",
+      "relation": "calls\n",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n8",
+      "target": "n9",
+      "relation": "__",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n9",
+      "target": "n10",
+      "relation": "a\u2014b",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "n10",
+      "target": "n0",
+      "relation": "xxx",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "source": "p",
+      "target": "q",
+      "relation": "first",
+      "confidence": "INFERRED",
+      "extra1": 1
+    },
+    {
+      "source": "q",
+      "target": "p",
+      "relation": "second"
+    },
+    {
+      "source": "ctl\nid\u0001",
+      "target": "p",
+      "relation": "calls",
+      "confidence": ""
+    },
+    {
+      "source": "ghost2",
+      "target": "ghost1",
+      "relation": "calls"
+    }
+  ],
+  "hyperedges": []
+}

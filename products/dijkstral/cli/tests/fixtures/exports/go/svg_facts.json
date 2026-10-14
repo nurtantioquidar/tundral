@@ -1,0 +1,238 @@
+{
+ "source": "graphify 0.9.86 export svg (matplotlib 3.11.2); positions are not stored",
+ "canvas_pt": [
+  1432.8,
+  1000.8
+ ],
+ "background": "#1a1a2e",
+ "links_solid": 68,
+ "links_dashed": 3,
+ "legend": false,
+ "nodes": [
+  {
+   "colour": "#4e79a7",
+   "radius": 15.0,
+   "label": "main.go"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.86,
+   "label": "Greeter"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.86,
+   "label": ".Greet()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 19.36,
+   "label": "service.go"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.86,
+   "label": "apply()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.82,
+   "label": "logLine()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.82,
+   "label": "strings2upper()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 12.68,
+   "label": "main()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.82,
+   "label": "N"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 12.68,
+   "label": "NewUserService()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.86,
+   "label": "Format()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.8,
+   "label": "Sum()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 15.0,
+   "label": "helpers.go"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.86,
+   "label": "clean()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 12.68,
+   "label": "Normalize()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.82,
+   "label": "testing.T"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 10.86,
+   "label": "clean()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.8,
+   "label": "service_test.go"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 12.68,
+   "label": "TestRegister()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 15.0,
+   "label": "User"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 15.0,
+   "label": "UserService"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.86,
+   "label": ".Greet()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 11.8,
+   "label": ".Names()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 11.8,
+   "label": ".Register()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.82,
+   "label": "Number"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 18.8,
+   "label": "Store"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.86,
+   "label": "NewStore()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 10.86,
+   "label": "Store[T]"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 11.8,
+   "label": ".Get()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 11.8,
+   "label": ".Put()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 12.68,
+   "label": "T"
+  },
+  {
+   "colour": "#ff9da7",
+   "radius": 14.27,
+   "label": "ID"
+  },
+  {
+   "colour": "#ff9da7",
+   "radius": 11.8,
+   "label": ".Identity()"
+  },
+  {
+   "colour": "#ff9da7",
+   "radius": 12.68,
+   "label": "Model"
+  },
+  {
+   "colour": "#9c755f",
+   "radius": 10.86,
+   "label": "Entity"
+  },
+  {
+   "colour": "#9c755f",
+   "radius": 10.86,
+   "label": ".Identity()"
+  },
+  {
+   "colour": "#bab0ac",
+   "radius": 8.66,
+   "label": "example.com/shop"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.86,
+   "label": "go_pkg_fmt"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.82,
+   "label": "go_pkg_github_com_google_uuid"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.82,
+   "label": "go_pkg_os"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.82,
+   "label": "go_pkg_sort"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.82,
+   "label": "go_pkg_strconv"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.82,
+   "label": "go_pkg_strings"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.82,
+   "label": "go_pkg_testing"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.82,
+   "label": "go_pkg_errors"
+  }
+ ]
+}

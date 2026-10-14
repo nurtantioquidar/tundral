@@ -1,0 +1,2669 @@
+{
+ "title": "csharp — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 91 nodes, 136 edges, 8 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "shop-models-usercs",
+   "Shop Models Usercs"
+  ],
+  [
+   "shop-services-irepositorycs",
+   "Shop Services Irepositorycs"
+  ],
+  [
+   "shop-models-system",
+   "Shop Models System"
+  ],
+  [
+   "shop-models-entitycs",
+   "Shop Models Entitycs"
+  ],
+  [
+   "valuescs-shop-models",
+   "Valuescs Shop Models"
+  ],
+  [
+   "shop-models-usercs-92cf0a",
+   "Shop Models Usercs"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>30 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    SHOP_MODELS_USERCS_F747F7C5(\"Shop Models Usercs<br/><small>17 nodes</small>\")",
+     "    class SHOP_MODELS_USERCS_F747F7C5 module;",
+     "    SHOP_SERVICES_IREPOSITORYCS_4B4CC0A8(\"Shop Services Irepositorycs<br/><small>14 nodes</small>\")",
+     "    class SHOP_SERVICES_IREPOSITORYCS_4B4CC0A8 module;",
+     "    SHOP_MODELS_SYSTEM_46EC6B98(\"Shop Models System<br/><small>9 nodes</small>\")",
+     "    class SHOP_MODELS_SYSTEM_46EC6B98 module;",
+     "    SHOP_MODELS_ENTITYCS_D15A1748(\"Shop Models Entitycs<br/><small>9 nodes</small>\")",
+     "    class SHOP_MODELS_ENTITYCS_D15A1748 module;",
+     "    VALUESCS_SHOP_MODELS_9DDCE545(\"Valuescs Shop Models<br/><small>8 nodes</small>\")",
+     "    class VALUESCS_SHOP_MODELS_9DDCE545 module;",
+     "    SHOP_MODELS_USERCS_92CF0A_A9FE8C6A(\"Shop Models Usercs<br/><small>4 nodes</small>\")",
+     "    class SHOP_MODELS_USERCS_92CF0A_A9FE8C6A module;",
+     "    TESTS_FIXTURES_B84B1DCC -->|references x6| SHOP_MODELS_USERCS_F747F7C5",
+     "    TESTS_FIXTURES_B84B1DCC -->|method x4| SHOP_SERVICES_IREPOSITORYCS_4B4CC0A8",
+     "    SHOP_MODELS_SYSTEM_46EC6B98 -->|contains x4| TESTS_FIXTURES_B84B1DCC",
+     "    SHOP_SERVICES_IREPOSITORYCS_4B4CC0A8 -->|imports x2| SHOP_MODELS_SYSTEM_46EC6B98",
+     "    SHOP_MODELS_SYSTEM_46EC6B98 -->|contains x2| SHOP_MODELS_ENTITYCS_D15A1748",
+     "    SHOP_MODELS_SYSTEM_46EC6B98 -->|contains x2| SHOP_MODELS_USERCS_F747F7C5",
+     "    SHOP_MODELS_USERCS_F747F7C5 -->|references| SHOP_MODELS_USERCS_92CF0A_A9FE8C6A",
+     "    SHOP_MODELS_USERCS_F747F7C5 -->|inherits| SHOP_MODELS_ENTITYCS_D15A1748",
+     "    TESTS_FIXTURES_B84B1DCC -->|references| VALUESCS_SHOP_MODELS_9DDCE545",
+     "    TESTS_FIXTURES_B84B1DCC -->|imports| SHOP_MODELS_SYSTEM_46EC6B98",
+     "    SHOP_SERVICES_IREPOSITORYCS_4B4CC0A8 -->|contains| TESTS_FIXTURES_B84B1DCC",
+     "    SHOP_MODELS_SYSTEM_46EC6B98 -->|contains| SHOP_MODELS_USERCS_92CF0A_A9FE8C6A"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Valuescs Shop Models -> Shop Models System -> Tests & Fixtures -> Shop Models Usercs -> Shop Models Usercs -> Shop Services Irepositorycs -> Shop Models Entitycs"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Tests & Fixtures",
+      "30",
+      "1, 3"
+     ],
+     [
+      "Shop Models Usercs",
+      "17",
+      "0"
+     ],
+     [
+      "Shop Services Irepositorycs",
+      "14",
+      "2"
+     ],
+     [
+      "Shop Models System",
+      "9",
+      "4"
+     ],
+     [
+      "Shop Models Entitycs",
+      "9",
+      "5"
+     ],
+     [
+      "Valuescs Shop Models",
+      "8",
+      "6"
+     ],
+     [
+      "Shop Models Usercs",
+      "4",
+      "7"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "2. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (30 nodes, 38 edges)",
+     "    subgraph tests_fixtures_Shop_Services_UserService_cs_44a1f620[\"Shop/Services/UserService.cs\"]",
+     "        src_shop_services_userservice_shop_services_user_9a40016d(\"UserService<br/><small>Shop/Services/UserService.cs</small>\")",
+     "        src_shop_services_userservice_shop_services_user_76e35253(\"Register()<br/><small>Shop/Services/UserService.cs</small>\")",
+     "        src_shop_services_userservice_shop_services_ilog_25ca06af(\"ILogger<br/><small>Shop/Services/UserService.cs</small>\")",
+     "        src_shop_services_userservice_shop_services_ilog_3f991d49(\"Log()<br/><small>Shop/Services/UserService.cs</small>\")",
+     "        src_shop_services_userservice_shop_services_iuse_6b53826d(\"IUserService<br/><small>Shop/Services/UserService.cs</small>\")",
+     "        src_shop_services_userservice_shop_services_iuse_6ac2d9c0(\"Register()<br/><small>Shop/Services/UserService.cs</small>\")",
+     "        src_shop_services_userservice_shop_services_user_124fb8ab(\"Largest()<br/><small>Shop/Services/UserService.cs</small>\")",
+     "        src_shop_services_userservice_shop_services_user_f4b2ec69(\"Notify()<br/><small>Shop/Services/UserService.cs</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_Shop_Services_Extensions_cs_9b011426[\"Shop/Services/Extensions.cs\"]",
+     "        src_shop_services_extensions_shop_services_strin_790aba16(\"StringExtensions<br/><small>Shop/Services/Extensions.cs</small>\")",
+     "        src_shop_services_extensions_792d870b(\"Extensions.cs\")",
+     "        src_shop_services_extensions_shop_services_forma_1f3bef1b(\"Formatter<br/><small>Shop/Services/Extensions.cs</small>\")",
+     "        src_shop_services_extensions_shop_services_forma_4b3ebb4f(\"Format()<br/><small>Shop/Services/Extensions.cs</small>\")",
+     "        src_shop_services_extensions_shop_services_strin_a5b9e52c(\"Slug()<br/><small>Shop/Services/Extensions.cs</small>\")",
+     "        src_shop_services_extensions_shop_services_strin_7a9ff37a(\"Shout()<br/><small>Shop/Services/Extensions.cs</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_tests_Shop_Tests_UserServiceTests_5d4a140e[\"tests/Shop.Tests/UserServiceTests.cs\"]",
+     "        tests_shop_tests_userservicetests_10b1380e(\"UserServiceTests.cs\")",
+     "        tests_shop_tests_userservicetests_shop_tests_use_f67aaa6f(\"UserServiceTests<br/><small>tests/Shop.Tests/UserServiceTests.cs</small>\")",
+     "        tests_shop_tests_userservicetests_shop_tests_use_d2a0b486(\"RegistersUser()<br/><small>tests/Shop.Tests/UserServiceTests.cs</small>\")",
+     "        tests_shop_tests_userservicetests_shop_tests_use_dfeedca0(\"FormatsNames()<br/><small>tests/Shop.Tests/UserServiceTests.cs</small>\")",
+     "    end",
+     "    src_shop_services_extensions_shop_services_forma_1f3bef1b -->|method| src_shop_services_extensions_shop_services_forma_4b3ebb4f",
+     "    src_shop_services_extensions_shop_services_strin_790aba16 -->|method| src_shop_services_extensions_shop_services_strin_a5b9e52c",
+     "    src_shop_services_extensions_shop_services_strin_790aba16 -->|method| src_shop_services_extensions_shop_services_strin_7a9ff37a",
+     "    tests_shop_tests_userservicetests_shop_tests_use_f67aaa6f -->|method| tests_shop_tests_userservicetests_shop_tests_use_d2a0b486",
+     "    tests_shop_tests_userservicetests_shop_tests_use_f67aaa6f -->|method| tests_shop_tests_userservicetests_shop_tests_use_dfeedca0",
+     "    src_shop_services_userservice_shop_services_ilog_25ca06af -->|method| src_shop_services_userservice_shop_services_ilog_3f991d49",
+     "    src_shop_services_userservice_shop_services_iuse_6b53826d -->|method| src_shop_services_userservice_shop_services_iuse_6ac2d9c0",
+     "    src_shop_services_userservice_shop_services_user_9a40016d -->|method| src_shop_services_userservice_shop_services_user_76e35253",
+     "    src_shop_services_userservice_shop_services_user_9a40016d -->|method| src_shop_services_userservice_shop_services_user_124fb8ab",
+     "    src_shop_services_userservice_shop_services_user_9a40016d -->|method| src_shop_services_userservice_shop_services_user_f4b2ec69",
+     "    tests_shop_tests_userservicetests_shop_tests_use_dfeedca0 -->|calls| src_shop_services_extensions_shop_services_forma_4b3ebb4f",
+     "    src_shop_services_userservice_shop_services_user_76e35253 -->|calls| src_shop_services_userservice_shop_services_user_f4b2ec69",
+     "    src_shop_services_userservice_shop_services_user_76e35253 -->|calls| src_shop_services_extensions_shop_services_forma_4b3ebb4f",
+     "    tests_shop_tests_userservicetests_shop_tests_use_d2a0b486 -->|calls| src_shop_services_userservice_shop_services_user_76e35253",
+     "    src_shop_services_userservice_shop_services_user_76e35253 -->|calls| src_shop_services_userservice_shop_services_ilog_3f991d49",
+     "    %% Omitted for readability: 12 nodes, 0 edges",
+     "    class src_shop_services_userservice_shop_services_user_9a40016d klass;",
+     "    class src_shop_services_userservice_shop_services_user_76e35253 function;",
+     "    class src_shop_services_userservice_shop_services_ilog_25ca06af klass;",
+     "    class src_shop_services_userservice_shop_services_ilog_3f991d49 function;",
+     "    class src_shop_services_userservice_shop_services_iuse_6b53826d klass;",
+     "    class src_shop_services_userservice_shop_services_iuse_6ac2d9c0 function;",
+     "    class src_shop_services_userservice_shop_services_user_124fb8ab function;",
+     "    class src_shop_services_userservice_shop_services_user_f4b2ec69 function;",
+     "    class src_shop_services_extensions_shop_services_strin_790aba16 klass;",
+     "    class src_shop_services_extensions_792d870b klass;",
+     "    class src_shop_services_extensions_shop_services_forma_1f3bef1b klass;",
+     "    class src_shop_services_extensions_shop_services_forma_4b3ebb4f function;",
+     "    class src_shop_services_extensions_shop_services_strin_a5b9e52c function;",
+     "    class src_shop_services_extensions_shop_services_strin_7a9ff37a function;",
+     "    class tests_shop_tests_userservicetests_10b1380e test;",
+     "    class tests_shop_tests_userservicetests_shop_tests_use_f67aaa6f test;",
+     "    class tests_shop_tests_userservicetests_shop_tests_use_d2a0b486 test;",
+     "    class tests_shop_tests_userservicetests_shop_tests_use_dfeedca0 test;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around shop, services, userservicecs, extensionscs, mostly in Shop/Services/UserService.cs, Shop/Services/Extensions.cs, tests/Shop.Tests/UserServiceTests.cs. This section covers 30 nodes and 38 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x13, contains x6, calls x6, references x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Formatter",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Format()",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "Formatter node in Shop/Services/Extensions.cs."
+     ],
+     [
+      "2",
+      [
+       [
+        "StringExtensions",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Shout()",
+        "Shop/Services/Extensions.cs"
+       ],
+       [
+        "Slug()",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "StringExtensions node in Shop/Services/Extensions.cs."
+     ],
+     [
+      "3",
+      [
+       [
+        "UserServiceTests",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "FormatsNames()",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ],
+       [
+        "RegistersUser()",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "4",
+      [
+       [
+        ".Format()",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "FormatsNames()",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ],
+       [
+        "Formatter",
+        "Shop/Services/Extensions.cs"
+       ],
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Format() node in Shop/Services/Extensions.cs."
+     ],
+     [
+      "5",
+      [
+       [
+        ".Shout()",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "StringExtensions",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Shout() node in Shop/Services/Extensions.cs."
+     ],
+     [
+      "6",
+      [
+       [
+        ".Slug()",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "StringExtensions",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Slug() node in Shop/Services/Extensions.cs."
+     ],
+     [
+      "7",
+      [
+       [
+        ".FormatsNames()",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "UserServiceTests",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      [
+       [
+        "Format()",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      ".FormatsNames() node in tests/Shop.Tests/UserServiceTests.cs."
+     ],
+     [
+      "8",
+      [
+       [
+        ".RegistersUser()",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "UserServiceTests",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      [
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      ".RegistersUser() node in tests/Shop.Tests/UserServiceTests.cs."
+     ],
+     [
+      "9",
+      [
+       [
+        "Shop.Services",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "UserServiceTests.cs",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop.Services node in Shop/Services/Extensions.cs."
+     ],
+     [
+      "10",
+      [
+       [
+        "Shop.Tests",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "11",
+      [
+       [
+        "Fact",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Fact node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "InlineData",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "InlineData node in project."
+     ],
+     [
+      "13",
+      [
+       [
+        "Extensions.cs",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "system_linq"
+       ]
+      ],
+      "Extensions.cs node in Shop/Services/Extensions.cs."
+     ],
+     [
+      "14",
+      [
+       [
+        "UserServiceTests.cs",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Shop.Models",
+        "Shop/Models/Entity.cs"
+       ],
+       [
+        "Shop.Services",
+        "Shop/Services/Extensions.cs"
+       ],
+       [
+        "xunit"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "15",
+      [
+       [
+        "Theory",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Theory node in project."
+     ],
+     [
+      "16",
+      [
+       [
+        "system_linq",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Extensions.cs",
+        "Shop/Services/Extensions.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "system_linq node in project."
+     ],
+     [
+      "17",
+      [
+       [
+        "xunit",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserServiceTests.cs",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "xunit node in project."
+     ],
+     [
+      "18",
+      [
+       [
+        "ILogger",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Log()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "ILogger node in Shop/Services/UserService.cs."
+     ],
+     [
+      "19",
+      [
+       [
+        "IUserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "IUserService node in Shop/Services/UserService.cs."
+     ],
+     [
+      "20",
+      [
+       [
+        "UserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Audit()",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "Dispose()",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "Largest()",
+        "Shop/Services/UserService.cs"
+       ],
+       "+4 more"
+      ],
+      "UserService node in Shop/Services/UserService.cs."
+     ],
+     [
+      "21",
+      [
+       [
+        "NullLogger",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Log()",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "NullLogger node in tests/Shop.Tests/UserServiceTests.cs."
+     ],
+     [
+      "22",
+      [
+       [
+        ".Log()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "ILogger",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Log() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "23",
+      [
+       [
+        ".Register()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "IUserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Register() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "24",
+      [
+       [
+        ".Audit()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "UserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Audit() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "25",
+      [
+       [
+        ".Dispose()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Dispose() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "26",
+      [
+       [
+        ".Largest()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Largest() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "27",
+      [
+       [
+        ".Notify()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "UserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       [
+        "Describe()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      ".Notify() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "28",
+      [
+       [
+        ".Register()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "RegistersUser()",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ],
+       [
+        "UserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       [
+        "Address",
+        "Shop/Models/User.cs"
+       ],
+       [
+        "Audit()",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "Format()",
+        "Shop/Services/Extensions.cs"
+       ],
+       "+4 more"
+      ],
+      ".Register() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "29",
+      [
+       [
+        ".Log()",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "NullLogger",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Log() node in tests/Shop.Tests/UserServiceTests.cs."
+     ],
+     [
+      "30",
+      [
+       [
+        "IDisposable",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "IDisposable node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Services/UserService.cs",
+      "10 nodes"
+     ],
+     [
+      "Shop/Services/Extensions.cs",
+      "7 nodes"
+     ],
+     [
+      "tests/Shop.Tests/UserServiceTests.cs",
+      "7 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-models-usercs",
+   "heading": "3. Shop Models Usercs",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Models Usercs (17 nodes, 22 edges)",
+     "    subgraph shop_models_usercs_Shop_Models_User_cs_538d5da1[\"Shop/Models/User.cs\"]",
+     "        src_shop_models_user_shop_models_address_fe008184(\"Address<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_user_addaddress_92bb9b0f(\"AddAddress()<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_user_describe_11153097(\"Describe()<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_address_format_3beef116(\"Format()<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_user_of_0f4b7af2(\"Of()<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_user_compareto_5bdb8690(\"CompareTo()<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_user_getname_a68aa88f(\"GetName()<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_user_touch_803fde7f(\"Touch()<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_user_name_a57e6262(\"Name<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_user_status_2c768078(\"Status<br/><small>Shop/Models/User.cs</small>\")",
+     "        src_shop_models_user_shop_models_address_street_923c2869(\"Street<br/><small>Shop/Models/User.cs</small>\")",
+     "    end",
+     "    subgraph shop_models_usercs_External_generated_7b050bca[\"External / generated\"]",
+     "        address_c6621802(\"Address\")",
+     "        icomparable_f1abb89c(\"IComparable\")",
+     "        list_38b62be4(\"List\")",
+     "    end",
+     "    subgraph shop_models_usercs_Shop_Models_User_Validation_c_d00ec9ce[\"Shop/Models/User.Validation.cs\"]",
+     "        src_shop_models_user_validation_shop_models_user_497ccd00(\"User<br/><small>Shop/Models/User.Validation.cs</small>\")",
+     "        src_shop_models_user_validation_shop_models_user_d26dfe27(\"IsValid()<br/><small>Shop/Models/User.Validation.cs</small>\")",
+     "        src_shop_models_user_validation_shop_models_user_dce7933c(\"Validate()<br/><small>Shop/Models/User.Validation.cs</small>\")",
+     "    end",
+     "    src_shop_models_user_shop_models_address_fe008184 -->|method| src_shop_models_user_shop_models_address_format_3beef116",
+     "    src_shop_models_user_validation_shop_models_user_497ccd00 -->|method| src_shop_models_user_shop_models_user_of_0f4b7af2",
+     "    src_shop_models_user_validation_shop_models_user_497ccd00 -->|method| src_shop_models_user_shop_models_user_compareto_5bdb8690",
+     "    src_shop_models_user_validation_shop_models_user_497ccd00 -->|method| src_shop_models_user_validation_shop_models_user_dce7933c",
+     "    src_shop_models_user_validation_shop_models_user_497ccd00 -->|method| src_shop_models_user_validation_shop_models_user_d26dfe27",
+     "    src_shop_models_user_validation_shop_models_user_497ccd00 -->|method| src_shop_models_user_shop_models_user_getname_a68aa88f",
+     "    src_shop_models_user_validation_shop_models_user_497ccd00 -->|method| src_shop_models_user_shop_models_user_addaddress_92bb9b0f",
+     "    src_shop_models_user_validation_shop_models_user_497ccd00 -->|method| src_shop_models_user_shop_models_user_describe_11153097",
+     "    src_shop_models_user_validation_shop_models_user_497ccd00 -->|method| src_shop_models_user_shop_models_user_touch_803fde7f",
+     "    src_shop_models_user_shop_models_user_addaddress_92bb9b0f -->|calls| src_shop_models_user_shop_models_user_touch_803fde7f",
+     "    src_shop_models_user_shop_models_user_describe_11153097 -->|calls| src_shop_models_user_shop_models_user_getname_a68aa88f",
+     "    src_shop_models_user_validation_shop_models_user_d26dfe27 -->|calls| src_shop_models_user_validation_shop_models_user_dce7933c",
+     "    src_shop_models_user_validation_shop_models_user_d26dfe27 -->|calls| src_shop_models_user_shop_models_user_getname_a68aa88f",
+     "    class src_shop_models_user_shop_models_address_fe008184 klass;",
+     "    class src_shop_models_user_shop_models_user_addaddress_92bb9b0f function;",
+     "    class src_shop_models_user_shop_models_user_describe_11153097 function;",
+     "    class src_shop_models_user_shop_models_address_format_3beef116 function;",
+     "    class src_shop_models_user_shop_models_user_of_0f4b7af2 function;",
+     "    class src_shop_models_user_shop_models_user_compareto_5bdb8690 function;",
+     "    class src_shop_models_user_shop_models_user_getname_a68aa88f function;",
+     "    class src_shop_models_user_shop_models_user_touch_803fde7f function;",
+     "    class src_shop_models_user_shop_models_user_name_a57e6262 klass;",
+     "    class src_shop_models_user_shop_models_user_status_2c768078 klass;",
+     "    class src_shop_models_user_shop_models_address_street_923c2869 klass;",
+     "    class address_c6621802 klass;",
+     "    class icomparable_f1abb89c klass;",
+     "    class list_38b62be4 klass;",
+     "    class src_shop_models_user_validation_shop_models_user_497ccd00 klass;",
+     "    class src_shop_models_user_validation_shop_models_user_d26dfe27 function;",
+     "    class src_shop_models_user_validation_shop_models_user_dce7933c function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Models Usercs groups implementation around shop, models, usercs, uservalidationcs, mostly in Shop/Models/User.cs, Shop/Models/User.Validation.cs. This section covers 17 nodes and 22 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x9, references x4, calls x4, defines x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Address",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       [
+        "Format()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Address node in Shop/Models/User.cs."
+     ],
+     [
+      "2",
+      [
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "AddAddress()",
+        "Shop/Models/User.cs"
+       ],
+       [
+        "CompareTo()",
+        "Shop/Models/User.cs"
+       ],
+       [
+        "Describe()",
+        "Shop/Models/User.cs"
+       ],
+       "+5 more"
+      ],
+      "User node in Shop/Models/User.Validation.cs."
+     ],
+     [
+      "3",
+      [
+       [
+        ".Format()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Address",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Format() node in Shop/Models/User.cs."
+     ],
+     [
+      "4",
+      [
+       [
+        ".AddAddress()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      [
+       [
+        "Touch()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      ".AddAddress() node in Shop/Models/User.cs."
+     ],
+     [
+      "5",
+      [
+       [
+        ".CompareTo()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".CompareTo() node in Shop/Models/User.cs."
+     ],
+     [
+      "6",
+      [
+       [
+        ".Describe()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Notify()",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      [
+       [
+        "GetName()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      ".Describe() node in Shop/Models/User.cs."
+     ],
+     [
+      "7",
+      [
+       [
+        ".GetName()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Describe()",
+        "Shop/Models/User.cs"
+       ],
+       [
+        "IsValid()",
+        "Shop/Models/User.Validation.cs"
+       ],
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".GetName() node in Shop/Models/User.cs."
+     ],
+     [
+      "8",
+      [
+       [
+        ".Of()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Of() node in Shop/Models/User.cs."
+     ],
+     [
+      "9",
+      [
+       [
+        ".Touch()",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "AddAddress()",
+        "Shop/Models/User.cs"
+       ],
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Touch() node in Shop/Models/User.cs."
+     ],
+     [
+      "10",
+      [
+       [
+        ".IsValid()",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      [
+       [
+        "GetName()",
+        "Shop/Models/User.cs"
+       ],
+       [
+        "Validate()",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      ".IsValid() node in Shop/Models/User.Validation.cs."
+     ],
+     [
+      "11",
+      [
+       [
+        ".Validate()",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "IsValid()",
+        "Shop/Models/User.Validation.cs"
+       ],
+       [
+        "User",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Validate() node in Shop/Models/User.Validation.cs."
+     ],
+     [
+      "12",
+      [
+       [
+        "Address",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Address node in project."
+     ],
+     [
+      "13",
+      [
+       [
+        "IComparable",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "IComparable node in project."
+     ],
+     [
+      "14",
+      [
+       [
+        "List",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "List node in project."
+     ],
+     [
+      "15",
+      [
+       [
+        "Street",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Street node in Shop/Models/User.cs."
+     ],
+     [
+      "16",
+      [
+       [
+        "Name",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Name node in Shop/Models/User.cs."
+     ],
+     [
+      "17",
+      [
+       [
+        "Status",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Status node in Shop/Models/User.cs."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/User.cs",
+      "11 nodes"
+     ],
+     [
+      "Shop/Models/User.Validation.cs",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-services-irepositorycs",
+   "heading": "4. Shop Services Irepositorycs",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Services Irepositorycs (14 nodes, 18 edges)",
+     "    subgraph shop_services_irepositorycs_Shop_Services_IRepos_cfe33381[\"Shop/Services/IRepository.cs\"]",
+     "        src_shop_services_irepository_shop_services_inme_ab0c4e0d(\"InMemoryRepository<br/><small>Shop/Services/IRepository.cs</small>\")",
+     "        src_shop_services_irepository_shop_services_irep_42e6abe2(\"IRepository<br/><small>Shop/Services/IRepository.cs</small>\")",
+     "        src_shop_services_irepository_shop_services_inme_8beb4fc9(\"Save()<br/><small>Shop/Services/IRepository.cs</small>\")",
+     "        src_shop_services_irepository_shop_services_inme_959d514e(\"Find()<br/><small>Shop/Services/IRepository.cs</small>\")",
+     "        src_shop_services_irepository_shop_services_inme_1f5db36d(\"All()<br/><small>Shop/Services/IRepository.cs</small>\")",
+     "        src_shop_services_irepository_shop_services_irep_2c65dc87(\"Find()<br/><small>Shop/Services/IRepository.cs</small>\")",
+     "        src_shop_services_irepository_shop_services_irep_558a44dd(\"All()<br/><small>Shop/Services/IRepository.cs</small>\")",
+     "        src_shop_services_irepository_shop_services_irep_8964f16b(\"Save()<br/><small>Shop/Services/IRepository.cs</small>\")",
+     "        src_shop_services_irepository_7deb498b(\"IRepository.cs\")",
+     "    end",
+     "    subgraph shop_services_irepositorycs_External_generated_c40831d8[\"External / generated\"]",
+     "        dictionary_f18bfb74(\"Dictionary\")",
+     "        ienumerable_4f298f9c(\"IEnumerable\")",
+     "        ireadonlylist_5a60895f(\"IReadOnlyList\")",
+     "    end",
+     "    subgraph shop_services_irepositorycs_Shop_Services_UserSe_4dcfd0b6[\"Shop/Services/UserService.cs\"]",
+     "        src_shop_services_userservice_shop_services_user_115da4da(\"Names()<br/><small>Shop/Services/UserService.cs</small>\")",
+     "        src_shop_services_userservice_shop_services_user_1f6ca39d(\"Pick()<br/><small>Shop/Services/UserService.cs</small>\")",
+     "    end",
+     "    src_shop_services_irepository_shop_services_inme_ab0c4e0d -->|method| src_shop_services_irepository_shop_services_inme_8beb4fc9",
+     "    src_shop_services_irepository_shop_services_inme_ab0c4e0d -->|method| src_shop_services_irepository_shop_services_inme_959d514e",
+     "    src_shop_services_irepository_shop_services_inme_ab0c4e0d -->|method| src_shop_services_irepository_shop_services_inme_1f5db36d",
+     "    src_shop_services_irepository_shop_services_irep_42e6abe2 -->|method| src_shop_services_irepository_shop_services_irep_2c65dc87",
+     "    src_shop_services_irepository_shop_services_irep_42e6abe2 -->|method| src_shop_services_irepository_shop_services_irep_558a44dd",
+     "    src_shop_services_irepository_shop_services_irep_42e6abe2 -->|method| src_shop_services_irepository_shop_services_irep_8964f16b",
+     "    src_shop_services_userservice_shop_services_user_115da4da -->|calls| src_shop_services_irepository_shop_services_irep_558a44dd",
+     "    class src_shop_services_irepository_shop_services_inme_ab0c4e0d klass;",
+     "    class src_shop_services_irepository_shop_services_irep_42e6abe2 klass;",
+     "    class src_shop_services_irepository_shop_services_inme_8beb4fc9 function;",
+     "    class src_shop_services_irepository_shop_services_inme_959d514e function;",
+     "    class src_shop_services_irepository_shop_services_inme_1f5db36d function;",
+     "    class src_shop_services_irepository_shop_services_irep_2c65dc87 function;",
+     "    class src_shop_services_irepository_shop_services_irep_558a44dd function;",
+     "    class src_shop_services_irepository_shop_services_irep_8964f16b function;",
+     "    class src_shop_services_irepository_7deb498b klass;",
+     "    class dictionary_f18bfb74 klass;",
+     "    class ienumerable_4f298f9c klass;",
+     "    class ireadonlylist_5a60895f klass;",
+     "    class src_shop_services_userservice_shop_services_user_115da4da function;",
+     "    class src_shop_services_userservice_shop_services_user_1f6ca39d function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Services Irepositorycs groups implementation around shop, services, irepositorycs, all, mostly in Shop/Services/IRepository.cs, Shop/Services/UserService.cs. This section covers 14 nodes and 18 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x6, references x5, dispatches to x3, contains x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "InMemoryRepository",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "All()",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "Find()",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "Save()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "InMemoryRepository node in Shop/Services/IRepository.cs."
+     ],
+     [
+      "2",
+      [
+       [
+        "IRepository",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.cs",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       [
+        "All()",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "Find()",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "Save()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "IRepository node in Shop/Services/IRepository.cs."
+     ],
+     [
+      "3",
+      [
+       [
+        ".All()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "InMemoryRepository",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".All() node in Shop/Services/IRepository.cs."
+     ],
+     [
+      "4",
+      [
+       [
+        ".Find()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "InMemoryRepository",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Find() node in Shop/Services/IRepository.cs."
+     ],
+     [
+      "5",
+      [
+       [
+        ".Save()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "InMemoryRepository",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Save() node in Shop/Services/IRepository.cs."
+     ],
+     [
+      "6",
+      [
+       [
+        ".All()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "IRepository",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "Names()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".All() node in Shop/Services/IRepository.cs."
+     ],
+     [
+      "7",
+      [
+       [
+        ".Find()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "IRepository",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Find() node in Shop/Services/IRepository.cs."
+     ],
+     [
+      "8",
+      [
+       [
+        ".Save()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "IRepository",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "Register()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Save() node in Shop/Services/IRepository.cs."
+     ],
+     [
+      "9",
+      [
+       [
+        ".Names()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       [
+        "All()",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      ".Names() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "10",
+      [
+       [
+        ".Pick()",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Pick() node in Shop/Services/UserService.cs."
+     ],
+     [
+      "11",
+      [
+       [
+        "Dictionary",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Dictionary node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "IEnumerable",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "IEnumerable node in project."
+     ],
+     [
+      "13",
+      [
+       [
+        "IReadOnlyList",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "IReadOnlyList node in project."
+     ],
+     [
+      "14",
+      [
+       [
+        "IRepository.cs",
+        "Shop/Services/IRepository.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Shop.Models",
+        "Shop/Models/Entity.cs"
+       ],
+       [
+        "system_collections_generic"
+       ]
+      ],
+      "IRepository.cs node in Shop/Services/IRepository.cs."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Services/IRepository.cs",
+      "9 nodes"
+     ],
+     [
+      "Shop/Services/UserService.cs",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-models-system",
+   "heading": "5. Shop Models System",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Models System (9 nodes, 11 edges)",
+     "    subgraph shop_models_system_External_generated_6c19fe14[\"External / generated\"]",
+     "        system_317f1e76(\"system\")",
+     "        system_collections_generic_0d38464f(\"system_collections_generic\")",
+     "        system_datetime_277afb6f(\"system_datetime\")",
+     "        system_math_5aa411ad(\"system_math\")",
+     "    end",
+     "    subgraph shop_models_system_Shop_Models_Entity_cs_4bdfa6bd[\"Shop/Models/Entity.cs\"]",
+     "        src_shop_models_entity_221864bb(\"Entity.cs\")",
+     "        csharp_namespace_ba08633b333ae873_60c383ee(\"Shop.Models<br/><small>Shop/Models/Entity.cs</small>\")",
+     "    end",
+     "    src_shop_models_user_validation_03bed32d(\"User.Validation.cs\")",
+     "    src_shop_models_user_5de51d25(\"User.cs\")",
+     "    src_shop_services_userservice_dfb6c06e(\"UserService.cs\")",
+     "    src_shop_models_entity_221864bb -->|imports| system_317f1e76",
+     "    src_shop_models_user_5de51d25 -->|imports| system_317f1e76",
+     "    src_shop_models_user_5de51d25 -->|imports| system_collections_generic_0d38464f",
+     "    src_shop_services_userservice_dfb6c06e -->|imports| system_datetime_277afb6f",
+     "    src_shop_services_userservice_dfb6c06e -->|imports| csharp_namespace_ba08633b333ae873_60c383ee",
+     "    src_shop_services_userservice_dfb6c06e -->|imports| system_317f1e76",
+     "    src_shop_services_userservice_dfb6c06e -->|imports| system_collections_generic_0d38464f",
+     "    src_shop_services_userservice_dfb6c06e -->|imports| system_math_5aa411ad",
+     "    class system_317f1e76 function;",
+     "    class system_collections_generic_0d38464f function;",
+     "    class system_datetime_277afb6f function;",
+     "    class system_math_5aa411ad function;",
+     "    class src_shop_models_entity_221864bb klass;",
+     "    class csharp_namespace_ba08633b333ae873_60c383ee module;",
+     "    class src_shop_models_user_validation_03bed32d klass;",
+     "    class src_shop_models_user_5de51d25 klass;",
+     "    class src_shop_services_userservice_dfb6c06e klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Models System groups implementation around shop, models, system, entitycs, mostly in Shop/Models/Entity.cs, Shop/Models/User.cs, Shop/Models/User.Validation.cs. This section covers 9 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x8, contains x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Shop.Models",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "IRepository.cs",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "UserService.cs",
+        "Shop/Services/UserService.cs"
+       ],
+       [
+        "UserServiceTests.cs",
+        "tests/Shop.Tests/UserServiceTests.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop.Models node in Shop/Models/Entity.cs."
+     ],
+     [
+      "2",
+      [
+       [
+        "Entity.cs",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "system"
+       ]
+      ],
+      "Entity.cs node in Shop/Models/Entity.cs."
+     ],
+     [
+      "3",
+      [
+       [
+        "User.cs",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "system"
+       ],
+       [
+        "system_collections_generic"
+       ]
+      ],
+      "User.cs node in Shop/Models/User.cs."
+     ],
+     [
+      "4",
+      [
+       [
+        "User.Validation.cs",
+        "Shop/Models/User.Validation.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "User.Validation.cs node in Shop/Models/User.Validation.cs."
+     ],
+     [
+      "5",
+      [
+       [
+        "UserService.cs",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "IRepository",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "Shop.Models",
+        "Shop/Models/Entity.cs"
+       ],
+       [
+        "system"
+       ],
+       "+3 more"
+      ],
+      "UserService.cs node in Shop/Services/UserService.cs."
+     ],
+     [
+      "6",
+      [
+       [
+        "system",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Entity.cs",
+        "Shop/Models/Entity.cs"
+       ],
+       [
+        "User.cs",
+        "Shop/Models/User.cs"
+       ],
+       [
+        "UserService.cs",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "system node in project."
+     ],
+     [
+      "7",
+      [
+       [
+        "system_collections_generic",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "IRepository.cs",
+        "Shop/Services/IRepository.cs"
+       ],
+       [
+        "User.cs",
+        "Shop/Models/User.cs"
+       ],
+       [
+        "UserService.cs",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "system_collections_generic node in project."
+     ],
+     [
+      "8",
+      [
+       [
+        "system_datetime",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService.cs",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "system_datetime node in project."
+     ],
+     [
+      "9",
+      [
+       [
+        "system_math",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService.cs",
+        "Shop/Services/UserService.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "system_math node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/Entity.cs",
+      "2 nodes"
+     ],
+     [
+      "Shop/Models/User.Validation.cs",
+      "1 nodes"
+     ],
+     [
+      "Shop/Models/User.cs",
+      "1 nodes"
+     ],
+     [
+      "Shop/Services/UserService.cs",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-models-entitycs",
+   "heading": "6. Shop Models Entitycs",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Models Entitycs (9 nodes, 9 edges)",
+     "    subgraph shop_models_entitycs_Shop_Models_Entity_cs_7b7d27d8[\"Shop/Models/Entity.cs\"]",
+     "        src_shop_models_entity_shop_models_entity_3ba3ff17(\"Entity<br/><small>Shop/Models/Entity.cs</small>\")",
+     "        src_shop_models_entity_shop_models_ientity_1_0677a4b0(\"IEntity<br/><small>Shop/Models/Entity.cs</small>\")",
+     "        src_shop_models_entity_shop_models_entity_descri_97b9a6e8(\"Describe()<br/><small>Shop/Models/Entity.cs</small>\")",
+     "        src_shop_models_entity_shop_models_entity_isnew_b2f7854c(\"IsNew()<br/><small>Shop/Models/Entity.cs</small>\")",
+     "        src_shop_models_entity_shop_models_ientity_1_des_ab532477(\"Describe()<br/><small>Shop/Models/Entity.cs</small>\")",
+     "        src_shop_models_entity_shop_models_entity_create_5c87a2ed(\"CreatedAt<br/><small>Shop/Models/Entity.cs</small>\")",
+     "        src_shop_models_entity_shop_models_entity_id_b0ece055(\"Id<br/><small>Shop/Models/Entity.cs</small>\")",
+     "        src_shop_models_entity_shop_models_ientity_1_id_ff911311(\"Id<br/><small>Shop/Models/Entity.cs</small>\")",
+     "    end",
+     "    datetime_89ffad08(\"DateTime\")",
+     "    src_shop_models_entity_shop_models_entity_3ba3ff17 -->|method| src_shop_models_entity_shop_models_entity_descri_97b9a6e8",
+     "    src_shop_models_entity_shop_models_entity_3ba3ff17 -->|method| src_shop_models_entity_shop_models_entity_isnew_b2f7854c",
+     "    src_shop_models_entity_shop_models_ientity_1_0677a4b0 -->|method| src_shop_models_entity_shop_models_ientity_1_des_ab532477",
+     "    class src_shop_models_entity_shop_models_entity_3ba3ff17 klass;",
+     "    class src_shop_models_entity_shop_models_ientity_1_0677a4b0 klass;",
+     "    class src_shop_models_entity_shop_models_entity_descri_97b9a6e8 function;",
+     "    class src_shop_models_entity_shop_models_entity_isnew_b2f7854c function;",
+     "    class src_shop_models_entity_shop_models_ientity_1_des_ab532477 function;",
+     "    class src_shop_models_entity_shop_models_entity_create_5c87a2ed klass;",
+     "    class src_shop_models_entity_shop_models_entity_id_b0ece055 klass;",
+     "    class src_shop_models_entity_shop_models_ientity_1_id_ff911311 klass;",
+     "    class datetime_89ffad08 klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Models Entitycs groups implementation around shop, models, entitycs, describe, mostly in Shop/Models/Entity.cs. This section covers 9 nodes and 9 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: defines x3, method x3, references x1, implements x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Entity",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Describe()",
+        "Shop/Models/Entity.cs"
+       ],
+       [
+        "IsNew()",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Entity node in Shop/Models/Entity.cs."
+     ],
+     [
+      "2",
+      [
+       [
+        "IEntity",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Describe()",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "IEntity node in Shop/Models/Entity.cs."
+     ],
+     [
+      "3",
+      [
+       [
+        ".Describe()",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Entity",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Describe() node in Shop/Models/Entity.cs."
+     ],
+     [
+      "4",
+      [
+       [
+        ".IsNew()",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Entity",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".IsNew() node in Shop/Models/Entity.cs."
+     ],
+     [
+      "5",
+      [
+       [
+        ".Describe()",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "IEntity",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Describe() node in Shop/Models/Entity.cs."
+     ],
+     [
+      "6",
+      [
+       [
+        "DateTime",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "DateTime node in project."
+     ],
+     [
+      "7",
+      [
+       [
+        "CreatedAt",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "CreatedAt node in Shop/Models/Entity.cs."
+     ],
+     [
+      "8",
+      [
+       [
+        "Id",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Id node in Shop/Models/Entity.cs."
+     ],
+     [
+      "9",
+      [
+       [
+        "Id",
+        "Shop/Models/Entity.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Id node in Shop/Models/Entity.cs."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/Entity.cs",
+      "8 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "valuescs-shop-models",
+   "heading": "7. Valuescs Shop Models",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Valuescs Shop Models (8 nodes, 7 edges)",
+     "    src_shop_models_values_shop_models_money_5376c5ca(\"Money<br/><small>Shop/Models/Values.cs</small>\")",
+     "    src_shop_models_values_shop_models_point_0cde061d(\"Point<br/><small>Shop/Models/Values.cs</small>\")",
+     "    src_shop_models_values_shop_models_money_add_f0d08da2(\"Add()<br/><small>Shop/Models/Values.cs</small>\")",
+     "    src_shop_models_values_shop_models_point_length_5bfc9a9d(\"Length()<br/><small>Shop/Models/Values.cs</small>\")",
+     "    src_shop_models_values_shop_models_range_0a07eeb6(\"Range<br/><small>Shop/Models/Values.cs</small>\")",
+     "    src_shop_models_values_25d7a773(\"Values.cs\")",
+     "    src_shop_models_values_shop_models_point_x_5ee9c20f(\"X<br/><small>Shop/Models/Values.cs</small>\")",
+     "    src_shop_models_values_shop_models_point_y_4b83299f(\"Y<br/><small>Shop/Models/Values.cs</small>\")",
+     "    src_shop_models_values_shop_models_money_5376c5ca -->|method| src_shop_models_values_shop_models_money_add_f0d08da2",
+     "    src_shop_models_values_shop_models_point_0cde061d -->|method| src_shop_models_values_shop_models_point_length_5bfc9a9d",
+     "    class src_shop_models_values_shop_models_money_5376c5ca klass;",
+     "    class src_shop_models_values_shop_models_point_0cde061d klass;",
+     "    class src_shop_models_values_shop_models_money_add_f0d08da2 function;",
+     "    class src_shop_models_values_shop_models_point_length_5bfc9a9d function;",
+     "    class src_shop_models_values_shop_models_range_0a07eeb6 klass;",
+     "    class src_shop_models_values_25d7a773 klass;",
+     "    class src_shop_models_values_shop_models_point_x_5ee9c20f klass;",
+     "    class src_shop_models_values_shop_models_point_y_4b83299f klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Valuescs Shop Models groups implementation around valuescs, shop, models, money, mostly in Shop/Models/Values.cs. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x3, method x2, defines x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Money",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Add()",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Money node in Shop/Models/Values.cs."
+     ],
+     [
+      "2",
+      [
+       [
+        "Point",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Length()",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Point node in Shop/Models/Values.cs."
+     ],
+     [
+      "3",
+      [
+       [
+        "Range",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Range node in Shop/Models/Values.cs."
+     ],
+     [
+      "4",
+      [
+       [
+        ".Add()",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Money",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Add() node in Shop/Models/Values.cs."
+     ],
+     [
+      "5",
+      [
+       [
+        ".Length()",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Point",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Length() node in Shop/Models/Values.cs."
+     ],
+     [
+      "6",
+      [
+       [
+        "Values.cs",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Values.cs node in Shop/Models/Values.cs."
+     ],
+     [
+      "7",
+      [
+       [
+        "X",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "X node in Shop/Models/Values.cs."
+     ],
+     [
+      "8",
+      [
+       [
+        "Y",
+        "Shop/Models/Values.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Y node in Shop/Models/Values.cs."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/Values.cs",
+      "8 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shop-models-usercs-92cf0a",
+   "heading": "8. Shop Models Usercs",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shop Models Usercs (4 nodes, 3 edges)",
+     "    src_shop_models_user_shop_models_status_368e1d13(\"Status<br/><small>Shop/Models/User.cs</small>\")",
+     "    src_shop_models_user_shop_models_status_deleted_7a7fd67b(\"Deleted<br/><small>Shop/Models/User.cs</small>\")",
+     "    src_shop_models_user_shop_models_status_active_3b19e3a9(\"Active<br/><small>Shop/Models/User.cs</small>\")",
+     "    src_shop_models_user_shop_models_status_suspende_9bc8bd3a(\"Suspended<br/><small>Shop/Models/User.cs</small>\")",
+     "    src_shop_models_user_shop_models_status_368e1d13 -->|case of| src_shop_models_user_shop_models_status_deleted_7a7fd67b",
+     "    src_shop_models_user_shop_models_status_368e1d13 -->|case of| src_shop_models_user_shop_models_status_active_3b19e3a9",
+     "    src_shop_models_user_shop_models_status_368e1d13 -->|case of| src_shop_models_user_shop_models_status_suspende_9bc8bd3a",
+     "    class src_shop_models_user_shop_models_status_368e1d13 klass;",
+     "    class src_shop_models_user_shop_models_status_deleted_7a7fd67b klass;",
+     "    class src_shop_models_user_shop_models_status_active_3b19e3a9 klass;",
+     "    class src_shop_models_user_shop_models_status_suspende_9bc8bd3a klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shop Models Usercs groups implementation around shop, models, usercs, status, mostly in Shop/Models/User.cs. This section covers 4 nodes and 3 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: case of x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Status",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Status node in Shop/Models/User.cs."
+     ],
+     [
+      "2",
+      [
+       [
+        "Active",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Active node in Shop/Models/User.cs."
+     ],
+     [
+      "3",
+      [
+       [
+        "Deleted",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Deleted node in Shop/Models/User.cs."
+     ],
+     [
+      "4",
+      [
+       [
+        "Suspended",
+        "Shop/Models/User.cs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Suspended node in Shop/Models/User.cs."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Shop/Models/User.cs",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "csharp — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "91"
+     ],
+     [
+      "Edges",
+      "136"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "8"
+     ],
+     [
+      "Documented Sections",
+      "7"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "123"
+     ],
+     [
+      "INFERRED",
+      "13"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

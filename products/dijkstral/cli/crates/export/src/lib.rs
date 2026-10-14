@@ -1,9 +1,19 @@
 //! Exporters for dijkstral graphs, specified in `docs/graphify-exports.md`: the interactive
-//! `graph.html`, the Markdown wiki and GraphML. They read dijkstral's build in memory or any
-//! Graphify-format `graph.json`.
+//! `graph.html`, the Markdown wiki and GraphML, which read dijkstral's build in memory or any
+//! Graphify-format `graph.json`, and the stage-4b exporters over a `graph.json` loaded as
+//! NetworkX holds it (`nx.rs`): Cypher and the Neo4j/FalkorDB push, the Obsidian vault, SVG,
+//! the Mermaid call-flow page and the D3 tree.
 
+pub mod bolt;
+pub mod callflow;
+pub mod cypher;
 pub mod graphml;
 pub mod html;
+pub mod nx;
+pub mod obsidian;
+pub mod push;
+pub mod svg;
+pub mod tree;
 pub mod view;
 pub mod wiki;
 

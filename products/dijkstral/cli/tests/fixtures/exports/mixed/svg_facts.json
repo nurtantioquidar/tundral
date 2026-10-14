@@ -1,0 +1,168 @@
+{
+ "source": "graphify 0.9.86 export svg (matplotlib 3.11.2); positions are not stored",
+ "canvas_pt": [
+  1432.8,
+  1000.8
+ ],
+ "background": "#1a1a2e",
+ "links_solid": 31,
+ "links_dashed": 0,
+ "legend": false,
+ "nodes": [
+  {
+   "colour": "#76b7b2",
+   "radius": 12.25,
+   "label": "helper()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 12.25,
+   "label": "main()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 19.36,
+   "label": "package.json"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 12.25,
+   "label": "devDependencies"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.61,
+   "label": "typescript"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.61,
+   "label": "name"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 12.25,
+   "label": "scripts"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.61,
+   "label": "build"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.61,
+   "label": "version"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.61,
+   "label": "react"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.61,
+   "label": "typescript"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.61,
+   "label": "zod"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 16.2,
+   "label": "build.sh"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 16.2,
+   "label": "build()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 13.69,
+   "label": "clean()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 12.25,
+   "label": "compile_all()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 12.25,
+   "label": "build.sh script"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 13.69,
+   "label": "common.sh"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 13.69,
+   "label": "log()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.61,
+   "label": "common.sh script"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 12.25,
+   "label": "tsconfig.json"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 13.69,
+   "label": "compilerOptions"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.61,
+   "label": "strict"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.61,
+   "label": "target"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.61,
+   "label": "include"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 12.25,
+   "label": "main.py"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 13.69,
+   "label": "dependencies"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.61,
+   "label": "react"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.61,
+   "label": "zod"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 8.66,
+   "label": "mixed-fixture"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 8.66,
+   "label": "mixed-fixture"
+  }
+ ]
+}

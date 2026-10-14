@@ -111,7 +111,7 @@ pub fn write(view: &View, opts: &HtmlOptions, path: &Path) -> Result<()> {
 
 /// Replace each marker once, in template order, without rescanning inserted text (a label may
 /// contain a marker).
-fn fill(template: &str, parts: &[(&str, &str)]) -> String {
+pub(crate) fn fill(template: &str, parts: &[(&str, &str)]) -> String {
     let mut out =
         String::with_capacity(template.len() + parts.iter().map(|p| p.1.len()).sum::<usize>());
     let mut rest = template;
@@ -382,7 +382,7 @@ pub fn json_str(s: &str, out: &mut String) {
 
 /// Already-serialized JSON made inert inside `<script>`: the replaced characters can only occur
 /// inside strings, where the `\u` escapes mean the same.
-fn html_safe(json: &str) -> String {
+pub(crate) fn html_safe(json: &str) -> String {
     let mut out = String::with_capacity(json.len());
     for c in json.chars() {
         match c {
@@ -397,7 +397,7 @@ fn html_safe(json: &str) -> String {
     out
 }
 
-fn escape_html(s: &str, out: &mut String) {
+pub(crate) fn escape_html(s: &str, out: &mut String) {
     for c in s.chars() {
         match c {
             '&' => out.push_str("&amp;"),

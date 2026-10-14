@@ -33,7 +33,13 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   embeds Graphify's data shape, vis-network up to the node limit and sigma.js/WebGL above), the
   Markdown wiki (`wiki.rs`) and GraphML (`graphml.rs`). Builds run them through
   `core::pipeline::Exporter` (`crates/cli/src/export_cmd.rs`), so an unchanged build is skipped only
-  while their outputs exist.
+  while their outputs exist. The export-only formats read the graph as NetworkX loads it
+  (`nx.rs`, raw attributes, Graphify's graph kinds): `cypher.txt` (`cypher.rs`) and `--push` to
+  Neo4j over Bolt (`bolt.rs`) or FalkorDB over RESP (`push.rs`), both dijkstral's own plain-TCP
+  clients that connect only to the URI given; the Obsidian vault and canvas (`obsidian.rs`);
+  `graph.svg` (`svg.rs`); the Mermaid call-flow page (`callflow.rs`) and the D3 tree
+  (`tree.rs`), whose pages are dijkstral's own (`*.html`, CDN scripts pinned with integrity).
+  Their commands are in `crates/cli/src/exports/`.
 - `crates/semantic`: a later stage.
 
 Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's
@@ -49,8 +55,11 @@ runs every CLI case on the JSON load path and on `graph.dij`, and must stay at 1
 with its deliberate differences (§10.9) listed in the test. The exporters are specified in
 `docs/graphify-exports.md` and checked by `crates/export/tests/goldens.rs` against Graphify's own
 exports of the fixtures in `tests/fixtures/exports/` (GraphML and wiki byte for byte, page data
-record for record); `escaping.rs` keeps untrusted strings out of the page's markup. Query
-commands write nothing next to the graph (Graphify's `cache/last_query_stamp` is read by nothing).
+record for record); `escaping.rs` keeps untrusted strings out of the page's markup. Each
+export-only format has its own test file there (`cypher.rs`, `push.rs` against fake servers,
+`obsidian.rs`, `svg.rs`, `callflow.rs`, `tree.rs`) with Graphify's outputs, or the data embedded in
+its pages, as goldens. Query commands write nothing next to the graph (Graphify's
+`cache/last_query_stamp` is read by nothing).
 
 ## Ownership boundaries
 

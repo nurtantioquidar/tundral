@@ -1,0 +1,937 @@
+{
+  "nodes": [
+    {
+      "id": "g0",
+      "type": "group",
+      "label": "Community 0",
+      "x": 0,
+      "y": 0,
+      "width": 880,
+      "height": 420,
+      "color": "1"
+    },
+    {
+      "id": "n_service_greeter_greet",
+      "type": "file",
+      "file": "dot-Greet().md",
+      "x": 20,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_greeter",
+      "type": "file",
+      "file": "Greeter.md",
+      "x": 220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_service_apply",
+      "type": "file",
+      "file": "apply().md",
+      "x": 420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_pkg_fmt",
+      "type": "file",
+      "file": "go_pkg_fmt.md",
+      "x": 620,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_pkg_github_com_google_uuid",
+      "type": "file",
+      "file": "go_pkg_github_com_google_uuid.md",
+      "x": 20,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_pkg_os",
+      "type": "file",
+      "file": "go_pkg_os.md",
+      "x": 220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_pkg_sort",
+      "type": "file",
+      "file": "go_pkg_sort.md",
+      "x": 420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_service_logline",
+      "type": "file",
+      "file": "logLine().md",
+      "x": 620,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cmd_app_main",
+      "type": "file",
+      "file": "main.go.md",
+      "x": 20,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_service",
+      "type": "file",
+      "file": "service.go.md",
+      "x": 220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_service_strings2upper",
+      "type": "file",
+      "file": "strings2upper().md",
+      "x": 420,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g1",
+      "type": "group",
+      "label": "Community 1",
+      "x": 960,
+      "y": 0,
+      "width": 660,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_store_helpers_format",
+      "type": "file",
+      "file": "Format().md",
+      "x": 980,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_n",
+      "type": "file",
+      "file": "N.md",
+      "x": 1180,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_service_newuserservice",
+      "type": "file",
+      "file": "NewUserService().md",
+      "x": 1380,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_store_sum",
+      "type": "file",
+      "file": "Sum().md",
+      "x": 980,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_cmd_app_main_main",
+      "type": "file",
+      "file": "main().md",
+      "x": 1180,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g2",
+      "type": "group",
+      "label": "Community 2",
+      "x": 1700,
+      "y": 0,
+      "width": 660,
+      "height": 400,
+      "color": "3"
+    },
+    {
+      "id": "n_store_helpers_normalize",
+      "type": "file",
+      "file": "Normalize().md",
+      "x": 1720,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_helpers_clean",
+      "type": "file",
+      "file": "clean().md",
+      "x": 1920,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_pkg_strconv",
+      "type": "file",
+      "file": "go_pkg_strconv.md",
+      "x": 2120,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_pkg_strings",
+      "type": "file",
+      "file": "go_pkg_strings.md",
+      "x": 1720,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_helpers",
+      "type": "file",
+      "file": "helpers.go.md",
+      "x": 1920,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g3",
+      "type": "group",
+      "label": "Community 3",
+      "x": 2440,
+      "y": 0,
+      "width": 660,
+      "height": 400,
+      "color": "4"
+    },
+    {
+      "id": "n_service_service_test_testregister",
+      "type": "file",
+      "file": "TestRegister().md",
+      "x": 2460,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_service_clean",
+      "type": "file",
+      "file": "clean()_1.md",
+      "x": 2660,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_pkg_testing",
+      "type": "file",
+      "file": "go_pkg_testing.md",
+      "x": 2860,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_service_test",
+      "type": "file",
+      "file": "service_test.go.md",
+      "x": 2460,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_type_testing_t",
+      "type": "file",
+      "file": "testing.T.md",
+      "x": 2660,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g4",
+      "type": "group",
+      "label": "Community 4",
+      "x": 0,
+      "y": 500,
+      "width": 660,
+      "height": 400,
+      "color": "5"
+    },
+    {
+      "id": "n_service_userservice_greet",
+      "type": "file",
+      "file": "dot-Greet()_1.md",
+      "x": 20,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_userservice_names",
+      "type": "file",
+      "file": "dot-Names().md",
+      "x": 220,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_userservice_register",
+      "type": "file",
+      "file": "dot-Register().md",
+      "x": 420,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_user",
+      "type": "file",
+      "file": "User.md",
+      "x": 20,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_service_userservice",
+      "type": "file",
+      "file": "UserService.md",
+      "x": 220,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g5",
+      "type": "group",
+      "label": "Community 5",
+      "x": 960,
+      "y": 500,
+      "width": 600,
+      "height": 400,
+      "color": "6"
+    },
+    {
+      "id": "n_store_store_newstore",
+      "type": "file",
+      "file": "NewStore().md",
+      "x": 980,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_number",
+      "type": "file",
+      "file": "Number.md",
+      "x": 1180,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_store_go_store_store",
+      "type": "file",
+      "file": "Store.md",
+      "x": 980,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_go_pkg_errors",
+      "type": "file",
+      "file": "go_pkg_errors.md",
+      "x": 1180,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g6",
+      "type": "group",
+      "label": "Community 6",
+      "x": 1700,
+      "y": 500,
+      "width": 600,
+      "height": 400,
+      "color": "1"
+    },
+    {
+      "id": "n_store_store_t_get",
+      "type": "file",
+      "file": "dot-Get().md",
+      "x": 1720,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_store_t_put",
+      "type": "file",
+      "file": "dot-Put().md",
+      "x": 1920,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_store_t",
+      "type": "file",
+      "file": "StoreT.md",
+      "x": 1720,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_t",
+      "type": "file",
+      "file": "T.md",
+      "x": 1920,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g7",
+      "type": "group",
+      "label": "Community 7",
+      "x": 2440,
+      "y": 500,
+      "width": 600,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_store_model_identity",
+      "type": "file",
+      "file": "dot-Identity().md",
+      "x": 2460,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_id",
+      "type": "file",
+      "file": "ID.md",
+      "x": 2660,
+      "y": 580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_store_go_store_model",
+      "type": "file",
+      "file": "Model.md",
+      "x": 2460,
+      "y": 660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g8",
+      "type": "group",
+      "label": "Community 8",
+      "x": 0,
+      "y": 980,
+      "width": 600,
+      "height": 400,
+      "color": "3"
+    },
+    {
+      "id": "n_store_entity_identity",
+      "type": "file",
+      "file": "dot-Identity()_1.md",
+      "x": 20,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_store_entity",
+      "type": "file",
+      "file": "Entity.md",
+      "x": 220,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g9",
+      "type": "group",
+      "label": "Community 9",
+      "x": 960,
+      "y": 980,
+      "width": 600,
+      "height": 400,
+      "color": "4"
+    },
+    {
+      "id": "n_pkg_example_com_shop",
+      "type": "file",
+      "file": "example.comshop.md",
+      "x": 980,
+      "y": 1060,
+      "width": 180,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_cmd_app_main_go_pkg_fmt",
+      "fromNode": "n_cmd_app_main",
+      "toNode": "n_go_pkg_fmt",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_go_pkg_os",
+      "fromNode": "n_cmd_app_main",
+      "toNode": "n_go_pkg_os",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_service_service",
+      "fromNode": "n_cmd_app_main",
+      "toNode": "n_service_service",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_service_service_test",
+      "fromNode": "n_cmd_app_main",
+      "toNode": "n_service_service_test",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_store_helpers",
+      "fromNode": "n_cmd_app_main",
+      "toNode": "n_store_helpers",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_store_store_go_store_store",
+      "fromNode": "n_cmd_app_main",
+      "toNode": "n_store_store_go_store_store",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_cmd_app_main_main",
+      "fromNode": "n_cmd_app_main",
+      "toNode": "n_cmd_app_main_main",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_service_greeter",
+      "fromNode": "n_service_service",
+      "toNode": "n_service_greeter",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_greeter_service_greeter_greet",
+      "fromNode": "n_service_greeter",
+      "toNode": "n_service_greeter_greet",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_service_greeter_greet_service_user",
+      "fromNode": "n_service_greeter_greet",
+      "toNode": "n_service_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_go_pkg_github_com_google_uuid",
+      "fromNode": "n_service_service",
+      "toNode": "n_go_pkg_github_com_google_uuid",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_go_pkg_fmt",
+      "fromNode": "n_service_service",
+      "toNode": "n_go_pkg_fmt",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_go_pkg_sort",
+      "fromNode": "n_service_service",
+      "toNode": "n_go_pkg_sort",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_store_helpers",
+      "fromNode": "n_service_service",
+      "toNode": "n_store_helpers",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_store_store_go_store_store",
+      "fromNode": "n_service_service",
+      "toNode": "n_store_store_go_store_store",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_service_user",
+      "fromNode": "n_service_service",
+      "toNode": "n_service_user",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_service_userservice",
+      "fromNode": "n_service_service",
+      "toNode": "n_service_userservice",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_service_service_newuserservice",
+      "fromNode": "n_service_service",
+      "toNode": "n_service_service_newuserservice",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_service_service_logline",
+      "fromNode": "n_service_service",
+      "toNode": "n_service_service_logline",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_service_service_apply",
+      "fromNode": "n_service_service",
+      "toNode": "n_service_service_apply",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_service_service_strings2upper",
+      "fromNode": "n_service_service",
+      "toNode": "n_service_service_strings2upper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_service_service_clean",
+      "fromNode": "n_service_service",
+      "toNode": "n_service_service_clean",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_names_service_service_apply",
+      "fromNode": "n_service_userservice_names",
+      "toNode": "n_service_service_apply",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_main_service_service_newuserservice",
+      "fromNode": "n_cmd_app_main_main",
+      "toNode": "n_service_service_newuserservice",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_main_store_helpers_format",
+      "fromNode": "n_cmd_app_main_main",
+      "toNode": "n_store_helpers_format",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_cmd_app_main_main_store_store_sum",
+      "fromNode": "n_cmd_app_main_main",
+      "toNode": "n_store_store_sum",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_sum_n",
+      "fromNode": "n_store_store_sum",
+      "toNode": "n_n",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_newuserservice_service_userservice",
+      "fromNode": "n_service_service_newuserservice",
+      "toNode": "n_service_userservice",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_test_testregister_service_service_newuserservice",
+      "fromNode": "n_service_service_test_testregister",
+      "toNode": "n_service_service_newuserservice",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_store_helpers_store_helpers_format",
+      "fromNode": "n_store_helpers",
+      "toNode": "n_store_helpers_format",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_store_store_sum",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_store_store_sum",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_helpers_go_pkg_strings",
+      "fromNode": "n_store_helpers",
+      "toNode": "n_go_pkg_strings",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_store_helpers_go_pkg_strconv",
+      "fromNode": "n_store_helpers",
+      "toNode": "n_go_pkg_strconv",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_store_helpers_store_helpers_clean",
+      "fromNode": "n_store_helpers",
+      "toNode": "n_store_helpers_clean",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_helpers_store_helpers_normalize",
+      "fromNode": "n_store_helpers",
+      "toNode": "n_store_helpers_normalize",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_helpers_normalize_store_helpers_clean",
+      "fromNode": "n_store_helpers_normalize",
+      "toNode": "n_store_helpers_clean",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_store_helpers_normalize_store_id",
+      "fromNode": "n_store_helpers_normalize",
+      "toNode": "n_store_id",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_register_store_helpers_normalize",
+      "fromNode": "n_service_userservice_register",
+      "toNode": "n_store_helpers_normalize",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_service_service_test_testregister_go_type_testing_t",
+      "fromNode": "n_service_service_test_testregister",
+      "toNode": "n_go_type_testing_t",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_test_testregister_service_service_clean",
+      "fromNode": "n_service_service_test_testregister",
+      "toNode": "n_service_service_clean",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_service_service_test_go_pkg_testing",
+      "fromNode": "n_service_service_test",
+      "toNode": "n_go_pkg_testing",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_service_service_test_service_service_test_testregister",
+      "fromNode": "n_service_service_test",
+      "toNode": "n_service_service_test_testregister",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_service_user",
+      "fromNode": "n_service_userservice",
+      "toNode": "n_service_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_greet_service_user",
+      "fromNode": "n_service_userservice_greet",
+      "toNode": "n_service_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_names_service_user",
+      "fromNode": "n_service_userservice_names",
+      "toNode": "n_service_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_register_service_user",
+      "fromNode": "n_service_userservice_register",
+      "toNode": "n_service_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_user_store_store_go_store_model",
+      "fromNode": "n_service_user",
+      "toNode": "n_store_store_go_store_model",
+      "label": "embeds [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_store_store_go_store_store",
+      "fromNode": "n_service_userservice",
+      "toNode": "n_store_store_go_store_store",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_service_userservice_register",
+      "fromNode": "n_service_userservice",
+      "toNode": "n_service_userservice_register",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_service_userservice_greet",
+      "fromNode": "n_service_userservice",
+      "toNode": "n_service_userservice_greet",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_service_userservice_service_userservice_names",
+      "fromNode": "n_service_userservice",
+      "toNode": "n_service_userservice_names",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_store_number",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_store_number",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_t",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_t",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_go_pkg_errors",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_go_pkg_errors",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_store_id",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_store_id",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_store_entity",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_store_entity",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_store_store_go_store_model",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_store_store_go_store_model",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_store_store_go_store_store",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_store_store_go_store_store",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_store_store_store_newstore",
+      "fromNode": "n_store_store_go_store_store",
+      "toNode": "n_store_store_newstore",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_newstore_t",
+      "fromNode": "n_store_store_newstore",
+      "toNode": "n_t",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_t_store_store_t_put",
+      "fromNode": "n_store_store_t",
+      "toNode": "n_store_store_t_put",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_t_store_store_t_get",
+      "fromNode": "n_store_store_t",
+      "toNode": "n_store_store_t_get",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_t_get_store_id",
+      "fromNode": "n_store_store_t_get",
+      "toNode": "n_store_id",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_t_get_t",
+      "fromNode": "n_store_store_t_get",
+      "toNode": "n_t",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_t_put_store_model_identity",
+      "fromNode": "n_store_store_t_put",
+      "toNode": "n_store_model_identity",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_t_put_t",
+      "fromNode": "n_store_store_t_put",
+      "toNode": "n_t",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_model_store_id",
+      "fromNode": "n_store_store_go_store_model",
+      "toNode": "n_store_id",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_store_entity_identity_store_id",
+      "fromNode": "n_store_entity_identity",
+      "toNode": "n_store_id",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_store_model_identity_store_id",
+      "fromNode": "n_store_model_identity",
+      "toNode": "n_store_id",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_store_store_go_store_model_store_model_identity",
+      "fromNode": "n_store_store_go_store_model",
+      "toNode": "n_store_model_identity",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_store_entity_store_entity_identity",
+      "fromNode": "n_store_entity",
+      "toNode": "n_store_entity_identity",
+      "label": "method [EXTRACTED]"
+    }
+  ]
+}

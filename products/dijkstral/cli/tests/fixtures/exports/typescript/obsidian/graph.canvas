@@ -1,0 +1,1402 @@
+{
+  "nodes": [
+    {
+      "id": "g0",
+      "type": "group",
+      "label": "Community 0",
+      "x": 0,
+      "y": 0,
+      "width": 880,
+      "height": 520,
+      "color": "1"
+    },
+    {
+      "id": "n_src_models_user_base_describe",
+      "type": "file",
+      "file": "dot-describe().md",
+      "x": 20,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_user_display",
+      "type": "file",
+      "file": "dot-display().md",
+      "x": 220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_base_save",
+      "type": "file",
+      "file": "dot-save().md",
+      "x": 420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_role_admin",
+      "type": "file",
+      "file": "Admin_1.md",
+      "x": 620,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_base",
+      "type": "file",
+      "file": "Base.md",
+      "x": 20,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_role_member",
+      "type": "file",
+      "file": "Member.md",
+      "x": 220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_rationale_21",
+      "type": "file",
+      "file": "NOTE persistence is faked in this fixture..md",
+      "x": 420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_role",
+      "type": "file",
+      "file": "Role.md",
+      "x": 620,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_userid",
+      "type": "file",
+      "file": "UserId.md",
+      "x": 20,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_rationale_61",
+      "type": "file",
+      "file": "WHY names are displayed title-cased everywhere..md",
+      "x": 220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_formatname",
+      "type": "file",
+      "file": "formatName().md",
+      "x": 420,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_helper",
+      "type": "file",
+      "file": "helper().md",
+      "x": 620,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user",
+      "type": "file",
+      "file": "user.ts.md",
+      "x": 20,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_validate",
+      "type": "file",
+      "file": "validate().md",
+      "x": 220,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g1",
+      "type": "group",
+      "label": "Community 1",
+      "x": 960,
+      "y": 0,
+      "width": 880,
+      "height": 420,
+      "color": "2"
+    },
+    {
+      "id": "n_src_service_userservice_export",
+      "type": "file",
+      "file": "dot-export().md",
+      "x": 980,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_service_comparenames",
+      "type": "file",
+      "file": "compareNames().md",
+      "x": 1180,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_service_helper",
+      "type": "file",
+      "file": "helper()_1.md",
+      "x": 1380,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_fs",
+      "type": "file",
+      "file": "ref_fs.md",
+      "x": 1580,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_node_path",
+      "type": "file",
+      "file": "ref_node_path.md",
+      "x": 980,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_polyfill",
+      "type": "file",
+      "file": "ref_polyfill.md",
+      "x": 1180,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_service",
+      "type": "file",
+      "file": "service.ts.md",
+      "x": 1380,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_index_admin",
+      "type": "file",
+      "file": "src_models_index_admin.md",
+      "x": 1580,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_index_helper",
+      "type": "file",
+      "file": "src_models_index_helper.md",
+      "x": 980,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_index_storage",
+      "type": "file",
+      "file": "src_models_index_storage.md",
+      "x": 1180,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g2",
+      "type": "group",
+      "label": "Community 2",
+      "x": 1920,
+      "y": 0,
+      "width": 880,
+      "height": 420,
+      "color": "3"
+    },
+    {
+      "id": "n_src_models_repo_repo_add",
+      "type": "file",
+      "file": "dot-add().md",
+      "x": 1940,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_repo_repo_all",
+      "type": "file",
+      "file": "dot-all().md",
+      "x": 2140,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_repo_repo_get",
+      "type": "file",
+      "file": "dot-get().md",
+      "x": 2340,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_repo_entity",
+      "type": "file",
+      "file": "Entity.md",
+      "x": 2540,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_repo_repo",
+      "type": "file",
+      "file": "Repo.md",
+      "x": 1940,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_repo_storage",
+      "type": "file",
+      "file": "Storage.md",
+      "x": 2140,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_index",
+      "type": "file",
+      "file": "index.ts.md",
+      "x": 2340,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_repo_key",
+      "type": "file",
+      "file": "key().md",
+      "x": 2540,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_repo",
+      "type": "file",
+      "file": "repo.ts.md",
+      "x": 1940,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_repo_sealed",
+      "type": "file",
+      "file": "sealed().md",
+      "x": 2140,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g3",
+      "type": "group",
+      "label": "Community 3",
+      "x": 0,
+      "y": 600,
+      "width": 660,
+      "height": 420,
+      "color": "4"
+    },
+    {
+      "id": "n_src_service_userservice_constructor",
+      "type": "file",
+      "file": "dot-constructor().md",
+      "x": 20,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_service_userservice_log",
+      "type": "file",
+      "file": "dot-log().md",
+      "x": 220,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_service_userservice_register",
+      "type": "file",
+      "file": "dot-register().md",
+      "x": 420,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_service_userservice",
+      "type": "file",
+      "file": "UserService.md",
+      "x": 20,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_tests_service_test_makeuser",
+      "type": "file",
+      "file": "makeUser().md",
+      "x": 220,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_vitest",
+      "type": "file",
+      "file": "ref_vitest.md",
+      "x": 420,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_service_run",
+      "type": "file",
+      "file": "run().md",
+      "x": 20,
+      "y": 840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_tests_service_test",
+      "type": "file",
+      "file": "service.test.ts.md",
+      "x": 220,
+      "y": 840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_index_user",
+      "type": "file",
+      "file": "src_models_index_user.md",
+      "x": 420,
+      "y": 840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g4",
+      "type": "group",
+      "label": "Community 4",
+      "x": 960,
+      "y": 600,
+      "width": 660,
+      "height": 420,
+      "color": "5"
+    },
+    {
+      "id": "n_src_models_user_user_constructor",
+      "type": "file",
+      "file": "dot-constructor()_1.md",
+      "x": 980,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_user_describe",
+      "type": "file",
+      "file": "dot-describe()_1.md",
+      "x": 1180,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_user_parse",
+      "type": "file",
+      "file": "dot-parse().md",
+      "x": 1380,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_admin_promote",
+      "type": "file",
+      "file": "dot-promote().md",
+      "x": 980,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_service_userservice_promote",
+      "type": "file",
+      "file": "dot-promote()_1.md",
+      "x": 1180,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_admin",
+      "type": "file",
+      "file": "Admin.md",
+      "x": 1380,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_named",
+      "type": "file",
+      "file": "Named.md",
+      "x": 980,
+      "y": 840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_user",
+      "type": "file",
+      "file": "User.md",
+      "x": 1180,
+      "y": 840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_models_user_admin_promote_bump",
+      "type": "file",
+      "file": "bump().md",
+      "x": 1380,
+      "y": 840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g5",
+      "type": "group",
+      "label": "Community 5",
+      "x": 1920,
+      "y": 600,
+      "width": 660,
+      "height": 420,
+      "color": "6"
+    },
+    {
+      "id": "n_src_util_helper",
+      "type": "file",
+      "file": "helper()_2.md",
+      "x": 1940,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_util_legacy",
+      "type": "file",
+      "file": "legacy.md",
+      "x": 2140,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_legacy",
+      "type": "file",
+      "file": "ref_legacy.md",
+      "x": 2340,
+      "y": 680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_path",
+      "type": "file",
+      "file": "ref_path.md",
+      "x": 1940,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_util_slugify",
+      "type": "file",
+      "file": "slugify().md",
+      "x": 2140,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_util_traced",
+      "type": "file",
+      "file": "traced().md",
+      "x": 2340,
+      "y": 760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_util",
+      "type": "file",
+      "file": "util.ts.md",
+      "x": 1940,
+      "y": 840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_util_join",
+      "type": "file",
+      "file": "{ join }.md",
+      "x": 2140,
+      "y": 840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g6",
+      "type": "group",
+      "label": "Community 6",
+      "x": 0,
+      "y": 1100,
+      "width": 660,
+      "height": 420,
+      "color": "1"
+    },
+    {
+      "id": "n_src_ui_app_app_handleclick",
+      "type": "file",
+      "file": "dot-handleClick().md",
+      "x": 20,
+      "y": 1180,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_ui_app_app_render",
+      "type": "file",
+      "file": "dot-render().md",
+      "x": 220,
+      "y": 1180,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_ui_app_app",
+      "type": "file",
+      "file": "App.md",
+      "x": 420,
+      "y": 1180,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_ui_app",
+      "type": "file",
+      "file": "App.tsx.md",
+      "x": 20,
+      "y": 1260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_ui_app_badge",
+      "type": "file",
+      "file": "Badge().md",
+      "x": 220,
+      "y": 1260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_ui_app_badgeprops",
+      "type": "file",
+      "file": "BadgeProps.md",
+      "x": 420,
+      "y": 1260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_ui_app_userlist",
+      "type": "file",
+      "file": "UserList().md",
+      "x": 20,
+      "y": 1340,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_react",
+      "type": "file",
+      "file": "ref_react.md",
+      "x": 220,
+      "y": 1340,
+      "width": 180,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_src_models_user_base_src_models_repo_entity",
+      "fromNode": "n_src_models_user_base",
+      "toNode": "n_src_models_repo_entity",
+      "label": "implements [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_user_src_models_user_base",
+      "fromNode": "n_src_models_user_user",
+      "toNode": "n_src_models_user_base",
+      "label": "inherits [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_base",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_base",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_base_src_models_user_base_describe",
+      "fromNode": "n_src_models_user_base",
+      "toNode": "n_src_models_user_base_describe",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_base_src_models_user_base_save",
+      "fromNode": "n_src_models_user_base",
+      "toNode": "n_src_models_user_base_save",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_role_src_models_user_role_member",
+      "fromNode": "n_src_models_user_role",
+      "toNode": "n_src_models_user_role_member",
+      "label": "case_of [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_role_src_models_user_role_admin",
+      "fromNode": "n_src_models_user_role",
+      "toNode": "n_src_models_user_role_admin",
+      "label": "case_of [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_role",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_role",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_userid",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_userid",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_repo_entity",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_repo_entity",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_index_src_models_repo_entity",
+      "fromNode": "n_src_models_index",
+      "toNode": "n_src_models_repo_entity",
+      "label": "re_exports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_repo_src_models_repo_entity",
+      "fromNode": "n_src_models_repo",
+      "toNode": "n_src_models_repo_entity",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_run_src_models_repo_repo",
+      "fromNode": "n_src_service_run",
+      "toNode": "n_src_models_repo_repo",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_repo_repo_src_models_repo_sealed",
+      "fromNode": "n_src_models_repo_repo",
+      "toNode": "n_src_models_repo_sealed",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_src_models_repo_repo",
+      "fromNode": "n_src_service_userservice",
+      "toNode": "n_src_models_repo_repo",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_repo_repo",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_repo_repo",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_constructor_src_models_repo_repo",
+      "fromNode": "n_src_service_userservice_constructor",
+      "toNode": "n_src_models_repo_repo",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_index_src_models_repo_repo",
+      "fromNode": "n_src_models_index",
+      "toNode": "n_src_models_repo_repo",
+      "label": "re_exports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_repo_src_models_repo_repo",
+      "fromNode": "n_src_models_repo",
+      "toNode": "n_src_models_repo_repo",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_repo_repo_src_models_repo_repo_add",
+      "fromNode": "n_src_models_repo_repo",
+      "toNode": "n_src_models_repo_repo_add",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_repo_repo_src_models_repo_repo_get",
+      "fromNode": "n_src_models_repo_repo",
+      "toNode": "n_src_models_repo_repo_get",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_repo_repo_src_models_repo_repo_all",
+      "fromNode": "n_src_models_repo_repo",
+      "toNode": "n_src_models_repo_repo_all",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_run_src_service_userservice",
+      "fromNode": "n_src_service_run",
+      "toNode": "n_src_service_userservice",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_src_models_user_user",
+      "fromNode": "n_src_service_userservice",
+      "toNode": "n_src_models_user_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_src_service_userservice",
+      "fromNode": "n_src_tests_service_test",
+      "toNode": "n_src_service_userservice",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_service_userservice",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_service_userservice",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_service_userservice",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_service_userservice",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_src_service_userservice_constructor",
+      "fromNode": "n_src_service_userservice",
+      "toNode": "n_src_service_userservice_constructor",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_src_service_userservice_register",
+      "fromNode": "n_src_service_userservice",
+      "toNode": "n_src_service_userservice_register",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_src_service_userservice_promote",
+      "fromNode": "n_src_service_userservice",
+      "toNode": "n_src_service_userservice_promote",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_src_service_userservice_export",
+      "fromNode": "n_src_service_userservice",
+      "toNode": "n_src_service_userservice_export",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_src_service_userservice_log",
+      "fromNode": "n_src_service_userservice",
+      "toNode": "n_src_service_userservice_log",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_user_admin",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_user_admin",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_promote_src_models_user_admin",
+      "fromNode": "n_src_service_userservice_promote",
+      "toNode": "n_src_models_user_admin",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_admin_src_models_user_user",
+      "fromNode": "n_src_models_user_admin",
+      "toNode": "n_src_models_user_user",
+      "label": "inherits [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_admin",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_admin",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_admin_src_models_user_admin_promote",
+      "fromNode": "n_src_models_user_admin",
+      "toNode": "n_src_models_user_admin_promote",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_user_named",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_user_named",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_promote_src_models_user_named",
+      "fromNode": "n_src_service_userservice_promote",
+      "toNode": "n_src_models_user_named",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_user_src_models_user_named",
+      "fromNode": "n_src_models_user_user",
+      "toNode": "n_src_models_user_named",
+      "label": "implements [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_named",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_named",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_makeuser_src_models_user_user",
+      "fromNode": "n_src_tests_service_test_makeuser",
+      "toNode": "n_src_models_user_user",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_badgeprops_src_models_user_user",
+      "fromNode": "n_src_ui_app_badgeprops",
+      "toNode": "n_src_models_user_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_constructor_src_models_user_user",
+      "fromNode": "n_src_service_userservice_constructor",
+      "toNode": "n_src_models_user_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_user_user",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_user_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_src_models_user_user",
+      "fromNode": "n_src_tests_service_test",
+      "toNode": "n_src_models_user_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_models_user_user",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_models_user_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_promote_src_models_user_user",
+      "fromNode": "n_src_service_userservice_promote",
+      "toNode": "n_src_models_user_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_register_src_models_user_user",
+      "fromNode": "n_src_service_userservice_register",
+      "toNode": "n_src_models_user_user",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_user",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_user",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_user_src_models_user_user_constructor",
+      "fromNode": "n_src_models_user_user",
+      "toNode": "n_src_models_user_user_constructor",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_user_src_models_user_user_display",
+      "fromNode": "n_src_models_user_user",
+      "toNode": "n_src_models_user_user_display",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_user_src_models_user_user_parse",
+      "fromNode": "n_src_models_user_user",
+      "toNode": "n_src_models_user_user_parse",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_user_src_models_user_user_describe",
+      "fromNode": "n_src_models_user_user",
+      "toNode": "n_src_models_user_user_describe",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_ui_app_app",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_ui_app_app",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_app_src_ui_app_app_handleclick",
+      "fromNode": "n_src_ui_app_app",
+      "toNode": "n_src_ui_app_app_handleclick",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_app_src_ui_app_app_render",
+      "fromNode": "n_src_ui_app_app",
+      "toNode": "n_src_ui_app_app_render",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_ui_app_badgeprops",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_ui_app_badgeprops",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_base_save_src_models_user_validate",
+      "fromNode": "n_src_models_user_base_save",
+      "toNode": "n_src_models_user_validate",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_user_display_src_models_user_formatname",
+      "fromNode": "n_src_models_user_user_display",
+      "toNode": "n_src_models_user_formatname",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_formatname",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_formatname",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_user_helper",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_user_helper",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_helper",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_user_validate",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_user_validate",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_service_comparenames",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_service_comparenames",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_export_src_service_comparenames",
+      "fromNode": "n_src_service_userservice_export",
+      "toNode": "n_src_service_comparenames",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_src_service_src_service_helper",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_service_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_export_src_service_helper",
+      "fromNode": "n_src_service_userservice_export",
+      "toNode": "n_src_service_helper",
+      "label": "indirect_call [INFERRED]"
+    },
+    {
+      "id": "e_src_models_repo_src_models_repo_key",
+      "fromNode": "n_src_models_repo",
+      "toNode": "n_src_models_repo_key",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_repo_src_models_repo_sealed",
+      "fromNode": "n_src_models_repo",
+      "toNode": "n_src_models_repo_sealed",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_run_src_service_userservice_register",
+      "fromNode": "n_src_service_run",
+      "toNode": "n_src_service_userservice_register",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_app_handleclick_src_service_run",
+      "fromNode": "n_src_ui_app_app_handleclick",
+      "toNode": "n_src_service_run",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_run_src_util",
+      "fromNode": "n_src_service_run",
+      "toNode": "n_src_util",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_src_service_run",
+      "fromNode": "n_src_tests_service_test",
+      "toNode": "n_src_service_run",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_service_run",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_service_run",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_service_run",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_service_run",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_log_src_service_userservice_log",
+      "fromNode": "n_src_service_userservice_log",
+      "toNode": "n_src_service_userservice_log",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_register_src_service_userservice_log",
+      "fromNode": "n_src_service_userservice_register",
+      "toNode": "n_src_service_userservice_log",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_register_src_util_slugify",
+      "fromNode": "n_src_service_userservice_register",
+      "toNode": "n_src_util_slugify",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_src_tests_service_test_makeuser",
+      "fromNode": "n_src_tests_service_test",
+      "toNode": "n_src_tests_service_test_makeuser",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_admin_promote_src_models_user_admin_promote_bump",
+      "fromNode": "n_src_models_user_admin_promote",
+      "toNode": "n_src_models_user_admin_promote_bump",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_userservice_promote_src_service_userservice_promote",
+      "fromNode": "n_src_service_userservice_promote",
+      "toNode": "n_src_service_userservice_promote",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_util_slugify_src_util_helper",
+      "fromNode": "n_src_util_slugify",
+      "toNode": "n_src_util_helper",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_util_src_util_helper",
+      "fromNode": "n_src_util",
+      "toNode": "n_src_util_helper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_util_slugify",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_util_slugify",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_util_src_util_slugify",
+      "fromNode": "n_src_util",
+      "toNode": "n_src_util_slugify",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_util_src_util_traced",
+      "fromNode": "n_src_util",
+      "toNode": "n_src_util_traced",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_app_render_src_ui_app_userlist",
+      "fromNode": "n_src_ui_app_app_render",
+      "toNode": "n_src_ui_app_userlist",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_userlist_src_ui_app_badge",
+      "fromNode": "n_src_ui_app_userlist",
+      "toNode": "n_src_ui_app_badge",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_ui_app_badge",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_ui_app_badge",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_ui_app_userlist",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_ui_app_userlist",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_index_src_models_user",
+      "fromNode": "n_src_models_index",
+      "toNode": "n_src_models_user",
+      "label": "re_exports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_src_models_repo",
+      "fromNode": "n_src_models_user",
+      "toNode": "n_src_models_repo",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_user",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_user",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_rationale_21_src_models_user",
+      "fromNode": "n_src_models_user_rationale_21",
+      "toNode": "n_src_models_user",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_user_rationale_61_src_models_user",
+      "fromNode": "n_src_models_user_rationale_61",
+      "toNode": "n_src_models_user",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_index_admin",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_index_admin",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_index_helper",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_index_helper",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_index_storage",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_index_storage",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_index_user",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_index_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_ref_polyfill",
+      "fromNode": "n_src_service",
+      "toNode": "n_ref_polyfill",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_ref_fs",
+      "fromNode": "n_src_service",
+      "toNode": "n_ref_fs",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_ref_node_path",
+      "fromNode": "n_src_service",
+      "toNode": "n_ref_node_path",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_models_index",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_models_index",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_service_src_util",
+      "fromNode": "n_src_service",
+      "toNode": "n_src_util",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_src_service",
+      "fromNode": "n_src_tests_service_test",
+      "toNode": "n_src_service",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_service",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_service",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_index_src_models_repo",
+      "fromNode": "n_src_models_index",
+      "toNode": "n_src_models_repo",
+      "label": "re_exports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_src_models_index",
+      "fromNode": "n_src_tests_service_test",
+      "toNode": "n_src_models_index",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_models_index",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_models_index",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_models_repo_src_models_repo_storage",
+      "fromNode": "n_src_models_repo",
+      "toNode": "n_src_models_repo_storage",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_src_models_index_user",
+      "fromNode": "n_src_tests_service_test",
+      "toNode": "n_src_models_index_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_tests_service_test_ref_vitest",
+      "fromNode": "n_src_tests_service_test",
+      "toNode": "n_ref_vitest",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_util_ref_path",
+      "fromNode": "n_src_util",
+      "toNode": "n_ref_path",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_util_ref_legacy",
+      "fromNode": "n_src_util",
+      "toNode": "n_ref_legacy",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
+      "id": "e_src_util_src_util_join",
+      "fromNode": "n_src_util",
+      "toNode": "n_src_util_join",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_util_src_util_legacy",
+      "fromNode": "n_src_util",
+      "toNode": "n_src_util_legacy",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_src_models_index_user",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_src_models_index_user",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_ui_app_ref_react",
+      "fromNode": "n_src_ui_app",
+      "toNode": "n_ref_react",
+      "label": "imports_from [EXTRACTED]"
+    }
+  ]
+}

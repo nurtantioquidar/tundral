@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="@@LANG@@">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@@TITLE@@</title>
+<style>
+:root {
+  --bg: #f7f6f2; --panel: #ffffff; --ink: #1f2328; --soft: #5b6470; --line: #dedbd2;
+  --accent: #2c6e8f; --code: #f0eee8;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #15181c; --panel: #1d2127; --ink: #e6e8eb; --soft: #9aa3ad; --line: #30363e;
+          --accent: #7cc0de; --code: #262b32; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+       font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { padding: 28px 16px 12px; max-width: 1180px; margin: 0 auto; }
+.top h1 { margin: 0 0 6px; font-size: 1.6rem; line-height: 1.25; }
+.sub { margin: 0; color: var(--soft); }
+.toc { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 6px 14px;
+       padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--line);
+       max-width: 1180px; margin: 0 auto; }
+.toc a { color: var(--accent); text-decoration: none; font-size: .9rem; }
+.toc a:hover { text-decoration: underline; }
+main { max-width: 1180px; margin: 0 auto; padding: 0 16px 24px; }
+.block { padding: 18px 0 26px; border-bottom: 1px solid var(--line); }
+.block h2 { margin: 8px 0 10px; font-size: 1.3rem; scroll-margin-top: 56px; }
+.block h3 { margin: 20px 0 8px; font-size: 1.05rem; }
+.lead { color: var(--soft); max-width: 80ch; }
+.diagram { position: relative; margin: 14px 0; background: var(--panel); border: 1px solid var(--line);
+           border-radius: 8px; overflow: auto; max-height: 78vh; }
+.diagram .tools { position: sticky; top: 0; left: 0; display: flex; gap: 4px; padding: 6px;
+                  justify-content: flex-end; background: var(--panel); z-index: 1; }
+.diagram button { border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+                  border-radius: 4px; min-width: 2.2em; padding: 2px 8px; cursor: pointer; }
+.diagram pre.mermaid { margin: 0; padding: 12px; transform-origin: 0 0; background: transparent; }
+.diagram pre.mermaid:not([data-processed]) { white-space: pre; font: 12px/1.4 ui-monospace, monospace;
+                                             color: var(--soft); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 14px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.card h4 { margin: 0 0 8px; font-size: .95rem; }
+.chain { margin: 0; font-weight: 600; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--soft); font-weight: 600; }
+code { background: var(--code); border-radius: 3px; padding: 0 3px; font-size: .86em; overflow-wrap: anywhere; }
+small { color: var(--soft); overflow-wrap: anywhere; }
+.kind { display: inline-block; padding: 0 6px; border-radius: 10px; background: var(--code); font-size: .8rem; }
+table.calls td:nth-child(6) { min-width: 16ch; }
+footer { max-width: 1180px; margin: 0 auto; padding: 18px 16px 40px; color: var(--soft); text-align: center; font-size: .85rem; }
+footer p { margin: 2px 0; }
+.offline { color: #b54708; font-size: .85rem; padding: 0 12px 8px; }
+</style>
+</head>
+<body>
+@@BODY@@
+@@SCRIPTS@@
+<script>
+(function () {
+  "use strict";
+  var figures = document.querySelectorAll("figure.diagram");
+  figures.forEach(function (fig) {
+    var pre = fig.querySelector("pre.mermaid");
+    var scale = 1;
+    fig.querySelectorAll("button[data-zoom]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var step = Number(b.getAttribute("data-zoom"));
+        scale = step === 0 ? 1 : Math.min(4, Math.max(0.25, scale * (step > 0 ? 1.25 : 0.8)));
+        pre.style.transform = "scale(" + scale + ")";
+        fig.querySelector("button[data-zoom='0']").textContent = Math.round(scale * 100) + "%";
+      });
+    });
+  });
+  if (typeof window.mermaid === "undefined") {
+    figures.forEach(function (fig) {
+      var note = document.createElement("p");
+      note.className = "offline";
+      note.textContent = "Mermaid could not be loaded; the diagram source is shown instead.";
+      fig.appendChild(note);
+    });
+    return;
+  }
+  var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  window.mermaid.initialize({ startOnLoad: false, securityLevel: "strict", theme: dark ? "dark" : "base",
+                              maxTextSize: 2000000, flowchart: { htmlLabels: true } });
+  window.mermaid.run({ querySelector: "pre.mermaid" }).catch(function (err) {
+    console.warn("mermaid:", err && err.message ? err.message : err);
+  });
+})();
+</script>
+</body>
+</html>

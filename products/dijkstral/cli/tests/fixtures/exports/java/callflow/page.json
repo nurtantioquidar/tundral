@@ -1,0 +1,928 @@
+{
+ "title": "java — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 64 nodes, 93 edges, 7 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "extract-pipeline",
+   "Extraction Pipeline"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    EXTRACT_PIPELINE_5F350230(\"Extraction Pipeline<br/><small>64 nodes</small>\")",
+     "    class EXTRACT_PIPELINE_5F350230 module;"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Extraction Pipeline"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Extraction Pipeline",
+      "64",
+      "0, 1, 2, 3, 4, 5, 6"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "extract-pipeline",
+   "heading": "2. Extraction Pipeline",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Extraction Pipeline (64 nodes, 93 edges)",
+     "    subgraph extract_pipeline_shop_service_UserService_java_998cd608[\"shop/service/UserService.java\"]",
+     "        src_main_java_com_shop_service_userservice_00fd345f(\"UserService.java\")",
+     "        src_main_java_com_shop_service_userservice_users_827f6f82(\"UserService<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_users_ff38cb05(\"register()<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_forma_b45882d4(\"Formatter<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_forma_5dbbd51d(\"format()<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_forma_133e051a(\"shout()<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_forma_1013970c(\"slug()<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_repos_3a052bd5(\"Repository<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_repos_00b2fe4b(\"save()<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_stats_c54f2f09(\"Stats<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_stats_87cb6092(\"count()<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_users_b01b6bb0(\"save()<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_users_8ca95f6e(\"notify()<br/><small>shop/service/UserService.java</small>\")",
+     "        src_main_java_com_shop_service_userservice_users_2d7fe24e(\"names()<br/><small>shop/service/UserService.java</small>\")",
+     "    end",
+     "    subgraph extract_pipeline_shop_model_User_java_2d68332d[\"shop/model/User.java\"]",
+     "        src_main_java_com_shop_model_user_user_a3b4fd58(\"User<br/><small>shop/model/User.java</small>\")",
+     "        src_main_java_com_shop_model_user_address_ec2a8fd4(\"Address<br/><small>shop/model/User.java</small>\")",
+     "    end",
+     "    src_main_java_com_shop_model_model_model_cba3fcbb(\"Model<br/><small>shop/model/Model.java</small>\")",
+     "    src_test_java_com_shop_service_userservicetest_50329fbf(\"UserServiceTest.java\")",
+     "    src_main_java_com_shop_service_userservice_forma_b45882d4 -->|method| src_main_java_com_shop_service_userservice_forma_5dbbd51d",
+     "    src_main_java_com_shop_service_userservice_forma_b45882d4 -->|method| src_main_java_com_shop_service_userservice_forma_133e051a",
+     "    src_main_java_com_shop_service_userservice_forma_b45882d4 -->|method| src_main_java_com_shop_service_userservice_forma_1013970c",
+     "    src_main_java_com_shop_service_userservice_repos_3a052bd5 -->|method| src_main_java_com_shop_service_userservice_repos_00b2fe4b",
+     "    src_main_java_com_shop_service_userservice_stats_c54f2f09 -->|method| src_main_java_com_shop_service_userservice_stats_87cb6092",
+     "    src_main_java_com_shop_service_userservice_users_827f6f82 -->|method| src_main_java_com_shop_service_userservice_users_ff38cb05",
+     "    src_main_java_com_shop_service_userservice_users_827f6f82 -->|method| src_main_java_com_shop_service_userservice_users_b01b6bb0",
+     "    src_main_java_com_shop_service_userservice_users_827f6f82 -->|method| src_main_java_com_shop_service_userservice_users_8ca95f6e",
+     "    src_main_java_com_shop_service_userservice_users_827f6f82 -->|method| src_main_java_com_shop_service_userservice_users_2d7fe24e",
+     "    src_main_java_com_shop_service_userservice_users_ff38cb05 -->|calls| src_main_java_com_shop_service_userservice_users_b01b6bb0",
+     "    src_main_java_com_shop_service_userservice_users_ff38cb05 -->|calls| src_main_java_com_shop_service_userservice_users_8ca95f6e",
+     "    src_main_java_com_shop_service_userservice_users_ff38cb05 -->|calls| src_main_java_com_shop_service_userservice_forma_1013970c",
+     "    src_main_java_com_shop_service_userservice_00fd345f -->|imports| src_main_java_com_shop_model_model_model_cba3fcbb",
+     "    src_main_java_com_shop_service_userservice_00fd345f -->|imports| src_main_java_com_shop_model_user_address_ec2a8fd4",
+     "    src_main_java_com_shop_service_userservice_00fd345f -->|imports| src_main_java_com_shop_service_userservice_forma_b45882d4",
+     "    src_test_java_com_shop_service_userservicetest_50329fbf -->|imports| src_main_java_com_shop_model_user_user_a3b4fd58",
+     "    src_main_java_com_shop_service_userservice_stats_87cb6092 -->|calls| src_main_java_com_shop_service_userservice_users_2d7fe24e",
+     "    %% Omitted for readability: 46 nodes, 0 edges",
+     "    class src_main_java_com_shop_service_userservice_00fd345f klass;",
+     "    class src_main_java_com_shop_service_userservice_users_827f6f82 klass;",
+     "    class src_main_java_com_shop_service_userservice_users_ff38cb05 function;",
+     "    class src_main_java_com_shop_service_userservice_forma_b45882d4 klass;",
+     "    class src_main_java_com_shop_service_userservice_forma_5dbbd51d function;",
+     "    class src_main_java_com_shop_service_userservice_forma_133e051a function;",
+     "    class src_main_java_com_shop_service_userservice_forma_1013970c function;",
+     "    class src_main_java_com_shop_service_userservice_repos_3a052bd5 klass;",
+     "    class src_main_java_com_shop_service_userservice_repos_00b2fe4b function;",
+     "    class src_main_java_com_shop_service_userservice_stats_c54f2f09 klass;",
+     "    class src_main_java_com_shop_service_userservice_stats_87cb6092 function;",
+     "    class src_main_java_com_shop_service_userservice_users_b01b6bb0 function;",
+     "    class src_main_java_com_shop_service_userservice_users_8ca95f6e function;",
+     "    class src_main_java_com_shop_service_userservice_users_2d7fe24e function;",
+     "    class src_main_java_com_shop_model_user_user_a3b4fd58 klass;",
+     "    class src_main_java_com_shop_model_user_address_ec2a8fd4 klass;",
+     "    class src_main_java_com_shop_model_model_model_cba3fcbb klass;",
+     "    class src_test_java_com_shop_service_userservicetest_50329fbf test;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Extraction Pipeline groups implementation around com, shop, model, service, mostly in shop/service/UserService.java, shop/model/User.java, shop/model/Model.java. This section covers 64 nodes and 93 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x26, references x20, imports x18, contains x13. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Formatter",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.java",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       [
+        "format()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "shout()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "slug()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Formatter node in shop/service/UserService.java."
+     ],
+     [
+      "2",
+      [
+       [
+        "Repository",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "save()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Repository node in shop/service/UserService.java."
+     ],
+     [
+      "3",
+      [
+       [
+        "Stats",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "count()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Stats node in shop/service/UserService.java."
+     ],
+     [
+      "4",
+      [
+       [
+        "UserService",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "names()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "notify()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "register()",
+        "shop/service/UserService.java"
+       ],
+       "+1 more"
+      ],
+      "UserService node in shop/service/UserService.java."
+     ],
+     [
+      "5",
+      [
+       [
+        ".format()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Formatter",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".format() node in shop/service/UserService.java."
+     ],
+     [
+      "6",
+      [
+       [
+        ".shout()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Formatter",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".shout() node in shop/service/UserService.java."
+     ],
+     [
+      "7",
+      [
+       [
+        ".slug()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Formatter",
+        "shop/service/UserService.java"
+       ],
+       [
+        "register()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".slug() node in shop/service/UserService.java."
+     ],
+     [
+      "8",
+      [
+       [
+        ".save()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repository",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".save() node in shop/service/UserService.java."
+     ],
+     [
+      "9",
+      [
+       [
+        ".count()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Stats",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       [
+        "names()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      ".count() node in shop/service/UserService.java."
+     ],
+     [
+      "10",
+      [
+       [
+        ".names()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "count()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".names() node in shop/service/UserService.java."
+     ],
+     [
+      "11",
+      [
+       [
+        "UserService.java",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Address",
+        "shop/model/User.java"
+       ],
+       [
+        "Formatter",
+        "shop/service/UserServiceTest.java"
+       ],
+       [
+        "Formatter",
+        "shop/service/UserService.java"
+       ],
+       "+5 more"
+      ],
+      "UserService.java node in shop/service/UserService.java."
+     ],
+     [
+      "12",
+      [
+       [
+        "function",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService.java",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "function node in project."
+     ],
+     [
+      "13",
+      [
+       [
+        "requirenonnull",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService.java",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "requirenonnull node in project."
+     ],
+     [
+      "14",
+      [
+       [
+        "slug",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService.java",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "slug node in project."
+     ],
+     [
+      "15",
+      [
+       [
+        "util",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService.java",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "util node in project."
+     ],
+     [
+      "16",
+      [
+       [
+        "Address",
+        "shop/model/User.java"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.java",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       [
+        "label()",
+        "shop/model/User.java"
+       ]
+      ],
+      "Address node in shop/model/User.java."
+     ],
+     [
+      "17",
+      [
+       [
+        "Badge",
+        "shop/model/User.java"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "text()",
+        "shop/model/User.java"
+       ]
+      ],
+      "Badge node in shop/model/User.java."
+     ],
+     [
+      "18",
+      [
+       [
+        "User",
+        "shop/model/User.java"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserServiceTest.java",
+        "shop/service/UserServiceTest.java"
+       ]
+      ],
+      [
+       [
+        "getName()",
+        "shop/model/User.java"
+       ],
+       [
+        "of()",
+        "shop/model/User.java"
+       ],
+       [
+        "status()",
+        "shop/model/User.java"
+       ],
+       "+1 more"
+      ],
+      "User node in shop/model/User.java."
+     ],
+     [
+      "19",
+      [
+       [
+        "Runnable",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "run()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Runnable node in shop/service/UserService.java."
+     ],
+     [
+      "20",
+      [
+       [
+        ".label()",
+        "shop/model/User.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Address",
+        "shop/model/User.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".label() node in shop/model/User.java."
+     ],
+     [
+      "21",
+      [
+       [
+        ".text()",
+        "shop/model/User.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Badge",
+        "shop/model/User.java"
+       ]
+      ],
+      [
+       [
+        "getName()",
+        "shop/model/User.java"
+       ]
+      ],
+      ".text() node in shop/model/User.java."
+     ],
+     [
+      "22",
+      [
+       [
+        ".getName()",
+        "shop/model/User.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "text()",
+        "shop/model/User.java"
+       ],
+       [
+        "User",
+        "shop/model/User.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".getName() node in shop/model/User.java."
+     ],
+     [
+      "23",
+      [
+       [
+        ".of()",
+        "shop/model/User.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "User",
+        "shop/model/User.java"
+       ]
+      ],
+      [
+       [
+        "User()",
+        "shop/model/User.java"
+       ]
+      ],
+      ".of() node in shop/model/User.java."
+     ],
+     [
+      "24",
+      [
+       [
+        ".User()",
+        "shop/model/User.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "of()",
+        "shop/model/User.java"
+       ],
+       [
+        "User",
+        "shop/model/User.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".User() node in shop/model/User.java."
+     ],
+     [
+      "25",
+      [
+       [
+        ".notify()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".notify() node in shop/service/UserService.java."
+     ],
+     [
+      "26",
+      [
+       [
+        ".run()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Runnable",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".run() node in shop/service/UserService.java."
+     ],
+     [
+      "27",
+      [
+       [
+        ".register()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "registersUser()",
+        "shop/service/UserServiceTest.java"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       [
+        "getName()",
+        "shop/model/User.java"
+       ],
+       [
+        "notify()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "of()",
+        "shop/model/User.java"
+       ],
+       "+2 more"
+      ],
+      ".register() node in shop/service/UserService.java."
+     ],
+     [
+      "28",
+      [
+       [
+        ".save()",
+        "shop/service/UserService.java"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "shop/service/UserService.java"
+       ],
+       [
+        "UserService",
+        "shop/service/UserService.java"
+       ]
+      ],
+      [
+       [
+        "id()",
+        "shop/model/Model.java"
+       ]
+      ],
+      ".save() node in shop/service/UserService.java."
+     ],
+     [
+      "29",
+      [
+       [
+        "Override",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Override node in project."
+     ],
+     [
+      "30",
+      [
+       [
+        "Entity",
+        "shop/model/Entity.java"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "describe()",
+        "shop/model/Entity.java"
+       ],
+       [
+        "id()",
+        "shop/model/Entity.java"
+       ]
+      ],
+      "Entity node in shop/model/Entity.java."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "shop/service/UserService.java",
+      "16 nodes"
+     ],
+     [
+      "shop/model/Model.java",
+      "10 nodes"
+     ],
+     [
+      "shop/model/User.java",
+      "10 nodes"
+     ],
+     [
+      "shop/service/UserServiceTest.java",
+      "6 nodes"
+     ],
+     [
+      "shop/model/Entity.java",
+      "4 nodes"
+     ],
+     [
+      "shop/service/Audited.java",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "java — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "64"
+     ],
+     [
+      "Edges",
+      "93"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "7"
+     ],
+     [
+      "Documented Sections",
+      "1"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "88"
+     ],
+     [
+      "INFERRED",
+      "5"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

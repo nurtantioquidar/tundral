@@ -1,0 +1,926 @@
+{
+ "title": "mixed — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 31 nodes, 31 edges, 7 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "build-graph",
+   "Graph Build"
+  ],
+  [
+   "cli-skills",
+   "CLI & Skill Installers"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    BUILD_GRAPH_321CBB04(\"Graph Build<br/><small>26 nodes</small>\")",
+     "    class BUILD_GRAPH_321CBB04 module;",
+     "    CLI_SKILLS_9964CBB8(\"CLI & Skill Installers<br/><small>3 nodes</small>\")",
+     "    class CLI_SKILLS_9964CBB8 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>2 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    BUILD_GRAPH_321CBB04 -.-> CLI_SKILLS_9964CBB8",
+     "    CLI_SKILLS_9964CBB8 -.-> TESTS_FIXTURES_B84B1DCC"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Graph Build -> CLI & Skill Installers -> Tests & Fixtures"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Graph Build",
+      "26",
+      "0, 1, 2, 4"
+     ],
+     [
+      "CLI & Skill Installers",
+      "3",
+      "3"
+     ],
+     [
+      "Tests & Fixtures",
+      "2",
+      "5, 6"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "build-graph",
+   "heading": "2. Graph Build",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Graph Build (26 nodes, 28 edges)",
+     "    subgraph build_graph_package_json_4e40bfbd[\"package.json\"]",
+     "        package_582681c2(\"package.json\")",
+     "        ref_react_47bfb9fb(\"react<br/><small>package.json</small>\")",
+     "        ref_zod_60c5f9f5(\"zod<br/><small>package.json</small>\")",
+     "        ref_typescript_d5a01309(\"typescript<br/><small>package.json</small>\")",
+     "        package_scripts_build_b63da213(\"build<br/><small>package.json</small>\")",
+     "        package_dependencies_c512ca5e(\"dependencies<br/><small>package.json</small>\")",
+     "        package_devdependencies_ff8711cc(\"devDependencies<br/><small>package.json</small>\")",
+     "        package_name_b23e1232(\"name<br/><small>package.json</small>\")",
+     "        package_dependencies_react_a04d7d7e(\"react<br/><small>package.json</small>\")",
+     "        package_scripts_25cfc1ca(\"scripts<br/><small>package.json</small>\")",
+     "        package_devdependencies_typescript_6defc6cf(\"typescript<br/><small>package.json</small>\")",
+     "    end",
+     "    subgraph build_graph_scripts_build_sh_1c25f8f2[\"scripts/build.sh\"]",
+     "        scripts_build_build_5b073082(\"build()<br/><small>scripts/build.sh</small>\")",
+     "        scripts_build_1669b8cd(\"build.sh\")",
+     "        scripts_build_sh_entry_046cfa72(\"build.sh script<br/><small>scripts/build.sh</small>\")",
+     "        scripts_build_clean_70bdefba(\"clean()<br/><small>scripts/build.sh</small>\")",
+     "        scripts_build_compile_all_811491d1(\"compile_all()<br/><small>scripts/build.sh</small>\")",
+     "    end",
+     "    subgraph build_graph_scripts_common_sh_b8522c26[\"scripts/common.sh\"]",
+     "        scripts_common_log_3b2351df(\"log()<br/><small>scripts/common.sh</small>\")",
+     "        scripts_common_add0a0b2(\"common.sh\")",
+     "    end",
+     "    scripts_build_build_5b073082 -->|calls| scripts_build_clean_70bdefba",
+     "    scripts_build_build_5b073082 -->|calls| scripts_common_log_3b2351df",
+     "    scripts_build_build_5b073082 -->|calls| scripts_build_compile_all_811491d1",
+     "    scripts_build_clean_70bdefba -->|calls| scripts_common_log_3b2351df",
+     "    scripts_build_sh_entry_046cfa72 -->|calls| scripts_build_build_5b073082",
+     "    package_582681c2 -->|imports| ref_react_47bfb9fb",
+     "    package_582681c2 -->|imports| ref_zod_60c5f9f5",
+     "    package_582681c2 -->|imports| ref_typescript_d5a01309",
+     "    scripts_build_1669b8cd -->|imports| scripts_common_add0a0b2",
+     "    %% Omitted for readability: 8 nodes, 0 edges",
+     "    class package_582681c2 function;",
+     "    class ref_react_47bfb9fb function;",
+     "    class ref_zod_60c5f9f5 function;",
+     "    class ref_typescript_d5a01309 function;",
+     "    class package_scripts_build_b63da213 function;",
+     "    class package_dependencies_c512ca5e function;",
+     "    class package_devdependencies_ff8711cc function;",
+     "    class package_name_b23e1232 function;",
+     "    class package_dependencies_react_a04d7d7e function;",
+     "    class package_scripts_25cfc1ca function;",
+     "    class package_devdependencies_typescript_6defc6cf function;",
+     "    class scripts_build_build_5b073082 function;",
+     "    class scripts_build_1669b8cd function;",
+     "    class scripts_build_sh_entry_046cfa72 function;",
+     "    class scripts_build_clean_70bdefba function;",
+     "    class scripts_build_compile_all_811491d1 function;",
+     "    class scripts_common_log_3b2351df function;",
+     "    class scripts_common_add0a0b2 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Graph Build groups implementation around packagejson, scripts, buildsh, tsconfigjson, mostly in package.json, scripts/build.sh, tsconfig.json. This section covers 26 nodes and 28 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x15, calls x5, defines x4, imports x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "package.json",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "react",
+        "package.json"
+       ],
+       [
+        "typescript",
+        "package.json"
+       ],
+       [
+        "zod",
+        "package.json"
+       ]
+      ],
+      "package.json node in package.json."
+     ],
+     [
+      "2",
+      [
+       [
+        "devDependencies",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "devDependencies node in package.json."
+     ],
+     [
+      "3",
+      [
+       [
+        "typescript",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "typescript node in package.json."
+     ],
+     [
+      "4",
+      [
+       [
+        "name",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "name node in package.json."
+     ],
+     [
+      "5",
+      [
+       [
+        "scripts",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "scripts node in package.json."
+     ],
+     [
+      "6",
+      [
+       [
+        "build",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "build node in package.json."
+     ],
+     [
+      "7",
+      [
+       [
+        "version",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "version node in package.json."
+     ],
+     [
+      "8",
+      [
+       [
+        "react",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "package.json",
+        "package.json"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "react node in package.json."
+     ],
+     [
+      "9",
+      [
+       [
+        "typescript",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "package.json",
+        "package.json"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "typescript node in package.json."
+     ],
+     [
+      "10",
+      [
+       [
+        "zod",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "package.json",
+        "package.json"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "zod node in package.json."
+     ],
+     [
+      "11",
+      [
+       [
+        "build.sh",
+        "scripts/build.sh"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "common.sh",
+        "scripts/common.sh"
+       ]
+      ],
+      "build.sh node in scripts/build.sh."
+     ],
+     [
+      "12",
+      [
+       [
+        "build()",
+        "scripts/build.sh"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "build.sh script",
+        "scripts/build.sh"
+       ]
+      ],
+      [
+       [
+        "clean()",
+        "scripts/build.sh"
+       ],
+       [
+        "compile_all()",
+        "scripts/build.sh"
+       ],
+       [
+        "log()",
+        "scripts/common.sh"
+       ]
+      ],
+      "build() node in scripts/build.sh."
+     ],
+     [
+      "13",
+      [
+       [
+        "clean()",
+        "scripts/build.sh"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "build()",
+        "scripts/build.sh"
+       ]
+      ],
+      [
+       [
+        "log()",
+        "scripts/common.sh"
+       ]
+      ],
+      "clean() node in scripts/build.sh."
+     ],
+     [
+      "14",
+      [
+       [
+        "compile_all()",
+        "scripts/build.sh"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "build()",
+        "scripts/build.sh"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "compile_all() node in scripts/build.sh."
+     ],
+     [
+      "15",
+      [
+       [
+        "build.sh script",
+        "scripts/build.sh"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "build()",
+        "scripts/build.sh"
+       ]
+      ],
+      "build.sh script node in scripts/build.sh."
+     ],
+     [
+      "16",
+      [
+       [
+        "common.sh",
+        "scripts/common.sh"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "build.sh",
+        "scripts/build.sh"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "common.sh node in scripts/common.sh."
+     ],
+     [
+      "17",
+      [
+       [
+        "log()",
+        "scripts/common.sh"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "build()",
+        "scripts/build.sh"
+       ],
+       [
+        "clean()",
+        "scripts/build.sh"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "log() node in scripts/common.sh."
+     ],
+     [
+      "18",
+      [
+       [
+        "common.sh script",
+        "scripts/common.sh"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "common.sh script node in scripts/common.sh."
+     ],
+     [
+      "19",
+      [
+       [
+        "tsconfig.json",
+        "tsconfig.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Reads, resolves, or persists project configuration."
+     ],
+     [
+      "20",
+      [
+       [
+        "compilerOptions",
+        "tsconfig.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "compilerOptions node in tsconfig.json."
+     ],
+     [
+      "21",
+      [
+       [
+        "strict",
+        "tsconfig.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "strict node in tsconfig.json."
+     ],
+     [
+      "22",
+      [
+       [
+        "target",
+        "tsconfig.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "target node in tsconfig.json."
+     ],
+     [
+      "23",
+      [
+       [
+        "include",
+        "tsconfig.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "include node in tsconfig.json."
+     ],
+     [
+      "24",
+      [
+       [
+        "dependencies",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "dependencies node in package.json."
+     ],
+     [
+      "25",
+      [
+       [
+        "react",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "react node in package.json."
+     ],
+     [
+      "26",
+      [
+       [
+        "zod",
+        "package.json"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "zod node in package.json."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "package.json",
+      "13 nodes"
+     ],
+     [
+      "scripts/build.sh",
+      "5 nodes"
+     ],
+     [
+      "tsconfig.json",
+      "5 nodes"
+     ],
+     [
+      "scripts/common.sh",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "cli-skills",
+   "heading": "3. CLI & Skill Installers",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: CLI & Skill Installers (3 nodes, 3 edges)",
+     "    app_main_main_29d39d1d(\"main()<br/><small>app/main.py</small>\")",
+     "    app_main_helper_07bddfec(\"helper()<br/><small>app/main.py</small>\")",
+     "    app_main_f38e028d(\"main.py\")",
+     "    app_main_main_29d39d1d -->|calls| app_main_helper_07bddfec",
+     "    class app_main_main_29d39d1d function;",
+     "    class app_main_helper_07bddfec function;",
+     "    class app_main_f38e028d module;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "CLI & Skill Installers groups implementation around mainpy, app, helper, mostly in app/main.py. This section covers 3 nodes and 3 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "helper()",
+        "app/main.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "app/main.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in app/main.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "main()",
+        "app/main.py"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "helper()",
+        "app/main.py"
+       ]
+      ],
+      "main() node in app/main.py."
+     ],
+     [
+      "3",
+      [
+       [
+        "main.py",
+        "app/main.py"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Module file in app/main.py."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "app/main.py",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "4. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (2 nodes, 0 edges)",
+     "    cargo_toml_pkg_mixed_fixture_d9f69659(\"mixed-fixture<br/><small>Cargo.toml</small>\")",
+     "    pyproject_toml_pkg_mixed_fixture_ed086c91(\"mixed-fixture<br/><small>pyproject.toml</small>\")",
+     "    class cargo_toml_pkg_mixed_fixture_d9f69659 module;",
+     "    class pyproject_toml_pkg_mixed_fixture_ed086c91 module;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around mixed, fixture, cargotoml, pyprojecttoml, mostly in Cargo.toml, pyproject.toml. This section covers 2 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "mixed-fixture",
+        "Cargo.toml"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "mixed-fixture node in Cargo.toml."
+     ],
+     [
+      "2",
+      [
+       [
+        "mixed-fixture",
+        "pyproject.toml"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "mixed-fixture node in pyproject.toml."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Cargo.toml",
+      "1 nodes"
+     ],
+     [
+      "pyproject.toml",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "mixed — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "31"
+     ],
+     [
+      "Edges",
+      "31"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "7"
+     ],
+     [
+      "Documented Sections",
+      "3"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "31"
+     ],
+     [
+      "INFERRED",
+      "0"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

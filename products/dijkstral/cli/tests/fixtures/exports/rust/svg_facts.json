@@ -1,0 +1,408 @@
+{
+ "source": "graphify 0.9.86 export svg (matplotlib 3.11.2); positions are not stored",
+ "canvas_pt": [
+  1432.8,
+  1000.8
+ ],
+ "background": "#1a1a2e",
+ "links_solid": 96,
+ "links_dashed": 3,
+ "legend": false,
+ "nodes": [
+  {
+   "colour": "#4e79a7",
+   "radius": 11.31,
+   "label": "Named"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 15.29,
+   "label": "Shape"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 17.45,
+   "label": "Circle"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.31,
+   "label": "Meters"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 14.09,
+   "label": "Kind"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.63,
+   "label": "Unit"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.5,
+   "label": "Pair"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.5,
+   "label": "Wrapper"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.63,
+   "label": "Platform"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.63,
+   "label": "Pair<T>"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 11.31,
+   "label": "total_area()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 15.29,
+   "label": "main.rs"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 11.31,
+   "label": "main()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": ".name()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": ".area()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": ".describe()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.63,
+   "label": "Formatter"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.63,
+   "label": ".area()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.5,
+   "label": ".fmt()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.31,
+   "label": ".new()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.63,
+   "label": ".scale()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.63,
+   "label": ".UNIT"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 11.31,
+   "label": "fixture()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 14.09,
+   "label": "fmt.rs"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.5,
+   "label": "configure()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.63,
+   "label": "helper()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.5,
+   "label": "render()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.63,
+   "label": "Settings"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.63,
+   "label": "F"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.5,
+   "label": ".diameter()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 15.29,
+   "label": "mod.rs"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 12.07,
+   "label": "apply()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.31,
+   "label": "helper()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.5,
+   "label": "reconfigure()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.5,
+   "label": "render()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.63,
+   "label": "Settings"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.31,
+   "label": "run_all()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.63,
+   "label": "twice()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.5,
+   "label": "widen()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 19.36,
+   "label": "model.rs"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.63,
+   "label": "area_is_positive()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 10.5,
+   "label": "classify()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.63,
+   "label": "Empty"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 10.5,
+   "label": "Round"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.63,
+   "label": "Square"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 12.78,
+   "label": "round_kind()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "Registry"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 16.93,
+   "label": "lib.rs"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.5,
+   "label": "build()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "GREETING"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "label()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "square!"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "MAX_SHAPES"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.5,
+   "label": ".first()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.5,
+   "label": "Wrapper<T>"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.63,
+   "label": ".area()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.5,
+   "label": ".new()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 12.07,
+   "label": "T"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 12.07,
+   "label": "it.rs"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.63,
+   "label": "classifies_empty()"
+  },
+  {
+   "colour": "#ff9da7",
+   "radius": 8.66,
+   "label": "shapes"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": "build"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": "circle"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": "label"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.5,
+   "label": "render"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": "round"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": "round_kind"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.63,
+   "label": "total_area"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.63,
+   "label": "memchr"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.63,
+   "label": "render_as_render_shape"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.63,
+   "label": "serialize"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.63,
+   "label": "super"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "circle_as_round"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "cow"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "hashmap"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.63,
+   "label": "hashset"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.63,
+   "label": "classify"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.63,
+   "label": "kind"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.63,
+   "label": "twice"
+  }
+ ]
+}

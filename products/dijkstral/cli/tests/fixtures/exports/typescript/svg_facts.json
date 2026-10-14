@@ -1,0 +1,353 @@
+{
+ "source": "graphify 0.9.86 export svg (matplotlib 3.11.2); positions are not stored",
+ "canvas_pt": [
+  1432.8,
+  1000.8
+ ],
+ "background": "#1a1a2e",
+ "links_solid": 117,
+ "links_dashed": 2,
+ "legend": false,
+ "nodes": [
+  {
+   "colour": "#4e79a7",
+   "radius": 11.97,
+   "label": "Base"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.77,
+   "label": "Role"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.41,
+   "label": "UserId"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 11.38,
+   "label": "Entity"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 14.54,
+   "label": "Repo"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 15.0,
+   "label": "UserService"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 11.97,
+   "label": "Admin"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 11.38,
+   "label": "Named"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 17.52,
+   "label": "User"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 10.77,
+   "label": "App"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 10.11,
+   "label": "BadgeProps"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.41,
+   "label": ".describe()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.11,
+   "label": ".save()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.11,
+   "label": "formatName()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.11,
+   "label": "helper()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.11,
+   "label": ".display()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 10.11,
+   "label": "validate()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.11,
+   "label": "compareNames()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.11,
+   "label": "helper()"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 10.77,
+   "label": ".export()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.41,
+   "label": "key()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.41,
+   "label": ".add()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.41,
+   "label": ".all()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.41,
+   "label": ".get()"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 10.11,
+   "label": "sealed()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 13.57,
+   "label": "run()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 10.77,
+   "label": ".constructor()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.38,
+   "label": ".log()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 11.97,
+   "label": ".register()"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 10.11,
+   "label": "makeUser()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 10.11,
+   "label": ".promote()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.41,
+   "label": "bump()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.41,
+   "label": ".constructor()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.41,
+   "label": ".describe()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 9.41,
+   "label": ".parse()"
+  },
+  {
+   "colour": "#59a14f",
+   "radius": 12.52,
+   "label": ".promote()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 10.11,
+   "label": "helper()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 11.38,
+   "label": "slugify()"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.41,
+   "label": "traced()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 10.11,
+   "label": ".handleClick()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 10.11,
+   "label": ".render()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 10.11,
+   "label": "Badge()"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 10.77,
+   "label": "UserList()"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 16.72,
+   "label": "user.ts"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.41,
+   "label": "Admin"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.41,
+   "label": "Member"
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.41,
+   "label": "NOTE: persistence is faked in this fixture."
+  },
+  {
+   "colour": "#4e79a7",
+   "radius": 9.41,
+   "label": "WHY: names are displayed title-cased everywhere."
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 19.36,
+   "label": "service.ts"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 13.06,
+   "label": "index.ts"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 13.06,
+   "label": "repo.ts"
+  },
+  {
+   "colour": "#e15759",
+   "radius": 9.41,
+   "label": "Storage"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 13.57,
+   "label": "service.test.ts"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 14.06,
+   "label": "util.ts"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.41,
+   "label": "{ join }"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.41,
+   "label": "legacy"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 15.0,
+   "label": "App.tsx"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.41,
+   "label": "ref_fs"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.41,
+   "label": "ref_node_path"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.41,
+   "label": "ref_polyfill"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.41,
+   "label": "src_models_index_admin"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.41,
+   "label": "src_models_index_helper"
+  },
+  {
+   "colour": "#f28e2b",
+   "radius": 9.41,
+   "label": "src_models_index_storage"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 9.41,
+   "label": "ref_vitest"
+  },
+  {
+   "colour": "#76b7b2",
+   "radius": 10.77,
+   "label": "src_models_index_user"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.41,
+   "label": "ref_legacy"
+  },
+  {
+   "colour": "#edc948",
+   "radius": 9.41,
+   "label": "ref_path"
+  },
+  {
+   "colour": "#b07aa1",
+   "radius": 9.41,
+   "label": "ref_react"
+  }
+ ]
+}

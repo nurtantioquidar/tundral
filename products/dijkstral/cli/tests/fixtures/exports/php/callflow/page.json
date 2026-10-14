@@ -1,0 +1,1794 @@
+{
+ "title": "php — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 50 nodes, 71 edges, 8 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "userservicephp-service-appphp",
+   "Userservicephp Service Appphp"
+  ],
+  [
+   "repositoryphp-models-repository",
+   "Repositoryphp Models Repository"
+  ],
+  [
+   "modelphp-models-model",
+   "Modelphp Models Model"
+  ],
+  [
+   "models-userphp-user",
+   "Models Userphp User"
+  ],
+  [
+   "statusphp-models-status",
+   "Statusphp Models Status"
+  ],
+  [
+   "userphp-shopsupportstr-models",
+   "Userphp Shopsupportstr Models"
+  ],
+  [
+   "helpersphp-helper-slugify",
+   "Helpersphp Helper Slugify"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>5 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    USERSERVICEPHP_SERVICE_APPPHP_176E1FD6(\"Userservicephp Service Appphp<br/><small>11 nodes</small>\")",
+     "    class USERSERVICEPHP_SERVICE_APPPHP_176E1FD6 module;",
+     "    REPOSITORYPHP_MODELS_REPOSITORY_719A37B0(\"Repositoryphp Models Repository<br/><small>8 nodes</small>\")",
+     "    class REPOSITORYPHP_MODELS_REPOSITORY_719A37B0 module;",
+     "    MODELPHP_MODELS_MODEL_57E7229B(\"Modelphp Models Model<br/><small>7 nodes</small>\")",
+     "    class MODELPHP_MODELS_MODEL_57E7229B module;",
+     "    MODELS_USERPHP_USER_0748FA00(\"Models Userphp User<br/><small>6 nodes</small>\")",
+     "    class MODELS_USERPHP_USER_0748FA00 module;",
+     "    STATUSPHP_MODELS_STATUS_DBA562FD(\"Statusphp Models Status<br/><small>5 nodes</small>\")",
+     "    class STATUSPHP_MODELS_STATUS_DBA562FD module;",
+     "    USERPHP_SHOPSUPPORTSTR_MODELS_A900EFC9(\"Userphp Shopsupportstr Models<br/><small>4 nodes</small>\")",
+     "    class USERPHP_SHOPSUPPORTSTR_MODELS_A900EFC9 module;",
+     "    HELPERSPHP_HELPER_SLUGIFY_387A2190(\"Helpersphp Helper Slugify<br/><small>4 nodes</small>\")",
+     "    class HELPERSPHP_HELPER_SLUGIFY_387A2190 module;",
+     "    USERSERVICEPHP_SERVICE_APPPHP_176E1FD6 -->|references x4| REPOSITORYPHP_MODELS_REPOSITORY_719A37B0",
+     "    USERSERVICEPHP_SERVICE_APPPHP_176E1FD6 -->|references x4| MODELS_USERPHP_USER_0748FA00",
+     "    REPOSITORYPHP_MODELS_REPOSITORY_719A37B0 -->|references x2| MODELPHP_MODELS_MODEL_57E7229B",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls x2| MODELS_USERPHP_USER_0748FA00",
+     "    TESTS_FIXTURES_B84B1DCC -->|calls x2| USERSERVICEPHP_SERVICE_APPPHP_176E1FD6",
+     "    MODELS_USERPHP_USER_0748FA00 -->|references| STATUSPHP_MODELS_STATUS_DBA562FD",
+     "    MODELS_USERPHP_USER_0748FA00 -->|inherits| MODELPHP_MODELS_MODEL_57E7229B",
+     "    MODELS_USERPHP_USER_0748FA00 -->|method| HELPERSPHP_HELPER_SLUGIFY_387A2190",
+     "    MODELS_USERPHP_USER_0748FA00 -->|mixes in| REPOSITORYPHP_MODELS_REPOSITORY_719A37B0",
+     "    USERSERVICEPHP_SERVICE_APPPHP_176E1FD6 -->|imports| STATUSPHP_MODELS_STATUS_DBA562FD",
+     "    USERPHP_SHOPSUPPORTSTR_MODELS_A900EFC9 -->|contains| MODELS_USERPHP_USER_0748FA00"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Tests & Fixtures -> Userservicephp Service Appphp -> Repositoryphp Models Repository -> Modelphp Models Model -> Models Userphp User -> Statusphp Models Status -> Userphp Shopsupportstr Models"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Tests & Fixtures",
+      "5",
+      "4"
+     ],
+     [
+      "Userservicephp Service Appphp",
+      "11",
+      "0"
+     ],
+     [
+      "Repositoryphp Models Repository",
+      "8",
+      "1"
+     ],
+     [
+      "Modelphp Models Model",
+      "7",
+      "2"
+     ],
+     [
+      "Models Userphp User",
+      "6",
+      "3"
+     ],
+     [
+      "Statusphp Models Status",
+      "5",
+      "5"
+     ],
+     [
+      "Userphp Shopsupportstr Models",
+      "4",
+      "6"
+     ],
+     [
+      "Helpersphp Helper Slugify",
+      "4",
+      "7"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "2. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (5 nodes, 5 edges)",
+     "    subgraph tests_fixtures_tests_UserServiceTest_php_0a95d582[\"tests/UserServiceTest.php\"]",
+     "        tests_userservicetest_userservicetest_11c6aa56(\"UserServiceTest<br/><small>tests/UserServiceTest.php</small>\")",
+     "        tests_userservicetest_e84aad42(\"UserServiceTest.php\")",
+     "        tests_userservicetest_userservicetest_testparse_d8689298(\"testParse()<br/><small>tests/UserServiceTest.php</small>\")",
+     "        tests_userservicetest_userservicetest_testregist_c1b173ac(\"testRegister()<br/><small>tests/UserServiceTest.php</small>\")",
+     "    end",
+     "    phpunit_framework_testcase_3b18621a(\"PHPUnit\\Framework\\TestCase\")",
+     "    tests_userservicetest_userservicetest_11c6aa56 -->|method| tests_userservicetest_userservicetest_testparse_d8689298",
+     "    tests_userservicetest_userservicetest_11c6aa56 -->|method| tests_userservicetest_userservicetest_testregist_c1b173ac",
+     "    tests_userservicetest_e84aad42 -->|imports| phpunit_framework_testcase_3b18621a",
+     "    class tests_userservicetest_userservicetest_11c6aa56 test;",
+     "    class tests_userservicetest_e84aad42 test;",
+     "    class tests_userservicetest_userservicetest_testparse_d8689298 test;",
+     "    class tests_userservicetest_userservicetest_testregist_c1b173ac test;",
+     "    class phpunit_framework_testcase_3b18621a klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around userservicetestphp, tests, userservicetest, testparse, mostly in tests/UserServiceTest.php. This section covers 5 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x2, inherits x1, imports x1, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "UserServiceTest",
+        "tests/UserServiceTest.php"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "testParse()",
+        "tests/UserServiceTest.php"
+       ],
+       [
+        "testRegister()",
+        "tests/UserServiceTest.php"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "2",
+      [
+       [
+        ".testParse()",
+        "tests/UserServiceTest.php"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "UserServiceTest",
+        "tests/UserServiceTest.php"
+       ]
+      ],
+      [
+       [
+        "User",
+        "src/Models/User.php"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "3",
+      [
+       [
+        ".testRegister()",
+        "tests/UserServiceTest.php"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "UserServiceTest",
+        "tests/UserServiceTest.php"
+       ]
+      ],
+      [
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "4",
+      [
+       [
+        "PHPUnit\\Framework\\TestCase",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserServiceTest.php",
+        "tests/UserServiceTest.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "5",
+      [
+       [
+        "UserServiceTest.php",
+        "tests/UserServiceTest.php"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "PHPUnit\\Framework\\TestCase"
+       ],
+       [
+        "User",
+        "src/Models/User.php"
+       ],
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "tests/UserServiceTest.php",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "userservicephp-service-appphp",
+   "heading": "3. Userservicephp Service Appphp",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Userservicephp Service Appphp (11 nodes, 16 edges)",
+     "    subgraph userservicephp_service_appphp_src_Service_UserSe_38cc5ab7[\"src/Service/UserService.php\"]",
+     "        src_service_userservice_userservice_9456604b(\"UserService<br/><small>src/Service/UserService.php</small>\")",
+     "        src_service_userservice_d9a335c6(\"UserService.php\")",
+     "        src_service_userservice_userservice_ban_acfde272(\"ban()<br/><small>src/Service/UserService.php</small>\")",
+     "        src_service_userservice_userservice_register_9a71fd94(\"register()<br/><small>src/Service/UserService.php</small>\")",
+     "        src_service_userservice_userservice_construct_ea515446(\"__construct()<br/><small>src/Service/UserService.php</small>\")",
+     "        src_service_userservice_userservice_log_5d36e3e8(\"log()<br/><small>src/Service/UserService.php</small>\")",
+     "        src_service_userservice_helper_eee557b4(\"helper()<br/><small>src/Service/UserService.php</small>\")",
+     "    end",
+     "    subgraph userservicephp_service_appphp_External_generated_48d26967[\"External / generated\"]",
+     "        psr_log_loggerinterface_b9bdac86(\"Psr\\Log\\LoggerInterface\")",
+     "        invalidargumentexception_6fd52469(\"InvalidArgumentException\")",
+     "    end",
+     "    subgraph userservicephp_service_appphp_bin_app_php_fdaf27c0[\"bin/app.php\"]",
+     "        bin_app_2a1a8c16(\"app.php\")",
+     "        bin_app_main_de3c0479(\"main()<br/><small>bin/app.php</small>\")",
+     "    end",
+     "    src_service_userservice_userservice_9456604b -->|method| src_service_userservice_userservice_construct_ea515446",
+     "    src_service_userservice_userservice_9456604b -->|method| src_service_userservice_userservice_register_9a71fd94",
+     "    src_service_userservice_userservice_9456604b -->|method| src_service_userservice_userservice_ban_acfde272",
+     "    src_service_userservice_userservice_9456604b -->|method| src_service_userservice_userservice_log_5d36e3e8",
+     "    bin_app_main_de3c0479 -->|calls| src_service_userservice_userservice_9456604b",
+     "    src_service_userservice_userservice_ban_acfde272 -->|calls| src_service_userservice_userservice_log_5d36e3e8",
+     "    src_service_userservice_userservice_log_5d36e3e8 -->|calls| src_service_userservice_helper_eee557b4",
+     "    src_service_userservice_userservice_register_9a71fd94 -->|calls| src_service_userservice_userservice_log_5d36e3e8",
+     "    bin_app_2a1a8c16 -->|imports| src_service_userservice_userservice_9456604b",
+     "    src_service_userservice_d9a335c6 -->|imports| psr_log_loggerinterface_b9bdac86",
+     "    src_service_userservice_d9a335c6 -->|imports| invalidargumentexception_6fd52469",
+     "    class src_service_userservice_userservice_9456604b klass;",
+     "    class src_service_userservice_d9a335c6 klass;",
+     "    class src_service_userservice_userservice_ban_acfde272 function;",
+     "    class src_service_userservice_userservice_register_9a71fd94 function;",
+     "    class src_service_userservice_userservice_construct_ea515446 function;",
+     "    class src_service_userservice_userservice_log_5d36e3e8 function;",
+     "    class src_service_userservice_helper_eee557b4 function;",
+     "    class psr_log_loggerinterface_b9bdac86 klass;",
+     "    class invalidargumentexception_6fd52469 klass;",
+     "    class bin_app_2a1a8c16 module;",
+     "    class bin_app_main_de3c0479 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Userservicephp Service Appphp groups implementation around userservicephp, service, appphp, bin, mostly in src/Service/UserService.php, bin/app.php. This section covers 11 nodes and 16 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x4, calls x4, imports x3, contains x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "app.php",
+        "bin/app.php"
+       ],
+       [
+        "main()",
+        "bin/app.php"
+       ],
+       [
+        "testRegister()",
+        "tests/UserServiceTest.php"
+       ],
+       "+1 more"
+      ],
+      [
+       [
+        "__construct()",
+        "src/Service/UserService.php"
+       ],
+       [
+        "ban()",
+        "src/Service/UserService.php"
+       ],
+       [
+        "log()",
+        "src/Service/UserService.php"
+       ],
+       "+2 more"
+      ],
+      "UserService node in src/Service/UserService.php."
+     ],
+     [
+      "2",
+      [
+       [
+        "main()",
+        "bin/app.php"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "main() node in bin/app.php."
+     ],
+     [
+      "3",
+      [
+       [
+        "helper()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "log()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in src/Service/UserService.php."
+     ],
+     [
+      "4",
+      [
+       [
+        ".ban()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       [
+        "log()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      ".ban() node in src/Service/UserService.php."
+     ],
+     [
+      "5",
+      [
+       [
+        ".__construct()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".__construct() node in src/Service/UserService.php."
+     ],
+     [
+      "6",
+      [
+       [
+        ".log()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "ban()",
+        "src/Service/UserService.php"
+       ],
+       [
+        "register()",
+        "src/Service/UserService.php"
+       ],
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      ".log() node in src/Service/UserService.php."
+     ],
+     [
+      "7",
+      [
+       [
+        ".register()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       [
+        "log()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      ".register() node in src/Service/UserService.php."
+     ],
+     [
+      "8",
+      [
+       [
+        "app.php",
+        "bin/app.php"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "User",
+        "src/Models/User.php"
+       ],
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "app.php node in bin/app.php."
+     ],
+     [
+      "9",
+      [
+       [
+        "InvalidArgumentException",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.php",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "InvalidArgumentException node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        "Psr\\Log\\LoggerInterface",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.php",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Psr\\Log\\LoggerInterface node in project."
+     ],
+     [
+      "11",
+      [
+       [
+        "UserService.php",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "InvalidArgumentException"
+       ],
+       [
+        "Psr\\Log\\LoggerInterface"
+       ],
+       [
+        "Repository",
+        "src/Models/Repository.php"
+       ],
+       "+2 more"
+      ],
+      "UserService.php node in src/Service/UserService.php."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/Service/UserService.php",
+      "7 nodes"
+     ],
+     [
+      "bin/app.php",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "repositoryphp-models-repository",
+   "heading": "4. Repositoryphp Models Repository",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Repositoryphp Models Repository (8 nodes, 7 edges)",
+     "    subgraph repositoryphp_models_repository_src_Models_Repos_6cbdaa36[\"src/Models/Repository.php\"]",
+     "        src_models_repository_repository_7e9950c2(\"Repository<br/><small>src/Models/Repository.php</small>\")",
+     "        src_models_repository_timestamps_8773060b(\"Timestamps<br/><small>src/Models/Repository.php</small>\")",
+     "        src_models_repository_repository_find_d8350448(\"find()<br/><small>src/Models/Repository.php</small>\")",
+     "        src_models_repository_repository_add_516d9130(\"add()<br/><small>src/Models/Repository.php</small>\")",
+     "        src_models_repository_timestamps_touch_d2b019f8(\"touch()<br/><small>src/Models/Repository.php</small>\")",
+     "        src_models_repository_7143ca27(\"Repository.php\")",
+     "    end",
+     "    static_a381562a(\"static\")",
+     "    src_service_userservice_userservice_make_b86eb8df(\"make()<br/><small>src/Service/UserService.php</small>\")",
+     "    src_models_repository_repository_7e9950c2 -->|method| src_models_repository_repository_find_d8350448",
+     "    src_models_repository_repository_7e9950c2 -->|method| src_models_repository_repository_add_516d9130",
+     "    src_models_repository_timestamps_8773060b -->|method| src_models_repository_timestamps_touch_d2b019f8",
+     "    class src_models_repository_repository_7e9950c2 klass;",
+     "    class src_models_repository_timestamps_8773060b klass;",
+     "    class src_models_repository_repository_find_d8350448 function;",
+     "    class src_models_repository_repository_add_516d9130 function;",
+     "    class src_models_repository_timestamps_touch_d2b019f8 function;",
+     "    class src_models_repository_7143ca27 klass;",
+     "    class static_a381562a function;",
+     "    class src_service_userservice_userservice_make_b86eb8df function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Repositoryphp Models Repository groups implementation around repositoryphp, models, repository, timestamps, mostly in src/Models/Repository.php, src/Service/UserService.php. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x3, references x2, contains x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Repository",
+        "src/Models/Repository.php"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.php",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       [
+        "add()",
+        "src/Models/Repository.php"
+       ],
+       [
+        "find()",
+        "src/Models/Repository.php"
+       ]
+      ],
+      "Repository node in src/Models/Repository.php."
+     ],
+     [
+      "2",
+      [
+       [
+        "Timestamps",
+        "src/Models/Repository.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "touch()",
+        "src/Models/Repository.php"
+       ]
+      ],
+      "Timestamps node in src/Models/Repository.php."
+     ],
+     [
+      "3",
+      [
+       [
+        ".add()",
+        "src/Models/Repository.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repository",
+        "src/Models/Repository.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".add() node in src/Models/Repository.php."
+     ],
+     [
+      "4",
+      [
+       [
+        ".find()",
+        "src/Models/Repository.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Repository",
+        "src/Models/Repository.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".find() node in src/Models/Repository.php."
+     ],
+     [
+      "5",
+      [
+       [
+        ".touch()",
+        "src/Models/Repository.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Timestamps",
+        "src/Models/Repository.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".touch() node in src/Models/Repository.php."
+     ],
+     [
+      "6",
+      [
+       [
+        ".make()",
+        "src/Service/UserService.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "UserService",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".make() node in src/Service/UserService.php."
+     ],
+     [
+      "7",
+      [
+       [
+        "Repository.php",
+        "src/Models/Repository.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Repository.php node in src/Models/Repository.php."
+     ],
+     [
+      "8",
+      [
+       [
+        "static",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "static node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/Models/Repository.php",
+      "6 nodes"
+     ],
+     [
+      "src/Service/UserService.php",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "modelphp-models-model",
+   "heading": "5. Modelphp Models Model",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Modelphp Models Model (7 nodes, 7 edges)",
+     "    subgraph modelphp_models_model_src_Models_Model_php_b49d5f89[\"src/Models/Model.php\"]",
+     "        src_models_model_model_26f61519(\"Model<br/><small>src/Models/Model.php</small>\")",
+     "        src_models_model_model_save_076e2cf9(\"save()<br/><small>src/Models/Model.php</small>\")",
+     "        src_models_model_model_table_4b97ff8d(\"table()<br/><small>src/Models/Model.php</small>\")",
+     "        src_models_model_model_validate_128d8b75(\"validate()<br/><small>src/Models/Model.php</small>\")",
+     "        src_models_model_model_jsonserialize_83ffb57d(\"jsonSerialize()<br/><small>src/Models/Model.php</small>\")",
+     "        src_models_model_ce4292da(\"Model.php\")",
+     "    end",
+     "    jsonserializable_0b974bed(\"JsonSerializable\")",
+     "    src_models_model_model_26f61519 -->|method| src_models_model_model_table_4b97ff8d",
+     "    src_models_model_model_26f61519 -->|method| src_models_model_model_save_076e2cf9",
+     "    src_models_model_model_26f61519 -->|method| src_models_model_model_validate_128d8b75",
+     "    src_models_model_model_26f61519 -->|method| src_models_model_model_jsonserialize_83ffb57d",
+     "    src_models_model_model_save_076e2cf9 -->|calls| src_models_model_model_validate_128d8b75",
+     "    class src_models_model_model_26f61519 klass;",
+     "    class src_models_model_model_save_076e2cf9 function;",
+     "    class src_models_model_model_table_4b97ff8d function;",
+     "    class src_models_model_model_validate_128d8b75 function;",
+     "    class src_models_model_model_jsonserialize_83ffb57d function;",
+     "    class src_models_model_ce4292da klass;",
+     "    class jsonserializable_0b974bed klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Modelphp Models Model groups implementation around modelphp, models, model, jsonserialize, mostly in src/Models/Model.php. This section covers 7 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x4, implements x1, calls x1, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Model",
+        "src/Models/Model.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "jsonSerialize()",
+        "src/Models/Model.php"
+       ],
+       [
+        "save()",
+        "src/Models/Model.php"
+       ],
+       [
+        "table()",
+        "src/Models/Model.php"
+       ],
+       "+1 more"
+      ],
+      "Model node in src/Models/Model.php."
+     ],
+     [
+      "2",
+      [
+       [
+        ".jsonSerialize()",
+        "src/Models/Model.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "src/Models/Model.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".jsonSerialize() node in src/Models/Model.php."
+     ],
+     [
+      "3",
+      [
+       [
+        ".save()",
+        "src/Models/Model.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "src/Models/Model.php"
+       ]
+      ],
+      [
+       [
+        "validate()",
+        "src/Models/Model.php"
+       ]
+      ],
+      ".save() node in src/Models/Model.php."
+     ],
+     [
+      "4",
+      [
+       [
+        ".table()",
+        "src/Models/Model.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "src/Models/Model.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".table() node in src/Models/Model.php."
+     ],
+     [
+      "5",
+      [
+       [
+        ".validate()",
+        "src/Models/Model.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "src/Models/Model.php"
+       ],
+       [
+        "save()",
+        "src/Models/Model.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".validate() node in src/Models/Model.php."
+     ],
+     [
+      "6",
+      [
+       [
+        "JsonSerializable",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "JsonSerializable node in project."
+     ],
+     [
+      "7",
+      [
+       [
+        "Model.php",
+        "src/Models/Model.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Model.php node in src/Models/Model.php."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/Models/Model.php",
+      "6 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "models-userphp-user",
+   "heading": "6. Models Userphp User",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Models Userphp User (6 nodes, 5 edges)",
+     "    subgraph models_userphp_user_src_Models_User_php_27b194bb[\"src/Models/User.php\"]",
+     "        src_models_user_user_65b36526(\"User<br/><small>src/Models/User.php</small>\")",
+     "        src_models_user_user_parse_f5a781de(\"parse()<br/><small>src/Models/User.php</small>\")",
+     "        src_models_user_user_table_c8d15eb0(\"table()<br/><small>src/Models/User.php</small>\")",
+     "        src_models_user_user_save_3cbf2349(\"save()<br/><small>src/Models/User.php</small>\")",
+     "        src_models_user_user_display_ce45e4db(\"display()<br/><small>src/Models/User.php</small>\")",
+     "    end",
+     "    self_40380bc1(\"self\")",
+     "    src_models_user_user_65b36526 -->|method| src_models_user_user_parse_f5a781de",
+     "    src_models_user_user_65b36526 -->|method| src_models_user_user_table_c8d15eb0",
+     "    src_models_user_user_65b36526 -->|method| src_models_user_user_save_3cbf2349",
+     "    src_models_user_user_65b36526 -->|method| src_models_user_user_display_ce45e4db",
+     "    class src_models_user_user_65b36526 klass;",
+     "    class src_models_user_user_parse_f5a781de function;",
+     "    class src_models_user_user_table_c8d15eb0 function;",
+     "    class src_models_user_user_save_3cbf2349 function;",
+     "    class src_models_user_user_display_ce45e4db function;",
+     "    class self_40380bc1 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Models Userphp User groups implementation around models, userphp, user, display, mostly in src/Models/User.php. This section covers 6 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x4, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "User",
+        "src/Models/User.php"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "app.php",
+        "bin/app.php"
+       ],
+       [
+        "testParse()",
+        "tests/UserServiceTest.php"
+       ],
+       [
+        "UserService.php",
+        "src/Service/UserService.php"
+       ],
+       "+1 more"
+      ],
+      [
+       [
+        "__construct()",
+        "src/Models/User.php"
+       ],
+       [
+        "display()",
+        "src/Models/User.php"
+       ],
+       [
+        "parse()",
+        "src/Models/User.php"
+       ],
+       "+2 more"
+      ],
+      "User node in src/Models/User.php."
+     ],
+     [
+      "2",
+      [
+       [
+        ".display()",
+        "src/Models/User.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/Models/User.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".display() node in src/Models/User.php."
+     ],
+     [
+      "3",
+      [
+       [
+        ".parse()",
+        "src/Models/User.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/Models/User.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".parse() node in src/Models/User.php."
+     ],
+     [
+      "4",
+      [
+       [
+        ".save()",
+        "src/Models/User.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/Models/User.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".save() node in src/Models/User.php."
+     ],
+     [
+      "5",
+      [
+       [
+        ".table()",
+        "src/Models/User.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/Models/User.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".table() node in src/Models/User.php."
+     ],
+     [
+      "6",
+      [
+       [
+        "self",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "self node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/Models/User.php",
+      "5 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "statusphp-models-status",
+   "heading": "7. Statusphp Models Status",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Statusphp Models Status (5 nodes, 4 edges)",
+     "    src_models_status_status_84d51460(\"Status<br/><small>src/Models/Status.php</small>\")",
+     "    src_models_status_status_label_95f22ce2(\"label()<br/><small>src/Models/Status.php</small>\")",
+     "    src_models_status_status_active_74ac3cf9(\"Active<br/><small>src/Models/Status.php</small>\")",
+     "    src_models_status_status_banned_bce102ce(\"Banned<br/><small>src/Models/Status.php</small>\")",
+     "    src_models_status_3b32081a(\"Status.php\")",
+     "    src_models_status_status_84d51460 -->|method| src_models_status_status_label_95f22ce2",
+     "    class src_models_status_status_84d51460 klass;",
+     "    class src_models_status_status_label_95f22ce2 function;",
+     "    class src_models_status_status_active_74ac3cf9 klass;",
+     "    class src_models_status_status_banned_bce102ce klass;",
+     "    class src_models_status_3b32081a klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Statusphp Models Status groups implementation around statusphp, models, status, label, mostly in src/Models/Status.php. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: case of x2, method x1, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Status",
+        "src/Models/Status.php"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "UserService.php",
+        "src/Service/UserService.php"
+       ]
+      ],
+      [
+       [
+        "label()",
+        "src/Models/Status.php"
+       ]
+      ],
+      "Status node in src/Models/Status.php."
+     ],
+     [
+      "2",
+      [
+       [
+        ".label()",
+        "src/Models/Status.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Status",
+        "src/Models/Status.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".label() node in src/Models/Status.php."
+     ],
+     [
+      "3",
+      [
+       [
+        "Status.php",
+        "src/Models/Status.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Status.php node in src/Models/Status.php."
+     ],
+     [
+      "4",
+      [
+       [
+        "Active",
+        "src/Models/Status.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Active node in src/Models/Status.php."
+     ],
+     [
+      "5",
+      [
+       [
+        "Banned",
+        "src/Models/Status.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Banned node in src/Models/Status.php."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/Models/Status.php",
+      "5 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "userphp-shopsupportstr-models",
+   "heading": "8. Userphp Shopsupportstr Models",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Userphp Shopsupportstr Models (4 nodes, 3 edges)",
+     "    subgraph userphp_shopsupportstr_models_External_generated_afdcd163[\"External / generated\"]",
+     "        shop_support_str_cdaa4168(\"Shop\\Support\\Str\")",
+     "        slugify_01b0fc0a(\"slugify\")",
+     "        default_role_548d93aa(\"default_role\")",
+     "    end",
+     "    src_models_user_e59d5d33(\"User.php\")",
+     "    src_models_user_e59d5d33 -->|imports| shop_support_str_cdaa4168",
+     "    src_models_user_e59d5d33 -->|imports| slugify_01b0fc0a",
+     "    src_models_user_e59d5d33 -->|imports| default_role_548d93aa",
+     "    class shop_support_str_cdaa4168 klass;",
+     "    class slugify_01b0fc0a function;",
+     "    class default_role_548d93aa function;",
+     "    class src_models_user_e59d5d33 klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Userphp Shopsupportstr Models groups implementation around userphp, shopsupportstr, models, default, mostly in src/Models/User.php. This section covers 4 nodes and 3 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Shop\\Support\\Str",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       [
+        "User.php",
+        "src/Models/User.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Shop\\Support\\Str node in project."
+     ],
+     [
+      "2",
+      [
+       [
+        "User.php",
+        "src/Models/User.php"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "default_role"
+       ],
+       [
+        "Shop\\Support\\Str"
+       ],
+       [
+        "slugify"
+       ]
+      ],
+      "User.php node in src/Models/User.php."
+     ],
+     [
+      "3",
+      [
+       [
+        "default_role",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User.php",
+        "src/Models/User.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "default_role node in project."
+     ],
+     [
+      "4",
+      [
+       [
+        "slugify",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User.php",
+        "src/Models/User.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "slugify node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/Models/User.php",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "helpersphp-helper-slugify",
+   "heading": "9. Helpersphp Helper Slugify",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Helpersphp Helper Slugify (4 nodes, 4 edges)",
+     "    subgraph helpersphp_helper_slugify_src_helpers_php_62b01371[\"src/helpers.php\"]",
+     "        src_helpers_helper_4ee3d14c(\"helper()<br/><small>src/helpers.php</small>\")",
+     "        src_helpers_slugify_c24063ff(\"slugify()<br/><small>src/helpers.php</small>\")",
+     "        src_helpers_31d5c1b1(\"helpers.php\")",
+     "    end",
+     "    src_models_user_user_construct_441cb2e8(\"__construct()<br/><small>src/Models/User.php</small>\")",
+     "    src_helpers_helper_4ee3d14c -->|calls| src_helpers_slugify_c24063ff",
+     "    src_models_user_user_construct_441cb2e8 -->|calls| src_helpers_slugify_c24063ff",
+     "    class src_helpers_helper_4ee3d14c function;",
+     "    class src_helpers_slugify_c24063ff function;",
+     "    class src_helpers_31d5c1b1 module;",
+     "    class src_models_user_user_construct_441cb2e8 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Helpersphp Helper Slugify groups implementation around helpersphp, helper, slugify, construct, mostly in src/helpers.php, src/Models/User.php. This section covers 4 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: calls x2, contains x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "helper()",
+        "src/helpers.php"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "slugify()",
+        "src/helpers.php"
+       ]
+      ],
+      "helper() node in src/helpers.php."
+     ],
+     [
+      "2",
+      [
+       [
+        "slugify()",
+        "src/helpers.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "__construct()",
+        "src/Models/User.php"
+       ],
+       [
+        "helper()",
+        "src/helpers.php"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "slugify() node in src/helpers.php."
+     ],
+     [
+      "3",
+      [
+       [
+        ".__construct()",
+        "src/Models/User.php"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "User",
+        "src/Models/User.php"
+       ]
+      ],
+      [
+       [
+        "slugify()",
+        "src/helpers.php"
+       ]
+      ],
+      ".__construct() node in src/Models/User.php."
+     ],
+     [
+      "4",
+      [
+       [
+        "helpers.php",
+        "src/helpers.php"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helpers.php node in src/helpers.php."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/helpers.php",
+      "3 nodes"
+     ],
+     [
+      "src/Models/User.php",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "php — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "50"
+     ],
+     [
+      "Edges",
+      "71"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "8"
+     ],
+     [
+      "Documented Sections",
+      "8"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "70"
+     ],
+     [
+      "INFERRED",
+      "1"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

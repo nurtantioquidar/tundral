@@ -1,0 +1,1408 @@
+{
+ "title": "javascript — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 36 nodes, 52 edges, 7 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "formatmjs-helper-ref",
+   "Formatmjs Helper Ref"
+  ],
+  [
+   "storejs-cachedstore-add",
+   "Storejs Cachedstore Add"
+  ],
+  [
+   "appjsx-components-render",
+   "Appjsx Components Render"
+  ],
+  [
+   "defaultcjs-lodash-helper",
+   "Defaultcjs Lodash Helper"
+  ],
+  [
+   "components-appjsx-app",
+   "Components Appjsx App"
+  ],
+  [
+   "formatmjs-formatlabel-pad",
+   "Formatmjs Formatlabel Pad"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>8 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    FORMATMJS_HELPER_REF_C8DBA836(\"Formatmjs Helper Ref<br/><small>6 nodes</small>\")",
+     "    class FORMATMJS_HELPER_REF_C8DBA836 module;",
+     "    STOREJS_CACHEDSTORE_ADD_36460B6B(\"Storejs Cachedstore Add<br/><small>6 nodes</small>\")",
+     "    class STOREJS_CACHEDSTORE_ADD_36460B6B module;",
+     "    APPJSX_COMPONENTS_RENDER_EE99836E(\"Appjsx Components Render<br/><small>5 nodes</small>\")",
+     "    class APPJSX_COMPONENTS_RENDER_EE99836E module;",
+     "    DEFAULTCJS_LODASH_HELPER_7547262E(\"Defaultcjs Lodash Helper<br/><small>5 nodes</small>\")",
+     "    class DEFAULTCJS_LODASH_HELPER_7547262E module;",
+     "    COMPONENTS_APPJSX_APP_70F803E8(\"Components Appjsx App<br/><small>4 nodes</small>\")",
+     "    class COMPONENTS_APPJSX_APP_70F803E8 module;",
+     "    FORMATMJS_FORMATLABEL_PAD_600BA416(\"Formatmjs Formatlabel Pad<br/><small>2 nodes</small>\")",
+     "    class FORMATMJS_FORMATLABEL_PAD_600BA416 module;",
+     "    STOREJS_CACHEDSTORE_ADD_36460B6B -->|inherits x2| TESTS_FIXTURES_B84B1DCC",
+     "    APPJSX_COMPONENTS_RENDER_EE99836E -->|calls x2| FORMATMJS_FORMATLABEL_PAD_600BA416",
+     "    APPJSX_COMPONENTS_RENDER_EE99836E -->|imports x2| COMPONENTS_APPJSX_APP_70F803E8",
+     "    APPJSX_COMPONENTS_RENDER_EE99836E -->|imports x2| STOREJS_CACHEDSTORE_ADD_36460B6B",
+     "    COMPONENTS_APPJSX_APP_70F803E8 -->|method| APPJSX_COMPONENTS_RENDER_EE99836E",
+     "    COMPONENTS_APPJSX_APP_70F803E8 -->|calls| STOREJS_CACHEDSTORE_ADD_36460B6B",
+     "    COMPONENTS_APPJSX_APP_70F803E8 -->|indirect call| FORMATMJS_FORMATLABEL_PAD_600BA416",
+     "    TESTS_FIXTURES_B84B1DCC -->|imports| STOREJS_CACHEDSTORE_ADD_36460B6B",
+     "    FORMATMJS_HELPER_REF_C8DBA836 -->|re exports| STOREJS_CACHEDSTORE_ADD_36460B6B",
+     "    FORMATMJS_HELPER_REF_C8DBA836 -->|imports| DEFAULTCJS_LODASH_HELPER_7547262E",
+     "    FORMATMJS_HELPER_REF_C8DBA836 -->|contains| COMPONENTS_APPJSX_APP_70F803E8",
+     "    FORMATMJS_HELPER_REF_C8DBA836 -->|contains| FORMATMJS_FORMATLABEL_PAD_600BA416"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Appjsx Components Render -> Storejs Cachedstore Add -> Tests & Fixtures -> Formatmjs Helper Ref -> Formatmjs Formatlabel Pad -> Defaultcjs Lodash Helper -> Components Appjsx App"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Tests & Fixtures",
+      "8",
+      "0"
+     ],
+     [
+      "Formatmjs Helper Ref",
+      "6",
+      "1"
+     ],
+     [
+      "Storejs Cachedstore Add",
+      "6",
+      "2"
+     ],
+     [
+      "Appjsx Components Render",
+      "5",
+      "3"
+     ],
+     [
+      "Defaultcjs Lodash Helper",
+      "5",
+      "4"
+     ],
+     [
+      "Components Appjsx App",
+      "4",
+      "5"
+     ],
+     [
+      "Formatmjs Formatlabel Pad",
+      "2",
+      "6"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "2. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (8 nodes, 8 edges)",
+     "    subgraph tests_fixtures_lib_store_js_95d39541[\"lib/store.js\"]",
+     "        lib_store_store_3df11237(\"Store<br/><small>lib/store.js</small>\")",
+     "        lib_store_store_create_f1999ac7(\"create()<br/><small>lib/store.js</small>\")",
+     "        lib_store_store_add_3cdfd0db(\"add()<br/><small>lib/store.js</small>\")",
+     "        lib_store_store_size_6d4cc4d1(\"size()<br/><small>lib/store.js</small>\")",
+     "        lib_store_store_constructor_e4ee9a07(\"constructor()<br/><small>lib/store.js</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_test_store_test_js_86c3c0a8[\"test/store.test.js\"]",
+     "        test_store_test_bd220778(\"store.test.js\")",
+     "        test_store_test_fixture_7a4c9044(\"fixture()<br/><small>test/store.test.js</small>\")",
+     "        test_store_test_store_16b1a863(\"Store<br/><small>test/store.test.js</small>\")",
+     "    end",
+     "    lib_store_store_3df11237 -->|method| lib_store_store_create_f1999ac7",
+     "    lib_store_store_3df11237 -->|method| lib_store_store_add_3cdfd0db",
+     "    lib_store_store_3df11237 -->|method| lib_store_store_size_6d4cc4d1",
+     "    lib_store_store_3df11237 -->|method| lib_store_store_constructor_e4ee9a07",
+     "    test_store_test_fixture_7a4c9044 -->|calls| lib_store_store_3df11237",
+     "    test_store_test_bd220778 -->|imports| lib_store_store_3df11237",
+     "    class lib_store_store_3df11237 ui;",
+     "    class lib_store_store_create_f1999ac7 function;",
+     "    class lib_store_store_add_3cdfd0db function;",
+     "    class lib_store_store_size_6d4cc4d1 function;",
+     "    class lib_store_store_constructor_e4ee9a07 function;",
+     "    class test_store_test_bd220778 test;",
+     "    class test_store_test_fixture_7a4c9044 test;",
+     "    class test_store_test_store_16b1a863 test;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around storejs, storetestjs, test, store, mostly in lib/store.js, test/store.test.js. This section covers 8 nodes and 8 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x4, calls x1, imports x1, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Store",
+        "lib/store.js"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "default.cjs",
+        "lib/default.cjs"
+       ],
+       [
+        "fixture()",
+        "test/store.test.js"
+       ],
+       [
+        "store.test.js",
+        "test/store.test.js"
+       ]
+      ],
+      [
+       [
+        "add()",
+        "lib/store.js"
+       ],
+       [
+        "constructor()",
+        "lib/store.js"
+       ],
+       [
+        "create()",
+        "lib/store.js"
+       ],
+       "+1 more"
+      ],
+      "Store node in lib/store.js."
+     ],
+     [
+      "2",
+      [
+       [
+        ".add()",
+        "lib/store.js"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Store",
+        "lib/store.js"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".add() node in lib/store.js."
+     ],
+     [
+      "3",
+      [
+       [
+        ".constructor()",
+        "lib/store.js"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Store",
+        "lib/store.js"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".constructor() node in lib/store.js."
+     ],
+     [
+      "4",
+      [
+       [
+        ".create()",
+        "lib/store.js"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Store",
+        "lib/store.js"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".create() node in lib/store.js."
+     ],
+     [
+      "5",
+      [
+       [
+        ".size()",
+        "lib/store.js"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Store",
+        "lib/store.js"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".size() node in lib/store.js."
+     ],
+     [
+      "6",
+      [
+       [
+        "fixture()",
+        "test/store.test.js"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "store.test.js",
+        "test/store.test.js"
+       ]
+      ],
+      [
+       [
+        "Store",
+        "lib/store.js"
+       ]
+      ],
+      "fixture() node in test/store.test.js."
+     ],
+     [
+      "7",
+      [
+       [
+        "store.test.js",
+        "test/store.test.js"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "fixture()",
+        "test/store.test.js"
+       ],
+       [
+        "Store",
+        "lib/store.js"
+       ],
+       [
+        "store.js",
+        "lib/store.js"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "8",
+      [
+       [
+        "{ Store }",
+        "test/store.test.js"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "{ Store } node in test/store.test.js."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "lib/store.js",
+      "5 nodes"
+     ],
+     [
+      "test/store.test.js",
+      "3 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "formatmjs-helper-ref",
+   "heading": "3. Formatmjs Helper Ref",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Formatmjs Helper Ref (6 nodes, 5 edges)",
+     "    subgraph formatmjs_helper_ref_lib_format_mjs_5c820054[\"lib/format.mjs\"]",
+     "        lib_format_a7cde31f(\"format.mjs\")",
+     "        lib_format_helper_51de270f(\"helper()<br/><small>lib/format.mjs</small>\")",
+     "        lib_format_rationale_7_06625fa1(\"WHY: labels are shown in a fixed-width...<br/><small>lib/format.mjs</small>\")",
+     "    end",
+     "    subgraph formatmjs_helper_ref_External_generated_03c60b8d[\"External / generated\"]",
+     "        ref_path_6ea4f7de(\"ref_path\")",
+     "        ref_node_fs_b768bf73(\"ref_node_fs\")",
+     "    end",
+     "    lib_store_helper_b084f988(\"helper()<br/><small>lib/store.js</small>\")",
+     "    lib_format_a7cde31f -->|imports| ref_path_6ea4f7de",
+     "    lib_format_a7cde31f -->|imports| ref_node_fs_b768bf73",
+     "    class lib_format_a7cde31f function;",
+     "    class lib_format_helper_51de270f function;",
+     "    class lib_format_rationale_7_06625fa1 concept;",
+     "    class ref_path_6ea4f7de function;",
+     "    class ref_node_fs_b768bf73 function;",
+     "    class lib_store_helper_b084f988 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Formatmjs Helper Ref groups implementation around formatmjs, helper, ref, storejs, mostly in lib/format.mjs, lib/store.js. This section covers 6 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x2, re exports x1, contains x1, explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "helper()",
+        "lib/format.mjs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in lib/format.mjs."
+     ],
+     [
+      "2",
+      [
+       [
+        "helper()",
+        "lib/store.js"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "store.js",
+        "lib/store.js"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in lib/store.js."
+     ],
+     [
+      "3",
+      [
+       [
+        "format.mjs",
+        "lib/format.mjs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "App.jsx",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       [
+        "default.cjs",
+        "lib/default.cjs"
+       ],
+       [
+        "ref_node_fs"
+       ],
+       [
+        "ref_path"
+       ]
+      ],
+      "format.mjs node in lib/format.mjs."
+     ],
+     [
+      "4",
+      [
+       [
+        "WHY: labels are shown in a fixed-width column.",
+        "lib/format.mjs"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for WHY: labels are shown in a fixed-width column.."
+     ],
+     [
+      "5",
+      [
+       [
+        "ref_node_fs",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "format.mjs",
+        "lib/format.mjs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_node_fs node in project."
+     ],
+     [
+      "6",
+      [
+       [
+        "ref_path",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "format.mjs",
+        "lib/format.mjs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_path node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "lib/format.mjs",
+      "3 nodes"
+     ],
+     [
+      "lib/store.js",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "storejs-cachedstore-add",
+   "heading": "4. Storejs Cachedstore Add",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Storejs Cachedstore Add (6 nodes, 6 edges)",
+     "    lib_store_cachedstore_600fa4a0(\"CachedStore<br/><small>lib/store.js</small>\")",
+     "    lib_store_cachedstore_add_06183127(\"add()<br/><small>lib/store.js</small>\")",
+     "    lib_store_clear_69ecc0e2(\"clear()<br/><small>lib/store.js</small>\")",
+     "    lib_store_3880a218(\"store.js\")",
+     "    lib_store_utils_57f15f72(\"utils<br/><small>lib/store.js</small>\")",
+     "    lib_store_rationale_26_3464ba9b(\"NOTE: invalidates the cache on every wr...<br/><small>lib/store.js</small>\")",
+     "    lib_store_cachedstore_600fa4a0 -->|method| lib_store_cachedstore_add_06183127",
+     "    lib_store_cachedstore_add_06183127 -->|calls| lib_store_clear_69ecc0e2",
+     "    class lib_store_cachedstore_600fa4a0 ui;",
+     "    class lib_store_cachedstore_add_06183127 function;",
+     "    class lib_store_clear_69ecc0e2 function;",
+     "    class lib_store_3880a218 ui;",
+     "    class lib_store_utils_57f15f72 function;",
+     "    class lib_store_rationale_26_3464ba9b concept;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Storejs Cachedstore Add groups implementation around storejs, cachedstore, add, clear, mostly in lib/store.js. This section covers 6 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x3, method x1, calls x1, explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "CachedStore",
+        "lib/store.js"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "App.jsx",
+        "components/App.jsx"
+       ],
+       [
+        "constructor()",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       [
+        "add()",
+        "lib/store.js"
+       ]
+      ],
+      "Caches analysis results or computes cache keys."
+     ],
+     [
+      "2",
+      [
+       [
+        ".add()",
+        "lib/store.js"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "CachedStore",
+        "lib/store.js"
+       ]
+      ],
+      [
+       [
+        "clear()",
+        "lib/store.js"
+       ]
+      ],
+      ".add() node in lib/store.js."
+     ],
+     [
+      "3",
+      [
+       [
+        "clear()",
+        "lib/store.js"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "add()",
+        "lib/store.js"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "clear() node in lib/store.js."
+     ],
+     [
+      "4",
+      [
+       [
+        "store.js",
+        "lib/store.js"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "App.jsx",
+        "components/App.jsx"
+       ],
+       [
+        "default.cjs",
+        "lib/default.cjs"
+       ],
+       [
+        "store.test.js",
+        "test/store.test.js"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "lib/store.js"
+       ]
+      ],
+      "store.js node in lib/store.js."
+     ],
+     [
+      "5",
+      [
+       [
+        "utils",
+        "lib/store.js"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "utils node in lib/store.js."
+     ],
+     [
+      "6",
+      [
+       [
+        "NOTE: invalidates the cache on every write.",
+        "lib/store.js"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for NOTE: invalidates the cache on every write.."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "lib/store.js",
+      "6 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "appjsx-components-render",
+   "heading": "5. Appjsx Components Render",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Appjsx Components Render (5 nodes, 5 edges)",
+     "    subgraph appjsx_components_render_components_App_jsx_aa2b2d2f[\"components/App.jsx\"]",
+     "        components_app_318a08d8(\"App.jsx\")",
+     "        components_app_app_render_1978ac70(\"render()<br/><small>components/App.jsx</small>\")",
+     "        components_app_list_fe88346b(\"List()<br/><small>components/App.jsx</small>\")",
+     "        components_app_row_bbd6d8db(\"Row()<br/><small>components/App.jsx</small>\")",
+     "    end",
+     "    ref_react_47bfb9fb(\"ref_react\")",
+     "    components_app_app_render_1978ac70 -->|calls| components_app_list_fe88346b",
+     "    components_app_list_fe88346b -->|calls| components_app_row_bbd6d8db",
+     "    components_app_318a08d8 -->|imports| ref_react_47bfb9fb",
+     "    class components_app_318a08d8 ui;",
+     "    class components_app_app_render_1978ac70 ui;",
+     "    class components_app_list_fe88346b ui;",
+     "    class components_app_row_bbd6d8db ui;",
+     "    class ref_react_47bfb9fb function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Appjsx Components Render groups implementation around appjsx, components, render, list, mostly in components/App.jsx. This section covers 5 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: calls x2, contains x2, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        ".render()",
+        "components/App.jsx"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "App",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       [
+        "List()",
+        "components/App.jsx"
+       ]
+      ],
+      ".render() node in components/App.jsx."
+     ],
+     [
+      "2",
+      [
+       [
+        "List()",
+        "components/App.jsx"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "render()",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       [
+        "Row()",
+        "components/App.jsx"
+       ]
+      ],
+      "List() node in components/App.jsx."
+     ],
+     [
+      "3",
+      [
+       [
+        "Row()",
+        "components/App.jsx"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "List()",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       [
+        "formatLabel()",
+        "lib/format.mjs"
+       ]
+      ],
+      "Row() node in components/App.jsx."
+     ],
+     [
+      "4",
+      [
+       [
+        "App.jsx",
+        "components/App.jsx"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "CachedStore",
+        "lib/store.js"
+       ],
+       [
+        "format.mjs",
+        "lib/format.mjs"
+       ],
+       [
+        "formatAll()",
+        "lib/format.mjs"
+       ],
+       "+3 more"
+      ],
+      "App.jsx node in components/App.jsx."
+     ],
+     [
+      "5",
+      [
+       [
+        "ref_react",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "App.jsx",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_react node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "components/App.jsx",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "defaultcjs-lodash-helper",
+   "heading": "6. Defaultcjs Lodash Helper",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Defaultcjs Lodash Helper (5 nodes, 4 edges)",
+     "    subgraph defaultcjs_lodash_helper_lib_default_cjs_781f1e22[\"lib/default.cjs\"]",
+     "        lib_default_b42b20c1(\"default.cjs\")",
+     "        lib_default_helper_a7991b01(\"helper()<br/><small>lib/default.cjs</small>\")",
+     "        lib_default_lodash_b201725e(\"lodash<br/><small>lib/default.cjs</small>\")",
+     "        lib_default_store_d84f2369(\"Store<br/><small>lib/default.cjs</small>\")",
+     "    end",
+     "    ref_lodash_5cc67364(\"ref_lodash\")",
+     "    lib_default_b42b20c1 -->|imports| ref_lodash_5cc67364",
+     "    class lib_default_b42b20c1 function;",
+     "    class lib_default_helper_a7991b01 function;",
+     "    class lib_default_lodash_b201725e function;",
+     "    class lib_default_store_d84f2369 ui;",
+     "    class ref_lodash_5cc67364 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Defaultcjs Lodash Helper groups implementation around defaultcjs, lodash, helper, store, mostly in lib/default.cjs. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x3, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "helper()",
+        "lib/default.cjs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in lib/default.cjs."
+     ],
+     [
+      "2",
+      [
+       [
+        "default.cjs",
+        "lib/default.cjs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "format.mjs",
+        "lib/format.mjs"
+       ]
+      ],
+      [
+       [
+        "ref_lodash"
+       ],
+       [
+        "Store",
+        "lib/store.js"
+       ],
+       [
+        "store.js",
+        "lib/store.js"
+       ]
+      ],
+      "default.cjs node in lib/default.cjs."
+     ],
+     [
+      "3",
+      [
+       [
+        "lodash",
+        "lib/default.cjs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "lodash node in lib/default.cjs."
+     ],
+     [
+      "4",
+      [
+       [
+        "{ Store }",
+        "lib/default.cjs"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "{ Store } node in lib/default.cjs."
+     ],
+     [
+      "5",
+      [
+       [
+        "ref_lodash",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "default.cjs",
+        "lib/default.cjs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ref_lodash node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "lib/default.cjs",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "components-appjsx-app",
+   "heading": "7. Components Appjsx App",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Components Appjsx App (4 nodes, 3 edges)",
+     "    subgraph components_appjsx_app_components_App_jsx_37bc929b[\"components/App.jsx\"]",
+     "        components_app_app_7781d073(\"App<br/><small>components/App.jsx</small>\")",
+     "        components_app_app_onclick_4be2a42c(\"onClick()<br/><small>components/App.jsx</small>\")",
+     "        components_app_app_constructor_9aabf1f4(\"constructor()<br/><small>components/App.jsx</small>\")",
+     "    end",
+     "    lib_format_formatall_35cecd9b(\"formatAll()<br/><small>lib/format.mjs</small>\")",
+     "    components_app_app_7781d073 -->|method| components_app_app_constructor_9aabf1f4",
+     "    components_app_app_7781d073 -->|method| components_app_app_onclick_4be2a42c",
+     "    components_app_app_onclick_4be2a42c -->|calls| lib_format_formatall_35cecd9b",
+     "    class components_app_app_7781d073 ui;",
+     "    class components_app_app_onclick_4be2a42c entry;",
+     "    class components_app_app_constructor_9aabf1f4 ui;",
+     "    class lib_format_formatall_35cecd9b function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Components Appjsx App groups implementation around components, appjsx, app, constructor, mostly in components/App.jsx, lib/format.mjs. This section covers 4 nodes and 3 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "App",
+        "components/App.jsx"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "constructor()",
+        "components/App.jsx"
+       ],
+       [
+        "onClick()",
+        "components/App.jsx"
+       ],
+       [
+        "render()",
+        "components/App.jsx"
+       ]
+      ],
+      "App node in components/App.jsx."
+     ],
+     [
+      "2",
+      [
+       [
+        ".constructor()",
+        "components/App.jsx"
+       ]
+      ],
+      "UI",
+      [
+       [
+        "App",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       [
+        "CachedStore",
+        "lib/store.js"
+       ]
+      ],
+      ".constructor() node in components/App.jsx."
+     ],
+     [
+      "3",
+      [
+       [
+        ".onClick()",
+        "components/App.jsx"
+       ]
+      ],
+      "Entry",
+      [
+       [
+        "App",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       [
+        "formatAll()",
+        "lib/format.mjs"
+       ]
+      ],
+      ".onClick() node in components/App.jsx."
+     ],
+     [
+      "4",
+      [
+       [
+        "formatAll()",
+        "lib/format.mjs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "App.jsx",
+        "components/App.jsx"
+       ],
+       [
+        "onClick()",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       [
+        "formatLabel()",
+        "lib/format.mjs"
+       ]
+      ],
+      "formatAll() node in lib/format.mjs."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "components/App.jsx",
+      "3 nodes"
+     ],
+     [
+      "lib/format.mjs",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "formatmjs-formatlabel-pad",
+   "heading": "8. Formatmjs Formatlabel Pad",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Formatmjs Formatlabel Pad (2 nodes, 1 edges)",
+     "    lib_format_formatlabel_a9d17cd3(\"formatLabel()<br/><small>lib/format.mjs</small>\")",
+     "    lib_format_formatlabel_pad_64b6b38b(\"pad()<br/><small>lib/format.mjs</small>\")",
+     "    lib_format_formatlabel_a9d17cd3 -->|contains| lib_format_formatlabel_pad_64b6b38b",
+     "    class lib_format_formatlabel_a9d17cd3 function;",
+     "    class lib_format_formatlabel_pad_64b6b38b function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Formatmjs Formatlabel Pad groups implementation around formatmjs, formatlabel, pad, mostly in lib/format.mjs. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "formatLabel()",
+        "lib/format.mjs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "App.jsx",
+        "components/App.jsx"
+       ],
+       [
+        "formatAll()",
+        "lib/format.mjs"
+       ],
+       [
+        "Row()",
+        "components/App.jsx"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "formatLabel() node in lib/format.mjs."
+     ],
+     [
+      "2",
+      [
+       [
+        "pad()",
+        "lib/format.mjs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "pad() node in lib/format.mjs."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "lib/format.mjs",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "javascript — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "36"
+     ],
+     [
+      "Edges",
+      "52"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "7"
+     ],
+     [
+      "Documented Sections",
+      "7"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "49"
+     ],
+     [
+      "INFERRED",
+      "3"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

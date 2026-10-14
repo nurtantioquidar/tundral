@@ -1,0 +1,2358 @@
+{
+ "title": "rust — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 79 nodes, 99 edges, 8 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "build-graph",
+   "Graph Build"
+  ],
+  [
+   "cli-skills",
+   "CLI & Skill Installers"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ],
+  [
+   "modelrs-fmtrs-util",
+   "Modelrs Fmtrs Util"
+  ],
+  [
+   "modrs-util-render",
+   "Modrs Util Render"
+  ],
+  [
+   "modelrs-kind-round",
+   "Modelrs Kind Round"
+  ],
+  [
+   "modelrs-pair-wrapper",
+   "Modelrs Pair Wrapper"
+  ],
+  [
+   "shapes-cargotoml",
+   "Shapes Cargotoml"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    BUILD_GRAPH_321CBB04(\"Graph Build<br/><small>11 nodes</small>\")",
+     "    class BUILD_GRAPH_321CBB04 module;",
+     "    CLI_SKILLS_9964CBB8(\"CLI & Skill Installers<br/><small>15 nodes</small>\")",
+     "    class CLI_SKILLS_9964CBB8 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>5 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    MODELRS_FMTRS_UTIL_7E7042AD(\"Modelrs Fmtrs Util<br/><small>14 nodes</small>\")",
+     "    class MODELRS_FMTRS_UTIL_7E7042AD module;",
+     "    MODRS_UTIL_RENDER_61822A94(\"Modrs Util Render<br/><small>13 nodes</small>\")",
+     "    class MODRS_UTIL_RENDER_61822A94 module;",
+     "    MODELRS_KIND_ROUND_6F352BE8(\"Modelrs Kind Round<br/><small>12 nodes</small>\")",
+     "    class MODELRS_KIND_ROUND_6F352BE8 module;",
+     "    MODELRS_PAIR_WRAPPER_DAC6E28E(\"Modelrs Pair Wrapper<br/><small>8 nodes</small>\")",
+     "    class MODELRS_PAIR_WRAPPER_DAC6E28E module;",
+     "    SHAPES_CARGOTOML_8BB108D1(\"Shapes Cargotoml<br/><small>1 nodes</small>\")",
+     "    class SHAPES_CARGOTOML_8BB108D1 module;",
+     "    MODELRS_KIND_ROUND_6F352BE8 -->|contains x5| MODELRS_FMTRS_UTIL_7E7042AD",
+     "    BUILD_GRAPH_321CBB04 -->|imports x3| CLI_SKILLS_9964CBB8",
+     "    MODELRS_FMTRS_UTIL_7E7042AD -->|implements x2| CLI_SKILLS_9964CBB8",
+     "    MODELRS_KIND_ROUND_6F352BE8 -->|contains x2| CLI_SKILLS_9964CBB8",
+     "    MODELRS_KIND_ROUND_6F352BE8 -->|contains x2| MODELRS_PAIR_WRAPPER_DAC6E28E",
+     "    MODELRS_FMTRS_UTIL_7E7042AD -->|method| MODRS_UTIL_RENDER_61822A94",
+     "    CLI_SKILLS_9964CBB8 -->|calls| MODELRS_KIND_ROUND_6F352BE8",
+     "    MODRS_UTIL_RENDER_61822A94 -->|imports| MODELRS_KIND_ROUND_6F352BE8",
+     "    MODRS_UTIL_RENDER_61822A94 -->|references| MODELRS_FMTRS_UTIL_7E7042AD",
+     "    MODELRS_KIND_ROUND_6F352BE8 -->|contains| MODRS_UTIL_RENDER_61822A94"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "chain": [
+    "Graph Build -> CLI & Skill Installers -> Modelrs Kind Round -> Modelrs Fmtrs Util -> Modrs Util Render -> Tests & Fixtures -> Modelrs Pair Wrapper"
+   ],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Graph Build",
+      "11",
+      "4"
+     ],
+     [
+      "CLI & Skill Installers",
+      "15",
+      "0"
+     ],
+     [
+      "Tests & Fixtures",
+      "5",
+      "6"
+     ],
+     [
+      "Modelrs Fmtrs Util",
+      "14",
+      "1"
+     ],
+     [
+      "Modrs Util Render",
+      "13",
+      "2"
+     ],
+     [
+      "Modelrs Kind Round",
+      "12",
+      "3"
+     ],
+     [
+      "Modelrs Pair Wrapper",
+      "8",
+      "5"
+     ],
+     [
+      "Shapes Cargotoml",
+      "1",
+      "7"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "build-graph",
+   "heading": "2. Graph Build",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Graph Build (11 nodes, 10 edges)",
+     "    subgraph build_graph_src_lib_rs_2afa823e[\"src/lib.rs\"]",
+     "        src_lib_fd2913d6(\"lib.rs\")",
+     "        src_lib_greeting_1d9965d9(\"GREETING<br/><small>src/lib.rs</small>\")",
+     "        src_lib_max_shapes_7088406c(\"MAX_SHAPES<br/><small>src/lib.rs</small>\")",
+     "        src_lib_build_e21a29db(\"build()<br/><small>src/lib.rs</small>\")",
+     "        src_lib_label_eca51f95(\"label()<br/><small>src/lib.rs</small>\")",
+     "        src_lib_macro_square_2ba94692(\"square!<br/><small>src/lib.rs</small>\")",
+     "    end",
+     "    subgraph build_graph_External_generated_653891f5[\"External / generated\"]",
+     "        hashmap_70087453(\"hashmap\")",
+     "        hashset_4b39b97c(\"hashset\")",
+     "        circle_as_round_fc9e3af6(\"circle_as_round\")",
+     "        cow_8bbddb4a(\"cow\")",
+     "        registry_f687604a(\"Registry\")",
+     "    end",
+     "    src_lib_fd2913d6 -->|imports| hashmap_70087453",
+     "    src_lib_fd2913d6 -->|imports| hashset_4b39b97c",
+     "    src_lib_fd2913d6 -->|imports| circle_as_round_fc9e3af6",
+     "    src_lib_fd2913d6 -->|imports| cow_8bbddb4a",
+     "    class src_lib_fd2913d6 module;",
+     "    class src_lib_greeting_1d9965d9 klass;",
+     "    class src_lib_max_shapes_7088406c klass;",
+     "    class src_lib_build_e21a29db function;",
+     "    class src_lib_label_eca51f95 function;",
+     "    class src_lib_macro_square_2ba94692 function;",
+     "    class hashmap_70087453 function;",
+     "    class hashset_4b39b97c function;",
+     "    class circle_as_round_fc9e3af6 function;",
+     "    class cow_8bbddb4a function;",
+     "    class registry_f687604a klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Graph Build groups implementation around librs, registry, build, greeting, mostly in src/lib.rs. This section covers 11 nodes and 10 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x5, imports x4, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Registry",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Registry node in project."
+     ],
+     [
+      "2",
+      [
+       [
+        "lib.rs",
+        "src/lib.rs"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "circle_as_round"
+       ],
+       [
+        "cow"
+       ],
+       [
+        "hashmap"
+       ],
+       "+3 more"
+      ],
+      "lib.rs node in src/lib.rs."
+     ],
+     [
+      "3",
+      [
+       [
+        "build()",
+        "src/lib.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "build() node in src/lib.rs."
+     ],
+     [
+      "4",
+      [
+       [
+        "GREETING",
+        "src/lib.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "GREETING node in src/lib.rs."
+     ],
+     [
+      "5",
+      [
+       [
+        "label()",
+        "src/lib.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "label() node in src/lib.rs."
+     ],
+     [
+      "6",
+      [
+       [
+        "square!",
+        "src/lib.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "square! node in src/lib.rs."
+     ],
+     [
+      "7",
+      [
+       [
+        "MAX_SHAPES",
+        "src/lib.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "MAX_SHAPES node in src/lib.rs."
+     ],
+     [
+      "8",
+      [
+       [
+        "circle_as_round",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "lib.rs",
+        "src/lib.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "circle_as_round node in project."
+     ],
+     [
+      "9",
+      [
+       [
+        "cow",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "lib.rs",
+        "src/lib.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "cow node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        "hashmap",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "lib.rs",
+        "src/lib.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Caches analysis results or computes cache keys."
+     ],
+     [
+      "11",
+      [
+       [
+        "hashset",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "lib.rs",
+        "src/lib.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Caches analysis results or computes cache keys."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/lib.rs",
+      "6 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "cli-skills",
+   "heading": "3. CLI & Skill Installers",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: CLI & Skill Installers (15 nodes, 15 edges)",
+     "    subgraph cli_skills_External_generated_0c226fa1[\"External / generated\"]",
+     "        circle_00b7b811(\"circle\")",
+     "        round_kind_b9c4832d(\"round_kind\")",
+     "        build_80754af9(\"build\")",
+     "        label_64c65374(\"label\")",
+     "        render_37eca575(\"render\")",
+     "        round_f0590a6d(\"round\")",
+     "        total_area_df723a52(\"total_area\")",
+     "    end",
+     "    subgraph cli_skills_src_model_rs_c46b4d70[\"src/model.rs\"]",
+     "        src_model_shape_0ca49c3c(\"Shape<br/><small>src/model.rs</small>\")",
+     "        src_model_named_017c508b(\"Named<br/><small>src/model.rs</small>\")",
+     "        src_model_named_name_5a03efca(\"name()<br/><small>src/model.rs</small>\")",
+     "        src_model_shape_describe_fecbd19a(\"describe()<br/><small>src/model.rs</small>\")",
+     "        src_model_shape_area_895491a8(\"area()<br/><small>src/model.rs</small>\")",
+     "    end",
+     "    subgraph cli_skills_src_main_rs_abf17fea[\"src/main.rs\"]",
+     "        src_main_3231ff52(\"main.rs\")",
+     "        src_main_main_24787d5c(\"main()<br/><small>src/main.rs</small>\")",
+     "    end",
+     "    src_lib_total_area_f2d5503b(\"total_area()<br/><small>src/lib.rs</small>\")",
+     "    src_model_named_017c508b -->|method| src_model_named_name_5a03efca",
+     "    src_model_shape_0ca49c3c -->|method| src_model_shape_describe_fecbd19a",
+     "    src_model_shape_0ca49c3c -->|method| src_model_shape_area_895491a8",
+     "    src_main_3231ff52 -->|imports| circle_00b7b811",
+     "    src_main_3231ff52 -->|imports| round_kind_b9c4832d",
+     "    src_main_3231ff52 -->|imports| build_80754af9",
+     "    src_main_3231ff52 -->|imports| label_64c65374",
+     "    src_main_3231ff52 -->|imports| render_37eca575",
+     "    src_main_3231ff52 -->|imports| round_f0590a6d",
+     "    src_main_3231ff52 -->|imports| src_model_shape_0ca49c3c",
+     "    src_main_3231ff52 -->|imports| total_area_df723a52",
+     "    src_main_main_24787d5c -->|calls| src_lib_total_area_f2d5503b",
+     "    class circle_00b7b811 function;",
+     "    class round_kind_b9c4832d function;",
+     "    class build_80754af9 function;",
+     "    class label_64c65374 function;",
+     "    class render_37eca575 function;",
+     "    class round_f0590a6d function;",
+     "    class total_area_df723a52 function;",
+     "    class src_model_shape_0ca49c3c klass;",
+     "    class src_model_named_017c508b klass;",
+     "    class src_model_named_name_5a03efca function;",
+     "    class src_model_shape_describe_fecbd19a function;",
+     "    class src_model_shape_area_895491a8 function;",
+     "    class src_main_3231ff52 module;",
+     "    class src_main_main_24787d5c function;",
+     "    class src_lib_total_area_f2d5503b function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "CLI & Skill Installers groups implementation around modelrs, area, mainrs, total, mostly in src/model.rs, src/main.rs, src/lib.rs. This section covers 15 nodes and 15 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x8, method x3, inherits x1, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Named",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "name()",
+        "src/model.rs"
+       ]
+      ],
+      "Named node in src/model.rs."
+     ],
+     [
+      "2",
+      [
+       [
+        "Shape",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "fmt.rs",
+        "src/util/fmt.rs"
+       ],
+       [
+        "lib.rs",
+        "src/lib.rs"
+       ],
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      [
+       [
+        "area()",
+        "src/model.rs"
+       ],
+       [
+        "describe()",
+        "src/model.rs"
+       ]
+      ],
+      "Shape node in src/model.rs."
+     ],
+     [
+      "3",
+      [
+       [
+        "total_area()",
+        "src/lib.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "src/main.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "total_area() node in src/lib.rs."
+     ],
+     [
+      "4",
+      [
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "build"
+       ],
+       [
+        "circle"
+       ],
+       [
+        "label"
+       ],
+       "+5 more"
+      ],
+      "main.rs node in src/main.rs."
+     ],
+     [
+      "5",
+      [
+       [
+        "main()",
+        "src/main.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "round_kind()",
+        "src/model.rs"
+       ],
+       [
+        "total_area()",
+        "src/lib.rs"
+       ]
+      ],
+      "main() node in src/main.rs."
+     ],
+     [
+      "6",
+      [
+       [
+        ".name()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Named",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".name() node in src/model.rs."
+     ],
+     [
+      "7",
+      [
+       [
+        ".area()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shape",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".area() node in src/model.rs."
+     ],
+     [
+      "8",
+      [
+       [
+        ".describe()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Shape",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".describe() node in src/model.rs."
+     ],
+     [
+      "9",
+      [
+       [
+        "build",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "build node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        "circle",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "circle node in project."
+     ],
+     [
+      "11",
+      [
+       [
+        "label",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "label node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "render",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "lib.rs",
+        "src/lib.rs"
+       ],
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "render node in project."
+     ],
+     [
+      "13",
+      [
+       [
+        "round",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "round node in project."
+     ],
+     [
+      "14",
+      [
+       [
+        "round_kind",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "round_kind node in project."
+     ],
+     [
+      "15",
+      [
+       [
+        "total_area",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.rs",
+        "src/main.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "total_area node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/model.rs",
+      "5 nodes"
+     ],
+     [
+      "src/main.rs",
+      "2 nodes"
+     ],
+     [
+      "src/lib.rs",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "4. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (5 nodes, 4 edges)",
+     "    subgraph tests_fixtures_External_generated_473753cb[\"External / generated\"]",
+     "        classify_6144cd5e(\"classify\")",
+     "        kind_0ef25ae0(\"kind\")",
+     "        twice_f99abcfa(\"twice\")",
+     "    end",
+     "    subgraph tests_fixtures_tests_it_rs_bd3471eb[\"tests/it.rs\"]",
+     "        tests_it_612009cb(\"it.rs\")",
+     "        tests_it_classifies_empty_78ce3f31(\"classifies_empty()<br/><small>tests/it.rs</small>\")",
+     "    end",
+     "    tests_it_612009cb -->|imports| classify_6144cd5e",
+     "    tests_it_612009cb -->|imports| kind_0ef25ae0",
+     "    tests_it_612009cb -->|imports| twice_f99abcfa",
+     "    class classify_6144cd5e function;",
+     "    class kind_0ef25ae0 function;",
+     "    class twice_f99abcfa function;",
+     "    class tests_it_612009cb test;",
+     "    class tests_it_classifies_empty_78ce3f31 test;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around itrs, tests, classifies, empty, mostly in tests/it.rs. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: imports x3, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "it.rs",
+        "tests/it.rs"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "classify"
+       ],
+       [
+        "kind"
+       ],
+       [
+        "twice"
+       ]
+      ],
+      "it.rs node in tests/it.rs."
+     ],
+     [
+      "2",
+      [
+       [
+        "classifies_empty()",
+        "tests/it.rs"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "classifies_empty() node in tests/it.rs."
+     ],
+     [
+      "3",
+      [
+       [
+        "classify",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "it.rs",
+        "tests/it.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "classify node in project."
+     ],
+     [
+      "4",
+      [
+       [
+        "kind",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "it.rs",
+        "tests/it.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "kind node in project."
+     ],
+     [
+      "5",
+      [
+       [
+        "twice",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "it.rs",
+        "tests/it.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "twice node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "tests/it.rs",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "modelrs-fmtrs-util",
+   "heading": "5. Modelrs Fmtrs Util",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Modelrs Fmtrs Util (14 nodes, 15 edges)",
+     "    subgraph modelrs_fmtrs_util_src_model_rs_0b522e33[\"src/model.rs\"]",
+     "        src_model_circle_bd601a1e(\"Circle<br/><small>src/model.rs</small>\")",
+     "        src_model_fixture_84ce38f1(\"fixture()<br/><small>src/model.rs</small>\")",
+     "        src_model_circle_new_a103ba04(\"new()<br/><small>src/model.rs</small>\")",
+     "        src_model_circle_scale_f6d5a33f(\"scale()<br/><small>src/model.rs</small>\")",
+     "        src_model_circle_area_98f7b9ae(\"area()<br/><small>src/model.rs</small>\")",
+     "        src_model_circle_fmt_b66e48c5(\"fmt()<br/><small>src/model.rs</small>\")",
+     "        src_model_circle_unit_8d70b1f9(\".UNIT<br/><small>src/model.rs</small>\")",
+     "    end",
+     "    subgraph modelrs_fmtrs_util_src_util_fmt_rs_a406c156[\"src/util/fmt.rs\"]",
+     "        src_util_fmt_69248654(\"fmt.rs\")",
+     "        src_util_fmt_configure_f5aa9765(\"configure()<br/><small>src/util/fmt.rs</small>\")",
+     "        src_util_fmt_helper_e6c7e30d(\"helper()<br/><small>src/util/fmt.rs</small>\")",
+     "        src_util_fmt_render_7941fb87(\"render()<br/><small>src/util/fmt.rs</small>\")",
+     "    end",
+     "    subgraph modelrs_fmtrs_util_External_generated_4779b0ce[\"External / generated\"]",
+     "        memchr_1788a768(\"memchr\")",
+     "        formatter_6233e974(\"Formatter\")",
+     "        src_util_fmt_rs_settings_d8237c13(\"Settings\")",
+     "    end",
+     "    src_model_circle_bd601a1e -->|method| src_model_circle_new_a103ba04",
+     "    src_model_circle_bd601a1e -->|method| src_model_circle_scale_f6d5a33f",
+     "    src_model_circle_bd601a1e -->|method| src_model_circle_area_98f7b9ae",
+     "    src_model_circle_bd601a1e -->|method| src_model_circle_fmt_b66e48c5",
+     "    src_model_fixture_84ce38f1 -->|calls| src_model_circle_new_a103ba04",
+     "    src_util_fmt_69248654 -->|imports| src_model_circle_bd601a1e",
+     "    src_util_fmt_69248654 -->|imports| memchr_1788a768",
+     "    class src_model_circle_bd601a1e klass;",
+     "    class src_model_fixture_84ce38f1 function;",
+     "    class src_model_circle_new_a103ba04 function;",
+     "    class src_model_circle_scale_f6d5a33f function;",
+     "    class src_model_circle_area_98f7b9ae function;",
+     "    class src_model_circle_fmt_b66e48c5 function;",
+     "    class src_model_circle_unit_8d70b1f9 function;",
+     "    class src_util_fmt_69248654 module;",
+     "    class src_util_fmt_configure_f5aa9765 function;",
+     "    class src_util_fmt_helper_e6c7e30d function;",
+     "    class src_util_fmt_render_7941fb87 function;",
+     "    class memchr_1788a768 function;",
+     "    class formatter_6233e974 klass;",
+     "    class src_util_fmt_rs_settings_d8237c13 klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Modelrs Fmtrs Util groups implementation around modelrs, fmtrs, util, circle, mostly in src/model.rs, src/util/fmt.rs. This section covers 14 nodes and 15 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x4, method x4, references x4, imports x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Circle",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "fmt.rs",
+        "src/util/fmt.rs"
+       ]
+      ],
+      [
+       [
+        "area()",
+        "src/model.rs"
+       ],
+       [
+        "diameter()",
+        "src/model.rs"
+       ],
+       [
+        "fmt()",
+        "src/model.rs"
+       ],
+       "+2 more"
+      ],
+      "Circle node in src/model.rs."
+     ],
+     [
+      "2",
+      [
+       [
+        "Formatter",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Formatter node in project."
+     ],
+     [
+      "3",
+      [
+       [
+        ".area()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".area() node in src/model.rs."
+     ],
+     [
+      "4",
+      [
+       [
+        ".fmt()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".fmt() node in src/model.rs."
+     ],
+     [
+      "5",
+      [
+       [
+        ".new()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "src/model.rs"
+       ],
+       [
+        "fixture()",
+        "src/model.rs"
+       ],
+       [
+        "round_kind()",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".new() node in src/model.rs."
+     ],
+     [
+      "6",
+      [
+       [
+        ".scale()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".scale() node in src/model.rs."
+     ],
+     [
+      "7",
+      [
+       [
+        ".UNIT",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".UNIT node in src/model.rs."
+     ],
+     [
+      "8",
+      [
+       [
+        "fixture()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "new()",
+        "src/model.rs"
+       ]
+      ],
+      "fixture() node in src/model.rs."
+     ],
+     [
+      "9",
+      [
+       [
+        "fmt.rs",
+        "src/util/fmt.rs"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "model.rs",
+        "src/model.rs"
+       ]
+      ],
+      [
+       [
+        "Circle",
+        "src/model.rs"
+       ],
+       [
+        "memchr"
+       ],
+       [
+        "Shape",
+        "src/model.rs"
+       ]
+      ],
+      "fmt.rs node in src/util/fmt.rs."
+     ],
+     [
+      "10",
+      [
+       [
+        "configure()",
+        "src/util/fmt.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Reads, resolves, or persists project configuration."
+     ],
+     [
+      "11",
+      [
+       [
+        "helper()",
+        "src/util/fmt.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in src/util/fmt.rs."
+     ],
+     [
+      "12",
+      [
+       [
+        "render()",
+        "src/util/fmt.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "render() node in src/util/fmt.rs."
+     ],
+     [
+      "13",
+      [
+       [
+        "Settings",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Settings node in project."
+     ],
+     [
+      "14",
+      [
+       [
+        "memchr",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "fmt.rs",
+        "src/util/fmt.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "memchr node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/model.rs",
+      "7 nodes"
+     ],
+     [
+      "src/util/fmt.rs",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "modrs-util-render",
+   "heading": "6. Modrs Util Render",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Modrs Util Render (13 nodes, 15 edges)",
+     "    subgraph modrs_util_render_src_util_mod_rs_61f5f35d[\"src/util/mod.rs\"]",
+     "        src_util_mod_run_all_83ba15c2(\"run_all()<br/><small>src/util/mod.rs</small>\")",
+     "        src_util_mod_f2433e05(\"mod.rs\")",
+     "        src_util_mod_apply_44444141(\"apply()<br/><small>src/util/mod.rs</small>\")",
+     "        src_util_mod_helper_954bfbc9(\"helper()<br/><small>src/util/mod.rs</small>\")",
+     "        src_util_mod_reconfigure_5dc7ac55(\"reconfigure()<br/><small>src/util/mod.rs</small>\")",
+     "        src_util_mod_render_8742cf26(\"render()<br/><small>src/util/mod.rs</small>\")",
+     "        src_util_mod_twice_9c652d29(\"twice()<br/><small>src/util/mod.rs</small>\")",
+     "        src_util_mod_widen_ec3496bf(\"widen()<br/><small>src/util/mod.rs</small>\")",
+     "    end",
+     "    subgraph modrs_util_render_External_generated_5f12e898[\"External / generated\"]",
+     "        render_as_render_shape_e4118e68(\"render_as_render_shape\")",
+     "        f_4a0a1921(\"F\")",
+     "        src_util_mod_rs_settings_627f401c(\"Settings\")",
+     "    end",
+     "    subgraph modrs_util_render_src_model_rs_e7aad82b[\"src/model.rs\"]",
+     "        src_model_meters_11e232ea(\"Meters<br/><small>src/model.rs</small>\")",
+     "        src_model_circle_diameter_a0e288d0(\"diameter()<br/><small>src/model.rs</small>\")",
+     "    end",
+     "    src_util_mod_apply_44444141 -->|calls| src_util_mod_helper_954bfbc9",
+     "    src_util_mod_run_all_83ba15c2 -->|calls| src_util_mod_apply_44444141",
+     "    src_util_mod_run_all_83ba15c2 -->|calls| src_util_mod_helper_954bfbc9",
+     "    src_util_mod_f2433e05 -->|imports| render_as_render_shape_e4118e68",
+     "    class src_util_mod_run_all_83ba15c2 function;",
+     "    class src_util_mod_f2433e05 module;",
+     "    class src_util_mod_apply_44444141 function;",
+     "    class src_util_mod_helper_954bfbc9 function;",
+     "    class src_util_mod_reconfigure_5dc7ac55 function;",
+     "    class src_util_mod_render_8742cf26 function;",
+     "    class src_util_mod_twice_9c652d29 function;",
+     "    class src_util_mod_widen_ec3496bf function;",
+     "    class render_as_render_shape_e4118e68 function;",
+     "    class f_4a0a1921 klass;",
+     "    class src_util_mod_rs_settings_627f401c klass;",
+     "    class src_model_meters_11e232ea klass;",
+     "    class src_model_circle_diameter_a0e288d0 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Modrs Util Render groups implementation around modrs, util, render, modelrs, mostly in src/util/mod.rs, src/model.rs. This section covers 13 nodes and 15 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x7, references x4, calls x3, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Meters",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Meters node in src/model.rs."
+     ],
+     [
+      "2",
+      [
+       [
+        "F",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "F node in project."
+     ],
+     [
+      "3",
+      [
+       [
+        ".diameter()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Circle",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".diameter() node in src/model.rs."
+     ],
+     [
+      "4",
+      [
+       [
+        "mod.rs",
+        "src/util/mod.rs"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "model.rs",
+        "src/model.rs"
+       ],
+       [
+        "render_as_render_shape"
+       ]
+      ],
+      "mod.rs node in src/util/mod.rs."
+     ],
+     [
+      "5",
+      [
+       [
+        "apply()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "run_all()",
+        "src/util/mod.rs"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "apply() node in src/util/mod.rs."
+     ],
+     [
+      "6",
+      [
+       [
+        "helper()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "apply()",
+        "src/util/mod.rs"
+       ],
+       [
+        "run_all()",
+        "src/util/mod.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in src/util/mod.rs."
+     ],
+     [
+      "7",
+      [
+       [
+        "reconfigure()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Reads, resolves, or persists project configuration."
+     ],
+     [
+      "8",
+      [
+       [
+        "render()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "render() node in src/util/mod.rs."
+     ],
+     [
+      "9",
+      [
+       [
+        "Settings",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Settings node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        "run_all()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "apply()",
+        "src/util/mod.rs"
+       ],
+       [
+        "helper()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "run_all() node in src/util/mod.rs."
+     ],
+     [
+      "11",
+      [
+       [
+        "twice()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "twice() node in src/util/mod.rs."
+     ],
+     [
+      "12",
+      [
+       [
+        "widen()",
+        "src/util/mod.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "widen() node in src/util/mod.rs."
+     ],
+     [
+      "13",
+      [
+       [
+        "render_as_render_shape",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "mod.rs",
+        "src/util/mod.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "render_as_render_shape node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/util/mod.rs",
+      "8 nodes"
+     ],
+     [
+      "src/model.rs",
+      "2 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "modelrs-kind-round",
+   "heading": "7. Modelrs Kind Round",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Modelrs Kind Round (12 nodes, 14 edges)",
+     "    subgraph modelrs_kind_round_src_model_rs_eb025e1b[\"src/model.rs\"]",
+     "        src_model_e4a8dcbd(\"model.rs\")",
+     "        src_model_kind_empty_49026924(\"Empty<br/><small>src/model.rs</small>\")",
+     "        src_model_kind_23148090(\"Kind<br/><small>src/model.rs</small>\")",
+     "        src_model_platform_e58b9385(\"Platform<br/><small>src/model.rs</small>\")",
+     "        src_model_kind_round_4cfea903(\"Round<br/><small>src/model.rs</small>\")",
+     "        src_model_kind_square_4693721a(\"Square<br/><small>src/model.rs</small>\")",
+     "        src_model_unit_ca263f9f(\"Unit<br/><small>src/model.rs</small>\")",
+     "        src_model_area_is_positive_14c69f04(\"area_is_positive()<br/><small>src/model.rs</small>\")",
+     "        src_model_classify_9a3945c1(\"classify()<br/><small>src/model.rs</small>\")",
+     "        src_model_round_kind_be96fba6(\"round_kind()<br/><small>src/model.rs</small>\")",
+     "    end",
+     "    subgraph modelrs_kind_round_External_generated_0f4d7b70[\"External / generated\"]",
+     "        super_8451ba8a(\"super\")",
+     "        serialize_8b98a923(\"serialize\")",
+     "    end",
+     "    src_model_e4a8dcbd -->|imports| super_8451ba8a",
+     "    src_model_e4a8dcbd -->|imports| serialize_8b98a923",
+     "    class src_model_e4a8dcbd module;",
+     "    class src_model_kind_empty_49026924 klass;",
+     "    class src_model_kind_23148090 klass;",
+     "    class src_model_platform_e58b9385 klass;",
+     "    class src_model_kind_round_4cfea903 klass;",
+     "    class src_model_kind_square_4693721a klass;",
+     "    class src_model_unit_ca263f9f klass;",
+     "    class src_model_area_is_positive_14c69f04 function;",
+     "    class src_model_classify_9a3945c1 function;",
+     "    class src_model_round_kind_be96fba6 function;",
+     "    class super_8451ba8a function;",
+     "    class serialize_8b98a923 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Modelrs Kind Round groups implementation around modelrs, kind, round, unit, mostly in src/model.rs. This section covers 12 nodes and 14 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x6, case of x3, references x3, imports x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Kind",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Kind node in src/model.rs."
+     ],
+     [
+      "2",
+      [
+       [
+        "Unit",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Unit node in src/model.rs."
+     ],
+     [
+      "3",
+      [
+       [
+        "Platform",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Platform node in src/model.rs."
+     ],
+     [
+      "4",
+      [
+       [
+        "model.rs",
+        "src/model.rs"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "mod.rs",
+        "src/util/mod.rs"
+       ]
+      ],
+      [
+       [
+        "fmt.rs",
+        "src/util/fmt.rs"
+       ],
+       [
+        "serialize"
+       ],
+       [
+        "super"
+       ]
+      ],
+      "model.rs node in src/model.rs."
+     ],
+     [
+      "5",
+      [
+       [
+        "area_is_positive()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "area_is_positive() node in src/model.rs."
+     ],
+     [
+      "6",
+      [
+       [
+        "classify()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "classify() node in src/model.rs."
+     ],
+     [
+      "7",
+      [
+       [
+        "Empty",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Empty node in src/model.rs."
+     ],
+     [
+      "8",
+      [
+       [
+        "Round",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Round node in src/model.rs."
+     ],
+     [
+      "9",
+      [
+       [
+        "Square",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Square node in src/model.rs."
+     ],
+     [
+      "10",
+      [
+       [
+        "round_kind()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main()",
+        "src/main.rs"
+       ]
+      ],
+      [
+       [
+        "new()",
+        "src/model.rs"
+       ]
+      ],
+      "round_kind() node in src/model.rs."
+     ],
+     [
+      "11",
+      [
+       [
+        "serialize",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "model.rs",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "serialize node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "super",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "model.rs",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "super node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/model.rs",
+      "10 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "modelrs-pair-wrapper",
+   "heading": "8. Modelrs Pair Wrapper",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Modelrs Pair Wrapper (8 nodes, 7 edges)",
+     "    subgraph modelrs_pair_wrapper_src_model_rs_a04ae83f[\"src/model.rs\"]",
+     "        src_model_wrapper_t_17a6f775(\"Wrapper<T><br/><small>src/model.rs</small>\")",
+     "        src_model_pair_t_c04d12c2(\"Pair<T><br/><small>src/model.rs</small>\")",
+     "        src_model_pair_t_first_e313360f(\"first()<br/><small>src/model.rs</small>\")",
+     "        src_model_wrapper_t_new_71347784(\"new()<br/><small>src/model.rs</small>\")",
+     "        src_model_wrapper_t_area_85ea85c8(\"area()<br/><small>src/model.rs</small>\")",
+     "        src_model_pair_d51e3b96(\"Pair<br/><small>src/model.rs</small>\")",
+     "        src_model_wrapper_ab456ee1(\"Wrapper<br/><small>src/model.rs</small>\")",
+     "    end",
+     "    t_8efd86fb(\"T\")",
+     "    src_model_pair_t_c04d12c2 -->|method| src_model_pair_t_first_e313360f",
+     "    src_model_wrapper_t_17a6f775 -->|method| src_model_wrapper_t_new_71347784",
+     "    src_model_wrapper_t_17a6f775 -->|method| src_model_wrapper_t_area_85ea85c8",
+     "    class src_model_wrapper_t_17a6f775 klass;",
+     "    class src_model_pair_t_c04d12c2 klass;",
+     "    class src_model_pair_t_first_e313360f function;",
+     "    class src_model_wrapper_t_new_71347784 function;",
+     "    class src_model_wrapper_t_area_85ea85c8 function;",
+     "    class src_model_pair_d51e3b96 klass;",
+     "    class src_model_wrapper_ab456ee1 klass;",
+     "    class t_8efd86fb klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Modelrs Pair Wrapper groups implementation around modelrs, pair, wrapper, pairt, mostly in src/model.rs. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: references x4, method x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Pair",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Pair node in src/model.rs."
+     ],
+     [
+      "2",
+      [
+       [
+        "Wrapper",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Wrapper node in src/model.rs."
+     ],
+     [
+      "3",
+      [
+       [
+        "Pair<T>",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "first()",
+        "src/model.rs"
+       ]
+      ],
+      "Pair<T> node in src/model.rs."
+     ],
+     [
+      "4",
+      [
+       [
+        ".first()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Pair<T>",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".first() node in src/model.rs."
+     ],
+     [
+      "5",
+      [
+       [
+        "Wrapper<T>",
+        "src/model.rs"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "area()",
+        "src/model.rs"
+       ],
+       [
+        "new()",
+        "src/model.rs"
+       ]
+      ],
+      "Wrapper<T> node in src/model.rs."
+     ],
+     [
+      "6",
+      [
+       [
+        ".area()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Wrapper<T>",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".area() node in src/model.rs."
+     ],
+     [
+      "7",
+      [
+       [
+        ".new()",
+        "src/model.rs"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Wrapper<T>",
+        "src/model.rs"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".new() node in src/model.rs."
+     ],
+     [
+      "8",
+      [
+       [
+        "T",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "T node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "src/model.rs",
+      "7 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "shapes-cargotoml",
+   "heading": "9. Shapes Cargotoml",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Shapes Cargotoml (1 nodes, 0 edges)",
+     "    pkg_shapes_fd78e5c8(\"shapes<br/><small>Cargo.toml</small>\")",
+     "    class pkg_shapes_fd78e5c8 module;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Shapes Cargotoml groups implementation around shapes, cargotoml, mostly in Cargo.toml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "shapes",
+        "Cargo.toml"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "shapes node in Cargo.toml."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "Cargo.toml",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "rust — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "79"
+     ],
+     [
+      "Edges",
+      "99"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "8"
+     ],
+     [
+      "Documented Sections",
+      "8"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "96"
+     ],
+     [
+      "INFERRED",
+      "3"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}
