@@ -1,0 +1,86 @@
+{
+  "communities": {
+    "0": [
+      "tools_release",
+      "tools_release_main",
+      "tools_release_rationale_1",
+      "tools_release_release",
+      "tools_versions_bump"
+    ],
+    "1": [
+      "tools_versions",
+      "tools_versions_current",
+      "tools_versions_parse",
+      "tools_versions_rationale_1"
+    ]
+  },
+  "cohesion": {
+    "0": 0.6,
+    "1": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "tools_release_release",
+      "label": "release()",
+      "degree": 4
+    },
+    {
+      "id": "tools_versions_current",
+      "label": "current()",
+      "degree": 4
+    },
+    {
+      "id": "tools_versions_bump",
+      "label": "bump()",
+      "degree": 3
+    },
+    {
+      "id": "tools_release_main",
+      "label": "main()",
+      "degree": 2
+    },
+    {
+      "id": "tools_versions_parse",
+      "label": "parse()",
+      "degree": 2
+    },
+    {
+      "id": "tools_release_rationale_1",
+      "label": "Release helper for the shop library.",
+      "degree": 1
+    },
+    {
+      "id": "tools_versions_rationale_1",
+      "label": "Version arithmetic for releases.",
+      "degree": 1
+    }
+  ],
+  "surprises": [
+    {
+      "source": "release()",
+      "target": "current()",
+      "source_files": [
+        "tools/release.py",
+        "tools/versions.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "release()",
+      "target": "bump()",
+      "source_files": [
+        "tools/release.py",
+        "tools/versions.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

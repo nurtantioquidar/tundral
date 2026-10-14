@@ -44,6 +44,10 @@ Status labels used below:
 23. Swift
 24. C
 25. C++
+29. Elixir
+30. Erlang
+31. OCaml
+32. Julia
 
 ---
 
@@ -66,6 +70,10 @@ Status labels used below:
 | `swift/` | `Sources/App/main.swift`, `Sources/Shop/{Models/{Entity,User,Shape},Services/UserService,Extensions/User+Format}.swift`, `Tests/ShopTests/UserServiceTests.swift` | `swift.graphify.json` | `swift.clustered.graphify.json` |
 | `c/` | `main.c`, `include/{shape,util}.h`, `src/{shape,util}.c`, `tests/test_shape.c` | `c.graphify.json` | `c.clustered.graphify.json` |
 | `cpp/` | `include/geo/{shape.hpp,point.h}`, `src/{shape.cpp,main.cc,legacy.cxx,kernels.cu,kernels.h}`, `tests/shape_test.cc` | `cpp.graphify.json` | `cpp.clustered.graphify.json` |
+| `elixir/` | `mix.exs`, `config/config.exs`, `lib/shop.ex`, `lib/shop/{user,repo,util,format}.ex`, `priv/repo/seeds.exs`, `test/shop_test.exs` | `elixir.graphify.json` | `elixir.clustered.graphify.json` |
+| `erlang/` | `src/{shop,shop_util}.erl`, `include/shop.hrl`, `test/shop_tests.erl`, `tools/{release,versions}.py` | `erlang.graphify.json` | `erlang.clustered.graphify.json` |
+| `ocaml/` | `lib/shop.{ml,mli}`, `bin/main.ml`, `test/test_shop.ml`, `tools/{release,versions}.py` | `ocaml.graphify.json` | `ocaml.clustered.graphify.json` |
+| `julia/` | `src/{Shop,models,service}.jl`, `test/runtests.jl` | `julia.graphify.json` | `julia.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -3046,3 +3054,214 @@ usual (their file nodes: `x_h_x`, `x_cpp_x`).
 - **Error recovery.** A few fmt and gtest regions (methods attached to `buffer`, iterator buffer
   fields) come out of the parse differently, which moves `contains`/`references` lines and a
   handful of nodes.
+
+---
+
+## 29. Elixir
+
+Fixture `tests/fixtures/elixir/`; goldens `elixir.*` (53 nodes, 67 links, §17.6 report goldens).
+Extensions `.ex` and `.exs`; tree-sitter-elixir 0.3.5 (Graphify's version). Derived from about
+fifteen probe repositories, Graphify's per-file cache (`raw_calls` with `elixir_module` and
+`elixir_call_scope`) and ecto. Implementation: `crates/core/src/{extract,resolve}/elixir.rs`.
+
+### 29.1 Nodes
+
+| Construct | id | label | fields |
+|---|---|---|---|
+| `defmodule A.B` / `defprotocol A.B` not inside another module | `file_slug(A.B)` | `A.B` | `_elixir_module: true` |
+| the same nested in a module (any depth of its body) | `file_slug(name as written)` (not prefixed by the parent) | name as written (`Stats`) | — |
+| `defimpl P, for: X` | `file_defimpl_slug(P)_slug(X)` | `P (for X)` | — |
+| `defimpl P` (no `for:`, or `for:` a list or `__MODULE__`) | `file_defimpl_slug(P)` | `P` | — |
+| `def`, `defp`, `defmacro`, `defmacrop`, `defguard`, `defguardp`, `defdelegate` | `owner_slug(name)` | `name()` (`valid?()`, `promote!()`, `__using__()`) | — |
+| the same at file level (no module) | `slug(path WITH extension)_slug(name)` (`lib_a_ex_top`, quirk EX1) | `name()` | — |
+
+- **Rule.** Definitions are found at any depth of a module body outside function bodies: inside
+  `if`/`else`, `for`, `quote`, `describe`, `Enum.each(fn -> ... end)`. A `defmodule` inside a
+  top-level `if` is still top level (`_elixir_module`). Nothing inside a function body is a node
+  (`defmodule`, `def` and `quote do def ... end` in a `defmacro __using__`).
+- The name of a `def` is the head's call target (`f(x)`, `f(x) when g`), a bare identifier
+  (`def eight, do: ...`) or the left operand of an operator head (`def a + b` → `a()`).
+  `def unquote(name)(x)` gives nothing. Every clause of a multi-clause function merges into the
+  first (§8.1); `?`/`!` vanish from ids, so `dump` and `dump!` merge and keep the first label.
+- A `defmodule`, `defprotocol` or `defimpl` whose name is not an alias (`defimpl encoder, for:
+  X` in ecto's `json.ex`) yields nothing, its body included.
+- Not emitted: `defstruct`, `defexception`, `@callback`/`@spec`/`@type`, `@behaviour`, module
+  attributes, `test`/`describe`/`setup` blocks, comments and `@moduledoc`/`@doc` (no rationale;
+  `NOTE:`/`WHY:` ignored).
+
+### 29.2 Edges
+
+| relation | source → target | when | location |
+|---|---|---|---|
+| `contains` | file → `defmodule` (nested ones too); enclosing module → nested `defprotocol` or `defimpl`; file → top-level `defprotocol`/`defimpl`; file → file-level function | always | definition line |
+| `implements` | defimpl → protocol | a `defprotocol` of the same file, defined earlier, named like the defimpl's protocol (as written or after alias expansion); never across files | defimpl line |
+| `method` | module, protocol or defimpl → function | one per clause (the build keeps the last clause's line) | clause line |
+| `imports` | file → module, file or external | §29.4 | statement line |
+| `calls` | function → function | §29.3 | call line |
+
+### 29.3 Calls
+
+Only calls inside function bodies count: the `do` block, or the value of a `do:` keyword written
+on the keyword's line (anonymous functions and `quote` blocks inside included). A `do:` followed
+by a line break reads no body (EX7: ecto's `defp escape_bind(...), do:` with `error!(...)` on
+the next line calls nothing). Module bodies, file-level code, heads, guards and default
+arguments give nothing.
+
+- **Call sites.** A `call` node whose target is an identifier is a bare call, unless the name is
+  `def defp defmacro defmacrop defguard defdelegate defstruct defmodule defimpl defprotocol case
+  cond if unless with for import alias use` or in the builtin denylist (C's list of §24.5
+  without `object`, plus `require`: `map filter max min len print hash id ...`); `raise`, `quote`,
+  `unquote`, `try`, `receive`, `send`, `apply`, `inspect` and `@attr value` (`doc`, `impl`) are
+  calls. `x |> f()`, `&(&1 + f(&1))` and string interpolation call `f`; `&f/1` does not;
+  `&Mod.f/2` does. A target `Mod.f` is a member call: `Mod` is alias-expanded (§29.5), `__MODULE__`
+  and `__MODULE__.X` are the current module; a variable, call or atom receiver (`x.f`, `:ets.f`,
+  `f.()`) never binds.
+- **In the file** (no score): a bare `f` binds to the **last** function of the file labelled
+  `f()`, whatever module defines it (EX2); `Mod.f` binds when the expanded `Mod` is the full
+  name of a module of the file (a `defimpl P, for: X` is the module `P.X`), to its function
+  with id `module_slug(f)`, so by id rather than label (EX8: `Ecto.Schema.__field__` reaches
+  `field()`). One edge per (caller, callee), first line; a call that would bind to the caller
+  itself stays unbound.
+- **Across files.** `Mod.f` binds to the function labelled `f()` (any kind, `defp` included; by
+  label here, so `Ecto.primary_key!` misses the merged `primary_key()`) of the only
+  **top-level** module labelled `Mod` (EXTRACTED 1.0); nested modules are invisible here
+  (`Shop.Stats.count` from another file binds nothing, EX3). A bare `f` binds to the only
+  function labelled `f()` in the files that define the caller's scope modules (INFERRED 0.85):
+  the `import`/`use` targets of the enclosing modules, innermost first, then the file level, as
+  written (`require` and `alias` are not scope). No scope, two candidates, or a candidate equal
+  to the caller bind nothing. Self-loops never appear.
+- Graphify adds the cross-file calls in target-id order (`f → B.c` before `f → B.y`), which
+  decides surprise ties (§17.4).
+
+### 29.4 Imports
+
+`alias`, `import`, `use` and `require` anywhere outside function bodies (module body, file level,
+nested modules) give one edge per target from the **file** node: `alias A.B` / `as:` → `A.B`;
+`alias A.{B, C.D}` → `A.B`, `A.C.D`; `alias __MODULE__.Sub` → `__MODULE__.Sub` (external
+`module_sub`); atoms (`import :timer`) give nothing. The target `E = slug(text)` lands on, in
+order:
+
+1. the only top-level module whose `slug(label)` is `E`, when it is in another file (a same-file
+   match, or two matches, skip this step: `use Twice` with `Twice` in two files stays external);
+2. an existing node whose id is `E` (`alias Lib.A` → file `lib_a`);
+3. the only module, protocol or file of the graph keyed `E`, where a file's keys are the slugs
+   of its path suffixes without extension (`v`, `w_v`, `lib_w_v` for `lib/w/v.ex`) and a
+   module's are those keys plus `_` plus its id's local part (`q_r` for nested `R` in `lib/q.ex`);
+   in another file it is linked only if the importing file has no import edge to that node yet
+   (Graphify adds these after the others); in the importing file itself the edge is **dropped**
+   (`import Config` in `config/config.exs`, `use Supervisor` in `supervisor.ex`, EX4);
+4. otherwise the external node `E` (label = id).
+
+### 29.5 Module names and aliases
+
+A top-level module's full name is its label. A nested module's full name is its parent's plus
+`.` plus the name as written, and its first segment becomes an alias in the parent for the whole
+parent body (`defmodule Shop.Other` inside `Shop.A` makes `Shop` mean `Shop.A.Shop`, so
+`Shop.B.run` there names `Shop.A.Shop.B`, EX5). `alias` in a module body applies to the whole
+body, before or after it, and to nested modules; in a function body only to that function.
+Expansion replaces the first segment (`F.deep` with `alias Shop.{E.F}` → `Shop.E.F`).
+
+### 29.6 Quirks (Elixir)
+
+- **EX1** File-level functions keep the extension in their id prefix (`lib_a_ex_top`).
+- **EX2** A bare call binds to the file's last same-named function, even in another module.
+- **EX3** Nested modules are reachable only from their own file.
+- **EX4** Import targets are matched by id slugs and path suffixes, not module names; an import
+  that lands in its own file is dropped.
+- **EX5** A nested `defmodule A.B` re-aliases `A` for its whole parent, retargeting unrelated
+  `A.X` calls.
+- **EX6 (not reproduced)** An import matched by step 3 of §29.4 to a node of the importing file
+  other than the file itself: Graphify keeps either the `contains` link (with `context:
+  "import"`) or the import (probes disagree); dijkstral drops the import.
+- **EX7** A `do:` keyword body that starts on the next line is not read.
+- **EX8** In-file `Mod.f` matches by id, cross-file `Mod.f` and bare calls by label.
+
+### 29.7 Parity (2026-10-14)
+
+ecto (`--ext .ex,.exs`): nodes 1954/1954 and links 3943/3943 (recall and precision 100%), no field
+differences, identical communities (NMI 1.0) and array order. The Graphify repository's
+`sample.ex` matches the same way on a scratch copy.
+
+---
+
+## 30. Erlang
+
+`.erl` and `.hrl` are code files (counted in the report's corpus check, §17.5) but Graphify
+0.9.86 extracts nothing from them: their grammar comes from the optional extra `graphifyy[erlang]`
+(`tree-sitter-language-pack`), which the pinned install lacks, and the build logs "contributed
+nothing to the graph because a dependency is missing". No file node, no edges. A repository with
+only Erlang files yields an empty graph and no clustered output. Dijkstral classifies the files
+(`Lang::Erlang`), parses nothing and emits nothing. Fixture `erlang/` (Python tools carry the
+graph; `rebar.config` is not code and is left out so the report compares exactly).
+
+## 31. OCaml
+
+The same as §30 for `.ml` and `.mli` (optional extra `graphifyy[ocaml]`, `tree-sitter-ocaml`):
+code files with no nodes. Fixture `ocaml/`; dune files are not classified.
+
+## 32. Julia
+
+Fixture `tests/fixtures/julia/`; goldens `julia.*` (32 nodes, 42 links). Extension `.jl`;
+tree-sitter-julia 0.23.1 (Graphify's version). Implementation:
+`crates/core/src/{extract,resolve}/julia.rs`. There is no cross-file call resolution.
+
+### 32.1 Nodes
+
+| Construct | id | label |
+|---|---|---|
+| `module M` (nested too) | `file_slug(M)` | `M` |
+| `abstract type T`, `struct T`, `mutable struct T{P}` | `file_slug(T)` | `T` |
+| `function f(...)`, `f(...) = ...` (also with `where`, `::R`) | `file_slug(f)` | `f()` |
+| `function Base.show(...)` | `file_slug(show)` | `Base.show()` |
+| `Base.:+(a, b) = ...`, `function +(a, b)` | the file id (the name slugs to nothing, JL1) | `Base.:+()` |
+| `(c::Circle)(x)` | `file_circle_call` | `(Circle)()` |
+| `macro m(...)` | `file_slug(m)` | `@m` |
+| `using A, B.C: x`, `import ..P`, `using .Q` | `slug(path)` (no file prefix; per file, so two files importing `Base` both get renamed, §4.5) | `A`, `B.C`, `P`, `Q` (leading dots dropped) |
+| type name in a field or `<:` not defined earlier in the file | stub `slug(T)` | `T` |
+
+- Every id hangs off the file id, whatever module encloses the definition. Methods of one
+  function merge (§8.1); a struct and a function of the same slug merge too.
+- Definitions are found at any depth outside function bodies (`begin`, `let`, macro calls such as
+  `@inline f(x) = x`). Not nodes: `function f end`, `primitive type`, `const`, globals,
+  `export`, `import X as Y`, `include`, docstrings and comments (no rationale), functions nested
+  in a function body.
+
+### 32.2 Edges
+
+| relation | source → target | notes |
+|---|---|---|
+| `defines` | file → every module (nested ones too); enclosing module (or file) → type, function, macro | one per method, at its line |
+| `imports` | enclosing module (or file) → import node | context `import`, statement line |
+| `inherits` | type → parent | `<: P` or `<: P{...}`; qualified parents give nothing |
+| `references` | struct → field type | context `field`; only plain names (`x::T`), not `Vector{T}`, `Union{...}`, `Main.T`, nor the struct's own parameters |
+| `calls` | function → `file_slug(callee)` | §32.3 |
+
+A type name binds in the file only to a node already created with id `file_slug(T)`; otherwise
+a stub, which the build binds to the only Julia node labelled `T` (type, module or import node),
+else to the only function labelled `T()`; with two candidates it stays a stub.
+
+### 32.3 Calls
+
+Every call in a function body (calls in the signature and default arguments excluded) targets
+`file_slug(callee)` where the callee is the identifier, the last name of `a.b.c(...)` or
+`x.m(...)`, or the operator of `Base.:+(...)` (the file id, JL1); broadcast `f.(x)`, `x |> f`,
+calls in comprehensions, `do` blocks, lambdas, `begin`/`let` and macro arguments count; a nested
+short-form definition counts as two calls. The edge survives only when that id exists, so calls
+bind to the file's own definitions (constructors of its structs included) and never across files;
+self-calls stay. No denylist, no dedup (the build keeps the last line).
+
+### 32.4 Quirks (Julia)
+
+- **JL1** Operator methods (`Base.:+`, `function +`) take the file's id and merge into the file
+  node; calls to them link to the file. Graphify keeps `file -defines-> module` over the reverse
+  `module -defines-> file` (smaller source on an equal-rank tie), while dijkstral's fold keeps the
+  larger source in that tier (§8.2): a shared-rule difference, not observed outside probes.
+- **JL2** Calls are bound by synthesized id, so a call named like another file's id slug would
+  link there; cross-file calls are lost.
+
+### 32.5 Parity
+
+No Julia corpus repo. The Graphify repository's `sample.jl` matches exactly on a scratch copy
+(23 nodes, 27 links with `sample.ex`). In the whole repository its ids are collision-renamed
+(§4.5) against `sample.ps1` and `sample.f90`, languages dijkstral does not extract yet, so five
+definitions there differ by id until those languages land.

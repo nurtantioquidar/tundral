@@ -7,8 +7,10 @@
 pub mod c;
 pub mod csharp;
 pub mod data;
+pub mod elixir;
 pub mod go;
 pub mod java;
+pub mod julia;
 pub mod kotlin;
 pub mod php;
 pub mod python;
@@ -42,6 +44,10 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Scala => scala::extract(&mut cx, tree.as_ref()),
         Lang::Swift => swift::extract(&mut cx, tree.as_ref()),
         Lang::C | Lang::Cpp => c::extract(&mut cx, tree.as_ref()),
+        Lang::Elixir => elixir::extract(&mut cx, tree.as_ref()),
+        Lang::Julia => julia::extract(&mut cx, tree.as_ref()),
+        // Counted as code by Graphify, but they contribute nothing (§30, §31).
+        Lang::Erlang | Lang::OCaml => {}
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }

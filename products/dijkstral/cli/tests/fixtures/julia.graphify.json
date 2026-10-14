@@ -1,0 +1,704 @@
+{
+ "nodes": [
+  {
+   "id": "src_shop",
+   "label": "Shop.jl",
+   "file_type": "code",
+   "source_file": "src/Shop.jl",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_shop",
+   "label": "Shop",
+   "file_type": "code",
+   "source_file": "src/Shop.jl",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "dates",
+   "label": "Dates",
+   "file_type": "code",
+   "source_file": "src/Shop.jl",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "base",
+   "label": "Base",
+   "file_type": "code",
+   "source_file": "src/Shop.jl",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_internal",
+   "label": "Internal",
+   "file_type": "code",
+   "source_file": "src/Shop.jl",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_jl_shop",
+   "label": "Shop",
+   "file_type": "code",
+   "source_file": "src/Shop.jl",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_count_entities",
+   "label": "count_entities()",
+   "file_type": "code",
+   "source_file": "src/Shop.jl",
+   "source_location": "L17",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models",
+   "label": "models.jl",
+   "file_type": "code",
+   "source_file": "src/models.jl",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models_entity",
+   "label": "Entity",
+   "file_type": "code",
+   "source_file": "src/models.jl",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models_person",
+   "label": "Person",
+   "file_type": "code",
+   "source_file": "src/models.jl",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models_user",
+   "label": "User",
+   "file_type": "code",
+   "source_file": "src/models.jl",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "string",
+   "label": "String",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "datetime",
+   "label": "DateTime",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models_admin",
+   "label": "Admin",
+   "file_type": "code",
+   "source_file": "src/models.jl",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "int",
+   "label": "Int",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models_box",
+   "label": "Box",
+   "file_type": "code",
+   "source_file": "src/models.jl",
+   "source_location": "L19",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models_label",
+   "label": "Label",
+   "file_type": "code",
+   "source_file": "src/models.jl",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_models_name",
+   "label": "name()",
+   "file_type": "code",
+   "source_file": "src/models.jl",
+   "source_location": "L30",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service",
+   "label": "service.jl",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "printf",
+   "label": "Printf",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service_describe",
+   "label": "describe()",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service_register",
+   "label": "register()",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service_validate",
+   "label": "validate()",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L21",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service_show",
+   "label": "Base.show()",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service_label_call",
+   "label": "(Label)()",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service_registered",
+   "label": "@registered",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_service_promote",
+   "label": "promote()",
+   "file_type": "code",
+   "source_file": "src/service.jl",
+   "source_location": "L33",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_runtests",
+   "label": "runtests.jl",
+   "file_type": "code",
+   "source_file": "test/runtests.jl",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "test",
+   "label": "Test",
+   "file_type": "code",
+   "source_file": "test/runtests.jl",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_runtests_jl_shop",
+   "label": "Shop",
+   "file_type": "code",
+   "source_file": "test/runtests.jl",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_runtests_fixture",
+   "label": "Fixture",
+   "file_type": "code",
+   "source_file": "test/runtests.jl",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_runtests_make_user",
+   "label": "make_user()",
+   "file_type": "code",
+   "source_file": "test/runtests.jl",
+   "source_location": "L9",
+   "_origin": "ast"
+  }
+ ],
+ "edges": [
+  {
+   "source": "src_shop",
+   "target": "src_shop_shop",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop.jl",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "dates",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop.jl",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_shop",
+   "target": "base",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop.jl",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop",
+   "target": "src_shop_internal",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop.jl",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_internal",
+   "target": "src_shop_jl_shop",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop.jl",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_internal",
+   "target": "src_shop_count_entities",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop.jl",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models",
+   "target": "src_models_entity",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models",
+   "target": "src_models_person",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_person",
+   "target": "src_models_entity",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models",
+   "target": "src_models_user",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_user",
+   "target": "src_models_person",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_user",
+   "target": "string",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_user",
+   "target": "datetime",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models",
+   "target": "src_models_admin",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_admin",
+   "target": "src_models_person",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_admin",
+   "target": "src_models_user",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_admin",
+   "target": "int",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models",
+   "target": "src_models_box",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_box",
+   "target": "src_models_entity",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_box",
+   "target": "src_models_label",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models",
+   "target": "src_models_label",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_label",
+   "target": "string",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models",
+   "target": "src_models_name",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L30",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_name",
+   "target": "src_models_name",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/models.jl",
+   "source_location": "L31",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service",
+   "target": "printf",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service",
+   "target": "src_service_describe",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service",
+   "target": "src_service_register",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service",
+   "target": "src_service_validate",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service",
+   "target": "src_service_show",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service",
+   "target": "src_service_label_call",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service",
+   "target": "src_service_registered",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service",
+   "target": "src_service_promote",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L33",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service_describe",
+   "target": "src_service_describe",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service_register",
+   "target": "src_service_validate",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L17",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service_show",
+   "target": "src_service_describe",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L24",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service_promote",
+   "target": "src_service_validate",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/service.jl",
+   "source_location": "L35",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "test_runtests",
+   "target": "test",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "test/runtests.jl",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "test_runtests",
+   "target": "test_runtests_jl_shop",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "test/runtests.jl",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "test_runtests",
+   "target": "test_runtests_fixture",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "test/runtests.jl",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_runtests_fixture",
+   "target": "src_models_admin",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "test/runtests.jl",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_runtests_fixture",
+   "target": "src_models_label",
+   "relation": "references",
+   "context": "field",
+   "confidence": "EXTRACTED",
+   "source_file": "test/runtests.jl",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_runtests",
+   "target": "test_runtests_make_user",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "test/runtests.jl",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

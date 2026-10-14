@@ -1,0 +1,1162 @@
+{
+ "nodes": [
+  {
+   "id": "config_config",
+   "label": "config.exs",
+   "file_type": "code",
+   "source_file": "config/config.exs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop",
+   "label": "shop.ex",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_shop",
+   "label": "Shop",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L1",
+   "_elixir_module": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_shop_register",
+   "label": "register()",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_shop_describe",
+   "label": "describe()",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_shop_admins",
+   "label": "admins()",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_shop_log_result",
+   "label": "log_result()",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_stats",
+   "label": "Stats",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L31",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_stats_count",
+   "label": "count()",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L34",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_stats_summary",
+   "label": "summary()",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L35",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_shop_summary",
+   "label": "summary()",
+   "file_type": "code",
+   "source_file": "lib/shop.ex",
+   "source_location": "L38",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format",
+   "label": "format.ex",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format_shop_format",
+   "label": "Shop.Format",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L1",
+   "_elixir_module": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format_shop_format_line",
+   "label": "line()",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format_printable",
+   "label": "Printable",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format_printable_print",
+   "label": "print()",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format_defimpl_printable_user",
+   "label": "Printable (for User)",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format_defimpl_printable_user_print",
+   "label": "print()",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format_defimpl_string_chars_shop_user",
+   "label": "String.Chars (for Shop.User)",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L16",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_format_defimpl_string_chars_shop_user_to_string",
+   "label": "to_string()",
+   "file_type": "code",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L17",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_repo",
+   "label": "repo.ex",
+   "file_type": "code",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_repo_shop_repo",
+   "label": "Shop.Repo",
+   "file_type": "code",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L1",
+   "_elixir_module": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_repo_shop_repo_start_link",
+   "label": "start_link()",
+   "file_type": "code",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_repo_shop_repo_init",
+   "label": "init()",
+   "file_type": "code",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_repo_shop_repo_insert",
+   "label": "insert()",
+   "file_type": "code",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_repo_shop_repo_handle_call",
+   "label": "handle_call()",
+   "file_type": "code",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_repo_shop_repo_all",
+   "label": "all()",
+   "file_type": "code",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_user",
+   "label": "user.ex",
+   "file_type": "code",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_user_shop_user",
+   "label": "Shop.User",
+   "file_type": "code",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L1",
+   "_elixir_module": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_user_shop_user_new",
+   "label": "new()",
+   "file_type": "code",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_user_shop_user_admin",
+   "label": "admin?()",
+   "file_type": "code",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_user_shop_user_promote",
+   "label": "promote!()",
+   "file_type": "code",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_user_shop_user_is_member",
+   "label": "is_member()",
+   "file_type": "code",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_user_shop_user_is_named",
+   "label": "is_named()",
+   "file_type": "code",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_user_shop_user_format",
+   "label": "format()",
+   "file_type": "code",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util",
+   "label": "util.ex",
+   "file_type": "code",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util_shop_util",
+   "label": "Shop.Util",
+   "file_type": "code",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L1",
+   "_elixir_module": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util_shop_util_stamp",
+   "label": "stamp()",
+   "file_type": "code",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util_shop_util_normalize",
+   "label": "normalize()",
+   "file_type": "code",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "lib_shop_util_shop_util_now",
+   "label": "now()",
+   "file_type": "code",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "mix",
+   "label": "mix.exs",
+   "file_type": "code",
+   "source_file": "mix.exs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "mix_shop_mixproject",
+   "label": "Shop.MixProject",
+   "file_type": "code",
+   "source_file": "mix.exs",
+   "source_location": "L1",
+   "_elixir_module": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "mix_shop_mixproject_project",
+   "label": "project()",
+   "file_type": "code",
+   "source_file": "mix.exs",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "mix_shop_mixproject_deps",
+   "label": "deps()",
+   "file_type": "code",
+   "source_file": "mix.exs",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "priv_repo_seeds",
+   "label": "seeds.exs",
+   "file_type": "code",
+   "source_file": "priv/repo/seeds.exs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_shop_test",
+   "label": "shop_test.exs",
+   "file_type": "code",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_shop_test_shoptest",
+   "label": "ShopTest",
+   "file_type": "code",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L1",
+   "_elixir_module": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "test_shop_test_shoptest_stamped",
+   "label": "stamped()",
+   "file_type": "code",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L19",
+   "_origin": "ast"
+  },
+  {
+   "id": "test_shop_test_shoptest_helper_count",
+   "label": "helper_count()",
+   "file_type": "code",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L21",
+   "_origin": "ast"
+  },
+  {
+   "id": "config",
+   "label": "config",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "logger",
+   "label": "logger",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "genserver",
+   "label": "genserver",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "mix_project",
+   "label": "mix_project",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "exunit_case",
+   "label": "exunit_case",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "config_config",
+   "target": "config",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "config/config.exs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_shop",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_repo_shop_repo",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_user_shop_user",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L6",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_format_shop_format",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L7",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "logger",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop",
+   "target": "lib_shop_shop_register",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop",
+   "target": "lib_shop_shop_describe",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop",
+   "target": "lib_shop_shop_admins",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop",
+   "target": "lib_shop_shop_log_result",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop",
+   "target": "lib_shop_stats",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_stats",
+   "target": "lib_shop_stats_count",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L34",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_stats",
+   "target": "lib_shop_stats_summary",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop",
+   "target": "lib_shop_shop_summary",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L38",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop_register",
+   "target": "lib_shop_shop_log_result",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_stats_summary",
+   "target": "lib_shop_stats_count",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L35",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop_summary",
+   "target": "lib_shop_stats_summary",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop.ex",
+   "source_location": "L38",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format",
+   "target": "lib_shop_format_shop_format",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format",
+   "target": "lib_shop_user_shop_user",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_shop_format",
+   "target": "lib_shop_format_shop_format_line",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_shop_format",
+   "target": "lib_shop_format_printable",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_printable",
+   "target": "lib_shop_format_printable_print",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_shop_format",
+   "target": "lib_shop_format_defimpl_printable_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_defimpl_printable_user",
+   "target": "lib_shop_format_printable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_defimpl_printable_user",
+   "target": "lib_shop_format_defimpl_printable_user_print",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format",
+   "target": "lib_shop_format_defimpl_string_chars_shop_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_defimpl_string_chars_shop_user",
+   "target": "lib_shop_format_defimpl_string_chars_shop_user_to_string",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_defimpl_printable_user_print",
+   "target": "lib_shop_format_shop_format_line",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_format_defimpl_string_chars_shop_user_to_string",
+   "target": "lib_shop_format_shop_format_line",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/format.ex",
+   "source_location": "L17",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo",
+   "target": "lib_shop_repo_shop_repo",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo",
+   "target": "genserver",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo",
+   "target": "lib_shop_util_shop_util",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo_shop_repo",
+   "target": "lib_shop_repo_shop_repo_start_link",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo_shop_repo",
+   "target": "lib_shop_repo_shop_repo_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo_shop_repo",
+   "target": "lib_shop_repo_shop_repo_insert",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo_shop_repo",
+   "target": "lib_shop_repo_shop_repo_handle_call",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo_shop_repo",
+   "target": "lib_shop_repo_shop_repo_all",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_user",
+   "target": "lib_shop_user_shop_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_user_shop_user",
+   "target": "lib_shop_user_shop_user_new",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_user_shop_user",
+   "target": "lib_shop_user_shop_user_admin",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_user_shop_user",
+   "target": "lib_shop_user_shop_user_promote",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_user_shop_user",
+   "target": "lib_shop_user_shop_user_is_member",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_user_shop_user",
+   "target": "lib_shop_user_shop_user_is_named",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_user_shop_user",
+   "target": "lib_shop_user_shop_user_format",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util",
+   "target": "lib_shop_util_shop_util",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util_shop_util",
+   "target": "lib_shop_util_shop_util_stamp",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util_shop_util",
+   "target": "lib_shop_util_shop_util_normalize",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util_shop_util",
+   "target": "lib_shop_util_shop_util_now",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_util_shop_util_stamp",
+   "target": "lib_shop_util_shop_util_now",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "lib/shop/util.ex",
+   "source_location": "L4",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "mix",
+   "target": "mix_shop_mixproject",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "mix.exs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "mix",
+   "target": "mix_project",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "mix.exs",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "mix_shop_mixproject",
+   "target": "mix_shop_mixproject_project",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "mix.exs",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "mix_shop_mixproject",
+   "target": "mix_shop_mixproject_deps",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "mix.exs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "mix_shop_mixproject_project",
+   "target": "mix_shop_mixproject_deps",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "mix.exs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "priv_repo_seeds",
+   "target": "lib_shop_repo_shop_repo",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "priv/repo/seeds.exs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "test_shop_test",
+   "target": "test_shop_test_shoptest",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_shop_test",
+   "target": "exunit_case",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L2",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "test_shop_test",
+   "target": "lib_shop_util_shop_util",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "test_shop_test",
+   "target": "lib_shop_user_shop_user",
+   "relation": "imports",
+   "confidence": "EXTRACTED",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "test_shop_test_shoptest",
+   "target": "test_shop_test_shoptest_stamped",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_shop_test_shoptest",
+   "target": "test_shop_test_shoptest_helper_count",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "test/shop_test.exs",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_repo_shop_repo_insert",
+   "target": "lib_shop_util_shop_util_stamp",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "lib/shop/repo.ex",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "test_shop_test_shoptest_stamped",
+   "target": "lib_shop_util_shop_util_stamp",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "test/shop_test.exs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop_register",
+   "target": "lib_shop_user_shop_user_new",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.ex",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop_register",
+   "target": "lib_shop_repo_shop_repo_insert",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.ex",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop_describe",
+   "target": "lib_shop_format_shop_format_line",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.ex",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_shop_admins",
+   "target": "lib_shop_user_shop_user_admin",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop.ex",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_shop_user_shop_user_new",
+   "target": "lib_shop_util_shop_util_normalize",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/shop/user.ex",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

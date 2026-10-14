@@ -446,3 +446,22 @@ dijkstral defers to stage 4b; on `.cs` alone definitions are at 100%. fmt's gaps
 `cli/docs/graphify-format.md` §25 (self-calls Graphify drops in large files, include-target rules
 only partly pinned).
 
+
+### Stage 4b: Elixir, Erlang, OCaml and Julia — 2026-10-14
+
+Graph parity, `parity.py` on cold `extract` outputs (spec §29–§32):
+
+| repo | scope | nodes | links | NMI |
+|---|---|---|---|---|
+| ecto (Elixir) | `--ext .ex,.exs` | 100.0 / 100.0 (1954) | 100.0 / 100.0 (3943) | 1.000, same array order |
+| graphify `sample.ex` + `sample.jl` | scratch copy, all | 100.0 / 100.0 (23) | 100.0 / 100.0 (27) | 1.000 |
+
+Erlang (`.erl .hrl`) and OCaml (`.ml .mli`) contribute no nodes in Graphify 0.9.86 (optional
+grammar extras not installed); dijkstral counts them as code and emits nothing. In the whole
+graphify repository `sample.jl`'s ids are collision-renamed against `sample.ps1`/`sample.f90`,
+so five Julia definitions differ by id until those languages are extracted.
+
+ecto cold `extract`, single runs on a busy machine (other builds running), indicative only:
+Graphify 3.55 s wall (6.53 s user), dijkstral 0.25 s wall (0.70 s user). dijkstral `--timings`
+(release, 126 files): discover 9.0 ms, stat 51.8, cache-read 30.0, extract 150.8, cache-write
+18.7, resolve 9.5, cluster 9.0, write 26.7, analyze 2.8, report 34.7, html 12.9.

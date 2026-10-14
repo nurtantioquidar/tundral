@@ -1,0 +1,136 @@
+{
+  "communities": {
+    "0": [
+      "printf",
+      "src_service",
+      "src_service_describe",
+      "src_service_label_call",
+      "src_service_promote",
+      "src_service_register",
+      "src_service_registered",
+      "src_service_show",
+      "src_service_validate"
+    ],
+    "1": [
+      "base",
+      "dates",
+      "src_shop",
+      "src_shop_count_entities",
+      "src_shop_internal",
+      "src_shop_jl_shop",
+      "src_shop_shop"
+    ],
+    "2": [
+      "src_models",
+      "src_models_box",
+      "src_models_entity",
+      "src_models_name",
+      "src_models_person"
+    ],
+    "3": [
+      "int",
+      "src_models_admin",
+      "src_models_label",
+      "test_runtests_fixture"
+    ],
+    "4": [
+      "test",
+      "test_runtests",
+      "test_runtests_jl_shop",
+      "test_runtests_make_user"
+    ],
+    "5": [
+      "datetime",
+      "src_models_user",
+      "string"
+    ]
+  },
+  "cohesion": {
+    "0": 0.3055555555555556,
+    "1": 0.2857142857142857,
+    "2": 0.6,
+    "3": 0.5,
+    "4": 0.5,
+    "5": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "src_models_user",
+      "label": "User",
+      "degree": 5
+    },
+    {
+      "id": "src_models_admin",
+      "label": "Admin",
+      "degree": 5
+    },
+    {
+      "id": "src_models_person",
+      "label": "Person",
+      "degree": 4
+    },
+    {
+      "id": "src_models_label",
+      "label": "Label",
+      "degree": 4
+    },
+    {
+      "id": "src_service_describe",
+      "label": "describe()",
+      "degree": 4
+    },
+    {
+      "id": "src_shop_shop",
+      "label": "Shop",
+      "degree": 3
+    },
+    {
+      "id": "src_shop_internal",
+      "label": "Internal",
+      "degree": 3
+    },
+    {
+      "id": "src_models_entity",
+      "label": "Entity",
+      "degree": 3
+    },
+    {
+      "id": "src_models_box",
+      "label": "Box",
+      "degree": 3
+    },
+    {
+      "id": "src_models_name",
+      "label": "name()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Fixture",
+      "target": "Admin",
+      "source_files": [
+        "test/runtests.jl",
+        "src/models.jl"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "Fixture",
+      "target": "Label",
+      "source_files": [
+        "test/runtests.jl",
+        "src/models.jl"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

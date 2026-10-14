@@ -1,0 +1,196 @@
+{
+  "communities": {
+    "0": [
+      "exunit_case",
+      "lib_shop_repo_shop_repo_insert",
+      "lib_shop_util",
+      "lib_shop_util_shop_util",
+      "lib_shop_util_shop_util_now",
+      "lib_shop_util_shop_util_stamp",
+      "test_shop_test",
+      "test_shop_test_shoptest",
+      "test_shop_test_shoptest_helper_count",
+      "test_shop_test_shoptest_stamped"
+    ],
+    "1": [
+      "lib_shop_format",
+      "lib_shop_format_defimpl_printable_user",
+      "lib_shop_format_defimpl_printable_user_print",
+      "lib_shop_format_defimpl_string_chars_shop_user",
+      "lib_shop_format_defimpl_string_chars_shop_user_to_string",
+      "lib_shop_format_printable",
+      "lib_shop_format_printable_print",
+      "lib_shop_format_shop_format",
+      "lib_shop_format_shop_format_line",
+      "lib_shop_shop_describe"
+    ],
+    "2": [
+      "genserver",
+      "lib_shop_repo",
+      "lib_shop_repo_shop_repo",
+      "lib_shop_repo_shop_repo_all",
+      "lib_shop_repo_shop_repo_handle_call",
+      "lib_shop_repo_shop_repo_init",
+      "lib_shop_repo_shop_repo_start_link",
+      "priv_repo_seeds"
+    ],
+    "3": [
+      "lib_shop_user",
+      "lib_shop_user_shop_user",
+      "lib_shop_user_shop_user_format",
+      "lib_shop_user_shop_user_is_member",
+      "lib_shop_user_shop_user_is_named",
+      "lib_shop_user_shop_user_new",
+      "lib_shop_user_shop_user_promote",
+      "lib_shop_util_shop_util_normalize"
+    ],
+    "4": [
+      "lib_shop",
+      "lib_shop_shop_summary",
+      "lib_shop_stats",
+      "lib_shop_stats_count",
+      "lib_shop_stats_summary",
+      "logger"
+    ],
+    "5": [
+      "lib_shop_shop",
+      "lib_shop_shop_admins",
+      "lib_shop_shop_log_result",
+      "lib_shop_shop_register",
+      "lib_shop_user_shop_user_admin"
+    ],
+    "6": [
+      "mix",
+      "mix_project",
+      "mix_shop_mixproject",
+      "mix_shop_mixproject_deps",
+      "mix_shop_mixproject_project"
+    ],
+    "7": [
+      "config_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.24444444444444444,
+    "1": 0.26666666666666666,
+    "2": 0.25,
+    "3": 0.25,
+    "4": 0.4,
+    "5": 0.5,
+    "6": 0.5,
+    "7": 1.0
+  },
+  "gods": [
+    {
+      "id": "lib_shop_user_shop_user",
+      "label": "Shop.User",
+      "degree": 10
+    },
+    {
+      "id": "lib_shop_repo_shop_repo",
+      "label": "Shop.Repo",
+      "degree": 8
+    },
+    {
+      "id": "lib_shop_shop",
+      "label": "Shop",
+      "degree": 6
+    },
+    {
+      "id": "lib_shop_util_shop_util",
+      "label": "Shop.Util",
+      "degree": 6
+    },
+    {
+      "id": "lib_shop_format_shop_format",
+      "label": "Shop.Format",
+      "degree": 5
+    },
+    {
+      "id": "lib_shop_shop_register",
+      "label": "register()",
+      "degree": 4
+    },
+    {
+      "id": "lib_shop_format_shop_format_line",
+      "label": "line()",
+      "degree": 4
+    },
+    {
+      "id": "lib_shop_util_shop_util_stamp",
+      "label": "stamp()",
+      "degree": 4
+    },
+    {
+      "id": "lib_shop_stats",
+      "label": "Stats",
+      "degree": 3
+    },
+    {
+      "id": "lib_shop_stats_summary",
+      "label": "summary()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "stamped()",
+      "target": "stamp()",
+      "source_files": [
+        "test/shop_test.exs",
+        "lib/shop/util.ex"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "register()",
+      "target": "insert()",
+      "source_files": [
+        "lib/shop.ex",
+        "lib/shop/repo.ex"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "register()",
+      "target": "new()",
+      "source_files": [
+        "lib/shop.ex",
+        "lib/shop/user.ex"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "insert()",
+      "target": "stamp()",
+      "source_files": [
+        "lib/shop/repo.ex",
+        "lib/shop/util.ex"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source"
+    },
+    {
+      "source": "describe()",
+      "target": "line()",
+      "source_files": [
+        "lib/shop.ex",
+        "lib/shop/format.ex"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

@@ -127,6 +127,7 @@ pub enum LangFacts {
     Php(crate::extract::php::PhpFacts),
     Ruby(crate::extract::ruby::RubyFacts),
     C(crate::extract::c::CFacts),
+    Elixir(crate::extract::elixir::ElixirFacts),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

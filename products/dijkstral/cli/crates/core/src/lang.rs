@@ -36,6 +36,14 @@ pub enum Lang {
     C,
     /// `.cpp .cc .cxx .hpp .cu`, and `.h` with C++ markers (§19).
     Cpp,
+    /// `.ex`, `.exs` (§29).
+    Elixir,
+    /// `.erl`, `.hrl`: counted as code, no nodes (§30).
+    Erlang,
+    /// `.ml`, `.mli`: counted as code, no nodes (§31).
+    OCaml,
+    /// `.jl` (§32).
+    Julia,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -55,6 +63,10 @@ pub enum Family {
     Kotlin,
     Scala,
     C,
+    Elixir,
+    Julia,
+    /// Code files Graphify counts but extracts nothing from (Erlang, OCaml).
+    Opaque,
 }
 
 impl Lang {
@@ -89,6 +101,10 @@ impl Lang {
             "c" => Lang::C,
             "cpp" | "cc" | "cxx" | "hpp" | "cu" => Lang::Cpp,
             "h" => return crate::extract::c::header_lang(path),
+            "ex" | "exs" => Lang::Elixir,
+            "erl" | "hrl" => Lang::Erlang,
+            "ml" | "mli" => Lang::OCaml,
+            "jl" => Lang::Julia,
             _ => return None,
         })
     }
@@ -109,6 +125,9 @@ impl Lang {
             Lang::Kotlin => Family::Kotlin,
             Lang::Scala => Family::Scala,
             Lang::C | Lang::Cpp => Family::C,
+            Lang::Elixir => Family::Elixir,
+            Lang::Erlang | Lang::OCaml => Family::Opaque,
+            Lang::Julia => Family::Julia,
         }
     }
 
@@ -129,6 +148,9 @@ impl Lang {
             Lang::Swift => tree_sitter_swift::LANGUAGE.into(),
             Lang::C => tree_sitter_c::LANGUAGE.into(),
             Lang::Cpp => tree_sitter_cpp::LANGUAGE.into(),
+            Lang::Elixir => tree_sitter_elixir::LANGUAGE.into(),
+            Lang::Julia => tree_sitter_julia::LANGUAGE.into(),
+            Lang::Erlang | Lang::OCaml => return None,
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }

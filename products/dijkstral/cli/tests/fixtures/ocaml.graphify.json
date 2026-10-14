@@ -1,0 +1,233 @@
+{
+ "nodes": [
+  {
+   "id": "tools_release",
+   "label": "release.py",
+   "file_type": "code",
+   "source_file": "tools/release.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_release_release",
+   "label": "release()",
+   "file_type": "code",
+   "source_file": "tools/release.py",
+   "source_location": "L6",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_release_main",
+   "label": "main()",
+   "file_type": "code",
+   "source_file": "tools/release.py",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_release_rationale_1",
+   "label": "Release helper for the shop library.",
+   "file_type": "rationale",
+   "source_file": "tools/release.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_versions",
+   "label": "versions.py",
+   "file_type": "code",
+   "source_file": "tools/versions.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_versions_current",
+   "label": "current()",
+   "file_type": "code",
+   "source_file": "tools/versions.py",
+   "source_location": "L4",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_versions_parse",
+   "label": "parse()",
+   "file_type": "code",
+   "source_file": "tools/versions.py",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_versions_bump",
+   "label": "bump()",
+   "file_type": "code",
+   "source_file": "tools/versions.py",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tools_versions_rationale_1",
+   "label": "Version arithmetic for releases.",
+   "file_type": "rationale",
+   "source_file": "tools/versions.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  }
+ ],
+ "edges": [
+  {
+   "source": "tools_release",
+   "target": "tools_versions",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_release",
+   "target": "tools_release_release",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_release",
+   "target": "tools_release_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_release_main",
+   "target": "tools_release_release",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_release_rationale_1",
+   "target": "tools_release",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_versions",
+   "target": "tools_versions_current",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/versions.py",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_versions",
+   "target": "tools_versions_parse",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/versions.py",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_versions",
+   "target": "tools_versions_bump",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/versions.py",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_versions_current",
+   "target": "tools_versions_parse",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/versions.py",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_versions_rationale_1",
+   "target": "tools_versions",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/versions.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_release",
+   "target": "tools_versions_bump",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_release",
+   "target": "tools_versions_current",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_release_release",
+   "target": "tools_versions_bump",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tools_release_release",
+   "target": "tools_versions_current",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "tools/release.py",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}
