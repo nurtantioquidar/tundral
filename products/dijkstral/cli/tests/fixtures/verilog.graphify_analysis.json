@@ -1,0 +1,187 @@
+{
+  "communities": {
+    "0": [
+      "counter_counter",
+      "counter_v_counter",
+      "dup",
+      "rtl_top",
+      "rtl_top_keep_hierarchy",
+      "rtl_top_top",
+      "rtl_top_top_ctrl",
+      "rtl_top_top_reset_all",
+      "rtl_top_top_twice",
+      "wide_path"
+    ],
+    "1": [
+      "blackbox_ip",
+      "mem_ram",
+      "mem_ram_dup",
+      "mem_ram_ram",
+      "rtl_fifo",
+      "rtl_fifo_dup",
+      "rtl_fifo_fifo",
+      "rtl_fifo_fifo_flags"
+    ],
+    "2": [
+      "rtl_alu",
+      "rtl_alu_alu",
+      "rtl_alu_alu_saturate",
+      "rtl_alu_v_log_op",
+      "rtl_alu_v_ready",
+      "rtl_alu_v_scale"
+    ],
+    "3": [
+      "tb_tb_top_alu_txn",
+      "tb_tb_top_alu_txn_show",
+      "tb_tb_top_alu_txn_width",
+      "tb_tb_top_cloneable",
+      "tb_tb_top_printable"
+    ],
+    "4": [
+      "tb_model",
+      "tb_model_rationale_2",
+      "tb_model_ref_model",
+      "tb_model_ref_model_step"
+    ],
+    "5": [
+      "tb_tb_top",
+      "tb_tb_top_later_txn",
+      "tb_tb_top_later_txn_pending",
+      "tb_tb_top_tb_top"
+    ],
+    "6": [
+      "tb_tb_top_base_txn",
+      "tb_tb_top_base_txn_show"
+    ],
+    "7": [
+      "empty"
+    ],
+    "8": [
+      "vlang_main"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2222222222222222,
+    "1": 0.2857142857142857,
+    "2": 0.3333333333333333,
+    "3": 0.4,
+    "4": 0.5,
+    "5": 0.5,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0
+  },
+  "gods": [
+    {
+      "id": "rtl_top_top",
+      "label": "top",
+      "degree": 12
+    },
+    {
+      "id": "tb_tb_top_alu_txn",
+      "label": "alu_txn",
+      "degree": 6
+    },
+    {
+      "id": "rtl_fifo_fifo",
+      "label": "fifo",
+      "degree": 4
+    },
+    {
+      "id": "tb_model_ref_model",
+      "label": "ref_model",
+      "degree": 4
+    },
+    {
+      "id": "mem_ram_ram",
+      "label": "ram",
+      "degree": 3
+    },
+    {
+      "id": "rtl_alu_alu",
+      "label": "alu",
+      "degree": 3
+    },
+    {
+      "id": "tb_tb_top_base_txn",
+      "label": "base_txn",
+      "degree": 3
+    },
+    {
+      "id": "counter_counter",
+      "label": "counter",
+      "degree": 2
+    },
+    {
+      "id": "rtl_fifo_fifo_flags",
+      "label": "fifo_flags",
+      "degree": 2
+    },
+    {
+      "id": "rtl_top_top_ctrl",
+      "label": "top_ctrl",
+      "degree": 2
+    }
+  ],
+  "surprises": [
+    {
+      "source": "tb_top",
+      "target": "top",
+      "source_files": [
+        "tb/tb_top.v",
+        "rtl/top.v"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "instantiates",
+      "why": "connects across different repos/directories; bridges separate communities; peripheral node `tb_top` unexpectedly reaches hub `top`"
+    },
+    {
+      "source": "top",
+      "target": "counter",
+      "source_files": [
+        "rtl/top.v",
+        "counter.v"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "instantiates",
+      "why": "connects across different repos/directories; peripheral node `counter` unexpectedly reaches hub `top`"
+    },
+    {
+      "source": "top",
+      "target": "ref_model",
+      "source_files": [
+        "rtl/top.v",
+        "tb/model.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "instantiates",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "fifo",
+      "target": "ram",
+      "source_files": [
+        "rtl/fifo.v",
+        "mem/ram.v"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "instantiates",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "fifo_flags",
+      "target": "ram",
+      "source_files": [
+        "rtl/fifo.v",
+        "mem/ram.v"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "instantiates",
+      "why": "connects across different repos/directories"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

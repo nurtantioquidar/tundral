@@ -1,0 +1,173 @@
+{
+  "communities": {
+    "0": [
+      "canvas",
+      "label",
+      "src_shapes",
+      "src_shapes_area_fn",
+      "src_shapes_circle",
+      "src_shapes_circle_area",
+      "src_shapes_describe",
+      "src_shapes_external_draw",
+      "src_shapes_f90_geometry",
+      "src_shapes_f90_utils",
+      "src_shapes_make_circle",
+      "src_shapes_shapes"
+    ],
+    "1": [
+      "app_main",
+      "app_main_f90_geometry",
+      "app_main_main",
+      "app_main_print_summary",
+      "app_main_print_summary_inner",
+      "app_main_summarize",
+      "shapes"
+    ],
+    "2": [
+      "legacy_solver",
+      "legacy_solver_label",
+      "legacy_solver_legacy_types",
+      "legacy_solver_options",
+      "legacy_solver_solve",
+      "legacy_solver_step",
+      "legacy_solver_trace"
+    ],
+    "3": [
+      "constants",
+      "iso_fortran_env",
+      "src_geometry",
+      "src_geometry_geometry",
+      "src_geometry_point3"
+    ],
+    "4": [
+      "src_geometry_add_points",
+      "src_geometry_origin",
+      "src_geometry_point",
+      "src_geometry_point_norm",
+      "src_geometry_shift"
+    ],
+    "5": [
+      "utils_f90_utils",
+      "utils_factorial",
+      "utils_label",
+      "utils_log_value",
+      "utils_utils"
+    ],
+    "6": [
+      "src_constants",
+      "src_constants_constants",
+      "src_constants_deg2rad"
+    ],
+    "7": [
+      "src_geometry_distance",
+      "src_geometry_distance_coords",
+      "src_geometry_distance_points"
+    ],
+    "8": [
+      "src_geometry_circumference",
+      "src_geometry_report_circle"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2727272727272727,
+    "1": 0.3333333333333333,
+    "2": 0.38095238095238093,
+    "3": 0.4,
+    "4": 0.4,
+    "5": 0.4,
+    "6": 0.6666666666666666,
+    "7": 1.0,
+    "8": 1.0
+  },
+  "gods": [
+    {
+      "id": "src_geometry_geometry",
+      "label": "geometry",
+      "degree": 13
+    },
+    {
+      "id": "src_shapes_shapes",
+      "label": "shapes",
+      "degree": 9
+    },
+    {
+      "id": "src_geometry_point",
+      "label": "point",
+      "degree": 7
+    },
+    {
+      "id": "src_shapes_circle",
+      "label": "circle",
+      "degree": 7
+    },
+    {
+      "id": "src_shapes_describe",
+      "label": "describe()",
+      "degree": 6
+    },
+    {
+      "id": "app_main_main",
+      "label": "main",
+      "degree": 5
+    },
+    {
+      "id": "src_geometry_distance_points",
+      "label": "distance_points()",
+      "degree": 4
+    },
+    {
+      "id": "src_shapes_external_draw",
+      "label": "external_draw()",
+      "degree": 4
+    },
+    {
+      "id": "utils_utils",
+      "label": "utils",
+      "degree": 4
+    },
+    {
+      "id": "app_main_summarize",
+      "label": "summarize()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "describe()",
+      "target": "options",
+      "source_files": [
+        "src/shapes.f90",
+        "legacy/solver.f90"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities; peripheral node `options` unexpectedly reaches hub `describe()`"
+    },
+    {
+      "source": "summarize()",
+      "target": "circle",
+      "source_files": [
+        "app/main.f90",
+        "src/shapes.f90"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "make_circle()",
+      "target": "point",
+      "source_files": [
+        "src/shapes.f90",
+        "src/geometry.f90"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

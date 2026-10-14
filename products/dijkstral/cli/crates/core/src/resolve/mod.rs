@@ -12,9 +12,11 @@
 pub mod c;
 pub mod csharp;
 pub mod data;
+pub mod fortran;
 pub mod go;
 pub mod java;
 pub mod kotlin;
+pub mod objc;
 pub mod php;
 pub mod python;
 pub mod ruby;
@@ -22,6 +24,8 @@ pub mod rust;
 pub mod scala;
 pub mod script;
 pub mod swift;
+pub mod verilog;
+pub mod zig;
 
 use std::collections::{HashMap, HashSet};
 
@@ -113,6 +117,10 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         php::resolve,
         ruby::resolve,
         c::resolve,
+        zig::resolve,
+        objc::resolve,
+        fortran::resolve,
+        verilog::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {
         let handles: Vec<_> = passes

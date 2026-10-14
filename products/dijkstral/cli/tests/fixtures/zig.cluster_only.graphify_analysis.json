@@ -1,0 +1,213 @@
+{
+  "communities": {
+    "0": [
+      "main",
+      "main_helper",
+      "main_load",
+      "main_loaderror",
+      "main_loaderror_corrupt",
+      "main_loaderror_missing",
+      "main_report",
+      "main_snapshot",
+      "main_snapshot_take",
+      "missing",
+      "tests_main_test_callback"
+    ],
+    "1": [
+      "main_main",
+      "util",
+      "util_add",
+      "util_buffer",
+      "util_check",
+      "util_list",
+      "util_scale",
+      "util_sentinel"
+    ],
+    "2": [
+      "src_hue",
+      "src_hue_tint",
+      "src_shapes",
+      "src_shapes_add",
+      "src_shapes_area",
+      "src_shapes_paint",
+      "src_shapes_raw",
+      "src_shapes_rect"
+    ],
+    "3": [
+      "std",
+      "tests_main_test",
+      "tests_main_test_fixture",
+      "tests_main_test_fixture_make",
+      "tests_main_test_probe",
+      "tests_main_test_probe_off",
+      "tests_main_test_probe_on",
+      "tests_main_test_run"
+    ],
+    "4": [
+      "main_tally",
+      "main_tally_bump",
+      "main_tally_busy",
+      "main_tally_idle",
+      "main_tally_init",
+      "main_tally_reset"
+    ],
+    "5": [
+      "src_hue_hue",
+      "src_hue_hue_blue",
+      "src_hue_hue_green",
+      "src_hue_hue_iswarm",
+      "src_hue_hue_red"
+    ],
+    "6": [
+      "src_shapes_shape",
+      "src_shapes_shape_circle",
+      "src_shapes_shape_kind",
+      "src_shapes_shape_rect"
+    ],
+    "7": [
+      "src_lonely",
+      "src_lonely_alone"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2,
+    "1": 0.35714285714285715,
+    "2": 0.2857142857142857,
+    "3": 0.25,
+    "4": 0.4,
+    "5": 0.4,
+    "6": 0.5,
+    "7": 1.0
+  },
+  "gods": [
+    {
+      "id": "main_main",
+      "label": "main()",
+      "degree": 8
+    },
+    {
+      "id": "src_hue_hue",
+      "label": "Hue",
+      "degree": 7
+    },
+    {
+      "id": "main_tally",
+      "label": "Tally",
+      "degree": 6
+    },
+    {
+      "id": "main_helper",
+      "label": "helper()",
+      "degree": 4
+    },
+    {
+      "id": "util_add",
+      "label": "add()",
+      "degree": 4
+    },
+    {
+      "id": "src_shapes_shape",
+      "label": "Shape",
+      "degree": 4
+    },
+    {
+      "id": "main_loaderror",
+      "label": "LoadError",
+      "degree": 3
+    },
+    {
+      "id": "main_report",
+      "label": "report()",
+      "degree": 3
+    },
+    {
+      "id": "util_scale",
+      "label": "scale()",
+      "degree": 3
+    },
+    {
+      "id": "src_shapes_paint",
+      "label": "paint()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "main()",
+      "target": "paint()",
+      "source_files": [
+        "main.zig",
+        "src/shapes.zig"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "callback()",
+      "target": "helper()",
+      "source_files": [
+        "tests/main_test.zig",
+        "main.zig"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "paint()",
+      "target": "tint()",
+      "source_files": [
+        "src/shapes.zig",
+        "src/hue.zig"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source"
+    },
+    {
+      "source": "main()",
+      "target": "add()",
+      "source_files": [
+        "main.zig",
+        "util.zig"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "main()",
+      "target": "scale()",
+      "source_files": [
+        "main.zig",
+        "util.zig"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Hue` connect `Community 5` to `Community 2`?",
+      "why": "High betweenness centrality (0.146) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Corrupt`, `Missing`, `off` to the rest of the system?",
+      "why": "11 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Tally` connect `Community 4` to `Community 0`?",
+      "why": "High betweenness centrality (0.119) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Shape` connect `Community 6` to `Community 2`?",
+      "why": "High betweenness centrality (0.111) - this node is a cross-community bridge."
+    }
+  ]
+}

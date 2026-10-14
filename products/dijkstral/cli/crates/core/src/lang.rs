@@ -36,6 +36,16 @@ pub enum Lang {
     C,
     /// `.cpp .cc .cxx .hpp .cu`, and `.h` with C++ markers (§19).
     Cpp,
+    /// `.zig` (§33).
+    Zig,
+    /// `.m`, `.mm`, and `.h` with Objective-C markers (§34).
+    ObjC,
+    /// `.f .f90 .f95 .f03 .f08` (§35).
+    Fortran,
+    /// `.v .sv .svh .vh`: Verilog, not V (§36).
+    Verilog,
+    /// `.sol`: counted, never extracted (Graphify lacks the grammar, §37).
+    Solidity,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -55,6 +65,11 @@ pub enum Family {
     Kotlin,
     Scala,
     C,
+    Zig,
+    ObjC,
+    Fortran,
+    Verilog,
+    Solidity,
 }
 
 impl Lang {
@@ -88,7 +103,12 @@ impl Lang {
             "scala" => Lang::Scala,
             "c" => Lang::C,
             "cpp" | "cc" | "cxx" | "hpp" | "cu" => Lang::Cpp,
-            "h" => return crate::extract::c::header_lang(path),
+            "zig" => Lang::Zig,
+            "m" | "mm" => Lang::ObjC,
+            "f" | "f90" | "f95" | "f03" | "f08" => Lang::Fortran,
+            "v" | "sv" | "svh" | "vh" => Lang::Verilog,
+            "sol" => Lang::Solidity,
+            "h" => return crate::extract::objc::header_lang(path),
             _ => return None,
         })
     }
@@ -109,6 +129,11 @@ impl Lang {
             Lang::Kotlin => Family::Kotlin,
             Lang::Scala => Family::Scala,
             Lang::C | Lang::Cpp => Family::C,
+            Lang::Zig => Family::Zig,
+            Lang::ObjC => Family::ObjC,
+            Lang::Fortran => Family::Fortran,
+            Lang::Verilog => Family::Verilog,
+            Lang::Solidity => Family::Solidity,
         }
     }
 
@@ -129,7 +154,12 @@ impl Lang {
             Lang::Swift => tree_sitter_swift::LANGUAGE.into(),
             Lang::C => tree_sitter_c::LANGUAGE.into(),
             Lang::Cpp => tree_sitter_cpp::LANGUAGE.into(),
+            Lang::Zig => tree_sitter_zig::LANGUAGE.into(),
+            Lang::ObjC => tree_sitter_objc::LANGUAGE.into(),
+            Lang::Fortran => tree_sitter_fortran::LANGUAGE.into(),
+            Lang::Verilog => tree_sitter_verilog::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
+            Lang::Solidity => return None,
         })
     }
 }

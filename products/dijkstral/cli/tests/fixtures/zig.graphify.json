@@ -1,0 +1,1153 @@
+{
+ "nodes": [
+  {
+   "id": "main",
+   "label": "main.zig",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_main",
+   "label": "main()",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_report",
+   "label": "report()",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_load",
+   "label": "load()",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L31",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_tally",
+   "label": "Tally",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L35",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_tally_idle",
+   "label": "idle",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L37",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_tally_busy",
+   "label": "busy",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L37",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_tally_init",
+   "label": ".init()",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L39",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_tally_bump",
+   "label": ".bump()",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L43",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_tally_reset",
+   "label": ".reset()",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L49",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_snapshot",
+   "label": "Snapshot",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L53",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_snapshot_take",
+   "label": ".take()",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L55",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_loaderror",
+   "label": "LoadError",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L61",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_loaderror_missing",
+   "label": "Missing",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L61",
+   "_origin": "ast"
+  },
+  {
+   "id": "main_loaderror_corrupt",
+   "label": "Corrupt",
+   "file_type": "code",
+   "source_file": "main.zig",
+   "source_location": "L61",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_hue",
+   "label": "hue.zig",
+   "file_type": "code",
+   "source_file": "src/hue.zig",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_hue_hue",
+   "label": "Hue",
+   "file_type": "code",
+   "source_file": "src/hue.zig",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_hue_hue_red",
+   "label": "red",
+   "file_type": "code",
+   "source_file": "src/hue.zig",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_hue_hue_green",
+   "label": "green",
+   "file_type": "code",
+   "source_file": "src/hue.zig",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_hue_hue_blue",
+   "label": "blue",
+   "file_type": "code",
+   "source_file": "src/hue.zig",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_hue_hue_iswarm",
+   "label": ".isWarm()",
+   "file_type": "code",
+   "source_file": "src/hue.zig",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_hue_tint",
+   "label": "tint()",
+   "file_type": "code",
+   "source_file": "src/hue.zig",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lonely",
+   "label": "lonely.zig",
+   "file_type": "code",
+   "source_file": "src/lonely.zig",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_lonely_alone",
+   "label": "alone()",
+   "file_type": "code",
+   "source_file": "src/lonely.zig",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes",
+   "label": "shapes.zig",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_shape",
+   "label": "Shape",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_shape_rect",
+   "label": "rect",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_shape_circle",
+   "label": "circle",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_shape_kind",
+   "label": ".kind()",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_rect",
+   "label": "Rect",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_raw",
+   "label": "Raw",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_area",
+   "label": "area()",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_paint",
+   "label": "paint()",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shapes_add",
+   "label": "add_()",
+   "file_type": "code",
+   "source_file": "src/shapes.zig",
+   "source_location": "L31",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_main_test",
+   "label": "main_test.zig",
+   "file_type": "code",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_main_test_fixture",
+   "label": "Fixture",
+   "file_type": "code",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_main_test_fixture_make",
+   "label": ".make()",
+   "file_type": "code",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_main_test_callback",
+   "label": "callback()",
+   "file_type": "code",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_main_test_run",
+   "label": "run()",
+   "file_type": "code",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_main_test_probe",
+   "label": "Probe",
+   "file_type": "code",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_main_test_probe_on",
+   "label": "on",
+   "file_type": "code",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_main_test_probe_off",
+   "label": "off",
+   "file_type": "code",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "util",
+   "label": "util.zig",
+   "file_type": "code",
+   "source_file": "util.zig",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "util_add",
+   "label": "add()",
+   "file_type": "code",
+   "source_file": "util.zig",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "util_scale",
+   "label": "scale()",
+   "file_type": "code",
+   "source_file": "util.zig",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "util_list",
+   "label": "List()",
+   "file_type": "code",
+   "source_file": "util.zig",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "util_buffer",
+   "label": "Buffer()",
+   "file_type": "code",
+   "source_file": "util.zig",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "util_sentinel",
+   "label": "Sentinel",
+   "file_type": "code",
+   "source_file": "util.zig",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
+   "id": "util_check",
+   "label": "check()",
+   "file_type": "code",
+   "source_file": "util.zig",
+   "source_location": "L30",
+   "_origin": "ast"
+  },
+  {
+   "id": "std",
+   "label": "std",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "shapes",
+   "label": "shapes",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "hue",
+   "label": "hue",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "missing",
+   "label": "missing",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "main",
+   "target": "std",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "util",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "shapes",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "hue",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "missing",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main_report",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main_load",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main_tally",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_tally",
+   "target": "main_tally_idle",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_tally",
+   "target": "main_tally_busy",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_tally",
+   "target": "main_tally_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L39",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_tally",
+   "target": "main_tally_bump",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L43",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_tally",
+   "target": "main_tally_reset",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main_snapshot",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L53",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_snapshot",
+   "target": "main_snapshot_take",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L55",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main",
+   "target": "main_loaderror",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L61",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_loaderror",
+   "target": "main_loaderror_missing",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L61",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_loaderror",
+   "target": "main_loaderror_corrupt",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L61",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "main_tally_init",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "main_tally_bump",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "main_report",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "main_load",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_report",
+   "target": "main_helper",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_tally_bump",
+   "target": "main_tally_reset",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L45",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_tally_bump",
+   "target": "main_helper",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "main.zig",
+   "source_location": "L46",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_hue",
+   "target": "src_hue_hue",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/hue.zig",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_hue_hue",
+   "target": "src_hue_hue_red",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/hue.zig",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_hue_hue",
+   "target": "src_hue_hue_green",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/hue.zig",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_hue_hue",
+   "target": "src_hue_hue_blue",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/hue.zig",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_hue_hue",
+   "target": "src_hue_hue",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/hue.zig",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_hue_hue",
+   "target": "src_hue_hue_iswarm",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/hue.zig",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_hue",
+   "target": "src_hue_tint",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/hue.zig",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lonely",
+   "target": "src_lonely_alone",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lonely.zig",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "std",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "hue",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "src_shapes_shape",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shape",
+   "target": "src_shapes_shape_rect",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shape",
+   "target": "src_shapes_shape_circle",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_shape",
+   "target": "src_shapes_shape_kind",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "src_shapes_rect",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "src_shapes_raw",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "src_shapes_area",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "src_shapes_paint",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes",
+   "target": "src_shapes_add",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.zig",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test",
+   "target": "std",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test",
+   "target": "util",
+   "relation": "imports_from",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test",
+   "target": "tests_main_test_fixture",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test_fixture",
+   "target": "tests_main_test_fixture_make",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test",
+   "target": "tests_main_test_callback",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test",
+   "target": "tests_main_test_run",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test",
+   "target": "tests_main_test_probe",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test_probe",
+   "target": "tests_main_test_probe_on",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test_probe",
+   "target": "tests_main_test_probe_off",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/main_test.zig",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "util",
+   "target": "util_add",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "util.zig",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "util",
+   "target": "util_scale",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "util.zig",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "util",
+   "target": "util_list",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "util.zig",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "util",
+   "target": "util_buffer",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "util.zig",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "util",
+   "target": "util_sentinel",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "util.zig",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "util",
+   "target": "util_check",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "util.zig",
+   "source_location": "L30",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "util_scale",
+   "target": "util_add",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "util.zig",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "util_list",
+   "target": "util_buffer",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "util.zig",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "util_add",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "main.zig",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "util_scale",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "main.zig",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "main_main",
+   "target": "src_shapes_paint",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "main.zig",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_paint",
+   "target": "src_hue_tint",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/shapes.zig",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test_fixture_make",
+   "target": "util_add",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tests/main_test.zig",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_main_test_callback",
+   "target": "main_helper",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "tests/main_test.zig",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

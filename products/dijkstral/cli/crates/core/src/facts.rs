@@ -127,6 +127,10 @@ pub enum LangFacts {
     Php(crate::extract::php::PhpFacts),
     Ruby(crate::extract::ruby::RubyFacts),
     C(crate::extract::c::CFacts),
+    Zig(crate::extract::zig::ZigFacts),
+    ObjC(crate::extract::objc::ObjcFacts),
+    Fortran(crate::extract::fortran::FortranFacts),
+    Verilog(crate::extract::verilog::VerilogFacts),
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
