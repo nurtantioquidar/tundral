@@ -16,6 +16,7 @@ outside the source tree under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstr
 | `reference.sh` | Freezes Graphify's cold `extract --code-only` graph per repo as `$DIJKSTRAL_BENCH_HOME/reference/<repo>.graph.json` |
 | `parity.py` | Compares two `graph.json` files as sets: nodes by kind, links by relation, field agreement, samples of each difference; for clustered graphs, community agreement (same id, NMI, ARI) and array order |
 | `accuracy/` | Stage-2 SCIP oracle: precision and recall of both tools' graphs against compiler-grade indexes ([accuracy/README.md](accuracy/README.md)) |
+| `query.py` | Stage-3 query benchmark: `latency` (fresh process per call, p50/p95, peak RSS; Graphify on its reference graph, dijkstral on its own `graph.dij` and on Graphify's `graph.json`) → `results/query-<epoch>.json`; `parity` (both tools on Graphify's reference graph, seeds, NODE lists, EDGE sets and full output compared) → `results/query-parity-<epoch>.json`; `report` prints the tables |
 
 Later stages add query and hook latency, graph parity, SCIP precision/recall, and the paid
 agent-outcome runs (see `../DIJKSTRAL_DESIGN.md`).
@@ -269,3 +270,47 @@ graph on the merged build (`parity.py`, recall / precision %, and community NMI)
 Link parity moved slightly since stage 1 where the accuracy fixes made dijkstral deliberately
 differ from Graphify (e.g. ripgrep gains 205 correct file-level Rust imports Graphify lacks).
 
+
+### Stage 3: query, path and explain — 2026-10-14
+
+Apple M5, 10 cores, 16 GB, macOS 27.0; `bench/query.py latency --runs 20` with the argv of
+`cli/tests/fixtures/query/latency.json`. Graphify 0.9.86 (`GRAPHIFY_MAX_GRAPH_BYTES=8GB`) reads
+its frozen reference graph; dijkstral (worktree build on top of `c95c097`) reads its own
+`extract --code-only` build of the same corpus commit (`graph.dij`) and Graphify's `graph.json`.
+Every call is a fresh process; spawning `/usr/bin/true` from the same harness costs 3.9 ms p50
+(7.2 ms p95), so the `graph.dij` rows are mostly process start. Raw:
+`results/query-1791911392.json`, `results/query-1791912375.json` (Graphify) and
+`results/query-1791912686.json` (dijkstral).
+
+| repo | command | Graphify p50 / p95 ms | RSS | dijkstral (graph.dij) p50 / p95 ms | RSS | dijkstral on Graphify's graph.json p50 / p95 ms | RSS |
+|---|---|---|---|---|---|---|---|
+| fastapi | query | 418 / 426 | 115 MB | 6.6 / 7.5 | 7 MB | 44 / 45 | 51 MB |
+| fastapi | path | 410 / 415 | 118 MB | 9.1 / 10.1 | 5 MB | 43 / 46 | 51 MB |
+| fastapi | explain | 378 / 387 | 107 MB | 8.7 / 10.1 | 5 MB | 42 / 44 | 51 MB |
+| erpnext | query | 1,022 / 1,049 | 260 MB | 10.6 / 15.0 | 11 MB | 109 / 112 | 133 MB |
+| erpnext | path | 1,063 / 1,078 | 285 MB | 10.0 / 11.2 | 6 MB | 108 / 109 | 133 MB |
+| erpnext | explain | 955 / 978 | 243 MB | 8.5 / 9.8 | 5 MB | 109 / 118 | 133 MB |
+| kubernetes | query | 12,526 / 13,170 | 2,854 MB | 14.8 / 16.9 | 39 MB | 1,266 / 1,303 | 1,927 MB |
+| kubernetes | path | 14,495 / 14,845 | 2,983 MB | 8.5 / 17.3 | 11 MB | 1,270 / 1,293 | 1,927 MB |
+| kubernetes | explain | 11,601 / 14,145 | 2,639 MB | 9.0 / 13.1 | 6 MB | 1,288 / 1,341 | 1,927 MB |
+
+- From `graph.dij` every command is 7–15 ms p50 at every size (Graphify 0.4 s, 1 s, 12–14 s),
+  with 5–40 MB peak RSS against 0.1–3 GB.
+- On Graphify's own `graph.json` dijkstral parses and indexes the JSON on every call, with no
+  size cap: 44 ms, 109 ms and 1.3 s, about 10x faster than Graphify with 30–55 % less memory.
+
+Parity (`bench/query.py parity --questions 60 --questions-large 20`, raw
+`results/query-parity-1791913777.json`): both tools on Graphify's reference graph, with
+hand-written and fixed-seed label-word questions plus `explain` and undirected `path` on sampled
+ids.
+
+| repo | cases | identical output | same seeds | same NODE lists | same EDGE sets | same exit |
+|---|---|---|---|---|---|---|
+| fastapi | 70 | 70 | 70 | 70 | 70 | 70 |
+| erpnext | 70 | 70 | 70 | 70 | 70 | 70 |
+| kubernetes | 30 | 30 | 30 | 30 | 30 | 30 |
+
+The 74 query goldens pass on both load paths. The probes behind the stage-3 refinements of
+`cli/docs/graphify-query.md` (630 `path` probes, 750 `benchmark` questions on random graphs,
+`explain`, `affected` and `god-nodes` on random fastapi, erpnext and ripgrep nodes) all match
+except one recorded open case (§4: the exact id of an extensionless file's node).

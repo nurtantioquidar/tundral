@@ -230,7 +230,10 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "dijkstral-core",
+ "dijkstral-serve",
  "mimalloc",
+ "serde_json",
+ "tempfile",
 ]
 
 [[package]]
@@ -261,6 +264,17 @@ dependencies = [
  "tree-sitter-rust",
  "tree-sitter-typescript",
  "unicode-normalization",
+]
+
+[[package]]
+name = "dijkstral-serve"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "dijkstral-core",
+ "memchr",
+ "serde_json",
+ "tempfile",
 ]
 
 [[package]]

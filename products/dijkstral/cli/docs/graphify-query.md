@@ -316,8 +316,11 @@ terms and a prefix+substring node above the gap); `register,save` → `['.save()
 - **Rule (hub threshold, fitted).** `H = max(50, P99)`, where `P99` is the 99th percentile of all
   node degrees with linear interpolation (NumPy's default). Measured: a 50-degree hub is not
   expanded in small graphs; with 1.2–1.4 % of nodes at degree 70 or 80 the threshold rose to 70 or
-  80; with 0.7 % at degree 140 it stayed at 50. Degrees are over the full graph, not the context
-  filtered one.
+  80; with 0.7 % at degree 140 it stayed at 50. The node's degree is over the full graph.
+- **Rule (refined during stage 3).** With a context filter, `P99` is taken over the degrees in the
+  **filtered** links (every node, zeros included): kubernetes `who calls infeasible` (filter
+  `call`) does not expand `syscall6()` (92 links, 90 of them calls) because the call-degree P99 is
+  14, so `H` = 50; over all links P99 is 156 and it would be expanded.
 - **Rule.** A node with degree ≥ `H` is reached (listed) but never expanded, **except** a seed,
   which is always expanded.
 - **Rule (BFS).** Layer 0 is the seeds. For layers 0 and 1, expand every frontier node (subject to
@@ -349,7 +352,10 @@ terms and a prefix+substring node above the gap); `register,save` → `['.save()
   and every not-yet-printed link to a reached node is printed.
 - **Quirk (BFS order).** BFS `EDGE` order depends on Python's string hash seed and changes between
   runs. Dijkstral may use any deterministic order (the DFS rule is a good one); tests compare BFS
-  edge lines as a set.
+  edge lines as a set. Dijkstral uses the DFS rule for both modes: reached nodes in visit order,
+  each node's links in `links` order.
+- **Rule (self-loops).** A link from a node to itself never prints an `EDGE` line (go and
+  typescript goldens), although it counts twice in degree (§2.2).
 
 ### 3.10 Budget
 
@@ -360,7 +366,10 @@ terms and a prefix+substring node above the gap); `register,save` → `['.save()
   and the truncation footer ends the output. `<need>` = `ceil(node_chars / 3)` for all nodes.
 - **Rule.** When every node fits, every edge is printed. If `floor(total_chars / 3) > budget`
   (nodes plus edges) the `[i] Complete answer over budget` notice appears with `<total>` =
-  `floor(total_chars / 3)`; otherwise there is no notice. Python, `UserService` + `.register()`:
+  `floor(total_chars / 3)`; otherwise there is no notice. `total_chars` is the length of the
+  `NODE` and `EDGE` lines joined by newlines, one less than the sum of the per-line costs: the
+  typescript golden `how does UserService run` has 10 803 per-line characters and reports
+  `~3600`. Python, `UserService` + `.register()`:
   nodes cost 2371 characters (`need` 791), nodes and edges 9400 (`~3133 tokens`); budget 790
   truncates, 791 shows everything with the `[i]` notice, 3133 shows everything with no notice.
 - **Quirk.** A negative budget truncates nothing and prints the `[i]` notice with the negative
@@ -409,15 +418,24 @@ matched. The random sets surfaced the coverage tiers, the relation-word rule and
 
 ## 4. Name resolution for `path` and `explain`
 
-- **Rule.** Matching is case-insensitive. The query and labels are normalised by removing one
-  trailing `()` and one leading `.` (`register` finds `.register()`; `SERVICE()` finds `service()`).
+- **Rule (refined by probes during stage 3).** Matching is case-insensitive. Labels and the query
+  are compared as their **words**: the lower-cased text split on every character that is not
+  alphanumeric (Unicode letters and digits; `_` separates), joined by single spaces. So
+  `register` finds `.register()`, `SERVICE()` finds `service()`, `store` finds `{ Store }`,
+  `_store_` and `Store!`, `foo bar` finds `foo_bar`, `foo-bar` and `foo.bar`, and `naïve` stays one
+  word. `foo<T>` (words `foo t`) and `foo(a)` are not exact matches for `foo`, and `a()b` is
+  `a b`, not `ab`. Ids are compared lower-cased against the lower-cased query with one trailing
+  `()` removed (`main()` matches the id `main`; `.pkg_x()` does not match `pkg_x`).
 - **Rule.** Tiers, first non-empty wins:
-  1. exact: normalised label `==` query, or id `==` query;
-  2. prefix: normalised label starts with the query, or **id** starts with it (`test` matches every
-     node of `tests/test_service.py` through ids `tests_…`, including `service()`);
-  3. substring: normalised label contains the query.
+  1. exact: label words `==` query words, or id `==` the id form of the query;
+  2. prefix: label words start with the query words, or the **id** starts with the id form (`test`
+     matches every node of `tests/test_service.py` through ids `tests_…`, including `service()`);
+  3. substring: label words contain the query words (`o.b` finds `Foo.Bar`).
 
   One node in the winning tier resolves; several are ambiguous (exit 3); none is exit 4.
+- **Open.** On an extensionless file (`benchsuite/benchsuite` in ripgrep), the exact id of the file
+  node (`benchsuite_benchsuite`) resolves to the first node of that file instead (`Benchmark`);
+  with a suffix (`pkg/mod.py`) the exact id wins. Dijkstral resolves the exact id in both cases.
 - **Rule.** `path::symbol` restricts candidates to nodes whose `source_file` ends with `path`
   (`pkg/util.py::helper`, `util.py::helper()`); the symbol then resolves as above. An unknown path
   gives the not-found message for the whole string.
@@ -439,6 +457,12 @@ Ambiguous: '<q>' matches <n> nodes in <source_file>.
 Retry with the full node id.
 ```
 
+- **Rule (refined).** In the different-files form only the first candidate (node order) of each
+  `source_file` is listed and counted: fastapi's 393 exact `get` candidates (381 of them stubs
+  with an empty `source_file`) print as `matches 11 nodes`. A candidate with an empty
+  `source_file` is listed by its **id**. The same-file form lists every candidate; when that file
+  is empty the header says `matches <n> nodes with no source file.` and a candidate without a
+  `source_location` is listed by its label.
 - **Rule.** Not found: `No node matching '<q>' found.` with `<q>` echoed as typed.
 - **Quirk.** `main()` is ambiguous in the python fixture between `main()` (id `main_main`) and the
   file node whose id is `main`, because the normalised query `main` equals that id.
@@ -461,10 +485,19 @@ graphify path "<A>" "<B>" [--graph PATH] [--directed|--undirected]
   `u → v` is walkable from `u` to `v`; **`contains` links are also walkable backwards** (from the
   contained symbol to its file). No other relation is: 25 relations were probed one by one. With
   `--undirected` every link is walkable both ways.
-- **Rule (shortest path and ties).** An unweighted shortest path. Among equal-length paths the one
-  through the lexicographically smallest id at the earliest differing hop wins, independent of link
-  order and node array order (consistent with BFS from the source exploring neighbours in id
-  order).
+- **Rule (shortest path and ties, refined).** An unweighted shortest path, chosen as a
+  bidirectional breadth-first search does it: keep a forward fringe from the source and a
+  reverse fringe from the target, always expand the smaller one (the forward one on a tie), mark
+  each newly seen node with the node it came from, and stop at the first node the other side has
+  already seen. A node's successors are its forward-walkable neighbours sorted by id followed by
+  its backward-walkable (`contains`) neighbours sorted by id; predecessors likewise; undirected
+  neighbours are sorted by id. This reproduces all 630 probed paths (236 on the rust fixture, 234
+  on python, 160 on fastapi, directed and undirected, found and not found) byte for byte,
+  including the two that a "smallest id at the earliest hop" rule gets wrong (rust `main()` to
+  `src_model_circle` goes through `Kind`, not `model.rs`). It does not depend on link or node
+  array order.
+- **Rule (display).** Each hop shows the first link from the hop's start to its end in `links`
+  order (`-->`), otherwise the first link back (`<--`).
 - **Rule (output).**
 
 ```text
@@ -520,10 +553,11 @@ Connections (<n>):
 ```
 
   Groups cover only the hidden connections, keyed by direction and the **link's** `source_file`
-  (not the neighbour's), sorted by count descending then path ascending, at most 20 shown.
-  `connection` is singular for 1. With 20 or fewer connections, or with `--all`, there is no
-  footer.
-- **Open.** Group order between equal counts in different directions.
+  (not the neighbour's), sorted by count descending, then incoming (`<--`) before outgoing
+  (`-->`), then path ascending (probed on fastapi), at most 20 shown. `connection` is singular
+  for 1. With 20 or fewer connections, or with `--all`, there is no footer.
+- **Rule.** A node without connections prints only the header block: no blank line and no
+  `Connections (0):`.
 
 ## 7. `affected`
 
@@ -539,6 +573,20 @@ graphify affected "<X>" [--relation R]... [--depth N] [--graph PATH]
   set, up to `--depth` layers (default 2). Each node is listed once, with the relation and
   `source_file:source_location` of the link that first reached it, in BFS layer order; within a
   layer, frontier order, then incoming links in `links` order.
+- **Rule (members and overrides, probed during stage 3).** The start layer is the node followed
+  by its direct members: targets of its outgoing `contains` and `method` links, in `links` order
+  (grandchildren are not included), all marked seen. When a frontier node is processed, the
+  methods it **overrides** that are not yet seen are processed right after it: for each class
+  that owns it through a `method` link, that class's ancestors (breadth-first over outgoing
+  `inherits`, `extends` and `implements` links in `links` order, then visited in **reverse** of
+  that order) contribute their `method` targets with the same label. With `A(B, D)` and `B(C)`,
+  `A.run` is followed by `C.run`, `D.run`, `B.run`. Overridden methods are not marked seen, so one
+  can be listed when it calls another (erpnext `StockEntry`: `StockController.validate` calls
+  `AccountsController.validate` and is listed), and one already listed is skipped as an override.
+  `mixes_in`, `uses` and `contains` do not make an ancestor, and an ancestor's `contains`
+  children are not overrides. Checked on random fastapi, erpnext and ripgrep nodes.
+- **Rule.** A link without `source_file` or `source_location` prints the listed node's own value
+  instead (erpnext `dynamic_import` links have no location and print `:L1`).
 - **Rule.** The default relation set, printed in this order: `calls, indirect_call, references,
   imports, imports_from, dynamic_import, re_exports, inherits, extends, implements, uses, mixes_in,
   embeds, defines, requires`. `--relation` (repeatable) replaces it and is printed as given.
@@ -562,10 +610,14 @@ Depth: <N>
 graphify god-nodes [--top N] [--json] [--graph PATH]
 ```
 
-- **Rule (candidates).** Every node except: nodes with an empty `source_file` (concepts and
-  external stubs); file nodes, whose label equals the basename of their `source_file` (`b.py` with
-  source `a.py` stays); methods, whose label starts with `.` and ends with `()` (`.prop` stays).
-  Rationale and document-section nodes stay.
+- **Rule (candidates, refined).** The report's god-node candidates (`graphify-format.md` §17.4):
+  symbols whose `source_file` has a suffix (`Gemfile`, `Makefile`, `x.y/z` are excluded; `.env`
+  is kept), not file nodes (label a `/`-suffix of `source_file`), not methods (label starts with
+  `.` and ends with `()`; `.prop` stays), not in the noise-label list, and, in a `.json` file
+  (suffix compared case-insensitively), not a generic JSON key (compared stripped and
+  case-insensitively: `" name"` and `"  Dependencies "` are excluded). The mixed golden drops
+  `dependencies` and `devDependencies` of `package.json` this way. Rationale and document-section
+  nodes stay.
 - **Rule (order).** Degree (§2.2) descending, stable over `nodes` array order; the first `N`
   (default 10; values below 1 count as 1; no value keeps 10). Non-integer: stderr
   `error: --top must be an integer`, exit 1.
@@ -605,15 +657,18 @@ graphify token reduction benchmark
   node, `NODE <label> src=<source_file> loc=<source_location>`, and one per traversal edge,
   `EDGE <u label> --<relation>--> <v label>`. The traversal is BFS to **depth 3**; its edges are the
   links from a layer to nodes first reached in the next layer (two parents of one new node both
-  count; links inside a layer do not). `r_q = naive / cost`, `avg` = mean cost over listed
-  questions, `r = naive / avg`. Fitted on single-seed synthetic graphs; it reproduces those
-  exactly.
+  count; links inside a layer do not). `r_q = naive / cost`, `avg` = the mean cost over listed
+  questions **floored**, `r = naive / avg` with that floored value (a 318.6 mean prints `~318`
+  and its ratio uses 318).
+- **Rule (seeds, fitted during stage 3).** A question's terms are `query`'s (§3.3). A node is a
+  candidate when its lower-cased label contains at least one term; candidates are ranked by the
+  number of terms their label contains, then by **id descending**, and the first **three** are
+  the seeds. Match tier, source files and degree play no part. Fitted with seed-identifying
+  synthetic graphs (isolated nodes whose costs decode the chosen subset) and checked on 150
+  random graphs (750 questions) and a further 120 random graphs end to end: every output equal.
 - **Rule.** No question matched: `Benchmark error: No matching nodes found for sample questions.
   Build the graph first.` with exit 0.
-- **Open.** Seed selection for `benchmark`: applying the `query` seed model (§3.6) and the rules
-  above reproduces neither the python fixture costs (3.8x vs 3.1x) nor fastapi's, so benchmark
-  seeds or edges differ for multi-seed questions. Also open: whether `words` comes from scan
-  metadata when present, and the rounding of `avg`.
+- **Open.** Whether `words` comes from scan metadata when present.
 
 ---
 
@@ -1446,12 +1501,13 @@ argv.
 2. Phrase-substring bonus (`x_aaa_bbb` for `aaa bbb`): not observable; treated as 0.
 3. Rounding of the `[i]` notice's token total, and whether `query` can ever exit 3 (§3.10, §3.11).
 4. Non-ASCII tokenisation (§3.3).
-5. Order of `explain` file groups with equal counts in different directions (§6).
-6. `benchmark` seed selection and edge set for multi-seed questions; source of `words` when scan
-   metadata exists; rounding of `avg` (§9).
-7. Path selection when several links join one node pair (§5).
+5. Resolved in stage 3: `explain` groups with equal counts list incoming first (§6).
+6. `benchmark`: seeds and `avg` resolved in stage 3 (§9); open: the source of `words` when scan
+   metadata exists.
+7. Path selection when several links join one node pair (§5). Path ties are resolved (§5).
 8. MCP resources `surprises` and `questions` with an analysis file present; PR tools with a working
    `gh`; the HTTP transport (§10).
 9. Hook guard: Bash tokenizer boundary cases, equal mtimes; installer: quoting of a `graphify` path
    with spaces, `hooks` without `PreToolUse` (§11, §12).
 10. What `GRAPHIFY_QUERY_LOG_DISABLE` suppresses (§2.3).
+11. Name resolution of an extensionless file node's exact id (§4).

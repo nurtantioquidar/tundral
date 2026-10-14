@@ -1,3 +1,5 @@
+mod query_cmds;
+
 use std::path::PathBuf;
 use std::process::ExitCode;
 use std::time::Instant;
@@ -29,6 +31,8 @@ enum Command {
     /// .graphify_analysis.json (`graphify cluster-only --no-label`: communities named
     /// "Community N", no file statistics).
     ClusterOnly(ClusterOnlyArgs),
+    #[command(flatten)]
+    Query(query_cmds::QueryCommand),
 }
 
 #[derive(Args, Debug)]
@@ -69,6 +73,7 @@ fn main() -> ExitCode {
     let cli = Cli::parse();
     let args = match cli.command {
         Command::Extract(args) | Command::Update(args) => args,
+        Command::Query(cmd) => return query_cmds::run(cmd),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {

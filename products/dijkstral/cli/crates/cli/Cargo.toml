@@ -9,4 +9,9 @@ publish.workspace = true
 [dependencies]
 clap.workspace = true
 dijkstral-core.workspace = true
+dijkstral-serve.workspace = true
 mimalloc.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+tempfile.workspace = true

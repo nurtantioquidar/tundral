@@ -119,12 +119,16 @@ pub fn has_suffix(path: &str) -> bool {
 
 /// A file's own node: its label is a `/`-suffix of its source file (§5.1).
 pub fn is_file_node(n: &Node) -> bool {
-    let sf = n.source_file.as_str();
+    is_file_label(&n.label, &n.source_file)
+}
+
+/// `label` is a `/`-suffix of `source_file`.
+pub fn is_file_label(label: &str, sf: &str) -> bool {
     !sf.is_empty()
-        && (sf == n.label
-            || (sf.len() > n.label.len()
-                && sf.ends_with(n.label.as_str())
-                && sf.as_bytes()[sf.len() - n.label.len() - 1] == b'/'))
+        && (sf == label
+            || (sf.len() > label.len()
+                && sf.ends_with(label)
+                && sf.as_bytes()[sf.len() - label.len() - 1] == b'/'))
 }
 
 /// A symbol defined in a real source file: not a file node, stub, external or extensionless
@@ -139,14 +143,28 @@ pub fn is_method_label(label: &str) -> bool {
 
 /// Eligible as a god node, a surprise endpoint or a bridge.
 pub fn is_hub_candidate(n: &Node) -> bool {
-    is_symbol(n) && !is_method_label(&n.label) && !NOISE_LABELS.contains(&n.label.as_str())
+    is_hub_candidate_parts(&n.label, &n.source_file)
+}
+
+/// [`is_hub_candidate`] on a node's label and source file.
+pub fn is_hub_candidate_parts(label: &str, source_file: &str) -> bool {
+    has_suffix(source_file)
+        && !is_file_label(label, source_file)
+        && !is_method_label(label)
+        && !NOISE_LABELS.contains(&label)
 }
 
 /// Eligible as a god node: a hub candidate that is not a generic JSON key (a bridge may be one).
 pub fn is_god_candidate(n: &Node) -> bool {
-    is_hub_candidate(n)
-        && !(n.source_file.to_ascii_lowercase().ends_with(".json")
-            && JSON_NOISE_LABELS.contains(&n.label.to_lowercase().as_str()))
+    is_god_candidate_parts(&n.label, &n.source_file)
+}
+
+/// [`is_god_candidate`] on a node's label and source file. JSON keys are compared stripped and
+/// case-insensitively (`" name"` is excluded too).
+pub fn is_god_candidate_parts(label: &str, source_file: &str) -> bool {
+    is_hub_candidate_parts(label, source_file)
+        && !(source_file.to_ascii_lowercase().ends_with(".json")
+            && JSON_NOISE_LABELS.contains(&label.trim().to_lowercase().as_str()))
 }
 
 /// NetworkX adjacency in build order.
