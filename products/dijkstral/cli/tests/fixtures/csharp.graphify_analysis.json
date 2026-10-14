@@ -1,0 +1,234 @@
+{
+  "communities": {
+    "0": [
+      "address",
+      "icomparable",
+      "list",
+      "src_shop_models_user_shop_models_address",
+      "src_shop_models_user_shop_models_address_format",
+      "src_shop_models_user_shop_models_address_street",
+      "src_shop_models_user_shop_models_user_addaddress",
+      "src_shop_models_user_shop_models_user_compareto",
+      "src_shop_models_user_shop_models_user_describe",
+      "src_shop_models_user_shop_models_user_getname",
+      "src_shop_models_user_shop_models_user_name",
+      "src_shop_models_user_shop_models_user_of",
+      "src_shop_models_user_shop_models_user_status",
+      "src_shop_models_user_shop_models_user_touch",
+      "src_shop_models_user_validation_shop_models_user",
+      "src_shop_models_user_validation_shop_models_user_isvalid",
+      "src_shop_models_user_validation_shop_models_user_validate"
+    ],
+    "1": [
+      "csharp_namespace:b854194435a541c1",
+      "csharp_namespace:da94c1339abd364a",
+      "fact",
+      "inlinedata",
+      "src_shop_services_extensions",
+      "src_shop_services_extensions_shop_services_formatter",
+      "src_shop_services_extensions_shop_services_formatter_format",
+      "src_shop_services_extensions_shop_services_stringextensions",
+      "src_shop_services_extensions_shop_services_stringextensions_shout",
+      "src_shop_services_extensions_shop_services_stringextensions_slug",
+      "system_linq",
+      "tests_shop_tests_userservicetests",
+      "tests_shop_tests_userservicetests_shop_tests_userservicetests",
+      "tests_shop_tests_userservicetests_shop_tests_userservicetests_formatsnames",
+      "tests_shop_tests_userservicetests_shop_tests_userservicetests_registersuser",
+      "theory",
+      "xunit"
+    ],
+    "2": [
+      "dictionary",
+      "ienumerable",
+      "ireadonlylist",
+      "src_shop_services_irepository",
+      "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+      "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
+      "src_shop_services_irepository_shop_services_inmemoryrepository_1_find",
+      "src_shop_services_irepository_shop_services_inmemoryrepository_1_save",
+      "src_shop_services_irepository_shop_services_irepository_1",
+      "src_shop_services_irepository_shop_services_irepository_1_all",
+      "src_shop_services_irepository_shop_services_irepository_1_find",
+      "src_shop_services_irepository_shop_services_irepository_1_save",
+      "src_shop_services_userservice_shop_services_userservice_names",
+      "src_shop_services_userservice_shop_services_userservice_pick"
+    ],
+    "3": [
+      "idisposable",
+      "src_shop_services_userservice_shop_services_ilogger",
+      "src_shop_services_userservice_shop_services_ilogger_log",
+      "src_shop_services_userservice_shop_services_iuserservice",
+      "src_shop_services_userservice_shop_services_iuserservice_register",
+      "src_shop_services_userservice_shop_services_userservice",
+      "src_shop_services_userservice_shop_services_userservice_audit",
+      "src_shop_services_userservice_shop_services_userservice_dispose",
+      "src_shop_services_userservice_shop_services_userservice_largest",
+      "src_shop_services_userservice_shop_services_userservice_notify",
+      "src_shop_services_userservice_shop_services_userservice_register",
+      "tests_shop_tests_userservicetests_shop_tests_nulllogger",
+      "tests_shop_tests_userservicetests_shop_tests_nulllogger_log"
+    ],
+    "4": [
+      "csharp_namespace:ba08633b333ae873",
+      "src_shop_models_entity",
+      "src_shop_models_user",
+      "src_shop_models_user_validation",
+      "src_shop_services_userservice",
+      "system",
+      "system_collections_generic",
+      "system_datetime",
+      "system_math"
+    ],
+    "5": [
+      "datetime",
+      "src_shop_models_entity_shop_models_entity",
+      "src_shop_models_entity_shop_models_entity_createdat",
+      "src_shop_models_entity_shop_models_entity_describe",
+      "src_shop_models_entity_shop_models_entity_id",
+      "src_shop_models_entity_shop_models_entity_isnew",
+      "src_shop_models_entity_shop_models_ientity_1",
+      "src_shop_models_entity_shop_models_ientity_1_describe",
+      "src_shop_models_entity_shop_models_ientity_1_id"
+    ],
+    "6": [
+      "src_shop_models_values",
+      "src_shop_models_values_shop_models_money",
+      "src_shop_models_values_shop_models_money_add",
+      "src_shop_models_values_shop_models_point",
+      "src_shop_models_values_shop_models_point_length",
+      "src_shop_models_values_shop_models_point_x",
+      "src_shop_models_values_shop_models_point_y",
+      "src_shop_models_values_shop_models_range"
+    ],
+    "7": [
+      "src_shop_models_user_shop_models_status",
+      "src_shop_models_user_shop_models_status_active",
+      "src_shop_models_user_shop_models_status_deleted",
+      "src_shop_models_user_shop_models_status_suspended"
+    ]
+  },
+  "cohesion": {
+    "0": 0.15441176470588236,
+    "1": 0.125,
+    "2": 0.1978021978021978,
+    "3": 0.21794871794871795,
+    "4": 0.3055555555555556,
+    "5": 0.25,
+    "6": 0.25,
+    "7": 0.5
+  },
+  "gods": [
+    {
+      "id": "src_shop_models_user_validation_shop_models_user",
+      "label": "User",
+      "degree": 23
+    },
+    {
+      "id": "src_shop_services_userservice_shop_services_userservice",
+      "label": "UserService",
+      "degree": 13
+    },
+    {
+      "id": "src_shop_models_entity_shop_models_entity",
+      "label": "Entity",
+      "degree": 8
+    },
+    {
+      "id": "csharp_namespace:ba08633b333ae873",
+      "label": "Shop.Models",
+      "degree": 7
+    },
+    {
+      "id": "src_shop_services_irepository_shop_services_irepository_1",
+      "label": "IRepository",
+      "degree": 7
+    },
+    {
+      "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+      "label": "InMemoryRepository",
+      "degree": 6
+    },
+    {
+      "id": "src_shop_models_user_shop_models_status",
+      "label": "Status",
+      "degree": 5
+    },
+    {
+      "id": "src_shop_models_values_shop_models_point",
+      "label": "Point",
+      "degree": 5
+    },
+    {
+      "id": "tests_shop_tests_userservicetests_shop_tests_userservicetests",
+      "label": "UserServiceTests",
+      "degree": 5
+    },
+    {
+      "id": "src_shop_models_entity_shop_models_ientity_1",
+      "label": "IEntity",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "UserServiceTests",
+      "target": "UserService",
+      "source_files": [
+        "tests/Shop.Tests/UserServiceTests.cs",
+        "src/Shop/Services/UserService.cs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "NullLogger",
+      "target": "ILogger",
+      "source_files": [
+        "tests/Shop.Tests/UserServiceTests.cs",
+        "src/Shop/Services/UserService.cs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "implements",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "User",
+      "target": "Entity",
+      "source_files": [
+        "src/Shop/Models/User.Validation.cs",
+        "src/Shop/Models/Entity.cs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "User",
+      "target": "Status",
+      "source_files": [
+        "src/Shop/Models/User.Validation.cs",
+        "src/Shop/Models/User.cs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "User",
+      "target": "Name",
+      "source_files": [
+        "src/Shop/Models/User.Validation.cs",
+        "src/Shop/Models/User.cs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "defines",
+      "why": "peripheral node `Name` unexpectedly reaches hub `User`"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}
