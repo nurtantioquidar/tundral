@@ -8,7 +8,9 @@ pub mod csharp;
 pub mod data;
 pub mod go;
 pub mod java;
+pub mod php;
 pub mod python;
+pub mod ruby;
 pub mod rust;
 pub mod script;
 
@@ -30,6 +32,8 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Go => go::extract(&mut cx, tree.as_ref()),
         Lang::Java => java::extract(&mut cx, tree.as_ref()),
         Lang::CSharp => csharp::extract(&mut cx, tree.as_ref()),
+        Lang::Php => php::extract(&mut cx, tree.as_ref()),
+        Lang::Ruby => ruby::extract(&mut cx, tree.as_ref()),
         Lang::GoMod => go::extract_mod(&mut cx),
         Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
     }

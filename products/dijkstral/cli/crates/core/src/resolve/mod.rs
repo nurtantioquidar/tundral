@@ -13,7 +13,9 @@ pub mod csharp;
 pub mod data;
 pub mod go;
 pub mod java;
+pub mod php;
 pub mod python;
+pub mod ruby;
 pub mod rust;
 pub mod script;
 
@@ -93,7 +95,7 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         file_ids,
     };
 
-    let passes: [fn(&[View], &Index) -> Resolution; 7] = [
+    let passes: &[fn(&[View], &Index) -> Resolution] = &[
         python::resolve,
         script::resolve,
         rust::resolve,
@@ -101,6 +103,8 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         java::resolve,
         data::resolve,
         csharp::resolve,
+        php::resolve,
+        ruby::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {
         let handles: Vec<_> = passes

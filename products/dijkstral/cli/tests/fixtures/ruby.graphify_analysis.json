@@ -1,0 +1,166 @@
+{
+  "communities": {
+    "0": [
+      "base",
+      "lib_shop_models_user",
+      "lib_shop_models_user_shop",
+      "lib_shop_models_user_shop_models",
+      "lib_shop_models_user_shop_models_guest",
+      "lib_shop_models_user_shop_models_guest_display",
+      "lib_shop_models_user_shop_models_user",
+      "lib_shop_models_user_shop_models_user_admin",
+      "lib_shop_models_user_shop_models_user_display",
+      "user"
+    ],
+    "1": [
+      "lib_shop",
+      "lib_shop_models_base",
+      "lib_shop_models_base_shop",
+      "lib_shop_models_base_shop_models",
+      "lib_shop_models_base_shop_models_repo",
+      "lib_shop_models_base_shop_models_repo_add",
+      "lib_shop_models_base_shop_models_repo_each",
+      "lib_shop_models_base_shop_models_repo_initialize",
+      "lib_shop_shop",
+      "lib_shop_shop_boot"
+    ],
+    "2": [
+      "lib_shop_service",
+      "lib_shop_service_shop_service",
+      "lib_shop_service_shop_service_build",
+      "lib_shop_service_shop_service_userservice",
+      "lib_shop_service_shop_service_userservice_audit",
+      "lib_shop_service_shop_service_userservice_export",
+      "lib_shop_service_shop_service_userservice_helper",
+      "lib_shop_service_shop_service_userservice_initialize",
+      "lib_shop_service_shop_service_userservice_register",
+      "test_service_test_servicetest_setup"
+    ],
+    "3": [
+      "lib_shop_models_user_shop_models_user_parse",
+      "lib_shop_service_shop_service_userservice_promote",
+      "test",
+      "test_service_test",
+      "test_service_test_servicetest",
+      "test_service_test_servicetest_test_parse",
+      "test_service_test_servicetest_test_register"
+    ],
+    "4": [
+      "lib_shop_models_base_shop_models_base",
+      "lib_shop_models_base_shop_models_base_initialize",
+      "lib_shop_models_base_shop_models_base_save",
+      "lib_shop_models_base_shop_models_base_table",
+      "lib_shop_models_base_shop_models_base_validate",
+      "lib_shop_models_user_shop_models_user_save"
+    ],
+    "5": [
+      "lib_shop_models_user_shop_models_user_initialize",
+      "lib_shop_util_shop_util",
+      "lib_shop_util_shop_util_helper",
+      "lib_shop_util_shop_util_slugify",
+      "tasks_release",
+      "tasks_release_bump"
+    ],
+    "6": [
+      "lib_shop_models_user_shop_models_user_admin_promote",
+      "lib_shop_util",
+      "lib_shop_util_shop",
+      "lib_shop_util_shop_loggable",
+      "lib_shop_util_shop_loggable_log"
+    ],
+    "7": [
+      "bin_shop",
+      "bin_shop_main"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2222222222222222,
+    "1": 0.2,
+    "2": 0.28888888888888886,
+    "3": 0.2857142857142857,
+    "4": 0.4,
+    "5": 0.4,
+    "6": 0.4,
+    "7": 1.0
+  },
+  "gods": [
+    {
+      "id": "lib_shop_service_shop_service_userservice",
+      "label": "Shop::Service::UserService",
+      "degree": 10
+    },
+    {
+      "id": "lib_shop_models_user_shop_models_user",
+      "label": "Shop::Models::User",
+      "degree": 9
+    },
+    {
+      "id": "lib_shop_models_base_shop_models_repo",
+      "label": "Shop::Models::Repo",
+      "degree": 6
+    },
+    {
+      "id": "lib_shop_models_base_shop_models_base",
+      "label": "Shop::Models::Base",
+      "degree": 5
+    },
+    {
+      "id": "test_service_test_servicetest",
+      "label": "ServiceTest",
+      "degree": 5
+    },
+    {
+      "id": "lib_shop_util_shop_loggable",
+      "label": "Shop::Loggable",
+      "degree": 4
+    },
+    {
+      "id": "lib_shop_models_base_shop_models",
+      "label": "Shop::Models",
+      "degree": 3
+    },
+    {
+      "id": "lib_shop_models_user_shop_models_user_admin",
+      "label": "Shop::Models::User::Admin",
+      "degree": 3
+    },
+    {
+      "id": "lib_shop_models_user_shop_models_guest",
+      "label": "Shop::Models::Guest",
+      "degree": 3
+    },
+    {
+      "id": "lib_shop_service_shop_service",
+      "label": "Shop::Service",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Shop::Models::User",
+      "target": "Shop::Loggable",
+      "source_files": [
+        "lib/shop/models/user.rb",
+        "lib/shop/util.rb"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "mixes_in",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "Shop::Service::UserService",
+      "target": "Shop::Loggable",
+      "source_files": [
+        "lib/shop/service.rb",
+        "lib/shop/util.rb"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "mixes_in",
+      "why": "bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

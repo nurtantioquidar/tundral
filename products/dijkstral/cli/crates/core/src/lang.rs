@@ -25,6 +25,8 @@ pub enum Lang {
     /// `.sh`, `.bash`, and sh/bash/zsh shebang scripts.
     Shell,
     CSharp,
+    Php,
+    Ruby,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -38,11 +40,11 @@ pub enum Family {
     Data,
     Shell,
     CSharp,
+    Php,
+    Ruby,
 }
 
 impl Lang {
-    pub const COUNT: usize = 12;
-
     /// Classify a path. `shebang` is consulted only for extensionless files.
     pub fn classify(path: &Path) -> Option<Lang> {
         let name = path.file_name()?.to_str()?;
@@ -66,6 +68,8 @@ impl Lang {
             "json" => Lang::Json,
             "sh" | "bash" => Lang::Shell,
             "cs" => Lang::CSharp,
+            "php" => Lang::Php,
+            "rb" | "rake" => Lang::Ruby,
             _ => return None,
         })
     }
@@ -80,6 +84,8 @@ impl Lang {
             Lang::Json | Lang::Toml => Family::Data,
             Lang::Shell => Family::Shell,
             Lang::CSharp => Family::CSharp,
+            Lang::Php => Family::Php,
+            Lang::Ruby => Family::Ruby,
         }
     }
 
@@ -93,6 +99,8 @@ impl Lang {
             Lang::Go => tree_sitter_go::LANGUAGE.into(),
             Lang::Java => tree_sitter_java::LANGUAGE.into(),
             Lang::CSharp => tree_sitter_c_sharp::LANGUAGE.into(),
+            Lang::Php => tree_sitter_php::LANGUAGE_PHP.into(),
+            Lang::Ruby => tree_sitter_ruby::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }
@@ -113,19 +121,25 @@ fn shebang(path: &Path) -> Option<Lang> {
         Some(Lang::Python)
     } else if matches!(prog, "sh" | "bash" | "zsh") {
         Some(Lang::Shell)
+    } else if prog.starts_with("ruby") {
+        Some(Lang::Ruby)
     } else {
         None
     }
 }
 
 thread_local! {
-    static PARSERS: RefCell<Vec<Option<Parser>>> = RefCell::new((0..Lang::COUNT).map(|_| None).collect());
+    static PARSERS: RefCell<Vec<Option<Parser>>> = const { RefCell::new(Vec::new()) };
 }
 
 /// Parse `source` with a parser cached per thread and language.
 pub fn parse(lang: Lang, source: &[u8]) -> Option<Tree> {
     PARSERS.with(|cell| {
         let mut parsers = cell.borrow_mut();
+        // Grown on demand so adding a language never needs a count kept in sync.
+        if parsers.len() <= lang as usize {
+            parsers.resize_with(lang as usize + 1, || None);
+        }
         let slot = &mut parsers[lang as usize];
         if slot.is_none() {
             let mut parser = Parser::new();

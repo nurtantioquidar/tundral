@@ -36,6 +36,8 @@ fn rank(relation: &str) -> u8 {
         "imports" => 45,
         "imports_from" | "indirect_call" => 50,
         "re_exports" => 60,
+        "references_constant" => 35,
+        "uses_static_prop" => 36,
         _ => 40, // contains, method, inherits, implements, rationale_for, embeds, defines, …
     }
 }

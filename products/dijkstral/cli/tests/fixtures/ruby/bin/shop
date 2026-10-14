@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+require_relative "../lib/shop"
+
+def main(argv)
+  user = Shop.boot(argv.first || "guest")
+  puts user.display
+  unknown_function
+end
+
+main(ARGV)
