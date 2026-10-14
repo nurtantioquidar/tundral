@@ -35,6 +35,7 @@ Status labels used below:
 15. Quirks summary and open questions
 16. Addenda from implementation
 17. Clustering, analysis and `GRAPH_REPORT.md`
+18. C#
 
 ---
 
@@ -49,6 +50,7 @@ Status labels used below:
 | `go/` | `go.mod`, `store/{store,helpers}.go`, `service/{service,service_test}.go`, `cmd/app/main.go` | `go.graphify.json` | `go.clustered.graphify.json` |
 | `java/` | `src/main/java/com/shop/{model,service}/*.java`, `src/test/java/com/shop/service/UserServiceTest.java` | `java.graphify.json` | `java.clustered.graphify.json` |
 | `mixed/` | `package.json`, `tsconfig.json`, `Cargo.toml`, `pyproject.toml`, `scripts/{build,common}.sh`, `README.md`, `app/main.py` | `mixed.graphify.json` | `mixed.clustered.graphify.json` |
+| `csharp/` | `src/Shop/Models/{Entity,User,User.Validation,Values}.cs`, `src/Shop/Services/{IRepository,Extensions,UserService}.cs`, `tests/Shop.Tests/UserServiceTests.cs` | `csharp.graphify.json` | `csharp.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -185,7 +187,7 @@ once clustering matches.
 The full probe tables are in §14 and in the mixed fixture notes. In summary:
 
 - **Code extensions** (case-insensitive):
-  - This spec: `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .rs .go .java`.
+  - This spec: `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .rs .go .java`, and `.cs` (§18).
   - Also counted as code but out of scope here: `.json` (allowlisted manifests only, §14.1),
     `Cargo.toml`/`pyproject.toml` (only those names, §14.2), `.sh .bash` (§14.3), and `.rb .c .h
     .cpp .cc .cxx .hpp .cu .cs .kt .kts .swift .php .scala .groovy .gradle .dart .lua .zig .ex .exs
@@ -2068,3 +2070,140 @@ need no normalisation.
   `networkx.simple_cycles` over the arcs in link or `G.edges()` order (tested).
 - **Words** count the code files dijkstral indexes; `update` also counts markdown and other
   documents, and lists unclassified files, which dijkstral does not.
+
+---
+
+## 18. C# (2026-10-14)
+
+Fixture `tests/fixtures/csharp/` (file-scoped and block namespaces `Shop.Models`,
+`Shop.Services`, `Shop.Tests`; a `partial class User` split over `User.cs` and
+`User.Validation.cs`). Goldens: `csharp.graphify.json`, `csharp.clustered.graphify.json` and the
+§17.6 report goldens. Probes `p1`–`p6` (namespaces, members, call forms, `new`, `.csproj` and
+`.razor`) and the serilog corpus (Graphify's `graphify-out/cache/ast/*.json` per-file facts,
+`raw_calls` and `member_field_tables`, were read as observable output). Implementation:
+`crates/core/src/{extract,resolve}/csharp.rs`.
+
+### 18.1 Nodes
+
+| Construct | id | label | extra |
+|---|---|---|---|
+| file | `fileid` (§4.2) | basename | — |
+| namespace (every declaration, nested ones joined: `Outer.Inner`) | `csharp_namespace:` + `sha1(name)[:16]` — one node per name for the whole repo | the full name | `type: "namespace"`, `metadata {"kind":"csharp_namespace","namespace":…}`; `source_file`/`source_location` of the first declaring file in path order |
+| class, struct, interface, enum, record, `record struct` (**nested types flat**) | `fileid_slug(ns.Name)`, plus `_<arity>` for generic types (`…_ientity_1`, `…_c3_2`); global namespace `fileid_slug(Name)` | `Name` | `_callable`, `_callable_class` |
+| method (also interface/abstract/partial, explicit `IX.Do()`); overloads merge, first line kept | `typeid_slug(name)` | `.Name()` | `_callable` |
+| property (interface properties too) | `typeid_slug(Name)` | `Name` | — |
+| enum member | `enumid_slug(Name)` | `Name` | — |
+| method outside any type (tree-sitter error recovery, e.g. serilog `ILogger.cs` broken by `#if`) | `fileid_slug(name)` (no namespace) | `name()` | `_callable` |
+| unresolved type (field, parameter, return, base, generic argument, attribute) | `slug(Name)`, **one global node** (no §4.5 renaming) | `Name` | stub shape |
+| `using N;` of a non-local namespace, `using static`, alias to a non-local type | `slug(text as written)` (`system_collections_generic`, `system_math`, `system_datetime`) | = id | external |
+
+Every symbol node in a namespace has `metadata` (keys sorted): `is_nested_type: true` (nested
+types), `is_partial: true` (a `partial` declaration), `namespace`, `scope_chain` — the
+`s<row>:<col>` (0-based) of every enclosing namespace declaration, outermost first (a file-scoped
+namespace on line 15 is `["s14:0"]`) — and, cross-file, `unresolved_calls`. Symbols in the global
+namespace have no `metadata` unless they are nested, partial or have unresolved calls.
+
+Not emitted: constructors (static ones too), fields, events, indexers, operators, conversion
+operators, destructors, delegates, local functions, lambdas, top-level statements and their local
+functions, type parameters (no stub).
+
+**Partial types**: every `partial` declaration with the same namespace, enclosing types, name
+and arity merges into the declaration of the first file in path order (`User.Validation.cs`
+before `User.cs`); its node keeps that file's line and `is_partial`. Members keep their own
+file's ids (`src_shop_models_user_shop_models_user_getname` hangs off
+`src_shop_models_user_validation_shop_models_user`), and the other parts' `contains` and in-file
+edges are redirected to the merged node.
+
+### 18.2 Edges
+
+| relation | source → target | when | context / metadata | location |
+|---|---|---|---|---|
+| `imports` | file → namespace node / external / local type | every `using` (`global using` too; also inside `#if`) | `import`; `metadata {"using_kind": namespace\|static\|alias, ["alias"], "target_fqn" (as written, HTML-escaped: `IRepository&lt;Shop.Models.User&gt;`), "scope_kind": file\|namespace, ["scope_id": "s1:0"]}` | directive line |
+| `contains` | file → namespace node | every namespace declaration | — | declaration line |
+| `contains` | file → top-level type; outer type → nested type; file → recovered function | always | — | declaration line (attributes included) |
+| `inherits` / `implements` | type → base-list entry | `implements` when the entry resolves to a local interface **or** its name is `I` + capital (`IKlass` naming a class, unresolved `IStubby`); `inherits` otherwise; interfaces always `inherits` | `metadata {"ref_token": Name[, "qualified": true, "ref_qualifier": "System"]}` | type line |
+| `references` | type → base generic argument (`IComparable<User>` → `User`, a self-loop is kept) | | `generic_arg` | type line |
+| `references` | type → field, property, record / primary-constructor parameter type | not its own type (`static readonly T Instance`) | `field` | member line |
+| `references` | method → parameter, then return type; generic arguments of each | | `parameter_type` / `return_type`, `generic_arg` | method line |
+| `references` | method → attribute (`[Fact]` → `fact`, `[Obsolete]` → `obsolete`) | method attributes only, not inside `#if` | `attribute` | method line |
+| `references` | caller → type argument of a generic method call (`Assert.Throws<AggregateException>()`) | | `generic_arg` | call line |
+| `defines` | type → property | always | `field` | property line |
+| `method` | type → method | always | — | method line |
+| `case_of` | enum → member | always | — | member line |
+| `calls` | see 18.4 | | `call` | call line |
+| `dispatches_to` | interface method → implementing method | see 18.4 | `call`, INFERRED 0.85 | implementing class line, its file |
+
+All `references`, `inherits` and `implements` carry `metadata.ref_token` (the simple name as
+written: `Repo` for an alias); a qualified name adds `qualified: true` and `ref_qualifier` (the
+qualifier's raw text). Predefined types (`string`, `int`…), `var`, type parameters, arrays'
+brackets, nullability and tuples' parentheses produce nothing themselves (their element types
+do). Constructor parameters, property accessors, field initializers, `typeof`, casts, `is`
+patterns and `new List<T>()` produce no reference.
+
+### 18.3 Type lookup
+
+**Rule.** A type name resolves as C# would from the namespace declaration enclosing the reference:
+its namespace, that declaration's `using` namespaces and aliases, then each enclosing namespace
+(`namespace A.B` opens `B` then `A`) with its usings, the global namespace and the file's usings.
+`global using` directives in **other** files do not count (serilog's `GlobalUsings.cs`: most test
+files reference `LogEvent` as the stub `logevent`). Nested types are found only through their
+outer type (`Address` inside `User` → stub `address`; `new User.Address()` binds). Generic types
+are looked up by name and arity. No unique-name fallback for references.
+
+### 18.4 Calls
+
+Per file (no `confidence_score`): a bare call `M()`, and a call on any receiver that is not a
+name, `this` or `base` (`f().M()`, `a.b.M()`, `kvp.Key.Render()`), binds to a method named `M`
+of the enclosing type, else of any type in the file; `new T()` binds to a type `T` declared in the
+file (constructors or not). Calls named like a predefined type (`Int()`, `String()`,
+`Decimal()`) are ignored. Constructors' calls come from their type; lambdas' and local functions'
+from the enclosing method.
+
+Cross-file (unbound bare and `new` calls of the file first, then the rest in source order):
+
+| form | binds to | confidence |
+|---|---|---|
+| `M()` | the enclosing type's or a base type's `M`, else the only method named `M` | INFERRED 0.85 |
+| `this.M()`, `base.M()` | own type and bases / bases | EXTRACTED 1.0 |
+| `X.M()`, `X?.M()` with a capitalized `X`; `(x as T).M()`, `((T)x).M()` | `X` as a type (lookup, else the only type named `X`), else the declared type of field/property/local `X` | EXTRACTED 1.0 |
+| `x.M()` on a lower-case parameter, local (`T x`, `var x = new T()`, `is T x`), field or property (also `this.x`) of non-predefined declared type | that type (lookup, else unique name) and its bases | INFERRED 0.85 |
+| `new T()`, `T` not used as a type in the file | lookup, else the method or type named `T` nearest the caller's directory (`new LogEventProperty(…)` in a test → `Some.LogEventProperty()`) | INFERRED 0.85 |
+| `new T()`, `T` used as a type in the file | lookup only, and not when the caller already references `T` | INFERRED 0.85 |
+
+`foreach (T x in …)` and `var x = f()` give `x` no type; an untyped lower-case receiver never
+binds. **`metadata.unresolved_calls`** lists, per caller and in source order, one
+`{"callee","receiver_type","lang":"csharp","line"}` per (callee, type) for a capitalized or typed
+receiver whose type names no local type: `Console`, `Assert`, `Guid`, `List` (from
+`List<Address> _addresses`), `T`, `TextWriter` (a property `Output` of that type), and `Street` /
+`Renamed` (a property of predefined type, an event: the receiver's own name).
+
+**`dispatches_to`**: for each class listing a local interface in its base list, each interface
+method with a same-named method in the class; emitted only when that interface method has exactly
+one such implementation in the repo (serilog: 2 of 7 interface methods) and no call already joins
+the pair (a call outranks it in the collapse).
+
+### 18.5 `.csproj`, `.sln`, `.razor` in a code-only build
+
+**Open** (not implemented): `.csproj` files get a node (`source_location: null`) with
+`framework_<tfm>` nodes (`file_type: "concept"`, per file when the TFM is shared: `…_csproj_framework_net8_0`)
+and `…_csproj_sdk_<sdk>` nodes (`references`), `nuget_<package>` nodes labelled `Name (version)`
+(`imports`) and `imports` to referenced projects; `.sln` files a bare node; `.razor` files a node,
+`route:<path>` nodes, `@using` imports, `@inject` field references and `calls` to components.
+Parity runs use `--ext .cs`.
+
+### 18.6 Quirks (not reproduced)
+
+- **CS1** Graphify merges partial types after folding links (dict-update semantics), so a
+  `method` link to a member of a non-first part absorbs the reversed `references`' `context` and
+  `metadata` (fixture: `User -method-> .CompareTo()` has `context: parameter_type`), and a nested
+  class's `inherits` to its outer class can survive as `contains` with the `inherits` metadata
+  (serilog `TimeProvider`). dijkstral redirects before the fold.
+- **CS2** A generic reference picks a same-named type of another arity (`Gen<T> Self()` inside
+  `Gen<T>` → `Gen<T, U>`); dijkstral matches the arity.
+- **CS3** A call on an element access (`Receivers[group.Key](…)`) is recorded in
+  `unresolved_calls` with text fragments (`callee: "Key]"`); dijkstral records none.
+- **CS4** Some typed receivers are not recorded (`ReadOnlySpan<char> context` → `StartsWith`) or
+  recorded with the element type (`HashSet<Type>` field → `Type`) in Graphify; not explained.
+- Surprises: Graphify lists one surprise per (source label, target label, source files); a C#
+  property named like a type (`User -defines-> Status` beside `-references-> Status`) appears once.
+  dijkstral applies the same rule (`analyze.rs`); the tie order among equal scores is §17.7's.

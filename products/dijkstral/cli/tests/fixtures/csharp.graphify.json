@@ -1,0 +1,2938 @@
+{
+ "nodes": [
+  {
+   "id": "src_shop_models_entity",
+   "label": "Entity.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "csharp_namespace:ba08633b333ae873",
+   "label": "Shop.Models",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L3",
+   "type": "namespace",
+   "metadata": {
+    "kind": "csharp_namespace",
+    "namespace": "Shop.Models"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_entity_shop_models_ientity_1",
+   "label": "IEntity",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L8",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_entity_shop_models_ientity_1_id",
+   "label": "Id",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L10",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_entity_shop_models_ientity_1_describe",
+   "label": ".Describe()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L12",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_entity_shop_models_entity",
+   "label": "Entity",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L16",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_entity_shop_models_entity_id",
+   "label": "Id",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L19",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_entity_shop_models_entity_createdat",
+   "label": "CreatedAt",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L21",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "datetime",
+   "label": "DateTime",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_entity_shop_models_entity_describe",
+   "label": ".Describe()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L28",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_entity_shop_models_entity_isnew",
+   "label": ".IsNew()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L30",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_validation",
+   "label": "User.Validation.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_validation_shop_models_user",
+   "label": "User",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L3",
+   "metadata": {
+    "is_partial": true,
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_validation_shop_models_user_isvalid",
+   "label": ".IsValid()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L5",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_validation_shop_models_user_validate",
+   "label": ".Validate()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L10",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user",
+   "label": "User.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_status",
+   "label": "Status",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L6",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_status_active",
+   "label": "Active",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L8",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_status_suspended",
+   "label": "Suspended",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L9",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_status_deleted",
+   "label": "Deleted",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L10",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "icomparable",
+   "label": "IComparable",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "list",
+   "label": "List",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "address",
+   "label": "Address",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_user_name",
+   "label": "Name",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L21",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_user_status",
+   "label": "Status",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L23",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_user_getname",
+   "label": ".GetName()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L36",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_user_addaddress",
+   "label": ".AddAddress()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L41",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "Add",
+      "receiver_type": "List",
+      "lang": "csharp",
+      "line": "L43"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_user_describe",
+   "label": ".Describe()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L47",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_user_compareto",
+   "label": ".CompareTo()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L49",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_user_touch",
+   "label": ".Touch()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L51",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "Invoke",
+      "receiver_type": "Renamed",
+      "lang": "csharp",
+      "line": "L54"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_user_of",
+   "label": ".Of()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L57",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "NewGuid",
+      "receiver_type": "Guid",
+      "lang": "csharp",
+      "line": "L57"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_address",
+   "label": "Address",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L59",
+   "metadata": {
+    "is_nested_type": true,
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_address_street",
+   "label": "Street",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L61",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_user_shop_models_address_format",
+   "label": ".Format()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L63",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s3:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "Trim",
+      "receiver_type": "Street",
+      "lang": "csharp",
+      "line": "L63"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_values",
+   "label": "Values.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_values_shop_models_point",
+   "label": "Point",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L3",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_values_shop_models_point_x",
+   "label": "X",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L11",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_values_shop_models_point_y",
+   "label": "Y",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L12",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_values_shop_models_point_length",
+   "label": ".Length()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L14",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_values_shop_models_money",
+   "label": "Money",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L17",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_values_shop_models_money_add",
+   "label": ".Add()",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L19",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_models_values_shop_models_range",
+   "label": "Range",
+   "file_type": "code",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L22",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_extensions",
+   "label": "Extensions.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "csharp_namespace:b854194435a541c1",
+   "label": "Shop.Services",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L3",
+   "type": "namespace",
+   "metadata": {
+    "kind": "csharp_namespace",
+    "namespace": "Shop.Services"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_extensions_shop_services_stringextensions",
+   "label": "StringExtensions",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L5",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_extensions_shop_services_stringextensions_shout",
+   "label": ".Shout()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L8",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_extensions_shop_services_stringextensions_slug",
+   "label": ".Slug()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L10",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_extensions_shop_services_formatter",
+   "label": "Formatter",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L16",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_extensions_shop_services_formatter_format",
+   "label": ".Format()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L18",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s2:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository",
+   "label": "IRepository.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_irepository_1",
+   "label": "IRepository",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L6",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_irepository_1_save",
+   "label": ".Save()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L8",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_irepository_1_find",
+   "label": ".Find()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L10",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_irepository_1_all",
+   "label": ".All()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L12",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+   "label": "InMemoryRepository",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L15",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "dictionary",
+   "label": "Dictionary",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_save",
+   "label": ".Save()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L19",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_find",
+   "label": ".Find()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L21",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "TryGetValue",
+      "receiver_type": "Dictionary",
+      "lang": "csharp",
+      "line": "L21"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
+   "label": ".All()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L23",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice",
+   "label": "UserService.cs",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice",
+   "label": "UserService",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L10",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "idisposable",
+   "label": "IDisposable",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_register",
+   "label": ".Register()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L22",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_names",
+   "label": ".Names()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L39",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "Add",
+      "receiver_type": "List",
+      "lang": "csharp",
+      "line": "L44"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "ireadonlylist",
+   "label": "IReadOnlyList",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_pick",
+   "label": ".Pick()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L49",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_largest",
+   "label": ".Largest()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L58",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_notify",
+   "label": ".Notify()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L60",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "WriteLine",
+      "receiver_type": "Console",
+      "lang": "csharp",
+      "line": "L62"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_audit",
+   "label": ".Audit()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L65",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "WriteLine",
+      "receiver_type": "Console",
+      "lang": "csharp",
+      "line": "L68"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_dispose",
+   "label": ".Dispose()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L71",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_iuserservice",
+   "label": "IUserService",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L76",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_iuserservice_register",
+   "label": ".Register()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L78",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_ilogger",
+   "label": "ILogger",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L81",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_ilogger_log",
+   "label": ".Log()",
+   "file_type": "code",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L83",
+   "metadata": {
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_userservicetests",
+   "label": "UserServiceTests.cs",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "csharp_namespace:da94c1339abd364a",
+   "label": "Shop.Tests",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L5",
+   "type": "namespace",
+   "metadata": {
+    "kind": "csharp_namespace",
+    "namespace": "Shop.Tests"
+   },
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_userservicetests_shop_tests_userservicetests",
+   "label": "UserServiceTests",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L7",
+   "metadata": {
+    "namespace": "Shop.Tests",
+    "scope_chain": [
+     "s4:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_userservicetests_shop_tests_userservicetests_registersuser",
+   "label": ".RegistersUser()",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L11",
+   "metadata": {
+    "namespace": "Shop.Tests",
+    "scope_chain": [
+     "s4:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "Equal",
+      "receiver_type": "Assert",
+      "lang": "csharp",
+      "line": "L15"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "fact",
+   "label": "Fact",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_userservicetests_shop_tests_userservicetests_formatsnames",
+   "label": ".FormatsNames()",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L18",
+   "metadata": {
+    "namespace": "Shop.Tests",
+    "scope_chain": [
+     "s4:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "NotEmpty",
+      "receiver_type": "Assert",
+      "lang": "csharp",
+      "line": "L22"
+     }
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "theory",
+   "label": "Theory",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "inlinedata",
+   "label": "InlineData",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_userservicetests_shop_tests_nulllogger",
+   "label": "NullLogger",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L25",
+   "metadata": {
+    "is_nested_type": true,
+    "namespace": "Shop.Tests",
+    "scope_chain": [
+     "s4:0"
+    ]
+   },
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shop_tests_userservicetests_shop_tests_nulllogger_log",
+   "label": ".Log()",
+   "file_type": "code",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L27",
+   "metadata": {
+    "namespace": "Shop.Tests",
+    "scope_chain": [
+     "s4:0"
+    ]
+   },
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "ienumerable",
+   "label": "IEnumerable",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "system",
+   "label": "system",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "system_collections_generic",
+   "label": "system_collections_generic",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "system_linq",
+   "label": "system_linq",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "system_math",
+   "label": "system_math",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "system_datetime",
+   "label": "system_datetime",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "xunit",
+   "label": "xunit",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "src_shop_models_entity",
+   "target": "system",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "System",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity",
+   "target": "csharp_namespace:ba08633b333ae873",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity",
+   "target": "src_shop_models_entity_shop_models_ientity_1",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_ientity_1",
+   "target": "src_shop_models_entity_shop_models_ientity_1_id",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_ientity_1",
+   "target": "src_shop_models_entity_shop_models_ientity_1_describe",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity",
+   "target": "src_shop_models_entity_shop_models_entity",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_entity",
+   "target": "src_shop_models_entity_shop_models_ientity_1",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "IEntity"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_entity",
+   "target": "src_shop_models_entity_shop_models_entity_id",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_entity",
+   "target": "src_shop_models_entity_shop_models_entity_createdat",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L21",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_entity",
+   "target": "datetime",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L21",
+   "weight": 1.0,
+   "context": "field",
+   "metadata": {
+    "ref_token": "DateTime"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_entity",
+   "target": "src_shop_models_entity_shop_models_entity_describe",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_entity",
+   "target": "src_shop_models_entity_shop_models_entity_isnew",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L30",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation",
+   "target": "csharp_namespace:ba08633b333ae873",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_validation_shop_models_user_isvalid",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_validation_shop_models_user_validate",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user_isvalid",
+   "target": "src_shop_models_user_validation_shop_models_user_validate",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user",
+   "target": "system",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "System",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user",
+   "target": "system_collections_generic",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L2",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "System.Collections.Generic",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user",
+   "target": "csharp_namespace:ba08633b333ae873",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user",
+   "target": "src_shop_models_user_shop_models_status",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_status",
+   "target": "src_shop_models_user_shop_models_status_active",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_status",
+   "target": "src_shop_models_user_shop_models_status_suspended",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_status",
+   "target": "src_shop_models_user_shop_models_status_deleted",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_entity_shop_models_entity",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "Entity"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "icomparable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "IComparable"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "metadata": {
+    "ref_token": "User"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "list",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "field",
+   "metadata": {
+    "ref_token": "List"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "address",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "metadata": {
+    "ref_token": "Address"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_user_name",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L21",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_user_status",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_status",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "field",
+   "metadata": {
+    "ref_token": "Status"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_user_getname",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_user_addaddress",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L41",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_user_addaddress",
+   "target": "address",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L41",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "Address"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_user_describe",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L47",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_user_compareto",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_user_compareto",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L49",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "User"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_user_touch",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L51",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_user_of",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L57",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_user_of",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L57",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "User"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user",
+   "target": "src_shop_models_user_shop_models_address",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L59",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_address",
+   "target": "src_shop_models_user_shop_models_address_street",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L61",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_address",
+   "target": "src_shop_models_user_shop_models_address_format",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L63",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_user_addaddress",
+   "target": "src_shop_models_user_shop_models_user_touch",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L44",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_user_describe",
+   "target": "src_shop_models_user_shop_models_user_getname",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L47",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_shop_models_user_of",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L57",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values",
+   "target": "csharp_namespace:ba08633b333ae873",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values",
+   "target": "src_shop_models_values_shop_models_point",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values_shop_models_point",
+   "target": "src_shop_models_values_shop_models_point_x",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values_shop_models_point",
+   "target": "src_shop_models_values_shop_models_point_y",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values_shop_models_point",
+   "target": "src_shop_models_values_shop_models_point_length",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values",
+   "target": "src_shop_models_values_shop_models_money",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values_shop_models_money",
+   "target": "src_shop_models_values_shop_models_money_add",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values_shop_models_money_add",
+   "target": "src_shop_models_values_shop_models_money",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "Money"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_values",
+   "target": "src_shop_models_values_shop_models_range",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_extensions",
+   "target": "system_linq",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "System.Linq",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_extensions",
+   "target": "csharp_namespace:b854194435a541c1",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_extensions",
+   "target": "src_shop_services_extensions_shop_services_stringextensions",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_extensions_shop_services_stringextensions",
+   "target": "src_shop_services_extensions_shop_services_stringextensions_shout",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_extensions_shop_services_stringextensions",
+   "target": "src_shop_services_extensions_shop_services_stringextensions_slug",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_extensions",
+   "target": "src_shop_services_extensions_shop_services_formatter",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_extensions_shop_services_formatter",
+   "target": "src_shop_services_extensions_shop_services_formatter_format",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/Extensions.cs",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository",
+   "target": "system_collections_generic",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "System.Collections.Generic",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository",
+   "target": "csharp_namespace:ba08633b333ae873",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L2",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Shop.Models",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository",
+   "target": "csharp_namespace:b854194435a541c1",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository",
+   "target": "src_shop_services_irepository_shop_services_irepository_1",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_irepository_1",
+   "target": "src_shop_services_irepository_shop_services_irepository_1_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_irepository_1",
+   "target": "src_shop_services_irepository_shop_services_irepository_1_find",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_irepository_1",
+   "target": "src_shop_services_irepository_shop_services_irepository_1_all",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_irepository_1_all",
+   "target": "ienumerable",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "IEnumerable"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository",
+   "target": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+   "target": "src_shop_services_irepository_shop_services_irepository_1",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "IRepository"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+   "target": "dictionary",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L17",
+   "weight": 1.0,
+   "context": "field",
+   "metadata": {
+    "ref_token": "Dictionary"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+   "target": "src_shop_services_irepository_shop_services_inmemoryrepository_1_save",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+   "target": "src_shop_services_irepository_shop_services_inmemoryrepository_1_find",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+   "target": "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
+   "target": "ienumerable",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "IEnumerable"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "system",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "System",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "system_collections_generic",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L2",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "System.Collections.Generic",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "csharp_namespace:ba08633b333ae873",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Shop.Models",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "system_math",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L4",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "static",
+    "target_fqn": "System.Math",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "src_shop_services_irepository_shop_services_irepository_1",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "alias",
+    "alias": "Repo",
+    "target_fqn": "Shop.Services.IRepository&lt;Shop.Models.User&gt;",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "system_datetime",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L6",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "alias",
+    "alias": "Clock",
+    "target_fqn": "System.DateTime",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "csharp_namespace:b854194435a541c1",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_iuserservice",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "IUserService"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "idisposable",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "IDisposable"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_irepository_shop_services_irepository_1",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "field",
+   "metadata": {
+    "ref_token": "Repo"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_ilogger",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L14",
+   "weight": 1.0,
+   "context": "field",
+   "metadata": {
+    "ref_token": "ILogger"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice_register",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L22",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "User"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_models_values_shop_models_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L33",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "Point"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice_names",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L39",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_names",
+   "target": "ireadonlylist",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L39",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "IReadOnlyList"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice_pick",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_pick",
+   "target": "ienumerable",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L49",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "IEnumerable"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice_largest",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L58",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice_notify",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L60",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_notify",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L60",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "metadata": {
+    "ref_token": "User"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice_audit",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L65",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice_dispose",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L71",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_iuserservice",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L76",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_iuserservice",
+   "target": "src_shop_services_userservice_shop_services_iuserservice_register",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L78",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_iuserservice_register",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L78",
+   "weight": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "User"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_ilogger",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L81",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_ilogger",
+   "target": "src_shop_services_userservice_shop_services_ilogger_log",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L83",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_services_userservice_shop_services_userservice_audit",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests",
+   "target": "csharp_namespace:ba08633b333ae873",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L1",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Shop.Models",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests",
+   "target": "csharp_namespace:b854194435a541c1",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L2",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Shop.Services",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests",
+   "target": "xunit",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L3",
+   "weight": 1.0,
+   "metadata": {
+    "using_kind": "namespace",
+    "target_fqn": "Xunit",
+    "scope_kind": "file"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests",
+   "target": "csharp_namespace:da94c1339abd364a",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests",
+   "target": "tests_shop_tests_userservicetests_shop_tests_userservicetests",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests",
+   "target": "src_shop_services_userservice_shop_services_userservice",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L9",
+   "weight": 1.0,
+   "context": "field",
+   "metadata": {
+    "ref_token": "UserService"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests",
+   "target": "tests_shop_tests_userservicetests_shop_tests_userservicetests_registersuser",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests_registersuser",
+   "target": "fact",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L11",
+   "weight": 1.0,
+   "context": "attribute",
+   "metadata": {
+    "ref_token": "Fact"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests",
+   "target": "tests_shop_tests_userservicetests_shop_tests_userservicetests_formatsnames",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests_formatsnames",
+   "target": "theory",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L18",
+   "weight": 1.0,
+   "context": "attribute",
+   "metadata": {
+    "ref_token": "Theory"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests_formatsnames",
+   "target": "inlinedata",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L18",
+   "weight": 1.0,
+   "context": "attribute",
+   "metadata": {
+    "ref_token": "InlineData"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests",
+   "target": "tests_shop_tests_userservicetests_shop_tests_nulllogger",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_nulllogger",
+   "target": "src_shop_services_userservice_shop_services_ilogger",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L25",
+   "weight": 1.0,
+   "metadata": {
+    "ref_token": "ILogger"
+   },
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_nulllogger",
+   "target": "tests_shop_tests_userservicetests_shop_tests_nulllogger_log",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_user_validation_shop_models_user_isvalid",
+   "target": "src_shop_models_user_shop_models_user_getname",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_models_user_shop_models_address",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_models_user_shop_models_user_of",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_services_irepository_shop_services_irepository_1_save",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_services_userservice_shop_services_userservice_notify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_services_userservice_shop_services_ilogger_log",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_services_extensions_shop_services_formatter_format",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_names",
+   "target": "src_shop_services_irepository_shop_services_irepository_1_all",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L42",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_notify",
+   "target": "src_shop_models_user_shop_models_user_describe",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L62",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests_registersuser",
+   "target": "src_shop_services_userservice_shop_services_userservice_register",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shop_tests_userservicetests_shop_tests_userservicetests_formatsnames",
+   "target": "src_shop_services_extensions_shop_services_formatter_format",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_models_entity_shop_models_ientity_1_describe",
+   "target": "src_shop_models_entity_shop_models_entity_describe",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_irepository_1_save",
+   "target": "src_shop_services_irepository_shop_services_inmemoryrepository_1_save",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_irepository_1_find",
+   "target": "src_shop_services_irepository_shop_services_inmemoryrepository_1_find",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_irepository_shop_services_irepository_1_all",
+   "target": "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_iuserservice_register",
+   "target": "src_shop_services_userservice_shop_services_userservice_register",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_ilogger_log",
+   "target": "tests_shop_tests_userservicetests_shop_tests_nulllogger_log",
+   "relation": "dispatches_to",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "tests/Shop.Tests/UserServiceTests.cs",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

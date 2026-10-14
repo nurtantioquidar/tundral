@@ -323,6 +323,20 @@ fn surprises(
         });
     }
     cands.sort_by_key(|c| std::cmp::Reverse(c.score));
+    // One surprise per (source label, target label, source files): a C# property named like a
+    // type (`User -defines-> Status` beside `User -references-> Status`) is listed once.
+    let mut listed = HashSet::new();
+    cands.retain(|c| {
+        let (s, t, _) = topo.edges[c.edge as usize];
+        let (u, v) = (&graph.nodes[s as usize], &graph.nodes[t as usize]);
+        // `topo` endpoints are unordered; key by the link's own direction.
+        let (u, v) = if u.id == graph.edges[c.edge as usize].source {
+            (u, v)
+        } else {
+            (v, u)
+        };
+        listed.insert((&u.label, &v.label, &u.source_file, &v.source_file))
+    });
     cands.truncate(SURPRISE_COUNT);
     cands
 }

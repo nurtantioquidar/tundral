@@ -9,6 +9,7 @@
 //! Language passes see the renamed per-file facts through `View`; any id stored in their
 //! `LangFacts` was recorded before renaming, so translate it with `View::id`.
 
+pub mod csharp;
 pub mod data;
 pub mod go;
 pub mod java;
@@ -92,13 +93,14 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         file_ids,
     };
 
-    let passes: [fn(&[View], &Index) -> Resolution; 6] = [
+    let passes: [fn(&[View], &Index) -> Resolution; 7] = [
         python::resolve,
         script::resolve,
         rust::resolve,
         go::resolve,
         java::resolve,
         data::resolve,
+        csharp::resolve,
     ];
     let results: Vec<Resolution> = std::thread::scope(|s| {
         let handles: Vec<_> = passes
