@@ -1,0 +1,2000 @@
+{
+ "nodes": [
+  {
+   "id": "include_geo_point",
+   "label": "point.h",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_point",
+   "label": "Point",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L11",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_point_x",
+   "label": "x",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_point_y",
+   "label": "y",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_point_dist",
+   "label": ".dist()",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L14",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_named",
+   "label": "Named",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L17",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_named_label",
+   "label": "label",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L18",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_bits",
+   "label": "Bits",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L24",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_bits_f",
+   "label": "f",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L25",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_bits_u",
+   "label": "u",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_near",
+   "label": "near()",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L29",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape",
+   "label": "shape.hpp",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_kind",
+   "label": "Kind",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L10",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_kind_circle",
+   "label": "Circle",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_kind_rect",
+   "label": "Rect",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_shape",
+   "label": "Shape",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L13",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_shape_shape",
+   "label": ".~Shape()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L16",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_shape_area",
+   "label": ".area()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L17",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_shape_name",
+   "label": ".name()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L18",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_shape_kind",
+   "label": ".kind()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_circle",
+   "label": "Circle",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L25",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_circle_area",
+   "label": ".area()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L28",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_circle_r",
+   "label": "r_",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L31",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_circle_center",
+   "label": "center_",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L32",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_rect",
+   "label": "Rect",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L35",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_rect_area",
+   "label": ".area()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L38",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_rect_square",
+   "label": ".square()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L39",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_rect_w",
+   "label": "w_",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L42",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_rect_h",
+   "label": "h_",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L42",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_registry",
+   "label": "Registry",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L46",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_registry_add",
+   "label": ".add()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L48",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "unique_ptr",
+   "label": "unique_ptr",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_hpp_t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_registry_size",
+   "label": ".size()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L49",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "size_t",
+   "label": "size_t",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_registry_first",
+   "label": ".first()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L50",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "vector",
+   "label": "vector",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_registry_items",
+   "label": "items_",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L53",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_shape_registry_t_first",
+   "label": "Registry<T>::first()",
+   "file_type": "code",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L57",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_kernels_cu_src_kernels",
+   "label": "kernels.cu",
+   "file_type": "code",
+   "source_file": "src/kernels.cu",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_kernels_scale_kernel",
+   "label": "scale_kernel()",
+   "file_type": "code",
+   "source_file": "src/kernels.cu",
+   "source_location": "L3",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "global",
+   "label": "__global__",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_kernels_launch_scale",
+   "label": "launch_scale()",
+   "file_type": "code",
+   "source_file": "src/kernels.cu",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_kernels_h_src_kernels",
+   "label": "kernels.h",
+   "file_type": "code",
+   "source_file": "src/kernels.h",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy",
+   "label": "legacy.cxx",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_legacy_add",
+   "label": "legacy_add()",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L4",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_counter",
+   "label": "Counter",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L7",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_counter_n",
+   "label": "n",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_counter_bump",
+   "label": ".bump()",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_counter_get",
+   "label": ".get()",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_base",
+   "label": "Base",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L15",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_base_run",
+   "label": ".run()",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L17",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_derived",
+   "label": "Derived",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L20",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_derived_run",
+   "label": ".run()",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L22",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_derived_counter",
+   "label": "counter",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_clamp_to",
+   "label": "clamp_to()",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L27",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_cxx_t",
+   "label": "T",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_legacy_use_point",
+   "label": "use_point()",
+   "file_type": "code",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L31",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main",
+   "label": "main.cc",
+   "file_type": "code",
+   "source_file": "src/main.cc",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_helper",
+   "label": "helper()",
+   "file_type": "code",
+   "source_file": "src/main.cc",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_print_area",
+   "label": "print_area()",
+   "file_type": "code",
+   "source_file": "src/main.cc",
+   "source_location": "L13",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_main",
+   "label": "main()",
+   "file_type": "code",
+   "source_file": "src/main.cc",
+   "source_location": "L17",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape",
+   "label": "shape.cpp",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_shape_shape",
+   "label": "Shape::Shape()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L8",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_shape_name",
+   "label": "Shape::name()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L10",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "string",
+   "label": "string",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_circle_circle",
+   "label": "Circle::Circle()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L16",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_circle_area",
+   "label": "Circle::area()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L19",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_rect_rect",
+   "label": "Rect::Rect()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L23",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_rect_area",
+   "label": "Rect::area()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L25",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_rect_square",
+   "label": "Rect::square()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L27",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "rect",
+   "label": "Rect",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_total_area",
+   "label": "total_area()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L31",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_geo_detail_round_up",
+   "label": "geo::detail::round_up()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L41",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_shape_geo_point_dist",
+   "label": "geo::Point::dist()",
+   "file_type": "code",
+   "source_file": "src/shape.cpp",
+   "source_location": "L45",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shape_test",
+   "label": "shape_test.cc",
+   "file_type": "code",
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shape_test_test_circle",
+   "label": "test_circle()",
+   "file_type": "code",
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L7",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "tests_shape_test_main",
+   "label": "main()",
+   "file_type": "code",
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "cmath",
+   "label": "cmath",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "memory",
+   "label": "memory",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "iostream",
+   "label": "iostream",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "sstream",
+   "label": "sstream",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "cassert",
+   "label": "cassert",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "shape",
+   "label": "shape",
+   "file_type": "concept",
+   "type": "external",
+   "external": true,
+   "source_file": ""
+  }
+ ],
+ "edges": [
+  {
+   "source": "include_geo_point",
+   "target": "cmath",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point",
+   "target": "include_geo_point_point",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point_point",
+   "target": "include_geo_point_point_x",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L12",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point_point",
+   "target": "include_geo_point_point_y",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point_point",
+   "target": "include_geo_point_point_dist",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point",
+   "target": "include_geo_point_named",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point_named",
+   "target": "include_geo_point_named_label",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L18",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point",
+   "target": "include_geo_point_bits",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point_bits",
+   "target": "include_geo_point_bits_f",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L25",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point_bits",
+   "target": "include_geo_point_bits_u",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L26",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point",
+   "target": "include_geo_point_near",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "string",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "vector",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "memory",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "include_geo_point",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "include_geo_shape_kind",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_kind",
+   "target": "include_geo_shape_kind_circle",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_kind",
+   "target": "include_geo_shape_kind_rect",
+   "relation": "case_of",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "include_geo_shape_shape",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_shape",
+   "target": "include_geo_shape_shape_shape",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_shape",
+   "target": "include_geo_shape_shape_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_shape",
+   "target": "include_geo_shape_shape_name",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_shape",
+   "target": "include_geo_shape_shape_kind",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_shape_kind",
+   "target": "include_geo_shape_kind",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L19",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_shape",
+   "target": "include_geo_shape_kind",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L22",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_shape",
+   "target": "include_geo_shape_shape_kind",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L22",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "include_geo_shape_circle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_circle",
+   "target": "include_geo_shape_shape",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_circle",
+   "target": "include_geo_shape_circle_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_circle",
+   "target": "include_geo_shape_circle_r",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L31",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_circle",
+   "target": "include_geo_point_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L32",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_circle",
+   "target": "include_geo_shape_circle_center",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L32",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "include_geo_shape_rect",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_rect",
+   "target": "include_geo_shape_shape",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_rect",
+   "target": "include_geo_point_named",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_rect",
+   "target": "include_geo_shape_rect_area",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L38",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_rect",
+   "target": "include_geo_shape_rect_square",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L39",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_rect",
+   "target": "include_geo_shape_rect_w",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L42",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_rect",
+   "target": "include_geo_shape_rect_h",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L42",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "include_geo_shape_registry",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L46",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry",
+   "target": "include_geo_shape_registry_add",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L48",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry_add",
+   "target": "unique_ptr",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L48",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry_add",
+   "target": "include_geo_shape_hpp_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L48",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry",
+   "target": "include_geo_shape_registry_size",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry_size",
+   "target": "size_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L49",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry",
+   "target": "include_geo_shape_registry_first",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L50",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry",
+   "target": "vector",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L53",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry",
+   "target": "unique_ptr",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L53",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry",
+   "target": "include_geo_shape_hpp_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L53",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry",
+   "target": "include_geo_shape_registry_items",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L53",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape",
+   "target": "include_geo_shape_registry_t_first",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L57",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry_t_first",
+   "target": "include_geo_shape_hpp_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L57",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_shape_registry_size",
+   "target": "include_geo_shape_registry_size",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/shape.hpp",
+   "source_location": "L49",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_kernels_cu_src_kernels",
+   "target": "src_kernels_h_src_kernels",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/kernels.cu",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_kernels_cu_src_kernels",
+   "target": "src_kernels_scale_kernel",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/kernels.cu",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_kernels_scale_kernel",
+   "target": "global",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/kernels.cu",
+   "source_location": "L3",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_kernels_cu_src_kernels",
+   "target": "src_kernels_launch_scale",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/kernels.cu",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy",
+   "target": "include_geo_point",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy",
+   "target": "src_legacy_legacy_add",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy",
+   "target": "src_legacy_counter",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_counter",
+   "target": "src_legacy_counter_n",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_counter",
+   "target": "src_legacy_counter_bump",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_counter",
+   "target": "src_legacy_counter_get",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy",
+   "target": "src_legacy_counter_get",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy",
+   "target": "src_legacy_base",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_base",
+   "target": "src_legacy_base_run",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy",
+   "target": "src_legacy_derived",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_derived",
+   "target": "src_legacy_base",
+   "relation": "inherits",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_derived",
+   "target": "src_legacy_derived_run",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_derived",
+   "target": "src_legacy_counter",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_derived",
+   "target": "src_legacy_derived_counter",
+   "relation": "defines",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L23",
+   "weight": 1.0,
+   "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy",
+   "target": "src_legacy_clamp_to",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_clamp_to",
+   "target": "src_legacy_cxx_t",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L27",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy",
+   "target": "src_legacy_use_point",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_counter_bump",
+   "target": "src_legacy_legacy_add",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_derived_run",
+   "target": "src_legacy_counter_bump",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_use_point",
+   "target": "src_legacy_derived_run",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_use_point",
+   "target": "src_legacy_clamp_to",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_use_point",
+   "target": "src_legacy_legacy_add",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/legacy.cxx",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "iostream",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "memory",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "include_geo_shape",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "src_kernels_h_src_kernels",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "src_main_helper",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "src_main_print_area",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_print_area",
+   "target": "include_geo_shape_shape",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L13",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main",
+   "target": "src_main_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_main",
+   "target": "src_main_print_area",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_main",
+   "target": "src_main_helper",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main.cc",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "include_geo_shape_shape",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "cmath",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "sstream",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_shape_shape",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape_shape_shape",
+   "target": "include_geo_shape_kind",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L8",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_shape_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape_shape_name",
+   "target": "string",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L10",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_circle_circle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_circle_area",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_rect_rect",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_rect_area",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_rect_square",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape_rect_square",
+   "target": "rect",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L27",
+   "weight": 1.0,
+   "context": "return_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_total_area",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape_total_area",
+   "target": "include_geo_shape_registry",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L31",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape_total_area",
+   "target": "include_geo_shape_shape",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L31",
+   "weight": 1.0,
+   "context": "generic_arg",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_geo_detail_round_up",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L41",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape",
+   "target": "src_shape_geo_point_dist",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L45",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape_geo_point_dist",
+   "target": "include_geo_point_point",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shape.cpp",
+   "source_location": "L45",
+   "weight": 1.0,
+   "context": "parameter_type",
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shape_test",
+   "target": "cassert",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shape_test",
+   "target": "shape",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shape_test",
+   "target": "tests_shape_test_test_circle",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shape_test",
+   "target": "tests_shape_test_main",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shape_test_main",
+   "target": "tests_shape_test_test_circle",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_main",
+   "target": "src_shape_total_area",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/main.cc",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_main",
+   "target": "src_kernels_launch_scale",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/main.cc",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_legacy_use_point",
+   "target": "include_geo_point_point_dist",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/legacy.cxx",
+   "source_location": "L36",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_main",
+   "target": "include_geo_shape_rect_square",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/main.cc",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shape_total_area",
+   "target": "include_geo_shape_shape_area",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/shape.cpp",
+   "source_location": "L34",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tests_shape_test_test_circle",
+   "target": "include_geo_shape_circle_area",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "tests/shape_test.cc",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

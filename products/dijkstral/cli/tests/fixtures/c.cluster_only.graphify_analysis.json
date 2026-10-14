@@ -1,0 +1,203 @@
+{
+  "communities": {
+    "0": [
+      "include_util",
+      "include_util_util_max",
+      "src_shape_shape_free",
+      "src_util",
+      "src_util_clamp",
+      "src_util_log_line",
+      "src_util_util_report",
+      "src_util_xmalloc",
+      "stdlib"
+    ],
+    "1": [
+      "callback",
+      "main",
+      "main_apply",
+      "main_main",
+      "main_twice",
+      "missing",
+      "src_shape_shape_area",
+      "stdio"
+    ],
+    "2": [
+      "math",
+      "shape",
+      "src_shape",
+      "src_shape_circle_area",
+      "src_shape_rect_area",
+      "src_shape_registry_add",
+      "string",
+      "util"
+    ],
+    "3": [
+      "assert",
+      "include_shape",
+      "stddef",
+      "tests_test_shape",
+      "tests_test_shape_main",
+      "tests_test_shape_test_area"
+    ],
+    "4": [
+      "areafn",
+      "point",
+      "shapekind",
+      "src_shape_pick_area",
+      "src_shape_shape_new"
+    ]
+  },
+  "cohesion": {
+    "0": 0.3055555555555556,
+    "1": 0.2857142857142857,
+    "2": 0.32142857142857145,
+    "3": 0.4,
+    "4": 0.5
+  },
+  "gods": [
+    {
+      "id": "src_shape_shape_new",
+      "label": "shape_new()",
+      "degree": 8
+    },
+    {
+      "id": "main_main",
+      "label": "main()",
+      "degree": 6
+    },
+    {
+      "id": "src_shape_shape_free",
+      "label": "shape_free()",
+      "degree": 5
+    },
+    {
+      "id": "tests_test_shape_test_area",
+      "label": "test_area()",
+      "degree": 5
+    },
+    {
+      "id": "src_shape_shape_area",
+      "label": "shape_area()",
+      "degree": 4
+    },
+    {
+      "id": "src_shape_pick_area",
+      "label": "pick_area()",
+      "degree": 4
+    },
+    {
+      "id": "src_util_clamp",
+      "label": "clamp()",
+      "degree": 3
+    },
+    {
+      "id": "src_util_util_report",
+      "label": "util_report()",
+      "degree": 3
+    },
+    {
+      "id": "main_apply",
+      "label": "apply()",
+      "degree": 3
+    },
+    {
+      "id": "include_util_util_max",
+      "label": "util_max()",
+      "degree": 2
+    }
+  ],
+  "surprises": [
+    {
+      "source": "main()",
+      "target": "shape_free()",
+      "source_files": [
+        "main.c",
+        "src/shape.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_area()",
+      "target": "shape_free()",
+      "source_files": [
+        "tests/test_shape.c",
+        "src/shape.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "util_report()",
+      "source_files": [
+        "main.c",
+        "src/util.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "shape_new()",
+      "source_files": [
+        "main.c",
+        "src/shape.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_area()",
+      "target": "shape_area()",
+      "source_files": [
+        "tests/test_shape.c",
+        "src/shape.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `shape_new()` connect `Community 4` to `Community 0`, `Community 1`, `Community 2`, `Community 3`?",
+      "why": "High betweenness centrality (0.297) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 3 inferred relationships involving `shape_new()` (e.g. with `main()` and `xmalloc()`) actually correct?",
+      "why": "`shape_new()` has 3 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `main()` connect `Community 1` to `Community 0`, `Community 4`?",
+      "why": "High betweenness centrality (0.267) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 4 inferred relationships involving `main()` (e.g. with `shape_area()` and `shape_free()`) actually correct?",
+      "why": "`main()` has 4 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `shape_free()` connect `Community 0` to `Community 1`, `Community 2`, `Community 3`?",
+      "why": "High betweenness centrality (0.167) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 3 inferred relationships involving `shape_free()` (e.g. with `main()` and `clamp()`) actually correct?",
+      "why": "`shape_free()` has 3 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 3 inferred relationships involving `test_area()` (e.g. with `shape_area()` and `shape_free()`) actually correct?",
+      "why": "`test_area()` has 3 INFERRED edges - model-reasoned connections that need verification."
+    }
+  ]
+}

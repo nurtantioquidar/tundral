@@ -1,0 +1,224 @@
+{
+  "communities": {
+    "0": [
+      "include_geo_point_point_dist",
+      "src_legacy",
+      "src_legacy_base",
+      "src_legacy_base_run",
+      "src_legacy_clamp_to",
+      "src_legacy_counter",
+      "src_legacy_counter_bump",
+      "src_legacy_counter_get",
+      "src_legacy_counter_n",
+      "src_legacy_cxx_t",
+      "src_legacy_derived",
+      "src_legacy_derived_counter",
+      "src_legacy_derived_run",
+      "src_legacy_legacy_add",
+      "src_legacy_use_point"
+    ],
+    "1": [
+      "cassert",
+      "include_geo_point_point",
+      "include_geo_point_point_x",
+      "include_geo_point_point_y",
+      "include_geo_shape_circle",
+      "include_geo_shape_circle_area",
+      "include_geo_shape_circle_center",
+      "include_geo_shape_circle_r",
+      "shape",
+      "src_shape_geo_point_dist",
+      "tests_shape_test",
+      "tests_shape_test_main",
+      "tests_shape_test_test_circle"
+    ],
+    "2": [
+      "cmath",
+      "include_geo_point",
+      "include_geo_point_bits",
+      "include_geo_point_bits_f",
+      "include_geo_point_bits_u",
+      "include_geo_point_named",
+      "include_geo_point_named_label",
+      "include_geo_point_near",
+      "include_geo_shape_rect",
+      "include_geo_shape_rect_area",
+      "include_geo_shape_rect_h",
+      "include_geo_shape_rect_w"
+    ],
+    "3": [
+      "global",
+      "include_geo_shape_rect_square",
+      "iostream",
+      "memory",
+      "src_kernels_cu_src_kernels",
+      "src_kernels_h_src_kernels",
+      "src_kernels_launch_scale",
+      "src_kernels_scale_kernel",
+      "src_main",
+      "src_main_helper",
+      "src_main_main",
+      "src_main_print_area"
+    ],
+    "4": [
+      "include_geo_shape",
+      "include_geo_shape_hpp_t",
+      "include_geo_shape_registry",
+      "include_geo_shape_registry_add",
+      "include_geo_shape_registry_first",
+      "include_geo_shape_registry_items",
+      "include_geo_shape_registry_size",
+      "include_geo_shape_registry_t_first",
+      "size_t",
+      "unique_ptr",
+      "vector"
+    ],
+    "5": [
+      "rect",
+      "src_shape",
+      "src_shape_circle_area",
+      "src_shape_circle_circle",
+      "src_shape_geo_detail_round_up",
+      "src_shape_rect_area",
+      "src_shape_rect_rect",
+      "src_shape_rect_square",
+      "src_shape_shape_name",
+      "sstream",
+      "string"
+    ],
+    "6": [
+      "include_geo_shape_kind",
+      "include_geo_shape_kind_circle",
+      "include_geo_shape_kind_rect",
+      "include_geo_shape_shape",
+      "include_geo_shape_shape_area",
+      "include_geo_shape_shape_kind",
+      "include_geo_shape_shape_name",
+      "include_geo_shape_shape_shape",
+      "src_shape_shape_shape",
+      "src_shape_total_area"
+    ]
+  },
+  "cohesion": {
+    "0": 0.20952380952380953,
+    "1": 0.16666666666666666,
+    "2": 0.16666666666666666,
+    "3": 0.21212121212121213,
+    "4": 0.2545454545454545,
+    "5": 0.18181818181818182,
+    "6": 0.24444444444444444
+  },
+  "gods": [
+    {
+      "id": "include_geo_shape_shape",
+      "label": "Shape",
+      "degree": 11
+    },
+    {
+      "id": "include_geo_shape_registry",
+      "label": "Registry",
+      "degree": 9
+    },
+    {
+      "id": "include_geo_shape_rect",
+      "label": "Rect",
+      "degree": 7
+    },
+    {
+      "id": "include_geo_point_point",
+      "label": "Point",
+      "degree": 6
+    },
+    {
+      "id": "include_geo_shape_kind",
+      "label": "Kind",
+      "degree": 6
+    },
+    {
+      "id": "include_geo_shape_circle",
+      "label": "Circle",
+      "degree": 6
+    },
+    {
+      "id": "src_main_main",
+      "label": "main()",
+      "degree": 6
+    },
+    {
+      "id": "src_legacy_derived",
+      "label": "Derived",
+      "degree": 5
+    },
+    {
+      "id": "src_legacy_use_point",
+      "label": "use_point()",
+      "degree": 5
+    },
+    {
+      "id": "src_shape_total_area",
+      "label": "total_area()",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "geo::Point::dist()",
+      "target": "Point",
+      "source_files": [
+        "src/shape.cpp",
+        "include/geo/point.h"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; peripheral node `geo::Point::dist()` unexpectedly reaches hub `Point`"
+    },
+    {
+      "source": "Shape::Shape()",
+      "target": "Kind",
+      "source_files": [
+        "src/shape.cpp",
+        "include/geo/shape.hpp"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; peripheral node `Shape::Shape()` unexpectedly reaches hub `Kind`"
+    },
+    {
+      "source": "print_area()",
+      "target": "Shape",
+      "source_files": [
+        "src/main.cc",
+        "include/geo/shape.hpp"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "total_area()",
+      "target": "Registry",
+      "source_files": [
+        "src/shape.cpp",
+        "include/geo/shape.hpp"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "total_area()",
+      "target": "Shape",
+      "source_files": [
+        "src/shape.cpp",
+        "include/geo/shape.hpp"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

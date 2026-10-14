@@ -1,0 +1,170 @@
+{
+  "communities": {
+    "0": [
+      "include_util",
+      "include_util_util_max",
+      "src_shape_shape_free",
+      "src_util",
+      "src_util_clamp",
+      "src_util_log_line",
+      "src_util_util_report",
+      "src_util_xmalloc",
+      "stdlib"
+    ],
+    "1": [
+      "callback",
+      "main",
+      "main_apply",
+      "main_main",
+      "main_twice",
+      "missing",
+      "src_shape_shape_area",
+      "stdio"
+    ],
+    "2": [
+      "math",
+      "shape",
+      "src_shape",
+      "src_shape_circle_area",
+      "src_shape_rect_area",
+      "src_shape_registry_add",
+      "string",
+      "util"
+    ],
+    "3": [
+      "assert",
+      "include_shape",
+      "stddef",
+      "tests_test_shape",
+      "tests_test_shape_main",
+      "tests_test_shape_test_area"
+    ],
+    "4": [
+      "areafn",
+      "point",
+      "shapekind",
+      "src_shape_pick_area",
+      "src_shape_shape_new"
+    ]
+  },
+  "cohesion": {
+    "0": 0.3055555555555556,
+    "1": 0.2857142857142857,
+    "2": 0.32142857142857145,
+    "3": 0.4,
+    "4": 0.5
+  },
+  "gods": [
+    {
+      "id": "src_shape_shape_new",
+      "label": "shape_new()",
+      "degree": 8
+    },
+    {
+      "id": "main_main",
+      "label": "main()",
+      "degree": 6
+    },
+    {
+      "id": "src_shape_shape_free",
+      "label": "shape_free()",
+      "degree": 5
+    },
+    {
+      "id": "tests_test_shape_test_area",
+      "label": "test_area()",
+      "degree": 5
+    },
+    {
+      "id": "src_shape_pick_area",
+      "label": "pick_area()",
+      "degree": 4
+    },
+    {
+      "id": "src_shape_shape_area",
+      "label": "shape_area()",
+      "degree": 4
+    },
+    {
+      "id": "main_apply",
+      "label": "apply()",
+      "degree": 3
+    },
+    {
+      "id": "src_util_clamp",
+      "label": "clamp()",
+      "degree": 3
+    },
+    {
+      "id": "src_util_util_report",
+      "label": "util_report()",
+      "degree": 3
+    },
+    {
+      "id": "include_util_util_max",
+      "label": "util_max()",
+      "degree": 2
+    }
+  ],
+  "surprises": [
+    {
+      "source": "main()",
+      "target": "shape_free()",
+      "source_files": [
+        "main.c",
+        "src/shape.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "shape_new()",
+      "source_files": [
+        "main.c",
+        "src/shape.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "util_report()",
+      "source_files": [
+        "main.c",
+        "src/util.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_area()",
+      "target": "shape_new()",
+      "source_files": [
+        "tests/test_shape.c",
+        "src/shape.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_area()",
+      "target": "shape_free()",
+      "source_files": [
+        "tests/test_shape.c",
+        "src/shape.c"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

@@ -24,6 +24,10 @@ pub enum Lang {
     GoMod,
     /// `.sh`, `.bash`, and sh/bash/zsh shebang scripts.
     Shell,
+    /// `.c`, and `.h` without C++ markers (§18).
+    C,
+    /// `.cpp .cc .cxx .hpp .cu`, and `.h` with C++ markers (§19).
+    Cpp,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -36,10 +40,11 @@ pub enum Family {
     Java,
     Data,
     Shell,
+    C,
 }
 
 impl Lang {
-    pub const COUNT: usize = 11;
+    pub const COUNT: usize = 13;
 
     /// Classify a path. `shebang` is consulted only for extensionless files.
     pub fn classify(path: &Path) -> Option<Lang> {
@@ -63,6 +68,9 @@ impl Lang {
             "java" => Lang::Java,
             "json" => Lang::Json,
             "sh" | "bash" => Lang::Shell,
+            "c" => Lang::C,
+            "cpp" | "cc" | "cxx" | "hpp" | "cu" => Lang::Cpp,
+            "h" => return crate::extract::c::header_lang(path),
             _ => return None,
         })
     }
@@ -76,6 +84,7 @@ impl Lang {
             Lang::Java => Family::Java,
             Lang::Json | Lang::Toml => Family::Data,
             Lang::Shell => Family::Shell,
+            Lang::C | Lang::Cpp => Family::C,
         }
     }
 
@@ -88,6 +97,8 @@ impl Lang {
             Lang::Rust => tree_sitter_rust::LANGUAGE.into(),
             Lang::Go => tree_sitter_go::LANGUAGE.into(),
             Lang::Java => tree_sitter_java::LANGUAGE.into(),
+            Lang::C => tree_sitter_c::LANGUAGE.into(),
+            Lang::Cpp => tree_sitter_cpp::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }
