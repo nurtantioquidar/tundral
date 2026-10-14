@@ -90,7 +90,10 @@ fn fold(old: &mut Edge, new: Edge) {
         } else {
             *old = merge_over(&new, old);
         }
-    } else if rn > ro || (rn == ro && new.source < old.source) {
+    } else if rn > ro || (rn == ro && (new.source < old.source) == (ro != 40)) {
+        // Equal ranks: the smaller source survives, but in the structural tier (contains,
+        // method, inherits, implements…) the larger one does: a nested class inheriting its
+        // outer class keeps `contains` or `inherits` by id order (Kotlin and Java probes).
         *old = new;
     }
 }
@@ -649,6 +652,26 @@ mod tests {
             vec![edge("b", "a", "calls", 1), edge("a", "b", "method", 2)],
         );
         assert_eq!(e.relation, "method");
+    }
+
+    #[test]
+    fn opposite_direction_structural_tie_keeps_larger_source() {
+        let e = one(
+            &["f_result", "f_ok"],
+            vec![
+                edge("f_result", "f_ok", "contains", 1),
+                edge("f_ok", "f_result", "inherits", 2),
+            ],
+        );
+        assert_eq!(e.relation, "contains");
+        let e = one(
+            &["f_event", "f_start"],
+            vec![
+                edge("f_event", "f_start", "contains", 1),
+                edge("f_start", "f_event", "inherits", 2),
+            ],
+        );
+        assert_eq!(e.relation, "inherits");
     }
 
     #[test]

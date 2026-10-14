@@ -1,0 +1,229 @@
+{
+  "communities": {
+    "0": [
+      "k",
+      "src_main_scala_shop_model_model",
+      "src_main_scala_shop_model_model_active",
+      "src_main_scala_shop_model_model_color",
+      "src_main_scala_shop_model_model_color_green",
+      "src_main_scala_shop_model_model_color_label",
+      "src_main_scala_shop_model_model_color_red",
+      "src_main_scala_shop_model_model_entity",
+      "src_main_scala_shop_model_model_entity_describe",
+      "src_main_scala_shop_model_model_entity_id",
+      "src_main_scala_shop_model_model_inactive",
+      "src_main_scala_shop_model_model_model",
+      "src_main_scala_shop_model_model_model_touch",
+      "src_main_scala_shop_model_model_model_validate",
+      "src_main_scala_shop_model_model_scala_boolean",
+      "src_main_scala_shop_model_model_scala_instant",
+      "src_main_scala_shop_model_model_scala_string",
+      "src_main_scala_shop_model_model_status"
+    ],
+    "1": [
+      "option",
+      "ordered",
+      "src_main_scala_shop_model_user",
+      "src_main_scala_shop_model_user_address",
+      "src_main_scala_shop_model_user_scala_boolean",
+      "src_main_scala_shop_model_user_scala_int",
+      "src_main_scala_shop_model_user_scala_string",
+      "src_main_scala_shop_model_user_user",
+      "src_main_scala_shop_model_user_user_compare",
+      "src_main_scala_shop_model_user_user_greet",
+      "src_main_scala_shop_model_user_user_guest",
+      "src_main_scala_shop_model_user_user_of",
+      "src_main_scala_shop_model_user_user_validate",
+      "src_main_scala_shop_model_user_userops",
+      "src_main_scala_shop_model_user_userops_displayname"
+    ],
+    "2": [
+      "src_main_scala_shop_service_audit",
+      "src_main_scala_shop_service_audit_auditable",
+      "src_main_scala_shop_service_audit_auditable_audit",
+      "src_main_scala_shop_service_audit_audited",
+      "src_main_scala_shop_service_audit_inmemoryrepository",
+      "src_main_scala_shop_service_audit_inmemoryrepository_all",
+      "src_main_scala_shop_service_audit_inmemoryrepository_audit",
+      "src_main_scala_shop_service_audit_inmemoryrepository_save",
+      "src_main_scala_shop_service_audit_logging",
+      "src_main_scala_shop_service_audit_logging_log",
+      "src_main_scala_shop_service_audit_scala_list",
+      "src_main_scala_shop_service_audit_scala_string",
+      "src_main_scala_shop_service_audit_scala_t",
+      "src_main_scala_shop_service_audit_scala_unit",
+      "staticannotation"
+    ],
+    "3": [
+      "array",
+      "funsuite",
+      "munit",
+      "shop",
+      "src_main_scala_main",
+      "src_main_scala_main_main",
+      "src_main_scala_main_main_main",
+      "src_main_scala_main_scala_string",
+      "src_main_scala_main_scala_unit",
+      "src_test_scala_shop_service_userservicesuite",
+      "src_test_scala_shop_service_userservicesuite_formatter",
+      "src_test_scala_shop_service_userservicesuite_formatter_shout",
+      "src_test_scala_shop_service_userservicesuite_scala_string",
+      "src_test_scala_shop_service_userservicesuite_userservicesuite"
+    ],
+    "4": [
+      "customer",
+      "src_main_scala_shop_service_userservice_scala_instant",
+      "src_main_scala_shop_service_userservice_scala_string",
+      "src_main_scala_shop_service_userservice_userservice",
+      "src_main_scala_shop_service_userservice_userservice_audit",
+      "src_main_scala_shop_service_userservice_userservice_notifyuser",
+      "src_main_scala_shop_service_userservice_userservice_register",
+      "src_main_scala_shop_service_userservice_userservice_save"
+    ],
+    "5": [
+      "src_main_scala_shop_util_strings",
+      "src_main_scala_shop_util_strings_formatter",
+      "src_main_scala_shop_util_strings_formatter_shout",
+      "src_main_scala_shop_util_strings_formatter_whisper",
+      "src_main_scala_shop_util_strings_scala_list",
+      "src_main_scala_shop_util_strings_scala_string",
+      "src_main_scala_shop_util_strings_slugify",
+      "src_main_scala_shop_util_strings_words"
+    ],
+    "6": [
+      "java",
+      "scala",
+      "src_main_scala_shop_service_userservice",
+      "src_main_scala_shop_service_userservice_helper",
+      "src_main_scala_shop_service_userservice_registry",
+      "src_main_scala_shop_service_userservice_registry_remember",
+      "src_main_scala_shop_service_userservice_scala_unit"
+    ],
+    "7": [
+      "src_main_scala_shop_service_userservice_scala_int",
+      "src_main_scala_shop_service_userservice_scala_list",
+      "src_main_scala_shop_service_userservice_stats",
+      "src_main_scala_shop_service_userservice_stats_count",
+      "src_main_scala_shop_service_userservice_userservice_names"
+    ],
+    "8": [
+      "src_main_scala_shop_service_userservice_repository",
+      "src_main_scala_shop_service_userservice_repository_all",
+      "src_main_scala_shop_service_userservice_repository_save",
+      "src_main_scala_shop_service_userservice_scala_t"
+    ]
+  },
+  "cohesion": {
+    "0": 0.1568627450980392,
+    "1": 0.21904761904761905,
+    "2": 0.22857142857142856,
+    "3": 0.15384615384615385,
+    "4": 0.5,
+    "5": 0.39285714285714285,
+    "6": 0.38095238095238093,
+    "7": 0.4,
+    "8": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "src_main_scala_shop_model_user_user",
+      "label": "User",
+      "degree": 14
+    },
+    {
+      "id": "src_main_scala_shop_service_userservice_userservice",
+      "label": "UserService",
+      "degree": 12
+    },
+    {
+      "id": "src_main_scala_shop_model_model_model",
+      "label": "Model",
+      "degree": 7
+    },
+    {
+      "id": "src_main_scala_shop_service_audit_inmemoryrepository",
+      "label": "InMemoryRepository",
+      "degree": 7
+    },
+    {
+      "id": "src_main_scala_shop_model_user_address",
+      "label": "Address",
+      "degree": 5
+    },
+    {
+      "id": "src_main_scala_shop_service_audit_auditable",
+      "label": "Auditable",
+      "degree": 5
+    },
+    {
+      "id": "src_main_scala_shop_service_userservice_repository",
+      "label": "Repository",
+      "degree": 5
+    },
+    {
+      "id": "src_main_scala_shop_model_model_entity",
+      "label": "Entity",
+      "degree": 4
+    },
+    {
+      "id": "src_main_scala_shop_model_model_status",
+      "label": "Status",
+      "degree": 4
+    },
+    {
+      "id": "src_main_scala_shop_service_audit_logging",
+      "label": "Logging",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "User",
+      "target": "Model",
+      "source_files": [
+        "src/main/scala/shop/model/User.scala",
+        "src/main/scala/shop/model/Model.scala"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "User",
+      "target": "Status",
+      "source_files": [
+        "src/main/scala/shop/model/User.scala",
+        "src/main/scala/shop/model/Model.scala"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "UserService",
+      "target": "Auditable",
+      "source_files": [
+        "src/main/scala/shop/service/UserService.scala",
+        "src/main/scala/shop/service/Audit.scala"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "InMemoryRepository",
+      "target": "Repository",
+      "source_files": [
+        "src/main/scala/shop/service/Audit.scala",
+        "src/main/scala/shop/service/UserService.scala"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

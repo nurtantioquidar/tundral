@@ -120,6 +120,8 @@ pub enum LangFacts {
     Go(crate::extract::go::GoFacts),
     Java(crate::extract::java::JavaFacts),
     CSharp(crate::extract::csharp::CsFacts),
+    Kotlin(crate::extract::kotlin::KotlinFacts),
+    Scala(crate::extract::scala::ScalaFacts),
     Data(crate::extract::data::DataFacts),
     Php(crate::extract::php::PhpFacts),
     Ruby(crate::extract::ruby::RubyFacts),

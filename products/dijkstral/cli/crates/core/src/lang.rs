@@ -27,6 +27,10 @@ pub enum Lang {
     CSharp,
     Php,
     Ruby,
+    /// `.kt`, `.kts`.
+    Kotlin,
+    /// `.scala` (`.sc` and `.sbt` are not classified).
+    Scala,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -42,6 +46,8 @@ pub enum Family {
     CSharp,
     Php,
     Ruby,
+    Kotlin,
+    Scala,
 }
 
 impl Lang {
@@ -70,6 +76,8 @@ impl Lang {
             "cs" => Lang::CSharp,
             "php" => Lang::Php,
             "rb" | "rake" => Lang::Ruby,
+            "kt" | "kts" => Lang::Kotlin,
+            "scala" => Lang::Scala,
             _ => return None,
         })
     }
@@ -86,6 +94,8 @@ impl Lang {
             Lang::CSharp => Family::CSharp,
             Lang::Php => Family::Php,
             Lang::Ruby => Family::Ruby,
+            Lang::Kotlin => Family::Kotlin,
+            Lang::Scala => Family::Scala,
         }
     }
 
@@ -101,6 +111,8 @@ impl Lang {
             Lang::CSharp => tree_sitter_c_sharp::LANGUAGE.into(),
             Lang::Php => tree_sitter_php::LANGUAGE_PHP.into(),
             Lang::Ruby => tree_sitter_ruby::LANGUAGE.into(),
+            Lang::Kotlin => tree_sitter_kotlin_ng::LANGUAGE.into(),
+            Lang::Scala => tree_sitter_scala::LANGUAGE.into(),
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
         })
     }

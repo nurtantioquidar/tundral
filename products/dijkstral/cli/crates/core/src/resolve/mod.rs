@@ -13,10 +13,12 @@ pub mod csharp;
 pub mod data;
 pub mod go;
 pub mod java;
+pub mod kotlin;
 pub mod php;
 pub mod python;
 pub mod ruby;
 pub mod rust;
+pub mod scala;
 pub mod script;
 
 use std::collections::{HashMap, HashSet};
@@ -101,6 +103,8 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         rust::resolve,
         go::resolve,
         java::resolve,
+        kotlin::resolve,
+        scala::resolve,
         data::resolve,
         csharp::resolve,
         php::resolve,
