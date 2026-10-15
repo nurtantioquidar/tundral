@@ -3,6 +3,7 @@ mod export_cmd;
 mod exports;
 mod mcp_cmd;
 mod query_cmds;
+mod semantic_cmd;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -46,6 +47,10 @@ enum Command {
     Tree(exports::tree::TreeArgs),
     #[command(flatten)]
     Agents(agents_cmd::AgentCommand),
+    /// Semantic pass hand-off: import the host assistant's replies.
+    Semantic(semantic_cmd::SemanticArgs),
+    /// Report non-code changes the semantic pass has not seen (silent when current).
+    CheckUpdate(semantic_cmd::CheckUpdateArgs),
 }
 
 #[derive(Args, Debug)]
@@ -96,6 +101,8 @@ fn main() -> ExitCode {
         Command::Mcp(args) => return mcp_cmd::run(args),
         Command::Export(args) => return export_cmd::run(args),
         Command::Tree(args) => return exports::tree::run_cmd(args),
+        Command::Semantic(args) => return semantic_cmd::run_semantic(args),
+        Command::CheckUpdate(args) => return semantic_cmd::run_check_update(args),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {

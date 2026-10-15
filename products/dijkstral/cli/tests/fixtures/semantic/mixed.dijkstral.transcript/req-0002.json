@@ -1,0 +1,23 @@
+{
+  "index": 2,
+  "fingerprint": "848ee1f72de98cb9d6574b469cbd71728a12df14e34eef406f9e5265be701720",
+  "responder": "codex",
+  "codex_model": "gpt-6.1-sol",
+  "request": {
+    "system_chars": 0,
+    "user_chars": 694,
+    "images": 0,
+    "max_output_tokens": 448
+  },
+  "status": 200,
+  "response": {
+    "ok": true,
+    "text": "{\"0\":\"Write-Through Cache Configuration\",\"1\":\"Job Queue Execution\",\"2\":\"Job Service Documentation\",\"3\":\"Slug Generation\"}",
+    "usage": {
+      "input_tokens": 15060,
+      "output_tokens": 30
+    },
+    "latency_s": 6.81,
+    "finish_reason": "stop"
+  }
+}

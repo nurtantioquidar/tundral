@@ -12,6 +12,7 @@ clap.workspace = true
 dijkstral-agents.workspace = true
 dijkstral-core.workspace = true
 dijkstral-export.workspace = true
+dijkstral-semantic.workspace = true
 dijkstral-serve.workspace = true
 mimalloc.workspace = true
 

@@ -16,6 +16,7 @@ dijkstral-serve = { path = "crates/serve" }
 dijkstral-agents = { path = "crates/agents" }
 dijkstral-export = { path = "crates/export" }
 anyhow = "1"
+base64 = "0.22"
 blake3 = "1"
 bincode = "1.3"
 clap = { version = "4", features = ["derive"] }
@@ -33,6 +34,7 @@ redb = "2"
 regex = "1"
 serde = { version = "1", features = ["derive"] }
 sha1_smol = "1"
+sha2 = "0.10"
 serde_json = { version = "1", features = ["preserve_order"] }
 tempfile = "3"
 toml = "0.8"
@@ -63,6 +65,8 @@ tree-sitter-zig = "1.1.2"
 tree-sitter-fortran = "0.6.0"
 tree-sitter-verilog = "1.0.3"
 unicode-normalization = "0.1"
+# HTTP for the semantic pass's API backends (rustls, no OpenSSL).
+ureq = { version = "2.12", default-features = false, features = ["tls"] }
 
 [profile.release]
 lto = "thin"
