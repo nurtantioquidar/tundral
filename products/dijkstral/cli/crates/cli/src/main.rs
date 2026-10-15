@@ -11,7 +11,8 @@ use std::time::Instant;
 
 use clap::{Args, Parser, Subcommand};
 use dijkstral_core::pipeline::cluster_only_files;
-use dijkstral_core::{build_with, BuildOptions, BuildReport};
+use dijkstral_core::{build_full, BuildOptions, BuildReport};
+use dijkstral_semantic::markdown::MarkdownPass;
 
 // mimalloc keeps fragmentation and the retained high-water mark well below the system allocator's
 // on large builds (Kubernetes: measured in bench/README.md).
@@ -30,7 +31,8 @@ struct Cli {
 enum Command {
     /// Build the graph for a directory and write dijkstral-out/graph.json.
     Extract(BuildArgs),
-    /// Rebuild incrementally after changes (only changed files are re-extracted).
+    /// Rebuild incrementally after changes (only changed files are re-extracted), adding the
+    /// structure of Markdown pages: headings, links and backtick references to code.
     Update(BuildArgs),
     /// Re-cluster an existing graph.json and rewrite it with GRAPH_REPORT.md and
     /// .graphify_analysis.json (`graphify cluster-only --no-label`: communities named
@@ -94,9 +96,10 @@ fn main() -> ExitCode {
         return code;
     }
     let cli = Cli::parse();
-    let args = match cli.command {
+    let (args, update) = match cli.command {
         Command::Agents(cmd) => return agents_cmd::run(cmd),
-        Command::Extract(args) | Command::Update(args) => args,
+        Command::Extract(args) => (args, false),
+        Command::Update(args) => (args, true),
         Command::Query(cmd) => return query_cmds::run(cmd),
         Command::Mcp(args) => return mcp_cmd::run(args),
         Command::Export(args) => return export_cmd::run(args),
@@ -128,7 +131,12 @@ fn main() -> ExitCode {
         cluster: !args.no_cluster,
     };
     let exporters: Vec<_> = exporters.iter().map(|e| e.as_ref()).collect();
-    match build_with(&opts, &exporters) {
+    // `update` adds the markdown structure as `graphify update` does; `extract` (code only until
+    // the semantic pass lands) does not.
+    let markdown = MarkdownPass::new();
+    let documents =
+        (update && !args.code_only).then_some(&markdown as &dyn dijkstral_core::Documents);
+    match build_full(&opts, &exporters, documents) {
         Ok(report) => {
             print_report(&report, args.timings, started);
             ExitCode::SUCCESS

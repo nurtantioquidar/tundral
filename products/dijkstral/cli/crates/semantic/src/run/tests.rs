@@ -121,6 +121,7 @@ fn doc(rel: &str, text: &str) -> SourceDoc {
         image: None,
         sha256: sha256_hex(text.as_bytes()),
         tokens: 10,
+        converted: None,
     }
 }
 

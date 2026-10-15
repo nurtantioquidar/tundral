@@ -95,6 +95,9 @@ pub enum Lang {
     Dart,
     /// `.lua`, `.luau`, and `lua` shebang scripts (§28).
     Lua,
+    /// `.md`/`.mdx` pages of `update`'s markdown structure (`docs/graphify-semantic.md` §3). Never
+    /// returned by `classify`: such files are built by a `pipeline::Documents` pass, not here.
+    Markdown,
 }
 
 /// Languages that may share call and type resolution with each other.
@@ -134,6 +137,8 @@ pub enum Family {
     Groovy,
     Dart,
     Lua,
+    /// Markdown pages and headings (`Lang::Markdown`).
+    Document,
 }
 
 impl Lang {
@@ -240,6 +245,7 @@ impl Lang {
             Lang::Groovy => Family::Groovy,
             Lang::Dart => Family::Dart,
             Lang::Lua => Family::Lua,
+            Lang::Markdown => Family::Document,
         }
     }
 
@@ -272,7 +278,7 @@ impl Lang {
             Lang::Verilog => tree_sitter_verilog::LANGUAGE.into(),
             Lang::Groovy => tree_sitter_groovy::LANGUAGE.into(),
             Lang::Lua => tree_sitter_lua::LANGUAGE.into(),
-            Lang::Dart => return None,
+            Lang::Dart | Lang::Markdown => return None,
             Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
             Lang::Solidity => return None,
             Lang::MsBuild

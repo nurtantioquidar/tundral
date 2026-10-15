@@ -17,7 +17,7 @@ use crate::facts::{Attr, FileFacts};
 use crate::graph::Graph;
 use crate::index;
 use crate::report::{self, Corpus};
-use crate::resolve::resolve;
+use crate::resolve::{resolve_with, Index, Pass, Resolution, View};
 
 pub const OUT_DIR: &str = "dijkstral-out";
 
@@ -78,20 +78,58 @@ pub trait Exporter: Sync {
     fn write(&self, built: &Built) -> Result<()>;
 }
 
+/// Walked non-code files a build adds to the graph next to the code: `update`'s LLM-free markdown
+/// structure (`dijkstral_semantic::markdown`, `docs/graphify-semantic.md` §3). Its files are read
+/// on every build (their contents enter the build digest) and are not cached.
+pub trait Documents: Sync {
+    /// Changes whenever identical files could produce a different graph.
+    fn fingerprint(&self) -> String;
+    /// Whether a walked non-code file (`Discovery::documents`) is read by the pass: its pages and
+    /// the documents whose words the report counts.
+    fn accepts(&self, rel: &str) -> bool;
+    /// Pages and words of the accepted files (given in path order).
+    fn extract(&self, root: &Path, files: &[(SourceFile, Vec<u8>)]) -> DocumentFacts;
+    /// Edges that need the whole renamed graph, after the language passes'.
+    fn resolve(&self, views: &[View], index: &Index) -> Resolution;
+}
+
+/// What a [`Documents`] pass extracted.
+#[derive(Debug, Default)]
+pub struct DocumentFacts {
+    /// `(index into the files, facts)` in path order: pages follow every code file in the graph,
+    /// share collision renaming and file labels with it, and count as files in the report.
+    pub pages: Vec<(usize, FileFacts)>,
+    /// Words of the other accepted files, added to the report's corpus total only.
+    pub words: u64,
+}
+
 pub fn build(opts: &BuildOptions) -> Result<BuildReport> {
     build_with(opts, &[])
 }
 
 /// [`build`], then `exporters` in order, before the build is recorded as current.
 pub fn build_with(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<BuildReport> {
+    build_full(opts, exporters, None)
+}
+
+/// [`build_with`], adding `documents` to the graph (`update`).
+pub fn build_full(
+    opts: &BuildOptions,
+    exporters: &[&dyn Exporter],
+    documents: Option<&dyn Documents>,
+) -> Result<BuildReport> {
     let pool = rayon::ThreadPoolBuilder::new()
         .num_threads(opts.threads.max(1))
         .build()
         .context("building thread pool")?;
-    pool.install(|| build_inner(opts, exporters))
+    pool.install(|| build_inner(opts, exporters, documents))
 }
 
-fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<BuildReport> {
+fn build_inner(
+    opts: &BuildOptions,
+    exporters: &[&dyn Exporter],
+    documents: Option<&dyn Documents>,
+) -> Result<BuildReport> {
     let mut report = BuildReport::default();
     let mut clock = Instant::now();
     let mut phase = |report: &mut BuildReport, name: &'static str| {
@@ -116,6 +154,40 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
     report.files = files.len();
     phase(&mut report, "discover");
 
+    // Documents are read now: their contents decide whether the build is current.
+    let docs: Vec<(SourceFile, Vec<u8>)> = documents.map_or_else(Vec::new, |d| {
+        found
+            .documents
+            .par_iter()
+            .filter(|rel| d.accepts(rel))
+            .filter_map(|rel| {
+                let abs = root.join(rel);
+                let content = fs::read(&abs).ok()?;
+                let lang = crate::lang::Lang::Markdown;
+                Some((
+                    SourceFile {
+                        rel: rel.clone(),
+                        abs,
+                        lang,
+                    },
+                    content,
+                ))
+            })
+            .collect()
+    });
+    let docs_digest = documents.map(|d| {
+        let mut h = blake3::Hasher::new();
+        h.update(d.fingerprint().as_bytes());
+        for (f, content) in &docs {
+            h.update(&[0]);
+            h.update(f.rel.as_bytes());
+            h.update(&[0]);
+            h.update(blake3::hash(content).as_bytes());
+        }
+        h.finalize().to_hex().to_string()
+    });
+    report.files += docs.len();
+
     let mut cache = Cache::open(&out_dir.join("cache.redb"))?;
     let probes: Vec<Probe> = files.par_iter().map(|f| probe(&cache, f)).collect();
     phase(&mut report, "stat");
@@ -136,6 +208,7 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
         opts.cluster,
         commit.as_deref(),
         &date,
+        docs_digest.as_deref(),
     );
     let extra: Vec<PathBuf> = exporters.iter().flat_map(|e| e.outputs()).collect();
     if file_keys.iter().all(Option::is_some)
@@ -194,7 +267,7 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
         by_index[i] = Some(f);
     }
     // Keys include the relative path, so each hit belongs to exactly one file.
-    let ordered: Vec<(&SourceFile, FileFacts)> = files
+    let mut ordered: Vec<(&SourceFile, FileFacts)> = files
         .iter()
         .enumerate()
         .filter_map(|(i, f)| {
@@ -204,8 +277,22 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
         .collect();
     report.cached = ordered.len() - report.extracted;
 
+    // Documents follow every code file (`docs/graphify-semantic.md` §3.6).
+    let mut doc_words = 0;
+    if let Some(d) = documents {
+        let facts = d.extract(&root, &docs);
+        report.extracted += facts.pages.len();
+        ordered.extend(facts.pages.into_iter().map(|(i, f)| (&docs[i].0, f)));
+        doc_words = facts.words;
+    }
+    let doc_pass = |views: &[View], index: &Index| match documents {
+        Some(d) => d.resolve(views, index),
+        None => Resolution::default(),
+    };
+    let passes: [Pass; 1] = [&doc_pass];
+
     let words: Vec<u64> = ordered.iter().map(|(_, f)| f.words).collect();
-    let graph: Graph = resolve(ordered);
+    let graph: Graph = resolve_with(ordered, &passes);
     phase(&mut report, "resolve");
 
     report.nodes = graph.nodes.len();
@@ -250,7 +337,7 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
             name: root
                 .file_name()
                 .map_or_else(String::new, |n| n.to_string_lossy().into_owned()),
-            stats: Some((words.len(), words.iter().sum())),
+            stats: Some((words.len(), words.iter().sum::<u64>() + doc_words)),
             unclassified,
             commit: commit.clone(),
             date: date.clone(),
@@ -294,9 +381,14 @@ fn build_digest(
     cluster: bool,
     commit: Option<&str>,
     date: &str,
+    documents: Option<&str>,
 ) -> String {
     let mut h = blake3::Hasher::new();
     h.update(env!("DIJKSTRAL_BUILD_FINGERPRINT").as_bytes());
+    if let Some(d) = documents {
+        h.update(b"documents\0");
+        h.update(d.as_bytes());
+    }
     h.update(&[cluster as u8]);
     h.update(commit.unwrap_or("").as_bytes());
     h.update(&[0]);

@@ -44,9 +44,11 @@ pub fn normalize(text: &str) -> String {
     out
 }
 
-/// Python's `\w` for str patterns: Unicode letters, digits and underscore.
+/// Python's `\w` for str patterns: Unicode letters, digits and underscore. Combining marks (the
+/// vowel signs of Devanagari headings, `परिचय` → `पर_चय`) are alphabetic in Rust but not
+/// `isalnum()` in Python, so they separate words.
 fn is_word(c: char) -> bool {
-    c == '_' || c.is_alphanumeric()
+    c == '_' || (c.is_alphanumeric() && !unicode_normalization::char::is_combining_mark(c))
 }
 
 /// Unicode default case folding for the characters where it differs from lowercasing.
@@ -102,5 +104,7 @@ mod tests {
         assert_eq!(make_id(&["x--y", "", "z"]), "x_y_z");
         assert_eq!(make_id(&["Straße"]), "strasse");
         assert_eq!(make_id(&["ﬁle"]), "file");
+        // Graphify's id of the Hindi heading `परिचय (About)`.
+        assert_eq!(make_id(&["परिचय (About)"]), "पर_चय_about");
     }
 }

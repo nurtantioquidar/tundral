@@ -10,10 +10,15 @@ publish.workspace = true
 anyhow.workspace = true
 base64.workspace = true
 dijkstral-core.workspace = true
+pdf-extract.workspace = true
+quick-xml.workspace = true
+regex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
+tiktoken-rs.workspace = true
 ureq.workspace = true
+zip.workspace = true
 
 [dev-dependencies]
 tempfile.workspace = true

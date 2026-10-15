@@ -255,8 +255,23 @@ backtick references).
 
 - **Rule (raw order).** Nodes: all code files as in format spec §2.4, then markdown files in sorted
   path order (byte order: `README.md`, `UPPER.MD`, `bom.md`, …), each as page, then headings in
-  line order. Edges: per-file `contains`, then all link edges in file order, then all backtick
-  references in file order.
+  line order. Edges: per file, `contains` and link edges in line order (a heading's `contains`
+  before the links on its line), then all backtick references in file order.
+- **Rule (report).** `update`'s `Corpus Check` counts code files and markdown pages as files, but
+  its word total also includes the other documents (`.rst .txt .yaml .html`: 418 words for the
+  `markdown` fixture, 404 without them), PDF text, converted office text and raster images read
+  as UTF-8 with invalid bytes dropped (`mixed`: 823 words).
+- **Rule (papers).** A `.md` file with at least three paper signals is a paper and gets no page
+  (Graphify's `worked/mixed-corpus/raw/attention_notes.md`). Signals, each counted once:
+  `arxiv`, an arXiv id `1706.03762`, `doi`, `abstract`, a citation `[1]` (not `argv[0]`),
+  `\cite{`, `journal`, `preprint`, `proceedings`; `et al.`, `References`, `ISBN`, a second DOI and
+  others do not count. **Open:** exact patterns, and whether other document types are reclassified
+  for the semantic pass too (dijkstral assumes so).
+- **Quirk.** `update` discovers files differently from `extract --code-only`: it descends into
+  `.claude/` (code and documents), and a symlinked file is indexed under its own path, its id and
+  heading ids derived from the resolved absolute path (`private_tmp_…_aaa_zzz`), while a target
+  sorted before its symlink (`AGENTS.md` ← `CLAUDE.md`, `a.py` ← `b.py`) is dropped. dijkstral's
+  walker does neither (monet: 21 `.claude/skills` pages and 10 `CLAUDE.md` pages differ).
 - **Rule.** The clustered build treats these nodes and edges like any other (§8.2 fold of the
   format spec; `docs_guide → readme` and `readme → docs_guide` keep one link).
 - **Rule.** On a graph that already has semantic nodes, `update` keeps them (with
@@ -617,3 +632,10 @@ compares against `dijkstral-out/semantic/index.json`, which also feeds `check-up
 7. Label prompt member selection (§10).
 8. `add` downloads, `--google-workspace` with `gws`, audio/video transcription with the `video`
    extra (§2.1, §11).
+9. Qualified backtick references on real corpora (§3.4): fastapi resolves
+   `APIRoute.get_route_handler()` among nine `get_route_handler` callables,
+   `fastapi.security.base.SecurityBase` among two and `fastapi.sse` to a function in
+   `tests/test_stream_status_code.py`, while the probes (`Alpha.go`, `pkg.Beta.go`, `zzz.run`,
+   a scratch `fastapi.sse`) do not resolve. 68 of fastapi's 19,650 markdown links (0.35%) and 3
+   of Graphify's 3,880 depend on this.
+10. Paper detection patterns and the symlink rule of `update` (§3.6).
