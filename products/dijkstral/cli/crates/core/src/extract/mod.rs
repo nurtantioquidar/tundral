@@ -78,7 +78,8 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::MsBuild | Lang::Sln | Lang::Slnx | Lang::Razor | Lang::Xaml => {
             dotnet::extract(&mut cx)
         }
-        Lang::Inert => {}
+        // Built by the markdown pass of a `pipeline::Documents` hook, never extracted here.
+        Lang::Inert | Lang::Markdown => {}
         Lang::Pascal | Lang::DelphiForm | Lang::Lpk | Lang::Apex | Lang::Cobol | Lang::Byond => {
             legacy::extract(&mut cx)
         }

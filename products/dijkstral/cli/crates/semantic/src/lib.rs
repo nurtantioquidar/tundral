@@ -8,8 +8,10 @@
 //!   Gemini, replay, skill-driven hand-off), validation and repair, retries, concurrency, the
 //!   per-file cache, community naming (§4.3–4.4, §5, §6, §9, §10).
 //! - `merge`: replies into the graph, hyperedges, outputs that change (§7, §8).
+//! - `markdown`: the LLM-free markdown structure `update` adds (§3), as a core build pass.
 
 pub mod ingest;
+pub mod markdown;
 pub mod merge;
 pub mod run;
 pub mod types;

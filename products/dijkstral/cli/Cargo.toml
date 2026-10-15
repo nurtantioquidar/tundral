@@ -23,6 +23,15 @@ ignore = "0.4"
 memchr = "2"
 memmap2 = "0.9"
 mimalloc = { version = "0.1", default-features = false }
+# Office files are zip archives of XML parts (.docx/.xlsx → Markdown for the semantic pass); inflate
+# only, through flate2's pure-Rust backend.
+zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
+quick-xml = "0.38"
+# PDF text for the semantic pass (pure Rust, over lopdf).
+pdf-extract = "0.12"
+# cl100k_base token estimates for the semantic pass's chunking; the vocabulary ships in the crate.
+tiktoken-rs = "0.12"
+sha2 = "0.10"
 # Microsoft's MIT-licensed Leiden (graspologic-native v1.3.1, the engine Graphify calls through
 # Python), so partitions match Graphify's for identical input and seed.
 network_partitions = { git = "https://github.com/microsoft/graspologic-native", rev = "773181488b4e5b81925e302b972b294fd51f61a4" }
