@@ -1,7 +1,9 @@
 mod agents_cmd;
+mod clone_cmd;
 mod export_cmd;
 mod exports;
 mod mcp_cmd;
+mod multirepo_cmd;
 mod query_cmds;
 mod semantic_build;
 mod semantic_cmd;
@@ -60,6 +62,12 @@ enum Command {
     Semantic(semantic_cmd::SemanticArgs),
     /// Report non-code changes the semantic pass has not seen (silent when current).
     CheckUpdate(semantic_cmd::CheckUpdateArgs),
+    /// Merge two or more graph.json files into one cross-repo graph (ids become <repo>::<id>).
+    MergeGraphs(multirepo_cmd::MergeArgs),
+    /// The global graph of every added project, in $DIJKSTRAL_HOME (default ~/.dijkstral).
+    Global(multirepo_cmd::GlobalArgs),
+    /// Shallow-clone a GitHub repository to index it and print its path.
+    Clone(clone_cmd::CloneArgs),
 }
 
 #[derive(Args, Debug)]
@@ -98,6 +106,8 @@ struct BuildArgs {
     exports: export_cmd::BuildExports,
     #[command(flatten)]
     semantic: semantic_build::SemanticFlags,
+    #[command(flatten)]
+    global: multirepo_cmd::GlobalFlags,
 }
 
 fn main() -> ExitCode {
@@ -117,6 +127,9 @@ fn main() -> ExitCode {
         Command::Tree(args) => return exports::tree::run_cmd(args),
         Command::Semantic(args) => return semantic_cmd::run_semantic(args),
         Command::CheckUpdate(args) => return semantic_cmd::run_check_update(args),
+        Command::MergeGraphs(args) => return multirepo_cmd::run_merge(args),
+        Command::Global(args) => return multirepo_cmd::run_global(args),
+        Command::Clone(args) => return clone_cmd::run(args),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {
@@ -171,6 +184,9 @@ fn main() -> ExitCode {
                 {
                     eprintln!("warning: {e:#}");
                 }
+            }
+            if !multirepo_cmd::after_build(&args.global, &opts.root, &report.out_dir) {
+                return ExitCode::FAILURE;
             }
             ExitCode::SUCCESS
         }
