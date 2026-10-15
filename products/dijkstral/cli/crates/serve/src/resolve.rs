@@ -19,6 +19,17 @@ pub enum Resolved {
 /// non-empty wins: exact (words or id), prefix (words or id), substring (words). `path::symbol`
 /// narrows to nodes whose `source_file` ends with `path`.
 pub fn resolve(ix: &Index, query: &str) -> Resolved {
+    // A cross-repo id (`<repo>::<id>`, `docs/graphify-multirepo.md` §3.3) is an exact id before
+    // it is a `path::symbol`.
+    if query.contains("::") {
+        let exact: Vec<u32> = ix
+            .ids_with_prefix(query)
+            .filter(|&i| ix.id(i) == query)
+            .collect();
+        if let [one] = exact[..] {
+            return Resolved::Found(one);
+        }
+    }
     let (path, symbol) = match query.split_once("::") {
         Some((p, s)) => (Some(p), s),
         None => (None, query),
