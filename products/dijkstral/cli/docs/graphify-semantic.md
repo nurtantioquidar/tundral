@@ -666,8 +666,8 @@ compares against `dijkstral-out/semantic/index.json`, which also feeds `check-up
 - Office conversions are written to and named as `dijkstral-out/converted/<stem>_<h8>.md`, so
   office nodes are `dijkstral_out_converted_…` where Graphify's are `graphify_out_converted_…`,
   and `update` does not index them (quirk S2 is not reproduced; `dijkstral-out` is skipped).
-  Because dijkstral's requests frame an office file by its own path, a reply node attributed to
-  `office/runbook.docx` is in scope too (Graphify drops it, §7.1).
+  Requests frame an office file by its converted path (§2.2), but a reply node attributed to the
+  original `office/runbook.docx` is in scope too (Graphify drops it, §7.1).
 - `extract` without `--code-only` runs the semantic pass through core's `Documents` seam
   (`crates/semantic/src/pass.rs`) and writes `GRAPH_REPORT.md` with this run's usage; `update`
   never calls a model and sets `needs_update` when a file the pass read changed or a new one

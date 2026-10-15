@@ -235,9 +235,9 @@ impl Run<'_> {
     fn files_of(&self, parts: &[Part]) -> Vec<String> {
         let mut out: Vec<String> = Vec::new();
         for p in parts {
-            let rel = &self.docs[p.doc].rel;
-            if !out.contains(rel) {
-                out.push(rel.clone());
+            let rel = self.docs[p.doc].dispatched();
+            if !out.iter().any(|f| f == rel) {
+                out.push(rel.to_string());
             }
         }
         out
@@ -274,7 +274,12 @@ impl Run<'_> {
                     );
                     let file_keys: Vec<(String, String)> = parts
                         .iter()
-                        .map(|p| (self.docs[p.doc].rel.clone(), self.keys[&p.doc].clone()))
+                        .map(|p| {
+                            (
+                                self.docs[p.doc].dispatched().to_string(),
+                                self.keys[&p.doc].clone(),
+                            )
+                        })
                         .fold(Vec::new(), |mut v, fk| {
                             if !v.contains(&fk) {
                                 v.push(fk);
@@ -576,7 +581,7 @@ pub fn extract(
         if let Some(e) = hits.get(&d) {
             let raw = e.reply_map();
             outcome.extracted.push(Extracted {
-                files: vec![docs[d].rel.clone()],
+                files: vec![docs[d].dispatched().to_string()],
                 cached: true,
                 partial: false,
                 reply: to_reply(&raw),
@@ -607,7 +612,7 @@ pub fn extract(
     // File states, the shrink guard and the index.
     let mut all_complete = true;
     for &d in &order {
-        let rel = docs[d].rel.clone();
+        let rel = docs[d].dispatched().to_string();
         let (state, nodes) = match (hits.get(&d), accs.get(&d)) {
             (Some(e), _) => (FileState::Cached, e.node_count()),
             (None, Some(a)) => (state_of(a), a.nodes.len()),
@@ -680,7 +685,7 @@ fn accumulate(run: &Run<'_>, pieces: &[Piece], accs: &mut HashMap<usize, FileAcc
         let files = run.files_of(&piece.parts);
         let split = piece.map.as_ref().map(|m| split_by_file(m, &files).0);
         for d in unique_docs(&piece.parts) {
-            let rel = &run.docs[d].rel;
+            let rel = run.docs[d].dispatched();
             let acc = accs.get_mut(&d).expect("tracked file");
             match &piece.status {
                 Status::Pending(_) => acc.pending = true,

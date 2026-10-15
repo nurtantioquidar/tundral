@@ -80,7 +80,7 @@ pub fn extraction_request(docs: &[SourceDoc], parts: &[Part], mode: Mode) -> Req
     let mut text = String::new();
     let mut files: Vec<&str> = Vec::new();
     for p in parts {
-        let rel = docs[p.doc].rel.as_str();
+        let rel = docs[p.doc].dispatched();
         if !files.contains(&rel) {
             files.push(rel);
         }
@@ -94,19 +94,20 @@ pub fn extraction_request(docs: &[SourceDoc], parts: &[Part], mode: Mode) -> Req
     let mut images = Vec::new();
     for p in parts {
         let d = &docs[p.doc];
+        let rel = d.dispatched();
         match d.kind {
             DocKind::RasterImage => {
                 if let Some((mime, bytes)) = &d.image {
-                    images.push((mime.clone(), bytes.clone(), d.rel.clone()));
+                    images.push((mime.clone(), bytes.clone(), rel.to_string()));
                 }
             }
             DocKind::Paper => {
                 let _ = write!(
                     text,
                     "\n=== FILE: {} (paper, extracted text) ===\n{}\n=== END FILE: {} ===\n",
-                    d.rel,
+                    rel,
                     piece(&d.text, p.piece),
-                    d.rel
+                    rel
                 );
             }
             DocKind::Document | DocKind::VectorImage => {
@@ -120,7 +121,7 @@ pub fn extraction_request(docs: &[SourceDoc], parts: &[Part], mode: Mode) -> Req
                         let _ = write!(
                             text,
                             "\n=== FILE: {} ({what}, sha256 {}) ===\n{}\n=== END FILE: {} ===\n",
-                            d.rel, d.sha256, d.text, d.rel
+                            rel, d.sha256, d.text, rel
                         );
                     }
                     Some((a, b)) => {
@@ -129,9 +130,9 @@ pub fn extraction_request(docs: &[SourceDoc], parts: &[Part], mode: Mode) -> Req
                             text,
                             "\n=== FILE: {} ({what}, characters {a}-{b} of {total}) ===\n{}\n\
                              === END FILE: {} ===\n",
-                            d.rel,
+                            rel,
                             piece(&d.text, p.piece),
-                            d.rel
+                            rel
                         );
                     }
                 }
@@ -271,6 +272,28 @@ mod tests {
         assert!(r.user_text.ends_with("1. images/a.png\n"));
         assert_eq!(r.images.len(), 1);
         assert_eq!(r.images[0].2, "images/a.png");
+    }
+
+    #[test]
+    fn frames_office_files_by_their_converted_path() {
+        let mut office = doc(
+            "docs/capacity.xlsx",
+            DocKind::Document,
+            "## Sheet: Capacity",
+        );
+        office.converted = Some("dijkstral-out/converted/capacity_e7fd8f6a.md".into());
+        let parts = vec![Part {
+            doc: 0,
+            piece: None,
+        }];
+        let r = extraction_request(&[office], &parts, Mode::Normal);
+        assert!(r
+            .user_text
+            .contains("source_file must be one of: dijkstral-out/converted/capacity_e7fd8f6a.md."));
+        assert!(r
+            .user_text
+            .contains("=== FILE: dijkstral-out/converted/capacity_e7fd8f6a.md (document"));
+        assert!(!r.user_text.contains("capacity.xlsx"));
     }
 
     #[test]
