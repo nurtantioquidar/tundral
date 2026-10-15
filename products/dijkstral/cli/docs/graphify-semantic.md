@@ -74,6 +74,10 @@ Goldens in `tests/fixtures/semantic/`:
 | `mixed.cache_keys.json` | cache directories, per-file cache keys, manifest hashes, converted file names |
 | `merge_probe{1,2}.reply.json` | crafted replies (static responder) exercising validation and merging |
 | `merge_probe{1,2}.extract[_raw].graphify.json` | Graphify's clustered and raw graphs for those replies on `mixed/` |
+| `fold_probe{1,2}.reply.json`, `….extract.graphify.json` | crafted replies and Graphify's clustered graphs: semantic edges on code links, and 330 pairs of relations (§7.3) |
+| `hyper_probe.reply.json`, `….extract.graphify.json` | hyperedge pruning (§7.4) |
+| `report_probe.reply.json`, `….extract.graphify.json` | seven AMBIGUOUS links and four hyperedges |
+| `report_probe.cluster_only.graphify{.json,_analysis.json,_report.md}`, `mixed.extract.cluster_only.graphify{…}` | `graphify cluster-only --no-label` on those graphs (report sections and questions, §8.2) |
 
 Replaying `mixed.transcript` reproduced `mixed.extract`, `mixed.deep` and the label run byte for
 byte (graph, analysis, labels), so every semantic golden is a deterministic function of the
@@ -457,11 +461,32 @@ runs. "Raw" is `extract --no-cluster`, "clustered" the default build.
   no `relation` or `confidence` is kept without the key.
 - **Rule.** Any relation string is kept (`mentions`, `shares_data_with`). Self-loops are kept.
   Extra keys (`context`, `x_edge`) pass through.
-- **Rule.** The one-edge-per-pair fold of format spec §8.2 applies. Between two semantic
-  relations of one pair the first in reply order survived (`semantically_similar_to` INFERRED 0.7
-  over a later `implements` EXTRACTED 1.0), and a reverse edge folds into the earlier one
-  (`readme_job_service → docs_guide_operator_guide` disappeared next to the reverse edge).
-  **Open:** the rank of semantic relations against code relations.
+- **Rule (fold, resolved 2026-10-15).** Probed with crafted replies through the static shim on
+  `mixed/` (`fold_probe1`: nine semantic edges on code links; `fold_probe2`: 330 pairs of reply
+  relations, both orders and both orientations, each pair on fresh nodes). `graphify cluster-only`
+  cannot answer this: it writes every link of a hand-written graph back, duplicates included, so
+  the probes go through `extract`. The fold has two steps:
+  1. **Per direction.** Reply edges with the same `source` and `target` are reduced to one.
+     They are taken in relation-name order (stable for a repeated relation, so the later one of
+     two `references` wins); each replaces the survivor when its tier is at least the survivor's,
+     merged as `{**survivor, **edge}`, and is dropped otherwise (no keys absorbed). Tiers:
+     `mentions` lowest, then `references`, `uses`, `calls`/`case_of`/`dynamic_import`, the PHP
+     relations of format spec §8.2, and **one** tier for every other relation: `contains`,
+     `method`, `defines`, `implements`, `rationale_for`, `imports`, `imports_from` and every
+     relation a model invents (`cites`, `describes`, `semantically_similar_to`, …). Hence
+     `semantically_similar_to` keeps a later `implements` (`merge_probe1`), `related_to` beats
+     `imports`, and `calls` beats `cites` only because `cites` sorts first.
+  2. **Into the code links**, after every code edge, with the code fold's shape on these tiers.
+     In the link's orientation a new edge of at least the link's tier wins merged
+     (`{**link, **edge}`: a semantic `imports_from` over a code `calls` keeps the link's
+     `_origin`, `source_location` and score; over `contains` it keeps `L17` and `_origin`); a
+     structural link (`contains`, …) takes only a `calls` edge's context; any other link takes the
+     keys it lacks (`rationale_for` gains a `mentions` edge's `context`). Against the orientation
+     the higher tier wins, equal tiers keep the smaller source for one relation and the larger
+     for two (format spec §8.2), and the winner is **merged** over the loser (a semantic
+     `init → jobqueue` `contains` beats the code `method` link and keeps its `source_location` and
+     `_origin`). The reverse `docs_guide → readme` of the Codex reply wins over `readme →
+     docs_guide` that way.
 - **Rule.** Leiden weights `AMBIGUOUS` links ×0.5 (format spec §17.2); semantic replies are the
   only source of `AMBIGUOUS` links.
 
@@ -469,8 +494,14 @@ runs. "Raw" is `extract --no-cluster`, "clustered" the default build.
 
 - **Rule.** Raw output: the reply's hyperedges verbatim, in reply order, unknown members kept.
 - **Rule.** Clustered output: members that are not graph nodes are removed (`h_ghost` keeps 2 of
-  3), ids follow §7.2, hyperedges without `id` move after those with one, and the list is written
-  **twice**: as the top-level `hyperedges` and as `graph.hyperedges`.
+  3; one member left is kept, none drops the hyperedge), member ids follow §7.2 (hyperedge ids do
+  not), and a hyperedge whose `source_file` names a file not dispatched is dropped like a node
+  (one without `source_file` is kept; `hyper_probe`).
+- **Rule.** The list is sorted like nodes and links, by `json.dumps(h, sort_keys=True)`
+  (`report_probe`: `AMBIGUOUS`, `EXTRACTED`, `INFERRED` 0.333, then one without `confidence`;
+  the Codex runs: `EXTRACTED` 0.95 before 1.0), which is why ones without `id` and
+  `confidence` usually come last. It is written **twice**: as the top-level `hyperedges` and as
+  `graph.hyperedges`.
 
 ---
 
@@ -491,14 +522,35 @@ runs. "Raw" is `extract --no-cluster`, "clustered" the default build.
   (`{"input": 16843, "output": 3275}`); 0/0 for a fully cached run.
 - **Rule.** `extract` prints `tokens: 16,843 in / 3,275 out, est. cost (~openai): $0.0120` and
   writes `.graphify_semantic_marker` = `{"output_tokens": N}`.
+- **Rule (surprises).** A surprise between files of two kinds adds 2 to its score and the reason
+  `crosses file types (<a> ↔ <b>)`, after the confidence reason and before the directory one.
+  Kinds: `paper` (`.pdf`), `image`, `doc` (the §2.1 documents, office files included), else
+  `code`. **Quirk:** the pair is printed in Python set order, which changes between runs
+  (`doc ↔ paper` in the extract sidecar, `paper ↔ doc` in a later `cluster-only` of the same
+  graph); dijkstral prints it sorted.
+- **Rule (questions).** Each AMBIGUOUS link gives an `ambiguous_edge` question, first in every
+  round of the interleave (format spec §17.5), with `"low_confidence": true` in the sidecar:
+  ``What is the exact relationship between `<u>` and `<v>`?`` / `Edge tagged AMBIGUOUS
+  (relation: <relation>) - confidence is low.`, `u`, `v` in `G.edges()` order. They count
+  toward the seven questions (`report_probe`: six hints and one bridge).
 - **Rule.** `GRAPH_REPORT.md` (from `update`, `label`, `cluster-only`): `Token cost:` shows only the
   writing command's own usage (`15,160 input · 29 output` after `label`, `0 · 0` after `update`).
-  Two sections appear when relevant, both after `## Import Cycles`:
-  - `## Hyperedges (group relationships)` — `- **<label>** — <member ids, comma-separated>
-    [<CONFIDENCE> <score with 2 decimals>]`, sorted by label (by id gives the same order in the
-    fixture; **Open**).
-  - `## Ambiguous Edges - Review These` (after the communities) — ``- `<source label>` → `<target
-    label>`  [AMBIGUOUS]`` then `  <source_file> · relation: <relation>`.
+  Sections when relevant:
+  - `## Hyperedges (group relationships)` after `## Import Cycles`, one line per hyperedge in
+    graph order: `- **<label>** — <member ids, ", "-joined> [<CONFIDENCE>[ <score, 2
+    decimals>]]`; a missing confidence reads `INFERRED`, the score only when numeric.
+  - `## Ambiguous Edges - Review These` after the communities, every AMBIGUOUS link in
+    `G.edges()` order: ``- `<u label>` → `<v label>`  [AMBIGUOUS]`` then `  <source_file> ·
+    relation: <relation>`.
+  - In `## Knowledge Gaps`, after the thin-communities line, `- **High ambiguity: N% of edges
+    are AMBIGUOUS.** Review the Ambiguous Edges section above.` when more than a fifth of the
+    links are AMBIGUOUS (5 of 20 and 21 of 100 flag, 20 of 100 does not); the section appears
+    for this line alone too.
+  - After the questions, the `ambiguous_edge` ones under `\n\n### Low-confidence Hints\n_AMBIGUOUS
+    edges — the extractor was unsure. Verify before acting on these._\n`, each as the other
+    questions are written.
+
+dijkstral's `extract` writes the report too (Graphify's does not), with this run's usage.
 
 ---
 
@@ -603,6 +655,25 @@ compares against `dijkstral-out/semantic/index.json`, which also feeds `check-up
   `--google-workspace`; without a `gws` binary on `PATH` the flag prints nothing and creates no
   conversion (`graphify-out/converted/` stays empty). **Open:** behaviour with `gws` installed.
 
+### 11.1 dijkstral's choices (deliberate differences)
+
+- `add` applies the same refusals, then connects only to the addresses it checked (its HTTP
+  agent's resolver repeats the check on every redirect hop) and saves at most 20 MB as
+  `<--dir, default raw>/<slug of host and path>.<ext>`: text as Markdown with a front-matter
+  block (`source_url`, `captured_at`, `author`, `contributor`), HTML as `.html`, PDFs and images
+  as fetched. It does not rebuild; the next `extract` sends the file
+  (`crates/semantic/src/add.rs`).
+- Office conversions are written to and named as `dijkstral-out/converted/<stem>_<h8>.md`, so
+  office nodes are `dijkstral_out_converted_…` where Graphify's are `graphify_out_converted_…`,
+  and `update` does not index them (quirk S2 is not reproduced; `dijkstral-out` is skipped).
+  Because dijkstral's requests frame an office file by its own path, a reply node attributed to
+  `office/runbook.docx` is in scope too (Graphify drops it, §7.1).
+- `extract` without `--code-only` runs the semantic pass through core's `Documents` seam
+  (`crates/semantic/src/pass.rs`) and writes `GRAPH_REPORT.md` with this run's usage; `update`
+  never calls a model and sets `needs_update` when a file the pass read changed or a new one
+  appeared. The unchanged-build check covers the documents' hashes, backend, model, mode,
+  reasoning effort and prompt version, and never skips while a file still needs the model.
+
 ---
 
 ## 12. Quirks and open questions
@@ -628,7 +699,8 @@ compares against `dijkstral-out/semantic/index.json`, which also feeds `check-up
    (§4.1–4.2).
 4. The cache directory recipe `p<12 hex>` (§9.1) and the `.graphify_labels.json.sig` values (§10).
 5. Evidence check details for `file_type: "code"` nodes (§7.2).
-6. Fold ranks of semantic relations against AST relations (§7.3).
+6. ~~Fold ranks of semantic relations against AST relations~~: resolved (§7.3). Still open: the
+   tier of `instantiates`, `indirect_call` and `re_exports` against model relations.
 7. Label prompt member selection (§10).
 8. `add` downloads, `--google-workspace` with `gws`, audio/video transcription with the `video`
    extra (§2.1, §11).

@@ -1,0 +1,16 @@
+{"nodes": [
+  {"id": "readme_a", "label": "Alpha", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_b", "label": "Bravo", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_c", "label": "Charlie", "file_type": "concept", "source_file": "README.md"}
+ ],
+ "edges": [
+  {"source": "readme_a", "target": "readme_b", "relation": "references", "confidence": "EXTRACTED", "source_file": "README.md"}
+ ],
+ "hyperedges": [
+  {"id": "h_none", "label": "no known members", "nodes": ["ghost_1", "ghost_2"], "relation": "form", "source_file": "README.md"},
+  {"id": "h_one", "label": "one known member", "nodes": ["readme_a", "ghost_2"], "relation": "form", "source_file": "README.md"},
+  {"id": "h_two", "label": "two known members", "nodes": ["readme_a", "readme_b", "ghost"], "relation": "form", "source_file": "README.md"},
+  {"id": "h_oos", "label": "out of scope file", "nodes": ["readme_a", "readme_c"], "relation": "form", "source_file": "src/app/util.py"},
+  {"id": "h_missing", "label": "unknown file", "nodes": ["readme_b", "readme_c"], "relation": "form", "source_file": "nowhere.md"},
+  {"id": "h_code", "label": "code members only", "nodes": ["src_app_util", "src_app_service"], "relation": "form", "source_file": "README.md"}
+ ]}

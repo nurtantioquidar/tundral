@@ -387,6 +387,12 @@ pub fn merge(graph: &mut Graph, dispatched: &[Dispatched], inputs: &[MergeInput]
     let mut without_id = Vec::new();
     for input in inputs {
         for h in input.items("hyperedges") {
+            // Like nodes, a hyperedge attributed to a file not dispatched is dropped.
+            if let Some(sf) = h.get("source_file").and_then(Value::as_str) {
+                if !scope.contains_key(canonical(sf)) {
+                    continue;
+                }
+            }
             let mut h = h.clone();
             if let Some(Value::Array(members)) = h.get("nodes") {
                 let members: Vec<Value> = members
@@ -396,6 +402,10 @@ pub fn merge(graph: &mut Graph, dispatched: &[Dispatched], inputs: &[MergeInput]
                     .filter(|m| known.contains(m.as_str()))
                     .map(Value::String)
                     .collect();
+                // One member left is kept; none drops the hyperedge.
+                if members.is_empty() {
+                    continue;
+                }
                 h.insert("nodes".into(), Value::Array(members));
             }
             if h.contains_key("id") {

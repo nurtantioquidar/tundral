@@ -340,6 +340,12 @@ fn report_probe_matches_graphify() {
     assert_probe("report_probe", &[]);
 }
 
+/// Hyperedge pruning: no member left, one member left, a `source_file` not dispatched.
+#[test]
+fn hyper_probe_matches_graphify() {
+    assert_probe("hyper_probe", &[]);
+}
+
 /// `dijkstral cluster-only` on Graphify's graph `input` reproduces `graphify cluster-only
 /// --no-label`: graph, analysis and report.
 fn assert_cluster_only(input: &str, prefix: &str) {

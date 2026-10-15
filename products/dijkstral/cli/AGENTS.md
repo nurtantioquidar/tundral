@@ -40,10 +40,18 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   `graph.svg` (`svg.rs`); the Mermaid call-flow page (`callflow.rs`) and the D3 tree
   (`tree.rs`), whose pages are dijkstral's own (`*.html`, CDN scripts pinned with integrity).
   Their commands are in `crates/cli/src/exports/`.
-- `crates/semantic`: a later stage. Graphify's semantic pass (files sent, chunking, request and
-  reply schema, merge, cache, model labelling) and the LLM-free markdown structure of `update` are
-  specified in `docs/graphify-semantic.md`, with goldens and recorded model replies in
-  `tests/fixtures/semantic/` (replayable through `../bench/llm_shim.py`).
+- `crates/semantic`: Graphify's semantic pass (files sent, chunking, request and reply schema,
+  merge, cache, model labelling) and the LLM-free markdown structure of `update`, specified in
+  `docs/graphify-semantic.md`, with goldens and recorded model replies in
+  `tests/fixtures/semantic/` (replayable through `../bench/llm_shim.py`). Stages: `ingest`, `run`
+  (backends, cache, naming), `merge` (replies into the graph; its fold is
+  `core::graph::Graph::fold_semantic`) and `markdown`; `pass.rs` runs ingest → run → merge as
+  `extract`'s core `Documents` pass and implements `label`; `add.rs` is `dijkstral add <url>`.
+  Their commands are in `crates/cli/src/semantic_build.rs` and `semantic_cmd.rs`.
+  `crates/semantic/tests/merge_goldens.rs` feeds recorded and crafted replies through merge and
+  must match Graphify's graphs, sidecars and reports field for field; `crates/cli/tests/
+  semantic_cli.rs` drives the commands offline with the `replay` backend. Tests never call a
+  model; `../bench/semantic.py` is the same-model head-to-head.
 
 Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's
 output, and enforced by `crates/core/tests/golden_<lang>.rs` against the goldens in

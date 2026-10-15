@@ -260,15 +260,20 @@ impl Documents for SemanticPass {
     }
 }
 
-/// The files of this run as replies name them, with the text the evidence check searches.
+/// The files of this run as replies name them, with the text the evidence check searches. An
+/// office file counts under its converted path (Graphify's rule) and under its own path, which
+/// is the one `run`'s requests frame it by, so replies naming either are kept.
 pub fn dispatched(docs: &[SourceDoc]) -> Vec<Dispatched> {
-    docs.iter()
-        .map(|d| {
-            let text =
-                matches!(d.kind, DocKind::Document | DocKind::VectorImage).then(|| d.text.clone());
-            Dispatched::new(d.dispatched(), text)
-        })
-        .collect()
+    let mut out = Vec::with_capacity(docs.len());
+    for d in docs {
+        let text =
+            matches!(d.kind, DocKind::Document | DocKind::VectorImage).then(|| d.text.clone());
+        if d.converted.is_some() {
+            out.push(Dispatched::new(d.rel.clone(), text.clone()));
+        }
+        out.push(Dispatched::new(d.dispatched(), text));
+    }
+    out
 }
 
 /// After a no-model `update`: flag the semantic pass as stale when a non-code file it read

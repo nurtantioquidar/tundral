@@ -19,6 +19,7 @@ outside the source tree under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstr
 | `query.py` | Stage-3 query benchmark: `latency` (fresh process per call, p50/p95, peak RSS; Graphify on its reference graph, dijkstral on its own `graph.dij` and on Graphify's `graph.json`) → `results/query-<epoch>.json`; `parity` (both tools on Graphify's reference graph, seeds, NODE lists, EDGE sets and full output compared) → `results/query-parity-<epoch>.json`; `mcp` (MCP servers over stdio: spawn → `tools/list`, first and warm `query_graph` calls, peak RSS) → `results/mcp-<epoch>.json`; `report` prints the tables |
 | `hook.py` | Hook-guard latency: one fresh process per Claude Code `PreToolUse` payload for both tools, interleaved with the exec floor (`/usr/bin/true`) → `results/hook-<epoch>.json` |
 | `llm_shim.py` | Stage-5 semantic pass: localhost OpenAI-compatible server that answers through `codex exec` (ChatGPT subscription, no API key), replays recorded replies, or serves static ones; writes clean-room request transcripts ([semantic/README.md](semantic/README.md)) |
+| `semantic.py` | Stage-5 same-model semantic benchmark: Graphify and dijkstral through one Codex-backed shim (`--max-requests` caps Codex calls, `--dry-run` uses static replies) → `results/semantic-<epoch>.json` and a table |
 | `semantic/` | Semantic fixture binaries (`make_binaries.py`), markers, and how to run Graphify's model pass through the shim |
 
 Later stages add query latency, graph parity, SCIP precision/recall, and the paid
@@ -34,7 +35,7 @@ uv run --no-project bench/run.py run --tools graphify,dijkstral --repos fastapi,
 uv run --no-project bench/run.py report bench/results/build-<epoch>.json
 uv run --no-project bench/hook.py    # hook-guard latency, both tools (needs a release build)
 bench/reference.sh fastapi           # freeze Graphify's graph for parity
-cli/target/release/dijkstral extract ~/.cache/dijkstral-bench/corpus/fastapi --out /tmp/fa
+cli/target/release/dijkstral extract ~/.cache/dijkstral-bench/corpus/fastapi --code-only --out /tmp/fa
 uv run --no-project bench/parity.py /tmp/fa/dijkstral-out/graph.json \
   ~/.cache/dijkstral-bench/reference/fastapi.graph.json --ext .py
 # clustering alone: re-cluster a copy of the reference (cluster-only rewrites the graph it reads)
@@ -545,3 +546,36 @@ project/markup files, Pascal, Apex, COBOL and BYOND; their fixture goldens and p
 
 dijkstral is faster (7× to 57×) and lower in peak memory in all 12 scenarios.
 
+
+### Stage 5: semantic pass, same model — 2026-10-15
+
+`semantic.py`: both tools run `extract --backend openai` against one `llm_shim.py --responder
+codex` (`gpt-6.1-sol`, reasoning effort `medium`, both passed explicitly on every `codex exec`),
+scrubbed environment, dummy key, scratch copies. dijkstral goes through the shim rather than its
+own Codex backend so the transport (preamble, `codex exec` flags, model, effort) is identical and
+only each tool's prompt, chunking and merge differ. Corpora: the `mixed` fixture (README, two
+docs, YAML, PDF, PNG, DOCX, XLSX; 3 Python files) and a ripgrep slice (`crates/globset` README
+and sources, four crate READMEs, `RELEASE-CHECKLIST.md`). Graphify 0.9.86 semantic venv,
+dijkstral at this commit (release). Four Codex calls in all; reruns made none. Raw:
+`results/semantic-1792070444.json`.
+
+| Corpus | Tool | Wall s | Calls | Tokens in / out | Semantic nodes | Semantic links | Docs with ≥ 1 node | Doc→code links | Hyperedges | Rerun s | Rerun calls |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| mixed | Graphify | 66.1 | 1 | 17,614 / 3,443 | 18 | 34 | 8/8 | 0 | 2 | 0.63 | 0 |
+| mixed | dijkstral | 78.8 | 1 | 16,735 / 4,177 | 24 | 41 | 8/8 | 0 | 3 | 0.13 | 0 |
+| ripgrep | Graphify | 83.9 | 1 | 18,759 / 4,390 | 28 | 32 | 6/6 | 0 | 2 | 0.54 | 0 |
+| ripgrep | dijkstral | 82.8 | 1 | 19,542 / 4,540 | 33 | 31 | 6/6 | 0 | 3 | 0.12 | 0 |
+
+- Wall time is the model: one request each, 65–83 s of Codex time; the tools' own work is under a
+  second. Reruns served everything from the cache with no request: dijkstral 0.12–0.13 s,
+  Graphify 0.54–0.63 s.
+- The dijkstral `mixed` row is its recorded reply merged again from the cache after one fix (no
+  extra call): dijkstral's requests frame office files by their own path, so the model attributed
+  6 nodes to `office/*.docx`/`.xlsx`, which the first run dropped as out of scope (6 of 8 files,
+  18 nodes, 31 links). The pass now accepts both the original and the converted path.
+- Neither tool's model linked a document to a code node: both prompts show only the documents,
+  so the models create their own concept nodes (`readme_jobqueue` next to the code
+  `src_app_service_jobqueue`) instead of naming code ids. `update`'s backtick references
+  (no model) are what connect docs to code today.
+- Token counts are Codex's own usage through the shim (they include about 12k tokens of Codex's
+  instructions, mostly cached); a direct API call would report less for both tools.
