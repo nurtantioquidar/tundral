@@ -44,6 +44,8 @@ pub struct BuildReport {
     pub phases: Vec<(&'static str, Duration)>,
     /// Nothing changed since the last build; outputs were left as they are.
     pub unchanged: bool,
+    /// What the semantic stage did, when it ran.
+    pub semantic: Option<SemanticReport>,
 }
 
 enum Probe {
@@ -78,20 +80,61 @@ pub trait Exporter: Sync {
     fn write(&self, built: &Built) -> Result<()>;
 }
 
+/// What a [`Semantic`] stage did.
+#[derive(Debug, Default, Clone)]
+pub struct SemanticReport {
+    /// Model usage of this run (0/0 when every file came from the cache).
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+    /// Requests sent to the model.
+    pub calls: usize,
+    /// Nodes and links the stage added to the code graph.
+    pub nodes_added: usize,
+    pub edges_added: usize,
+    /// Lines for the user (files sent, cache hits, dropped items, warnings).
+    pub notes: Vec<String>,
+}
+
+/// A stage that adds non-code nodes to the resolved code graph before clustering: the semantic
+/// pass of `crates/semantic`, which this crate cannot depend on.
+pub trait Semantic: Sync {
+    /// Everything besides the code files that determines the stage's output (its input files,
+    /// backend, model, mode, prompt version), folded into the unchanged-build digest.
+    fn fingerprint(&self, root: &Path) -> Result<String>;
+    /// Bypass the unchanged-build skip (`--force`).
+    fn force(&self) -> bool {
+        false
+    }
+    fn apply(&self, root: &Path, out_dir: &Path, graph: &mut Graph) -> Result<SemanticReport>;
+}
+
 pub fn build(opts: &BuildOptions) -> Result<BuildReport> {
     build_with(opts, &[])
 }
 
 /// [`build`], then `exporters` in order, before the build is recorded as current.
 pub fn build_with(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<BuildReport> {
+    build_semantic(opts, exporters, None)
+}
+
+/// [`build_with`] with a [`Semantic`] stage between resolution and clustering.
+pub fn build_semantic(
+    opts: &BuildOptions,
+    exporters: &[&dyn Exporter],
+    semantic: Option<&dyn Semantic>,
+) -> Result<BuildReport> {
     let pool = rayon::ThreadPoolBuilder::new()
         .num_threads(opts.threads.max(1))
         .build()
         .context("building thread pool")?;
-    pool.install(|| build_inner(opts, exporters))
+    pool.install(|| build_inner(opts, exporters, semantic))
 }
 
-fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<BuildReport> {
+fn build_inner(
+    opts: &BuildOptions,
+    exporters: &[&dyn Exporter],
+    semantic: Option<&dyn Semantic>,
+) -> Result<BuildReport> {
     let mut report = BuildReport::default();
     let mut clock = Instant::now();
     let mut phase = |report: &mut BuildReport, name: &'static str| {
@@ -129,7 +172,7 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
         .collect();
     let commit = git_head(&root);
     let date = today();
-    let digest = build_digest(
+    let mut digest = build_digest(
         &files,
         &file_keys,
         &unclassified,
@@ -137,8 +180,18 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
         commit.as_deref(),
         &date,
     );
+    if let Some(s) = semantic {
+        // The semantic inputs, backend and model decide the outputs too; a code-only build of
+        // the same files has a different digest.
+        let mut h = blake3::Hasher::new();
+        h.update(digest.as_bytes());
+        h.update(b"\0semantic\0");
+        h.update(s.fingerprint(&root)?.as_bytes());
+        digest = h.finalize().to_hex().to_string();
+    }
     let extra: Vec<PathBuf> = exporters.iter().flat_map(|e| e.outputs()).collect();
     if file_keys.iter().all(Option::is_some)
+        && !semantic.is_some_and(|s| s.force())
         && outputs_current(&out_dir, opts.cluster, &digest, &extra)
     {
         report.unchanged = true;
@@ -205,13 +258,20 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
     report.cached = ordered.len() - report.extracted;
 
     let words: Vec<u64> = ordered.iter().map(|(_, f)| f.words).collect();
-    let graph: Graph = resolve(ordered);
+    let mut graph: Graph = resolve(ordered);
     phase(&mut report, "resolve");
 
-    report.nodes = graph.nodes.len();
-    report.edges = graph.edges.len();
     // A failed or interrupted build must never look current: drop the digest first.
     fs::remove_file(out_dir.join(DIGEST_FILE)).ok();
+    let mut tokens = (0, 0);
+    if let Some(s) = semantic {
+        let sr = s.apply(&root, &out_dir, &mut graph)?;
+        tokens = (sr.input_tokens, sr.output_tokens);
+        report.semantic = Some(sr);
+        phase(&mut report, "semantic");
+    }
+    report.nodes = graph.nodes.len();
+    report.edges = graph.edges.len();
 
     let clustered = if opts.cluster {
         let topo = Topology::of(&graph);
@@ -240,7 +300,8 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
 
     let mut labelled = None;
     if let Some((topo, communities)) = clustered {
-        let analysis = analyze(&graph, &topo, &communities);
+        let mut analysis = analyze(&graph, &topo, &communities);
+        analysis.tokens = tokens;
         write_atomic(
             &out_dir.join(ANALYSIS_FILE),
             analysis.to_json(&graph, &communities).as_bytes(),
@@ -254,6 +315,7 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
             unclassified,
             commit: commit.clone(),
             date: date.clone(),
+            tokens,
         };
         let md = report::render(&graph, &topo, &communities, &analysis, &corpus);
         write_atomic(&out_dir.join(REPORT_FILE), md.as_bytes())?;
@@ -366,12 +428,30 @@ pub struct ClusterOnly {
     pub analysis_json: String,
     pub report: String,
     pub communities: usize,
+    /// The community names written as `community_name`.
+    pub labels: Vec<String>,
 }
 
 /// Re-cluster an existing clustered `graph.json` the way `graphify cluster-only --no-label` does:
 /// nodes and links in file order, `Community N` names (also written as `community_name`), no file
 /// statistics, and `questions` in the analysis sidecar.
 pub fn cluster_only(doc: &serde_json::Value, name: &str) -> Result<ClusterOnly> {
+    cluster_only_named(doc, name, None)
+}
+
+/// Names communities after clustering (`label`): given the graph, its communities and their
+/// structural (hub) names, a name per community (`None` keeps the structural one) and the
+/// model usage `(input, output)`.
+pub type Namer<'a> =
+    &'a dyn Fn(&Graph, &Communities, &[String]) -> Result<(Vec<Option<String>>, (u64, u64))>;
+
+/// [`cluster_only`], with communities named by `namer` instead of `Community N`
+/// (`graphify label`, `docs/graphify-semantic.md` §10). Also returns the names.
+pub fn cluster_only_named(
+    doc: &serde_json::Value,
+    name: &str,
+    namer: Option<Namer>,
+) -> Result<ClusterOnly> {
     let mut graph = Graph::from_graphify_json(doc).map_err(anyhow::Error::msg)?;
     let commit = doc
         .get("built_at_commit")
@@ -380,9 +460,29 @@ pub fn cluster_only(doc: &serde_json::Value, name: &str) -> Result<ClusterOnly> 
     let topo = Topology::of(&graph);
     let communities = cluster(&topo);
     let mut analysis = analyze(&graph, &topo, &communities);
-    analysis.labels = (0..communities.members.len())
-        .map(|c| format!("Community {c}"))
-        .collect();
+    let mut tokens = (0, 0);
+    analysis.labels = match namer {
+        None => (0..communities.members.len())
+            .map(|c| format!("Community {c}"))
+            .collect(),
+        Some(namer) => {
+            let (names, used) = namer(&graph, &communities, &analysis.labels)?;
+            tokens = used;
+            analysis
+                .labels
+                .iter()
+                .enumerate()
+                .map(|(c, fallback)| {
+                    names
+                        .get(c)
+                        .cloned()
+                        .flatten()
+                        .unwrap_or_else(|| fallback.clone())
+                })
+                .collect()
+        }
+    };
+    analysis.tokens = tokens;
     let analysis_json = report::cluster_only_analysis_json(&graph, &communities, &analysis);
     let corpus = Corpus {
         name: name.to_string(),
@@ -390,12 +490,15 @@ pub fn cluster_only(doc: &serde_json::Value, name: &str) -> Result<ClusterOnly> 
         unclassified: Vec::new(),
         commit: commit.clone(),
         date: today(),
+        tokens,
     };
     let md = report::render(&graph, &topo, &communities, &analysis, &corpus);
     for (i, n) in graph.nodes.iter_mut().enumerate() {
-        let c = communities.of_node[i];
-        n.attrs
-            .push(("community_name".into(), Attr::Str(format!("Community {c}"))));
+        let c = communities.of_node[i] as usize;
+        n.attrs.push((
+            "community_name".into(),
+            Attr::Str(analysis.labels[c].clone()),
+        ));
     }
     let graph_json = graph.to_graphify_json(commit.as_deref(), Some(&communities.of_node));
     Ok(ClusterOnly {
@@ -403,12 +506,22 @@ pub fn cluster_only(doc: &serde_json::Value, name: &str) -> Result<ClusterOnly> 
         analysis_json,
         report: md,
         communities: communities.members.len(),
+        labels: analysis.labels,
     })
 }
 
 /// `cluster_only` on `<dir>/dijkstral-out/graph.json` (or `graph`), rewriting that graph and its
 /// sidecars in place. Returns the output directory and the community count.
 pub fn cluster_only_files(dir: &Path, graph: Option<&Path>) -> Result<(PathBuf, usize)> {
+    cluster_only_files_named(dir, graph, None).map(|(d, n, _)| (d, n))
+}
+
+/// [`cluster_only_files`] with [`cluster_only_named`]: also returns the community names.
+pub fn cluster_only_files_named(
+    dir: &Path,
+    graph: Option<&Path>,
+    namer: Option<Namer>,
+) -> Result<(PathBuf, usize, Vec<String>)> {
     let path = graph.map_or_else(|| dir.join(OUT_DIR).join("graph.json"), Path::to_path_buf);
     let doc: serde_json::Value = serde_json::from_slice(
         &fs::read(&path).with_context(|| format!("reading {}", path.display()))?,
@@ -419,16 +532,17 @@ pub fn cluster_only_files(dir: &Path, graph: Option<&Path>) -> Result<(PathBuf, 
         .ok()
         .and_then(|d| d.file_name().map(|n| n.to_string_lossy().into_owned()))
         .unwrap_or_default();
-    let out = cluster_only(&doc, &name)?;
+    let out = cluster_only_named(&doc, &name, namer)?;
     drop(doc);
     let out_dir = path.parent().map_or_else(PathBuf::new, Path::to_path_buf);
     write_atomic(&path, out.graph_json.as_bytes())?;
     write_atomic(&out_dir.join(ANALYSIS_FILE), out.analysis_json.as_bytes())?;
     write_atomic(&out_dir.join(REPORT_FILE), out.report.as_bytes())?;
-    Ok((out_dir, out.communities))
+    Ok((out_dir, out.communities, out.labels))
 }
 
-fn write_atomic(path: &Path, bytes: &[u8]) -> Result<()> {
+/// Write through a temporary file and rename, so readers never see a partial file.
+pub fn write_atomic(path: &Path, bytes: &[u8]) -> Result<()> {
     let tmp = path.with_extension("tmp");
     fs::write(&tmp, bytes)?;
     fs::rename(&tmp, path)?;

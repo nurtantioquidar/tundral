@@ -1,0 +1,26 @@
+{"nodes": [
+  {"id": "readme_a", "label": "Alpha", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_b", "label": "Bravo", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_c", "label": "Charlie", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_d", "label": "Delta", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_e", "label": "Echo", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_f", "label": "Foxtrot", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_g", "label": "Golf", "file_type": "concept", "source_file": "README.md"},
+  {"id": "readme_h", "label": "Hotel", "file_type": "concept", "source_file": "README.md"}
+ ],
+ "edges": [
+  {"source": "readme_h", "target": "readme_a", "relation": "rel_one", "confidence": "AMBIGUOUS", "source_file": "README.md"},
+  {"source": "readme_b", "target": "readme_c", "relation": "rel_two", "confidence": "AMBIGUOUS", "source_file": "README.md"},
+  {"source": "readme_c", "target": "readme_d", "relation": "rel_three", "confidence": "AMBIGUOUS", "source_file": "README.md"},
+  {"source": "readme_d", "target": "readme_e", "relation": "rel_four", "confidence": "AMBIGUOUS", "source_file": "README.md"},
+  {"source": "readme_e", "target": "readme_f", "relation": "rel_five", "confidence": "AMBIGUOUS", "source_file": "README.md"},
+  {"source": "readme_f", "target": "readme_g", "relation": "rel_six", "confidence": "AMBIGUOUS", "source_file": "README.md"},
+  {"source": "readme_g", "target": "readme_h", "relation": "rel_seven", "confidence": "AMBIGUOUS", "confidence_score": 0.33, "source_file": "README.md"},
+  {"source": "readme_a", "target": "readme_b", "relation": "rel_eight", "confidence": "INFERRED", "source_file": "README.md"}
+ ],
+ "hyperedges": [
+  {"id": "z_first", "label": "Bbb group", "nodes": ["readme_a", "readme_b"], "relation": "form", "confidence": "INFERRED", "confidence_score": 0.333},
+  {"id": "a_second", "label": "Ccc group", "nodes": ["readme_c", "readme_d"], "relation": "form"},
+  {"id": "m_third", "label": "Aaa group", "nodes": ["readme_e", "readme_f", "readme_g"], "relation": "form", "confidence": "AMBIGUOUS"},
+  {"label": "No id group", "nodes": ["readme_e", "readme_h"], "relation": "form", "confidence": "EXTRACTED", "confidence_score": 1}
+ ]}

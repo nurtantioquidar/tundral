@@ -16,4 +16,7 @@ pub mod pyjson;
 pub mod report;
 pub mod resolve;
 
-pub use pipeline::{build, build_with, BuildOptions, BuildReport, Built, Exporter};
+pub use pipeline::{
+    build, build_semantic, build_with, BuildOptions, BuildReport, Built, Exporter, Semantic,
+    SemanticReport,
+};

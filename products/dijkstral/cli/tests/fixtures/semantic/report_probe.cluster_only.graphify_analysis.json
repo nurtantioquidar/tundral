@@ -1,0 +1,132 @@
+{
+  "communities": {
+    "0": [
+      "readme_a",
+      "readme_b",
+      "readme_c",
+      "readme_d",
+      "readme_e",
+      "readme_f",
+      "readme_g",
+      "readme_h"
+    ],
+    "1": [
+      "src_app_service_jobqueue",
+      "src_app_service_jobqueue_init",
+      "src_app_service_jobqueue_push",
+      "src_app_service_rationale_7",
+      "src_app_service_run_job"
+    ],
+    "2": [
+      "src_app_service",
+      "src_app_service_rationale_1",
+      "src_app_util",
+      "src_app_util_slugify"
+    ],
+    "3": [
+      "src_app_init"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2857142857142857,
+    "1": 0.5,
+    "2": 0.6666666666666666,
+    "3": 1.0
+  },
+  "gods": [
+    {
+      "id": "src_app_service_jobqueue",
+      "label": "JobQueue",
+      "degree": 5
+    },
+    {
+      "id": "src_app_service_run_job",
+      "label": "run_job()",
+      "degree": 3
+    },
+    {
+      "id": "src_app_util_slugify",
+      "label": "slugify()",
+      "degree": 3
+    },
+    {
+      "id": "readme_a",
+      "label": "Alpha",
+      "degree": 2
+    },
+    {
+      "id": "readme_b",
+      "label": "Bravo",
+      "degree": 2
+    },
+    {
+      "id": "readme_c",
+      "label": "Charlie",
+      "degree": 2
+    },
+    {
+      "id": "readme_d",
+      "label": "Delta",
+      "degree": 2
+    },
+    {
+      "id": "readme_e",
+      "label": "Echo",
+      "degree": 2
+    },
+    {
+      "id": "readme_f",
+      "label": "Foxtrot",
+      "degree": 2
+    },
+    {
+      "id": "readme_g",
+      "label": "Golf",
+      "degree": 2
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Alpha` and `Hotel`?",
+      "why": "Edge tagged AMBIGUOUS (relation: rel_one) - confidence is low.",
+      "low_confidence": true
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `JobQueue` connect `Community 1` to `Community 2`?",
+      "why": "High betweenness centrality (0.100) - this node is a cross-community bridge."
+    },
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Bravo` and `Charlie`?",
+      "why": "Edge tagged AMBIGUOUS (relation: rel_two) - confidence is low.",
+      "low_confidence": true
+    },
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Charlie` and `Delta`?",
+      "why": "Edge tagged AMBIGUOUS (relation: rel_three) - confidence is low.",
+      "low_confidence": true
+    },
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Delta` and `Echo`?",
+      "why": "Edge tagged AMBIGUOUS (relation: rel_four) - confidence is low.",
+      "low_confidence": true
+    },
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Echo` and `Foxtrot`?",
+      "why": "Edge tagged AMBIGUOUS (relation: rel_five) - confidence is low.",
+      "low_confidence": true
+    },
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Foxtrot` and `Golf`?",
+      "why": "Edge tagged AMBIGUOUS (relation: rel_six) - confidence is low.",
+      "low_confidence": true
+    }
+  ]
+}

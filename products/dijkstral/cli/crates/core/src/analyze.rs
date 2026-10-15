@@ -254,6 +254,9 @@ pub struct Analysis {
     pub surprises: Vec<Surprise>,
     /// Links inside each community.
     pub internal: Vec<usize>,
+    /// Model usage of the command writing the sidecar: `(input, output)` tokens (§8.2 of
+    /// `docs/graphify-semantic.md`; 0/0 without a semantic pass or when it was fully cached).
+    pub tokens: (u64, u64),
 }
 
 pub fn analyze(graph: &Graph, topo: &Topology, communities: &Communities) -> Analysis {
@@ -276,6 +279,7 @@ pub fn analyze(graph: &Graph, topo: &Topology, communities: &Communities) -> Ana
         gods,
         surprises,
         internal,
+        tokens: (0, 0),
     }
 }
 
@@ -294,6 +298,26 @@ pub fn god_nodes(graph: &Graph, adj: &Adjacency, n: usize) -> Vec<u32> {
 
 fn top_dir(path: &str) -> &str {
     path.split_once('/').map_or("", |(d, _)| d)
+}
+
+/// What a link between two kinds of file adds to a surprise's score
+/// (`docs/graphify-semantic.md` §8.2).
+const CROSS_TYPE_SCORE: u32 = 2;
+
+/// A source file's kind for surprises: `paper` (PDF), `image`, `doc` (the documents the semantic
+/// pass reads, office files included), otherwise `code`.
+pub fn file_category(source_file: &str) -> &'static str {
+    let name = source_file.rsplit('/').next().unwrap_or(source_file);
+    let ext = name
+        .rfind('.')
+        .filter(|&i| i > 0)
+        .map_or(String::new(), |i| name[i + 1..].to_ascii_lowercase());
+    match ext.as_str() {
+        "pdf" => "paper",
+        "png" | "jpg" | "jpeg" | "gif" | "webp" | "svg" => "image",
+        "md" | "mdx" | "rst" | "txt" | "html" | "yaml" | "yml" | "docx" | "xlsx" => "doc",
+        _ => "code",
+    }
 }
 
 /// Relations never listed as surprising: structure and imports.
@@ -342,6 +366,14 @@ fn surprises(
             Confidence::Ambiguous => {
                 why.push("ambiguous connection - not explicitly stated in source".into());
             }
+        }
+        let (cu, cv) = (file_category(&u.source_file), file_category(&v.source_file));
+        if cu != cv {
+            score += CROSS_TYPE_SCORE;
+            // Graphify prints the pair in Python set order, which varies from run to run; the
+            // sorted order is one of the two it prints.
+            let (a, b) = if cu <= cv { (cu, cv) } else { (cv, cu) };
+            why.push(format!("crosses file types ({a} \u{2194} {b})"));
         }
         if top_dir(&u.source_file) != top_dir(&v.source_file) {
             score += 2;
@@ -507,8 +539,8 @@ impl Analysis {
             None => (
                 "tokens".to_string(),
                 Json::Object(vec![
-                    ("input".into(), Json::Int(0)),
-                    ("output".into(), Json::Int(0)),
+                    ("input".into(), Json::Int(self.tokens.0 as i64)),
+                    ("output".into(), Json::Int(self.tokens.1 as i64)),
                 ]),
             ),
             Some(qs) => (
@@ -516,11 +548,15 @@ impl Analysis {
                 Json::Array(
                     qs.into_iter()
                         .map(|(kind, q, why)| {
-                            Json::Object(vec![
+                            let mut fields = vec![
                                 ("type".into(), Json::str(kind)),
                                 ("question".into(), q.map_or(Json::Null, Json::str)),
                                 ("why".into(), Json::str(why)),
-                            ])
+                            ];
+                            if kind == "ambiguous_edge" {
+                                fields.push(("low_confidence".into(), Json::Bool(true)));
+                            }
+                            Json::Object(fields)
                         })
                         .collect(),
                 ),

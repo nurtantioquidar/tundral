@@ -25,6 +25,9 @@ pub struct Graph {
     pub edges: Vec<Edge>,
     /// Edges dropped because an endpoint does not exist.
     pub dangling: usize,
+    /// Group relationships from the semantic pass (`docs/graphify-semantic.md` §7.4), written
+    /// as the top-level `hyperedges` and, when there are any, as `graph.hyperedges`.
+    pub hyperedges: Vec<Value>,
 }
 
 /// Collapse precedence (§8.2). Unobserved relations rank with the structural ones.
@@ -117,6 +120,74 @@ fn fold(old: &mut Edge, new: Edge, first_source: &str) {
     }
 }
 
+/// The semantic fold's tier (see [`Graph::fold_semantic`]).
+fn semantic_tier(relation: &str) -> u8 {
+    match relation {
+        "mentions" => 0,
+        r => rank(r).min(40),
+    }
+}
+
+/// `{**base, **over}` for edges that may lack `relation`, `confidence` or `source_file`
+/// ([`Attr::Absent`]): a key `over` lacks keeps `base`'s value.
+fn merge_dict(base: &Edge, over: &Edge) -> Edge {
+    let mut e = merge_over(base, over);
+    if over.loc != Loc::Absent {
+        // A located `over` replaces a free-text location `base` carried as an attribute.
+        if !over.attrs.iter().any(|(k, _)| k == "source_location") {
+            e.attrs.retain(|(k, _)| k != "source_location");
+        }
+    }
+    fn attr<'a>(x: &'a Edge, key: &str) -> Option<&'a Attr> {
+        x.attrs.iter().find(|(k, _)| k == key).map(|(_, v)| v)
+    }
+    for key in ["relation", "confidence", "source_file"] {
+        match attr(over, key) {
+            // `over`'s field is authoritative: drop a raw value `base` carried.
+            None => {
+                e.attrs.retain(|(k, _)| k != key);
+                continue;
+            }
+            Some(Attr::Absent) if attr(base, key) != Some(&Attr::Absent) => {}
+            Some(_) => continue,
+        }
+        match key {
+            "relation" => e.relation = base.relation.clone(),
+            "confidence" => e.confidence = base.confidence,
+            _ => e.source_file = base.source_file.clone(),
+        }
+        e.attrs.retain(|(k, _)| k != key);
+        if let Some(kept) = base.attrs.iter().find(|(k, _)| k == key) {
+            e.attrs.push(kept.clone());
+        }
+    }
+    e
+}
+
+fn fold_semantic_edge(old: &mut Edge, new: Edge, first_source: &str) {
+    let (to, tn) = (semantic_tier(&old.relation), semantic_tier(&new.relation));
+    if new.source == first_source && new.source != new.target {
+        if tn >= to {
+            *old = merge_dict(old, &new);
+        } else if is_structural(&old.relation) {
+            if new.relation == "calls" && old.context.is_none() {
+                old.context = new.context;
+            }
+        } else {
+            *old = merge_dict(&new, old);
+        }
+    } else if tn > to
+        || (tn == to
+            && if new.relation == old.relation {
+                new.source < old.source
+            } else {
+                new.source > old.source
+            })
+    {
+        *old = merge_dict(old, &new);
+    }
+}
+
 impl Graph {
     /// Merge duplicate node ids (first wins), drop dangling edges, and fold parallel edges to one
     /// link per unordered pair in the given order.
@@ -191,7 +262,100 @@ impl Graph {
                 .map(|e| e.expect("every counted pair has an edge"))
                 .collect(),
             dangling,
+            hyperedges: Vec::new(),
         }
+    }
+
+    /// Fold the semantic pass's edges, in reply order, into the built graph
+    /// (`docs/graphify-semantic.md` §7.3). Edges with an unknown endpoint are counted as dangling.
+    ///
+    /// Probed against Graphify (`extract` with crafted replies on reply and code pairs,
+    /// `tests/fixtures/semantic/fold_probe*`), in two steps:
+    ///
+    /// 1. Reply edges with the same source and target are reduced to one: taken in relation-name
+    ///    order (stable), each replaces the survivor when its tier is at least the survivor's,
+    ///    merged as `{**survivor, **edge}`, and is dropped otherwise. Tiers: `mentions` lowest,
+    ///    then `references`, `uses`, the `calls` family, the PHP relations, and one tier for
+    ///    every other relation, model-invented ones included (so `semantically_similar_to` keeps
+    ///    a later `implements`, and `related_to` beats `imports`).
+    /// 2. The survivors fold into the code graph's links like code edges, on the same tiers:
+    ///    in the pair's orientation a new edge of at least the link's tier wins merged
+    ///    (`{**link, **edge}`), a structural link takes only a call's context, any other link
+    ///    takes the edge's keys it lacks (`{**edge, **link}`); against the orientation the higher
+    ///    tier wins, equal tiers keeping the smaller source for one relation and the larger for
+    ///    two, the winner merged over the loser.
+    ///
+    /// The pair's orientation is the current link's, which is the first edge's unless a reversed
+    /// code edge won the pair.
+    pub fn fold_semantic(&mut self, edges: Vec<Edge>) {
+        // Step 1: one edge per (source, target), in order of first appearance.
+        let mut slots: HashMap<(String, String), usize> = HashMap::new();
+        let mut groups: Vec<Vec<Edge>> = Vec::new();
+        for e in edges {
+            let key = (e.source.clone(), e.target.clone());
+            match slots.get(&key) {
+                Some(&i) => groups[i].push(e),
+                None => {
+                    slots.insert(key, groups.len());
+                    groups.push(vec![e]);
+                }
+            }
+        }
+        drop(slots);
+        let edges = groups.into_iter().map(|mut group| {
+            group.sort_by(|a, b| a.relation.cmp(&b.relation));
+            let mut it = group.into_iter();
+            let mut cur = it.next().expect("groups are never empty");
+            for e in it {
+                if semantic_tier(&e.relation) >= semantic_tier(&cur.relation) {
+                    cur = merge_dict(&cur, &e);
+                }
+            }
+            cur
+        });
+
+        // Step 2: into the links.
+        let index: HashMap<String, u32> = self
+            .nodes
+            .iter()
+            .enumerate()
+            .map(|(i, n)| (n.id.clone(), i as u32))
+            .collect();
+        let pair_of = |e: &Edge| -> Option<(u32, u32)> {
+            let s = *index.get(e.source.as_str())?;
+            let t = *index.get(e.target.as_str())?;
+            Some(if s <= t { (s, t) } else { (t, s) })
+        };
+        let mut slot: HashMap<(u32, u32), usize> = HashMap::with_capacity(self.edges.len());
+        for (i, e) in self.edges.iter().enumerate() {
+            if let Some(pair) = pair_of(e) {
+                slot.entry(pair).or_insert(i);
+            }
+        }
+        for e in edges {
+            let Some(pair) = pair_of(&e) else {
+                self.dangling += 1;
+                continue;
+            };
+            match slot.get(&pair) {
+                None => {
+                    slot.insert(pair, self.edges.len());
+                    self.edges.push(e);
+                }
+                Some(&i) => {
+                    let old = &mut self.edges[i];
+                    let first = old.source.clone();
+                    fold_semantic_edge(old, e, &first);
+                }
+            }
+        }
+    }
+
+    /// Order hyperedges as Graphify writes them: by `json.dumps(h, sort_keys=True)`, like nodes
+    /// and links (`docs/graphify-semantic.md` §7.4; this is also why ones without an `id`
+    /// usually come last).
+    pub fn sort_hyperedges(&mut self) {
+        self.hyperedges.sort_by_cached_key(python_dumps);
     }
 
     /// Clustered-shape `graph.json` (§2.1): compact, ASCII-escaped, no trailing newline, arrays in
@@ -222,8 +386,16 @@ impl Graph {
         let node_order = sorted_order(&self.nodes, |i, n| sort_key(node_map(n, comm(i))));
         let link_order = sorted_order(&self.edges, |_, e| sort_key(edge_map(e)));
 
+        // Hyperedges keep their reply key order (§7.4); `graph` lists them first when present.
+        let hyperedges = ascii_escape(serde_json::to_string(&self.hyperedges).unwrap());
         let mut w = BufWriter::with_capacity(1 << 20, w);
-        w.write_all(b"{\"directed\":false,\"multigraph\":false,\"graph\":{\"schema_version\":")?;
+        w.write_all(b"{\"directed\":false,\"multigraph\":false,\"graph\":{")?;
+        if !self.hyperedges.is_empty() {
+            w.write_all(b"\"hyperedges\":")?;
+            w.write_all(hyperedges.as_bytes())?;
+            w.write_all(b",")?;
+        }
+        w.write_all(b"\"schema_version\":")?;
         w.write_all(SCHEMA_VERSION.to_string().as_bytes())?;
         w.write_all(b",\"graphify_version\":\"")?;
         w.write_all(COMPAT_VERSION.as_bytes())?;
@@ -235,7 +407,8 @@ impl Graph {
         write_items(&mut w, &self.edges, &link_order, |_, e| {
             compact(edge_map(e))
         })?;
-        w.write_all(b"],\"hyperedges\":[]")?;
+        w.write_all(b"],\"hyperedges\":")?;
+        w.write_all(hyperedges.as_bytes())?;
         if let Some(c) = built_at_commit {
             w.write_all(b",\"built_at_commit\":")?;
             w.write_all(ascii_escape(serde_json::to_string(c).unwrap()).as_bytes())?;
@@ -270,6 +443,7 @@ impl Graph {
                     node.attrs.push(("source_location".into(), raw));
                 }
                 keep_non_strings(obj, &["file_type", "source_file"], &mut node.attrs);
+                mark_absent(obj, &["label", "source_file"], &mut node.attrs);
                 for (k, v) in obj {
                     if !matches!(
                         k.as_str(),
@@ -322,6 +496,20 @@ impl Graph {
                     edge.attrs.push(("source_location".into(), raw));
                 }
                 keep_non_strings(obj, &["source_file"], &mut edge.attrs);
+                mark_absent(
+                    obj,
+                    &["relation", "confidence", "source_file"],
+                    &mut edge.attrs,
+                );
+                // A semantic edge's confidence outside the three values is kept verbatim (§7.3).
+                if let Some(c) = obj.get("confidence").filter(|c| {
+                    !matches!(
+                        c.as_str(),
+                        Some("EXTRACTED") | Some("INFERRED") | Some("AMBIGUOUS")
+                    )
+                }) {
+                    edge.attrs.push(("confidence".into(), attr_of(c)));
+                }
                 for (k, v) in obj {
                     if !matches!(
                         k.as_str(),
@@ -346,10 +534,16 @@ impl Graph {
             .into_iter()
             .partition(|e| known.contains(e.source.as_str()) && known.contains(e.target.as_str()));
         drop(known);
+        let hyperedges = doc
+            .get("hyperedges")
+            .and_then(Value::as_array)
+            .cloned()
+            .unwrap_or_default();
         Ok(Graph {
             nodes,
             edges,
             dangling: dropped.len(),
+            hyperedges,
         })
     }
 
@@ -428,12 +622,31 @@ fn attr_value(a: &Attr) -> Value {
         Attr::Bool(b) => Value::Bool(*b),
         Attr::Null => Value::Null,
         Attr::Json(raw) => serde_json::from_str(raw).unwrap_or(Value::Null),
+        // Never written: `apply_attrs` removes the key instead.
+        Attr::Absent => Value::Null,
+    }
+}
+
+/// Insert `attrs` over the fields already in `head` and `rest`; an [`Attr::Absent`] removes its
+/// key from either.
+fn apply_attrs(
+    head: &mut Vec<(&'static str, Value)>,
+    rest: &mut BTreeMap<String, Value>,
+    attrs: &[(String, Attr)],
+) {
+    for (k, v) in attrs {
+        if *v == Attr::Absent {
+            rest.remove(k);
+            head.retain(|(h, _)| h != k);
+        } else {
+            rest.insert(k.clone(), attr_value(v));
+        }
     }
 }
 
 /// A loaded `source_location`: one of [`Loc`]'s shapes, or any other value (Lua's bare `"3"`,
 /// quirk LU1) kept verbatim as an attribute, as the build writes it.
-fn loc_of(v: Option<&Value>) -> (Loc, Option<Attr>) {
+pub fn loc_of(v: Option<&Value>) -> (Loc, Option<Attr>) {
     match v {
         None => (Loc::Absent, None),
         Some(Value::Null) => (Loc::Null, None),
@@ -461,7 +674,17 @@ fn keep_non_strings(obj: &Map<String, Value>, keys: &[&str], attrs: &mut Vec<(St
     }
 }
 
-fn attr_of(v: &Value) -> Attr {
+/// Fields the writer always emits but this object lacks (semantic nodes and edges, §7).
+fn mark_absent(obj: &Map<String, Value>, keys: &[&str], attrs: &mut Vec<(String, Attr)>) {
+    for &k in keys {
+        if !obj.contains_key(k) {
+            attrs.push((k.to_string(), Attr::Absent));
+        }
+    }
+}
+
+/// A JSON value as an attribute.
+pub fn attr_of(v: &Value) -> Attr {
     match v {
         Value::String(s) => Attr::Str(s.clone()),
         Value::Bool(b) => Attr::Bool(*b),
@@ -485,7 +708,7 @@ fn loc_value(loc: Loc) -> Option<Value> {
 
 /// Fields in Graphify's key order: `id`, `label`, then the rest sorted.
 fn node_map(n: &Node, community: Option<u32>) -> Fields {
-    let head = vec![
+    let mut head = vec![
         ("id", Value::String(n.id.clone())),
         ("label", Value::String(n.label.clone())),
     ];
@@ -499,15 +722,13 @@ fn node_map(n: &Node, community: Option<u32>) -> Fields {
     if let Some(c) = community {
         rest.insert("community".into(), Value::from(c));
     }
-    for (k, v) in &n.attrs {
-        rest.insert(k.clone(), attr_value(v));
-    }
+    apply_attrs(&mut head, &mut rest, &n.attrs);
     (head, rest)
 }
 
 /// Fields in Graphify's key order: `source`, `target`, `relation`, then the rest sorted.
 fn edge_map(e: &Edge) -> Fields {
-    let head = vec![
+    let mut head = vec![
         ("source", Value::String(e.source.clone())),
         ("target", Value::String(e.target.clone())),
         ("relation", Value::String(e.relation.clone())),
@@ -529,9 +750,7 @@ fn edge_map(e: &Edge) -> Fields {
     if let Some(w) = e.weight {
         rest.insert("weight".into(), Value::from(w));
     }
-    for (k, v) in &e.attrs {
-        rest.insert(k.clone(), attr_value(v));
-    }
+    apply_attrs(&mut head, &mut rest, &e.attrs);
     (head, rest)
 }
 

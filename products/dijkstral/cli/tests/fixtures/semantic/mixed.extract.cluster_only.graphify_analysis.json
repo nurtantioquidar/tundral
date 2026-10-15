@@ -1,0 +1,181 @@
+{
+  "communities": {
+    "0": [
+      "config_queue",
+      "docs_glossary",
+      "docs_glossary_job",
+      "docs_glossary_slug",
+      "graphify_out_converted_capacity_e7fd8f6a",
+      "papers_write_through",
+      "papers_write_through_smith_wong_2019",
+      "readme_cache",
+      "readme_slugify"
+    ],
+    "1": [
+      "src_app_service",
+      "src_app_service_jobqueue",
+      "src_app_service_jobqueue_init",
+      "src_app_service_jobqueue_push",
+      "src_app_service_rationale_1",
+      "src_app_service_rationale_7",
+      "src_app_service_run_job",
+      "src_app_util",
+      "src_app_util_slugify"
+    ],
+    "2": [
+      "docs_guide",
+      "docs_guide_jobqueue_push",
+      "graphify_out_converted_runbook_b3207a85",
+      "images_architecture",
+      "readme",
+      "readme_jobqueue",
+      "readme_run_job"
+    ],
+    "3": [
+      "src_app_init"
+    ]
+  },
+  "cohesion": {
+    "0": 0.2777777777777778,
+    "1": 0.3333333333333333,
+    "2": 0.5714285714285714,
+    "3": 1.0
+  },
+  "gods": [
+    {
+      "id": "readme_cache",
+      "label": "Write-through cache",
+      "degree": 8
+    },
+    {
+      "id": "readme_jobqueue",
+      "label": "JobQueue",
+      "degree": 8
+    },
+    {
+      "id": "readme",
+      "label": "Job Service README",
+      "degree": 7
+    },
+    {
+      "id": "readme_slugify",
+      "label": "slugify",
+      "degree": 6
+    },
+    {
+      "id": "readme_run_job",
+      "label": "run_job",
+      "degree": 6
+    },
+    {
+      "id": "src_app_service_jobqueue",
+      "label": "JobQueue",
+      "degree": 5
+    },
+    {
+      "id": "papers_write_through",
+      "label": "Write-Through Caching for Job Queues",
+      "degree": 5
+    },
+    {
+      "id": "images_architecture",
+      "label": "Architecture diagram: README → run_job → JobQueue; run_job → slugify → Cache",
+      "degree": 5
+    },
+    {
+      "id": "src_app_service_run_job",
+      "label": "run_job()",
+      "degree": 3
+    },
+    {
+      "id": "src_app_util_slugify",
+      "label": "slugify()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Write-Through Caching for Job Queues",
+      "target": "JobQueue.push",
+      "source_files": [
+        "papers/write_through.pdf",
+        "docs/guide.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (paper ↔ doc); connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "Write-Through Caching for Job Queues",
+      "target": "slugify",
+      "source_files": [
+        "papers/write_through.pdf",
+        "README.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (paper ↔ doc); connects across different repos/directories"
+    },
+    {
+      "source": "Job Service README",
+      "target": "Write-Through Caching for Job Queues",
+      "source_files": [
+        "README.md",
+        "papers/write_through.pdf"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (paper ↔ doc); connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "Architecture diagram: README → run_job → JobQueue; run_job → slugify → Cache",
+      "target": "Write-through cache",
+      "source_files": [
+        "images/architecture.png",
+        "README.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc ↔ image); connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "Architecture diagram: README → run_job → JobQueue; run_job → slugify → Cache",
+      "target": "slugify",
+      "source_files": [
+        "images/architecture.png",
+        "README.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc ↔ image); connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `slugify` and `run_job`?",
+      "why": "Edge tagged AMBIGUOUS (relation: calls) - confidence is low.",
+      "low_confidence": true
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Write-through cache` connect `Community 0` to `Community 2`?",
+      "why": "High betweenness centrality (0.090) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Lazy Invalidation in Distributed Caches (2019)` to the rest of the system?",
+      "why": "1 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `JobQueue` connect `Community 2` to `Community 0`?",
+      "why": "High betweenness centrality (0.077) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Write-Through Caching for Job Queues` connect `Community 0` to `Community 2`?",
+      "why": "High betweenness centrality (0.059) - this node is a cross-community bridge."
+    }
+  ]
+}

@@ -222,7 +222,7 @@ impl<'a> View<'a> {
             built.edge_order.to_vec(),
             community,
             names,
-            "[]".into(),
+            Value::Array(built.graph.hyperedges.clone()).to_string(),
         )
     }
 

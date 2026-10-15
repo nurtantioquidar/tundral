@@ -35,6 +35,8 @@ pub struct Corpus {
     pub commit: Option<String>,
     /// `YYYY-MM-DD`.
     pub date: String,
+    /// Model usage of the command writing the report: `(input, output)` tokens.
+    pub tokens: (u64, u64),
 }
 
 /// One suggested question: its kind (`bridge_node`, `verify_inferred`, `isolated_nodes`,
@@ -104,7 +106,12 @@ pub fn render(
     }
     s.push('\n');
     s.push_str(&extraction_line(graph));
-    s.push_str("- Token cost: 0 input · 0 output\n");
+    let _ = writeln!(
+        s,
+        "- Token cost: {} input · {} output",
+        thousands(corpus.tokens.0),
+        thousands(corpus.tokens.1)
+    );
 
     if let Some(commit) = corpus.commit.as_deref().filter(|c| !c.is_empty()) {
         s.push_str("\n## Graph Freshness\n");
@@ -174,6 +181,14 @@ pub fn render(
         );
     }
 
+    if !graph.hyperedges.is_empty() {
+        s.push_str("\n## Hyperedges (group relationships)\n");
+        for line in hyperedge_lines(&graph.hyperedges) {
+            s.push_str(&line);
+            s.push('\n');
+        }
+    }
+
     let _ = writeln!(s, "\n## Communities ({total} total, {thin} thin omitted)");
     for (c, m) in listed_members.iter().enumerate() {
         if m.len() < THIN {
@@ -200,8 +215,27 @@ pub fn render(
         );
     }
 
+    let ambiguous = ambiguous_links(graph, adj);
+    if !ambiguous.is_empty() {
+        s.push_str("\n## Ambiguous Edges - Review These\n");
+        for &(e, u, v) in &ambiguous {
+            let link = &graph.edges[e as usize];
+            let _ = writeln!(
+                s,
+                "- `{}` → `{}`  [AMBIGUOUS]\n  {} · relation: {}",
+                node(u).label,
+                node(v).label,
+                link.source_file,
+                link.relation
+            );
+        }
+    }
+    // More than a fifth of the links AMBIGUOUS (probed: 21 of 100 and 5 of 20 flag, 20 of 100
+    // does not).
+    let high_ambiguity = !graph.edges.is_empty() && ambiguous.len() * 5 > graph.edges.len();
+
     let lonely = isolated(graph, adj);
-    if !lonely.is_empty() || thin > 0 {
+    if !lonely.is_empty() || thin > 0 || high_ambiguity {
         s.push_str("\n## Knowledge Gaps\n");
     }
     if !lonely.is_empty() {
@@ -233,6 +267,13 @@ pub fn render(
             "- **{thin} thin communities (<{THIN} nodes) omitted from report** — run `dijkstral query` to explore isolated nodes."
         );
     }
+    if high_ambiguity {
+        let _ = writeln!(
+            s,
+            "- **High ambiguity: {:.0}% of edges are AMBIGUOUS.** Review the Ambiguous Edges section above.",
+            ambiguous.len() as f64 * 100.0 / graph.edges.len() as f64
+        );
+    }
 
     s.push_str("\n## Suggested Questions\n");
     let questions = questions(graph, communities, analysis);
@@ -240,11 +281,57 @@ pub fn render(
         let _ = write!(s, "_{NO_SIGNAL}_");
     } else {
         s.push_str("_Questions this graph is uniquely positioned to answer:_\n");
-        for q in &questions {
+        // AMBIGUOUS-edge questions follow the others under their own heading.
+        let (hints, others): (Vec<&Question>, Vec<&Question>) =
+            questions.iter().partition(|q| q.kind == AMBIGUOUS_KIND);
+        for q in &others {
             let _ = write!(s, "\n- **{}**\n  _{}_", q.question, q.why);
+        }
+        if !hints.is_empty() {
+            s.push_str("\n\n### Low-confidence Hints\n_AMBIGUOUS edges — the extractor was unsure. Verify before acting on these._\n");
+            for q in &hints {
+                let _ = write!(s, "\n- **{}**\n  _{}_", q.question, q.why);
+            }
         }
     }
     s
+}
+
+const AMBIGUOUS_KIND: &str = "ambiguous_edge";
+
+/// AMBIGUOUS links as `(link, u, v)` in `G.edges()` order (`u` the endpoint met first).
+fn ambiguous_links(graph: &Graph, adj: &crate::analyze::Adjacency) -> Vec<(u32, u32, u32)> {
+    adj.edges_uv()
+        .into_iter()
+        .filter(|&(e, _, _)| graph.edges[e as usize].confidence == Confidence::Ambiguous)
+        .collect()
+}
+
+/// `## Hyperedges` lines (`docs/graphify-semantic.md` §8.2), in graph order: `- **label** —
+/// members [CONFIDENCE score]`, a missing confidence read as `INFERRED`, the score with two
+/// decimals only when the hyperedge has a numeric one.
+pub fn hyperedge_lines(hyperedges: &[serde_json::Value]) -> Vec<String> {
+    hyperedges
+        .iter()
+        .map(|h| {
+            let text = |k: &str| h.get(k).and_then(serde_json::Value::as_str);
+            let confidence = text("confidence").unwrap_or("INFERRED");
+            let label = text("label").unwrap_or("");
+            let members: Vec<&str> = h
+                .get("nodes")
+                .and_then(serde_json::Value::as_array)
+                .map(|a| a.iter().filter_map(serde_json::Value::as_str).collect())
+                .unwrap_or_default();
+            let tag = match h
+                .get("confidence_score")
+                .and_then(serde_json::Value::as_f64)
+            {
+                Some(score) => format!("{confidence} {score:.2}"),
+                None => confidence.to_string(),
+            };
+            format!("- **{label}** — {} [{tag}]", members.join(", "))
+        })
+        .collect()
 }
 
 /// The `n` most common `PurePath.suffix`es (`(none)` for none) of `paths`, as `ext count`; ties
@@ -448,7 +535,27 @@ pub fn questions(graph: &Graph, communities: &Communities, analysis: &Analysis) 
         }
     }
 
-    let lists = [bridges, verify, lonely_q, loose];
+    // One question per AMBIGUOUS link (semantic replies are their only source), first in each
+    // round.
+    let ambiguous: Vec<Question> = ambiguous_links(graph, adj)
+        .into_iter()
+        .map(|(e, u, v)| {
+            q(
+                AMBIGUOUS_KIND,
+                format!(
+                    "What is the exact relationship between `{}` and `{}`?",
+                    node(u).label,
+                    node(v).label
+                ),
+                format!(
+                    "Edge tagged AMBIGUOUS (relation: {}) - confidence is low.",
+                    graph.edges[e as usize].relation
+                ),
+            )
+        })
+        .collect();
+
+    let lists = [ambiguous, bridges, verify, lonely_q, loose];
     let rounds = lists.iter().map(Vec::len).max().unwrap_or(0);
     let mut out = Vec::new();
     for r in 0..rounds {

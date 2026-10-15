@@ -41,6 +41,10 @@ pub enum Attr {
     Null,
     /// A pre-serialized JSON value (objects such as `metadata`), spliced verbatim.
     Json(String),
+    /// The key is not written at all, not even a field the writer always emits (`label`,
+    /// `source_file`, `relation`, `confidence`): semantic nodes and edges whose reply omitted it
+    /// (`docs/graphify-semantic.md` §7).
+    Absent,
 }
 
 /// `source_location` has four observable shapes (§6).
