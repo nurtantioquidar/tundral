@@ -310,6 +310,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "dijkstral-semantic"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "dijkstral-core",
+ "serde",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
 name = "dijkstral-serve"
 version = "0.1.0"
 dependencies = [
