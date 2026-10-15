@@ -131,6 +131,20 @@ const DENYLIST: &[&str] = &[
     "URIError",
 ];
 
+/// Final segments that make a qualified span a file name (`a.py`, `Alpha.go`), never a reference
+/// (§3.4; exact case: `K.PY` and `K.F77` resolve, `K.F90` does not).
+const EXTENSIONS: &[&str] = &[
+    "py", "ts", "tsx", "mts", "cts", "ets", "js", "jsx", "mjs", "cjs", "go", "rs", "java", "kt",
+    "kts", "scala", "cs", "rb", "rake", "c", "h", "cpp", "cc", "cxx", "hpp", "cu", "cuh", "metal",
+    "swift", "php", "groovy", "gradle", "dart", "lua", "luau", "zig", "ex", "exs", "erl", "hrl",
+    "ml", "mli", "jl", "m", "mm", "v", "sv", "svh", "vh", "sol", "f", "f90", "f95", "f03", "f08",
+    "F", "F90", "F95", "F03", "F08", "vb", "vue", "svelte", "astro", "ejs", "ps1", "psm1", "psd1",
+    "r", "sql", "tf", "tfvars", "hcl", "sh", "bash", "json", "csproj", "fsproj", "vbproj", "sln",
+    "slnx", "razor", "cshtml", "xaml", "pas", "dpr", "pp", "inc", "lpr", "dpk", "dfm", "lfm",
+    "lpk", "cls", "trigger", "cob", "cbl", "cpy", "dm", "dme", "dmf", "dmi", "dmm", "lisp", "lsp",
+    "cl", "md", "mdx", "qmd", "rst", "txt", "html", "yaml", "yml",
+];
+
 /// Markdown that reads as a paper is a paper, not a page.
 fn is_page(rel: &str, content: &[u8]) -> bool {
     is_markdown(rel) && !crate::ingest::looks_like_paper(&String::from_utf8_lossy(content))
@@ -163,6 +177,9 @@ struct Span {
 pub struct MarkdownPass {
     /// Backtick spans per file, from `extract` to `resolve`.
     spans: Mutex<HashMap<String, Vec<Span>>>,
+    /// The directory names of the indexed root's resolved absolute path, which qualify every
+    /// code node (§3.4).
+    root_dirs: Mutex<Vec<String>>,
 }
 
 impl MarkdownPass {
@@ -191,6 +208,7 @@ impl Documents for MarkdownPass {
             .filter(|(f, content)| is_page(&f.rel, content))
             .map(|(f, _)| file_id(&f.rel))
             .collect();
+        *self.root_dirs.lock().unwrap() = root_dirs(root);
         let mut spans = self.spans.lock().unwrap();
         let mut out = DocumentFacts::default();
         for (i, (f, content)) in files.iter().enumerate() {
@@ -207,8 +225,23 @@ impl Documents for MarkdownPass {
 
     fn resolve(&self, views: &[View], _index: &Index) -> Resolution {
         let spans = self.spans.lock().unwrap();
-        resolve_references(views, &spans)
+        let root_dirs = self.root_dirs.lock().unwrap();
+        resolve_references(views, &spans, &root_dirs)
     }
+}
+
+/// The directory names of `root`'s resolved absolute path (`/tmp/x` on macOS gives `private`,
+/// `tmp`, `x`), the root included.
+fn root_dirs(root: &Path) -> Vec<String> {
+    let abs = std::fs::canonicalize(root)
+        .or_else(|_| std::path::absolute(root))
+        .unwrap_or_else(|_| root.to_path_buf());
+    abs.components()
+        .filter_map(|c| match c {
+            Component::Normal(p) => p.to_str().map(str::to_string),
+            _ => None,
+        })
+        .collect()
 }
 
 /// The words `update`'s report counts for a non-page document (`len(text.split())`): its text
@@ -410,24 +443,35 @@ fn heading(line: &str) -> Option<(usize, &str)> {
     (!label.is_empty()).then_some((level, label))
 }
 
-/// Inline code spans (§3.4): text between a pair of backticks with no backtick inside, which also
-/// reads a double-backtick span by its inner pair. Returned stripped.
+/// Inline code spans (§3.4): a run of N backticks opens a span that the next run of exactly N
+/// closes (`` `` `%||%` `` `` is one span); an opening run with no closing run is plain text.
+/// Backslashes escape nothing. Returned stripped.
 fn code_spans(line: &str) -> Vec<&str> {
+    // Maximal backtick runs as (start, length).
     let b = line.as_bytes();
-    let mut out = Vec::new();
+    let mut runs = Vec::new();
     let mut i = 0;
     while i < b.len() {
-        if b[i] != b'`' {
-            i += 1;
-            continue;
-        }
-        match line[i + 1..].find('`') {
-            Some(0) => i += 1,
-            Some(len) => {
-                out.push(line[i + 1..i + 1 + len].trim());
-                i += len + 2;
+        if b[i] == b'`' {
+            let start = i;
+            while i < b.len() && b[i] == b'`' {
+                i += 1;
             }
-            None => break,
+            runs.push((start, i - start));
+        } else {
+            i += 1;
+        }
+    }
+    let mut out = Vec::new();
+    let mut r = 0;
+    while r < runs.len() {
+        let (start, n) = runs[r];
+        match (r + 1..runs.len()).find(|&k| runs[k].1 == n) {
+            Some(k) => {
+                out.push(line[start + n..runs[k].0].trim());
+                r = k + 1;
+            }
+            None => r += 1,
         }
     }
     out
@@ -557,53 +601,95 @@ fn link_target(root: &Path, path: &str, pages: &HashSet<String>) -> Option<Strin
 struct Candidate<'a> {
     id: &'a str,
     source_file: &'a str,
-    class: Option<&'a str>,
+    /// Names of the enclosing definitions, innermost first (`Top.tm.tin` → `tm`, `Top`).
+    scopes: Vec<&'a str>,
+}
+
+/// A label as a backtick name: no leading `.`, no trailing `()`.
+fn bare_name(label: &str) -> &str {
+    let name = label.strip_prefix('.').unwrap_or(label);
+    name.strip_suffix("()").unwrap_or(name)
+}
+
+/// The enclosing definitions of the node `id` named `name`, read off the ids (§3.4): drop
+/// `_<slug(name)>` from the id; while what is left is a code node other than a file, its name is
+/// the next scope. A local class with no node of its own is skipped (`outer.meth`), and a
+/// collision-merged node keeps its first label (`Box_put.take` is qualified by `put`, `Box`). An
+/// id disambiguated by a hash (`k_k_go_2e0b45` for `.Go()` beside `.go()`) drops it first.
+fn scopes<'a>(id: &str, name: &str, labels: &HashMap<&str, (&'a str, bool)>) -> Vec<&'a str> {
+    let mut out = Vec::new();
+    let (mut id, mut name) = (id.to_string(), name.to_string());
+    loop {
+        let suffix = format!("_{}", make_id(&[name.as_str()]));
+        let Some(parent) = id
+            .strip_suffix(suffix.as_str())
+            .or_else(|| strip_hash(&id)?.strip_suffix(suffix.as_str()))
+        else {
+            break;
+        };
+        let Some(&(label, is_file)) = labels.get(parent) else {
+            break;
+        };
+        if is_file {
+            break;
+        }
+        let parent_name = bare_name(label);
+        out.push(parent_name);
+        id = parent.to_string();
+        name = parent_name.to_string();
+    }
+    out
+}
+
+/// `id` without a trailing `_<6 lowercase hex>` collision hash (format spec §4.5).
+fn strip_hash(id: &str) -> Option<&str> {
+    let (base, hash) = id.rsplit_once('_')?;
+    (hash.len() == 6 && hash.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f')))
+        .then_some(base)
 }
 
 /// Backtick references (§3.4) from every page's spans, in file and line order.
-fn resolve_references(views: &[View], spans: &HashMap<String, Vec<Span>>) -> Resolution {
+fn resolve_references(
+    views: &[View],
+    spans: &HashMap<String, Vec<Span>>,
+    root_dirs: &[String],
+) -> Resolution {
+    let code: Vec<&View> = views
+        .iter()
+        .filter(|v| v.family() != Family::Document)
+        .collect();
+    // Every file's and definition's label by id (the first of merged ids), and whether it is a
+    // file.
+    let mut labels: HashMap<&str, (&str, bool)> = HashMap::new();
+    for v in &code {
+        for n in v
+            .facts
+            .nodes
+            .iter()
+            .filter(|n| matches!(n.kind, NodeKind::File | NodeKind::Def))
+        {
+            labels
+                .entry(n.id.as_str())
+                .or_insert((n.label.as_str(), n.kind == NodeKind::File));
+        }
+    }
     // Callables by name, one entry per distinct final id.
     let mut by_name: HashMap<&str, Vec<Candidate>> = HashMap::new();
     let mut seen: HashSet<&str> = HashSet::new();
-    for v in views.iter().filter(|v| v.family() != Family::Document) {
-        let classes: HashSet<&str> = v
-            .facts
-            .nodes
-            .iter()
-            .filter(|n| flagged(n, "_callable_class"))
-            .map(|n| n.id.as_str())
-            .collect();
-        let mut enclosing: HashMap<&str, &str> = HashMap::new();
-        for e in &v.facts.edges {
-            if (e.relation == "method" || e.relation == "contains")
-                && classes.contains(e.source.as_str())
-            {
-                enclosing
-                    .entry(e.target.as_str())
-                    .or_insert(e.source.as_str());
-            }
-        }
-        let labels: HashMap<&str, &str> = v
-            .facts
-            .nodes
-            .iter()
-            .map(|n| (n.id.as_str(), n.label.as_str()))
-            .collect();
+    for v in &code {
         for n in &v.facts.nodes {
             if !flagged(n, "_callable") || !seen.insert(n.id.as_str()) {
                 continue;
             }
-            let name = n.label.strip_prefix('.').unwrap_or(&n.label);
-            let name = name.strip_suffix("()").unwrap_or(name);
+            let name = bare_name(&n.label);
             by_name.entry(name).or_default().push(Candidate {
                 id: &n.id,
                 source_file: &n.source_file,
-                class: enclosing
-                    .get(n.id.as_str())
-                    .and_then(|c| labels.get(c).copied()),
+                scopes: scopes(&n.id, name, &labels),
             });
         }
     }
+    let root_dirs: HashSet<&str> = root_dirs.iter().map(String::as_str).collect();
 
     let mut out = Resolution::default();
     for v in views.iter().filter(|v| v.family() == Family::Document) {
@@ -612,7 +698,7 @@ fn resolve_references(views: &[View], spans: &HashMap<String, Vec<Span>>) -> Res
         };
         let mut done: HashSet<(String, &str)> = HashSet::new();
         for s in spans {
-            let Some(target) = reference_target(&s.text, &by_name) else {
+            let Some(target) = reference_target(&s.text, &by_name, &root_dirs) else {
                 continue;
             };
             let source = v.id(&s.section).to_string();
@@ -640,10 +726,12 @@ fn flagged(n: &Node, key: &str) -> bool {
     matches!(n.attr(key), Some(Attr::Bool(true)))
 }
 
-/// The one code node a span names, if any (§3.4: shape, denylist, uniqueness, qualifiers).
+/// The one code node a span names, if any (§3.4: shape, denylist, file names, qualifiers,
+/// uniqueness). `root_dirs` are the directory names of the indexed root's absolute path.
 fn reference_target<'a>(
     text: &str,
     by_name: &HashMap<&str, Vec<Candidate<'a>>>,
+    root_dirs: &HashSet<&str>,
 ) -> Option<&'a str> {
     let key = text.strip_suffix("()").unwrap_or(text);
     let segments: Vec<&str> = key.split('.').collect();
@@ -651,22 +739,31 @@ fn reference_target<'a>(
         return None;
     }
     let (name, qualifiers) = segments.split_last()?;
-    if DENYLIST.contains(name) {
+    if DENYLIST.contains(name) || (!qualifiers.is_empty() && EXTENSIONS.contains(name)) {
         return None;
     }
-    let [c] = by_name.get(name)?.as_slice() else {
-        return None;
-    };
-    let path = c.source_file;
-    let (dirs, file) = path.rsplit_once('/').unwrap_or(("", path));
+    let mut found = by_name
+        .get(name)?
+        .iter()
+        .filter(|c| qualifiers.iter().all(|q| qualifies(q, c, root_dirs)));
+    match (found.next(), found.next()) {
+        (Some(c), None) => Some(c.id),
+        _ => None,
+    }
+}
+
+/// Whether `q` names a directory of the candidate's absolute path, its file stem or one of its
+/// enclosing definitions (case-sensitive).
+fn qualifies(q: &str, c: &Candidate, root_dirs: &HashSet<&str>) -> bool {
+    let (dirs, file) = c
+        .source_file
+        .rsplit_once('/')
+        .unwrap_or(("", c.source_file));
     let stem = file
         .rfind('.')
         .filter(|&i| i > 0)
         .map_or(file, |i| &file[..i]);
-    let ok = qualifiers.iter().all(|q| {
-        *q == stem || c.class == Some(*q) || dirs.split('/').any(|d| !d.is_empty() && d == *q)
-    });
-    ok.then_some(c.id)
+    q == stem || c.scopes.contains(&q) || root_dirs.contains(q) || dirs.split('/').any(|d| d == q)
 }
 
 /// `[A-Za-z_][A-Za-z0-9_]*`.
@@ -731,6 +828,15 @@ mod tests {
         );
         assert_eq!(code_spans("` run ` and `run()`"), ["run", "run()"]);
         assert_eq!(code_spans("no `closing"), Vec::<&str>::new());
+        // Probed against Graphify: a run closes at the next run of the same length.
+        assert_eq!(code_spans("x `` `%||%` `` then `walk`"), ["`%||%`", "walk"]);
+        assert_eq!(code_spans("x ``run` and `jump``"), ["run` and `jump"]);
+        assert_eq!(code_spans("x ```hop``` and ``walk``"), ["hop", "walk"]);
+        assert_eq!(code_spans("x `` unclosed and `hop`"), ["hop"]);
+        assert_eq!(code_spans("x `a``b` `jump`"), ["a``b", "jump"]);
+        assert_eq!(code_spans("x ``walk` mixed `` run `"), ["walk` mixed"]);
+        assert_eq!(code_spans("x ```jump`` hop`"), Vec::<&str>::new());
+        assert_eq!(code_spans("x \\`escaped` `run`"), ["escaped", "run"]);
     }
 
     #[test]
@@ -815,34 +921,239 @@ mod tests {
         assert_eq!(page.spans[0].section, "a_tilde_y");
     }
 
+    /// Resolve `spans` against code nodes `(id, label, source_file, callable)` (a label ending in
+    /// `.py`/`.ts`/`.java` is the file) under a root at `/private/tmp/qprobe/cases/c1`.
+    fn resolve_all<'a>(
+        nodes: &'a [(&'a str, &'a str, &'a str, bool)],
+        spans: &[&str],
+    ) -> Vec<Option<&'a str>> {
+        let labels: HashMap<&str, (&str, bool)> = nodes
+            .iter()
+            .map(|(id, label, _, _)| {
+                (
+                    *id,
+                    (
+                        *label,
+                        label.contains(".py") || label.contains(".ts") || label.contains(".java"),
+                    ),
+                )
+            })
+            .collect();
+        let mut by_name: HashMap<&str, Vec<Candidate>> = HashMap::new();
+        for (id, label, file, callable) in nodes {
+            if *callable {
+                let name = bare_name(label);
+                by_name.entry(name).or_default().push(Candidate {
+                    id,
+                    source_file: file,
+                    scopes: scopes(id, name, &labels),
+                });
+            }
+        }
+        let root: HashSet<&str> = ["private", "tmp", "qprobe", "cases", "c1"].into();
+        spans
+            .iter()
+            .map(|s| reference_target(s, &by_name, &root))
+            .collect()
+    }
+
     #[test]
     fn reference_shapes_and_qualifiers() {
-        let mut by_name: HashMap<&str, Vec<Candidate>> = HashMap::new();
-        by_name.entry("other").or_default().push(Candidate {
-            id: "pkg_b_beta_other",
-            source_file: "pkg/b.py",
-            class: Some("Beta"),
-        });
-        by_name.entry("str").or_default().push(Candidate {
-            id: "a_str",
-            source_file: "a.py",
-            class: None,
-        });
+        let nodes = [
+            ("pkg_b", "b.py", "pkg/b.py", false),
+            ("pkg_b_beta", "Beta", "pkg/b.py", true),
+            ("pkg_b_beta_other", ".other()", "pkg/b.py", true),
+            ("a", "a.py", "a.py", false),
+            ("a_str", "str()", "a.py", true),
+        ];
         for (text, want) in [
             ("other", Some("pkg_b_beta_other")),
             ("other()", Some("pkg_b_beta_other")),
             ("Beta.other", Some("pkg_b_beta_other")),
             ("b.Beta.other", Some("pkg_b_beta_other")),
             ("Beta.pkg.other", Some("pkg_b_beta_other")),
+            ("Beta.Beta.other", Some("pkg_b_beta_other")),
             ("Alpha.other", None),
             ("PKG.other", None),
             ("b_beta.other", None),
+            ("other.other", None),
             ("other(1)", None),
             ("pkg/b.other", None),
+            ("Beta::other", None),
             (".other", None),
             ("str", None),
         ] {
-            assert_eq!(reference_target(text, &by_name), want, "{text}");
+            assert_eq!(resolve_all(&nodes, &[text]), [want], "{text}");
         }
+    }
+
+    /// Probed against Graphify 0.9.86 `update` (§3.4): the qualifiers pick one of several
+    /// callables of the same name, and the root's absolute path qualifies every node.
+    #[test]
+    fn qualifiers_disambiguate_and_root_directories_qualify() {
+        let nodes = [
+            ("pkg_a", "a.py", "pkg/a.py", false),
+            ("pkg_a_alpha", "Alpha", "pkg/a.py", true),
+            ("pkg_a_alpha_walk", ".walk()", "pkg/a.py", true),
+            ("pkg_a_alpha_inner", "Inner", "pkg/a.py", true),
+            ("pkg_a_alpha_inner_deep", ".deep()", "pkg/a.py", true),
+            ("pkg_a_dup", "dup()", "pkg/a.py", true),
+            ("pkg_a_x", "X", "pkg/a.py", true),
+            ("pkg_a_x_dup", ".dup()", "pkg/a.py", true),
+            ("pkg_b", "b.py", "pkg/b.py", false),
+            ("pkg_b_beta", "Beta", "pkg/b.py", true),
+            ("pkg_b_beta_walk", ".walk()", "pkg/b.py", true),
+            ("pkg_b_beta_inner", "Inner", "pkg/b.py", true),
+            ("pkg_b_beta_inner_deep", ".deep()", "pkg/b.py", true),
+            ("pkg_b_sub", "Sub", "pkg/b.py", true),
+            ("c", "c.py", "c.py", false),
+            ("c_run", "run()", "c.py", true),
+            ("c_shared", "shared()", "c.py", true),
+            ("d", "d.py", "d.py", false),
+            ("d_shared", "shared()", "d.py", true),
+        ];
+        let spans = [
+            "walk",
+            "Alpha.walk",
+            "Beta.walk()",
+            "pkg.a.Alpha.walk",
+            "a.walk",
+            "pkg.walk",
+            "alpha.walk",
+            "Sub.walk",
+            "shared",
+            "c.shared",
+            "d.shared()",
+            "Inner.deep",
+            "Alpha.deep",
+            "Beta.Inner.deep",
+            "dup",
+            "a.dup",
+            "X.dup",
+            "cases.run",
+            "private.tmp.c1.c.run",
+            "zzz.run",
+            "pkg.run",
+        ];
+        let want = [
+            None,
+            Some("pkg_a_alpha_walk"),
+            Some("pkg_b_beta_walk"),
+            Some("pkg_a_alpha_walk"),
+            Some("pkg_a_alpha_walk"),
+            None,
+            None,
+            None,
+            None,
+            Some("c_shared"),
+            Some("d_shared"),
+            None,
+            Some("pkg_a_alpha_inner_deep"),
+            Some("pkg_b_beta_inner_deep"),
+            None,
+            None,
+            Some("pkg_a_x_dup"),
+            Some("c_run"),
+            Some("c_run"),
+            None,
+            None,
+        ];
+        assert_eq!(resolve_all(&nodes, &spans), want);
+    }
+
+    /// Enclosing functions qualify nested definitions; the scopes are read off the ids, so a
+    /// local class without a node is skipped and a top-level `top_level` is not inside `Top`.
+    #[test]
+    fn enclosing_functions_qualify_nested_definitions() {
+        let nodes = [
+            ("n", "n.py", "n.py", false),
+            ("n_outer", "outer()", "n.py", true),
+            ("n_outer_inner", "inner()", "n.py", true),
+            ("n_outer_meth", "meth()", "n.py", true),
+            ("n_top", "Top", "n.py", true),
+            ("n_top_tm", ".tm()", "n.py", true),
+            ("n_top_tm_tin", "tin()", "n.py", true),
+            ("n_top_level", "top_level()", "n.py", true),
+            ("n_box", "Box", "n.py", true),
+            ("n_box_put", ".put()", "n.py", true),
+            ("n_box_put_take", ".take()", "n.py", true),
+            ("w", "w.ts", "w.ts", false),
+            ("w_shell", "Shell", "w.ts", true),
+            ("w_shell_open", ".open()", "w.ts", true),
+            ("w_shell_open_hidden", "hidden()", "w.ts", true),
+        ];
+        let spans = [
+            "outer.inner",
+            "outer.meth",
+            "Local.meth",
+            "Top.tin",
+            "tm.tin",
+            "Top.tm.tin",
+            "Top.top_level",
+            "Box.take",
+            "put.take",
+            "Box_put.take",
+            "Shell.open.hidden",
+            "Shell.top_level",
+        ];
+        let want = [
+            Some("n_outer_inner"),
+            Some("n_outer_meth"),
+            None,
+            Some("n_top_tm_tin"),
+            Some("n_top_tm_tin"),
+            Some("n_top_tm_tin"),
+            None,
+            Some("n_box_put_take"),
+            Some("n_box_put_take"),
+            None,
+            Some("w_shell_open_hidden"),
+            None,
+        ];
+        assert_eq!(resolve_all(&nodes, &spans), want);
+    }
+
+    /// A qualified span ending in a file extension is a file name (`K.py`, `K.F90`), case-sensitive;
+    /// a bare name never is. The denylist applies to qualified names too.
+    #[test]
+    fn qualified_file_names_and_denylisted_names_never_resolve() {
+        let mut nodes = vec![
+            ("k", "k.py", "k.py", false),
+            ("k_k", "K", "k.py", true),
+            ("z", "z.py", "z.py", false),
+            ("z_ts", "ts()", "z.py", true),
+        ];
+        let methods = [
+            ("k_k_go", ".go()"),
+            ("k_k_f90", ".F90()"),
+            ("k_k_f77", ".F77()"),
+            ("k_k_py", ".PY()"),
+            ("k_k_toml", ".toml()"),
+            ("k_k_zip", ".zip()"),
+            ("k_k_json", ".JSON()"),
+            // `.Go()` beside `.go()`: the ids differ by a collision hash only.
+            ("k_k_go_2e0b45", ".Go()"),
+        ];
+        for (id, label) in methods {
+            nodes.push((id, label, "k.py", true));
+        }
+        let spans = [
+            "ts", "z.ts", "K.go", "k.K.go()", "K.F90", "K.F77", "K.PY", "K.toml", "K.zip",
+            "K.JSON", "K.Go",
+        ];
+        let want = [
+            Some("z_ts"),
+            None,
+            None,
+            None,
+            None,
+            Some("k_k_f77"),
+            Some("k_k_py"),
+            Some("k_k_toml"),
+            None,
+            None,
+            Some("k_k_go_2e0b45"),
+        ];
+        assert_eq!(resolve_all(&nodes, &spans), want);
     }
 }
