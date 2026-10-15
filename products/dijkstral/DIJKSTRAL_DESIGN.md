@@ -102,6 +102,33 @@ Each stage ends with a benchmark run and a review before the next begins.
 | 6 | PR tools, git hooks, watch, merge, global graph, remaining assistant installs | CLI checklist mirrors Graphify |
 | 7 | Agent-outcome benchmarks (key facts, LOCOMO, LongMemEval) | published comparison |
 
+### Deferred: assistant installs beyond Claude Code and Codex
+
+Stage 6 ships the Claude Code and Codex integrations only. Graphify's other assistant targets are
+deferred and must be completed before the CLI checklist counts as mirroring Graphify. Each needs its
+footprint probed (files, sections, hooks or plugins written; user-wide or project), specified
+alongside Claude Code and Codex in `cli/docs/graphify-query.md` §12, and added to `install`,
+`uninstall` and their own `<platform> install|uninstall` commands, with dijkstral's own text:
+
+| Target | Graphify's footprint, from `graphify --help` |
+|---|---|
+| `gemini` | `GEMINI.md` section and a `BeforeTool` hook (Gemini CLI) |
+| `cursor` | `.cursor/rules/graphify.mdc` |
+| `codebuddy` | `CODEBUDDY.md` section and a `PreToolUse` hook |
+| `opencode` | `AGENTS.md` section and a `tool.execute.before` plugin |
+| `kilo` | native Kilo skill, command, `AGENTS.md` and a `.kilo` plugin |
+| `aider`, `claw` (OpenClaw), `droid` (Factory Droid), `trae`, `trae-cn` | `AGENTS.md` section |
+| `copilot` | skill under `~/.copilot/skills` (GitHub Copilot CLI) |
+| `vscode` | skill and `.github/copilot-instructions.md` (VS Code Copilot Chat) |
+| `antigravity` | `.agents/rules`, `.agents/workflows` and a skill (Google Antigravity) |
+| `hermes` | skill under `~/.hermes/skills/` |
+| `kiro` | skill under `.kiro/skills/` and a steering file |
+| `pi` | skill under `~/.pi/agent/skills/` |
+| `devin` | skill under `~/.config/devin/skills/` |
+| `agents`, `amp`, `windows` | `install --platform` skill targets |
+
+`uninstall --purge` (also delete the output directory) belongs with this work.
+
 ## Relationship to other Monet products
 
 Dijkstral is an independent local product. It does not import Butterfly, whose `atlas` crate is
