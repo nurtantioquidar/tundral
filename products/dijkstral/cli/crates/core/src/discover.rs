@@ -14,7 +14,7 @@ use crate::lang::Lang;
 
 /// Directory names that are never descended into, at any depth (§14.5). Hidden directories in
 /// general, `vendor`, `third_party` and the like are indexed, as Graphify does.
-const SKIP_DIRS: &[&str] = &[
+pub const SKIP_DIRS: &[&str] = &[
     ".git",
     "node_modules",
     "target",
@@ -169,7 +169,7 @@ pub fn discover_all(root: &Path, threads: usize) -> Discovery {
 }
 
 /// Files that may hold secrets are never read (§14.5): `.env`, `.env.*`, `*.pem`.
-fn is_sensitive(name: &str) -> bool {
+pub fn is_sensitive(name: &str) -> bool {
     name == ".env" || name.starts_with(".env.") || name.ends_with(".pem")
 }
 

@@ -68,7 +68,7 @@ struct Replay {
 }
 
 impl Semantic for Replay {
-    fn fingerprint(&self, _root: &Path) -> Result<String> {
+    fn fingerprint(&self, _root: &Path, _out: &Path) -> Result<String> {
         Ok("replay".into())
     }
     fn apply(&self, root: &Path, _out: &Path, graph: &mut Graph) -> Result<SemanticReport> {

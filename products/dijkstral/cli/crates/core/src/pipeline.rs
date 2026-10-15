@@ -100,7 +100,7 @@ pub struct SemanticReport {
 pub trait Semantic: Sync {
     /// Everything besides the code files that determines the stage's output (its input files,
     /// backend, model, mode, prompt version), folded into the unchanged-build digest.
-    fn fingerprint(&self, root: &Path) -> Result<String>;
+    fn fingerprint(&self, root: &Path, out_dir: &Path) -> Result<String>;
     /// Bypass the unchanged-build skip (`--force`).
     fn force(&self) -> bool {
         false
@@ -186,7 +186,7 @@ fn build_inner(
         let mut h = blake3::Hasher::new();
         h.update(digest.as_bytes());
         h.update(b"\0semantic\0");
-        h.update(s.fingerprint(&root)?.as_bytes());
+        h.update(s.fingerprint(&root, &out_dir)?.as_bytes());
         digest = h.finalize().to_hex().to_string();
     }
     let extra: Vec<PathBuf> = exporters.iter().flat_map(|e| e.outputs()).collect();

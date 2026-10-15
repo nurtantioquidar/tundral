@@ -3,6 +3,7 @@ mod export_cmd;
 mod exports;
 mod mcp_cmd;
 mod query_cmds;
+mod semantic_build;
 mod semantic_cmd;
 
 use std::path::PathBuf;
@@ -11,7 +12,8 @@ use std::time::Instant;
 
 use clap::{Args, Parser, Subcommand};
 use dijkstral_core::pipeline::cluster_only_files;
-use dijkstral_core::{build_with, BuildOptions, BuildReport};
+use dijkstral_core::pipeline::Semantic;
+use dijkstral_core::{build_semantic, BuildOptions, BuildReport};
 
 // mimalloc keeps fragmentation and the retained high-water mark well below the system allocator's
 // on large builds (Kubernetes: measured in bench/README.md).
@@ -28,10 +30,16 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Command {
-    /// Build the graph for a directory and write dijkstral-out/graph.json.
+    /// Build the graph for a directory and write dijkstral-out/graph.json. Documents, images and
+    /// other non-code files go through a model (the semantic pass) unless --code-only.
     Extract(BuildArgs),
-    /// Rebuild incrementally after changes (only changed files are re-extracted).
+    /// Rebuild incrementally after code changes (only changed files are re-extracted; never
+    /// calls a model).
     Update(BuildArgs),
+    /// Re-cluster the graph and name its communities with a model.
+    Label(semantic_build::LabelArgs),
+    /// Fetch an http(s) page into raw/ for the next semantic pass.
+    Add(semantic_build::AddArgs),
     /// Re-cluster an existing graph.json and rewrite it with GRAPH_REPORT.md and
     /// .graphify_analysis.json (`graphify cluster-only --no-label`: communities named
     /// "Community N", no file statistics).
@@ -69,7 +77,7 @@ struct BuildArgs {
     /// Directory to index.
     #[arg(default_value = ".")]
     path: PathBuf,
-    /// Index code only (no documents, papers or images). The only mode before the semantic pass.
+    /// Index code only: no documents, papers or images, no model.
     #[arg(long)]
     code_only: bool,
     /// Skip clustering, analysis and the report: graph.json gets no `community`, and
@@ -87,6 +95,8 @@ struct BuildArgs {
     timings: bool,
     #[command(flatten)]
     exports: export_cmd::BuildExports,
+    #[command(flatten)]
+    semantic: semantic_build::SemanticFlags,
 }
 
 fn main() -> ExitCode {
@@ -94,9 +104,15 @@ fn main() -> ExitCode {
         return code;
     }
     let cli = Cli::parse();
-    let args = match cli.command {
+    let (args, semantic) = match cli.command {
         Command::Agents(cmd) => return agents_cmd::run(cmd),
-        Command::Extract(args) | Command::Update(args) => args,
+        Command::Extract(args) => {
+            let semantic = !args.code_only;
+            (args, semantic)
+        }
+        Command::Update(args) => (args, false),
+        Command::Label(args) => return semantic_build::run_label(args),
+        Command::Add(args) => return semantic_build::run_add(args),
         Command::Query(cmd) => return query_cmds::run(cmd),
         Command::Mcp(args) => return mcp_cmd::run(args),
         Command::Export(args) => return export_cmd::run(args),
@@ -128,9 +144,29 @@ fn main() -> ExitCode {
         cluster: !args.no_cluster,
     };
     let exporters: Vec<_> = exporters.iter().map(|e| e.as_ref()).collect();
-    match build_with(&opts, &exporters) {
+    let pass = if semantic {
+        match semantic_build::prepare(&opts.root, &args.semantic) {
+            Ok(pass) => pass,
+            Err(e) => {
+                eprintln!("error: {e:#}");
+                return ExitCode::FAILURE;
+            }
+        }
+    } else {
+        None
+    };
+    let stage = pass.as_ref().map(|p| p as &dyn Semantic);
+    match build_semantic(&opts, &exporters, stage) {
         Ok(report) => {
             print_report(&report, args.timings, started);
+            if !semantic {
+                // A no-model build: flag non-code changes for `check-update`.
+                if let Err(e) =
+                    dijkstral_semantic::pass::note_pending_changes(&opts.root, &report.out_dir)
+                {
+                    eprintln!("warning: {e:#}");
+                }
+            }
             ExitCode::SUCCESS
         }
         Err(e) => {
@@ -149,6 +185,11 @@ fn print_report(r: &BuildReport, timings: bool, started: Instant) {
             started.elapsed().as_secs_f64()
         );
         return;
+    }
+    if let Some(s) = &r.semantic {
+        for note in &s.notes {
+            println!("{note}");
+        }
     }
     let communities = if r.communities > 0 {
         format!(", {} communities", r.communities)
