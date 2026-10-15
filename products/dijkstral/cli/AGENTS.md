@@ -18,6 +18,16 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   `.graphify_analysis.json` (`analyze.rs`), `GRAPH_REPORT.md` (`report.rs`) and Python-exact JSON
   output (`pyjson.rs`), and the memory-mapped query index `graph.dij` with its in-memory loader
   for any Graphify `graph.json` (`index.rs`).
+- Extra build inputs, only when their flag is given (`docs/graphify-inputs.md`): the Cargo crate
+  graph (`core/src/inputs/cargo.rs`, `--cargo`, manifests read without running cargo) and a
+  PostgreSQL schema mapped from catalog rows (`core/src/inputs/postgres.rs`); both enter the
+  build digest through `core::build_inputs`. The only database client is
+  `crates/cli/src/inputs_cmd.rs` (`--postgres`, `--no-gitignore`). Google Workspace exports run
+  through the `gws` CLI inside the semantic pass (`crates/semantic/src/gws.rs`). Custom
+  OpenAI-compatible providers (`dijkstral provider`, `crates/cli/src/provider_cmd.rs`) live in
+  `crates/semantic/src/run/backend/provider.rs`: dijkstral's `~/.dijkstral/providers.json` plus
+  Graphify's file read only; a provider stores the name of its key's environment variable, never
+  a key.
 - `crates/serve`: the query engine behind `query`, `path`, `explain`, `affected`, `god-nodes` and
   `benchmark`: structured answers plus Graphify-format renderers, shared by the CLI
   (`crates/cli/src/query_cmds.rs`) and the stdio MCP server (`mcp.rs`, with the graph summaries
@@ -71,6 +81,14 @@ export-only format has its own test file there (`cypher.rs`, `push.rs` against f
 `obsidian.rs`, `svg.rs`, `callflow.rs`, `tree.rs`) with Graphify's outputs, or the data embedded in
 its pages, as goldens. Query commands write nothing next to the graph (Graphify's
 `cache/last_query_stamp` is read by nothing).
+The extra inputs, walk flags and custom providers are specified in `docs/graphify-inputs.md`, with
+goldens in `tests/fixtures/inputs/`: `crates/core/tests/inputs_goldens.rs` must match Graphify's
+`--cargo` and `--postgres` graphs record for record (communities exact; its `ALLOWED` list names
+the quirks not reproduced), building PostgreSQL graphs offline from the catalog snapshots
+(`<db>.catalog.json`) that the `#[ignore]`d live test in `crates/cli/src/inputs_cmd.rs` checks
+(`DIJKSTRAL_PG_TEST_DSN`); `crates/cli/tests/inputs_cli.rs` drives the flags with a scratch `HOME`,
+a fake `gws` and a fake model server. `docs/graphify-cli-checklist.md` maps every Graphify command
+and flag to dijkstral; a new command or flag updates it.
 
 ## Ownership boundaries
 

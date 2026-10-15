@@ -21,7 +21,8 @@ pub enum ModeArg {
 #[derive(Args, Debug, Clone)]
 pub struct BackendFlags {
     /// Model backend: codex (default when the Codex CLI is logged in), openai, anthropic,
-    /// gemini, kimi, deepseek, replay or handoff. Without it, the first configured one.
+    /// gemini, kimi, deepseek, replay, handoff, or a provider from `dijkstral provider list`.
+    /// Without it, the first configured one.
     #[arg(long, value_name = "NAME")]
     pub backend: Option<String>,
     /// Model to ask (overrides the backend's default and environment variable).
@@ -43,12 +44,17 @@ pub struct BackendFlags {
 
 impl BackendFlags {
     fn settings(&self) -> Result<BackendSettings> {
+        // A name that is not a built-in backend is a custom provider's (`provider add`).
+        let (kind, provider) = match self.backend.as_deref() {
+            None => (None, None),
+            Some(name) => match BackendKind::parse(name) {
+                Ok(kind) => (Some(kind), None),
+                Err(_) => (None, Some(name.to_string())),
+            },
+        };
         Ok(BackendSettings {
-            kind: self
-                .backend
-                .as_deref()
-                .map(BackendKind::parse)
-                .transpose()?,
+            kind,
+            provider,
             model: self.model.clone(),
             reasoning_effort: self.reasoning_effort.clone(),
             api_timeout: Duration::from_secs(self.api_timeout),
@@ -66,7 +72,8 @@ pub struct SemanticFlags {
     /// `deep`: finer concepts and more inferred links (its own cache).
     #[arg(long, value_enum, default_value_t = ModeArg::Normal)]
     pub mode: ModeArg,
-    /// Ignore the semantic cache and the unchanged-build check: ask the model again.
+    /// Ignore the semantic cache and the unchanged-build check: ask the model again. Also set by
+    /// GRAPHIFY_FORCE=1.
     #[arg(long)]
     pub force: bool,
     /// Estimated input tokens per request.
@@ -75,6 +82,16 @@ pub struct SemanticFlags {
     /// Accept files whose re-extraction produced fewer nodes than before.
     #[arg(long)]
     pub allow_partial: bool,
+    /// Export Google Docs, Sheets and Slides shortcuts (.gdoc, .gsheet, .gslides) through the
+    /// `gws` CLI and send them with the other documents (not with --code-only).
+    #[arg(long)]
+    pub google_workspace: bool,
+}
+
+/// `--force`, or `GRAPHIFY_FORCE` set to 1, true or yes (Graphify's variable).
+pub fn force_requested(flag: bool) -> bool {
+    flag || std::env::var("GRAPHIFY_FORCE")
+        .is_ok_and(|v| matches!(v.trim().to_ascii_lowercase().as_str(), "1" | "true" | "yes"))
 }
 
 /// The pass for `root`, or `None` when nothing needs a model.
@@ -82,6 +99,7 @@ pub fn prepare(
     root: &Path,
     out: Option<&Path>,
     flags: &SemanticFlags,
+    gitignore: bool,
 ) -> Result<Option<SemanticPass>> {
     let opts = PassOptions {
         backend: flags.backend.settings()?,
@@ -91,9 +109,11 @@ pub fn prepare(
         },
         max_concurrency: flags.backend.max_concurrency,
         token_budget: flags.token_budget,
-        force: flags.force,
+        force: force_requested(flags.force),
         allow_partial: flags.allow_partial,
         progress: true,
+        gitignore,
+        google_workspace: flags.google_workspace,
     };
     SemanticPass::prepare(root, &pass::out_dir_for(root, out), opts, &Env::system())
 }
@@ -109,8 +129,48 @@ pub struct LabelArgs {
     /// Communities per naming request.
     #[arg(long, value_name = "N", default_value_t = 100)]
     batch_size: usize,
+    /// Keep the names saved in .graphify_labels.json; name only communities without one or
+    /// still called "Community N".
+    #[arg(long)]
+    missing_only: bool,
     #[command(flatten)]
     backend: BackendFlags,
+}
+
+/// `cluster-only`'s naming flags. Without `--backend` it names communities "Community N" and
+/// calls no model (Graphify would pick a backend itself).
+#[derive(Args, Debug)]
+pub struct ClusterNaming {
+    /// Keep "Community N" names (the default without --backend).
+    #[arg(long)]
+    no_label: bool,
+    /// Accepted for Graphify compatibility: cluster-only writes no graph.html.
+    #[arg(long)]
+    no_viz: bool,
+    /// Communities per naming request (with --backend).
+    #[arg(long, value_name = "N", default_value_t = 100)]
+    batch_size: usize,
+    #[command(flatten)]
+    backend: BackendFlags,
+}
+
+/// `cluster-only --backend B`: re-cluster and name the communities that have no saved name
+/// (`label --missing-only`); `None` when no model was asked for.
+pub fn run_cluster_naming(
+    path: std::path::PathBuf,
+    graph: Option<std::path::PathBuf>,
+    n: ClusterNaming,
+) -> Option<ExitCode> {
+    if n.no_label || n.backend.backend.is_none() {
+        return None;
+    }
+    Some(run_label(LabelArgs {
+        path,
+        graph,
+        batch_size: n.batch_size,
+        missing_only: true,
+        backend: n.backend,
+    }))
 }
 
 /// `dijkstral label`: re-cluster and name the communities through the backend.
@@ -120,6 +180,7 @@ pub fn run_label(a: LabelArgs) -> ExitCode {
         let opts = LabelOptions {
             batch_size: a.batch_size,
             max_concurrency: a.backend.max_concurrency,
+            missing_only: a.missing_only,
             ..LabelOptions::default()
         };
         let (dir, communities, outcome) =

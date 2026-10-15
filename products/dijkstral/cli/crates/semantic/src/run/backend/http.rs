@@ -92,7 +92,7 @@ pub enum TokenField {
 }
 
 pub struct OpenAi {
-    name: &'static str,
+    name: String,
     base: String,
     key: Option<String>,
     model: String,
@@ -103,7 +103,7 @@ pub struct OpenAi {
 
 impl OpenAi {
     pub fn new(
-        name: &'static str,
+        name: impl Into<String>,
         base: String,
         key: Option<String>,
         model: String,
@@ -112,7 +112,7 @@ impl OpenAi {
         timeout: Duration,
     ) -> OpenAi {
         OpenAi {
-            name,
+            name: name.into(),
             base: base.trim_end_matches('/').to_string(),
             key,
             model,
@@ -125,7 +125,7 @@ impl OpenAi {
 
 impl Backend for OpenAi {
     fn name(&self) -> &str {
-        self.name
+        &self.name
     }
 
     fn model(&self) -> &str {

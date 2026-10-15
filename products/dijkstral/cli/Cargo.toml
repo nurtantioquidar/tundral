@@ -30,6 +30,8 @@ zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
 quick-xml = "0.38"
 # PDF text for the semantic pass (pure Rust, over lopdf).
 pdf-extract = "0.12"
+# `extract --postgres`: a synchronous, pure-Rust client (no libpq); plain TCP, no TLS.
+postgres = "0.19"
 # cl100k_base token estimates for the semantic pass's chunking; the vocabulary ships in the crate.
 tiktoken-rs = "0.12"
 sha2 = "0.10"

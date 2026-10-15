@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::{bail, Result};
-use dijkstral_core::discover::{discover_all, SourceFile};
+use dijkstral_core::discover::{discover_all, discover_all_with, SourceFile};
 use dijkstral_core::graph::Graph;
 use dijkstral_core::pipeline::{DocumentFacts, Documents, SemanticReport, OUT_DIR};
 use dijkstral_core::resolve::{Index, Resolution, View};
@@ -36,6 +36,10 @@ pub struct PassOptions {
     pub force: bool,
     pub allow_partial: bool,
     pub progress: bool,
+    /// Read `.gitignore` files when finding documents (off with `--no-gitignore`).
+    pub gitignore: bool,
+    /// Export Google Workspace shortcuts through `gws` (`--google-workspace`).
+    pub google_workspace: bool,
 }
 
 impl Default for PassOptions {
@@ -48,6 +52,8 @@ impl Default for PassOptions {
             force: false,
             allow_partial: false,
             progress: false,
+            gitignore: true,
+            google_workspace: false,
         }
     }
 }
@@ -76,17 +82,36 @@ impl SemanticPass {
         opts: PassOptions,
         env: &Env,
     ) -> Result<Option<SemanticPass>> {
-        let found = discover_all(root, 1);
+        let found = discover_all_with(root, 1, opts.gitignore);
         let converted_dir = out_dir.join("converted");
+        let mut notes: Vec<String> = Vec::new();
+        let gws = if opts.google_workspace {
+            crate::gws::GwsCli::find()
+        } else {
+            None
+        };
+        if opts.google_workspace && gws.is_none() {
+            let shortcuts = found
+                .documents
+                .iter()
+                .filter(|rel| crate::gws::Kind::of(rel).is_some())
+                .count();
+            if shortcuts > 0 {
+                notes.push(format!(
+                    "google workspace: gws is not on PATH (or DIJKSTRAL_GWS); {shortcuts} \
+                     shortcut(s) left out"
+                ));
+            }
+        }
         let ingested = ingest::ingest(
             root,
             &found.documents,
             &IngestOptions {
                 converted_prefix: CONVERTED_PREFIX,
                 converted_dir: Some(&converted_dir),
+                workspace: gws.as_ref().map(|g| g as &dyn crate::gws::Exporter),
             },
         );
-        let mut notes: Vec<String> = Vec::new();
         for (rel, why) in ingested.skipped.iter().chain(&ingested.warnings) {
             notes.push(format!("{rel}: {why}"));
         }
@@ -318,6 +343,26 @@ pub fn label(
     use std::cell::RefCell;
 
     let outcome: RefCell<run::LabelOutcome> = RefCell::default();
+    // `--missing-only`: the names saved next to the graph, by community id.
+    let saved: std::collections::HashMap<String, String> = if opts.missing_only {
+        let labels = graph.map_or_else(
+            || dir.join(OUT_DIR).join(LABELS_FILE),
+            |g| g.with_file_name(LABELS_FILE),
+        );
+        std::fs::read(&labels)
+            .ok()
+            .and_then(|b| serde_json::from_slice::<serde_json::Value>(&b).ok())
+            .and_then(|v| v.as_object().cloned())
+            .map(|m| {
+                m.into_iter()
+                    .filter_map(|(k, v)| Some((k.clone(), v.as_str()?.to_string())))
+                    .filter(|(k, v)| !v.is_empty() && *v != format!("Community {k}"))
+                    .collect()
+            })
+            .unwrap_or_default()
+    } else {
+        Default::default()
+    };
     let namer = |g: &Graph, c: &Communities, _fallback: &[String]| {
         let mut degree = vec![0usize; g.nodes.len()];
         let index: std::collections::HashMap<&str, usize> = g
@@ -350,10 +395,14 @@ pub fn label(
                     labels: m.iter().map(|&i| g.nodes[i].label.clone()).collect(),
                 }
             })
+            .filter(|community: &run::Community| !saved.contains_key(&community.id))
             .collect();
         let named = run::name_communities(&communities, backend, opts);
         let names = (0..c.members.len())
-            .map(|cid| named.names.get(&cid.to_string()).cloned())
+            .map(|cid| {
+                let id = cid.to_string();
+                saved.get(&id).or_else(|| named.names.get(&id)).cloned()
+            })
             .collect();
         let tokens = (named.usage.input_tokens, named.usage.output_tokens);
         *outcome.borrow_mut() = named;

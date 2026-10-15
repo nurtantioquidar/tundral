@@ -31,6 +31,9 @@ pub struct LabelOptions {
     pub batch_size: usize,
     /// `--max-concurrency` (default 4).
     pub max_concurrency: usize,
+    /// `--missing-only`: keep saved names; ask only for communities without one or still named
+    /// `Community N` (`docs/graphify-inputs.md` §7.2).
+    pub missing_only: bool,
     /// Member labels shown per community (default 12).
     pub max_labels: usize,
 }
@@ -41,6 +44,7 @@ impl Default for LabelOptions {
             batch_size: 100,
             max_concurrency: 4,
             max_labels: 12,
+            missing_only: false,
         }
     }
 }

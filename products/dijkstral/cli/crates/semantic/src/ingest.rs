@@ -116,6 +116,8 @@ pub struct IngestOptions<'a> {
     pub converted_prefix: &'a str,
     /// Directory the converted files are also written to; `None` keeps them in memory.
     pub converted_dir: Option<&'a Path>,
+    /// Exports Google Workspace shortcuts (`--google-workspace`); `None` leaves them out.
+    pub workspace: Option<&'a dyn crate::gws::Exporter>,
 }
 
 /// What [`ingest`] produced.
@@ -142,6 +144,28 @@ pub fn ingest(root: &Path, documents: &[String], opts: &IngestOptions) -> Ingest
     let mut sorted: Vec<&String> = documents.iter().collect();
     sorted.sort();
     for rel in sorted {
+        if let (Some(exporter), Some(_)) = (opts.workspace, crate::gws::Kind::of(rel)) {
+            // Exported, then sent with the converted office files (`graphify-inputs.md` §4).
+            let dir = opts
+                .converted_dir
+                .map_or_else(std::env::temp_dir, Path::to_path_buf);
+            match crate::gws::convert(root, rel, exporter, &dir) {
+                Ok(md) => {
+                    let path = format!("{}/{}", opts.converted_prefix, converted_name(rel));
+                    if let Some(dir) = opts.converted_dir {
+                        if let Err(e) = std::fs::write(dir.join(converted_name(rel)), &md) {
+                            out.warnings
+                                .push((rel.clone(), format!("writing {path}: {e}")));
+                        }
+                    }
+                    let mut doc = text_doc(rel, DocKind::Document, md.as_bytes());
+                    doc.converted = Some(path);
+                    office.push(doc);
+                }
+                Err(e) => out.skipped.push((rel.clone(), format!("{e:#}"))),
+            }
+            continue;
+        }
         let Some(class) = classify(rel) else {
             continue;
         };
@@ -378,7 +402,7 @@ fn docx_text(bytes: &[u8]) -> Result<String> {
 }
 
 /// A `.xlsx` workbook: `## Sheet: <name>` and a Markdown table per sheet, first row as header.
-fn xlsx_markdown(bytes: &[u8]) -> Result<String> {
+pub(crate) fn xlsx_markdown(bytes: &[u8]) -> Result<String> {
     let mut archive = open_zip(bytes)?;
     let workbook = zip_part(&mut archive, "xl/workbook.xml")?;
     let rels = zip_part(&mut archive, "xl/_rels/workbook.xml.rels").unwrap_or_default();
