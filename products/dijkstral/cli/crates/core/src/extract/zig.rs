@@ -16,8 +16,8 @@
 //!   error-set names. A struct field whose type is an inline container hands that container's
 //!   members to the struct (`kind: enum { a, b }` → cases `a`, `b` of the struct; an inline
 //!   struct's functions become its methods); enum and union fields' types are not walked. A
-//!   non-exhaustive `_` slugs to nothing, so it is a `case_of` self-loop on the enum, of which
-//!   only the first is emitted (the build keeps the first self-loop).
+//!   non-exhaustive `_` slugs to nothing, so it is a `case_of` self-loop on the enum (the build
+//!   keeps the first of repeated self-loops, §8.2).
 //!
 //! Not emitted: struct and plain-union fields, `opaque` declarations (methods included), type
 //! aliases, merged error sets, containers declared inside functions (generic `return struct`),
@@ -96,8 +96,6 @@ struct Z<'c, 'a> {
     names: HashMap<String, String>,
     /// Ids of the definitions emitted so far.
     emitted: HashSet<String>,
-    /// Containers that already have their `case_of` self-loop.
-    self_loops: HashSet<String>,
     calls: Vec<RawCall>,
 }
 
@@ -112,7 +110,6 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         },
         names: HashMap::new(),
         emitted: HashSet::new(),
-        self_loops: HashSet::new(),
         calls: Vec::new(),
     };
     if let Some(tree) = tree {
@@ -254,13 +251,10 @@ impl Z<'_, '_> {
         let label = self.cx.text(name).to_string();
         let id = Ctx::child_id(owner, &label);
         let line = Ctx::line(at);
+        // The non-exhaustive `_` slugs to nothing: a self-loop.
         if id != owner {
             self.emitted.insert(id.clone());
             self.cx.add_def(id.clone(), label, line, vec![]);
-        } else if !self.self_loops.insert(id.clone()) {
-            // The non-exhaustive `_` slugs to nothing: a self-loop. Graphify's build keeps the
-            // first self-loop of a node (a later one never replaces it), so only that is emitted.
-            return;
         }
         self.cx.add_edge(owner, &id, "case_of", line, None);
     }

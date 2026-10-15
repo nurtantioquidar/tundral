@@ -572,16 +572,11 @@ impl<'a> Go<'_, 'a> {
         }
     }
 
-    /// Emit a declaration's pending edges. A `references` edge to a type the declaration also
-    /// embeds is dropped: Graphify's build keeps the `embeds` link untouched (§8.2).
+    /// Emit a declaration's pending edges (an `embeds` link absorbs a `references` to the same
+    /// type in the build, §8.2).
     fn flush(&mut self, source: &str, refs: Vec<Ref>) {
-        let embedded: HashSet<String> = refs
-            .iter()
-            .filter(|r| r.relation == "embeds")
-            .map(|r| r.target.clone())
-            .collect();
         for r in refs {
-            if r.target == source || (r.relation == "references" && embedded.contains(&r.target)) {
+            if r.target == source {
                 continue;
             }
             self.cx

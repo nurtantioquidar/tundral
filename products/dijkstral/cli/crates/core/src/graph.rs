@@ -33,17 +33,22 @@ fn rank(relation: &str) -> u8 {
         "references" => 10,
         "uses" => 20,
         "calls" | "case_of" | "dynamic_import" => 30,
-        "imports" => 45,
-        "imports_from" | "indirect_call" => 50,
-        "re_exports" => 60,
         "references_constant" => 35,
         "uses_static_prop" => 36,
+        "instantiates" => 41,
+        "imports" => 45,
+        "imports_from" | "indirect_call" | "re_exports" => 50,
         _ => 40, // contains, method, inherits, implements, rationale_for, embeds, defines, …
     }
 }
 
+/// Relations that, surviving, replace a lower edge whole and take nothing from one they absorb
+/// but a call's `context` (§8.2).
 fn is_structural(relation: &str) -> bool {
-    relation == "contains" || relation == "method"
+    matches!(
+        relation,
+        "contains" | "method" | "inherits" | "implements" | "defines" | "embeds"
+    )
 }
 
 /// `{**base, **over}`: every field `over` carries wins; fields only `base` has survive.
@@ -73,10 +78,16 @@ fn merge_over(base: &Edge, over: &Edge) -> Edge {
     }
 }
 
-/// Fold `new` into the link `old` already holding the same unordered pair.
-fn fold(old: &mut Edge, new: Edge) {
+/// Fold `new` into the link `old` already holding the same unordered pair, whose first edge ran
+/// from `first_source`.
+///
+/// Orientation is judged against that first edge, not against the current survivor: after a
+/// reversed edge won the pair, a later edge in the first edge's direction still merges into it
+/// (Kotlin probe: `contains A→Z`, `implements Z→A`, `calls A→Z` gives `implements` with
+/// `context: "call"`). A self-loop always counts as reversed, so a repeated one keeps the first.
+fn fold(old: &mut Edge, new: Edge, first_source: &str) {
     let (ro, rn) = (rank(&old.relation), rank(&new.relation));
-    if old.source == new.source {
+    if new.source == first_source && new.source != new.target {
         if rn >= ro {
             *old = if is_structural(&new.relation) {
                 new
@@ -84,16 +95,24 @@ fn fold(old: &mut Edge, new: Edge) {
                 merge_over(old, &new)
             };
         } else if is_structural(&old.relation) {
+            // A structural link absorbs only a call's context (none when the call has none).
             if new.relation == "calls" && old.context.is_none() {
-                old.context = Some("call".into());
+                old.context = new.context;
             }
         } else {
             *old = merge_over(&new, old);
         }
-    } else if rn > ro || (rn == ro && (new.source < old.source) == (ro != 40)) {
-        // Equal ranks: the smaller source survives, but in the structural tier (contains,
-        // method, inherits, implements…) the larger one does: a nested class inheriting its
-        // outer class keeps `contains` or `inherits` by id order (Kotlin and Java probes).
+    } else if rn > ro
+        || (rn == ro
+            && if new.relation == old.relation {
+                new.source < old.source
+            } else {
+                new.source > old.source
+            })
+    {
+        // Equal ranks: of two links of one relation the smaller source survives, of two
+        // relations the larger one (a nested class inheriting its outer class keeps `contains`
+        // or `inherits` by id order; `re_exports` and `imports_from` likewise).
         *old = new;
     }
 }
@@ -131,6 +150,8 @@ impl Graph {
             let t = *index.get(e.target.as_str())?;
             Some(if s <= t { (s, t) } else { (t, s) })
         };
+        // The source of each pair's first edge, which fixes the pair's orientation (`fold`).
+        let mut first: Vec<u32> = Vec::new();
 
         let mut slot: HashMap<(u32, u32), u32> = HashMap::new();
         for e in batches.iter().flatten() {
@@ -141,6 +162,7 @@ impl Graph {
         }
         let mut kept: Vec<Option<Edge>> = Vec::with_capacity(slot.len());
         kept.resize_with(slot.len(), || None);
+        first.resize(slot.len(), 0);
         let mut dangling = 0;
         for batch in batches {
             for e in batch {
@@ -150,11 +172,15 @@ impl Graph {
                 };
                 let i = slot[&pair] as usize;
                 match &mut kept[i] {
-                    None => kept[i] = Some(e),
-                    Some(old) => fold(old, e),
+                    None => {
+                        first[i] = index[e.source.as_str()];
+                        kept[i] = Some(e);
+                    }
+                    Some(old) => fold(old, e, &nodes[first[i] as usize].id),
                 }
             }
         }
+        drop(first);
         drop(slot);
         drop(index);
         Graph {
@@ -230,15 +256,20 @@ impl Graph {
             .map(|n| {
                 let obj = n.as_object().ok_or("node is not an object")?;
                 let s = |k: &str| obj.get(k).and_then(Value::as_str).unwrap_or("").to_string();
+                let (loc, raw_loc) = loc_of(obj.get("source_location"));
                 let mut node = Node {
                     id: s("id"),
                     label: s("label"),
                     kind: NodeKind::Def,
                     file_type: s("file_type"),
                     source_file: s("source_file"),
-                    loc: loc_of(obj.get("source_location")),
+                    loc,
                     attrs: Vec::new(),
                 };
+                if let Some(raw) = raw_loc {
+                    node.attrs.push(("source_location".into(), raw));
+                }
+                keep_non_strings(obj, &["file_type", "source_file"], &mut node.attrs);
                 for (k, v) in obj {
                     if !matches!(
                         k.as_str(),
@@ -271,6 +302,7 @@ impl Graph {
                     Some("AMBIGUOUS") => Confidence::Ambiguous,
                     _ => Confidence::Extracted,
                 };
+                let (loc, raw_loc) = loc_of(obj.get("source_location"));
                 let mut edge = Edge {
                     source: s("source"),
                     target: s("target"),
@@ -282,10 +314,14 @@ impl Graph {
                         .and_then(Value::as_str)
                         .map(str::to_string),
                     source_file: s("source_file"),
-                    loc: loc_of(obj.get("source_location")),
+                    loc,
                     weight: obj.get("weight").and_then(Value::as_f64),
                     attrs: Vec::new(),
                 };
+                if let Some(raw) = raw_loc {
+                    edge.attrs.push(("source_location".into(), raw));
+                }
+                keep_non_strings(obj, &["source_file"], &mut edge.attrs);
                 for (k, v) in obj {
                     if !matches!(
                         k.as_str(),
@@ -395,16 +431,33 @@ fn attr_value(a: &Attr) -> Value {
     }
 }
 
-fn loc_of(v: Option<&Value>) -> Loc {
+/// A loaded `source_location`: one of [`Loc`]'s shapes, or any other value (Lua's bare `"3"`,
+/// quirk LU1) kept verbatim as an attribute, as the build writes it.
+fn loc_of(v: Option<&Value>) -> (Loc, Option<Attr>) {
     match v {
-        None => Loc::Absent,
-        Some(Value::Null) => Loc::Null,
-        Some(Value::String(s)) if s.is_empty() => Loc::Empty,
-        Some(Value::String(s)) => s
+        None => (Loc::Absent, None),
+        Some(Value::Null) => (Loc::Null, None),
+        Some(Value::String(s)) if s.is_empty() => (Loc::Empty, None),
+        Some(Value::String(s)) => match s
             .strip_prefix('L')
+            .filter(|n| n.bytes().all(|b| b.is_ascii_digit()))
             .and_then(|n| n.parse().ok())
-            .map_or(Loc::Empty, Loc::Line),
-        Some(_) => Loc::Empty,
+        {
+            Some(n) if format!("L{n}") == *s => (Loc::Line(n), None),
+            _ => (Loc::Absent, Some(Attr::Str(s.clone()))),
+        },
+        Some(other) => (Loc::Absent, Some(attr_of(other))),
+    }
+}
+
+/// String fields the model reads as `""` when absent or not a string; a present non-string value
+/// (Dart's shared nodes have `"source_file": null`) is kept as an attribute, which the writer
+/// emits in the field's place.
+fn keep_non_strings(obj: &Map<String, Value>, keys: &[&str], attrs: &mut Vec<(String, Attr)>) {
+    for &k in keys {
+        if let Some(v) = obj.get(k).filter(|v| !v.is_string()) {
+            attrs.push((k.to_string(), attr_of(v)));
+        }
     }
 }
 
@@ -599,16 +652,95 @@ mod tests {
         g.edges.into_iter().next().unwrap()
     }
 
+    fn with_context(mut e: Edge, context: &str) -> Edge {
+        e.context = Some(context.into());
+        e
+    }
+
     #[test]
-    fn contains_absorbs_a_later_call_as_context() {
+    fn structural_links_absorb_a_later_calls_context_only() {
         let e = one(
             &["a", "b"],
-            vec![edge("a", "b", "contains", 52), edge("a", "b", "calls", 55)],
+            vec![
+                edge("a", "b", "contains", 52),
+                with_context(edge("a", "b", "calls", 55), "call"),
+            ],
         );
         assert_eq!(
             (e.relation.as_str(), e.context.as_deref(), e.loc),
             ("contains", Some("call"), Loc::Line(52))
         );
+        // A call without context (Zig, quirk ZG3) leaves none.
+        let e = one(
+            &["a", "b"],
+            vec![edge("a", "b", "method", 1), edge("a", "b", "calls", 2)],
+        );
+        assert_eq!(e.context, None);
+        // `defines`, `inherits`, `implements` and `embeds` take nothing from a reference
+        // (Dart, C#, Go probes), and replace an earlier one whole.
+        for rel in ["defines", "inherits", "implements", "embeds"] {
+            let e = one(
+                &["a", "b"],
+                vec![
+                    edge("a", "b", rel, 1),
+                    with_context(edge("a", "b", "references", 2), "field"),
+                ],
+            );
+            assert_eq!((e.relation.as_str(), e.context), (rel, None));
+            let e = one(
+                &["a", "b"],
+                vec![
+                    with_context(edge("a", "b", "references", 1), "field"),
+                    edge("a", "b", rel, 2),
+                ],
+            );
+            assert_eq!((e.relation.as_str(), e.context), (rel, None));
+        }
+    }
+
+    #[test]
+    fn orientation_is_the_first_edges() {
+        // Kotlin probe: the reversed `implements` wins the tie (larger source), and a later
+        // call in the first edge's direction still lends it its context.
+        let e = one(
+            &["f_aa", "f_zz"],
+            vec![
+                edge("f_aa", "f_zz", "contains", 1),
+                edge("f_zz", "f_aa", "implements", 1),
+                with_context(edge("f_aa", "f_zz", "calls", 3), "call"),
+            ],
+        );
+        assert_eq!(
+            (e.source.as_str(), e.relation.as_str(), e.context.as_deref()),
+            ("f_zz", "implements", Some("call"))
+        );
+        // A call in the survivor's own direction is reversed relative to the pair: no trace.
+        let e = one(
+            &["f_aa", "f_zz"],
+            vec![
+                edge("f_aa", "f_zz", "contains", 1),
+                edge("f_zz", "f_aa", "inherits", 1),
+                with_context(edge("f_zz", "f_aa", "calls", 3), "call"),
+            ],
+        );
+        assert_eq!((e.relation.as_str(), e.context), ("inherits", None));
+    }
+
+    #[test]
+    fn repeated_self_loops_keep_the_first() {
+        let e = one(
+            &["a"],
+            vec![edge("a", "a", "case_of", 1), edge("a", "a", "case_of", 2)],
+        );
+        assert_eq!(e.loc, Loc::Line(1));
+        let e = one(
+            &["a"],
+            vec![
+                edge("a", "a", "references", 1),
+                with_context(edge("a", "a", "references", 2), "field"),
+            ],
+        );
+        assert_eq!((e.loc, e.context), (Loc::Line(1), None));
     }
 
     #[test]
@@ -652,6 +784,40 @@ mod tests {
             vec![edge("b", "a", "calls", 1), edge("a", "b", "method", 2)],
         );
         assert_eq!(e.relation, "method");
+    }
+
+    #[test]
+    fn opposite_direction_tie_of_one_relation_keeps_smaller_source() {
+        // Python and Java probes: `class Aa(Bb)` / `class Bb(Aa)` keep `Aa -inherits-> Bb` in
+        // either order; Julia's `file -defines-> module` beats `module -defines-> file`.
+        for (first, second) in [
+            (("m_aa", "m_bb"), ("m_bb", "m_aa")),
+            (("m_bb", "m_aa"), ("m_aa", "m_bb")),
+        ] {
+            for rel in ["inherits", "implements", "defines", "references"] {
+                let e = one(
+                    &["m_aa", "m_bb"],
+                    vec![
+                        edge(first.0, first.1, rel, 1),
+                        edge(second.0, second.1, rel, 2),
+                    ],
+                );
+                assert_eq!(e.source, "m_aa", "{rel}");
+            }
+        }
+        // `re_exports` and `imports_from` share a rank: the larger source wins (fastapi's
+        // package import cycles, quirk tri_a / tri_z).
+        let e = one(
+            &["pkg_init", "pkg_z"],
+            vec![
+                edge("pkg_init", "pkg_z", "re_exports", 2),
+                edge("pkg_z", "pkg_init", "imports_from", 1),
+            ],
+        );
+        assert_eq!(
+            (e.source.as_str(), e.relation.as_str()),
+            ("pkg_z", "imports_from")
+        );
     }
 
     #[test]

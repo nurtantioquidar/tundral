@@ -298,7 +298,6 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         w.visit(root, None);
     }
     w.bind_events();
-    w.tidy();
     let Objc { cx, facts, .. } = w;
     cx.facts.lang = LangFacts::ObjC(facts);
 }
@@ -957,56 +956,6 @@ impl<'s> Objc<'_, '_, 's> {
             }
             _ => None,
         }
-    }
-
-    /// Two of Graphify's folds differ from the shared one for Objective-C edges; reproduce them by
-    /// dropping the edge that would leave a trace:
-    ///
-    /// - a property `references` (context `field`) on a pair that also has `inherits` or
-    ///   `implements` is absorbed without its context, whatever the order;
-    /// - a repeated self-loop of one relation keeps the first.
-    fn tidy(&mut self) {
-        let real = |e: &crate::facts::Edge, aliases: &HashMap<&str, &str>| -> String {
-            aliases
-                .get(e.target.as_str())
-                .map_or_else(|| e.target.clone(), |t| t.to_string())
-        };
-        let aliases: HashMap<&str, &str> = self
-            .facts
-            .aliases
-            .iter()
-            .map(|a| (a.alias.as_str(), a.target.as_str()))
-            .collect();
-        let typed: HashSet<(String, String)> = self
-            .cx
-            .facts
-            .edges
-            .iter()
-            .filter(|e| e.relation == "inherits" || e.relation == "implements")
-            .map(|e| (e.source.clone(), real(e, &aliases)))
-            .collect();
-        let mut loops: HashSet<(String, String)> = HashSet::new();
-        let keep: Vec<bool> = self
-            .cx
-            .facts
-            .edges
-            .iter()
-            .map(|e| {
-                let target = real(e, &aliases);
-                if e.relation == "references"
-                    && e.context.as_deref() == Some("field")
-                    && typed.contains(&(e.source.clone(), target.clone()))
-                {
-                    return false;
-                }
-                target != e.source || loops.insert((e.source.clone(), e.relation.clone()))
-            })
-            .collect();
-        let mut i = 0;
-        self.cx.facts.edges.retain(|_| {
-            i += 1;
-            keep[i - 1]
-        });
     }
 
     /// In-file binding of the body events, emitted after every structural edge.
