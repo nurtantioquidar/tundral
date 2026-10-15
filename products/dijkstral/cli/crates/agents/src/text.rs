@@ -70,15 +70,20 @@ description: Build and query a dijkstral code knowledge graph of the current rep
 
 dijkstral indexes a repository with tree-sitter into a graph of files, classes, functions and
 their relations (imports, calls, inheritance, containment), clusters it into communities, and
-answers questions about it locally. No model or network is involved.
+answers questions about it locally. Building the code graph involves no model or network.
 
 ## Build or refresh
 
-- `dijkstral extract .` builds the graph into `dijkstral-out/` (`graph.json`, `GRAPH_REPORT.md`).
-- `dijkstral update .` refreshes it after edits; unchanged files come from the cache, and an
-  unchanged tree is detected without rebuilding.
+- `dijkstral extract . --code-only` builds the code graph into `dijkstral-out/` (`graph.json`,
+  `GRAPH_REPORT.md`), locally.
+- `dijkstral update .` refreshes it after edits, also without a model; unchanged files come from
+  the cache, and an unchanged tree is detected without rebuilding.
 
 Build once when a project has no `dijkstral-out/graph.json`; update after changing code.
+
+`dijkstral extract .` without `--code-only` also sends the project's documents, PDFs and images
+to a model (the Codex CLI by default) to add concepts from them. Run it only when the user asks
+for it: it uses their model quota.
 
 ## Ask
 

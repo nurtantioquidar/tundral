@@ -188,7 +188,7 @@ fn report(changes: &[Change]) {
 fn claude_note() {
     println!(
         "\nClaude Code will steer searches and source reads toward `dijkstral query` whenever \
-         dijkstral-out/graph.json exists here. Build it with `dijkstral extract .`."
+         dijkstral-out/graph.json exists here. Build it with `dijkstral extract . --code-only`."
     );
 }
 
@@ -196,7 +196,7 @@ fn codex_note() {
     println!(
         "\nCodex reads the AGENTS.md section. Its PreToolUse hook (`dijkstral hook-check`) is a \
          placeholder that does nothing, because Codex does not accept added context from \
-         PreToolUse hooks. Build the graph with `dijkstral extract .`."
+         PreToolUse hooks. Build the graph with `dijkstral extract . --code-only`."
     );
 }
 
