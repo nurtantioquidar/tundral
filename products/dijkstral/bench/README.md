@@ -515,3 +515,31 @@ byte for byte: `graph.json` on all 19 repositories (before: 17), `.graphify_anal
 §17.7, Open). Outputs are byte-identical across
 `--threads 1` and the default on monet, fastapi, alamofire, afnetworking, guzzle, dart-http and
 penlight.
+
+### Stage 4b head-to-head: Dart, Elixir, Lua, Objective-C — 2026-10-15
+
+Four corpus repos added for stage 4b (dart-http, ecto, Penlight, AFNetworking), frozen references,
+dijkstral after the shared-rule consolidation and the call-flow stamp fix (`3296e29`), 10 threads,
+3 runs, quiet machine. Raw: `results/build-1792027080.json`. Stage 4b also added Groovy/Gradle,
+Erlang/OCaml (no nodes, as Graphify without those grammar extras), Julia, Zig, Fortran,
+Verilog/SystemVerilog, Solidity (no nodes), Vue, Svelte, Astro, PowerShell, VB (no nodes), .NET
+project/markup files, Pascal, Apex, COBOL and BYOND; their fixture goldens and parity are in
+`cli/docs/graphify-format.md` §26–§44.
+
+| repo | scenario | Graphify s | dijkstral s | speedup | Graphify RSS MB | dijkstral RSS MB |
+|---|---|---|---|---|---|---|
+| dart-http | cold | 16.08 | 0.30 | 54× | 688 | 196 |
+|  | warm | 2.92 | 0.05 | 57× | 221 | 12 |
+|  | update | 2.69 | 0.19 | 14× | 343 | 167 |
+| ecto | cold | 1.25 | 0.14 | 9× | 639 | 42 |
+|  | warm | 0.66 | 0.05 | 14× | 77 | 8 |
+|  | update | 0.71 | 0.08 | 8× | 80 | 9 |
+| penlight | cold | 1.21 | 0.10 | 12× | 586 | 32 |
+|  | warm | 0.51 | 0.05 | 11× | 69 | 7 |
+|  | update | 0.61 | 0.08 | 8× | 62 | 7 |
+| afnetworking | cold | 1.12 | 0.10 | 11× | 613 | 53 |
+|  | warm | 0.63 | 0.04 | 14× | 77 | 9 |
+|  | update | 0.63 | 0.09 | 7× | 69 | 10 |
+
+dijkstral is faster (7× to 57×) and lower in peak memory in all 12 scenarios.
+
