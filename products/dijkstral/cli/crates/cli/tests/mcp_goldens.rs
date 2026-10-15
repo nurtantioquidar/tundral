@@ -47,9 +47,6 @@ const FLAGGED_FAILURES: &[&str] = &[
     "rust.get_node.2",
 ];
 
-/// Tools Graphify lists that dijkstral does not yet (stage 6).
-const UNLISTED_TOOLS: &[&str] = &["list_prs", "get_pr_impact", "triage_prs"];
-
 fn split_edges(s: &str) -> (Vec<&str>, Vec<&str>) {
     let (mut edges, mut rest) = (Vec::new(), Vec::new());
     for line in s.split('\n') {
@@ -158,9 +155,6 @@ fn compare(t: &Transcript, got: &Value) -> Result<(), String> {
             let mut w = want["result"]["tools"].clone();
             strip_descriptions(&mut g);
             strip_descriptions(&mut w);
-            w.as_array_mut()
-                .unwrap()
-                .retain(|t| !UNLISTED_TOOLS.contains(&t["name"].as_str().unwrap()));
             (g == w).then_some(()).ok_or(format!("{g} != {w}"))
         }
         "resources_list" => {

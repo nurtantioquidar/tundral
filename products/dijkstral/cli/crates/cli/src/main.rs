@@ -1,10 +1,14 @@
 mod agents_cmd;
+mod diagnose_cmd;
 mod export_cmd;
 mod exports;
 mod mcp_cmd;
+mod memory_cmd;
+mod prs_cmd;
 mod query_cmds;
 mod semantic_build;
 mod semantic_cmd;
+mod work_cmds;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -60,6 +64,8 @@ enum Command {
     Semantic(semantic_cmd::SemanticArgs),
     /// Report non-code changes the semantic pass has not seen (silent when current).
     CheckUpdate(semantic_cmd::CheckUpdateArgs),
+    #[command(flatten)]
+    Work(work_cmds::WorkCommand),
 }
 
 #[derive(Args, Debug)]
@@ -117,6 +123,7 @@ fn main() -> ExitCode {
         Command::Tree(args) => return exports::tree::run_cmd(args),
         Command::Semantic(args) => return semantic_cmd::run_semantic(args),
         Command::CheckUpdate(args) => return semantic_cmd::run_check_update(args),
+        Command::Work(cmd) => return work_cmds::run(cmd),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {
