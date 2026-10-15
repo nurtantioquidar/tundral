@@ -73,6 +73,9 @@ pub struct Response {
     pub output_tokens: Option<u64>,
     /// The backend's own name for the model that answered, for the cache key and reports.
     pub model: String,
+    /// The reply stopped at the output token limit (`finish_reason: "length"` and equivalents);
+    /// `run` bisects a truncated multi-file chunk (§6).
+    pub truncated: bool,
 }
 
 /// A model backend (Codex CLI, OpenAI-compatible HTTP, Anthropic, Gemini, replay, …).

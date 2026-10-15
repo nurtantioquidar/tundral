@@ -539,6 +539,18 @@ runs. "Raw" is `extract --no-cluster`, "clustered" the default build.
 - **Quirk.** A rerun served from the cache differs from the fresh run only by
   `_origin: "semantic"` on every semantic node and edge (also after `update` and `label`).
 
+### 9.5 dijkstral's cache (deliberate differences)
+
+dijkstral keeps Graphify's per-file content key (§9.1, verified against `mixed.cache_keys.json`)
+under `dijkstral-out/semantic/cache/<normal|deep>/<scope>/<key>.json`, where `scope` hashes the
+backend, the model and dijkstral's `PROMPT_VERSION`: changing the model or backend re-asks
+instead of reusing another model's replies, and switching back finds the earlier entries. A file
+the model leaves out of a non-empty reply is retried once, then cached as empty (Graphify retries
+it on every run), and `./README.md` is attributed to `README.md` (no quirk S6). The shrink guard
+compares against `dijkstral-out/semantic/index.json`, which also feeds `check-update` (the
+`needs_update` flag, or an indexed file whose size or mtime changed). Implementation:
+`crates/semantic/src/run/cache.rs`.
+
 ---
 
 ## 10. Community labelling with a model
