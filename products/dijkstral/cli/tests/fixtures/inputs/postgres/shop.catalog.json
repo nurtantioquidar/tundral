@@ -1,0 +1,124 @@
+{
+  "host": "127.0.0.1",
+  "database": "shop",
+  "catalog": {
+    "tables": [
+      {
+        "schema": "billing",
+        "name": "invoices"
+      },
+      {
+        "schema": "public",
+        "name": "customers"
+      },
+      {
+        "schema": "public",
+        "name": "order_items"
+      },
+      {
+        "schema": "public",
+        "name": "orders"
+      },
+      {
+        "schema": "public",
+        "name": "products"
+      },
+      {
+        "schema": "public",
+        "name": "stock_moves"
+      },
+      {
+        "schema": "public",
+        "name": "warehouse_stock"
+      }
+    ],
+    "views": [
+      {
+        "schema": "billing",
+        "name": "open_invoices",
+        "definition": " SELECT id,\n    order_id\n   FROM billing.invoices\n  WHERE (total_micros > 0);"
+      },
+      {
+        "schema": "public",
+        "name": "order_totals",
+        "definition": " SELECT o.id AS order_id,\n    sum((i.quantity * p.price_micros)) AS total_micros\n   FROM ((orders o\n     JOIN order_items i ON ((i.order_id = o.id)))\n     JOIN products p ON ((p.sku = i.sku)))\n  GROUP BY o.id;"
+      }
+    ],
+    "foreign_keys": [
+      {
+        "schema": "billing",
+        "table": "invoices",
+        "name": "invoices_order_id_fkey",
+        "ref_schema": "public",
+        "ref_table": "orders"
+      },
+      {
+        "schema": "public",
+        "table": "customers",
+        "name": "customers_referred_by_fkey",
+        "ref_schema": "public",
+        "ref_table": "customers"
+      },
+      {
+        "schema": "public",
+        "table": "order_items",
+        "name": "order_items_order_id_fkey",
+        "ref_schema": "public",
+        "ref_table": "orders"
+      },
+      {
+        "schema": "public",
+        "table": "order_items",
+        "name": "order_items_sku_fkey",
+        "ref_schema": "public",
+        "ref_table": "products"
+      },
+      {
+        "schema": "public",
+        "table": "orders",
+        "name": "orders_customer_id_fkey",
+        "ref_schema": "public",
+        "ref_table": "customers"
+      },
+      {
+        "schema": "public",
+        "table": "stock_moves",
+        "name": "stock_moves_warehouse_sku_fkey",
+        "ref_schema": "public",
+        "ref_table": "warehouse_stock"
+      }
+    ],
+    "functions": [
+      {
+        "schema": "billing",
+        "name": "close_invoice",
+        "oid": 16489,
+        "source": "\n    UPDATE billing.invoices SET total_micros = 0 WHERE id = inv\n"
+      },
+      {
+        "schema": "public",
+        "name": "add_one",
+        "oid": 16490,
+        "source": "SELECT $1 + 1"
+      },
+      {
+        "schema": "public",
+        "name": "add_one",
+        "oid": 16491,
+        "source": "SELECT $1 + 1"
+      },
+      {
+        "schema": "public",
+        "name": "order_total",
+        "oid": 16486,
+        "source": "\n    SELECT total_micros FROM order_totals WHERE order_id = oid\n"
+      },
+      {
+        "schema": "public",
+        "name": "touch_stock",
+        "oid": 16487,
+        "source": "\nBEGIN\n    UPDATE warehouse_stock SET on_hand = on_hand + NEW.delta\n    WHERE warehouse = NEW.warehouse AND sku = NEW.sku;\n    RETURN NEW;\nEND\n"
+      }
+    ]
+  }
+}

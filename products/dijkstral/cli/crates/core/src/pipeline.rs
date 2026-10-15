@@ -11,11 +11,12 @@ use rayon::prelude::*;
 use crate::analyze::{analyze, ANALYSIS_FILE, REPORT_FILE};
 use crate::cache::{content_key, Cache, Key, Stat};
 use crate::cluster::{cluster, Communities, Topology};
-use crate::discover::{discover_all, SourceFile};
+use crate::discover::{discover_all_with, SourceFile};
 use crate::extract::extract_file;
 use crate::facts::{Attr, FileFacts};
 use crate::graph::Graph;
 use crate::index;
+use crate::inputs::Inputs;
 use crate::report::{self, Corpus};
 use crate::resolve::{resolve_with, Index, Pass, Resolution, View};
 
@@ -46,6 +47,8 @@ pub struct BuildReport {
     pub unchanged: bool,
     /// What the semantic stage did, when it ran.
     pub semantic: Option<SemanticReport>,
+    /// A line per extra input added (`--cargo`, `--postgres`).
+    pub inputs: Vec<String>,
 }
 
 enum Probe {
@@ -152,15 +155,27 @@ pub fn build_full(
     exporters: &[&dyn Exporter],
     documents: Option<&dyn Documents>,
 ) -> Result<BuildReport> {
+    build_inputs(opts, &Inputs::default(), exporters, documents)
+}
+
+/// [`build_full`] with `inputs`: the Cargo crate graph, a PostgreSQL schema, and whether the walk
+/// reads git's ignore files (`docs/graphify-inputs.md`).
+pub fn build_inputs(
+    opts: &BuildOptions,
+    inputs: &Inputs,
+    exporters: &[&dyn Exporter],
+    documents: Option<&dyn Documents>,
+) -> Result<BuildReport> {
     let pool = rayon::ThreadPoolBuilder::new()
         .num_threads(opts.threads.max(1))
         .build()
         .context("building thread pool")?;
-    pool.install(|| build_inner(opts, exporters, documents))
+    pool.install(|| build_inner(opts, inputs, exporters, documents))
 }
 
 fn build_inner(
     opts: &BuildOptions,
+    inputs: &Inputs,
     exporters: &[&dyn Exporter],
     documents: Option<&dyn Documents>,
 ) -> Result<BuildReport> {
@@ -183,7 +198,8 @@ fn build_inner(
     fs::create_dir_all(&out_dir)?;
     report.out_dir = out_dir.clone();
 
-    let found = discover_all(&root, opts.threads);
+    let found = discover_all_with(&root, opts.threads, inputs.gitignore);
+    let loaded = inputs.load(&root);
     let (files, unclassified) = (found.files, found.unclassified);
     report.files = files.len();
     phase(&mut report, "discover");
@@ -244,6 +260,14 @@ fn build_inner(
         &date,
         docs_digest.as_deref(),
     );
+    let digest = {
+        // The inputs and the walk mode change the graph without changing any file key.
+        let mut h = blake3::Hasher::new();
+        h.update(digest.as_bytes());
+        h.update(&[inputs.gitignore as u8]);
+        loaded.digest(&mut h);
+        h.finalize().to_hex().to_string()
+    };
     let extra: Vec<PathBuf> = exporters.iter().flat_map(|e| e.outputs()).collect();
     if file_keys.iter().all(Option::is_some)
         && !documents.is_some_and(|d| d.force())
@@ -329,6 +353,10 @@ fn build_inner(
     let words: Vec<u64> = ordered.iter().map(|(_, f)| f.words).collect();
     let mut graph: Graph = resolve_with(ordered, &passes);
     phase(&mut report, "resolve");
+    report.inputs = loaded.apply(&mut graph);
+    if !report.inputs.is_empty() {
+        phase(&mut report, "inputs");
+    }
 
     // A failed or interrupted build must never look current: drop the digest first.
     fs::remove_file(out_dir.join(DIGEST_FILE)).ok();

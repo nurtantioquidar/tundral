@@ -132,13 +132,20 @@ fn non_code(name: &str) -> NonCode {
 
 /// [`discover`], also collecting the unclassified files.
 pub fn discover_all(root: &Path, threads: usize) -> Discovery {
+    discover_all_with(root, threads, true)
+}
+
+/// [`discover_all`]; with `gitignore` false, `.gitignore` files and `.git/info/exclude` are not
+/// read (`extract --no-gitignore`, `docs/graphify-inputs.md` §5) while `.graphifyignore` and
+/// `.dijkstralignore` still apply.
+pub fn discover_all_with(root: &Path, threads: usize, gitignore: bool) -> Discovery {
     let found = Mutex::new(Vec::new());
     let unclassified = Mutex::new(Vec::new());
     let documents = Mutex::new(Vec::new());
     WalkBuilder::new(root)
         .hidden(false)
-        .git_ignore(true)
-        .git_exclude(true)
+        .git_ignore(gitignore)
+        .git_exclude(gitignore)
         .git_global(false)
         .require_git(false)
         .parents(false)
@@ -250,5 +257,43 @@ mod tests {
                 "vendor/v.go"
             ]
         );
+    }
+
+    /// `docs/graphify-inputs.md` §5: `--no-gitignore` drops `.gitignore` (at any depth) and
+    /// `.git/info/exclude`; `.graphifyignore` still applies and its negations win over git's.
+    #[test]
+    fn gitignore_toggle_keeps_graphifyignore() {
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path();
+        for p in [
+            "gen/g.py",
+            "ex/e.py",
+            "keep/k.py",
+            "deep/sub/d.py",
+            "top.py",
+        ] {
+            let path = root.join(p);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, "x = 1\n").unwrap();
+        }
+        fs::create_dir_all(root.join(".git/info")).unwrap();
+        fs::write(root.join(".git/info/exclude"), "ex/\n").unwrap();
+        fs::write(root.join(".gitignore"), "gen/\n").unwrap();
+        fs::write(root.join("deep/.gitignore"), "sub/\n").unwrap();
+        fs::write(root.join(".graphifyignore"), "keep/\n").unwrap();
+        let rels = |gitignore| -> Vec<String> {
+            discover_all_with(root, 2, gitignore)
+                .files
+                .into_iter()
+                .map(|f| f.rel)
+                .collect()
+        };
+        assert_eq!(rels(true), ["top.py"]);
+        assert_eq!(
+            rels(false),
+            ["deep/sub/d.py", "ex/e.py", "gen/g.py", "top.py"]
+        );
+        fs::write(root.join(".graphifyignore"), "keep/\n!gen/\n").unwrap();
+        assert_eq!(rels(true), ["gen/g.py", "top.py"]);
     }
 }

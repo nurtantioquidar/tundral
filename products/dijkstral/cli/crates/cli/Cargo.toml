@@ -18,6 +18,8 @@ dijkstral-semantic.workspace = true
 dijkstral-serve.workspace = true
 mimalloc.workspace = true
 notify.workspace = true
+postgres.workspace = true
+serde_json.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true

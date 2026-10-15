@@ -20,6 +20,7 @@
 pub mod codex;
 pub mod handoff;
 pub mod http;
+pub mod provider;
 pub mod record;
 pub mod replay;
 
@@ -90,6 +91,8 @@ pub struct BackendSettings {
     pub api_timeout: Duration,
     /// Transcript directory for `replay`.
     pub replay_dir: Option<PathBuf>,
+    /// `--backend <name>` naming a custom provider (`provider add`) rather than a built-in.
+    pub provider: Option<String>,
 }
 
 impl Default for BackendSettings {
@@ -100,6 +103,7 @@ impl Default for BackendSettings {
             reasoning_effort: None,
             api_timeout: DEFAULT_API_TIMEOUT,
             replay_dir: None,
+            provider: None,
         }
     }
 }
@@ -111,6 +115,7 @@ type VarFn = dyn Fn(&str) -> Option<String> + Send + Sync;
 pub struct Env {
     vars: Box<VarFn>,
     codex: Box<dyn Fn() -> CodexStatus + Send + Sync>,
+    providers: Box<dyn Fn() -> Result<Vec<provider::Provider>> + Send + Sync>,
 }
 
 /// The Codex CLI as selection sees it.
@@ -131,6 +136,7 @@ impl Env {
                 Some(bin) if codex::logged_in(&bin) => CodexStatus::Ready(bin),
                 Some(bin) => CodexStatus::LoggedOut(bin),
             }),
+            providers: Box::new(|| Ok(provider::Registry::system()?.all())),
         }
     }
 
@@ -147,7 +153,19 @@ impl Env {
                     .map(|(_, v)| v.clone())
             }),
             codex: Box::new(move || codex.clone()),
+            providers: Box::new(|| Ok(Vec::new())),
         }
+    }
+
+    /// The same, with these custom providers registered (tests).
+    pub fn with_providers(mut self, providers: Vec<provider::Provider>) -> Env {
+        self.providers = Box::new(move || Ok(providers.clone()));
+        self
+    }
+
+    /// The registered custom providers.
+    pub fn providers(&self) -> Result<Vec<provider::Provider>> {
+        (self.providers)()
     }
 
     pub fn var(&self, name: &str) -> Option<String> {
@@ -193,11 +211,39 @@ no model backend available for the semantic pass. Either:
 
 /// The backend `settings` and `env` select.
 pub fn select(settings: &BackendSettings, env: &Env) -> Result<Box<dyn Backend>> {
+    if let Some(name) = &settings.provider {
+        let providers = env.providers()?;
+        let Some(p) = providers.iter().find(|p| &p.name == name) else {
+            let mut known: Vec<&str> = vec![
+                "codex",
+                "openai",
+                "anthropic",
+                "gemini",
+                "kimi",
+                "deepseek",
+                "replay",
+                "handoff",
+            ];
+            known.extend(providers.iter().map(|p| p.name.as_str()));
+            bail!("unknown backend '{name}' (known: {})", known.join(", "));
+        };
+        return custom(p, settings, env);
+    }
     let kind = match settings.kind {
         Some(k) => k,
         None => match auto_kind(env) {
             Some(k) => k,
-            None => bail!("{NO_BACKEND}"),
+            None => {
+                // Then the first custom provider whose key is set (Graphify's order: rule R4).
+                if let Some(p) = env
+                    .providers()?
+                    .iter()
+                    .find(|p| !p.env_key.is_empty() && env.var(&p.env_key).is_some())
+                {
+                    return custom(p, settings, env);
+                }
+                bail!("{NO_BACKEND}")
+            }
         },
     };
     let model = |var: &str, default: &str| {
@@ -304,6 +350,47 @@ pub fn select(settings: &BackendSettings, env: &Env) -> Result<Box<dyn Backend>>
     })
 }
 
+/// A custom provider: OpenAI Chat Completions at its `base_url`, keyed by its `env_key`.
+fn custom(
+    p: &provider::Provider,
+    settings: &BackendSettings,
+    env: &Env,
+) -> Result<Box<dyn Backend>> {
+    if p.env_key.is_empty() {
+        bail!(
+            "provider '{}' names no env_key; register it again with --env-key",
+            p.name
+        );
+    }
+    let Some(key) = env.var(&p.env_key) else {
+        bail!(
+            "--backend {} needs {} (the variable its key is read from)",
+            p.name,
+            p.env_key
+        );
+    };
+    if let Some(host) = provider::check_base_url(&p.base_url)? {
+        eprintln!(
+            "[dijkstral] {}",
+            provider::plaintext_warning(&p.name, &host)
+        );
+    }
+    let model = settings
+        .model
+        .clone()
+        .or_else(|| (!p.default_model.is_empty()).then(|| p.default_model.clone()))
+        .ok_or_else(|| anyhow::anyhow!("--backend {} needs --model", p.name))?;
+    Ok(Box::new(http::OpenAi::new(
+        p.name.clone(),
+        p.base_url.clone(),
+        Some(key),
+        model,
+        http::TokenField::MaxCompletionTokens,
+        None,
+        settings.api_timeout,
+    )))
+}
+
 fn require(env: &Env, vars: &[&str], backend: &str) -> Result<String> {
     for v in vars {
         if let Some(k) = env.var(v) {
@@ -405,5 +492,49 @@ mod tests {
             BackendKind::Anthropic
         );
         assert!(BackendKind::parse("nope").is_err());
+    }
+
+    /// `docs/graphify-inputs.md` §6.3: `--backend <provider>`, and providers after the built-in
+    /// keys in automatic selection.
+    #[test]
+    fn custom_providers() {
+        let p = |name: &str, key: &str| provider::Provider {
+            name: name.into(),
+            base_url: "http://127.0.0.1:9/v1".into(),
+            default_model: format!("{name}-model"),
+            env_key: key.into(),
+            pricing: (0.0, 0.0),
+            origin: provider::Origin::Dijkstral,
+        };
+        let providers = vec![p("first", "FIRST_KEY"), p("second", "SECOND_KEY")];
+        let by_name = |name: &str| BackendSettings {
+            provider: Some(name.into()),
+            ..BackendSettings::default()
+        };
+        let env = Env::fake(&[("SECOND_KEY", "k")], CodexStatus::Missing)
+            .with_providers(providers.clone());
+        let b = select(&by_name("second"), &env).unwrap();
+        assert_eq!((b.name(), b.model()), ("second", "second-model"));
+        let e = select(&by_name("first"), &env).err().unwrap().to_string();
+        assert!(e.contains("FIRST_KEY"), "{e}");
+        let e = select(&by_name("nope"), &env).err().unwrap().to_string();
+        assert!(e.contains("first") && e.contains("second"), "{e}");
+        let model = BackendSettings {
+            model: Some("m2".into()),
+            ..by_name("second")
+        };
+        assert_eq!(select(&model, &env).unwrap().model(), "m2");
+        // Automatic: the first provider whose key is set, after the built-in keys.
+        let b = select(&BackendSettings::default(), &env).unwrap();
+        assert_eq!(b.name(), "second");
+        let env = Env::fake(
+            &[("SECOND_KEY", "k"), ("DEEPSEEK_API_KEY", "d")],
+            CodexStatus::Missing,
+        )
+        .with_providers(providers);
+        assert_eq!(
+            select(&BackendSettings::default(), &env).unwrap().name(),
+            "deepseek"
+        );
     }
 }

@@ -13,6 +13,7 @@
 //!   `dijkstral add <url>` (§11).
 
 pub mod add;
+pub mod gws;
 pub mod ingest;
 pub mod markdown;
 pub mod merge;

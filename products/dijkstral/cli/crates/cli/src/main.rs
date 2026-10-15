@@ -3,8 +3,10 @@ mod clone_cmd;
 mod export_cmd;
 mod exports;
 mod git_cmd;
+mod inputs_cmd;
 mod mcp_cmd;
 mod multirepo_cmd;
+mod provider_cmd;
 mod query_cmds;
 mod semantic_build;
 mod semantic_cmd;
@@ -16,7 +18,7 @@ use std::time::Instant;
 
 use clap::{Args, Parser, Subcommand};
 use dijkstral_core::pipeline::cluster_only_files;
-use dijkstral_core::{build_full, BuildOptions, BuildReport};
+use dijkstral_core::{build_inputs, BuildOptions, BuildReport};
 use dijkstral_semantic::markdown::MarkdownPass;
 
 // mimalloc keeps fragmentation and the retained high-water mark well below the system allocator's
@@ -78,6 +80,8 @@ enum Command {
     MergeDriver(git_cmd::MergeDriverArgs),
     /// Watch a directory and run `update` whenever its code or documents change (Ctrl-C stops).
     Watch(watch_cmd::WatchArgs),
+    /// Manage custom OpenAI-compatible model providers for `--backend <name>`.
+    Provider(provider_cmd::ProviderArgs),
 }
 
 #[derive(Args, Debug)]
@@ -89,6 +93,8 @@ struct ClusterOnlyArgs {
     /// written next to it.
     #[arg(long, value_name = "FILE")]
     graph: Option<PathBuf>,
+    #[command(flatten)]
+    naming: semantic_build::ClusterNaming,
 }
 
 #[derive(Args, Debug)]
@@ -104,11 +110,14 @@ struct BuildArgs {
     #[arg(long)]
     no_cluster: bool,
     /// Write dijkstral-out/ under this directory instead of the indexed one.
-    #[arg(long, value_name = "DIR")]
+    #[arg(long, visible_alias = "output", value_name = "DIR")]
     out: Option<PathBuf>,
     /// Worker threads (default: all cores).
-    #[arg(long, value_name = "N")]
-    threads: Option<usize>,
+    #[arg(long, visible_alias = "max-workers", value_name = "N",
+          value_parser = clap::value_parser!(u32).range(1..))]
+    threads: Option<u32>,
+    #[command(flatten)]
+    inputs: inputs_cmd::InputFlags,
     /// Print per-phase timings to stderr.
     #[arg(long)]
     timings: bool,
@@ -143,7 +152,12 @@ fn main() -> ExitCode {
         Command::Hook(args) => return git_cmd::run_hook(args),
         Command::MergeDriver(args) => return git_cmd::run_merge_driver(args),
         Command::Watch(args) => return watch_cmd::run(args),
+        Command::Provider(args) => return provider_cmd::run(args),
         Command::ClusterOnly(args) => {
+            let (path, graph) = (args.path.clone(), args.graph.clone());
+            if let Some(code) = semantic_build::run_cluster_naming(path, graph, args.naming) {
+                return code;
+            }
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {
                     println!("{communities} communities\nwrote {}", dir.display());
@@ -156,9 +170,17 @@ fn main() -> ExitCode {
             };
         }
     };
-    let threads = args
-        .threads
-        .unwrap_or_else(|| std::thread::available_parallelism().map_or(1, |n| n.get()));
+    let threads = args.threads.map_or_else(
+        || std::thread::available_parallelism().map_or(1, |n| n.get()),
+        |n| n as usize,
+    );
+    let inputs = match args.inputs.inputs() {
+        Ok(inputs) => inputs,
+        Err(e) => {
+            eprintln!("error: {e:#}");
+            return ExitCode::FAILURE;
+        }
+    };
     let started = Instant::now();
     let exporters = export_cmd::exporters(&args.exports, &args.path);
     let opts = BuildOptions {
@@ -174,7 +196,12 @@ fn main() -> ExitCode {
     let semantic = if update || args.code_only {
         None
     } else {
-        match semantic_build::prepare(&opts.root, opts.out.as_deref(), &args.semantic) {
+        match semantic_build::prepare(
+            &opts.root,
+            opts.out.as_deref(),
+            &args.semantic,
+            inputs.gitignore,
+        ) {
             Ok(pass) => pass,
             Err(e) => {
                 eprintln!("error: {e:#}");
@@ -187,7 +214,7 @@ fn main() -> ExitCode {
         None if update && !args.code_only => Some(&markdown),
         None => None,
     };
-    match build_full(&opts, &exporters, documents) {
+    match build_inputs(&opts, &inputs, &exporters, documents) {
         Ok(report) => {
             print_report(&report, args.timings, started);
             if semantic.is_none() {
@@ -219,6 +246,9 @@ fn print_report(r: &BuildReport, timings: bool, started: Instant) {
             started.elapsed().as_secs_f64()
         );
         return;
+    }
+    for note in &r.inputs {
+        println!("{note}");
     }
     if let Some(s) = &r.semantic {
         for note in &s.notes {

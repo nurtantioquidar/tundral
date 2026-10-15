@@ -1,0 +1,12 @@
+[package]
+name = "delta-tool"
+version = "1.0.0"
+edition = "2021"
+
+[[bin]]
+name = "delta"
+path = "src/main.rs"
+
+[dependencies]
+alpha = { path = "../../crates/alpha", features = ["x"] }
+anyhow = "1"

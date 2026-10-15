@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = ["crates/*", "tools/delta"]
+
+[workspace.package]
+version = "0.3.0"
+edition = "2021"
+
+[workspace.dependencies]
+beta = { path = "crates/beta" }
+serde = "1"

@@ -22,6 +22,7 @@ fn ingest_mixed(converted_dir: Option<&Path>) -> ingest::Ingested {
         &IngestOptions {
             converted_prefix: "graphify-out/converted",
             converted_dir,
+            workspace: None,
         },
     )
 }
