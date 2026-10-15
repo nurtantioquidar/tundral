@@ -1,0 +1,81 @@
+{
+  "host": "127.0.0.1",
+  "database": "probe2",
+  "catalog": {
+    "tables": [
+      {
+        "schema": "public",
+        "name": "Mixed Case"
+      },
+      {
+        "schema": "public",
+        "name": "alpha"
+      },
+      {
+        "schema": "public",
+        "name": "events"
+      },
+      {
+        "schema": "public",
+        "name": "events_2026"
+      },
+      {
+        "schema": "public",
+        "name": "src"
+      },
+      {
+        "schema": "public",
+        "name": "zeta"
+      }
+    ],
+    "views": [
+      {
+        "schema": "public",
+        "name": "View Two",
+        "definition": " SELECT \"Mixed Case\".id\n   FROM \"Mixed Case\"\nUNION\n SELECT src.id\n   FROM src;"
+      },
+      {
+        "schema": "public",
+        "name": "v_cte",
+        "definition": " WITH recent AS (\n         SELECT events.id,\n            events.at\n           FROM events\n          WHERE (events.at > '2026-06-01'::date)\n        )\n SELECT r.id,\n    ( SELECT count(*) AS count\n           FROM alpha) AS n\n   FROM recent r,\n    zeta z\n  WHERE (z.id = r.id);"
+      }
+    ],
+    "foreign_keys": [
+      {
+        "schema": "public",
+        "table": "src",
+        "name": "a_first_fkey",
+        "ref_schema": "public",
+        "ref_table": "zeta"
+      },
+      {
+        "schema": "public",
+        "table": "src",
+        "name": "m_mid_fkey",
+        "ref_schema": "public",
+        "ref_table": "Mixed Case"
+      },
+      {
+        "schema": "public",
+        "table": "src",
+        "name": "z_last_fkey",
+        "ref_schema": "public",
+        "ref_table": "alpha"
+      }
+    ],
+    "functions": [
+      {
+        "schema": "public",
+        "name": "joiner",
+        "oid": 16546,
+        "source": "\nSELECT count(*) FROM src s JOIN alpha a ON a.id = s.a LEFT JOIN zeta ON zeta.id = s.z\n"
+      },
+      {
+        "schema": "public",
+        "name": "plain_c",
+        "oid": 16547,
+        "source": "SELECT 1"
+      }
+    ]
+  }
+}

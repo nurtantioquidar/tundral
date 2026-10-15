@@ -1,0 +1,47 @@
+{
+  "host": "127.0.0.1",
+  "database": "probe3",
+  "catalog": {
+    "tables": [
+      {
+        "schema": "app",
+        "name": "t1"
+      },
+      {
+        "schema": "public",
+        "name": "t2"
+      },
+      {
+        "schema": "public",
+        "name": "t3"
+      }
+    ],
+    "views": [
+      {
+        "schema": "public",
+        "name": "sys_view",
+        "definition": " SELECT relname\n   FROM pg_class;"
+      },
+      {
+        "schema": "public",
+        "name": "sys_view2",
+        "definition": " SELECT pg_class.relname\n   FROM pg_class\nUNION\n SELECT pg_class.relname\n   FROM pg_class;"
+      }
+    ],
+    "foreign_keys": [],
+    "functions": [
+      {
+        "schema": "public",
+        "name": "plp",
+        "oid": 16572,
+        "source": "\nDECLARE n int;\nBEGIN\n  SELECT count(*) INTO n FROM t1;\n  SELECT count(*) INTO n FROM nosuch_table;\n  SELECT count(*) INTO n FROM pg_catalog.pg_proc;\n  SELECT count(*) INTO n FROM \"App\".\"Odd\";\n  RETURN n;\nEND\n"
+      },
+      {
+        "schema": "public",
+        "name": "writer",
+        "oid": 16569,
+        "source": "\nINSERT INTO t2 (id, v) SELECT id, v FROM app.t1;\nDELETE FROM t3 WHERE id < 0;\nUPDATE t2 SET v = 0 FROM t3 WHERE t3.id = t2.id;\n"
+      }
+    ]
+  }
+}

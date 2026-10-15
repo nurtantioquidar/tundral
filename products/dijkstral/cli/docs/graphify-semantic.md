@@ -651,9 +651,10 @@ compares against `dijkstral-out/semantic/index.json`, which also feeds `check-up
   local URL, no download could be observed; `--dir` (default `./raw`), `--author` and
   `--contributor` are documented by `--help` only (**Open:** saved file name, format and how the
   graph is updated).
-- **Rule.** `.gdoc`/`.gsheet`/`.gslides` shortcut files are not counted or sent, with or without
-  `--google-workspace`; without a `gws` binary on `PATH` the flag prints nothing and creates no
-  conversion (`graphify-out/converted/` stays empty). **Open:** behaviour with `gws` installed.
+- **Rule.** `.gdoc`/`.gsheet`/`.gslides` shortcut files are never counted or sent themselves;
+  without a `gws` binary on `PATH`, `--google-workspace` prints nothing and creates no conversion
+  (`graphify-out/converted/` stays empty). With `gws` installed the flag exports them and sends
+  the exports (`graphify-inputs.md` §4).
 
 ### 11.1 dijkstral's choices (deliberate differences)
 

@@ -1,0 +1,15 @@
+[package]
+name = "alpha"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+beta = { workspace = true }
+serde = { workspace = true }
+gamma-lib = { package = "gamma", path = "../gamma" }
+
+[dev-dependencies]
+delta-tool = { path = "../../tools/delta" }
+
+[build-dependencies]
+cc = "1"
