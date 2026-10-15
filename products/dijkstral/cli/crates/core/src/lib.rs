@@ -10,6 +10,7 @@ pub mod facts;
 pub mod graph;
 pub mod ids;
 pub mod index;
+pub mod inputs;
 pub mod lang;
 pub mod pipeline;
 pub mod pyjson;
@@ -17,6 +18,6 @@ pub mod report;
 pub mod resolve;
 
 pub use pipeline::{
-    build, build_full, build_with, BuildOptions, BuildReport, Built, DocumentFacts, Documents,
-    Exporter, SemanticReport,
+    build, build_full, build_inputs, build_with, BuildOptions, BuildReport, Built, DocumentFacts,
+    Documents, Exporter, SemanticReport,
 };
