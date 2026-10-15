@@ -1,0 +1,16 @@
+[package]
+name = "dijkstral-git"
+description = "Git integration for dijkstral: post-commit and post-checkout hooks and the graph.json merge driver"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+dijkstral-core.workspace = true
+rayon.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

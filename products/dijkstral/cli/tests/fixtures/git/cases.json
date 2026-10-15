@@ -1,0 +1,300 @@
+{
+ "tool": "graphify 0.9.86",
+ "how": "bench/git_goldens.py: merge-driver O A B in a scratch directory; hook status/uninstall in scratch git repositories with hand-written hook files (graphify hook install was never run). Env GRAPHIFY_QUERY_LOG_DISABLE=1 PYTHONHASHSEED=0.",
+ "merge": [
+  {
+   "case": "identical",
+   "note": "all three equal",
+   "exit": 0,
+   "stdout": "",
+   "stderr_last_line": ""
+  },
+  {
+   "case": "disjoint",
+   "note": "each side adds a different node and link",
+   "exit": 0,
+   "stdout": "",
+   "stderr_last_line": ""
+  },
+  {
+   "case": "attr-conflict",
+   "note": "both sides edit node attributes, one key in conflict",
+   "exit": 0,
+   "stdout": "",
+   "stderr_last_line": ""
+  },
+  {
+   "case": "ours-only",
+   "note": "only the current side changed",
+   "exit": 0,
+   "stdout": "",
+   "stderr_last_line": ""
+  },
+  {
+   "case": "deletion",
+   "note": "the current side deletes a node and its links",
+   "exit": 0,
+   "stdout": "",
+   "stderr_last_line": ""
+  },
+  {
+   "case": "reversed-edge",
+   "note": "the other side flips a link the current side reweighted",
+   "exit": 0,
+   "stdout": "",
+   "stderr_last_line": ""
+  },
+  {
+   "case": "hyperedges",
+   "note": "current drops a hyperedge; other edits one and adds one",
+   "exit": 0,
+   "stdout": "",
+   "stderr_last_line": ""
+  },
+  {
+   "case": "raw-shape",
+   "note": "--no-cluster graphs (edges, no header)",
+   "exit": 0,
+   "stdout": "",
+   "stderr_last_line": ""
+  },
+  {
+   "case": "empty-base",
+   "note": "no common ancestor: git passes an empty base",
+   "exit": 1,
+   "stdout": "",
+   "stderr_last_line": "networkx.exception.NetworkXError: All graphs must be graphs or multigraphs.",
+   "current_untouched": true
+  },
+  {
+   "case": "directed-mismatch",
+   "note": "one side is directed",
+   "exit": 1,
+   "stdout": "",
+   "stderr_last_line": "networkx.exception.NetworkXError: All graphs must be directed or undirected.",
+   "current_untouched": true
+  },
+  {
+   "case": "invalid-other",
+   "note": "the other side is not JSON",
+   "exit": 1,
+   "stdout": "",
+   "stderr_last_line": "[graphify merge-driver] error loading graphs: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+   "current_untouched": true
+  }
+ ],
+ "hooks": [
+  {
+   "case": "outside-git",
+   "command": "status",
+   "exit": 0,
+   "stdout": "Not in a git repository.\n"
+  },
+  {
+   "case": "outside-git",
+   "command": "uninstall",
+   "exit": 1,
+   "stderr_last_line": "RuntimeError: No git repository found at or above <dir>"
+  },
+  {
+   "case": "fresh",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: not installed\npost-checkout: not installed\nmerge driver: not registered\n",
+   "after": null
+  },
+  {
+   "case": "fresh",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: no post-commit hook found - nothing to remove.\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: not registered - nothing to remove.\n",
+   "after": {
+    ".git/hooks/post-commit": null,
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  },
+  {
+   "case": "foreign-hook",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: not installed (hook exists but graphify not found)\npost-checkout: not installed\nmerge driver: not registered\n",
+   "after": null
+  },
+  {
+   "case": "foreign-hook",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: graphify hook not found in post-commit - nothing to remove.\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: not registered - nothing to remove.\n",
+   "after": {
+    ".git/hooks/post-commit": "#!/bin/sh\necho user hook\n",
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  },
+  {
+   "case": "marker-only",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: installed (out of date: run `graphify hook install` to refresh it)\npost-checkout: not installed\nmerge driver: not registered\n",
+   "after": null
+  },
+  {
+   "case": "marker-only",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: graphify removed from post-commit at <repo>/.git/hooks/post-commit (other hook content preserved)\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: not registered - nothing to remove.\n",
+   "after": {
+    ".git/hooks/post-commit": "#!/bin/sh\necho user hook\n",
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  },
+  {
+   "case": "marker-sole-content",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: installed (out of date: run `graphify hook install` to refresh it)\npost-checkout: installed (out of date: run `graphify hook install` to refresh it)\nmerge driver: not registered\n",
+   "after": null
+  },
+  {
+   "case": "marker-sole-content",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: removed post-commit hook at <repo>/.git/hooks/post-commit\npost-checkout: removed post-checkout hook at <repo>/.git/hooks/post-checkout\nmerge driver: not registered - nothing to remove.\n",
+   "after": {
+    ".git/hooks/post-commit": null,
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  },
+  {
+   "case": "marker-between",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: installed (out of date: run `graphify hook install` to refresh it)\npost-checkout: not installed\nmerge driver: not registered\n",
+   "after": null
+  },
+  {
+   "case": "marker-between",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: graphify removed from post-commit at <repo>/.git/hooks/post-commit (other hook content preserved)\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: not registered - nothing to remove.\n",
+   "after": {
+    ".git/hooks/post-commit": "#!/bin/sh\necho before\necho after\n",
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  },
+  {
+   "case": "config-only",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: not installed\npost-checkout: not installed\nmerge driver: partially registered (git config set, .gitattributes line missing)\n",
+   "after": null
+  },
+  {
+   "case": "config-only",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: no post-commit hook found - nothing to remove.\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: not registered - nothing to remove.\n",
+   "after": {
+    ".git/hooks/post-commit": null,
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  },
+  {
+   "case": "attributes-only",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: not installed\npost-checkout: not installed\nmerge driver: partially registered (.gitattributes line set, git config missing)\n",
+   "after": null
+  },
+  {
+   "case": "attributes-only",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: no post-commit hook found - nothing to remove.\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: removed from .gitattributes (other entries preserved)\n",
+   "after": {
+    ".git/hooks/post-commit": null,
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": "*.png binary\n",
+    "merge config": ""
+   }
+  },
+  {
+   "case": "merge-driver-both",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: not installed\npost-checkout: not installed\nmerge driver: registered\n",
+   "after": null
+  },
+  {
+   "case": "merge-driver-both",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: no post-commit hook found - nothing to remove.\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: removed (.gitattributes deleted - no other entries)\n",
+   "after": {
+    ".git/hooks/post-commit": null,
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  },
+  {
+   "case": "attributes-sole-line",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: not installed\npost-checkout: not installed\nmerge driver: registered\n",
+   "after": null
+  },
+  {
+   "case": "attributes-sole-line",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: no post-commit hook found - nothing to remove.\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: removed (.gitattributes deleted - no other entries)\n",
+   "after": {
+    ".git/hooks/post-commit": null,
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  },
+  {
+   "case": "hooks-path",
+   "command": "status",
+   "exit": 0,
+   "stdout": "post-commit: installed (out of date: run `graphify hook install` to refresh it)\npost-checkout: not installed\nmerge driver: not registered\n",
+   "after": null
+  },
+  {
+   "case": "hooks-path",
+   "command": "uninstall",
+   "exit": 0,
+   "stdout": "post-commit: removed post-commit hook at <repo>/.githooks/post-commit\npost-checkout: no post-checkout hook found - nothing to remove.\nmerge driver: not registered - nothing to remove.\n",
+   "after": {
+    ".git/hooks/post-commit": null,
+    ".git/hooks/post-checkout": null,
+    ".githooks/post-commit": null,
+    ".gitattributes": null,
+    "merge config": ""
+   }
+  }
+ ]
+}

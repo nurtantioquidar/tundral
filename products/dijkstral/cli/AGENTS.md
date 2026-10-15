@@ -55,6 +55,19 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   must match Graphify's graphs, sidecars and reports field for field; `crates/cli/tests/
   semantic_cli.rs` drives the commands offline with the `replay` backend. Tests never call a
   model; `../bench/semantic.py` is the same-model head-to-head.
+- `crates/git`: git integration, specified in `docs/graphify-git.md` with Graphify's goldens in
+  `tests/fixtures/git/` (`../bench/git_goldens.py`). The `post-commit`/`post-checkout` block
+  (`hooks.rs`) is dijkstral's own text between marker lines and leaves foreign hook content
+  intact; what it runs (`rebuild.rs`) starts a detached `dijkstral update` that serialises on a
+  lock and coalesces triggers, and never fails git. The `graph.json` merge driver (`merge.rs`) is
+  three-way and writes a build's canonical order; `attributes.rs` and `install.rs` wire it into
+  the local git config and `.gitattributes`, in the repository `repo.rs` resolves through `git`
+  (`core.hooksPath`, linked worktrees). Commands are in `crates/cli/src/git_cmd.rs`; `watch`
+  (`crates/cli/src/watch_cmd.rs`) runs `update` when files of the corpus change, through
+  `notify`. `crates/git/tests/merge_goldens.rs` compares merges with Graphify's as data, applying
+  each deliberate difference explicitly; `crates/cli/tests/git_cli.rs` and `watch_cli.rs` drive
+  the commands in scratch repositories with the user's git config shut out
+  (`GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`) and bounded waits.
 
 Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's
 output, and enforced by `crates/core/tests/golden_<lang>.rs` against the goldens in

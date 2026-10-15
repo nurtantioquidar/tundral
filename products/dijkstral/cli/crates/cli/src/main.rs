@@ -2,11 +2,13 @@ mod agents_cmd;
 mod clone_cmd;
 mod export_cmd;
 mod exports;
+mod git_cmd;
 mod mcp_cmd;
 mod multirepo_cmd;
 mod query_cmds;
 mod semantic_build;
 mod semantic_cmd;
+mod watch_cmd;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -68,6 +70,14 @@ enum Command {
     Global(multirepo_cmd::GlobalArgs),
     /// Shallow-clone a GitHub repository to index it and print its path.
     Clone(clone_cmd::CloneArgs),
+    /// Git hooks that rebuild the graph after commits and branch switches (in the background),
+    /// plus the graph.json merge driver: install, uninstall or status.
+    Hook(git_cmd::HookArgs),
+    /// Git merge driver for graph.json: three-way merge of nodes, links and hyperedges (`hook
+    /// install` registers it).
+    MergeDriver(git_cmd::MergeDriverArgs),
+    /// Watch a directory and run `update` whenever its code or documents change (Ctrl-C stops).
+    Watch(watch_cmd::WatchArgs),
 }
 
 #[derive(Args, Debug)]
@@ -130,6 +140,9 @@ fn main() -> ExitCode {
         Command::MergeGraphs(args) => return multirepo_cmd::run_merge(args),
         Command::Global(args) => return multirepo_cmd::run_global(args),
         Command::Clone(args) => return clone_cmd::run(args),
+        Command::Hook(args) => return git_cmd::run_hook(args),
+        Command::MergeDriver(args) => return git_cmd::run_merge_driver(args),
+        Command::Watch(args) => return watch_cmd::run(args),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {
