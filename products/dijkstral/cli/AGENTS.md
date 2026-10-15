@@ -10,14 +10,17 @@ stages are in `../DIJKSTRAL_DESIGN.md`; the head-to-head benchmark is in `../ben
 
 A Cargo workspace. Crates are added when their stage begins, never ahead of an implementation:
 
-- `crates/cli`: the `dijkstral` binary and command surface.
+- `crates/cli`: the `dijkstral` binary and command surface; the cross-repo commands are
+  `multirepo_cmd.rs` (`merge-graphs`, `global`, `extract --global`) and `clone_cmd.rs`.
 - `crates/core`: discovery (`discover.rs`), per-file extraction (`extract/<lang>.rs`), the
   content-addressed cache (`cache.rs`), the cross-file build stage (`resolve/mod.rs` plus
   `resolve/<lang>.rs`), the graph fold and `graph.json` writer (`graph.rs`), Leiden clustering
   through Microsoft's `network_partitions` (`cluster.rs`), the analysis behind
   `.graphify_analysis.json` (`analyze.rs`), `GRAPH_REPORT.md` (`report.rs`) and Python-exact JSON
-  output (`pyjson.rs`), and the memory-mapped query index `graph.dij` with its in-memory loader
-  for any Graphify `graph.json` (`index.rs`).
+  output (`pyjson.rs`), the memory-mapped query index `graph.dij` with its in-memory loader
+  for any Graphify `graph.json` (`index.rs`), NetworkX node-link graphs with Graphify's
+  insertion and iteration order (`nodelink.rs`), and the cross-repo merge and global graph
+  (`multirepo.rs`).
 - `crates/serve`: the query engine behind `query`, `path`, `explain`, `affected`, `god-nodes` and
   `benchmark`: structured answers plus Graphify-format renderers, shared by the CLI
   (`crates/cli/src/query_cmds.rs`) and the stdio MCP server (`mcp.rs`, with the graph summaries
@@ -70,14 +73,20 @@ record for record); `escaping.rs` keeps untrusted strings out of the page's mark
 export-only format has its own test file there (`cypher.rs`, `push.rs` against fake servers,
 `obsidian.rs`, `svg.rs`, `callflow.rs`, `tree.rs`) with Graphify's outputs, or the data embedded in
 its pages, as goldens. Query commands write nothing next to the graph (Graphify's
-`cache/last_query_stamp` is read by nothing).
+`cache/last_query_stamp` is read by nothing). The cross-repo commands (`merge-graphs`, `global`,
+`extract --global`, `clone`) are specified in `docs/graphify-multirepo.md`, with Graphify's outputs
+in `tests/fixtures/multirepo/` (case table and crafted inputs in its `regen.py`);
+`crates/cli/tests/multirepo_goldens.rs` must reproduce every merged graph, global graph and
+manifest byte for byte apart from its `ALLOWED` cases, and `multirepo_cli.rs` covers
+dijkstral-built graphs, queries on them, `extract --global` and `clone` offline.
 
 ## Ownership boundaries
 
 This module owns local graph construction, its on-disk index and outputs under `dijkstral-out/`,
-the query and MCP surfaces, and assistant integration files it installs. It must not import another
-Monet product (Butterfly's `atlas` included) or Graphify code, prompts or skill text; only
-Graphify's documented formats and observable behaviour are reproduced.
+its user-wide state under `$DIJKSTRAL_HOME` (default `~/.dijkstral`: the global graph and
+`clone`'s repositories), the query and MCP surfaces, and assistant integration files it installs.
+It must not import another Monet product (Butterfly's `atlas` included) or Graphify code, prompts
+or skill text; only Graphify's documented formats and observable behaviour are reproduced.
 
 ## Invariants
 
@@ -88,6 +97,8 @@ Graphify's documented formats and observable behaviour are reproduced.
 - Code extraction never calls a model or the network. The semantic pass runs only when requested
   and never sends files excluded by ignore rules or the sensitive-file filter.
 - Never log or store prompts, API keys or file contents outside the cache under `dijkstral-out/`.
+- Tests never touch a real home or the network: they set `DIJKSTRAL_HOME`, and `clone` tests use a
+  local repository through the test-only `DIJKSTRAL_CLONE_BASE`.
 
 ## Commands
 
