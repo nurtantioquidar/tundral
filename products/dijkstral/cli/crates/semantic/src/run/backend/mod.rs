@@ -13,7 +13,8 @@
 //!
 //! Without `--backend`: Codex when it is installed and logged in, else the first API key set in
 //! Graphify's order (Gemini, Kimi, Anthropic, OpenAI, DeepSeek), else an error that says how to
-//! enable the pass or use the hand-off. Keys are read only to authenticate the request they
+//! enable the pass or use the hand-off. `openai`, `kimi` and `gemini` ship no default model (their
+//! ids change too often): they need `--model` or their model variable. Keys are read only to authenticate the request they
 //! belong to; they are never logged, stored or put in an error.
 
 pub mod codex;
@@ -206,6 +207,16 @@ pub fn select(settings: &BackendSettings, env: &Env) -> Result<Box<dyn Backend>>
             .or_else(|| env.var(var))
             .unwrap_or_else(|| default.to_string())
     };
+    // Backends whose model ids change too often to ship a default: the user names one.
+    let required_model = |var: &str, backend: &str| -> Result<String> {
+        settings
+            .model
+            .clone()
+            .or_else(|| env.var(var))
+            .ok_or_else(|| {
+                anyhow::anyhow!("--backend {backend} needs a model: pass --model or set {var}")
+            })
+    };
     let timeout = settings.api_timeout;
     Ok(match kind {
         BackendKind::Codex => {
@@ -243,7 +254,7 @@ pub fn select(settings: &BackendSettings, env: &Env) -> Result<Box<dyn Backend>>
                 "openai",
                 base.unwrap_or_else(|| "https://api.openai.com/v1".into()),
                 key,
-                model("OPENAI_MODEL", "gpt-5-mini"),
+                required_model("OPENAI_MODEL", "openai")?,
                 http::TokenField::MaxCompletionTokens,
                 None,
                 timeout,
@@ -254,7 +265,7 @@ pub fn select(settings: &BackendSettings, env: &Env) -> Result<Box<dyn Backend>>
             env.var("DEEPSEEK_BASE_URL")
                 .unwrap_or_else(|| "https://api.deepseek.com".into()),
             Some(require(env, &["DEEPSEEK_API_KEY"], "deepseek")?),
-            model("DEEPSEEK_MODEL", "deepseek-chat"),
+            model("DEEPSEEK_MODEL", "deepseek-v4-flash"),
             http::TokenField::MaxTokens,
             Some(8192),
             timeout,
@@ -264,7 +275,7 @@ pub fn select(settings: &BackendSettings, env: &Env) -> Result<Box<dyn Backend>>
             env.var("MOONSHOT_BASE_URL")
                 .unwrap_or_else(|| "https://api.moonshot.ai/v1".into()),
             Some(require(env, &["MOONSHOT_API_KEY"], "kimi")?),
-            model("MOONSHOT_MODEL", "kimi-k2-turbo-preview"),
+            required_model("MOONSHOT_MODEL", "kimi")?,
             http::TokenField::MaxTokens,
             None,
             timeout,
@@ -280,7 +291,7 @@ pub fn select(settings: &BackendSettings, env: &Env) -> Result<Box<dyn Backend>>
             env.var("GEMINI_BASE_URL")
                 .unwrap_or_else(|| "https://generativelanguage.googleapis.com/v1beta".into()),
             require(env, &["GEMINI_API_KEY", "GOOGLE_API_KEY"], "gemini")?,
-            model("GEMINI_MODEL", "gemini-2.5-flash"),
+            required_model("GEMINI_MODEL", "gemini")?,
             timeout,
         )),
         BackendKind::Replay => {
@@ -361,7 +372,7 @@ mod tests {
             CodexStatus::LoggedOut("/x".into()),
         );
         let b = select(&s, &env).unwrap();
-        assert_eq!((b.name(), b.model()), ("deepseek", "deepseek-chat"));
+        assert_eq!((b.name(), b.model()), ("deepseek", "deepseek-v4-flash"));
         let explicit = |k| BackendSettings {
             kind: Some(k),
             ..BackendSettings::default()
@@ -384,6 +395,10 @@ mod tests {
         assert_eq!((b.name(), b.model()), ("openai", "llama"));
         let b = select(&explicit(BackendKind::Handoff), &local).unwrap();
         assert_eq!(b.name(), "handoff");
+        let gemini = Env::fake(&[("GEMINI_API_KEY", "k")], CodexStatus::Missing);
+        let e = select(&s, &gemini).err().unwrap().to_string();
+        assert!(e.contains("--model") && e.contains("GEMINI_MODEL"), "{e}");
+        assert_eq!(select(&s2, &gemini).unwrap().model(), "m");
         assert_eq!(BackendKind::parse("skill").unwrap(), BackendKind::Handoff);
         assert_eq!(
             BackendKind::parse("claude").unwrap(),
