@@ -48,6 +48,11 @@ pub const SKIP_DIRS: &[&str] = &[
     "dijkstral-out",
 ];
 
+/// Saved results (`dijkstral save-result`), relative to the root. Although the output directory is
+/// skipped, this subtree is walked as corpus content, as Graphify walks `graphify-out/memory`
+/// (`docs/graphify-memory.md` §3); only ignore files inside it apply.
+pub const MEMORY_DIR: &str = "dijkstral-out/memory";
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct SourceFile {
     /// Repo-relative path with `/` separators.
@@ -135,7 +140,37 @@ pub fn discover_all(root: &Path, threads: usize) -> Discovery {
     let found = Mutex::new(Vec::new());
     let unclassified = Mutex::new(Vec::new());
     let documents = Mutex::new(Vec::new());
-    WalkBuilder::new(root)
+    let sinks = (&found, &unclassified, &documents);
+    walk(root, root, threads, sinks);
+    let memory = root.join(MEMORY_DIR);
+    if memory.is_dir() {
+        walk(&memory, root, threads, sinks);
+    }
+    let mut files = found.into_inner().unwrap();
+    files.sort();
+    files.dedup();
+    let mut unclassified = unclassified.into_inner().unwrap();
+    unclassified.sort();
+    unclassified.dedup();
+    let mut documents = documents.into_inner().unwrap();
+    documents.sort();
+    documents.dedup();
+    Discovery {
+        files,
+        unclassified,
+        documents,
+    }
+}
+
+type Sinks<'a> = (
+    &'a Mutex<Vec<SourceFile>>,
+    &'a Mutex<Vec<String>>,
+    &'a Mutex<Vec<String>>,
+);
+
+/// Walk `start` (the root, or a subtree of it), naming files relative to `root`.
+fn walk(start: &Path, root: &Path, threads: usize, (found, unclassified, documents): Sinks) {
+    WalkBuilder::new(start)
         .hidden(false)
         .git_ignore(true)
         .git_exclude(true)
@@ -155,7 +190,6 @@ pub fn discover_all(root: &Path, threads: usize) -> Discovery {
         .threads(threads)
         .build_parallel()
         .run(|| {
-            let (found, unclassified, documents) = (&found, &unclassified, &documents);
             Box::new(move |entry| {
                 let Ok(entry) = entry else {
                     return WalkState::Continue;
@@ -183,17 +217,6 @@ pub fn discover_all(root: &Path, threads: usize) -> Discovery {
                 WalkState::Continue
             })
         });
-    let mut files = found.into_inner().unwrap();
-    files.sort();
-    let mut unclassified = unclassified.into_inner().unwrap();
-    unclassified.sort();
-    let mut documents = documents.into_inner().unwrap();
-    documents.sort();
-    Discovery {
-        files,
-        unclassified,
-        documents,
-    }
 }
 
 /// Files that may hold secrets are never read (§14.5): `.env`, `.env.*`, `*.pem`.
@@ -250,5 +273,39 @@ mod tests {
                 "vendor/v.go"
             ]
         );
+    }
+
+    #[test]
+    fn walks_saved_results_inside_the_output_directory() {
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path();
+        for p in [
+            "a.py",
+            "dijkstral-out/graph.json",
+            "dijkstral-out/reflections/LESSONS.md",
+            "dijkstral-out/memory/query_x.md",
+            "dijkstral-out/memory/sub/nested.md",
+            "dijkstral-out/memory/helper.py",
+            "dijkstral-out/memory/skip.md",
+            "graphify-out/memory/theirs.md",
+        ] {
+            let path = root.join(p);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, "x").unwrap();
+        }
+        // The project ignores the output directory; the memory walk still happens, and an ignore
+        // file inside the memory directory applies there.
+        fs::write(root.join(".gitignore"), "dijkstral-out/\n").unwrap();
+        fs::write(root.join("dijkstral-out/memory/.gitignore"), "skip.md\n").unwrap();
+        let found = discover_all(root, 2);
+        assert_eq!(
+            found.documents,
+            [
+                "dijkstral-out/memory/query_x.md",
+                "dijkstral-out/memory/sub/nested.md"
+            ]
+        );
+        let rels: Vec<_> = found.files.into_iter().map(|f| f.rel).collect();
+        assert_eq!(rels, ["a.py", "dijkstral-out/memory/helper.py"]);
     }
 }
