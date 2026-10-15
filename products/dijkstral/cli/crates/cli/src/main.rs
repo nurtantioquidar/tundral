@@ -1,16 +1,20 @@
 mod agents_cmd;
 mod clone_cmd;
+mod diagnose_cmd;
 mod export_cmd;
 mod exports;
 mod git_cmd;
 mod inputs_cmd;
 mod mcp_cmd;
+mod memory_cmd;
 mod multirepo_cmd;
 mod provider_cmd;
+mod prs_cmd;
 mod query_cmds;
 mod semantic_build;
 mod semantic_cmd;
 mod watch_cmd;
+mod work_cmds;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -82,6 +86,8 @@ enum Command {
     Watch(watch_cmd::WatchArgs),
     /// Manage custom OpenAI-compatible model providers for `--backend <name>`.
     Provider(provider_cmd::ProviderArgs),
+    #[command(flatten)]
+    Work(work_cmds::WorkCommand),
 }
 
 #[derive(Args, Debug)]
@@ -153,6 +159,7 @@ fn main() -> ExitCode {
         Command::MergeDriver(args) => return git_cmd::run_merge_driver(args),
         Command::Watch(args) => return watch_cmd::run(args),
         Command::Provider(args) => return provider_cmd::run(args),
+        Command::Work(cmd) => return work_cmds::run(cmd),
         Command::ClusterOnly(args) => {
             let (path, graph) = (args.path.clone(), args.graph.clone());
             if let Some(code) = semantic_build::run_cluster_naming(path, graph, args.naming) {

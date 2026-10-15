@@ -1,0 +1,35 @@
+import os
+seen = set()
+seen_a = set()
+seen_b: set[str] = set()
+    seen_c = {n["id"] for n in nodes}
+seen_d = {}
+seen_e = []
+seen_f: set[tuple[str, str]] = set()
+seen_g: set[tuple[str, str, str, str | None]] = set()
+seen_h: set[tuple] = set()
+seen_i: Set[Tuple[str, int]] = set()
+seen_j = set()  # comment
+# seen_k = set()
+self.seen_l = set()
+x = seen_m = set()
+seen_n.add((a, b, c))
+if key in seen_o:
+visited = set()
+visited_ids = set()
+SEEN_P = set()
+seen_q=set()
+seen_r = frozenset()
+seen_s = dict()
+seen_t: dict[str, int] = {}
+seen_u = set(nodes)
+seen_v: set[tuple[str, str]] = set()
+seen_w: "set[tuple[str, str]]" = set()
+dedup_x = set()
+seen_y = {(a, b) for a, b in pairs}
+	seen_z = set()
+seen_aa: set[tuple[str, tuple[str, str]]] = set()
+seen_ab: set[tuple[str, ...]] = set()
+seen_ac = set()
+seen_ad = set()
+seen_ae = set()

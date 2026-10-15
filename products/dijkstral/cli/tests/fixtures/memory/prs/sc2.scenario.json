@@ -1,0 +1,562 @@
+{
+ "default_branch": "main",
+ "prs": [
+  {
+   "number": 201,
+   "title": "changes+draft",
+   "headRefName": "h201",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": true,
+   "reviewDecision": "CHANGES_REQUESTED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 202,
+   "title": "approved+pending",
+   "headRefName": "h202",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "APPROVED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "IN_PROGRESS",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 203,
+   "title": "draft+pending",
+   "headRefName": "h203",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": true,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "IN_PROGRESS",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 204,
+   "title": "status null pending",
+   "headRefName": "h204",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "PENDING",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 205,
+   "title": "status waiting",
+   "headRefName": "h205",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "WAITING",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 206,
+   "title": "status requested",
+   "headRefName": "h206",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "REQUESTED",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 207,
+   "title": "in progress empty concl",
+   "headRefName": "h207",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "IN_PROGRESS",
+     "conclusion": ""
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 208,
+   "title": "success+neutral",
+   "headRefName": "h208",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    },
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "NEUTRAL"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 209,
+   "title": "success+skipped",
+   "headRefName": "h209",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    },
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SKIPPED"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 210,
+   "title": "lowercase failure",
+   "headRefName": "h210",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "failure"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 211,
+   "title": "23 hours",
+   "headRefName": "h211",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "hours_ago": 23
+   }
+  },
+  {
+   "number": 212,
+   "title": "13d 23h",
+   "headRefName": "h212",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 13,
+    "hours_ago": 23
+   }
+  },
+  {
+   "number": 213,
+   "title": "future",
+   "headRefName": "h213",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": -3
+   }
+  },
+  {
+   "number": 214,
+   "title": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "headRefName": "h214",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 215,
+   "title": "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+   "headRefName": "h215",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 216,
+   "title": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+   "headRefName": "h216",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": true,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 999,
+   "title": "tie order b",
+   "headRefName": "h217",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": "2026-01-01T00:00:00Z"
+  },
+  {
+   "number": 5,
+   "title": "tie order a",
+   "headRefName": "h218",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": "2026-01-01T00:00:00Z"
+  },
+  {
+   "number": 219,
+   "title": "wt branch",
+   "headRefName": "wt-branch",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 220,
+   "title": "local branch only",
+   "headRefName": "local-only",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 221,
+   "title": "current branch",
+   "headRefName": "main",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 222,
+   "title": "multi\nline title",
+   "headRefName": "h222",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 223,
+   "title": "emoji 🐛 title",
+   "headRefName": "h223",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  }
+ ],
+ "files": {
+  "201": [
+   "pkg/service.py",
+   "README.md"
+  ],
+  "203": [
+   "pkg/util.py",
+   "pkg/models.py",
+   "main.py",
+   "tests/test_service.py"
+  ],
+  "219": [
+   "pkg/models.py"
+  ],
+  "999": [],
+  "5": [
+   "nothing.py"
+  ]
+ }
+}

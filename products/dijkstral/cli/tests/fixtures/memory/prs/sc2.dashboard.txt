@@ -1,0 +1,32 @@
+
+  graphify prs  ·  base: main  ·  23 PRs
+
+     #  CI  STATUS         UPDATED   IMPACT                  TITLE
+  ────  ──  ─────────────  ────────  ──────────────────────  ────────────────────────────────────────
+  #201      ✓  CHANGES-REQ        1d   –                       changes+draft [draft]
+  #203      …  DRAFT              1d   –                       draft+pending [draft]
+  #216      ✓  DRAFT              1d   –                       zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz… [draft]
+  #999      ✓  STALE            287d   –                       tie order b
+  #5        ✓  STALE            287d   –                       tie order a
+  #207      …  PENDING            1d   –                       in progress empty concl
+  #202      …  APPROVED           1d   –                       approved+pending
+  #213      ✓  READY           today   –                       future
+  #211      ✓  READY           today   –                       23 hours
+  #204      –  READY              1d   –                       status null pending
+  #205      –  READY              1d   –                       status waiting
+  #206      –  READY              1d   –                       status requested
+  #208      ✓  READY              1d   –                       success+neutral
+  #209      ✓  READY              1d   –                       success+skipped
+  #210      –  READY              1d   –                       lowercase failure
+  #214      ✓  READY              1d   –                       xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  #215      ✓  READY              1d   –                       yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy…
+  #219   ⬡  ✓  READY              1d   –                       wt branch
+  #220      ✓  READY              1d   –                       local branch only
+  #221   ⬡  ✓  READY              1d   –                       current branch
+  #222      ✓  READY              1d   –                       multi
+line title
+  #223      ✓  READY              1d   –                       emoji 🐛 title
+  #212      ✓  READY             13d   –                       13d 23h
+
+  16 ready · 1 approved · 1 pending CI · 1 changes requested · 2 draft · 2 stale
+

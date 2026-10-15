@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::{bail, Result};
-use dijkstral_core::discover::{discover_all, discover_all_with, SourceFile};
+use dijkstral_core::discover::{discover_all, discover_all_with, SourceFile, MEMORY_DIR};
 use dijkstral_core::graph::Graph;
 use dijkstral_core::pipeline::{DocumentFacts, Documents, SemanticReport, OUT_DIR};
 use dijkstral_core::resolve::{Index, Resolution, View};
@@ -103,9 +103,14 @@ impl SemanticPass {
                 ));
             }
         }
+        let documents: Vec<String> = found
+            .documents
+            .into_iter()
+            .filter(|rel| !is_saved_result(rel))
+            .collect();
         let ingested = ingest::ingest(
             root,
-            &found.documents,
+            &documents,
             &IngestOptions {
                 converted_prefix: CONVERTED_PREFIX,
                 converted_dir: Some(&converted_dir),
@@ -301,6 +306,14 @@ pub fn dispatched(docs: &[SourceDoc]) -> Vec<Dispatched> {
     out
 }
 
+/// Saved results (`dijkstral save-result`) are part of the corpus for `update`'s local passes but
+/// are never sent to a model: they hold the user's questions and answers
+/// (`docs/graphify-memory.md` §7; Graphify sends its own).
+fn is_saved_result(rel: &str) -> bool {
+    rel.strip_prefix(MEMORY_DIR)
+        .is_some_and(|rest| rest.starts_with('/'))
+}
+
 /// After a no-model `update`: flag the semantic pass as stale when a non-code file it read
 /// changed, or a new one appeared, since it last ran (`check-update` then reports it, §9.3).
 pub fn note_pending_changes(root: &Path, out_dir: &Path) -> Result<bool> {
@@ -313,7 +326,7 @@ pub fn note_pending_changes(root: &Path, out_dir: &Path) -> Result<bool> {
         discover_all(root, 1)
             .documents
             .iter()
-            .filter(|rel| ingest::classify(rel).is_some())
+            .filter(|rel| ingest::classify(rel).is_some() && !is_saved_result(rel))
             .any(|rel| !index.files.contains_key(rel.as_str()))
     };
     let pending = run::pending_changes(root, out_dir).is_some() || new_file();

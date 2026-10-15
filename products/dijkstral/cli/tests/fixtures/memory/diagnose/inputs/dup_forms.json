@@ -1,0 +1,64 @@
+{
+ "nodes": [
+  {
+   "id": "a"
+  },
+  {
+   "id": "b"
+  },
+  {
+   "id": "1"
+  },
+  {
+   "id": 1
+  }
+ ],
+ "links": [
+  {
+   "source": "a",
+   "target": "b",
+   "w": 1.5,
+   "m": {
+    "x": 1,
+    "y": 2
+   }
+  },
+  {
+   "m": {
+    "y": 2,
+    "x": 1
+   },
+   "target": "b",
+   "source": "a",
+   "w": 1.5
+  },
+  {
+   "source": "a",
+   "target": "b",
+   "weight": 1
+  },
+  {
+   "source": "a",
+   "target": "b",
+   "weight": 1.0
+  },
+  {
+   "source": 1,
+   "target": "a"
+  },
+  {
+   "source": "1",
+   "target": "a"
+  },
+  {
+   "target": "a"
+  },
+  {
+   "target": "a"
+  },
+  {
+   "source": true,
+   "target": "a"
+  }
+ ]
+}

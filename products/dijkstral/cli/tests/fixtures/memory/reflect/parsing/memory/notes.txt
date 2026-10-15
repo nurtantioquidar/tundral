@@ -1,0 +1,5 @@
+---
+question: "txt"
+outcome: "useful"
+source_nodes: ["TXT"]
+---

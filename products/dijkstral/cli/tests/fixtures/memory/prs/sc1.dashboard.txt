@@ -1,0 +1,45 @@
+
+  graphify prs  ·  base: main  ·  37 PRs
+
+     #  CI  STATUS         UPDATED   IMPACT                  TITLE
+  ────  ──  ─────────────  ────────  ──────────────────────  ────────────────────────────────────────
+  #102      ✗  CI-FAIL            1d   –                       ci failure
+  #105      ✗  CI-FAIL            1d   –                       ci cancelled
+  #106      ✗  CI-FAIL            1d   –                       ci timed out
+  #107      ✗  CI-FAIL            1d   –                       ci action required
+  #108      ✗  CI-FAIL            1d   –                       ci startup failure
+  #121      ✗  CI-FAIL            1d   –                       failure+pending
+  #125      ✗  CI-FAIL            1d   –                       approved but failing
+  #127      ✗  CI-FAIL            1d   –                       draft failing [draft]
+  #123      ✓  CHANGES-REQ        1d   –                       changes requested
+  #132      ✓  CHANGES-REQ      400d   –                       age 400 changes
+  #126      ✓  DRAFT              1d   –                       draft passing [draft]
+  #130      ✓  STALE             14d   –                       age 14
+  #131      ✓  STALE             15d   –                       age 15 approved
+  #133      …  STALE             30d   –                       pending stale
+  #110      …  PENDING            1d   –                       ci in progress
+  #111      …  PENDING            1d   –                       ci queued
+  #120      …  PENDING            1d   –                       success+pending
+  #122      ✓  APPROVED           1d   –                       approved
+  #128      ✓  READY           today   –                       age 0
+  #101      ✓  READY              1d   –                       ci success
+  #103      –  READY              1d   –                       ci neutral
+  #104      –  READY              1d   –                       ci skipped
+  #109      –  READY              1d   –                       ci stale conclusion
+  #112      –  READY              1d   –                       ci pending empty concl
+  #113      –  READY              1d   –                       status success
+  #114      –  READY              1d   –                       status failure
+  #115      –  READY              1d   –                       status error
+  #116      –  READY              1d   –                       status pending
+  #117      –  READY              1d   –                       status expected
+  #118      –  READY              1d   –                       no checks
+  #119      –  READY              1d   –                       null rollup
+  #124      ✓  READY              1d   –                       review required
+  #135      ✓  READY              1d   –                       bot author
+  #136      ✓  READY              1d   –                       title exactly fifty chars long xxxxxxxxxxxxxxxxxxx
+  #137      ✓  READY              1d   –                       title fifty-one chars long xxxxxxxxxxxxxxxxxxxxxxxxx
+  #138      ✓  READY              1d   –                       日本語のタイトルはとても長いのでここで切られるかどうかを確認するためのテストです
+  #129      ✓  READY             13d   –                       age 13
+
+  19 ready · 1 approved · 3 pending CI · 8 CI failing · 2 changes requested · 1 draft · 3 stale · 1 wrong base
+

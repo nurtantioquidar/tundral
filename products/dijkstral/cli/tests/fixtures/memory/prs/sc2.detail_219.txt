@@ -1,0 +1,15 @@
+
+  PR #219  ·  READY
+  wt branch
+
+  branch:  wt-branch  ->  main
+  author:  alice
+  updated: 1d ago
+  CI:      ✓ SUCCESS
+  worktree: <WORKTREE>
+
+  Graph impact:  23 nodes / 5 communities
+  communities: [1, 2, 4, 5, 7]
+  files changed: 1
+    pkg/models.py
+

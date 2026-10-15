@@ -1,0 +1,115 @@
+{
+ "default_branch": "main",
+ "prs": [
+  {
+   "number": 1,
+   "title": "fail with review and worktree",
+   "headRefName": "wt-branch",
+   "baseRefName": "main",
+   "author": {
+    "login": "bob",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "REVIEW_REQUIRED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "status": "COMPLETED",
+     "conclusion": "FAILURE"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 2
+   }
+  },
+  {
+   "number": 2,
+   "title": "many files",
+   "headRefName": "h2",
+   "baseRefName": "main",
+   "author": {
+    "login": ""
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 0
+   }
+  },
+  {
+   "number": 3,
+   "title": "wrong base",
+   "headRefName": "h3",
+   "baseRefName": "dev",
+   "author": {
+    "login": "bob",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [],
+   "updatedAt": {
+    "days_ago": 0
+   }
+  },
+  {
+   "number": 4,
+   "title": "no author",
+   "headRefName": "h4",
+   "baseRefName": "main",
+   "author": null,
+   "isDraft": false,
+   "reviewDecision": null,
+   "statusCheckRollup": [],
+   "updatedAt": {
+    "days_ago": 0
+   }
+  }
+ ],
+ "files": {
+  "1": [
+   "pkg/service.py"
+  ],
+  "2": [
+   "f0.py",
+   "f1.py",
+   "f2.py",
+   "f3.py",
+   "f4.py",
+   "f5.py",
+   "f6.py",
+   "f7.py",
+   "f8.py",
+   "f9.py",
+   "f10.py",
+   "f11.py",
+   "f12.py",
+   "f13.py",
+   "f14.py",
+   "f15.py",
+   "f16.py",
+   "f17.py",
+   "f18.py",
+   "f19.py",
+   "f20.py",
+   "f21.py",
+   "f22.py",
+   "f23.py",
+   "f24.py",
+   "f25.py",
+   "f26.py",
+   "f27.py",
+   "f28.py",
+   "f29.py",
+   "pkg/util.py"
+  ]
+ }
+}

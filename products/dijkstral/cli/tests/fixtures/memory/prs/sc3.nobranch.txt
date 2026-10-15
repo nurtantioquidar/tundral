@@ -1,0 +1,11 @@
+
+  graphify prs  ·  base: main  ·  3 PRs
+
+     #  CI  STATUS         UPDATED   IMPACT                  TITLE
+  ────  ──  ─────────────  ────────  ──────────────────────  ────────────────────────────────────────
+  #1     ⬡  ✗  CI-FAIL            2d   –                       fail with review and worktree
+  #2        ✓  READY           today   –                       many files
+  #4        –  READY           today   –                       no author
+
+  2 ready · 1 CI failing · 1 wrong base
+

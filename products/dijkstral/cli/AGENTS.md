@@ -34,7 +34,13 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
 - `crates/serve`: the query engine behind `query`, `path`, `explain`, `affected`, `god-nodes` and
   `benchmark`: structured answers plus Graphify-format renderers, shared by the CLI
   (`crates/cli/src/query_cmds.rs`) and the stdio MCP server (`mcp.rs`, with the graph summaries
-  of `insights.rs`; `crates/cli/src/mcp_cmd.rs`).
+  of `insights.rs`; `crates/cli/src/mcp_cmd.rs`). Beside the graph, also in `crates/serve`: the
+  work-memory loop (`memory.rs`, the saved-result files of `save-result`; `reflect.rs`, lessons
+  from them), the PR dashboard and MCP PR tools over read-only `gh` and `git` calls (`prs.rs`),
+  `diagnose multigraph` (`diagnose.rs`) and UTC time without a date library (`clock.rs`); their
+  commands are in `crates/cli/src/work_cmds.rs`, `memory_cmd.rs`, `prs_cmd.rs` and
+  `diagnose_cmd.rs`. Saved results live in `dijkstral-out/memory/`, which discovery walks as
+  corpus content (`core::discover::MEMORY_DIR`) but the semantic pass never sends to a model.
 - `crates/agents`: assistant integrations — the `PreToolUse` hook guard (`guard.rs`, Bash command
   lexer in `bash.rs`) and the Claude Code / Codex installers (`install.rs`), which edit settings
   JSON by splicing text (`jsonedit.rs`) and instruction files by section (`section.rs`). All prose
@@ -110,6 +116,12 @@ the quirks not reproduced), building PostgreSQL graphs offline from the catalog 
 (`DIJKSTRAL_PG_TEST_DSN`); `crates/cli/tests/inputs_cli.rs` drives the flags with a scratch `HOME`,
 a fake `gws` and a fake model server. `docs/graphify-cli-checklist.md` maps every Graphify command
 and flag to dijkstral; a new command or flag updates it.
+`save-result`, `reflect`, `prs` (and the MCP PR
+tools) and `diagnose multigraph` are specified in `docs/graphify-memory.md`, with goldens in
+`tests/fixtures/memory/` and tests in `crates/cli/tests/memory_cli.rs`, `prs_cli.rs` and
+`diagnose_cli.rs`. Lessons and the PR dashboard are compared as data, since their wording is
+dijkstral's own. `prs` tests run offline against a fake `gh` placed first on `PATH`; no test or
+command may write to GitHub.
 
 ## Ownership boundaries
 

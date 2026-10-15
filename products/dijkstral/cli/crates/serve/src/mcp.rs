@@ -16,8 +16,9 @@
 //! - A string `context_filter` is one context (Graphify iterates its characters); an unknown
 //!   `mode` or an out-of-range `exclude_hubs_percentile` is an argument error.
 //! - A line that is not JSON gets a JSON-RPC parse error (Graphify stays silent).
-//! - The PR tools (`list_prs`, `get_pr_impact`, `triage_prs`) are not listed: they arrive with
-//!   stage 6. Calling one returns an error saying so.
+//! - The PR tools (`list_prs`, `get_pr_impact`, `triage_prs`, `docs/graphify-memory.md` §5.6) word
+//!   their headers and messages themselves and flag every failure; their entry lines are
+//!   Graphify's.
 //! - `serverInfo` names dijkstral; resource URIs and tool names stay Graphify's.
 //! - A project (the server's cwd, or `project_path`) is served from `dijkstral-out/graph.dij`,
 //!   else `dijkstral-out/graph.json`, else `graphify-out/graph.json`.
@@ -33,7 +34,7 @@ use dijkstral_core::index::{Index, INDEX_FILE};
 use serde_json::{json, Map, Value};
 
 use crate::text::{line_label, py_repr};
-use crate::{god_nodes, insights, path, query, resolve};
+use crate::{clock, god_nodes, insights, path, prs, query, resolve};
 
 pub const SERVER_NAME: &str = "dijkstral";
 const PROTOCOL_VERSIONS: &[&str] = &["2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25"];
@@ -673,11 +674,55 @@ impl Server {
         }
     }
 
+    /// `list_prs`, `get_pr_impact` and `triage_prs`: `gh` runs in the server's cwd; the graph for
+    /// the impact is the call's target graph, when it loads.
+    fn pr_tool(&mut self, name: &str, args: &Args) -> Reply {
+        let text = |k: &str| {
+            args.get(k)
+                .and_then(Value::as_str)
+                .filter(|s| !s.is_empty())
+                .map(str::to_string)
+        };
+        let repo = text("repo");
+        let gh = prs::Gh::new(&self.opts.cwd);
+        let target = self.target(args);
+        let now = clock::now();
+        if name == "get_pr_impact" {
+            let number = match required(args, "pr_number").and_then(|v| py_int(v).map_err(ArgError))
+            {
+                Ok(n) => n,
+                Err(ArgError(e)) => return fail(format!("Error executing {name}: {e}")),
+            };
+            let ix = self.graph(&target).ok().map(|e| &e.ix);
+            return match prs::mcp_impact(&gh, number, repo.as_deref(), ix) {
+                Ok(t) => ok(t),
+                Err(t) => fail(t),
+            };
+        }
+        let base = text("base").unwrap_or_else(|| gh.default_branch(repo.as_deref()));
+        let list = match gh.list(repo.as_deref()) {
+            Ok(l) => l,
+            Err(_) => return fail(prs::GH_UNAVAILABLE),
+        };
+        let listing = prs::Listing::new(base, list, now);
+        if name == "list_prs" {
+            return ok(prs::mcp_list(&listing, now));
+        }
+        let worktrees = prs::worktrees(&self.opts.cwd);
+        let ix = self.graph(&target).ok().map(|e| &e.ix);
+        ok(prs::mcp_triage(
+            &listing,
+            &gh,
+            repo.as_deref(),
+            ix,
+            &worktrees,
+            now,
+        ))
+    }
+
     fn call_tool(&mut self, name: &str, args: &Args) -> Reply {
         if PR_TOOLS.contains(&name) {
-            return fail(format!(
-                "{name} is not available in dijkstral yet: the pull-request tools ship in a later release. Use query_graph, get_neighbors or shortest_path on the changed symbols instead."
-            ));
+            return self.pr_tool(name, args);
         }
         let run: fn(&Entry, &Args) -> Result<Reply, ArgError> = match name {
             "query_graph" => tool_query_graph,
@@ -990,6 +1035,43 @@ pub fn tools() -> Vec<Value> {
             },
             "name": "shortest_path"
         }),
+        json!({
+            "description": "List the open pull requests on a base branch with their CI state, review decision, age and author (read-only, through gh).",
+            "inputSchema": {
+                "properties": {
+                    "base": {"type": "string", "description": "Base branch to filter PRs by (auto-detected if omitted)"},
+                    "repo": {"type": "string", "description": "GitHub repo (owner/repo). Defaults to current repo."},
+                    "project_path": pp
+                },
+                "type": "object"
+            },
+            "name": "list_prs"
+        }),
+        json!({
+            "description": "Show one pull request and its footprint in the graph: the nodes defined in the files it changes and the communities they belong to (read-only, through gh).",
+            "inputSchema": {
+                "properties": {
+                    "pr_number": {"type": "integer", "description": "PR number to analyse"},
+                    "repo": {"type": "string", "description": "GitHub repo (owner/repo). Defaults to current repo."},
+                    "project_path": pp
+                },
+                "required": ["pr_number"],
+                "type": "object"
+            },
+            "name": "get_pr_impact"
+        }),
+        json!({
+            "description": "Prepare the open pull requests that are not stale for review ordering: status, CI, review, age, blast radius in the graph and the worktree that has each checked out (read-only, through gh).",
+            "inputSchema": {
+                "properties": {
+                    "base": {"type": "string", "description": "Base branch to filter PRs by (auto-detected if omitted)"},
+                    "repo": {"type": "string", "description": "GitHub repo (owner/repo). Defaults to current repo."},
+                    "project_path": pp
+                },
+                "type": "object"
+            },
+            "name": "triage_prs"
+        }),
     ]
 }
 
@@ -1051,12 +1133,17 @@ mod tests {
             call["result"]["content"][0]["text"],
             "Error executing graph_stats: graph.json not found: /nonexistent/graph.json"
         );
+        // A PR tool argument error, which runs no gh.
         let pr = s
             .handle(
-                &json!({"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"list_prs"}}),
+                &json!({"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"get_pr_impact","arguments":{}}}),
             )
             .unwrap();
         assert_eq!(pr["result"]["isError"], true);
+        assert_eq!(
+            pr["result"]["content"][0]["text"],
+            "Error executing get_pr_impact: 'pr_number'"
+        );
         let unknown = s
             .handle(&json!({"jsonrpc":"2.0","id":5,"method":"prompts/list"}))
             .unwrap();

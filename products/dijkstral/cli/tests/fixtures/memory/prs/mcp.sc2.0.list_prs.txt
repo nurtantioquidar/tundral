@@ -1,0 +1,72 @@
+Open PRs targeting main: 23  (0 on wrong base, not shown)
+
+
+#201 [CHANGES-REQ] CI=SUCCESS review=CHANGES_REQUESTED age=1d author=alice
+  changes+draft
+
+#203 [DRAFT] CI=PENDING review=none age=1d author=alice
+  draft+pending
+
+#216 [DRAFT] CI=SUCCESS review=none age=1d author=alice
+  zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+
+#999 [STALE] CI=SUCCESS review=none age=287d author=alice
+  tie order b
+
+#5 [STALE] CI=SUCCESS review=none age=287d author=alice
+  tie order a
+
+#207 [PENDING] CI=PENDING review=none age=1d author=alice
+  in progress empty concl
+
+#202 [APPROVED] CI=PENDING review=APPROVED age=1d author=alice
+  approved+pending
+
+#213 [READY] CI=SUCCESS review=none age=-3d author=alice
+  future
+
+#211 [READY] CI=SUCCESS review=none age=0d author=alice
+  23 hours
+
+#204 [READY] CI=NONE review=none age=1d author=alice
+  status null pending
+
+#205 [READY] CI=NONE review=none age=1d author=alice
+  status waiting
+
+#206 [READY] CI=NONE review=none age=1d author=alice
+  status requested
+
+#208 [READY] CI=SUCCESS review=none age=1d author=alice
+  success+neutral
+
+#209 [READY] CI=SUCCESS review=none age=1d author=alice
+  success+skipped
+
+#210 [READY] CI=NONE review=none age=1d author=alice
+  lowercase failure
+
+#214 [READY] CI=SUCCESS review=none age=1d author=alice
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+#215 [READY] CI=SUCCESS review=none age=1d author=alice
+  yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+
+#219 [READY] CI=SUCCESS review=none age=1d author=alice
+  wt branch
+
+#220 [READY] CI=SUCCESS review=none age=1d author=alice
+  local branch only
+
+#221 [READY] CI=SUCCESS review=none age=1d author=alice
+  current branch
+
+#222 [READY] CI=SUCCESS review=none age=1d author=alice
+  multi
+line title
+
+#223 [READY] CI=SUCCESS review=none age=1d author=alice
+  emoji 🐛 title
+
+#212 [READY] CI=SUCCESS review=none age=13d author=alice
+  13d 23h
