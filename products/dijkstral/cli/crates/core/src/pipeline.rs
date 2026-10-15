@@ -11,7 +11,7 @@ use rayon::prelude::*;
 use crate::analyze::{analyze, ANALYSIS_FILE, REPORT_FILE};
 use crate::cache::{content_key, Cache, Key, Stat};
 use crate::cluster::{cluster, Communities, Topology};
-use crate::discover::{discover, SourceFile};
+use crate::discover::{discover_all, SourceFile};
 use crate::extract::extract_file;
 use crate::facts::{Attr, FileFacts};
 use crate::graph::Graph;
@@ -111,7 +111,8 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
     fs::create_dir_all(&out_dir)?;
     report.out_dir = out_dir.clone();
 
-    let files = discover(&root, opts.threads);
+    let found = discover_all(&root, opts.threads);
+    let (files, unclassified) = (found.files, found.unclassified);
     report.files = files.len();
     phase(&mut report, "discover");
 
@@ -128,7 +129,14 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
         .collect();
     let commit = git_head(&root);
     let date = today();
-    let digest = build_digest(&files, &file_keys, opts.cluster, commit.as_deref(), &date);
+    let digest = build_digest(
+        &files,
+        &file_keys,
+        &unclassified,
+        opts.cluster,
+        commit.as_deref(),
+        &date,
+    );
     let extra: Vec<PathBuf> = exporters.iter().flat_map(|e| e.outputs()).collect();
     if file_keys.iter().all(Option::is_some)
         && outputs_current(&out_dir, opts.cluster, &digest, &extra)
@@ -243,6 +251,7 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
                 .file_name()
                 .map_or_else(String::new, |n| n.to_string_lossy().into_owned()),
             stats: Some((words.len(), words.iter().sum())),
+            unclassified,
             commit: commit.clone(),
             date: date.clone(),
         };
@@ -275,11 +284,13 @@ fn build_inner(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<Build
 /// Records what the outputs in `dijkstral-out/` were built from.
 pub const DIGEST_FILE: &str = ".build-digest";
 
-/// Everything that determines the outputs: the binary, each file's content key, the options, the
-/// git commit written into `graph.json`, and the date written into the report.
+/// Everything that determines the outputs: the binary, each file's content key, the unclassified
+/// files the report counts, the options, the git commit written into `graph.json`, and the date
+/// written into the report.
 fn build_digest(
     files: &[SourceFile],
     keys: &[Option<Key>],
+    unclassified: &[String],
     cluster: bool,
     commit: Option<&str>,
     date: &str,
@@ -295,6 +306,10 @@ fn build_digest(
         h.update(f.rel.as_bytes());
         h.update(&[0]);
         h.update(k.as_ref().map_or(&[0u8; 32][..], |k| &k[..]));
+    }
+    for rel in unclassified {
+        h.update(rel.as_bytes());
+        h.update(&[0]);
     }
     h.finalize().to_hex().to_string()
 }
@@ -372,6 +387,7 @@ pub fn cluster_only(doc: &serde_json::Value, name: &str) -> Result<ClusterOnly> 
     let corpus = Corpus {
         name: name.to_string(),
         stats: None,
+        unclassified: Vec::new(),
         commit: commit.clone(),
         date: today(),
     };

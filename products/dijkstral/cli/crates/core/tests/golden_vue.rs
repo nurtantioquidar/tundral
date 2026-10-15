@@ -35,19 +35,13 @@ fn vue_fixture_matches_graphify() {
     let ours: Vec<&String> = ours.iter().filter(|i| golden.contains(i)).collect();
     let golden: Vec<&String> = golden.iter().filter(|i| ours.contains(i)).collect();
     assert_eq!(ours, golden, "vue: node array order");
-    // Not exact: the allowed Q8 self-loop changes `mount()`'s degree, and the bridge question
-    // below.
+    // Not exact: the allowed Q8 self-loop changes `mount()`'s degree.
     common::check_report_goldens("vue", &built, false);
 }
 
-/// `dijkstral cluster-only` on Graphify's own graph matches its communities, order, god nodes
-/// and surprises, but asks one more bridge question (`formatTitle()`, whose only neighbour in
-/// another community is its own file node); Graphify appears not to count same-file neighbours
-/// when it lists the communities a bridge connects (graphify-format.md §38.6).
 #[test]
-#[ignore = "bridge questions count same-file neighbours: graphify-format.md §38.6"]
 fn vue_cluster_only_matches_graphify() {
-    common::assert_cluster_only("vue", false);
+    common::assert_cluster_only("vue");
 }
 
 #[test]

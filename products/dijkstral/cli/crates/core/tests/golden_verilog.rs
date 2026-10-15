@@ -8,5 +8,5 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn verilog_fixture_matches_graphify() {
-    common::assert_fixture("verilog", ALLOWED, common::Communities::Exact, true, false);
+    common::assert_fixture("verilog", ALLOWED, common::Communities::Exact, true);
 }

@@ -12,8 +12,8 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn objc_fixture_matches_graphify() {
-    // Same graph, same communities; the extract-time report orders equal-score surprises by
-    // build edge order, which follows the cross-file passes' emission order (§17.7), and
-    // cluster-only surprises tie the same way.
-    common::assert_fixture("objc", ALLOWED, common::Communities::Exact, false, true);
+    // Same graph, same communities, cluster-only exact. The extract-time report lists three
+    // equal-score surprises in another order: ties follow the node order of the build, and
+    // Graphify's differs where headers and implementations merge (§34.7, §17.7).
+    common::assert_fixture("objc", ALLOWED, common::Communities::Exact, false);
 }

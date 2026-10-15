@@ -10,13 +10,7 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn powershell_fixture_matches_graphify() {
-    common::assert_fixture(
-        "powershell",
-        ALLOWED,
-        common::Communities::Exact,
-        true,
-        false,
-    );
+    common::assert_fixture("powershell", ALLOWED, common::Communities::Exact, true);
 }
 
 #[test]

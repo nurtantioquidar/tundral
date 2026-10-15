@@ -15,7 +15,7 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn php_fixture_matches_graphify() {
-    common::assert_fixture("php", ALLOWED, common::Communities::Exact, false, false);
+    common::assert_fixture("php", ALLOWED, common::Communities::Exact, true);
 }
 
 /// Build a probe repository and return its links as `source -relation-> target [context]`.

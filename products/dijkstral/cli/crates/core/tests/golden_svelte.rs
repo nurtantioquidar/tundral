@@ -20,13 +20,7 @@ const ALLOWED: &[&str] = &[
 #[test]
 fn svelte_fixture_matches_graphify() {
     // The two phantom nodes move community ids; the partition is otherwise the same.
-    common::assert_fixture(
-        "svelte",
-        ALLOWED,
-        common::Communities::MinNmi(0.95),
-        false,
-        false,
-    );
+    common::assert_fixture("svelte", ALLOWED, common::Communities::MinNmi(0.95), false);
 }
 
 #[test]

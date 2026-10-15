@@ -38,13 +38,7 @@ const ALLOWED: &[&str] = &[
 #[test]
 fn python_fixture_matches_graphify() {
     // Community ids move with the ALLOWED differences (graphify-format.md §17.7).
-    common::assert_fixture(
-        "python",
-        ALLOWED,
-        common::Communities::MinNmi(0.90),
-        false,
-        false,
-    );
+    common::assert_fixture("python", ALLOWED, common::Communities::MinNmi(0.90), false);
 }
 
 /// Build a probe repository and return its links as `source -relation-> target [context]`.

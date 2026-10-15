@@ -10,7 +10,7 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn astro_fixture_matches_graphify() {
-    common::assert_fixture("astro", ALLOWED, common::Communities::Exact, true, false);
+    common::assert_fixture("astro", ALLOWED, common::Communities::Exact, true);
 }
 
 #[test]

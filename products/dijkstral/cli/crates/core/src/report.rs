@@ -18,6 +18,8 @@ const LISTED_SHOWN: usize = 8;
 const THIN: usize = 3;
 const QUESTION_LIMIT: usize = 7;
 const LOW_COHESION: f64 = 0.15;
+/// What the report and the `no_signal` question say when no question qualifies.
+const NO_SIGNAL: &str = "Not enough signal to generate questions. This usually means the corpus has no AMBIGUOUS edges, no bridge nodes, no INFERRED relationships, and all communities are tightly cohesive. Add more files or run with --mode deep to extract richer edges.";
 
 /// What the corpus check reports about the indexed files.
 #[derive(Debug, Clone, Default)]
@@ -27,6 +29,9 @@ pub struct Corpus {
     /// `(files, whitespace-separated words)` over the indexed files; `None` when the graph was
     /// loaded rather than built (Graphify's `cluster-only` mode).
     pub stats: Option<(usize, u64)>,
+    /// Walked files neither indexed nor documents or media `update` would index, sorted
+    /// (`discover::Discovery::unclassified`).
+    pub unclassified: Vec<String>,
     pub commit: Option<String>,
     /// `YYYY-MM-DD`.
     pub date: String,
@@ -74,20 +79,30 @@ pub fn render(
         Some((files, words)) => {
             let _ = writeln!(s, "- {files} files · ~{} words", thousands(words));
             s.push_str("- Verdict: corpus is large enough that graph structure adds value.\n");
+            if !corpus.unclassified.is_empty() {
+                let _ = writeln!(
+                    s,
+                    "- Unclassified: {} file(s) not represented in the graph (top: {})",
+                    corpus.unclassified.len(),
+                    top_suffixes(&corpus.unclassified, 3)
+                );
+            }
         }
         None => s.push_str("- cluster-only mode — file stats not available\n"),
     }
 
     s.push_str("\n## Summary\n");
-    let _ = writeln!(
+    let _ = write!(
         s,
-        "- {} nodes · {} edges · {} communities ({} shown, {} thin omitted)",
+        "- {} nodes · {} edges · {} communities",
         graph.nodes.len(),
         graph.edges.len(),
-        total,
-        total - thin,
-        thin
+        total
     );
+    if thin > 0 {
+        let _ = write!(s, " ({} shown, {thin} thin omitted)", total - thin);
+    }
+    s.push('\n');
     s.push_str(&extraction_line(graph));
     s.push_str("- Token cost: 0 input · 0 output\n");
 
@@ -128,9 +143,13 @@ pub fn render(
         let e = &graph.edges[sp.edge as usize];
         let (a, b, _) = topo.edges[sp.edge as usize];
         let (u, v) = (node(a), node(b));
+        let note = sp
+            .note
+            .as_ref()
+            .map_or_else(String::new, |n| format!("  _{n}_"));
         let _ = writeln!(
             s,
-            "- `{}` --{}--> `{}`  [{}]\n  {} → {}",
+            "- `{}` --{}--> `{}`  [{}]\n  {} → {}{note}",
             u.label,
             e.relation,
             v.label,
@@ -181,8 +200,10 @@ pub fn render(
         );
     }
 
-    s.push_str("\n## Knowledge Gaps\n");
     let lonely = isolated(graph, adj);
+    if !lonely.is_empty() || thin > 0 {
+        s.push_str("\n## Knowledge Gaps\n");
+    }
     if !lonely.is_empty() {
         let shown: Vec<String> = lonely
             .iter()
@@ -216,7 +237,7 @@ pub fn render(
     s.push_str("\n## Suggested Questions\n");
     let questions = questions(graph, communities, analysis);
     if questions.is_empty() {
-        s.push_str("_Not enough signal to generate questions. This usually means the corpus has no AMBIGUOUS edges, no bridge nodes, no INFERRED relationships, and all communities are tightly cohesive. Add more files or run with --mode deep to extract richer edges._");
+        let _ = write!(s, "_{NO_SIGNAL}_");
     } else {
         s.push_str("_Questions this graph is uniquely positioned to answer:_\n");
         for q in &questions {
@@ -224,6 +245,30 @@ pub fn render(
         }
     }
     s
+}
+
+/// The `n` most common `PurePath.suffix`es (`(none)` for none) of `paths`, as `ext count`; ties
+/// in path order (`Counter.most_common` over the sorted walk).
+fn top_suffixes(paths: &[String], n: usize) -> String {
+    let mut counts: Vec<(String, usize)> = Vec::new();
+    for p in paths {
+        let name = p.rsplit('/').next().unwrap_or(p);
+        let suffix = match name.rfind('.') {
+            Some(i) if i > 0 && i < name.len() - 1 => &name[i..],
+            _ => "(none)",
+        };
+        match counts.iter_mut().find(|(s, _)| s == suffix) {
+            Some(c) => c.1 += 1,
+            None => counts.push((suffix.to_string(), 1)),
+        }
+    }
+    counts.sort_by_key(|c| std::cmp::Reverse(c.1));
+    counts
+        .iter()
+        .take(n)
+        .map(|(s, c)| format!("{s} {c}"))
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 fn extraction_line(graph: &Graph) -> String {
@@ -246,16 +291,29 @@ fn extraction_line(graph: &Graph) -> String {
             .edges
             .iter()
             .filter(|e| e.confidence == Confidence::Inferred)
-            .map(|e| e.score.unwrap_or_else(|| e.confidence.default_score()))
+            // A link without a score counts 0.5 here, although `graph.json` writes it as 0.55
+            // (§2.5): only a reloaded graph (`cluster-only`) averages the written 0.55.
+            .map(|e| e.score.unwrap_or(0.5))
             .sum();
         let _ = write!(
             line,
-            " · INFERRED: {inf} edges (avg confidence: {:.2})",
-            sum / inf as f64
+            " · INFERRED: {inf} edges (avg confidence: {})",
+            round2_repr(sum / inf as f64)
         );
     }
     line.push('\n');
     line
+}
+
+/// `repr(round(x, 2))`: two decimals at most, trailing zeros dropped but one (`0.5`, `1.0`).
+fn round2_repr(x: f64) -> String {
+    let s = format!("{x:.2}");
+    let t = s.trim_end_matches('0');
+    if t.ends_with('.') {
+        format!("{t}0")
+    } else {
+        t.to_string()
+    }
 }
 
 /// Python's `round()` to an integer (banker's rounding).
@@ -288,19 +346,22 @@ pub fn questions(graph: &Graph, communities: &Communities, analysis: &Analysis) 
     let node = |i: u32| &graph.nodes[i as usize];
     let comm = |i: u32| communities.of_node[i as usize];
 
-    // Bridges: the five hub candidates with the highest betweenness, if they touch other
-    // communities; at most three.
+    // Bridges: of the three hub candidates with the highest betweenness, those touching other
+    // communities.
     let bc = betweenness(adj);
     let mut ranked: Vec<u32> = (0..graph.nodes.len() as u32)
-        .filter(|&i| is_hub_candidate(node(i)))
+        .filter(|&i| is_hub_candidate(node(i), adj.degree[i as usize]))
         .collect();
     ranked.sort_by(|&a, &b| bc[b as usize].total_cmp(&bc[a as usize]));
     let mut bridges = Vec::new();
-    for &x in ranked.iter().take(5) {
-        let mut nbrs: Vec<u32> = adj.neighbors[x as usize].iter().map(|&(v, _)| v).collect();
-        nbrs.sort_by(|&a, &b| node(a).id.cmp(&node(b).id));
+    for &x in ranked.iter().take(3) {
         let own = comm(x);
-        let others = py_int_set_order(nbrs.into_iter().map(comm).filter(|&c| c != own));
+        let others = py_int_set_order(
+            adj.neighbors[x as usize]
+                .iter()
+                .map(|&(v, _)| comm(v))
+                .filter(|&c| c != own),
+        );
         if others.is_empty() {
             continue;
         }
@@ -416,15 +477,14 @@ pub fn cluster_only_analysis_json(
     analysis: &Analysis,
 ) -> String {
     let qs = questions(graph, communities, analysis);
-    analysis.to_json_with(
-        graph,
-        communities,
-        Some(
-            qs.iter()
-                .map(|q| (q.kind, q.question.as_str(), q.why.as_str()))
-                .collect(),
-        ),
-    )
+    let listed = if qs.is_empty() {
+        vec![("no_signal", None, NO_SIGNAL)]
+    } else {
+        qs.iter()
+            .map(|q| (q.kind, Some(q.question.as_str()), q.why.as_str()))
+            .collect()
+    };
+    analysis.to_json_with(graph, communities, Some(listed))
 }
 
 #[cfg(test)]
@@ -439,5 +499,25 @@ mod tests {
         assert_eq!(round_half_even(91.5887), 92);
         assert_eq!(round_half_even(2.5), 2);
         assert_eq!(round_half_even(3.5), 4);
+        assert_eq!(round2_repr(0.5), "0.5");
+        assert_eq!(round2_repr(0.5349999999999999), "0.53");
+        assert_eq!(round2_repr(0.9055555555555556), "0.91");
+        assert_eq!(round2_repr(1.0), "1.0");
+    }
+
+    #[test]
+    fn unclassified_suffixes_by_count_then_path_order() {
+        let paths: Vec<String> = [
+            "LICENSE",
+            "a/z1.zzz",
+            "b.sbt",
+            "b/a1.aaa",
+            "c.sbt",
+            ".gitignore",
+        ]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+        assert_eq!(top_suffixes(&paths, 3), "(none) 2, .sbt 2, .zzz 1");
     }
 }

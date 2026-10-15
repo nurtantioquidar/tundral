@@ -1,19 +1,16 @@
 //! `god-nodes`: the most connected symbols (`docs/graphify-query.md` §8).
 
-use dijkstral_core::analyze::is_god_candidate_parts;
+use dijkstral_core::analyze::is_god_node;
 use dijkstral_core::index::Index;
 use dijkstral_core::pyjson::{dumps_indent, Json};
 
 pub const DEFAULT_TOP: i64 = 10;
 
 /// The same candidates as the report's god nodes (`docs/graphify-format.md` §17.4): symbols in
-/// files with a suffix, not file nodes or methods, not noise labels or generic JSON keys; and,
-/// past the report's top ten, no functions with at most one link (probed with `--top 30` and MCP
-/// `exclude_hubs_percentile` on the fixtures).
+/// files with a suffix, not file nodes or methods, not noise labels or generic JSON keys, and no
+/// functions with at most one link.
 fn candidate(ix: &Index, i: u32) -> bool {
-    let label = ix.label(i);
-    is_god_candidate_parts(label, ix.source_file(i))
-        && !(label.ends_with("()") && ix.degree(i) <= 1)
+    is_god_node(ix.label(i), ix.source_file(i), ix.degree(i))
 }
 
 /// The top `n` candidates by degree, descending, stable over node order (`n` below 1 is 1).

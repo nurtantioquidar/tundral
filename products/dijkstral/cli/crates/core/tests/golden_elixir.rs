@@ -15,8 +15,7 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn elixir_fixture_matches_graphify() {
-    // Graphify orders the tied surprises differently in `extract` and `cluster-only` (§17.7).
-    common::assert_fixture("elixir", ALLOWED, common::Communities::Exact, true, true);
+    common::assert_fixture("elixir", ALLOWED, common::Communities::Exact, true);
 }
 
 /// Build a probe repository and return its links as `source -relation-> target [context]`.

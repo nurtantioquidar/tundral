@@ -7,7 +7,7 @@ use std::fs;
 use std::path::Path;
 
 use anyhow::{bail, Context, Result};
-use dijkstral_core::analyze::is_god_candidate_parts;
+use dijkstral_core::analyze::is_god_node;
 use dijkstral_core::facts::Confidence;
 
 use crate::view::View;
@@ -88,8 +88,7 @@ pub fn write(view: &View, dir: &Path) -> Result<usize> {
     Ok(articles.len())
 }
 
-/// The ten best-connected symbols (§3.3): `analyze`'s god-node rule, also skipping functions
-/// with at most one link, ties in node order.
+/// The ten best-connected symbols (§3.3): `analyze`'s god-node rule, ties in node order.
 pub fn god_nodes(view: &View) -> Vec<u32> {
     let mut cands: Vec<u32> = view
         .nodes
@@ -97,8 +96,7 @@ pub fn god_nodes(view: &View) -> Vec<u32> {
         .copied()
         .filter(|&i| {
             let n = &view.graph.nodes[i as usize];
-            is_god_candidate_parts(&n.label, &n.source_file)
-                && !(n.label.ends_with("()") && view.degree[i as usize] <= 1)
+            is_god_node(&n.label, &n.source_file, view.degree[i as usize])
         })
         .collect();
     cands.sort_by_key(|&i| std::cmp::Reverse(view.degree[i as usize]));

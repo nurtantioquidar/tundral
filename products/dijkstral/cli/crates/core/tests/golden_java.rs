@@ -17,13 +17,7 @@ const ALLOWED: &[&str] = &[
 
 #[test]
 fn java_fixture_matches_graphify() {
-    // Community ids move with the ALLOWED differences (NMI 0.92); Graphify orders two equal-score
-    // surprises differently from G.edges() here (graphify-format.md §17.7).
-    common::assert_fixture(
-        "java",
-        ALLOWED,
-        common::Communities::MinNmi(0.85),
-        false,
-        true,
-    );
+    // Community ids move with the ALLOWED differences (NMI 0.92), and the extract-time sidecars
+    // with them (graphify-format.md §17.7).
+    common::assert_fixture("java", ALLOWED, common::Communities::MinNmi(0.85), false);
 }

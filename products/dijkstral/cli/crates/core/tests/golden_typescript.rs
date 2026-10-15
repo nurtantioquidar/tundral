@@ -45,7 +45,6 @@ fn typescript_fixture_matches_graphify() {
         ALLOWED,
         common::Communities::MinNmi(0.85),
         false,
-        false,
     );
 }
 

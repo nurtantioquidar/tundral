@@ -10,5 +10,5 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn solidity_fixture_matches_graphify() {
-    common::assert_fixture("solidity", ALLOWED, common::Communities::Exact, true, false);
+    common::assert_fixture("solidity", ALLOWED, common::Communities::Exact, true);
 }

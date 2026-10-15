@@ -217,10 +217,8 @@ fn partition_similarity(pairs: &[(i64, i64)]) -> (f64, f64) {
 
 /// `dijkstral cluster-only` on Graphify's clustered golden must reproduce Graphify's
 /// `cluster-only --no-label` exactly: community of every node, node and link array order, the
-/// analysis sidecar and the report. `unordered_surprises` names fixtures whose surprise ties
-/// Graphify orders differently (`docs/graphify-format.md` §17.4); there the surprises are compared
-/// as sets.
-pub fn assert_cluster_only(name: &str, unordered_surprises: bool) {
+/// analysis sidecar and the report.
+pub fn assert_cluster_only(name: &str) {
     let golden = golden_graph(name);
     let out = cluster_only(&golden, name).unwrap();
     let ours: Value = serde_json::from_str(&out.graph_json).unwrap();
@@ -247,18 +245,12 @@ pub fn assert_cluster_only(name: &str, unordered_surprises: bool) {
         "{name}: link order"
     );
 
-    let mut analysis = out.analysis_json.clone();
-    let mut want = golden_text(&format!("{name}.cluster_only.graphify_analysis.json"));
-    let mut report = normalise_report(&out.report);
-    let mut want_report = normalise_report(&golden_text(&format!(
+    let analysis = out.analysis_json.clone();
+    let want = golden_text(&format!("{name}.cluster_only.graphify_analysis.json"));
+    let report = normalise_report(&out.report);
+    let want_report = normalise_report(&golden_text(&format!(
         "{name}.cluster_only.graphify_report.md"
     )));
-    if unordered_surprises {
-        analysis = sort_surprises_json(&analysis);
-        want = sort_surprises_json(&want);
-        report = sort_surprise_lines(&report);
-        want_report = sort_surprise_lines(&want_report);
-    }
     assert!(
         analysis == want,
         "{name}: cluster-only analysis differs:\n{}",
@@ -269,29 +261,6 @@ pub fn assert_cluster_only(name: &str, unordered_surprises: bool) {
         "{name}: cluster-only report differs:\n{}",
         first_differences(&report, &want_report, 6)
     );
-}
-
-fn sort_surprises_json(text: &str) -> String {
-    let mut v: Value = serde_json::from_str(text).unwrap();
-    if let Some(list) = v["surprises"].as_array_mut() {
-        list.sort_by_key(|s| s.to_string());
-    }
-    v.to_string()
-}
-
-fn sort_surprise_lines(text: &str) -> String {
-    let start = text.find("## Surprising Connections").unwrap();
-    let end = start + text[start..].find("\n\n## ").unwrap();
-    let section = &text[start..end];
-    let mut head = section.lines().take(1).collect::<Vec<_>>().join("\n");
-    let lines: Vec<&str> = section.lines().skip(1).collect();
-    let mut items: Vec<String> = lines.chunks(2).map(|c| c.join("\n")).collect();
-    items.sort();
-    for i in items {
-        head.push('\n');
-        head.push_str(&i);
-    }
-    format!("{}{}{}", &text[..start], head, &text[end..])
 }
 
 /// Our extract-time sidecars against Graphify's (`graphify extract` analysis, `graphify update`
@@ -571,13 +540,7 @@ pub enum Communities {
 /// The full golden check for one fixture: node/link parity, community agreement (see
 /// `Communities`), Graphify's own graph re-clustered exactly, and the
 /// report goldens (byte-exact when `exact_report`).
-pub fn assert_fixture(
-    name: &str,
-    allowed: &[&str],
-    communities: Communities,
-    exact_report: bool,
-    unordered_surprises: bool,
-) {
+pub fn assert_fixture(name: &str, allowed: &[&str], communities: Communities, exact_report: bool) {
     let (built, agreement) = assert_golden(name, 1.0, 1.0, allowed);
     match communities {
         Communities::Exact => assert!(
@@ -608,6 +571,6 @@ pub fn assert_fixture(
         let golden: Vec<&String> = golden.iter().filter(|i| in_ours.contains(i)).collect();
         assert_eq!(ours, golden, "{name}: node array order");
     }
-    assert_cluster_only(name, unordered_surprises);
+    assert_cluster_only(name);
     check_report_goldens(name, &built, exact_report);
 }

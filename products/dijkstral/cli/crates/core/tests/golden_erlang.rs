@@ -10,5 +10,5 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn erlang_fixture_matches_graphify() {
-    common::assert_fixture("erlang", ALLOWED, common::Communities::Exact, true, false);
+    common::assert_fixture("erlang", ALLOWED, common::Communities::Exact, true);
 }

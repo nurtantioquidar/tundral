@@ -8,5 +8,5 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn zig_fixture_matches_graphify() {
-    common::assert_fixture("zig", ALLOWED, common::Communities::Exact, true, false);
+    common::assert_fixture("zig", ALLOWED, common::Communities::Exact, true);
 }

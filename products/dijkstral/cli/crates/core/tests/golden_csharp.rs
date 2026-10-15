@@ -11,8 +11,5 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn csharp_fixture_matches_graphify() {
-    // Same graph, same communities. Surprise ties: Graphify lists `User -inherits-> Entity`
-    // before two equal-score links that come first in `G.edges()` (§17.7), so the cluster-only
-    // surprises are compared as a set; the extract-time report differs only there.
-    common::assert_fixture("csharp", ALLOWED, common::Communities::Exact, false, true);
+    common::assert_fixture("csharp", ALLOWED, common::Communities::Exact, true);
 }

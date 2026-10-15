@@ -58,7 +58,62 @@ pub struct SourceFile {
 
 /// Every indexable file under `root`, sorted by relative path.
 pub fn discover(root: &Path, threads: usize) -> Vec<SourceFile> {
+    discover_all(root, threads).files
+}
+
+/// What a walk of the corpus found.
+#[derive(Debug, Default)]
+pub struct Discovery {
+    /// Indexable files, sorted by relative path.
+    pub files: Vec<SourceFile>,
+    /// Relative paths, sorted, of the walked files that are neither code nor a document, paper,
+    /// image or media file Graphify's `update` would index, nor a lockfile or sensitive file it
+    /// drops silently: the report's `Unclassified` line (§17.5).
+    pub unclassified: Vec<String>,
+}
+
+/// Extensions `update` indexes as documents, papers, images or media (probed one by one).
+const INDEXED_NON_CODE: &[&str] = &[
+    "md", "mdx", "rst", "txt", "html", "yaml", "yml", "pdf", "png", "svg", "jpg", "jpeg", "gif",
+    "webp", "mp4", "mov", "webm", "m4v", "mkv", "avi", "mp3", "wav", "ogg", "m4a", "docx", "xlsx",
+    "gdoc", "gsheet", "gslides",
+];
+
+/// Files Graphify skips without counting: lockfiles and likely secrets (probed).
+fn dropped_silently(name: &str) -> bool {
+    matches!(
+        name,
+        "package-lock.json"
+            | "Cargo.lock"
+            | "yarn.lock"
+            | "composer.lock"
+            | "poetry.lock"
+            | "Gemfile.lock"
+            | "go.sum"
+            | "id_rsa"
+            | ".npmrc"
+            | ".netrc"
+    ) || [".key", ".crt", ".p12", ".pfx"]
+        .iter()
+        .any(|ext| name.ends_with(ext))
+}
+
+fn is_unclassified(name: &str) -> bool {
+    if dropped_silently(name) {
+        return false;
+    }
+    match name.rfind('.') {
+        Some(i) if i > 0 && i < name.len() - 1 => {
+            !INDEXED_NON_CODE.contains(&name[i + 1..].to_ascii_lowercase().as_str())
+        }
+        _ => true,
+    }
+}
+
+/// [`discover`], also collecting the unclassified files.
+pub fn discover_all(root: &Path, threads: usize) -> Discovery {
     let found = Mutex::new(Vec::new());
+    let unclassified = Mutex::new(Vec::new());
     WalkBuilder::new(root)
         .hidden(false)
         .git_ignore(true)
@@ -79,7 +134,7 @@ pub fn discover(root: &Path, threads: usize) -> Vec<SourceFile> {
         .threads(threads)
         .build_parallel()
         .run(|| {
-            let found = &found;
+            let (found, unclassified) = (&found, &unclassified);
             Box::new(move |entry| {
                 let Ok(entry) = entry else {
                     return WalkState::Continue;
@@ -88,21 +143,29 @@ pub fn discover(root: &Path, threads: usize) -> Vec<SourceFile> {
                     return WalkState::Continue;
                 }
                 let path = entry.path();
+                let Some(rel) = relative(root, path) else {
+                    return WalkState::Continue;
+                };
                 if let Some(lang) = Lang::classify(path) {
-                    if let Some(rel) = relative(root, path) {
-                        found.lock().unwrap().push(SourceFile {
-                            rel,
-                            abs: path.to_path_buf(),
-                            lang,
-                        });
-                    }
+                    found.lock().unwrap().push(SourceFile {
+                        rel,
+                        abs: path.to_path_buf(),
+                        lang,
+                    });
+                } else if is_unclassified(&entry.file_name().to_string_lossy()) {
+                    unclassified.lock().unwrap().push(rel);
                 }
                 WalkState::Continue
             })
         });
     let mut files = found.into_inner().unwrap();
     files.sort();
-    files
+    let mut unclassified = unclassified.into_inner().unwrap();
+    unclassified.sort();
+    Discovery {
+        files,
+        unclassified,
+    }
 }
 
 /// Files that may hold secrets are never read (§14.5): `.env`, `.env.*`, `*.pem`.

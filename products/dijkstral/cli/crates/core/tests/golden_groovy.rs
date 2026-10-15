@@ -9,5 +9,5 @@ const ALLOWED: &[&str] = &[];
 
 #[test]
 fn groovy_fixture_matches_graphify() {
-    common::assert_fixture("groovy", ALLOWED, common::Communities::Exact, true, false);
+    common::assert_fixture("groovy", ALLOWED, common::Communities::Exact, true);
 }

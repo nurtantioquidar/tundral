@@ -141,12 +141,27 @@ pub fn is_method_label(label: &str) -> bool {
     label.starts_with('.') && label.ends_with("()")
 }
 
-/// Eligible as a god node, a surprise endpoint or a bridge.
-pub fn is_hub_candidate(n: &Node) -> bool {
-    is_hub_candidate_parts(&n.label, &n.source_file)
+/// A function (`…()`) with at most one link: never a god node, surprise endpoint or bridge.
+pub fn is_minor_function(label: &str, degree: u32) -> bool {
+    label.ends_with("()") && degree <= 1
 }
 
-/// [`is_hub_candidate`] on a node's label and source file.
+/// Not a file node, not a method and not a minor function: what every ranking requires. The
+/// community-bridge fallback of the surprises asks nothing more (stubs, rationale and files
+/// without a suffix qualify there).
+fn is_ranked_parts(label: &str, source_file: &str, degree: u32) -> bool {
+    !is_file_label(label, source_file)
+        && !is_method_label(label)
+        && !is_minor_function(label, degree)
+}
+
+/// Eligible as a surprise endpoint or a bridge (§17.4): a ranked node in a file with a suffix.
+/// Noise labels (`String`), concepts and rationale qualify; only god nodes exclude them.
+pub fn is_hub_candidate(n: &Node, degree: u32) -> bool {
+    has_suffix(&n.source_file) && is_ranked_parts(&n.label, &n.source_file, degree)
+}
+
+/// A symbol whose label is not in the noise list, on its label and source file.
 pub fn is_hub_candidate_parts(label: &str, source_file: &str) -> bool {
     has_suffix(source_file)
         && !is_file_label(label, source_file)
@@ -154,22 +169,24 @@ pub fn is_hub_candidate_parts(label: &str, source_file: &str) -> bool {
         && !NOISE_LABELS.contains(&label)
 }
 
-/// Eligible as a god node: a hub candidate that is not a generic JSON key (a bridge may be one).
-pub fn is_god_candidate(n: &Node) -> bool {
-    is_god_candidate_parts(&n.label, &n.source_file)
-}
-
-/// [`is_god_candidate`] on a node's label and source file. JSON keys are compared stripped and
-/// case-insensitively (`" name"` is excluded too).
+/// [`is_hub_candidate_parts`] that is not a generic JSON key either. JSON keys are compared
+/// stripped and case-insensitively (`" name"` is excluded too).
 pub fn is_god_candidate_parts(label: &str, source_file: &str) -> bool {
     is_hub_candidate_parts(label, source_file)
         && !(source_file.to_ascii_lowercase().ends_with(".json")
             && JSON_NOISE_LABELS.contains(&label.trim().to_lowercase().as_str()))
 }
 
-/// NetworkX adjacency in build order.
+/// Eligible as a god node: [`is_god_candidate_parts`] and not a minor function. The report, the
+/// wiki, `god-nodes` and the MCP server share this rule.
+pub fn is_god_node(label: &str, source_file: &str, degree: u32) -> bool {
+    is_god_candidate_parts(label, source_file) && !is_minor_function(label, degree)
+}
+
+/// The NetworkX graph Graphify analyses: nodes in build (or loaded) order, links added sorted by
+/// `(source id, target id)` as written, so each node's neighbours follow that sort (§17.4).
 pub struct Adjacency {
-    /// Per node: `(neighbour, link index)` in first-seen order; a self-loop appears once.
+    /// Per node: `(neighbour, link index)` in insertion order; a self-loop appears once.
     pub neighbors: Vec<Vec<(u32, u32)>>,
     /// NetworkX degree: a self-loop counts twice.
     pub degree: Vec<u32>,
@@ -179,12 +196,19 @@ impl Adjacency {
     pub fn of(topo: &Topology) -> Adjacency {
         let mut neighbors: Vec<Vec<(u32, u32)>> = vec![Vec::new(); topo.n];
         let mut degree = vec![0u32; topo.n];
-        for (i, &(s, t, _)) in topo.edges.iter().enumerate() {
-            neighbors[s as usize].push((t, i as u32));
+        // `topo` keeps each link's stored direction; `rank` orders nodes by id.
+        let mut order: Vec<u32> = (0..topo.edges.len() as u32).collect();
+        order.sort_by_key(|&i| {
+            let (s, t, _) = topo.edges[i as usize];
+            (topo.rank[s as usize], topo.rank[t as usize])
+        });
+        for i in order {
+            let (s, t, _) = topo.edges[i as usize];
+            neighbors[s as usize].push((t, i));
             degree[s as usize] += 1;
             degree[t as usize] += 1;
             if s != t {
-                neighbors[t as usize].push((s, i as u32));
+                neighbors[t as usize].push((s, i));
             }
         }
         Adjacency { neighbors, degree }
@@ -192,12 +216,17 @@ impl Adjacency {
 
     /// Link indices in `G.edges()` order.
     pub fn edge_order(&self) -> Vec<u32> {
+        self.edges_uv().into_iter().map(|(e, _, _)| e).collect()
+    }
+
+    /// `G.edges()` as `(link, u, v)`, `u` being the node whose neighbours yielded the link.
+    pub fn edges_uv(&self) -> Vec<(u32, u32, u32)> {
         let mut seen = vec![false; self.neighbors.len()];
         let mut out = Vec::new();
         for (u, list) in self.neighbors.iter().enumerate() {
             for &(v, e) in list {
                 if !seen[v as usize] {
-                    out.push(e);
+                    out.push((e, u as u32, v));
                 }
             }
             seen[u] = true;
@@ -210,7 +239,10 @@ impl Adjacency {
 pub struct Surprise {
     pub edge: u32,
     pub score: u32,
+    /// Why the link is surprising; empty for a community-bridge fallback, which has `note`.
     pub why: String,
+    /// `Bridges community a → community b` when no cross-file link qualified (§17.4).
+    pub note: Option<String>,
 }
 
 /// Everything `.graphify_analysis.json` holds, plus what the report reuses.
@@ -247,10 +279,13 @@ pub fn analyze(graph: &Graph, topo: &Topology, communities: &Communities) -> Ana
     }
 }
 
-/// The `n` best-connected hub candidates, ties in build order.
+/// The `n` best-connected god-node candidates, ties in build order.
 pub fn god_nodes(graph: &Graph, adj: &Adjacency, n: usize) -> Vec<u32> {
     let mut cands: Vec<u32> = (0..graph.nodes.len() as u32)
-        .filter(|&i| is_god_candidate(&graph.nodes[i as usize]))
+        .filter(|&i| {
+            let node = &graph.nodes[i as usize];
+            is_god_node(&node.label, &node.source_file, adj.degree[i as usize])
+        })
         .collect();
     cands.sort_by_key(|&i| std::cmp::Reverse(adj.degree[i as usize]));
     cands.truncate(n);
@@ -261,36 +296,50 @@ fn top_dir(path: &str) -> &str {
     path.split_once('/').map_or("", |(d, _)| d)
 }
 
-/// Links between hub candidates in different files, scored by how unexpected they are:
-/// confidence (EXTRACTED 1, INFERRED 2, AMBIGUOUS 3), +2 across top-level directories, +1 across
-/// communities, +1 when a node with at most 2 links reaches one with at least 5. Best five, ties in
-/// `G.edges()` order.
+/// Relations never listed as surprising: structure and imports.
+fn unsurprising(relation: &str) -> bool {
+    matches!(relation, "contains" | "method" | "imports" | "imports_from")
+}
+
+fn confidence_score(c: Confidence) -> u32 {
+    match c {
+        Confidence::Extracted => 1,
+        Confidence::Inferred => 2,
+        Confidence::Ambiguous => 3,
+    }
+}
+
+/// Links between hub candidates in different files, other than structure and imports, scored by
+/// how unexpected they are: confidence (EXTRACTED 1, INFERRED 2, AMBIGUOUS 3), +2 across top-level
+/// directories, +1 across communities, +1 when a node with at most 2 links reaches one with at
+/// least 5. Best five, ties in `G.edges()` order. Without any, the community-bridge fallback.
 fn surprises(
     graph: &Graph,
     topo: &Topology,
     adj: &Adjacency,
     communities: &Communities,
 ) -> Vec<Surprise> {
-    let eligible =
-        |n: &Node| is_hub_candidate(n) && n.file_type != "concept" && n.file_type != "rationale";
+    let order = adj.edges_uv();
     let mut cands: Vec<Surprise> = Vec::new();
-    for e in adj.edge_order() {
-        let (s, t, _) = topo.edges[e as usize];
-        let (u, v) = (&graph.nodes[s as usize], &graph.nodes[t as usize]);
-        if !eligible(u) || !eligible(v) || u.source_file == v.source_file {
+    for &(e, _, _) in &order {
+        let link = &graph.edges[e as usize];
+        if unsurprising(&link.relation) {
             continue;
         }
-        let link = &graph.edges[e as usize];
-        let mut score = 0;
+        let (s, t, _) = topo.edges[e as usize];
+        let (u, v) = (&graph.nodes[s as usize], &graph.nodes[t as usize]);
+        let (ds, dt) = (adj.degree[s as usize], adj.degree[t as usize]);
+        if !is_hub_candidate(u, ds) || !is_hub_candidate(v, dt) || u.source_file == v.source_file {
+            continue;
+        }
+        let mut score = confidence_score(link.confidence);
         let mut why: Vec<String> = Vec::new();
         match link.confidence {
-            Confidence::Extracted => score += 1,
+            Confidence::Extracted => {}
             Confidence::Inferred => {
-                score += 2;
                 why.push("inferred connection - not explicitly stated in source".into());
             }
             Confidence::Ambiguous => {
-                score += 3;
                 why.push("ambiguous connection - not explicitly stated in source".into());
             }
         }
@@ -302,7 +351,6 @@ fn surprises(
             score += 1;
             why.push("bridges separate communities".into());
         }
-        let (ds, dt) = (adj.degree[s as usize], adj.degree[t as usize]);
         if ds.min(dt) <= 2 && ds.max(dt) >= 5 {
             score += 1;
             let (p, h) = if ds <= dt { (u, v) } else { (v, u) };
@@ -320,25 +368,58 @@ fn surprises(
             edge: e,
             score,
             why,
+            note: None,
         });
     }
+    if cands.is_empty() {
+        return community_bridges(graph, adj, communities, &order);
+    }
     cands.sort_by_key(|c| std::cmp::Reverse(c.score));
-    // One surprise per (source label, target label, source files): a C# property named like a
-    // type (`User -defines-> Status` beside `User -references-> Status`) is listed once.
-    let mut listed = HashSet::new();
-    cands.retain(|c| {
-        let (s, t, _) = topo.edges[c.edge as usize];
-        let (u, v) = (&graph.nodes[s as usize], &graph.nodes[t as usize]);
-        // `topo` endpoints are unordered; key by the link's own direction.
-        let (u, v) = if u.id == graph.edges[c.edge as usize].source {
-            (u, v)
-        } else {
-            (v, u)
-        };
-        listed.insert((&u.label, &v.label, &u.source_file, &v.source_file))
-    });
     cands.truncate(SURPRISE_COUNT);
     cands
+}
+
+/// The fallback when no cross-file link qualifies: links between communities, other than
+/// structure and imports, whose endpoints are ranked nodes (stubs, rationale and files without a
+/// suffix qualify); by confidence, then `G.edges()` order; the first for each pair of
+/// communities, at most five. The note names the communities in `G.edges()`'s `(u, v)` order.
+fn community_bridges(
+    graph: &Graph,
+    adj: &Adjacency,
+    communities: &Communities,
+    order: &[(u32, u32, u32)],
+) -> Vec<Surprise> {
+    let comm = |i: u32| communities.of_node[i as usize];
+    let ranked = |i: u32| {
+        let n = &graph.nodes[i as usize];
+        is_ranked_parts(&n.label, &n.source_file, adj.degree[i as usize])
+    };
+    let mut cands: Vec<(u32, u32, u32, u32)> = order
+        .iter()
+        .filter(|&&(e, u, v)| {
+            !unsurprising(&graph.edges[e as usize].relation)
+                && comm(u) != comm(v)
+                && ranked(u)
+                && ranked(v)
+        })
+        .map(|&(e, u, v)| {
+            let score = confidence_score(graph.edges[e as usize].confidence);
+            (score, e, comm(u), comm(v))
+        })
+        .collect();
+    cands.sort_by_key(|c| std::cmp::Reverse(c.0));
+    let mut pairs = HashSet::new();
+    cands
+        .into_iter()
+        .filter(|&(_, _, a, b)| pairs.insert((a.min(b), a.max(b))))
+        .take(SURPRISE_COUNT)
+        .map(|(score, edge, a, b)| Surprise {
+            edge,
+            score,
+            why: String::new(),
+            note: Some(format!("Bridges community {a} \u{2192} community {b}")),
+        })
+        .collect()
 }
 
 impl Analysis {
@@ -354,7 +435,7 @@ impl Analysis {
         &self,
         graph: &Graph,
         communities: &Communities,
-        questions: Option<Vec<(&str, &str, &str)>>,
+        questions: Option<Vec<(&str, Option<&str>, &str)>>,
     ) -> String {
         let node = |i: u32| &graph.nodes[i as usize];
         let comms = Json::Object(
@@ -398,6 +479,10 @@ impl Analysis {
                 .map(|s| {
                     let e = &graph.edges[s.edge as usize];
                     let (u, v) = (node_by_id(graph, &e.source), node_by_id(graph, &e.target));
+                    let tail = match &s.note {
+                        Some(note) => ("note".to_string(), Json::str(note)),
+                        None => ("why".to_string(), Json::str(&s.why)),
+                    };
                     Json::Object(vec![
                         ("source".into(), Json::str(&u.label)),
                         ("target".into(), Json::str(&v.label)),
@@ -407,7 +492,7 @@ impl Analysis {
                         ),
                         ("confidence".into(), Json::str(e.confidence.as_str())),
                         ("relation".into(), Json::str(&e.relation)),
-                        ("why".into(), Json::str(&s.why)),
+                        tail,
                     ])
                 })
                 .collect(),
@@ -433,7 +518,7 @@ impl Analysis {
                         .map(|(kind, q, why)| {
                             Json::Object(vec![
                                 ("type".into(), Json::str(kind)),
-                                ("question".into(), Json::str(q)),
+                                ("question".into(), q.map_or(Json::Null, Json::str)),
                                 ("why".into(), Json::str(why)),
                             ])
                         })
