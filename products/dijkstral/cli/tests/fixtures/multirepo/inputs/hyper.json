@@ -1,0 +1,34 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "a",
+   "community": 0
+  }
+ ],
+ "links": [],
+ "hyperedges": [
+  {
+   "id": "h",
+   "nodes": [
+    "a",
+    "zz",
+    "e"
+   ]
+  },
+  {
+   "label": "noid",
+   "nodes": [
+    "a"
+   ]
+  },
+  {
+   "id": "h3"
+  },
+  "notadict"
+ ]
+}

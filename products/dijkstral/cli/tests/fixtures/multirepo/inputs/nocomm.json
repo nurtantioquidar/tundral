@@ -1,0 +1,15 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "n",
+   "label": "n"
+  }
+ ],
+ "links": [],
+ "hyperedges": []
+}

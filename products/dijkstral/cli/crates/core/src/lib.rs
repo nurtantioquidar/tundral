@@ -11,6 +11,8 @@ pub mod graph;
 pub mod ids;
 pub mod index;
 pub mod lang;
+pub mod multirepo;
+pub mod nodelink;
 pub mod pipeline;
 pub mod pyjson;
 pub mod report;

@@ -1,0 +1,1 @@
+{"directed":false,"multigraph":false,"graph":{"schema_version":1},"nodes":[{"community":-5,"repo":"neg","local_id":"a","id":"neg::a"},{"community":-1,"repo":"neg","local_id":"b","id":"neg::b"},{"community":2,"repo":"ints","local_id":"a","id":"ints::a"},{"community":0,"repo":"ints","local_id":"b","id":"ints::b"}],"links":[],"hyperedges":[]}

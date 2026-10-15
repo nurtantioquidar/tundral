@@ -1,0 +1,83 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "f2",
+   "label": "two.py",
+   "source_file": "two.py",
+   "community": 0
+  },
+  {
+   "id": "s2",
+   "label": "Foo",
+   "norm_label": "foo",
+   "source_file": "",
+   "community": 5
+  },
+  {
+   "id": "s3",
+   "label": "Other",
+   "norm_label": "other",
+   "source_file": "",
+   "community": 5
+  },
+  {
+   "id": "nosf",
+   "label": "NoSF",
+   "community": 6
+  },
+  {
+   "id": "same",
+   "label": "Same",
+   "source_file": "two.py",
+   "community": 0
+  },
+  {
+   "id": "e",
+   "label": "E2",
+   "external": true,
+   "source_file": "",
+   "community": 7,
+   "extra": 1
+  },
+  {
+   "id": "low",
+   "label": "foo",
+   "norm_label": "foo",
+   "source_file": "",
+   "community": 5
+  }
+ ],
+ "links": [
+  {
+   "source": "f2",
+   "target": "s2",
+   "relation": "references"
+  },
+  {
+   "source": "f2",
+   "target": "s3",
+   "relation": "references"
+  },
+  {
+   "source": "f2",
+   "target": "e",
+   "relation": "imports"
+  },
+  {
+   "source": "f2",
+   "target": "nosf",
+   "relation": "uses"
+  },
+  {
+   "source": "f2",
+   "target": "low",
+   "relation": "uses"
+  }
+ ],
+ "hyperedges": []
+}

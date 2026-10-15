@@ -1,0 +1,1 @@
+{"directed":false,"multigraph":false,"graph":{"schema_version":1},"nodes":[{"community":0,"repo":"hgempty2","local_id":"a","id":"hgempty2::a"},{"external":true,"community":0,"id":"x"},{"community":1,"repo":"ext1","local_id":"a","local_community":0,"id":"ext1::a"}],"links":[{"relation":"r0","source":"ext1::a","target":"x"}],"hyperedges":[]}

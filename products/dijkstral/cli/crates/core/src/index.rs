@@ -551,6 +551,12 @@ struct RawEdge<'a> {
     source_file: Option<PyVal<'a>>,
     #[serde(borrow, default, deserialize_with = "present")]
     source_location: Option<PyVal<'a>>,
+    /// The true direction in a global graph, whose `source`/`target` follow NetworkX's
+    /// iteration order (`docs/graphify-multirepo.md` §5.2).
+    #[serde(borrow, default, rename = "_src", deserialize_with = "present")]
+    src: Option<PyVal<'a>>,
+    #[serde(borrow, default, rename = "_tgt", deserialize_with = "present")]
+    tgt: Option<PyVal<'a>>,
 }
 
 #[derive(Deserialize)]
@@ -657,8 +663,16 @@ pub fn encode_graph_json(bytes: &[u8]) -> Result<Vec<u8>> {
     let efields: Vec<EFields<'_>> = links
         .iter()
         .filter_map(|e| {
-            let s = *index_of.get(disp(&e.source).as_ref())?;
-            let t = *index_of.get(disp(&e.target).as_ref())?;
+            let mut s = *index_of.get(disp(&e.source).as_ref())?;
+            let mut t = *index_of.get(disp(&e.target).as_ref())?;
+            // `_src`/`_tgt` naming the same two endpoints give the direction.
+            if let (Some(a), Some(b)) = (&e.src, &e.tgt) {
+                let a = index_of.get(a.display().as_ref()).copied();
+                let b = index_of.get(b.display().as_ref()).copied();
+                if a == Some(t) && b == Some(s) {
+                    std::mem::swap(&mut s, &mut t);
+                }
+            }
             Some(EFields {
                 source: s,
                 target: t,

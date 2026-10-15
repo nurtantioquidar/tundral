@@ -1,0 +1,1 @@
+{"directed":false,"multigraph":false,"graph":{"schema_version":1},"nodes":[{"community":4,"repo":"premerged","local_id":"a","local_community":1,"id":"premerged::t::a"},{"community":7,"repo":"ints","local_id":"a","local_community":2,"id":"ints::a"},{"community":5,"repo":"ints","local_id":"b","local_community":0,"id":"ints::b"}],"links":[],"hyperedges":[]}

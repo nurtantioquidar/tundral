@@ -1,0 +1,19 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "a",
+   "community": -5
+  },
+  {
+   "id": "b",
+   "community": -1
+  }
+ ],
+ "links": [],
+ "hyperedges": []
+}

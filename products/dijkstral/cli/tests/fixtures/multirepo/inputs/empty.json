@@ -1,0 +1,10 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [],
+ "links": [],
+ "hyperedges": []
+}

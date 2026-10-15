@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "repos": {
+    "golang": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/gorepo/graphify-out/graph.json",
+      "node_count": 44,
+      "edge_count": 71,
+      "source_hash": "dc7554588fd0f9c2"
+    },
+    "gox": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/gorepo/graphify-out/graph.json",
+      "node_count": 34,
+      "edge_count": 71,
+      "source_hash": "dc7554588fd0f9c2"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1,
+  "graphify_version": "0.9.86"
+ },
+ "nodes": [
+  {
+   "id": "a1",
+   "label": "B-A1",
+   "community": 0,
+   "source_file": "b.py"
+  },
+  {
+   "id": "b2",
+   "label": "B2",
+   "community": 4,
+   "source_file": "b.py"
+  },
+  {
+   "id": "x",
+   "label": "X-from-B",
+   "community": 5,
+   "external": true,
+   "source_file": "",
+   "extra": 1
+  }
+ ],
+ "links": [
+  {
+   "source": "a1",
+   "target": "b2",
+   "relation": "calls",
+   "note": "first"
+  },
+  {
+   "source": "b2",
+   "target": "a1",
+   "relation": "uses",
+   "note": "second",
+   "zz": 1
+  },
+  {
+   "source": "x",
+   "target": "a1",
+   "relation": "rev"
+  }
+ ],
+ "hyperedges": [
+  {
+   "id": "h1",
+   "nodes": [
+    "a1",
+    "b2"
+   ],
+   "relation": "group",
+   "label": "HB"
+  }
+ ],
+ "built_at_commit": "def456"
+}

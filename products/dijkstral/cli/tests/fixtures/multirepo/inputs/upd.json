@@ -1,0 +1,33 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "a",
+   "community": 0
+  },
+  {
+   "id": "b",
+   "community": 1
+  }
+ ],
+ "links": [
+  {
+   "source": "a",
+   "target": "b",
+   "relation": "r1",
+   "only_first": 1,
+   "shared": "first"
+  },
+  {
+   "source": "b",
+   "target": "a",
+   "relation": "r2",
+   "shared": "second"
+  }
+ ],
+ "hyperedges": []
+}

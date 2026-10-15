@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "repos": {
+    "r1": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/r1/graphify-out/graph.json",
+      "node_count": 6,
+      "edge_count": 5,
+      "source_hash": "f7024efd6957af66"
+    },
+    "r2": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/r2/graphify-out/graph.json",
+      "node_count": 5,
+      "edge_count": 5,
+      "source_hash": "0475fd7f0d846a68"
+    }
+  }
+}

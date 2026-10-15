@@ -1,0 +1,22 @@
+{
+ "nodes": [
+  {
+   "id": "a",
+   "label": "A"
+  },
+  {
+   "id": "b",
+   "label": "B"
+  }
+ ],
+ "edges": [
+  {
+   "source": "a",
+   "target": "b",
+   "relation": "calls"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

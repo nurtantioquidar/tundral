@@ -1,0 +1,53 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "b",
+   "label": "Beta",
+   "source_file": "b.py",
+   "file_type": "code",
+   "source_location": "L1",
+   "community": 0
+  },
+  {
+   "id": "a",
+   "label": "Alpha",
+   "source_file": "a.py",
+   "file_type": "code",
+   "source_location": "L1",
+   "community": 0
+  },
+  {
+   "id": "s1",
+   "label": "S",
+   "source_file": "",
+   "community": 0
+  },
+  {
+   "id": "s2",
+   "label": "T",
+   "source_file": "",
+   "community": 0
+  }
+ ],
+ "links": [
+  {
+   "source": "a",
+   "target": "b",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "a.py",
+   "source_location": "L2"
+  },
+  {
+   "source": "s1",
+   "target": "s2",
+   "relation": "rel"
+  }
+ ],
+ "hyperedges": []
+}
