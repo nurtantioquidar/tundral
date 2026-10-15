@@ -1,0 +1,2781 @@
+{
+ "tool": "graphify 0.9.86",
+ "how": "Captured by running the pinned graphify binary in scratch directories (HOME=scratch, GRAPHIFY_QUERY_LOG_DISABLE=1, PYTHONHASHSEED=0). save-result files are random in their 8-hex token and time stamp; reflect inputs carry fixed dates, so their ordering is independent of the run date; prs ran against a fake gh that serves the scenario files, with updatedAt materialised as now minus days_ago; worktree paths are replaced by <WORKTREE>/<REPO>. diagnose runs scan a crafted source file (diagnose/scan_probe.py.txt) instead of Graphify's own extractor.",
+ "save_result": [
+  {
+   "case": "basic",
+   "argv": [
+    "save-result",
+    "--question",
+    "How does auth work?",
+    "--answer",
+    "Via UserService.login",
+    "--nodes",
+    "UserService",
+    "login()"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164124_ebb7fda1_how_does_auth_work.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164124_ebb7fda1_how_does_auth_work.md",
+   "file": "save/basic.md"
+  },
+  {
+   "case": "path_useful",
+   "argv": [
+    "save-result",
+    "--question",
+    "Path from main to Repo",
+    "--answer",
+    "main -> UserService -> Repo",
+    "--type",
+    "path_query",
+    "--outcome",
+    "useful",
+    "--nodes",
+    "main()",
+    "Repo"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164124_50b42998_path_from_main_to_repo.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164124_50b42998_path_from_main_to_repo.md",
+   "file": "save/path_useful.md"
+  },
+  {
+   "case": "explain_corrected",
+   "argv": [
+    "save-result",
+    "--question",
+    "What does helper do?",
+    "--answer",
+    "It formats names",
+    "--type",
+    "explain",
+    "--outcome",
+    "corrected",
+    "--correction",
+    "It slugifies text"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164124_1090443d_what_does_helper_do.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164124_1090443d_what_does_helper_do.md",
+   "file": "save/explain_corrected.md"
+  },
+  {
+   "case": "dead_end",
+   "argv": [
+    "save-result",
+    "--question",
+    "Where is caching?",
+    "--answer",
+    "Nowhere obvious",
+    "--outcome",
+    "dead_end",
+    "--nodes",
+    "cache",
+    "Store"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164124_d2f183e5_where_is_caching.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164124_d2f183e5_where_is_caching.md",
+   "file": "save/dead_end.md"
+  },
+  {
+   "case": "correction_only",
+   "argv": [
+    "save-result",
+    "--question",
+    "q",
+    "--answer",
+    "a",
+    "--correction",
+    "only a correction"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_6d8fb82c_q.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_6d8fb82c_q.md",
+   "file": "save/correction_only.md"
+  },
+  {
+   "case": "useful_with_correction",
+   "argv": [
+    "save-result",
+    "--question",
+    "q",
+    "--answer",
+    "a",
+    "--outcome",
+    "useful",
+    "--correction",
+    "kept anyway"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_f969b678_q.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_f969b678_q.md",
+   "file": "save/useful_with_correction.md"
+  },
+  {
+   "case": "empty_correction",
+   "argv": [
+    "save-result",
+    "--question",
+    "q",
+    "--answer",
+    "a",
+    "--outcome",
+    "corrected",
+    "--correction",
+    ""
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_98332b7c_q.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_98332b7c_q.md",
+   "file": "save/empty_correction.md"
+  },
+  {
+   "case": "escapes",
+   "argv": [
+    "save-result",
+    "--question",
+    "quote \" back \\ slash\ttab\nnew\rcr\u0001ctldel ls psnel nbsp",
+    "--answer",
+    "multi\nline\n  answer  ",
+    "--nodes",
+    "a \"b\"",
+    "multi\nline",
+    "",
+    "tick`x",
+    "--correction",
+    "c\\d"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_54a761a6_quote___back___slash_tab_new_cr_ctl_del_ls_ps_nel.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_54a761a6_quote___back___slash_tab_new_cr_ctl_del_ls_ps_nel.md",
+   "file": "save/escapes.md"
+  },
+  {
+   "case": "unicode_slug",
+   "argv": [
+    "save-result",
+    "--question",
+    "Hello, World! What's   up?? ünïcødé — 日本語 test_case-x.y",
+    "--answer",
+    "a"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_ef8a80ee_hello__world__what_s___up___ünïcødé___日本語_test_cas.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_ef8a80ee_hello__world__what_s___up___ünïcødé___日本語_test_cas.md",
+   "file": "save/unicode_slug.md"
+  },
+  {
+   "case": "upper_unicode",
+   "argv": [
+    "save-result",
+    "--question",
+    "ÜBER Straße ẞ emoji 😀 done",
+    "--answer",
+    "a"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_6ecc2f65_über_straße_ß_emoji___done.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_6ecc2f65_über_straße_ß_emoji___done.md",
+   "file": "save/upper_unicode.md"
+  },
+  {
+   "case": "long_question",
+   "argv": [
+    "save-result",
+    "--question",
+    "This is a very long question that goes on and on and on to see where the slug gets truncated",
+    "--answer",
+    "a"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_36dd08fa_this_is_a_very_long_question_that_goes_on_and_on_a.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_36dd08fa_this_is_a_very_long_question_that_goes_on_and_on_a.md",
+   "file": "save/long_question.md"
+  },
+  {
+   "case": "trunc_then_strip",
+   "argv": [
+    "save-result",
+    "--question",
+    "1234567890123456789012345678901234567890123456789!xyz",
+    "--answer",
+    "a"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_9429ef6a_1234567890123456789012345678901234567890123456789.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_9429ef6a_1234567890123456789012345678901234567890123456789.md",
+   "file": "save/trunc_then_strip.md"
+  },
+  {
+   "case": "lead_trail",
+   "argv": [
+    "save-result",
+    "--question",
+    "  lead and trail  ",
+    "--answer",
+    "a"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_2f9858b3_lead_and_trail.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_2f9858b3_lead_and_trail.md",
+   "file": "save/lead_trail.md"
+  },
+  {
+   "case": "punct_only",
+   "argv": [
+    "save-result",
+    "--question",
+    "!!!",
+    "--answer",
+    "a"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_161e88b0_.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_161e88b0_.md",
+   "file": "save/punct_only.md"
+  },
+  {
+   "case": "empty_question",
+   "argv": [
+    "save-result",
+    "--question",
+    "",
+    "--answer",
+    "a"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_bd711fcf_.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_bd711fcf_.md",
+   "file": "save/empty_question.md"
+  },
+  {
+   "case": "bogus_type",
+   "argv": [
+    "save-result",
+    "--question",
+    "q",
+    "--answer",
+    "a",
+    "--type",
+    "Weird \"type\""
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164125_9b931b53_q.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164125_9b931b53_q.md",
+   "file": "save/bogus_type.md"
+  },
+  {
+   "case": "empty_nodes_flag",
+   "argv": [
+    "save-result",
+    "--question",
+    "q",
+    "--answer",
+    "a",
+    "--nodes"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164126_d42a2621_q.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164126_d42a2621_q.md",
+   "file": "save/empty_nodes_flag.md"
+  },
+  {
+   "case": "repeated_question",
+   "argv": [
+    "save-result",
+    "--question",
+    "first",
+    "--answer",
+    "a",
+    "--question",
+    "second"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164126_e4475651_second.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164126_e4475651_second.md",
+   "file": "save/repeated_question.md"
+  },
+  {
+   "case": "answer_file",
+   "argv": [
+    "save-result",
+    "--question",
+    "from file",
+    "--answer-file",
+    "answer.txt"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164126_7b98f6ed_from_file.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164126_7b98f6ed_from_file.md",
+   "file": "save/answer_file.md"
+  },
+  {
+   "case": "answer_file_wins",
+   "argv": [
+    "save-result",
+    "--question",
+    "both",
+    "--answer",
+    "inline",
+    "--answer-file",
+    "answer.txt"
+   ],
+   "exit": 0,
+   "stdout": "Saved to graphify-out/memory/query_20261015_164126_2ccee590_both.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "graphify-out/memory/query_20261015_164126_2ccee590_both.md",
+   "file": "save/answer_file_wins.md"
+  },
+  {
+   "case": "memory_dir",
+   "argv": [
+    "save-result",
+    "--question",
+    "custom dir",
+    "--answer",
+    "a",
+    "--memory-dir",
+    "custom/mem"
+   ],
+   "exit": 0,
+   "stdout": "Saved to custom/mem/query_20261015_164126_4864fd3f_custom_dir.md\n",
+   "stderr_has_usage": false,
+   "saved_path": "custom/mem/query_20261015_164126_4864fd3f_custom_dir.md",
+   "file": "save/memory_dir.md"
+  },
+  {
+   "case": "err_no_question",
+   "argv": [
+    "save-result",
+    "--answer",
+    "a"
+   ],
+   "exit": 2,
+   "stdout": "",
+   "stderr_has_usage": true,
+   "stderr_last_line": "graphify save-result: error: the following arguments are required: --question"
+  },
+  {
+   "case": "err_no_answer",
+   "argv": [
+    "save-result",
+    "--question",
+    "q"
+   ],
+   "exit": 2,
+   "stdout": "",
+   "stderr_has_usage": true,
+   "stderr_last_line": "graphify save-result: error: --answer or --answer-file is required"
+  },
+  {
+   "case": "err_empty_answer",
+   "argv": [
+    "save-result",
+    "--question",
+    "q",
+    "--answer",
+    ""
+   ],
+   "exit": 2,
+   "stdout": "",
+   "stderr_has_usage": true,
+   "stderr_last_line": "graphify save-result: error: --answer or --answer-file is required"
+  },
+  {
+   "case": "err_bad_outcome",
+   "argv": [
+    "save-result",
+    "--question",
+    "q",
+    "--answer",
+    "a",
+    "--outcome",
+    "USEFUL"
+   ],
+   "exit": 2,
+   "stdout": "",
+   "stderr_has_usage": true,
+   "stderr_last_line": "graphify save-result: error: argument --outcome: invalid choice: 'USEFUL' (choose from 'useful', 'dead_end', 'corrected')"
+  },
+  {
+   "case": "err_unknown_flag",
+   "argv": [
+    "save-result",
+    "--question",
+    "q",
+    "--answer",
+    "a",
+    "--bogus"
+   ],
+   "exit": 2,
+   "stdout": "",
+   "stderr_has_usage": true,
+   "stderr_last_line": "graphify save-result: error: unrecognized arguments: --bogus"
+  }
+ ],
+ "reflect": [
+  {
+   "case": "basic",
+   "memory": "memory/reflect/basic/memory",
+   "inputs": {},
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 5 memories (2 useful, 1 dead ends, 1 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/basic.graphify.md"
+  },
+  {
+   "case": "decay_and_dedupe",
+   "memory": "memory/reflect/decay_and_dedupe/memory",
+   "inputs": {},
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--min-corroboration",
+    "1"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 24 memories (9 useful, 10 dead ends, 5 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/decay_and_dedupe.graphify.md"
+  },
+  {
+   "case": "contested",
+   "memory": "memory/reflect/contested/memory",
+   "inputs": {},
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 17 memories (9 useful, 7 dead ends, 1 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/contested.graphify.md"
+  },
+  {
+   "case": "graph_topics",
+   "memory": "memory/reflect/graph_topics/memory",
+   "inputs": {
+    "graph.json": "python.clustered.graphify.json",
+    ".graphify_analysis.json": "python.graphify_analysis.json",
+    ".graphify_labels.json": "memory/reflect/graph_topics/.graphify_labels.json"
+   },
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--graph",
+    "graph.json"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 10 memories (5 useful, 3 dead ends, 1 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/graph_topics.graphify.md"
+  },
+  {
+   "case": "graph_only",
+   "memory": "memory/reflect/graph_topics/memory",
+   "inputs": {
+    "g/graph.json": "python.clustered.graphify.json"
+   },
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--graph",
+    "g/graph.json"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 10 memories (5 useful, 3 dead ends, 1 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/graph_only.graphify.md"
+  },
+  {
+   "case": "explicit_analysis",
+   "memory": "memory/reflect/graph_topics/memory",
+   "inputs": {
+    "g/graph.json": "python.clustered.graphify.json",
+    "an.json": "python.graphify_analysis.json"
+   },
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--graph",
+    "g/graph.json",
+    "--analysis",
+    "an.json"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 10 memories (5 useful, 3 dead ends, 1 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/explicit_analysis.graphify.md"
+  },
+  {
+   "case": "crafted_communities",
+   "memory": "memory/reflect/crafted_communities/memory",
+   "inputs": {
+    "g/graph.json": "python.clustered.graphify.json",
+    "an.json": "memory/reflect/crafted_communities/an.json",
+    "lab.json": "memory/reflect/crafted_communities/lab.json"
+   },
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--graph",
+    "g/graph.json",
+    "--analysis",
+    "an.json",
+    "--labels",
+    "lab.json"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 5 memories (5 useful, 0 dead ends, 0 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/crafted_communities.graphify.md"
+  },
+  {
+   "case": "name_resolution",
+   "memory": "memory/reflect/name_resolution/memory",
+   "inputs": {
+    "graph.json": "memory/reflect/name_resolution/graph.json",
+    ".graphify_analysis.json": "memory/reflect/name_resolution/.graphify_analysis.json"
+   },
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--graph",
+    "graph.json"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 3 memories (2 useful, 1 dead ends, 0 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/name_resolution.graphify.md"
+  },
+  {
+   "case": "knobs_no_decay",
+   "memory": "memory/reflect/decay_and_dedupe/memory",
+   "inputs": {},
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--half-life-days",
+    "0",
+    "--min-corroboration",
+    "3"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 24 memories (9 useful, 10 dead ends, 5 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/knobs_no_decay.graphify.md"
+  },
+  {
+   "case": "knobs_long_half_life",
+   "memory": "memory/reflect/decay_and_dedupe/memory",
+   "inputs": {},
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--half-life-days",
+    "100000"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 24 memories (9 useful, 10 dead ends, 5 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/knobs_long_half_life.graphify.md"
+  },
+  {
+   "case": "parsing",
+   "memory": "memory/reflect/parsing/memory",
+   "inputs": {},
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md",
+    "--min-corroboration",
+    "1"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 17 memories (8 useful, 2 dead ends, 1 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/parsing.graphify.md"
+  },
+  {
+   "case": "empty_dir",
+   "memory": "memory/reflect/empty_dir/memory",
+   "inputs": {},
+   "argv": [
+    "reflect",
+    "--memory-dir",
+    "memory",
+    "--out",
+    "out/LESSONS.md"
+   ],
+   "exit": 0,
+   "stdout": "Reflected 0 memories (0 useful, 0 dead ends, 0 corrected) -> out/LESSONS.md\n",
+   "stderr": "",
+   "lessons": "reflect/empty_dir.graphify.md"
+  }
+ ],
+ "diagnose": [
+  {
+   "case": "python.raw",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "python.graphify.json",
+    "--extract-path",
+    "scan.py"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/python.raw.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "python.raw.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "python.graphify.json",
+    "--extract-path",
+    "scan.py",
+    "--json"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/python.raw.json",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "python.clustered",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "python.clustered.graphify.json",
+    "--extract-path",
+    "scan.py"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/python.clustered.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "rust.raw",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "rust.graphify.json",
+    "--extract-path",
+    "scan.py"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/rust.raw.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "rust.raw.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "rust.graphify.json",
+    "--extract-path",
+    "scan.py",
+    "--json"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/rust.raw.json",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "rust.clustered",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "rust.clustered.graphify.json",
+    "--extract-path",
+    "scan.py"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/rust.clustered.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "typescript.raw",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "typescript.graphify.json",
+    "--extract-path",
+    "scan.py"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/typescript.raw.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "typescript.raw.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "typescript.graphify.json",
+    "--extract-path",
+    "scan.py",
+    "--json"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/typescript.raw.json",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "typescript.clustered",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "typescript.clustered.graphify.json",
+    "--extract-path",
+    "scan.py"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/typescript.clustered.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "go.raw",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "go.graphify.json",
+    "--extract-path",
+    "scan.py"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/go.raw.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "go.raw.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "go.graphify.json",
+    "--extract-path",
+    "scan.py",
+    "--json"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/go.raw.json",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "go.clustered",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "go.clustered.graphify.json",
+    "--extract-path",
+    "scan.py"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/go.clustered.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "python.raw.undirected",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "python.graphify.json",
+    "--extract-path",
+    "scan.py",
+    "--undirected",
+    "--max-examples",
+    "2"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/python.raw.undirected.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "python.raw.max0",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "python.graphify.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "0"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/python.raw.max0.txt",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "python.clustered.directed.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "python.clustered.graphify.json",
+    "--extract-path",
+    "scan.py",
+    "--directed",
+    "--json"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/python.clustered.directed.json",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "python.raw.max3.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "python.graphify.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "3"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/python.raw.max3.json",
+   "stderr_first_line": ""
+  },
+  {
+   "case": "counters",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/counters.txt",
+   "stderr_first_line": "[graphify] Extraction warning (56 issues): 22x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 3x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 21x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'target' (e.g. Edge 3 missing required field 'target'); 2x missing required field 'source' (e.g. Edge 4 missing required field 'source'); 7x missing required field 'relation' (e.g. Edge 5 missing required field 'relation')"
+  },
+  {
+   "case": "counters.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/counters.json",
+   "stderr_first_line": "[graphify] Extraction warning (56 issues): 22x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 3x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 21x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'target' (e.g. Edge 3 missing required field 'target'); 2x missing required field 'source' (e.g. Edge 4 missing required field 'source'); 7x missing required field 'relation' (e.g. Edge 5 missing required field 'relation')"
+  },
+  {
+   "case": "post_build_error",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "post_build_error.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/post_build_error.txt",
+   "stderr_first_line": "[graphify] Extraction warning (17 issues): 3x other schema issue (e.g. Node 0 must be an object); 6x missing required field 'source_file' (e.g. Node 1 (id='a') missing required field 'source_file'); 2x missing required field 'label' (e.g. Node 1 (id='a') missing required field 'label'); 1x missing required field 'id' (e.g. Node 2 (id='?') missing required field 'id'); 3x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 2x missing required field 'relation' (e.g. Edge 1 missing required field 'relation')"
+  },
+  {
+   "case": "post_build_error.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "post_build_error.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/post_build_error.json",
+   "stderr_first_line": "[graphify] Extraction warning (17 issues): 3x other schema issue (e.g. Node 0 must be an object); 6x missing required field 'source_file' (e.g. Node 1 (id='a') missing required field 'source_file'); 2x missing required field 'label' (e.g. Node 1 (id='a') missing required field 'label'); 1x missing required field 'id' (e.g. Node 2 (id='?') missing required field 'id'); 3x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 2x missing required field 'relation' (e.g. Edge 1 missing required field 'relation')"
+  },
+  {
+   "case": "undirected_reverse",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "undirected_reverse.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/undirected_reverse.txt",
+   "stderr_first_line": "[graphify] Extraction warning (11 issues): 5x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 2x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 3x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'relation' (e.g. Edge 2 missing required field 'relation')"
+  },
+  {
+   "case": "undirected_reverse.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "undirected_reverse.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/undirected_reverse.json",
+   "stderr_first_line": "[graphify] Extraction warning (11 issues): 5x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 2x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 3x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'relation' (e.g. Edge 2 missing required field 'relation')"
+  },
+  {
+   "case": "flags",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "flags.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/flags.txt",
+   "stderr_first_line": "[graphify] Extraction warning (10 issues): 4x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 2x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 2x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 2x missing required field 'relation' (e.g. Edge 0 missing required field 'relation')"
+  },
+  {
+   "case": "flags.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "flags.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/flags.json",
+   "stderr_first_line": "[graphify] Extraction warning (10 issues): 4x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 2x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 2x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 2x missing required field 'relation' (e.g. Edge 0 missing required field 'relation')"
+  },
+  {
+   "case": "example_order",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "example_order.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/example_order.txt",
+   "stderr_first_line": "[graphify] Extraction warning (26 issues): 13x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 4x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 9x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence')"
+  },
+  {
+   "case": "example_order.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "example_order.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/example_order.json",
+   "stderr_first_line": "[graphify] Extraction warning (26 issues): 13x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 4x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 9x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence')"
+  },
+  {
+   "case": "dup_forms",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "dup_forms.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/dup_forms.txt",
+   "stderr_first_line": "[graphify] Extraction warning (37 issues): 13x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 4x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 9x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 9x missing required field 'relation' (e.g. Edge 0 missing required field 'relation'); 2x missing required field 'source' (e.g. Edge 6 missing required field 'source')"
+  },
+  {
+   "case": "dup_forms.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "dup_forms.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/dup_forms.json",
+   "stderr_first_line": "[graphify] Extraction warning (37 issues): 13x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 4x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 9x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 9x missing required field 'relation' (e.g. Edge 0 missing required field 'relation'); 2x missing required field 'source' (e.g. Edge 6 missing required field 'source')"
+  },
+  {
+   "case": "nodes_not_list",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "nodes_not_list.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/nodes_not_list.txt",
+   "stderr_first_line": "[graphify] Extraction warning (1 issues): 1x other schema issue (e.g. 'nodes' must be a list)"
+  },
+  {
+   "case": "nodes_not_list.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "nodes_not_list.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/nodes_not_list.json",
+   "stderr_first_line": "[graphify] Extraction warning (1 issues): 1x other schema issue (e.g. 'nodes' must be a list)"
+  },
+  {
+   "case": "no_nodes",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "no_nodes.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/no_nodes.txt",
+   "stderr_first_line": "[graphify] Extraction warning (4 issues): 1x other schema issue (e.g. Missing required key 'nodes'); 1x missing required field 'source_file' (e.g. Edge 0 missing required field 'source_file'); 1x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'relation' (e.g. Edge 0 missing required field 'relation')"
+  },
+  {
+   "case": "no_nodes.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "no_nodes.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 0,
+   "stdout": "diagnose/no_nodes.json",
+   "stderr_first_line": "[graphify] Extraction warning (4 issues): 1x other schema issue (e.g. Missing required key 'nodes'); 1x missing required field 'source_file' (e.g. Edge 0 missing required field 'source_file'); 1x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'relation' (e.g. Edge 0 missing required field 'relation')"
+  },
+  {
+   "case": "top_level_list",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "top_level_list.json",
+    "--extract-path",
+    "scan.py",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 1,
+   "stdout": "diagnose/top_level_list.txt",
+   "stderr_first_line": "error: diagnostic input must be a JSON object"
+  },
+  {
+   "case": "top_level_list.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "top_level_list.json",
+    "--extract-path",
+    "scan.py",
+    "--json",
+    "--max-examples",
+    "10"
+   ],
+   "exit": 1,
+   "stdout": "diagnose/top_level_list.json",
+   "stderr_first_line": "error: diagnostic input must be a JSON object"
+  },
+  {
+   "case": "err.missing_graph",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "nope.json"
+   ],
+   "exit": 1,
+   "stderr_first_line": "error: Cannot parse nope.json: [Errno 2] No such file or directory: 'nope.json'. The file may be corrupted — re-run 'graphify extract'."
+  },
+  {
+   "case": "err.unparseable",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "bad.json"
+   ],
+   "exit": 1,
+   "stderr_first_line": "error: Cannot parse bad.json: Expecting value: line 1 column 1 (char 0). The file may be corrupted — re-run 'graphify extract'."
+  },
+  {
+   "case": "err.both_flags",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--directed",
+    "--undirected"
+   ],
+   "exit": 1,
+   "stderr_first_line": "error: --directed and --undirected are mutually exclusive"
+  },
+  {
+   "case": "err.max_examples_text",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--max-examples",
+    "x"
+   ],
+   "exit": 1,
+   "stderr_first_line": "error: --max-examples requires an integer"
+  },
+  {
+   "case": "err.max_examples_negative",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--max-examples",
+    "-1"
+   ],
+   "exit": 1,
+   "stderr_first_line": "error: --max-examples must be >= 0"
+  },
+  {
+   "case": "err.unknown_option",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--bogus"
+   ],
+   "exit": 1,
+   "stderr_first_line": "error: unknown diagnose option --bogus"
+  },
+  {
+   "case": "err.scan_dir",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--extract-path",
+    "."
+   ],
+   "exit": 1,
+   "stderr_first_line": "[graphify] Extraction warning (56 issues): 22x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 3x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 21x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'target' (e.g. Edge 3 missing required field 'target'); 2x missing required field 'source' (e.g. Edge 4 missing required field 'source'); 7x missing required field 'relation' (e.g. Edge 5 missing required field 'relation')"
+  },
+  {
+   "case": "scan_missing",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--extract-path",
+    "missing.py"
+   ],
+   "exit": 0,
+   "stderr_first_line": "[graphify] Extraction warning (56 issues): 22x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 3x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 21x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'target' (e.g. Edge 3 missing required field 'target'); 2x missing required field 'source' (e.g. Edge 4 missing required field 'source'); 7x missing required field 'relation' (e.g. Edge 5 missing required field 'relation')",
+   "stdout": "diagnose/scan_missing.txt"
+  },
+  {
+   "case": "scan_missing.json",
+   "argv": [
+    "diagnose",
+    "multigraph",
+    "--graph",
+    "counters.json",
+    "--extract-path",
+    "missing.py",
+    "--json"
+   ],
+   "exit": 0,
+   "stderr_first_line": "[graphify] Extraction warning (56 issues): 22x missing required field 'source_file' (e.g. Node 0 (id='a') missing required field 'source_file'); 3x missing required field 'label' (e.g. Node 0 (id='a') missing required field 'label'); 21x missing required field 'confidence' (e.g. Edge 0 missing required field 'confidence'); 1x missing required field 'target' (e.g. Edge 3 missing required field 'target'); 2x missing required field 'source' (e.g. Edge 4 missing required field 'source'); 7x missing required field 'relation' (e.g. Edge 5 missing required field 'relation')",
+   "stdout": "diagnose/scan_missing.json"
+  },
+  {
+   "case": "err.no_subcommand",
+   "argv": [
+    "diagnose"
+   ],
+   "exit": 1,
+   "stdout_text": "",
+   "stderr_first_line": "Usage: graphify diagnose multigraph [--graph path] [--json] [--max-examples N] [--directed] [--undirected] [--extract-path path]"
+  },
+  {
+   "case": "err.bad_subcommand",
+   "argv": [
+    "diagnose",
+    "bogus"
+   ],
+   "exit": 1,
+   "stdout_text": "",
+   "stderr_first_line": "Usage: graphify diagnose multigraph [--graph path] [--json] [--max-examples N] [--directed] [--undirected] [--extract-path path]"
+  }
+ ],
+ "prs": [
+  {
+   "case": "sc1.dashboard",
+   "scenario": "sc1",
+   "variant": "",
+   "argv": [
+    "prs"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc1.dashboard.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  },
+  {
+   "case": "sc2.dashboard",
+   "scenario": "sc2",
+   "variant": "",
+   "argv": [
+    "prs"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc2.dashboard.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.dashboard",
+   "scenario": "sc3",
+   "variant": "",
+   "argv": [
+    "prs"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc3.dashboard.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  },
+  {
+   "case": "sc2.base_develop",
+   "scenario": "sc2",
+   "variant": "",
+   "argv": [
+    "prs",
+    "--base",
+    "develop"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc2.base_develop.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.base_dev",
+   "scenario": "sc3",
+   "variant": "",
+   "argv": [
+    "prs",
+    "--base",
+    "dev"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc3.base_dev.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  },
+  {
+   "case": "sc2.detail_201",
+   "scenario": "sc2",
+   "variant": "",
+   "argv": [
+    "prs",
+    "201"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc2.detail_201.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "201",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "202",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "203",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "204",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "205",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "206",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "207",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "208",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "209",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "210",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "211",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "212",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "213",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "214",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "215",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "216",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "219",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "220",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "221",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "222",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "223",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "5",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "999",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc2.detail_203",
+   "scenario": "sc2",
+   "variant": "",
+   "argv": [
+    "prs",
+    "203"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc2.detail_203.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "201",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "202",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "203",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "204",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "205",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "206",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "207",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "208",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "209",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "210",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "211",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "212",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "213",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "214",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "215",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "216",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "219",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "220",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "221",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "222",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "223",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "5",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "999",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc2.detail_210",
+   "scenario": "sc2",
+   "variant": "",
+   "argv": [
+    "prs",
+    "210"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc2.detail_210.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "201",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "202",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "203",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "204",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "205",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "206",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "207",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "208",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "209",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "210",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "211",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "212",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "213",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "214",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "215",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "216",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "219",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "220",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "221",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "222",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "223",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "5",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "999",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc2.detail_219",
+   "scenario": "sc2",
+   "variant": "",
+   "argv": [
+    "prs",
+    "219"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc2.detail_219.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "201",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "202",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "203",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "204",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "205",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "206",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "207",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "208",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "209",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "210",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "211",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "212",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "213",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "214",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "215",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "216",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "219",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "220",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "221",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "222",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "223",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "5",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "999",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc2.detail_5",
+   "scenario": "sc2",
+   "variant": "",
+   "argv": [
+    "prs",
+    "5"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc2.detail_5.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "201",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "202",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "203",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "204",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "205",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "206",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "207",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "208",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "209",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "210",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "211",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "212",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "213",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "214",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "215",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "216",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "219",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "220",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "221",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "222",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "223",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "5",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "999",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.detail_1",
+   "scenario": "sc3",
+   "variant": "",
+   "argv": [
+    "prs",
+    "1"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc3.detail_1.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "1",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "2",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "4",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.detail_2",
+   "scenario": "sc3",
+   "variant": "",
+   "argv": [
+    "prs",
+    "2"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc3.detail_2.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "1",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "2",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "4",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.detail_3",
+   "scenario": "sc3",
+   "variant": "",
+   "argv": [
+    "prs",
+    "3"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc3.detail_3.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "1",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "2",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "4",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.detail_4",
+   "scenario": "sc3",
+   "variant": "",
+   "argv": [
+    "prs",
+    "4"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc3.detail_4.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "1",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "2",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "4",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.detail_missing",
+   "scenario": "sc3",
+   "variant": "",
+   "argv": [
+    "prs",
+    "77"
+   ],
+   "exit": 1,
+   "stdout": "prs/sc3.detail_missing.txt",
+   "stderr": "  PR #77 not found in open PRs.\n",
+   "gh_calls": [
+    [
+     "pr",
+     "diff",
+     "1",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "2",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "diff",
+     "4",
+     "--name-only"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ],
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.nobranch",
+   "scenario": "sc3",
+   "variant": "nobranch",
+   "argv": [
+    "prs"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc3.nobranch.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.listfail",
+   "scenario": "sc3",
+   "variant": "listfail",
+   "argv": [
+    "prs"
+   ],
+   "exit": 1,
+   "stdout": "prs/sc3.listfail.txt",
+   "stderr": "  Error: gh CLI not found or not authenticated. Run: gh auth login\n",
+   "gh_calls": [
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.badjson",
+   "scenario": "sc3",
+   "variant": "badjson",
+   "argv": [
+    "prs"
+   ],
+   "exit": 1,
+   "stdout": "prs/sc3.badjson.txt",
+   "stderr": "  Error: gh CLI not found or not authenticated. Run: gh auth login\n",
+   "gh_calls": [
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  },
+  {
+   "case": "sc3.empty",
+   "scenario": "sc3",
+   "variant": "empty",
+   "argv": [
+    "prs"
+   ],
+   "exit": 0,
+   "stdout": "prs/sc3.empty.txt",
+   "stderr": "",
+   "gh_calls": [
+    [
+     "repo",
+     "view",
+     "--json",
+     "defaultBranchRef"
+    ],
+    [
+     "pr",
+     "list",
+     "--state",
+     "open",
+     "--limit",
+     "50",
+     "--json",
+     "number,title,headRefName,baseRefName,author,isDraft,reviewDecision,statusCheckRollup,updatedAt"
+    ]
+   ]
+  }
+ ],
+ "prs_mcp": [
+  {
+   "scenario": "sc3",
+   "tool": "list_prs",
+   "arguments": {},
+   "isError": false,
+   "text": "prs/mcp.sc3.0.list_prs.txt"
+  },
+  {
+   "scenario": "sc3",
+   "tool": "list_prs",
+   "arguments": {
+    "base": "dev"
+   },
+   "isError": false,
+   "text": "prs/mcp.sc3.1.list_prs.txt"
+  },
+  {
+   "scenario": "sc3",
+   "tool": "get_pr_impact",
+   "arguments": {
+    "pr_number": 1
+   },
+   "isError": false,
+   "text": "prs/mcp.sc3.2.get_pr_impact.txt"
+  },
+  {
+   "scenario": "sc3",
+   "tool": "get_pr_impact",
+   "arguments": {
+    "pr_number": 2
+   },
+   "isError": false,
+   "text": "prs/mcp.sc3.3.get_pr_impact.txt"
+  },
+  {
+   "scenario": "sc3",
+   "tool": "get_pr_impact",
+   "arguments": {
+    "pr_number": 3
+   },
+   "isError": false,
+   "text": "prs/mcp.sc3.4.get_pr_impact.txt"
+  },
+  {
+   "scenario": "sc3",
+   "tool": "get_pr_impact",
+   "arguments": {
+    "pr_number": 77
+   },
+   "isError": true,
+   "text": "prs/mcp.sc3.5.get_pr_impact.txt"
+  },
+  {
+   "scenario": "sc3",
+   "tool": "triage_prs",
+   "arguments": {},
+   "isError": false,
+   "text": "prs/mcp.sc3.6.triage_prs.txt"
+  },
+  {
+   "scenario": "sc2",
+   "tool": "list_prs",
+   "arguments": {},
+   "isError": false,
+   "text": "prs/mcp.sc2.0.list_prs.txt"
+  },
+  {
+   "scenario": "sc2",
+   "tool": "triage_prs",
+   "arguments": {},
+   "isError": false,
+   "text": "prs/mcp.sc2.1.triage_prs.txt"
+  },
+  {
+   "scenario": "sc2",
+   "tool": "get_pr_impact",
+   "arguments": {
+    "pr_number": 203
+   },
+   "isError": false,
+   "text": "prs/mcp.sc2.2.get_pr_impact.txt"
+  },
+  {
+   "scenario": "sc2",
+   "tool": "list_prs",
+   "arguments": {
+    "base": "nobase"
+   },
+   "isError": false,
+   "text": "prs/mcp.sc2.3.list_prs.txt"
+  },
+  {
+   "scenario": "sc2",
+   "tool": "triage_prs",
+   "arguments": {
+    "base": "nobase"
+   },
+   "isError": false,
+   "text": "prs/mcp.sc2.4.triage_prs.txt"
+  }
+ ]
+}

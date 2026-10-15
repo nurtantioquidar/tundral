@@ -1,0 +1,32 @@
+{
+ "nodes": [
+  "s",
+  {
+   "id": "a"
+  },
+  {
+   "label": "no id"
+  },
+  {
+   "id": 5
+  }
+ ],
+ "links": [
+  {
+   "source": "a",
+   "target": "a",
+   "relation": "it's",
+   "context": "q\"x"
+  },
+  {
+   "source": "a",
+   "target": "a"
+  },
+  {
+   "source": "a",
+   "target": 5
+  },
+  "not an object",
+  7
+ ]
+}

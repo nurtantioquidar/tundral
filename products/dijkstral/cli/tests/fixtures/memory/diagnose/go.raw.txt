@@ -1,0 +1,38 @@
+[graphify] MultiDiGraph edge-collapse diagnostic
+input: go.graphify.json
+input_stage: provided JSON (normal graph.json is post-build)
+effective_directed: True
+nodes: 45
+unverified_code_nodes: 0
+raw_edges: 74
+valid_candidate_edges: 74
+missing_endpoint_edges: 0
+dangling_endpoint_edges: 0
+external_reference_edges: 0
+self_loop_edges: 1
+exact_duplicate_edges: 0
+directed_unique_endpoint_pairs: 72
+directed_same_endpoint_collapsed_edges: 2
+undirected_unique_endpoint_pairs: 71
+undirected_same_endpoint_collapsed_edges: 3
+same_endpoint_group_count: 2
+relation_variant_groups: 2
+source_file_variant_groups: 0
+source_location_variant_groups: 0
+context_variant_groups: 0
+post_build_graph_type: DiGraph
+post_build_edges: 72
+producer_suppression_sites: 24
+producer_suppression_examples:
+  - L3 seen_a arity=unknown
+  - L4 seen_b arity=unknown
+  - L5 seen_c arity=unknown
+  - L6 seen_d arity=unknown
+  - L7 seen_e arity=unknown
+  - L8 seen_f arity=2
+  - L9 seen_g arity=4
+  - L10 seen_h arity=unknown
+examples:
+  - store_helpers_normalize -> store_id edges=2 relations=['calls', 'references'] locations=['L11', 'L9'] contexts=['call', 'return_type']
+  - store_store_go_store_store -> store_id edges=2 relations=['contains', 'references'] locations=['L12', 'L40'] contexts=['', 'field']
+note: normal graph.json is post-build; raw producer loss must be measured earlier.

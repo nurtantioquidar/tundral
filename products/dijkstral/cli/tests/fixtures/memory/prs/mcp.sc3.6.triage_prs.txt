@@ -1,0 +1,12 @@
+Actionable PRs targeting main: 3
+Rank these by review priority. Higher blast_radius = more graph communities affected = higher merge risk.
+
+
+PR #1 [CI-FAIL] CI=FAILURE review=REVIEW_REQUIRED age=2d author=bob  blast_radius=10 nodes / 5 communities  worktree=<WORKTREE>
+  title: fail with review and worktree
+
+PR #2 [READY] CI=SUCCESS review=none age=0d author=  blast_radius=5 nodes / 1 community
+  title: many files
+
+PR #4 [READY] CI=NONE review=none age=0d author=?
+  title: no author

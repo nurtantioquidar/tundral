@@ -1,0 +1,67 @@
+Actionable PRs targeting main: 21
+Rank these by review priority. Higher blast_radius = more graph communities affected = higher merge risk.
+
+
+PR #201 [CHANGES-REQ] CI=SUCCESS review=CHANGES_REQUESTED age=1d author=alice  blast_radius=10 nodes / 5 communities
+  title: changes+draft
+
+PR #203 [DRAFT] CI=PENDING review=none age=1d author=alice
+  title: draft+pending
+
+PR #216 [DRAFT] CI=SUCCESS review=none age=1d author=alice  blast_radius=23 nodes / 5 communities
+  title: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+
+PR #207 [PENDING] CI=PENDING review=none age=1d author=alice
+  title: in progress empty concl
+
+PR #202 [APPROVED] CI=PENDING review=APPROVED age=1d author=alice
+  title: approved+pending
+
+PR #204 [READY] CI=NONE review=none age=1d author=alice
+  title: status null pending
+
+PR #205 [READY] CI=NONE review=none age=1d author=alice
+  title: status waiting
+
+PR #206 [READY] CI=NONE review=none age=1d author=alice
+  title: status requested
+
+PR #208 [READY] CI=SUCCESS review=none age=1d author=alice
+  title: success+neutral
+
+PR #209 [READY] CI=SUCCESS review=none age=1d author=alice
+  title: success+skipped
+
+PR #210 [READY] CI=NONE review=none age=1d author=alice
+  title: lowercase failure
+
+PR #211 [READY] CI=SUCCESS review=none age=0d author=alice
+  title: 23 hours
+
+PR #212 [READY] CI=SUCCESS review=none age=13d author=alice
+  title: 13d 23h
+
+PR #213 [READY] CI=SUCCESS review=none age=-3d author=alice
+  title: future
+
+PR #214 [READY] CI=SUCCESS review=none age=1d author=alice
+  title: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+PR #215 [READY] CI=SUCCESS review=none age=1d author=alice
+  title: yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+
+PR #219 [READY] CI=SUCCESS review=none age=1d author=alice  worktree=<WORKTREE>
+  title: wt branch
+
+PR #220 [READY] CI=SUCCESS review=none age=1d author=alice
+  title: local branch only
+
+PR #221 [READY] CI=SUCCESS review=none age=1d author=alice  worktree=<REPO>
+  title: current branch
+
+PR #222 [READY] CI=SUCCESS review=none age=1d author=alice
+  title: multi
+line title
+
+PR #223 [READY] CI=SUCCESS review=none age=1d author=alice
+  title: emoji 🐛 title

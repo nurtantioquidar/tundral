@@ -1,0 +1,27 @@
+{
+ "directed": false,
+ "nodes": [
+  {
+   "id": "a"
+  },
+  {
+   "id": "b"
+  }
+ ],
+ "links": [
+  {
+   "source": "a",
+   "target": "b",
+   "relation": "1"
+  },
+  {
+   "source": "b",
+   "target": "a",
+   "relation": "2"
+  },
+  {
+   "source": "a",
+   "target": "zz"
+  }
+ ]
+}

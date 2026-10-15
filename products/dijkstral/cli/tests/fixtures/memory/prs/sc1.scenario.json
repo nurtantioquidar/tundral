@@ -1,0 +1,871 @@
+{
+ "default_branch": "main",
+ "prs": [
+  {
+   "number": 101,
+   "title": "ci success",
+   "headRefName": "h101",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 102,
+   "title": "ci failure",
+   "headRefName": "h102",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "FAILURE"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 103,
+   "title": "ci neutral",
+   "headRefName": "h103",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "NEUTRAL"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 104,
+   "title": "ci skipped",
+   "headRefName": "h104",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SKIPPED"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 105,
+   "title": "ci cancelled",
+   "headRefName": "h105",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "CANCELLED"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 106,
+   "title": "ci timed out",
+   "headRefName": "h106",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "TIMED_OUT"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 107,
+   "title": "ci action required",
+   "headRefName": "h107",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "ACTION_REQUIRED"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 108,
+   "title": "ci startup failure",
+   "headRefName": "h108",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "STARTUP_FAILURE"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 109,
+   "title": "ci stale conclusion",
+   "headRefName": "h109",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "STALE"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 110,
+   "title": "ci in progress",
+   "headRefName": "h110",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "IN_PROGRESS",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 111,
+   "title": "ci queued",
+   "headRefName": "h111",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "QUEUED",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 112,
+   "title": "ci pending empty concl",
+   "headRefName": "h112",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "PENDING",
+     "conclusion": ""
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 113,
+   "title": "status success",
+   "headRefName": "h113",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "StatusContext",
+     "context": "s",
+     "state": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 114,
+   "title": "status failure",
+   "headRefName": "h114",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "StatusContext",
+     "context": "s",
+     "state": "FAILURE"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 115,
+   "title": "status error",
+   "headRefName": "h115",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "StatusContext",
+     "context": "s",
+     "state": "ERROR"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 116,
+   "title": "status pending",
+   "headRefName": "h116",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "StatusContext",
+     "context": "s",
+     "state": "PENDING"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 117,
+   "title": "status expected",
+   "headRefName": "h117",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "StatusContext",
+     "context": "s",
+     "state": "EXPECTED"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 118,
+   "title": "no checks",
+   "headRefName": "h118",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 119,
+   "title": "null rollup",
+   "headRefName": "h119",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": null,
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 120,
+   "title": "success+pending",
+   "headRefName": "h120",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    },
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "IN_PROGRESS",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 121,
+   "title": "failure+pending",
+   "headRefName": "h121",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "FAILURE"
+    },
+    {
+     "__typename": "StatusContext",
+     "context": "s",
+     "state": "PENDING"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 122,
+   "title": "approved",
+   "headRefName": "h122",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "APPROVED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 123,
+   "title": "changes requested",
+   "headRefName": "h123",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "CHANGES_REQUESTED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 124,
+   "title": "review required",
+   "headRefName": "h124",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "REVIEW_REQUIRED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 125,
+   "title": "approved but failing",
+   "headRefName": "h125",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "APPROVED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "FAILURE"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 126,
+   "title": "draft passing",
+   "headRefName": "h126",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": true,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 127,
+   "title": "draft failing",
+   "headRefName": "h127",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": true,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "FAILURE"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 128,
+   "title": "age 0",
+   "headRefName": "h128",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 0
+   }
+  },
+  {
+   "number": 129,
+   "title": "age 13",
+   "headRefName": "h129",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 13
+   }
+  },
+  {
+   "number": 130,
+   "title": "age 14",
+   "headRefName": "h130",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 14
+   }
+  },
+  {
+   "number": 131,
+   "title": "age 15 approved",
+   "headRefName": "h131",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "APPROVED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 15
+   }
+  },
+  {
+   "number": 132,
+   "title": "age 400 changes",
+   "headRefName": "h132",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "CHANGES_REQUESTED",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 400
+   }
+  },
+  {
+   "number": 133,
+   "title": "pending stale",
+   "headRefName": "h133",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "IN_PROGRESS",
+     "conclusion": null
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 30
+   }
+  },
+  {
+   "number": 134,
+   "title": "other base",
+   "headRefName": "h134",
+   "baseRefName": "develop",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 135,
+   "title": "bot author",
+   "headRefName": "h135",
+   "baseRefName": "main",
+   "author": {
+    "login": "dependabot",
+    "is_bot": true
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 136,
+   "title": "title exactly fifty chars long xxxxxxxxxxxxxxxxxxx",
+   "headRefName": "h136",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 137,
+   "title": "title fifty-one chars long xxxxxxxxxxxxxxxxxxxxxxxxx",
+   "headRefName": "h137",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  },
+  {
+   "number": 138,
+   "title": "日本語のタイトルはとても長いのでここで切られるかどうかを確認するためのテストです",
+   "headRefName": "h138",
+   "baseRefName": "main",
+   "author": {
+    "login": "alice",
+    "is_bot": false
+   },
+   "isDraft": false,
+   "reviewDecision": "",
+   "statusCheckRollup": [
+    {
+     "__typename": "CheckRun",
+     "name": "c",
+     "status": "COMPLETED",
+     "conclusion": "SUCCESS"
+    }
+   ],
+   "updatedAt": {
+    "days_ago": 1
+   }
+  }
+ ]
+}

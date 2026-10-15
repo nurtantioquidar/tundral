@@ -1,0 +1,9 @@
+
+  graphify prs  ·  base: dev  ·  1 PRs
+
+     #  CI  STATUS         UPDATED   IMPACT                  TITLE
+  ────  ──  ─────────────  ────────  ──────────────────────  ────────────────────────────────────────
+  #3        –  READY           today   –                       wrong base
+
+  1 ready · 3 wrong base
+

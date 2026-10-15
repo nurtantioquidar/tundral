@@ -1001,7 +1001,7 @@ Shortest path (<h> hops):
 - **Rule.** These shell out to `gh`. Without an authenticated `gh` they return `isError: true`
   with `Error: gh CLI not found or not authenticated. Run: gh auth login` (list, triage) or
   `PR #<n> not found or gh not authenticated.` (impact). The first call took about 430 ms. Their
-  output with a working `gh` was not probed (**Open**).
+  output with a working `gh` is specified in `graphify-memory.md` §5.6.
 
 ### 10.7 Resources
 
@@ -1545,7 +1545,8 @@ argv.
    metadata exists.
 7. Path selection when several links join one node pair (§5). Path ties are resolved (§5).
 8. MCP resources `surprises` and `questions` with an analysis file present (without one they are
-   resolved, §10.7); PR tools with a working `gh`; the HTTP transport (§10).
+   resolved, §10.7); the HTTP transport (§10). (PR tools with a working `gh`: resolved in
+   `graphify-memory.md` §5.6.)
 9. Hook guard: Bash tokenizer boundary cases, equal mtimes; installer: quoting of a `graphify` path
    with spaces, `hooks` without `PreToolUse` (§11, §12).
 10. What `GRAPHIFY_QUERY_LOG_DISABLE` suppresses (§2.3).

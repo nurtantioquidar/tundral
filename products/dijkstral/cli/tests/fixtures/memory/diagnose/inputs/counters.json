@@ -1,0 +1,118 @@
+{
+ "nodes": [
+  {
+   "id": "a"
+  },
+  {
+   "id": "b"
+  },
+  {
+   "id": "c"
+  }
+ ],
+ "links": [
+  {
+   "source": "a",
+   "target": "b",
+   "relation": "calls"
+  },
+  {
+   "source": "a",
+   "target": "b",
+   "relation": "calls"
+  },
+  {
+   "source": "a",
+   "target": "b",
+   "relation": "calls",
+   "weight": 1.0
+  },
+  {
+   "source": "a",
+   "relation": "calls"
+  },
+  {
+   "target": "a",
+   "relation": "calls"
+  },
+  {
+   "source": "",
+   "target": "a"
+  },
+  {
+   "source": null,
+   "target": "a"
+  },
+  {
+   "source": "a",
+   "target": "zz"
+  },
+  {
+   "source": "yy",
+   "target": "a"
+  },
+  {
+   "source": "a",
+   "target": "a"
+  },
+  {
+   "source": "c",
+   "target": "c"
+  },
+  {
+   "source": "b",
+   "target": "a",
+   "relation": "imports"
+  },
+  {
+   "source": "b",
+   "target": "c",
+   "relation": "x",
+   "source_file": "f1"
+  },
+  {
+   "source": "b",
+   "target": "c",
+   "relation": "x",
+   "source_file": "f2"
+  },
+  {
+   "source": "c",
+   "target": "a",
+   "relation": "x",
+   "source_location": "L1"
+  },
+  {
+   "source": "c",
+   "target": "a",
+   "relation": "x",
+   "source_location": "L2"
+  },
+  {
+   "source": "c",
+   "target": "b",
+   "relation": "x",
+   "context": "k1"
+  },
+  {
+   "source": "c",
+   "target": "b",
+   "relation": "x",
+   "context": "k2"
+  },
+  {
+   "source": "c",
+   "target": "b",
+   "relation": "y",
+   "context": "k2"
+  },
+  {
+   "target": "a",
+   "relation": "calls"
+  },
+  {
+   "source": "a",
+   "target": "zz"
+  }
+ ]
+}

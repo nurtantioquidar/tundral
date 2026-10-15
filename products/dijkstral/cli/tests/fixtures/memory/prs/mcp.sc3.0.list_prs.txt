@@ -1,0 +1,11 @@
+Open PRs targeting main: 3  (1 on wrong base, not shown)
+
+
+#1 [CI-FAIL] CI=FAILURE review=REVIEW_REQUIRED age=2d author=bob
+  fail with review and worktree
+
+#2 [READY] CI=SUCCESS review=none age=0d author=
+  many files
+
+#4 [READY] CI=NONE review=none age=0d author=?
+  no author

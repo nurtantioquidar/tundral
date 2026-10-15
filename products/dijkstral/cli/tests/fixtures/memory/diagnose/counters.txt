@@ -1,0 +1,41 @@
+[graphify] MultiDiGraph edge-collapse diagnostic
+input: counters.json
+input_stage: provided JSON (normal graph.json is post-build)
+effective_directed: True
+nodes: 3
+unverified_code_nodes: 0
+raw_edges: 21
+valid_candidate_edges: 13
+missing_endpoint_edges: 5
+dangling_endpoint_edges: 3
+external_reference_edges: 0
+self_loop_edges: 2
+exact_duplicate_edges: 3
+directed_unique_endpoint_pairs: 7
+directed_same_endpoint_collapsed_edges: 6
+undirected_unique_endpoint_pairs: 5
+undirected_same_endpoint_collapsed_edges: 8
+same_endpoint_group_count: 4
+relation_variant_groups: 1
+source_file_variant_groups: 1
+source_location_variant_groups: 1
+context_variant_groups: 1
+post_build_graph_type: 
+post_build_edges: None
+producer_suppression_sites: 24
+post_build_error: AttributeError: 'NoneType' object has no attribute 'casefold'
+producer_suppression_examples:
+  - L3 seen_a arity=unknown
+  - L4 seen_b arity=unknown
+  - L5 seen_c arity=unknown
+  - L6 seen_d arity=unknown
+  - L7 seen_e arity=unknown
+  - L8 seen_f arity=2
+  - L9 seen_g arity=4
+  - L10 seen_h arity=unknown
+examples:
+  - a -> b edges=3 relations=['calls'] locations=[''] contexts=['']
+  - c -> b edges=3 relations=['x', 'y'] locations=[''] contexts=['k1', 'k2']
+  - b -> c edges=2 relations=['x'] locations=[''] contexts=['']
+  - c -> a edges=2 relations=['x'] locations=['L1', 'L2'] contexts=['']
+note: normal graph.json is post-build; raw producer loss must be measured earlier.
