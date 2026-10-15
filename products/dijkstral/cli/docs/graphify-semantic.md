@@ -191,27 +191,68 @@ backtick references).
 
 ### 3.4 Backtick references to code
 
-- **Rule.** Every inline code span outside backtick fences (single or double backticks; also in
-  lists, tables, headings, tilde fences, indented code blocks and HTML comments) is a candidate.
-  The span text is stripped; one trailing `()` is ignored for matching but kept in `context`.
+- **Rule.** Every inline code span outside backtick fences (also in lists, tables, headings, tilde
+  fences, indented code blocks and HTML comments) is a candidate. Spans are found per line: a run
+  of N backticks opens a span that the next run of exactly N backticks closes, so
+  ``` `` `%||%` `` ``` is one span and ``` ``run` and `jump`` ``` another; an opening run with no
+  closing run on the line is plain text (``` `` unclosed and `hop` ``` still yields `hop`), and
+  a backslash escapes nothing (``` \`x` `run` ``` yields `x` and `run`). The span text is
+  stripped; one trailing `()` is ignored for matching but kept in `context`.
 - **Rule (shape).** The stripped text must be dotted identifiers: `name` or `a.b.c`
   (`[A-Za-z_][A-Za-z0-9_]*` segments). `run(1)`, `Gamma<T>`, `@run`, `run;`, `run.`, `.solo`,
-  `Alpha::go`, `Alpha#go`, `pkg/b.Beta`, `a.py`, `run job` match nothing.
+  `Alpha::walk`, `Alpha#walk`, `Alpha->walk`, `Alpha . walk`, `a/Alpha.walk`, `pkg/b.Beta`,
+  `run job` match nothing.
+- **Rule (file names).** A qualified span whose last segment is one of these extensions (exact
+  case) is a file name and matches nothing, even when a method has that name (`K.py`, `Alpha.go`,
+  `k.K.go()`, `K.F90`): `py ts tsx mts cts ets js jsx mjs cjs go rs java kt kts scala cs rb rake
+  c h cpp cc cxx hpp cu cuh metal swift php groovy gradle dart lua luau zig ex exs erl hrl ml mli
+  jl m mm v sv svh vh sol f f90 f95 f03 f08 F F90 F95 F03 F08 vb vue svelte astro ejs ps1 psm1
+  psd1 r sql tf tfvars hcl sh bash json csproj fsproj vbproj sln slnx razor cshtml xaml pas dpr pp
+  inc lpr dpk dfm lfm lpk cls trigger cob cbl cpy dm dme dmf dmi dmm lisp lsp cl md mdx qmd rst
+  txt html yaml yml`. Probed and **not** in the list (they resolve): `pyi pyx pyw hh hxx toml ini
+  cfg xml htm css scss csv json5 jsonc ipynb pdf png svg docx zsh fish bat pl hs fs fsx nim cr clj
+  el scm vhd vhdl s asm f77 F77 FOR markdown rmd proto graphql`, and listed names in another case
+  (`K.PY`, `K.Go`, `K.MD`, `K.Inc`, `K.CLS`). A bare `py` or `go` is a name like any other. (The
+  earlier reading that `go` was ambiguous came from this rule: `Alpha.go` is a file name.)
 - **Rule (candidates).** Only `_callable` nodes (format spec §6: Python functions, methods and
   classes; TS/JS functions, methods, classes, interfaces, type aliases, enums; Java types and
   methods). Rust, Go, shell, JSON nodes, TS consts, enum members, externals, stubs and file nodes
   are never targets. A candidate's name is its label without a leading `.` and trailing `()`;
   comparison is case-sensitive (`alpha`, `RUN` miss).
-- **Rule (uniqueness).** The last segment must name exactly one candidate in the whole graph;
-  otherwise nothing is emitted (`shared` in two files, `go` as function and method, and
-  `Alpha.go` because `go` is ambiguous). Same-name collisions that merge nodes (format spec §4.5)
-  count once.
-- **Rule (qualifiers).** For `q1.q2.….name`, every qualifier must equal (case-sensitively) a
-  directory name or the stem of the target's `source_file`, or the label of its enclosing class:
-  `Beta.other`, `b.Beta.other`, `pkg.Beta`, `c.area`, `web.Gamma`, `a.Twin.twin` and
-  `Beta.pkg.other` (any order) resolve; `Alpha.other`, `B.other`, `PKG.Beta`, `lph.Beta`,
-  `eta.other`, `b_beta.other`, `zzz.run` do not.
-- **Rule (denylist).** These texts never resolve even when unique (exact case; probed lists, so
+- **Rule (qualifiers).** For `q1.q2.….name`, a candidate named `name` qualifies when every
+  qualifier equals (case-sensitively, in any order, repeats allowed) one of:
+  - a directory name of the candidate's **resolved absolute path**, the indexed root's own
+    ancestors included: under `/tmp/qprobe/cases/c2` (macOS resolves `/tmp` to `/private/tmp`),
+    `private.run`, `tmp.run`, `cases.run`, `c2.c.run` and `tmp.qprobe.cases.c2.c.run` all
+    resolve, so fastapi's docs reach a `tests/` function with `fastapi.sse` because the checkout
+    directory is named `fastapi` (**Quirk** S9: the graph depends on where the repository lives);
+  - the stem of its `source_file` (`c.shared`, `a.Twin`, `w.paint`);
+  - the name of an enclosing definition, classes and functions alike, at any depth
+    (`Alpha.Inner.deep`, `Alpha.deep`, `outer.inner`, `Top.tm.tin`, `tm.tin`, TS
+    `Shell.open.hidden`, Java `Shape.Sq.side`, `Shape.side`).
+  Base classes (`Sub.walk` for an inherited `walk`), import aliases (`AA.walk`), other files'
+  classes (`Alpha.other`), the name itself (`walk.walk`), case variants (`alpha.walk`,
+  `PKG.Beta`), substrings (`lph.Beta`) and slugs (`b_beta.other`) never qualify.
+- **Rule (enclosing definitions).** They read as if walked through the final ids: drop
+  `_<slug(name)>` from the candidate's id (and first a 6-hex collision hash, `k_k_go_2e0b45` for
+  `.Go()` beside `.go()`); while the rest is the id of a code node other than a file, that node's
+  name (label without `.`/`()`) is the next enclosing definition. So a class defined inside a
+  function has no node and is skipped (`n_outer_meth`: `outer.meth` resolves,
+  `outer.Local.meth` does not), a top-level `top_level` beside class `Top` is not inside it
+  (`Top.top_level` misses), and a merged id keeps its first label: method `Box.put` and class
+  `Box_put` share `n_box_put` (label `.put()`), so `Box_put.take` misses while `Box.take` and
+  `put.take` resolve. (Scope tracking during extraction gives the same answers on every probe; the
+  id walk is how dijkstral computes it.)
+- **Rule (uniqueness).** Exactly one candidate (distinct final id) may qualify, else nothing is
+  emitted. Unqualified, that means the name is globally unique (`shared` in two files, `walk` in
+  two classes miss); qualifiers pick one of several (`c.shared`, `Alpha.walk`,
+  `APIRoute.get_route_handler()` among nine, `fastapi.security.base.SecurityBase` against
+  `fastapi/openapi/models.py`'s) but not when several still qualify (`pkg.walk`, `Inner.deep`
+  with an `Inner` in two classes, `w.render` for two classes of `w.ts`), and a unique name with a
+  non-qualifying qualifier misses (`zzz.run`, `web.run`). Same-name collisions that merge nodes
+  (format spec §4.5) count once.
+- **Rule (denylist).** These names never resolve, qualified or not (`K.zip`, `K.sum`, `K.JSON`
+  miss), even when unique (exact case; probed lists, so
   more names may exist, §12): `abs all any bool bytes callable console delattr dict dir enumerate
   filter float getattr hasattr hash id int isinstance iter len list map max min next open print
   range repr reversed round set setattr sorted str sum super tuple type vars zip parseInt
@@ -690,6 +731,7 @@ compares against `dijkstral-out/semantic/index.json`, which also feeds `check-up
 | S6 | A non-canonical `source_file` spelling overwrites the canonical file's cache entry. | §9.1 |
 | S7 | Hyperedges are written twice (`hyperedges` and `graph.hyperedges`). | §7.4 |
 | S8 | The report's token line counts only the writing command, not the graph's history. | §8.2 |
+| S9 | Any directory of the root's resolved absolute path qualifies a backtick reference, so the same repository builds different edges at different locations (dijkstral reproduces it; its unchanged-build check does not notice a moved checkout). | §3.4 |
 
 ### 12.2 Open
 
@@ -704,10 +746,11 @@ compares against `dijkstral-out/semantic/index.json`, which also feeds `check-up
 7. Label prompt member selection (§10).
 8. `add` downloads, `--google-workspace` with `gws`, audio/video transcription with the `video`
    extra (§2.1, §11).
-9. Qualified backtick references on real corpora (§3.4): fastapi resolves
-   `APIRoute.get_route_handler()` among nine `get_route_handler` callables,
-   `fastapi.security.base.SecurityBase` among two and `fastapi.sse` to a function in
-   `tests/test_stream_status_code.py`, while the probes (`Alpha.go`, `pkg.Beta.go`, `zzz.run`,
-   a scratch `fastapi.sse`) do not resolve. 68 of fastapi's 19,650 markdown links (0.35%) and 3
-   of Graphify's 3,880 depend on this.
+9. ~~Qualified backtick references on real corpora~~: resolved (§3.4). Qualifiers disambiguate,
+   enclosing functions and the root's absolute path qualify, a final extension segment makes a
+   file name (the earlier `Alpha.go` probes hit that rule), and a run of N backticks closes at
+   the next run of N. dijkstral `update` now matches Graphify's links from markdown files on
+   fastapi (19,650/19,650) and graphify (3,880/3,880). Still open: extensions beyond the
+   probed names, and whether a symlinked file's qualifiers come from its own or its target's
+   path.
 10. Paper detection patterns and the symlink rule of `update` (§3.6).
