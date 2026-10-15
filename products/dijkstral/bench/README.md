@@ -477,3 +477,41 @@ serilog's remaining node gap is its two `.ps1` scripts (PowerShell, another stag
 repository's remaining definitions are in languages other stages add (`.f90 .groovy .ps1 .psd1 .zig
 .jl .sv .m .luau .ex`) plus Python/C++/JS differences already listed for those languages.
 
+### Shared fold and analysis rules — 2026-10-15
+
+The build's fold (spec §8.2: orientation of a pair's first edge, the structural set, absorbed call
+contexts, ties of one relation versus two, repeated self-loops, `instantiates` and `re_exports`
+ranks) and the analysis (§17.4–§17.5: sorted-link adjacency, hub and god-node candidates,
+surprise relations and the community-bridge fallback, top-three bridges, `no_signal`, the
+`Unclassified` line) were re-derived black-box and consolidated. `parity.py` of cold `extract`
+(all extensions) against the frozen references, before → after; def nodes and NMI did not move:
+
+| repo | def nodes R / P | links R / P | NMI | link field mismatches | of which `context` |
+|---|---|---|---|---|---|
+| monet | 99.8 / 99.9 | 97.18 / 95.95 → 97.18 / 95.95 | 0.945 | 29 → 29 | 0 → 0 |
+| graphify | 99.9 / 100.0 | 98.96 / 95.89 → 98.96 / 95.89 | 0.938 | 1614 → 1612 | 13 → 11 |
+| fastapi | 100.0 / 100.0 | 93.80 / 94.03 → 93.80 / 94.03 | 0.915 | 967 → 967 | 63 → 63 |
+| ripgrep | 100.0 / 100.0 | 94.93 / 95.18 → 94.93 / 95.18 | 0.911 | 3 → 3 | 1 → 1 |
+| excalidraw | 100.0 / 100.0 | 97.25 / 99.50 → 97.25 / 99.50 | 0.831 | 36 → 36 | 3 → 3 |
+| erpnext | 100.0 / 100.0 | 94.06 / 91.11 → 94.06 / 91.11 | 0.905 | 1910 → 1907 | 395 → 392 |
+| kubernetes | 100.0 / 100.0 | 99.91 / 99.84 → 99.91 / 99.84 | 0.866 | 2513 → 2512 | 2513 → 2512 |
+| jq | 100.0 / 100.0 | 100.00 / 99.89 → 100.00 / 99.89 | 0.957 | 0 → 0 | 0 → 0 |
+| fmt | 98.6 / 99.4 | 96.32 / 95.88 → 96.33 / 95.89 | 0.899 | 1135 → 1134 | 13 → 12 |
+| serilog | 100.0 / 100.0 | 99.75 / 99.92 → 99.75 / 99.92 | 0.881 | 49 → 27 | 24 → 2 |
+| okhttp | 100.0 / 100.0 | 98.73 / 98.92 → 98.73 / 98.92 | 0.944 | 65 → 39 | 42 → 16 |
+| munit | 100.0 / 100.0 | 99.21 / 98.68 → 99.21 / 98.68 | 0.921 | 7 → 5 | 6 → 4 |
+| alamofire | 99.9 / 100.0 | 99.14 / 99.16 → 99.14 / 99.16 | 0.935 | 133 → 118 | 104 → 89 |
+| guzzle | 100.0 / 100.0 | 99.99 / 99.99 → 99.99 / 99.99 | 0.940 | 2 → 0 | 2 → 0 |
+| sinatra | 100.0 / 100.0 | 99.95 / 99.95 → 99.95 / 99.95 | 1.000 | 3 → 0 | 0 → 0 |
+| dart-http | 99.8 / 99.7 | 99.28 / 98.88 → 99.28 / 98.88 | 0.965 | 122 → 39 | 88 → 5 |
+| ecto | 100.0 / 100.0 | 100.00 / 100.00 → 100.00 / 100.00 | 1.000 | 0 → 0 | 0 → 0 |
+| penlight | 100.0 / 100.0 | 100.00 / 100.00 → 100.00 / 100.00 | 1.000 | 0 → 0 | 0 → 0 |
+| afnetworking | 94.2 / 94.2 | 92.59 / 92.55 → 92.59 / 92.55 | 0.949 | 5 → 5 | 0 → 0 |
+
+`dijkstral cluster-only` on each frozen reference reproduces `graphify cluster-only --no-label`
+byte for byte: `graph.json` on all 19 repositories (before: 17), `.graphify_analysis.json` on 17
+(before: 8) and `GRAPH_REPORT.md` on 14 (before: 5). The rest differ in import-cycle order
+(ripgrep, excalidraw, Kubernetes, fastapi) and in `verify_inferred` questions (fastapi, erpnext;
+§17.7, Open). Outputs are byte-identical across
+`--threads 1` and the default on monet, fastapi, alamofire, afnetworking, guzzle, dart-http and
+penlight.

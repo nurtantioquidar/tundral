@@ -593,23 +593,35 @@ The graph is an undirected simple graph, so every unordered pair `{u, v}` keeps 
 Edges are folded in extraction order. For each new edge `N` on a pair that already holds an edge `E`:
 
 **Rank table.** This is inferred: it is the smallest total order consistent with every observed
-pair.
+pair (re-verified 2026-10-15 on extraction probes, see the shared-rules note below).
 
 | Rank | Relations |
 |---|---|
 | 1 | `references` |
 | 2 | `uses` |
 | 3 | `calls`, `case_of`, `dynamic_import` |
-| 4 | `contains`, `method`, `inherits`, `implements`, `rationale_for` |
+| 3.5 / 3.6 | `references_constant` / `uses_static_prop` (PHP, §19.2) |
+| 4 | `contains`, `method`, `inherits`, `implements`, `defines`, `embeds`, `rationale_for`, and every relation not listed |
+| 4.1 | `instantiates` (Verilog, §36.3: beats `contains` in either order; its place against `imports` is **Open**) |
 | 4.5 | `imports` |
-| 5 | `imports_from`, `indirect_call` |
-| 6 | `re_exports` |
+| 5 | `imports_from`, `indirect_call`, `re_exports` |
 
-**Same orientation** (`N.source == E.source`):
+**Orientation.** A pair's orientation is that of the **first** edge folded into it, not of the
+current survivor (**Rule**, Kotlin probe: `A -contains-> Z`, then `Z -implements-> A` wins the tie
+below, then `A -calls-> Z` still counts as same-orientation and lends `implements` its
+`context: "call"`; a `Z -calls-> A` instead leaves no trace). A self-loop always counts as
+opposite (below), so a repeated self-loop keeps the **first** (**Rule**: Zig's two `_` cases,
+Objective-C's `@property Impl *a` inside `Impl`).
+
+**Structural relations** are `contains`, `method`, `inherits`, `implements`, `defines` and
+`embeds` (**Rule**: Java/C#/Kotlin/Dart/Go probes; `extends`, `mixes_in` and the rest of rank 4 are
+**Open** and fold as non-structural).
+
+**Same orientation** (`N.source` is the first edge's source):
 
 - **If `rank(N) >= rank(E)`, N wins.**
-  - When `N` is `contains` or `method`, it replaces `E` whole (Java: an earlier
-    `references generic_arg` leaves no trace on `contains`).
+  - When `N` is structural, it replaces `E` whole (Java: an earlier `references generic_arg`
+    leaves no trace on `contains`; C#/Objective-C: a property `references` before `inherits`).
   - Otherwise `E = {**E, **N}`: `N`'s keys win, and keys only `E` had survive. Examples:
     `references(parameter_type)` + `uses` gives `uses` with `context: "parameter_type"`; an INFERRED
     0.85 `calls` followed by an EXTRACTED `calls` gives EXTRACTED with `confidence_score: 0.85`.
@@ -617,22 +629,29 @@ pair.
     the earlier `parameter_type`; duplicate Rust `method` edges from two `impl` blocks give the later
     line.
 - **Otherwise, E wins.**
-  - When `E` is `contains` or `method`, nothing is merged, except that a folded `calls` edge sets
-    `context: "call"` if `E` has no context. This is the source of the 935 `contains` links with
-    context `call`. A folded `references` edge leaves no trace (Go `store_store_go_store_store →
-    store_id` keeps `contains` with no context).
+  - When `E` is structural, nothing is merged, except that a folded `calls` edge gives `E` its own
+    `context` when `E` has none: `"call"` for most languages (the 935 `contains` links with context
+    `call`), none for a Zig call, which has none (quirk ZG3 is this rule). A folded `references`
+    edge leaves no trace (Go `store_store_go_store_store → store_id` keeps `contains` with no
+    context; Dart `file -defines-> X` beside `file -references-> X`, 88 dart-http links; C#
+    `class B : A { A a; }`; PHP `extends` + property; Go `embeds` + field).
   - Otherwise `E = {**N, **E}`.
 
 **Opposite orientation:**
 
 - There is **no key merging**. One edge survives whole, with its own direction.
 - If the ranks differ, the higher-ranked edge survives.
-- If the ranks are equal, the edge whose **source id is lexicographically smaller** survives,
-  regardless of extraction order (probe `rev1`: `x_alpha→x_zeta` and `x_beta→x_gamma` both survive).
-  **Except in rank 4** (`contains`, `method`, `inherits`, `implements`…), where the **larger**
-  source survives: a nested class that inherits its outer class keeps `contains` when its id sorts
-  first (`f_result -contains-> f_ok`, Java `r_r -contains-> r_o`) and `inherits` otherwise
-  (okhttp `…connectionevent_connectstart -inherits-> …connectionevent_connectionevent`).
+- If the ranks are equal and the relations are the **same**, the edge whose **source id is
+  lexicographically smaller** survives, regardless of extraction order (probe `rev1`:
+  `x_alpha→x_zeta` and `x_beta→x_gamma` both survive; Python `class Aa(Bb)` / `class Bb(Aa)` and
+  Java `implements` cycles keep `Aa→Bb` in either order; Julia's `file -defines-> module` beats
+  `module -defines-> file`, which was quirk JL1).
+- If the ranks are equal and the relations **differ**, the **larger** source survives (**Rule**): a
+  nested class that inherits its outer class keeps `contains` when its id sorts first
+  (`f_result -contains-> f_ok`, Java `r_r -contains-> r_o`) and `inherits` otherwise (okhttp
+  `…connectionevent_connectstart -inherits-> …connectionevent_connectionevent`; Java
+  `interface Zz { class Aa implements Zz {} }` keeps `contains`). The same rule explains the
+  package import cycles below, since `re_exports` ranks with `imports_from`.
 
 **Validation.** Replaying this model on raw edges reproduced 759 of 769 multi-edge pairs (all six
 language fixtures plus scratch `extract` runs of ripgrep and fastapi). The ten misses:
@@ -661,10 +680,11 @@ Worked examples (from goldens and probes):
 | TS `src_service -imports_from-> src_util` + `-dynamic_import->` | `imports_from` |
 | JS `lib_store -contains-> lib_store_helper` + file `-indirect_call->` (collection, `module.exports = { helper }`) | `indirect_call` |
 
-**Quirk (import cycle through a re-exporting package).** A package `__init__.py` that does
-`from .m import X` (`imports_from` + `re_exports` to `m`) while `m` does `from . import Y`
-(`imports_from` back to the package) keeps the edge whose source is lexicographically **larger**,
-against the tie rule above:
+**Import cycle through a re-exporting package (Rule, formerly a quirk).** A package
+`__init__.py` that does `from .m import X` (`imports_from` + `re_exports` to `m`) while `m` does
+`from . import Y` (`imports_from` back to the package) keeps the edge whose source is
+lexicographically **larger**: `re_exports` and `imports_from` share a rank and differ, so the
+opposite-orientation tie above applies.
 
 | Probe | Edges | Survivor |
 |---|---|---|
@@ -672,7 +692,14 @@ against the tie rule above:
 | `tri_z` | `pkg_init→pkg_z` (imports_from, re_exports); `pkg_z→pkg_init` (imports_from) | `pkg_z→pkg_init` `imports_from` |
 
 It occurs in 5 of 5 cases (4 in fastapi, 1 in the fixture: `pkg_service -imports_from-> pkg_init`).
-**Open.**
+
+**Still open.** Merges after the fold (C# partial types, quirk CS1; Swift extensions, quirk S4;
+stubs resolved to a definition after the fold: Java `class Aa { Bb b; } class Bb extends Aa {}`
+keeps `inherits` **with** `context: "field"`, the same with `Zz` in place of `Aa` without) follow
+dict-update semantics this model does not cover; Fortran's `defines` against reversed `calls`
+(§35.6) is folded by its extractor. Kubernetes keeps `context` (`return_type`,
+`parameter_type`) on 2,513 Go `method` links from a reversed reference, which no small Go probe
+reproduces.
 
 ### 8.3 Other edge transforms
 
@@ -2028,31 +2055,53 @@ instead of `tokens`.
 
 ### 17.4 Rankings
 
-All rankings run over the NetworkX graph in **build order** (nodes as extracted; each node's
-neighbours in the order their links were added), so ties keep that order. Under `cluster-only`
-the order is the loaded `graph.json` order, which is why `extract` and `cluster-only` can name
-different tenth god nodes for the same graph. Degree counts a self-loop twice.
+All rankings run over the NetworkX graph Graphify analyses: nodes in **build order** (or, under
+`cluster-only`, `graph.json` order), and links **added sorted by `(source id, target id)` as
+written** (**Rule**, 2026-10-15: of `G.edges()` over the links in file order, over first
+appearance, and over `(min, max)` pairs, only this reproduces the surprise order of all 19 corpus
+graphs and 33 fixtures under `cluster-only`). Each node's neighbours follow that sort, so ties in
+`G.edges()` order, betweenness and the bridge communities follow it. Degree counts a self-loop
+twice. Under `cluster-only` the node order is the loaded `graph.json` order, which is why `extract`
+and `cluster-only` can name different tenth god nodes for the same graph.
 
 - **Symbol**: `source_file` has a suffix (`PurePath.suffix`; `benchsuite/benchsuite` does not) and
   the node is not a file node (label is a `/`-suffix of `source_file`). Stubs and externals
   (empty `source_file`) are not symbols; concepts with a `source_file` (JSON `ref_*`) are.
-- **Hub candidate** = symbol, label not a method (`.x()`), label not in the noise list:
+- **Minor function**: a label ending in `()` with degree ≤ 1. Never a god node, surprise endpoint
+  or bridge (**Rule**, probes: `lonely()` with one link is skipped where a class with one link is
+  not; with two links it qualifies).
+- **Hub candidate** (surprise endpoints, bridges) = symbol, label not a method (`.x()`), not a
+  minor function. Concepts, rationale and noise labels **qualify** (**Rule**: Swift's
+  `extension String` is a surprise endpoint and a bridge, `net9.0` and XAML bindings in the
+  `csproj` fixture are surprise endpoints, `Foundation` and `Protocol` are bridges in alamofire and
+  okhttp, a rationale node is both).
+- **God nodes**: hub candidates whose label is not in the noise list:
   `Any AsyncMock Bool Callable ClassVar Color Combine Comparable Counter Data Date Dict Double Enum
   Equatable Error False Final Float Font Foundation Hashable Identifiable Int List Literal MagicMock
   Mock Optional OrderedDict Path Protocol Sendable Set String True Tuple Type URL UUID Union View abc
   bool bytearray bytes complex datetime defaultdict float int io json object os patch re sentinel
-  str sys typing` (case-sensitive; found by feeding ~593k candidate labels to `graphify god-nodes`).
-- **God nodes**: hub candidates that are also not generic JSON keys (in a `.json` file,
-  case-insensitively: `bundleddependencies bundledependencies data dependencies description
-  devdependencies end id items key name optionaldependencies peerdependencies properties start
-  title type value version`); top 10 by degree, stable.
-- **Surprising connections**: links in `G.edges()` order between two hub candidates (neither a
-  concept nor rationale) in different files. Score = confidence (EXTRACTED 1, INFERRED 2,
-  AMBIGUOUS 3) + 2 if the top-level directories differ (`main.py` → `""`) + 1 if the communities
-  differ + 1 if one end has degree ≤ 2 and the other ≥ 5. Stable sort by score, top 5. `why` joins,
-  in this order: `inferred connection - not explicitly stated in source`, `connects across
-  different repos/directories`, `bridges separate communities`, ``peripheral node `p` unexpectedly
-  reaches hub `h` ``; with none of them, `cross-file semantic connection`.
+  str sys typing` (case-sensitive; found by feeding ~593k candidate labels to `graphify god-nodes`)
+  and not a generic JSON key (in a `.json` file, case-insensitively: `bundleddependencies
+  bundledependencies data dependencies description devdependencies end id items key name
+  optionaldependencies peerdependencies properties start title type value version`); top 10 by
+  degree, stable. The wiki, `god-nodes` and MCP use the same rule.
+- **Surprising connections**: links in `G.edges()` order between two hub candidates in different
+  files, except `contains`, `method`, `imports` and `imports_from` links (**Rule**, one probe per
+  relation: every other relation, `re_exports` included, can be a surprise). Score = confidence
+  (EXTRACTED 1, INFERRED 2, AMBIGUOUS 3) + 2 if the top-level directories differ (`main.py` → `""`)
+  + 1 if the communities differ + 1 if one end has degree ≤ 2 and the other ≥ 5. Stable sort by
+  score, top 5; two links with the same labels and files are both listed (alamofire's two `.value`
+  properties; the C# rule of one surprise per label pair was a tie-order artefact). `why` joins, in
+  this order: `inferred connection - not explicitly stated in source`, `connects across different
+  repos/directories`, `bridges separate communities`, ``peripheral node `p` unexpectedly reaches
+  hub `h` ``; with none of them, `cross-file semantic connection`.
+- **Community-bridge fallback** (**Rule**): when no link qualifies as a surprise, links between
+  different communities, other than `contains`, `method`, `imports` and `imports_from`, whose
+  endpoints are neither file nodes, methods nor minor functions (stubs, rationale and files without
+  a suffix qualify), stably sorted by confidence (1/2/3, no other score), the first per unordered
+  pair of communities, at most 5. Each has `note: "Bridges community a → community b"` instead of
+  `why`, the communities of `G.edges()`'s `(u, v)`; the report adds `  _note_` after the files.
+  Seen in the `misc` fixture (`Area() → Compute()`, both in `pascal/Shapes.pas`).
 
 ### 17.5 `GRAPH_REPORT.md`
 
@@ -2080,14 +2129,27 @@ No trailing newline. Sections in order, each preceded by a blank line:
 
 Rules:
 
+- **Summary**: the `(S shown, T thin omitted)` clause only when `T > 0` (**Rule**).
 - **Words**: `len(text.split())` per file, thousands separators. Files/words count every file
-  `update` indexes (code and markdown; dijkstral counts the code files it indexes). An
-  `Unclassified: N file(s) not represented in the graph (top: …)` line appears when the walk saw
-  unsupported files; dijkstral does not write it.
+  `update` indexes (code and markdown; dijkstral counts the code files it indexes).
+- **Unclassified** (`update` only, **Rule**): `- Unclassified: N file(s) not represented in the
+  graph (top: .sbt 2, (none) 1)` after the verdict, when the walk saw files that are neither code
+  nor a document, paper, image or media file (`md mdx rst txt html yaml yml pdf png svg jpg jpeg gif
+  webp mp4 mov webm m4v mkv avi mp3 wav ogg m4a docx xlsx gdoc gsheet gslides`, probed one
+  extension at a time). Lockfiles (`package-lock.json Cargo.lock yarn.lock composer.lock
+  poetry.lock Gemfile.lock go.sum`; not `bun.lock`) and likely secrets (`.pem .key .crt .p12 .pfx
+  id_rsa .npmrc .netrc .env`) are not counted. The key is `PurePath.suffix` as written (`.SBT` and
+  `.sbt` are distinct, `a.tar.gz` is `.gz`, dotfiles are `(none)`); the three most common, ties
+  in sorted path order. **Open**: `.env.example` counts in Graphify but dijkstral's sensitive
+  filter never walks it.
 - **Percentages**: `round(100·count/links)`; the INFERRED clause only when there is one, with the
-  mean INFERRED `confidence_score` to two decimals.
+  mean INFERRED `confidence_score` as `repr(round(x, 2))` (`0.5`, `0.91`). A link without a score
+  counts **0.5** there although `graph.json` writes it as 0.55, so `update` and `cluster-only`
+  disagree on the same links (`misc`: 0.5 and 0.55).
 - **Listed members** (Community sections, hubs, thin): symbols, not rationale, not methods, not
   functions (`…()`) with degree ≤ 1; in id order, first 8 shown. *Thin* = fewer than 3 listed.
+- **Knowledge Gaps**: the section is omitted when there are no isolated nodes and no thin
+  communities (**Rule**).
 - **Isolated nodes**: symbols, not rationale, not functions, degree ≤ 1, unless their one link is a
   `contains`; build order; the explanation adds `or undocumented components` when
   the graph has `document` nodes; the total counts every node with degree ≤ 1.
@@ -2097,9 +2159,11 @@ Rules:
   start at its smallest path, at most 20.
 - **Suggested questions**, interleaved one per kind per round (bridge, verify, isolated, low
   cohesion), at most 7:
-  - *bridge_node*: the 5 hub candidates with the highest betweenness; those touching other
-    communities, at most 3. ``Why does `X` connect `<own>` to `<a>`, `<b>`?`` — other communities
-    in the iteration order of a CPython `set` of their ids. Why: `High betweenness centrality
+  - *bridge_node*: of the **3** hub candidates with the highest betweenness (stable), those
+    touching other communities (**Rule**: jq skips `RoffWalker`, ranked second with no other
+    community, and still asks about the third; Vue's `formatTitle()` was fourth). ``Why does `X`
+    connect `<own>` to `<a>`, `<b>`?`` — other communities in the iteration order of a CPython
+    `set` built from the neighbours in adjacency order (above). Why: `High betweenness centrality
     (0.304) - this node is a cross-community bridge.`
   - *verify_inferred*: god nodes among the first 5 with ≥ 2 INFERRED links. ``Are the n inferred
     relationships involving `X` (e.g. with `a` and `b`) actually correct?`` (first two INFERRED
@@ -2109,7 +2173,11 @@ Rules:
   - *low_cohesion*: communities with cohesion < 0.15 (a connected community needs 14+ members), in id
     order: ``Should `label` be split into smaller, more focused modules?`` / `Cohesion score
     <repr> - nodes in this community are weakly interconnected.`
-  - None at all: `_Not enough signal to generate questions. …_`.
+  - None at all: the report says `_Not enough signal to generate questions. This usually means the
+    corpus has no AMBIGUOUS edges, no bridge nodes, no INFERRED relationships, and all communities
+    are tightly cohesive. Add more files or run with --mode deep to extract richer edges._` and the
+    `cluster-only` sidecar lists `{"type": "no_signal", "question": null, "why": "<the same
+    sentence>"}` (**Rule**).
 
 ### 17.6 Goldens
 
@@ -2122,24 +2190,27 @@ need no normalisation.
 
 ### 17.7 Remaining differences
 
+Verified 2026-10-15: `dijkstral cluster-only` reproduces `graphify cluster-only --no-label`'s
+`graph.json`, analysis and report byte for byte on all 33 fixtures, and the graph and analysis on
+all 19 corpus graphs; the extract-time analysis and report match on every fixture whose graph
+matches, except the two below.
+
 - **Extraction**: wherever dijkstral's node or link set differs from Graphify's (the `ALLOWED`
   quirks, stage-1 parity), Leiden sees a different graph and community ids move globally
-  (NMI 0.83–0.95 on the corpus); god-node and surprise ties follow build order, which differs where
-  the cross-file pass emits links in another order (`go` fixture: `main() → Sum()` vs `Format()`).
-- **Surprise ties**: Graphify orders two equal-score surprises differently from `G.edges()` in the
-  `java` fixture and in fastapi. Not explained.
+  (NMI 0.83–0.95 on the corpus).
+- **Extract-time ties in node order**: equal-score surprises tie in build node order, which
+  differs where Graphify merges nodes: Objective-C headers and implementations (`objc`) and XAML
+  bindings (`csproj`, whose `update` graph is also larger than `extract`'s).
 - **verify_inferred**: on fastapi (`HTTPException`) and erpnext (`make_stock_entry()`,
   `make_sales_order()`) Graphify asks no question for a top-5 god node with ≥ 2 INFERRED links,
-  although it does for the same node in an ego graph. Not explained.
-- **Bridge community order**: the `set` iteration order matches for most bridges; for a few
-  (graphify `dispatch_command()`, erpnext `make_stock_entry()`) Graphify's insertion order differs
-  from sorted-neighbour order.
+  although it does for the same node in its ego graph, and stopping at the first god node without
+  any breaks ripgrep and guzzle. Not explained (**Open**).
 - **Import cycles**: the same cycles are found where Graphify lists all of them (fastapi, monet,
   erpnext, graphify); the order of equal-length cycles, and therefore which 20 are listed in
   ripgrep, excalidraw and Kubernetes, differs. Graphify's enumeration order is not
   `networkx.simple_cycles` over the arcs in link or `G.edges()` order (tested).
 - **Words** count the code files dijkstral indexes; `update` also counts markdown and other
-  documents, and lists unclassified files, which dijkstral does not.
+  documents.
 
 ---
 
@@ -2269,9 +2340,9 @@ Resolved: see §43 (project files, solutions, Razor, XAML).
   `unresolved_calls` with text fragments (`callee: "Key]"`); dijkstral records none.
 - **CS4** Some typed receivers are not recorded (`ReadOnlySpan<char> context` → `StartsWith`) or
   recorded with the element type (`HashSet<Type>` field → `Type`) in Graphify; not explained.
-- Surprises: Graphify lists one surprise per (source label, target label, source files); a C#
-  property named like a type (`User -defines-> Status` beside `-references-> Status`) appears once.
-  dijkstral applies the same rule (`analyze.rs`); the tie order among equal scores is §17.7's.
+- Surprises: an earlier reading had Graphify list one surprise per (source label, target label,
+  source files). It does not (alamofire lists two `.value → Result` links); the `csharp` fixture's
+  order is the sorted-link tie order of §17.4.
 ## 19. PHP
 
 Fixture `php/`; goldens `php.graphify.json` and `php.clustered.graphify.json` (50 nodes, 71
@@ -2373,8 +2444,8 @@ pairwise from `rack-protection/spec/support/x.rb`: `test/` beats `rack-protectio
 
 ### 19.6 Quirks and open questions (PHP)
 
-- **Quirk.** A class `extends`/`implements` link and a property `field` reference on the same pair
-  keep no context in Graphify; dijkstral's fold keeps `field` (guzzle: 2 links).
+- **Rule (fold).** A class `extends`/`implements` link and a property `field` reference on the
+  same pair keep no context: `inherits` and `implements` are structural (§8.2).
 - **Open.** `use GuzzleHttp\Server\Server;` inside a braced namespace becomes the external
   `server` when a later namespace block of the file defines a function (guzzle
   `tests/bootstrap.php`); dijkstral keeps the class import.
@@ -2806,8 +2877,9 @@ parameters, `for`/`if let`/`guard let` bindings and top-level statements are not
   `contains` + a later `references field` on the same pair gives `contains` with
   `context: "field"`, and in the opposite orientation `implements` + `references field` keeps
   `implements` with `context: "field"`; a `calls` edge folded over a `references return_type` loses
-  `swift_plain_return`. dijkstral's fold (§8.2) merges no keys into a surviving `contains`/`method`
-  and none across orientations (**Quirk S4**; 61 link fields on Alamofire).
+  `swift_plain_return`. dijkstral's fold (§8.2) merges no keys into a surviving structural link
+  and none across orientations (**Quirk S4**, merges of extensions after the fold; 104 link
+  fields on Alamofire after the shared fold rules of 2026-10-15).
 - Opposite-orientation ties compare Graphify's internal ids, where a file node is
   `fileid_swift`: for `extension Alamofire.HTTPHeader: Swift.Decodable` the extension's
   `implements → file` beats the file's `contains` (dijkstral keeps `contains`; 4 links).
@@ -2843,14 +2915,10 @@ Graphify's cache for all 134 files.
 
 ### 23.9 Analysis
 
-The god-node noise labels (§17.4) keep `String` out of the god nodes, but Graphify still lets an
-`extension String` symbol be a surprise endpoint and a bridge (fixture `swift`, `cluster-only`).
-dijkstral's analysis applies the noise labels to all three, so `dijkstral cluster-only` on the
-Swift golden differs in surprises and bridge questions (verified by making `String` eligible: only
-the god list then differs). The test `swift_cluster_only_matches_graphify` is ignored until the
-analysis distinguishes the two lists. Equal-score surprise ties also follow insertion order, where
-Graphify inserts module nodes at their first import and shared stubs at first use; dijkstral adds
-both after all files.
+The god-node noise labels (§17.4) keep `String` out of the god nodes only: an `extension String`
+symbol is a surprise endpoint and a bridge (fixture `swift`, `cluster-only`). The shared analysis
+applies this (**Rule**, §17.4), and the fixture's extract-time and `cluster-only` sidecars match
+byte for byte.
 ## 24. C
 
 Fixture `tests/fixtures/c/`; goldens `c.graphify.json`, `c.clustered.graphify.json` and the report
@@ -3287,8 +3355,8 @@ self-calls stay. No denylist, no dedup (the build keeps the last line).
 
 - **JL1** Operator methods (`Base.:+`, `function +`) take the file's id and merge into the file
   node; calls to them link to the file. Graphify keeps `file -defines-> module` over the reverse
-  `module -defines-> file` (smaller source on an equal-rank tie), while dijkstral's fold keeps the
-  larger source in that tier (§8.2): a shared-rule difference, not observed outside probes.
+  `module -defines-> file`: of two links of one relation the smaller source survives (§8.2), as
+  dijkstral's fold now does.
 - **JL2** Calls are bound by synthesized id, so a call named like another file's id slug would
   link there; cross-file calls are lost.
 
@@ -3359,13 +3427,11 @@ collide unless the names do.
   options-API method binds to the flattened `other()`), and Graphify emits uninitialised
   `export let x` late without a `contains` link (dijkstral links it).
 
-### 38.6 Analysis (Open)
+### 38.6 Analysis
 
-`dijkstral cluster-only` on the Vue golden asks one more bridge question than Graphify:
-`formatTitle()`, ranked fourth by betweenness, whose only neighbour in another community is its
-own file node. Graphify's two bridges are consistent with not counting same-file neighbours when
-listing the communities a bridge connects; unverified on other graphs, so `report.rs` is unchanged
-and `vue_cluster_only_matches_graphify` is ignored.
+`dijkstral cluster-only` once asked one more bridge question than Graphify on the Vue golden
+(`formatTitle()`, ranked fourth by betweenness). Bridges come from the top **three** candidates
+(§17.5), not five; same-file neighbours count as usual. The sidecars now match byte for byte.
 
 ## 39. Svelte (2026-10-15)
 
@@ -3564,7 +3630,7 @@ only for a stub without declarations. Implementation: `crates/core/src/{extract,
 
 - The non-exhaustive marker `_` slugs to nothing, so it is a `case_of` self-loop on the enum.
   **Rule (build).** When a node has two such self-loops (two same-named enums with `_` in one
-  file), the build keeps the **first** (§33.6).
+  file), the build keeps the **first**: a repeated self-loop always does (§8.2).
 
 ### 33.3 Imports
 
@@ -3632,9 +3698,9 @@ only for a stub without declarations. Implementation: `crates/core/src/{extract,
   repository's `sample.zig` keeps `imports_from std` at L1 where a Zig-only build has L2.
   Not reproduced (a build-wide rule, not Zig's).
 - **ZG3** A context-less in-file `calls` folded into a `method` link on the same pair leaves the
-  link without context (Graphify copies the call's context, which Zig calls lack); dijkstral's
-  fold writes `call`. Seen once in zig-clap (`fn help` sharing the id of `Help`, calling
-  `Help.description`); kept out of the fixture.
+  link without context: a structural link takes the call's own context (§8.2), which Zig calls
+  lack. Reproduced since 2026-10-15. Seen once in zig-clap (`fn help` sharing the id of `Help`,
+  calling `Help.description`).
 - **ZG4** In-file binding by first definition ignores receivers and the caller's own container;
   imports never bind member calls.
 
@@ -3708,12 +3774,13 @@ file), else to a per-file stub. Stubs then bind to the only Objective-C class, p
 that name in the repository (protocols by `P`, not `<P>`); an ambiguous name stays a stub (two
 classes named `Foo`, a class and a category elsewhere).
 
-Fold differences from §8.2 (reproduced in the extractor and resolver):
+Fold behaviour once taken for Objective-C differences, now the shared rules of §8.2:
 
 - A property `references` on a pair that also has `inherits` or `implements` (`@interface A : B`
-  with `@property B *b`) leaves no `context` on the survivor, in either order.
-- A repeated self-loop of one relation keeps the first (`@property Impl *a` then
-  `NSArray<Impl *> *b` inside `Impl`).
+  with `@property B *b`) leaves no `context` on the survivor, in either order (both are
+  structural).
+- A repeated self-loop keeps the first (`@property Impl *a` then `NSArray<Impl *> *b` inside
+  `Impl`).
 
 ### 34.4 Calls inside the file
 
@@ -3815,10 +3882,9 @@ nodes 1137/1137 and links 2494/2494 (recall and precision 100%), one link field 
 Raw, without stripping: 51 category nodes and their links differ by id only. Two Graphify runs on
 fresh copies are identical, so the reference is stable. The `objc` golden matches at 1.0 with exact
 communities; its extract-time surprise order is not compared (§17.7). Two analysis differences
-surfaced on Graphify's own graphs and are not Objective-C extraction: Graphify does not count a
-merged node's `definition_file` pair (`Shape` and a method defined only in `Shape.m`) as a
-cross-file surprise, and it stops bridge questions at the first top-5 candidate without
-cross-community neighbours.
+seen on Graphify's own graphs turned out to be shared rules (§17.4–§17.5): surprise ties follow
+the sorted-link adjacency (no `definition_file` rule is needed), and bridges come from the top
+three betweenness candidates.
 
 ### 34.10 Open (Objective-C)
 
@@ -3934,8 +4000,9 @@ source ignores a reversed `references`.
 | `aa -defines-> bb`; `aa -calls-> bb` | `aa -defines-> bb`, context `call` (as §8.2) |
 
 `method` against a reversed `calls` follows §8.2 (the `method` survives whatever the ids).
-dijkstral's generic fold ranks `defines` like `contains`, so `extract/fortran.rs` folds each such
-in-file pair itself and emits one edge; the reproduction covers an internal procedure calling its
+The shared fold (§8.2) ranks `defines` with `contains` and treats it as structural, which covers
+the same-direction rows but not a reversed `calls` winning on a larger source (rows 1–2), so
+`extract/fortran.rs` still folds each such in-file pair itself and emits one edge; the reproduction covers an internal procedure calling its
 host and a procedure calling or referencing its module.
 
 ### 35.7 Quirks (Fortran)
@@ -4029,8 +4096,7 @@ nothing. Context is never set.
   the fold). A module instantiating itself gives a self-loop.
 - **Fold rank.** `instantiates` outranks `contains`: a module that instantiates `m_x` and contains
   a function `x` whose id is also `file_m_x` keeps `instantiates` whatever the order (probe).
-  `graph.rs` gives unknown relations rank 4, so dijkstral keeps the later edge here; the rank is
-  a one-line addition there.
+  `graph.rs` ranks it 41, just above the structural tier (§8.2).
 
 ### 36.4 Instantiation targets
 
@@ -4320,10 +4386,9 @@ fixture's communities are unaffected).
   dijkstral creates C# stubs in the cross-file pass and keeps `widget`.
 - **PJ3** An `x:Class` class that inherits its own XAML root's tag through §43.5 gets the
   root's `x_class` context merged into its `inherits` link in Graphify.
-- **PJ4** Surprises: Graphify lists project-file concept nodes (`net9.0`, `Microsoft.NET.Sdk`,
-  XAML bindings) as surprise endpoints; the shared analysis (`analyze.rs`) excludes concept nodes,
-  so the fixture's report and analysis goldens are compared by shape (graph, communities, order
-  and every other analysis key match).
+- **PJ4** (resolved) Surprises: Graphify lists project-file concept nodes (`net9.0`,
+  `Microsoft.NET.Sdk`, XAML bindings) as surprise endpoints and never `imports` links; the shared
+  analysis does the same (§17.4), and the fixture's `cluster-only` sidecars match byte for byte.
 
 ---
 
@@ -4423,8 +4488,8 @@ elements produce nothing. `.dmi`: the PNG `tEXt` `Description` chunk's `state = 
   rename Graphify applies to a `.pas` file node when an `.lpk` names its unit from another stem
   (`c.pas` → `d_sub_c_pas_d_sub_c`).
 - Surprises: with no cross-file candidate Graphify falls back to a community bridge between Pascal
-  routines (`Area()` → `Compute()`); the shared analysis lists none, so the fixture's analysis and
-  report goldens are compared by shape (every other key matches).
+  routines (`Area()` → `Compute()`); the shared analysis does the same (§17.4), and the fixture's
+  sidecars match byte for byte.
 
 ### 44.8 Discovery after §43–§44
 
@@ -4605,10 +4670,10 @@ differences remain (two reference locations, quirk DA2; one `context`, below). C
 (`defines` 99.9/99.7, `imports`, `exports`, `includes`, `contains`, `extends`, `mixes_in` 100%,
 `inherits` 100/98.9, `implements` 100/91.5, `references` 97.2/95.2), NMI 0.964.
 
-- **`defines` collapse (shared rule).** When a file both defines `X` and references the type `X`
-  (bound to that definition), Graphify keeps the `defines` link without the reference's context,
-  as for `contains`/`method`; `graph.rs` merges the context in (88 corpus links, one fixture
-  link). Treating `defines` as structural in the fold would match.
+- **`defines` collapse (shared rule, reproduced).** When a file both defines `X` and references
+  the type `X` (bound to that definition), Graphify keeps the `defines` link without the
+  reference's context: `defines` is structural (§8.2). dart-http's 88 context differences are
+  gone.
 - Same-file preference in type binding (Graphify binds some types to a same-file definition when
   several files define the name), the `bloc_lookup` references (`context.read<T>()`, 12 corpus
   edges), a few parameter-list "definitions" and the first-wins label of shared nodes are not
@@ -4685,6 +4750,6 @@ Fixture: 100% of nodes and links, communities and node order exact, report golde
 Corpus penlight (`--ext .lua`, frozen reference): 905/905 nodes, 1800/1800 links, communities and
 array order identical. Graphify's `sample.luau`: 100%.
 
-- **Open (shared loader).** The `graph.json` loader behind `dijkstral cluster-only` reads only
-  `L<n>` locations, so re-clustering Graphify's own Lua graph sorts the bare-number import links
-  by an empty location; `golden_lua.rs` checks everything else the cluster-only check covers.
+- **Shared loader.** The `graph.json` loader behind `dijkstral cluster-only` keeps any location
+  that is not `L<n>` verbatim (the bare `"3"` of quirk LU1), so re-clustering Graphify's own Lua
+  graph reproduces its link order.
