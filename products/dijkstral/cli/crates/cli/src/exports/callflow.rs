@@ -76,11 +76,18 @@ fn resolve(a: &CallflowArgs) -> Result<PathBuf> {
 }
 
 /// `YYYY-MM-DD HH:MM UTC` for now.
+/// The page's "Generated:" time (UTC, minute resolution). `SOURCE_DATE_EPOCH` pins it, like the
+/// report's date, so a page can be rebuilt byte for byte.
 fn utc_stamp() -> String {
-    let secs = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs() as i64)
-        .unwrap_or(0);
+    let secs = std::env::var("SOURCE_DATE_EPOCH")
+        .ok()
+        .and_then(|v| v.trim().parse::<i64>().ok())
+        .unwrap_or_else(|| {
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .map(|d| d.as_secs() as i64)
+                .unwrap_or(0)
+        });
     let (days, rem) = (secs.div_euclid(86_400), secs.rem_euclid(86_400));
     // Civil date from days since 1970-01-01 (Howard Hinnant's algorithm).
     let z = days + 719_468;
