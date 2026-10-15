@@ -4,12 +4,10 @@ Every command and flag of `graphify --help` (PyPI `graphifyy` 0.9.86), plus the 
 subcommands print (`install --help`, `save-result --help`) and the environment variables the help
 names, mapped to dijkstral. Stage 6's exit criterion is that this list has no gap except the
 deferred rows. Spec references: `fmt` = `graphify-format.md`, `sem` = `graphify-semantic.md`,
-`qry` = `graphify-query.md`, `exp` = `graphify-exports.md`, `inp` = `graphify-inputs.md`.
+`qry` = `graphify-query.md`, `exp` = `graphify-exports.md`, `inp` = `graphify-inputs.md`,
+`git` = `graphify-git.md`, `mr` = `graphify-multirepo.md`, `mem` = `graphify-memory.md`.
 
-Status: **done** (implemented and specified); **D** (this track: inputs, providers and small
-gaps, done in the same change as this file); **A** (track A: git hooks, merge driver, watch);
-**B** (track B: merge-graphs, global graph, clone, `extract --global/--as`); **C** (track C:
-save-result, reflect, prs, diagnose); **deferred** (by decision, see
+Status: **done** (implemented and specified); **deferred** (by decision, see
 `../../DIJKSTRAL_DESIGN.md`, "Deferred: assistant installs beyond Claude Code and Codex").
 
 dijkstral's own names: outputs go to `dijkstral-out/` (Graphify's `graphify-out/graph.json` is
@@ -24,38 +22,38 @@ where Graphify sometimes ignores unknown flags.
 | `extract --code-only` | same | done | fmt §1 |
 | `extract --no-cluster` | same (clustered shape without `community`) | done | fmt §2.4 |
 | `extract --backend B` (gemini, kimi, claude, openai, deepseek, ollama, bedrock, claude-cli, azure) | `--backend` codex, gemini, kimi, anthropic/claude, openai (also Ollama, llama.cpp, vLLM, LM Studio via `OPENAI_BASE_URL`), deepseek, replay, handoff | done (bedrock, azure, claude-cli: not offered; reach them through an OpenAI-compatible provider) | sem §4, §10 |
-| `extract --backend <custom provider>` | same | D | inp §6 |
+| `extract --backend <custom provider>` | same | done | inp §6 |
 | `extract --model M` | same | done | sem §4 |
 | `extract --mode deep` | same | done | sem §9 |
-| `extract --force`, `GRAPHIFY_FORCE=1` | `--force`, `GRAPHIFY_FORCE` | done / D (env) | sem §9.2, inp §5 W4 |
-| `extract --max-workers N` | `--max-workers` (alias of `--threads`) | D | inp §5 W2 |
+| `extract --force`, `GRAPHIFY_FORCE=1` | `--force`, `GRAPHIFY_FORCE` | done | sem §9.2, inp §5 W4 |
+| `extract --max-workers N` | `--max-workers` (alias of `--threads`) | done | inp §5 W2 |
 | `extract --token-budget N` | same | done | sem §4.2 |
 | `extract --max-concurrency N` | same | done | sem §4.4 |
 | `extract --api-timeout S` | same | done | sem §4.4 |
-| `extract --out DIR`, `--output DIR` | `--out`, alias `--output` | done / D (alias) | inp §5 W3 |
-| `extract --google-workspace` | same (`gws`, or `DIJKSTRAL_GWS`) | D | inp §4 |
-| `extract --no-gitignore` | same | D | inp §5 W1 |
-| `extract --postgres DSN` | same | D | inp §3 |
-| `extract --cargo` | same | D | inp §2 |
-| `extract --global`, `--as <tag>` | | B | |
+| `extract --out DIR`, `--output DIR` | `--out`, alias `--output` | done | inp §5 W3 |
+| `extract --google-workspace` | same (`gws`, or `DIJKSTRAL_GWS`) | done | inp §4 |
+| `extract --no-gitignore` | same | done | inp §5 W1 |
+| `extract --postgres DSN` | same | done | inp §3 |
+| `extract --cargo` | same | done | inp §2 |
+| `extract --global`, `--as <tag>` | same (also on `update`) | done | mr §4 |
 | `OPENAI_BASE_URL`, `OPENAI_MODEL`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL` | same (and `*_MODEL`/`*_BASE_URL` for the other backends) | done | sem §4 |
 | `update <path>` | same | done | sem §3 |
-| `update --force` (`GRAPHIFY_FORCE=1`) | accepted; dijkstral has no shrink guard to override | D | inp §5 W4 |
+| `update --force` (`GRAPHIFY_FORCE=1`) | accepted; dijkstral has no shrink guard to override | done | inp §5 W4 |
 | `update --no-cluster` | same | done | fmt §2.1 |
 | `cluster-only <path>`, `--graph` | same | done | fmt §17 |
-| `cluster-only --no-label` | same (the default) | D | inp §7.1 |
-| `cluster-only --no-viz` | accepted (cluster-only writes no `graph.html`) | D | inp §7.1 |
-| `cluster-only --backend`, `--model`, `--max-concurrency`, `--batch-size` | same (with `--backend`: `label --missing-only`) | D | inp §7.1, §8 |
+| `cluster-only --no-label` | same (the default) | done | inp §7.1 |
+| `cluster-only --no-viz` | accepted (cluster-only writes no `graph.html`) | done | inp §7.1 |
+| `cluster-only --backend`, `--model`, `--max-concurrency`, `--batch-size` | same (with `--backend`: `label --missing-only`) | done | inp §7.1, §8 |
 | `label <path>`, `--backend`, `--model`, `--max-concurrency`, `--batch-size` | same | done | sem §10 |
-| `label --missing-only` | same | D | inp §7.2 |
+| `label --missing-only` | same | done | inp §7.2 |
 | `add <url>`, `--author`, `--contributor`, `--dir` | same | done | sem §11 |
 | `check-update <path>` | same | done | sem §9.3 |
-| `watch <path>` | | A | |
-| `provider` (usage) | same | D | inp §6.1 R2 |
-| `provider list` | same | D | inp §6.1 |
-| `provider show <name>` | same | D | inp §6.1 |
-| `provider add <name> --base-url --default-model --env-key [--pricing-input --pricing-output]` | same | D | inp §6.1 |
-| `provider remove <name>` | same | D | inp §6.1 |
+| `watch <path>` | `watch [PATH] [--debounce SECS]` (builds once at start) | done | git §5 |
+| `provider` (usage) | same | done | inp §6.1 R2 |
+| `provider list` | same | done | inp §6.1 |
+| `provider show <name>` | same | done | inp §6.1 |
+| `provider add <name> --base-url --default-model --env-key [--pricing-input --pricing-output]` | same | done | inp §6.1 |
+| `provider remove <name>` | same | done | inp §6.1 |
 
 ## Query
 
@@ -89,16 +87,16 @@ where Graphify sometimes ignores unknown flags.
 
 | Graphify | dijkstral | Status | Spec |
 |---|---|---|---|
-| `merge-graphs <g1> <g2> …`, `--out`, `--previous` | | B | |
-| `global add <graph.json>`, `--as` | | B | |
-| `global remove <tag>`, `global list`, `global path` | | B | |
-| `clone <github-url>`, `--branch`, `--out` | | B | |
-| `merge-driver <base> <current> <other>` | | A | |
-| `hook install`, `hook uninstall`, `hook status` | | A | |
-| `save-result`, `--question`, `--answer`, `--answer-file`, `--type`, `--nodes`, `--outcome`, `--correction`, `--memory-dir` | | C | |
-| `reflect`, `--memory-dir`, `--out`, `--graph`, `--analysis`, `--labels`, `--half-life-days`, `--min-corroboration` | | C | |
-| `prs` | | C | |
-| `diagnose multigraph`, `--graph`, `--json`, `--max-examples`, `--directed`, `--undirected`, `--extract-path` | | C | |
+| `merge-graphs <g1> <g2> …`, `--out`, `--previous` | same (default out `dijkstral-out/merged-graph.json`) | done | mr §3 |
+| `global add <graph.json>`, `--as` | same (`$DIJKSTRAL_HOME/global-graph.json`) | done | mr §5.3 |
+| `global remove <tag>`, `global list`, `global path` | same | done | mr §5.4–§5.5 |
+| `clone <github-url>`, `--branch`, `--out` | same (`$DIJKSTRAL_HOME/repos/<owner>/<repo>`) | done | mr §6 |
+| `merge-driver <base> <current> <other>` | same (three-way: deletions and one-sided edits stand) | done | git §4 |
+| `hook install`, `hook uninstall`, `hook status` | same (background `update`; never fails a commit) | done | git §2–§3 |
+| `save-result`, `--question`, `--answer`, `--answer-file`, `--type`, `--nodes`, `--outcome`, `--correction`, `--memory-dir` | same (`dijkstral-out/memory/`) | done | mem §2–§3 |
+| `reflect`, `--memory-dir`, `--out`, `--graph`, `--analysis`, `--labels`, `--half-life-days`, `--min-corroboration` | same (also `--if-stale`) | done | mem §4 |
+| `prs` | `prs [NUMBER] [--base] [--repo] [--graph]`, read-only through `gh`; MCP `list_prs`, `get_pr_impact`, `triage_prs` | done | mem §5 |
+| `diagnose multigraph`, `--graph`, `--json`, `--max-examples`, `--directed`, `--undirected`, `--extract-path` | same | done | mem §6 |
 
 ## Assistant integrations
 
@@ -124,8 +122,6 @@ where Graphify sometimes ignores unknown flags.
 
 ## Summary
 
-76 rows (a row may cover several flags of one command): done 43; D 16, plus 2 rows "done / D"
-(the flag existed, this track added its alias or environment variable); A 3; B 5; C 4; deferred
-3 (the 17 per-assistant `install`/`uninstall` commands, the other `install --platform` targets,
-and `uninstall --purge`). When tracks A, B and C land, the deferred rows are the only gap, as
-`DIJKSTRAL_DESIGN.md` records.
+76 rows (a row may cover several flags of one command): done 73; deferred 3 (the 17
+per-assistant `install`/`uninstall` commands, the other `install --platform` targets, and
+`uninstall --purge`). The deferred rows are the only gap, as `DIJKSTRAL_DESIGN.md` records.
