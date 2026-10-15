@@ -9,12 +9,15 @@ publish.workspace = true
 [dependencies]
 anyhow.workspace = true
 clap.workspace = true
+ctrlc.workspace = true
 dijkstral-agents.workspace = true
 dijkstral-core.workspace = true
 dijkstral-export.workspace = true
+dijkstral-git.workspace = true
 dijkstral-semantic.workspace = true
 dijkstral-serve.workspace = true
 mimalloc.workspace = true
+notify.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true

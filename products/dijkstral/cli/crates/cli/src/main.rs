@@ -1,10 +1,12 @@
 mod agents_cmd;
 mod export_cmd;
 mod exports;
+mod git_cmd;
 mod mcp_cmd;
 mod query_cmds;
 mod semantic_build;
 mod semantic_cmd;
+mod watch_cmd;
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -60,6 +62,14 @@ enum Command {
     Semantic(semantic_cmd::SemanticArgs),
     /// Report non-code changes the semantic pass has not seen (silent when current).
     CheckUpdate(semantic_cmd::CheckUpdateArgs),
+    /// Git hooks that rebuild the graph after commits and branch switches (in the background),
+    /// plus the graph.json merge driver: install, uninstall or status.
+    Hook(git_cmd::HookArgs),
+    /// Git merge driver for graph.json: three-way merge of nodes, links and hyperedges (`hook
+    /// install` registers it).
+    MergeDriver(git_cmd::MergeDriverArgs),
+    /// Watch a directory and run `update` whenever its code or documents change (Ctrl-C stops).
+    Watch(watch_cmd::WatchArgs),
 }
 
 #[derive(Args, Debug)]
@@ -117,6 +127,9 @@ fn main() -> ExitCode {
         Command::Tree(args) => return exports::tree::run_cmd(args),
         Command::Semantic(args) => return semantic_cmd::run_semantic(args),
         Command::CheckUpdate(args) => return semantic_cmd::run_check_update(args),
+        Command::Hook(args) => return git_cmd::run_hook(args),
+        Command::MergeDriver(args) => return git_cmd::run_merge_driver(args),
+        Command::Watch(args) => return watch_cmd::run(args),
         Command::ClusterOnly(args) => {
             return match cluster_only_files(&args.path, args.graph.as_deref()) {
                 Ok((dir, communities)) => {

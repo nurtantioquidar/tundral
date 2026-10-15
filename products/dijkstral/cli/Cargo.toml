@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 # One crate per concern; see ../DIJKSTRAL_DESIGN.md and AGENTS.md.
-members = ["crates/core", "crates/serve", "crates/agents", "crates/export", "crates/semantic", "crates/cli"]
+members = ["crates/core", "crates/serve", "crates/agents", "crates/export", "crates/semantic", "crates/git", "crates/cli"]
 
 [workspace.package]
 version = "0.1.0"
@@ -15,15 +15,20 @@ dijkstral-semantic = { path = "crates/semantic" }
 dijkstral-serve = { path = "crates/serve" }
 dijkstral-agents = { path = "crates/agents" }
 dijkstral-export = { path = "crates/export" }
+dijkstral-git = { path = "crates/git" }
 anyhow = "1"
 base64 = "0.22"
 blake3 = "1"
 bincode = "1.3"
 clap = { version = "4", features = ["derive"] }
+# `watch`: Ctrl-C (and SIGTERM) end it cleanly between rebuilds.
+ctrlc = { version = "3.5", features = ["termination"] }
 ignore = "0.4"
 memchr = "2"
 memmap2 = "0.9"
 mimalloc = { version = "0.1", default-features = false }
+# `watch`: native file events (FSEvents, inotify, ReadDirectoryChangesW).
+notify = "8.2"
 # Office files are zip archives of XML parts (.docx/.xlsx → Markdown for the semantic pass); inflate
 # only, through flate2's pure-Rust backend.
 zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
