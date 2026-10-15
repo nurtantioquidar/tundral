@@ -17,7 +17,7 @@ use crate::facts::{Attr, FileFacts};
 use crate::graph::Graph;
 use crate::index;
 use crate::report::{self, Corpus};
-use crate::resolve::resolve;
+use crate::resolve::{resolve_with, Index, Pass, Resolution, View};
 
 pub const OUT_DIR: &str = "dijkstral-out";
 
@@ -80,7 +80,48 @@ pub trait Exporter: Sync {
     fn write(&self, built: &Built) -> Result<()>;
 }
 
-/// What a [`Semantic`] stage did.
+/// Walked non-code files a build adds to the graph next to the code: `update`'s LLM-free markdown
+/// structure (`dijkstral_semantic::markdown`, `docs/graphify-semantic.md` §3), and `extract`'s
+/// semantic pass (`dijkstral_semantic::pass`, §7), which adds model-read nodes to the resolved
+/// graph through [`Documents::augment`]. Accepted files are read on every build (their contents
+/// enter the build digest) and are not cached here.
+pub trait Documents: Sync {
+    /// Changes whenever identical files could produce a different graph.
+    fn fingerprint(&self) -> String;
+    /// Whether a walked non-code file (`Discovery::documents`) is read by the pass: its pages and
+    /// the documents whose words the report counts.
+    fn accepts(&self, rel: &str) -> bool;
+    /// Pages and words of the accepted files (given in path order).
+    fn extract(&self, root: &Path, files: &[(SourceFile, Vec<u8>)]) -> DocumentFacts;
+    /// Edges that need the whole renamed graph, after the language passes'.
+    fn resolve(&self, views: &[View], index: &Index) -> Resolution;
+    /// Bypass the unchanged-build check (`extract --force`).
+    fn force(&self) -> bool {
+        false
+    }
+    /// After resolution, before clustering: add to the resolved graph (the semantic pass's
+    /// merge). Its usage reaches the analysis sidecar and the report.
+    fn augment(
+        &self,
+        _root: &Path,
+        _out_dir: &Path,
+        _graph: &mut Graph,
+    ) -> Result<Option<SemanticReport>> {
+        Ok(None)
+    }
+}
+
+/// What a [`Documents`] pass extracted.
+#[derive(Debug, Default)]
+pub struct DocumentFacts {
+    /// `(index into the files, facts)` in path order: pages follow every code file in the graph,
+    /// share collision renaming and file labels with it, and count as files in the report.
+    pub pages: Vec<(usize, FileFacts)>,
+    /// Words of the other accepted files, added to the report's corpus total only.
+    pub words: u64,
+}
+
+/// What [`Documents::augment`] did.
 #[derive(Debug, Default, Clone)]
 pub struct SemanticReport {
     /// Model usage of this run (0/0 when every file came from the cache).
@@ -88,24 +129,11 @@ pub struct SemanticReport {
     pub output_tokens: u64,
     /// Requests sent to the model.
     pub calls: usize,
-    /// Nodes and links the stage added to the code graph.
+    /// Nodes and links added to the code graph.
     pub nodes_added: usize,
     pub edges_added: usize,
     /// Lines for the user (files sent, cache hits, dropped items, warnings).
     pub notes: Vec<String>,
-}
-
-/// A stage that adds non-code nodes to the resolved code graph before clustering: the semantic
-/// pass of `crates/semantic`, which this crate cannot depend on.
-pub trait Semantic: Sync {
-    /// Everything besides the code files that determines the stage's output (its input files,
-    /// backend, model, mode, prompt version), folded into the unchanged-build digest.
-    fn fingerprint(&self, root: &Path, out_dir: &Path) -> Result<String>;
-    /// Bypass the unchanged-build skip (`--force`).
-    fn force(&self) -> bool {
-        false
-    }
-    fn apply(&self, root: &Path, out_dir: &Path, graph: &mut Graph) -> Result<SemanticReport>;
 }
 
 pub fn build(opts: &BuildOptions) -> Result<BuildReport> {
@@ -114,26 +142,27 @@ pub fn build(opts: &BuildOptions) -> Result<BuildReport> {
 
 /// [`build`], then `exporters` in order, before the build is recorded as current.
 pub fn build_with(opts: &BuildOptions, exporters: &[&dyn Exporter]) -> Result<BuildReport> {
-    build_semantic(opts, exporters, None)
+    build_full(opts, exporters, None)
 }
 
-/// [`build_with`] with a [`Semantic`] stage between resolution and clustering.
-pub fn build_semantic(
+/// [`build_with`], adding `documents` to the graph (`update`'s markdown, `extract`'s semantic
+/// pass).
+pub fn build_full(
     opts: &BuildOptions,
     exporters: &[&dyn Exporter],
-    semantic: Option<&dyn Semantic>,
+    documents: Option<&dyn Documents>,
 ) -> Result<BuildReport> {
     let pool = rayon::ThreadPoolBuilder::new()
         .num_threads(opts.threads.max(1))
         .build()
         .context("building thread pool")?;
-    pool.install(|| build_inner(opts, exporters, semantic))
+    pool.install(|| build_inner(opts, exporters, documents))
 }
 
 fn build_inner(
     opts: &BuildOptions,
     exporters: &[&dyn Exporter],
-    semantic: Option<&dyn Semantic>,
+    documents: Option<&dyn Documents>,
 ) -> Result<BuildReport> {
     let mut report = BuildReport::default();
     let mut clock = Instant::now();
@@ -159,6 +188,40 @@ fn build_inner(
     report.files = files.len();
     phase(&mut report, "discover");
 
+    // Documents are read now: their contents decide whether the build is current.
+    let docs: Vec<(SourceFile, Vec<u8>)> = documents.map_or_else(Vec::new, |d| {
+        found
+            .documents
+            .par_iter()
+            .filter(|rel| d.accepts(rel))
+            .filter_map(|rel| {
+                let abs = root.join(rel);
+                let content = fs::read(&abs).ok()?;
+                let lang = crate::lang::Lang::Markdown;
+                Some((
+                    SourceFile {
+                        rel: rel.clone(),
+                        abs,
+                        lang,
+                    },
+                    content,
+                ))
+            })
+            .collect()
+    });
+    let docs_digest = documents.map(|d| {
+        let mut h = blake3::Hasher::new();
+        h.update(d.fingerprint().as_bytes());
+        for (f, content) in &docs {
+            h.update(&[0]);
+            h.update(f.rel.as_bytes());
+            h.update(&[0]);
+            h.update(blake3::hash(content).as_bytes());
+        }
+        h.finalize().to_hex().to_string()
+    });
+    report.files += docs.len();
+
     let mut cache = Cache::open(&out_dir.join("cache.redb"))?;
     let probes: Vec<Probe> = files.par_iter().map(|f| probe(&cache, f)).collect();
     phase(&mut report, "stat");
@@ -172,26 +235,18 @@ fn build_inner(
         .collect();
     let commit = git_head(&root);
     let date = today();
-    let mut digest = build_digest(
+    let digest = build_digest(
         &files,
         &file_keys,
         &unclassified,
         opts.cluster,
         commit.as_deref(),
         &date,
+        docs_digest.as_deref(),
     );
-    if let Some(s) = semantic {
-        // The semantic inputs, backend and model decide the outputs too; a code-only build of
-        // the same files has a different digest.
-        let mut h = blake3::Hasher::new();
-        h.update(digest.as_bytes());
-        h.update(b"\0semantic\0");
-        h.update(s.fingerprint(&root, &out_dir)?.as_bytes());
-        digest = h.finalize().to_hex().to_string();
-    }
     let extra: Vec<PathBuf> = exporters.iter().flat_map(|e| e.outputs()).collect();
     if file_keys.iter().all(Option::is_some)
-        && !semantic.is_some_and(|s| s.force())
+        && !documents.is_some_and(|d| d.force())
         && outputs_current(&out_dir, opts.cluster, &digest, &extra)
     {
         report.unchanged = true;
@@ -247,7 +302,7 @@ fn build_inner(
         by_index[i] = Some(f);
     }
     // Keys include the relative path, so each hit belongs to exactly one file.
-    let ordered: Vec<(&SourceFile, FileFacts)> = files
+    let mut ordered: Vec<(&SourceFile, FileFacts)> = files
         .iter()
         .enumerate()
         .filter_map(|(i, f)| {
@@ -257,18 +312,33 @@ fn build_inner(
         .collect();
     report.cached = ordered.len() - report.extracted;
 
+    // Documents follow every code file (`docs/graphify-semantic.md` §3.6).
+    let mut doc_words = 0;
+    if let Some(d) = documents {
+        let facts = d.extract(&root, &docs);
+        report.extracted += facts.pages.len();
+        ordered.extend(facts.pages.into_iter().map(|(i, f)| (&docs[i].0, f)));
+        doc_words = facts.words;
+    }
+    let doc_pass = |views: &[View], index: &Index| match documents {
+        Some(d) => d.resolve(views, index),
+        None => Resolution::default(),
+    };
+    let passes: [Pass; 1] = [&doc_pass];
+
     let words: Vec<u64> = ordered.iter().map(|(_, f)| f.words).collect();
-    let mut graph: Graph = resolve(ordered);
+    let mut graph: Graph = resolve_with(ordered, &passes);
     phase(&mut report, "resolve");
 
     // A failed or interrupted build must never look current: drop the digest first.
     fs::remove_file(out_dir.join(DIGEST_FILE)).ok();
     let mut tokens = (0, 0);
-    if let Some(s) = semantic {
-        let sr = s.apply(&root, &out_dir, &mut graph)?;
-        tokens = (sr.input_tokens, sr.output_tokens);
-        report.semantic = Some(sr);
-        phase(&mut report, "semantic");
+    if let Some(d) = documents {
+        if let Some(sr) = d.augment(&root, &out_dir, &mut graph)? {
+            tokens = (sr.input_tokens, sr.output_tokens);
+            report.semantic = Some(sr);
+            phase(&mut report, "semantic");
+        }
     }
     report.nodes = graph.nodes.len();
     report.edges = graph.edges.len();
@@ -311,7 +381,7 @@ fn build_inner(
             name: root
                 .file_name()
                 .map_or_else(String::new, |n| n.to_string_lossy().into_owned()),
-            stats: Some((words.len(), words.iter().sum())),
+            stats: Some((words.len(), words.iter().sum::<u64>() + doc_words)),
             unclassified,
             commit: commit.clone(),
             date: date.clone(),
@@ -356,9 +426,14 @@ fn build_digest(
     cluster: bool,
     commit: Option<&str>,
     date: &str,
+    documents: Option<&str>,
 ) -> String {
     let mut h = blake3::Hasher::new();
     h.update(env!("DIJKSTRAL_BUILD_FINGERPRINT").as_bytes());
+    if let Some(d) = documents {
+        h.update(b"documents\0");
+        h.update(d.as_bytes());
+    }
     h.update(&[cluster as u8]);
     h.update(commit.unwrap_or("").as_bytes());
     h.update(&[0]);

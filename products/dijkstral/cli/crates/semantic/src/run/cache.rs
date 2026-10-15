@@ -335,6 +335,7 @@ mod tests {
             image: None,
             sha256: String::new(),
             tokens: 0,
+            converted: None,
         }
     }
 

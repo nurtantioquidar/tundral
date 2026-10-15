@@ -37,6 +37,19 @@ pub struct SourceDoc {
     pub sha256: String,
     /// Estimated cost in tokens (§4.2).
     pub tokens: usize,
+    /// For office files: the converted Markdown's relative path (`<prefix>/<stem>_<h8>.md`,
+    /// §2.2), which is what is framed, cached and expected back as `source_file`; `text` holds
+    /// its content.
+    #[serde(default)]
+    pub converted: Option<String>,
+}
+
+impl SourceDoc {
+    /// The path the model sees, the cache keys and replies name: the converted path of an office
+    /// file, else `rel`.
+    pub fn dispatched(&self) -> &str {
+        self.converted.as_deref().unwrap_or(&self.rel)
+    }
 }
 
 /// A piece of a request: a whole document, or one oversize piece of it (§4.2).

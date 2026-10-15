@@ -9,8 +9,12 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
+use dijkstral_core::discover::SourceFile;
 use dijkstral_core::graph::Graph;
-use dijkstral_core::pipeline::{build_semantic, cluster_only, Semantic, SemanticReport};
+use dijkstral_core::pipeline::{
+    build_full, cluster_only, DocumentFacts, Documents, SemanticReport,
+};
+use dijkstral_core::resolve::{Index, Resolution, View};
 use dijkstral_core::BuildOptions;
 use dijkstral_semantic::merge::{merge, Dispatched, MergeInput};
 use serde_json::Value;
@@ -67,11 +71,25 @@ struct Replay {
     tokens: (u64, u64),
 }
 
-impl Semantic for Replay {
-    fn fingerprint(&self, _root: &Path, _out: &Path) -> Result<String> {
-        Ok("replay".into())
+impl Documents for Replay {
+    fn fingerprint(&self) -> String {
+        "replay".into()
     }
-    fn apply(&self, root: &Path, _out: &Path, graph: &mut Graph) -> Result<SemanticReport> {
+    fn accepts(&self, _rel: &str) -> bool {
+        false
+    }
+    fn extract(&self, _root: &Path, _files: &[(SourceFile, Vec<u8>)]) -> DocumentFacts {
+        DocumentFacts::default()
+    }
+    fn resolve(&self, _views: &[View], _index: &Index) -> Resolution {
+        Resolution::default()
+    }
+    fn augment(
+        &self,
+        root: &Path,
+        _out: &Path,
+        graph: &mut Graph,
+    ) -> Result<Option<SemanticReport>> {
         let dispatched: Vec<Dispatched> = DISPATCHED
             .iter()
             .map(|rel| {
@@ -87,14 +105,14 @@ impl Semantic for Replay {
             })
             .collect();
         let stats = merge(graph, &dispatched, &self.replies);
-        Ok(SemanticReport {
+        Ok(Some(SemanticReport {
             input_tokens: self.tokens.0,
             output_tokens: self.tokens.1,
             nodes_added: stats.nodes_added,
             edges_added: stats.edges_added,
             notes: stats.notes(),
             ..Default::default()
-        })
+        }))
     }
 }
 
@@ -111,7 +129,7 @@ fn build_with_reply(reply: MergeInput, tokens: (u64, u64)) -> Ours {
         replies: vec![reply],
         tokens,
     };
-    build_semantic(
+    build_full(
         &BuildOptions {
             root: root.clone(),
             out: None,

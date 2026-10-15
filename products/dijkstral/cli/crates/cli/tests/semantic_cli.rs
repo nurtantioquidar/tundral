@@ -75,8 +75,10 @@ fn extract_merges_replies_and_reruns_without_a_model_call() {
         .map(|n| n["id"].as_str().unwrap())
         .collect();
     assert!(ids.contains(&"readme_cache") && ids.contains(&"src_app_service_jobqueue"));
-    // Nodes of files this run did not send (the PDF, office files) are out of scope.
-    assert!(!ids.contains(&"papers_write_through"));
+    assert!(ids.contains(&"papers_write_through"));
+    // Graphify's replies name the office conversions under graphify-out/converted; dijkstral
+    // sends them as dijkstral-out/converted/…, so those nodes are out of scope.
+    assert!(!ids.contains(&"graphify_out_converted_capacity_e7fd8f6a"));
     assert_eq!(g["graph"]["hyperedges"], g["hyperedges"]);
     assert_eq!(g["hyperedges"].as_array().unwrap().len(), 2);
     let analysis: Value = serde_json::from_slice(
@@ -89,9 +91,13 @@ fn extract_merges_replies_and_reruns_without_a_model_call() {
     assert!(report.contains("## Hyperedges (group relationships)"));
     assert!(report.contains("## Ambiguous Edges - Review These"));
 
-    // Rerun: every file from the cache (`_origin: "semantic"`), then nothing to do at all.
+    // The runbook's conversion got no node (the replies name Graphify's converted path), so the
+    // rerun asks once more for it alone; after that it is cached as empty.
     let second = ok(&extract);
-    assert!(second.contains("model calls: 0"), "{second}");
+    assert!(second.contains("7 hit / 1 miss"), "{second}");
+    // Then every file from the cache (`_origin: "semantic"`), then nothing to do at all.
+    let third = ok(&extract);
+    assert!(third.contains("model calls: 0"), "{third}");
     assert!(graph(&root)["nodes"]
         .as_array()
         .unwrap()

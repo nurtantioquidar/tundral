@@ -200,6 +200,7 @@ mod tests {
             image: None,
             sha256: "ab".repeat(32),
             tokens: 10,
+            converted: None,
         }
     }
 

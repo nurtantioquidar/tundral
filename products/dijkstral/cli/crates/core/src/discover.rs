@@ -70,6 +70,11 @@ pub struct Discovery {
     /// image or media file Graphify's `update` would index, nor a lockfile or sensitive file it
     /// drops silently: the report's `Unclassified` line (§17.5).
     pub unclassified: Vec<String>,
+    /// Relative paths, sorted, of the walked files that are not code but whose extension
+    /// `update` indexes (documents, papers, images, media, office and Google shortcuts): the
+    /// candidates of the semantic pass and of the markdown structure (`docs/graphify-semantic.md`
+    /// §2, §3), after the same ignore rules, skipped directories and sensitive-file filter.
+    pub documents: Vec<String>,
 }
 
 /// Extensions `update` indexes as documents, papers, images or media (probed one by one).
@@ -98,15 +103,30 @@ fn dropped_silently(name: &str) -> bool {
         .any(|ext| name.ends_with(ext))
 }
 
-fn is_unclassified(name: &str) -> bool {
+/// How a walked file that is not code is counted.
+#[derive(PartialEq)]
+enum NonCode {
+    /// Dropped without counting (lockfiles, likely secrets).
+    Dropped,
+    /// A document, paper, image or media file `update` indexes.
+    Indexed,
+    /// The report's `Unclassified` line.
+    Unclassified,
+}
+
+fn non_code(name: &str) -> NonCode {
     if dropped_silently(name) {
-        return false;
+        return NonCode::Dropped;
     }
     match name.rfind('.') {
-        Some(i) if i > 0 && i < name.len() - 1 => {
-            !INDEXED_NON_CODE.contains(&name[i + 1..].to_ascii_lowercase().as_str())
+        Some(i)
+            if i > 0
+                && i < name.len() - 1
+                && INDEXED_NON_CODE.contains(&name[i + 1..].to_ascii_lowercase().as_str()) =>
+        {
+            NonCode::Indexed
         }
-        _ => true,
+        _ => NonCode::Unclassified,
     }
 }
 
@@ -114,6 +134,7 @@ fn is_unclassified(name: &str) -> bool {
 pub fn discover_all(root: &Path, threads: usize) -> Discovery {
     let found = Mutex::new(Vec::new());
     let unclassified = Mutex::new(Vec::new());
+    let documents = Mutex::new(Vec::new());
     WalkBuilder::new(root)
         .hidden(false)
         .git_ignore(true)
@@ -134,7 +155,7 @@ pub fn discover_all(root: &Path, threads: usize) -> Discovery {
         .threads(threads)
         .build_parallel()
         .run(|| {
-            let (found, unclassified) = (&found, &unclassified);
+            let (found, unclassified, documents) = (&found, &unclassified, &documents);
             Box::new(move |entry| {
                 let Ok(entry) = entry else {
                     return WalkState::Continue;
@@ -152,8 +173,12 @@ pub fn discover_all(root: &Path, threads: usize) -> Discovery {
                         abs: path.to_path_buf(),
                         lang,
                     });
-                } else if is_unclassified(&entry.file_name().to_string_lossy()) {
-                    unclassified.lock().unwrap().push(rel);
+                } else {
+                    match non_code(&entry.file_name().to_string_lossy()) {
+                        NonCode::Unclassified => unclassified.lock().unwrap().push(rel),
+                        NonCode::Indexed => documents.lock().unwrap().push(rel),
+                        NonCode::Dropped => {}
+                    }
                 }
                 WalkState::Continue
             })
@@ -162,9 +187,12 @@ pub fn discover_all(root: &Path, threads: usize) -> Discovery {
     files.sort();
     let mut unclassified = unclassified.into_inner().unwrap();
     unclassified.sort();
+    let mut documents = documents.into_inner().unwrap();
+    documents.sort();
     Discovery {
         files,
         unclassified,
+        documents,
     }
 }
 
@@ -209,7 +237,9 @@ mod tests {
         }
         // An ignore file only applies beneath its own directory.
         fs::write(root.join("pkg/.graphifyignore"), "gen/\n").unwrap();
-        let rels: Vec<_> = discover(root, 2).into_iter().map(|f| f.rel).collect();
+        let found = discover_all(root, 2);
+        assert_eq!(found.documents, ["README.txt"]);
+        let rels: Vec<_> = found.files.into_iter().map(|f| f.rel).collect();
         assert_eq!(
             rels,
             [

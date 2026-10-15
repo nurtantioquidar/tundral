@@ -97,7 +97,15 @@ pub struct Resolution {
     pub labels: Vec<(String, String)>,
 }
 
+/// A cross-file pass supplied from outside the language passes (`pipeline::Documents`).
+pub type Pass<'p> = &'p (dyn Fn(&[View], &Index) -> Resolution + Sync);
+
 pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
+    resolve_with(files, &[])
+}
+
+/// [`resolve`] with `extra` passes, whose results follow the language passes' in order.
+pub fn resolve_with(files: Vec<(&SourceFile, FileFacts)>, extra: &[Pass]) -> Graph {
     let views = rename_collisions(files);
 
     let mut nodes_by_id = HashMap::new();
@@ -146,6 +154,7 @@ pub fn resolve(files: Vec<(&SourceFile, FileFacts)>) -> Graph {
         let handles: Vec<_> = passes
             .iter()
             .map(|p| s.spawn(|| p(&views, &index)))
+            .chain(extra.iter().map(|p| s.spawn(|| p(&views, &index))))
             .collect();
         handles
             .into_iter()

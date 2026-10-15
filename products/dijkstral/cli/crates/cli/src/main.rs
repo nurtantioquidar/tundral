@@ -12,8 +12,8 @@ use std::time::Instant;
 
 use clap::{Args, Parser, Subcommand};
 use dijkstral_core::pipeline::cluster_only_files;
-use dijkstral_core::pipeline::Semantic;
-use dijkstral_core::{build_semantic, BuildOptions, BuildReport};
+use dijkstral_core::{build_full, BuildOptions, BuildReport};
+use dijkstral_semantic::markdown::MarkdownPass;
 
 // mimalloc keeps fragmentation and the retained high-water mark well below the system allocator's
 // on large builds (Kubernetes: measured in bench/README.md).
@@ -33,8 +33,9 @@ enum Command {
     /// Build the graph for a directory and write dijkstral-out/graph.json. Documents, images and
     /// other non-code files go through a model (the semantic pass) unless --code-only.
     Extract(BuildArgs),
-    /// Rebuild incrementally after code changes (only changed files are re-extracted; never
-    /// calls a model).
+    /// Rebuild incrementally after changes (only changed files are re-extracted), adding the
+    /// structure of Markdown pages: headings, links and backtick references to code. Never calls
+    /// a model.
     Update(BuildArgs),
     /// Re-cluster the graph and name its communities with a model.
     Label(semantic_build::LabelArgs),
@@ -104,13 +105,10 @@ fn main() -> ExitCode {
         return code;
     }
     let cli = Cli::parse();
-    let (args, semantic) = match cli.command {
+    let (args, update) = match cli.command {
         Command::Agents(cmd) => return agents_cmd::run(cmd),
-        Command::Extract(args) => {
-            let semantic = !args.code_only;
-            (args, semantic)
-        }
-        Command::Update(args) => (args, false),
+        Command::Extract(args) => (args, false),
+        Command::Update(args) => (args, true),
         Command::Label(args) => return semantic_build::run_label(args),
         Command::Add(args) => return semantic_build::run_add(args),
         Command::Query(cmd) => return query_cmds::run(cmd),
@@ -144,22 +142,29 @@ fn main() -> ExitCode {
         cluster: !args.no_cluster,
     };
     let exporters: Vec<_> = exporters.iter().map(|e| e.as_ref()).collect();
-    let pass = if semantic {
-        match semantic_build::prepare(&opts.root, &args.semantic) {
+    // `update` adds the markdown structure as `graphify update` does; `extract` sends the
+    // non-code files to a model instead (the semantic pass). `--code-only` does neither.
+    let markdown = MarkdownPass::new();
+    let semantic = if update || args.code_only {
+        None
+    } else {
+        match semantic_build::prepare(&opts.root, opts.out.as_deref(), &args.semantic) {
             Ok(pass) => pass,
             Err(e) => {
                 eprintln!("error: {e:#}");
                 return ExitCode::FAILURE;
             }
         }
-    } else {
-        None
     };
-    let stage = pass.as_ref().map(|p| p as &dyn Semantic);
-    match build_semantic(&opts, &exporters, stage) {
+    let documents: Option<&dyn dijkstral_core::Documents> = match &semantic {
+        Some(pass) => Some(pass),
+        None if update && !args.code_only => Some(&markdown),
+        None => None,
+    };
+    match build_full(&opts, &exporters, documents) {
         Ok(report) => {
             print_report(&report, args.timings, started);
-            if !semantic {
+            if semantic.is_none() {
                 // A no-model build: flag non-code changes for `check-update`.
                 if let Err(e) =
                     dijkstral_semantic::pass::note_pending_changes(&opts.root, &report.out_dir)

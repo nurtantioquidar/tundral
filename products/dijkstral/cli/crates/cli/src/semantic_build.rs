@@ -78,7 +78,11 @@ pub struct SemanticFlags {
 }
 
 /// The pass for `root`, or `None` when nothing needs a model.
-pub fn prepare(root: &Path, flags: &SemanticFlags) -> Result<Option<SemanticPass>> {
+pub fn prepare(
+    root: &Path,
+    out: Option<&Path>,
+    flags: &SemanticFlags,
+) -> Result<Option<SemanticPass>> {
     let opts = PassOptions {
         backend: flags.backend.settings()?,
         mode: match flags.mode {
@@ -91,7 +95,7 @@ pub fn prepare(root: &Path, flags: &SemanticFlags) -> Result<Option<SemanticPass
         allow_partial: flags.allow_partial,
         progress: true,
     };
-    SemanticPass::prepare(root, opts, &Env::system())
+    SemanticPass::prepare(root, &pass::out_dir_for(root, out), opts, &Env::system())
 }
 
 #[derive(Args, Debug)]

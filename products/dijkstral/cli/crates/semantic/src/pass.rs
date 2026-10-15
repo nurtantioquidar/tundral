@@ -1,25 +1,30 @@
-//! The semantic pass as a build stage: `ingest` → `run::extract` → `merge`, plugged into
-//! `dijkstral_core::pipeline` through its [`Semantic`] hook, plus the no-model helpers `update`
-//! and `label` need.
-//!
-//! `ingest` is still the stand-in of `standin.rs`; the real stage replaces the two calls marked
-//! `STAND-IN`.
+//! The semantic pass as `extract`'s build pass: `ingest` → `run::extract` → `merge`, plugged into
+//! `dijkstral_core::pipeline` through its [`Documents`] seam (the one `update`'s markdown uses):
+//! it adds no pages of its own and merges the model's replies into the resolved graph in
+//! [`Documents::augment`]. Also the no-model helper `update` needs and `label`.
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::{bail, Result};
+use dijkstral_core::discover::{discover_all, SourceFile};
 use dijkstral_core::graph::Graph;
-use dijkstral_core::pipeline::{Semantic, SemanticReport};
+use dijkstral_core::pipeline::{DocumentFacts, Documents, SemanticReport, OUT_DIR};
+use dijkstral_core::resolve::{Index, Resolution, View};
 use sha2::{Digest, Sha256};
 
+use crate::ingest::{self, IngestOptions};
 use crate::merge::{merge, Dispatched, MergeInput};
 use crate::run::{self, BackendSettings, Env, ExtractOptions, Mode};
-use crate::standin;
-use crate::types::{Backend, Chunk, DocKind, SourceDoc};
+use crate::types::{Backend, Chunk, DocKind, Part, SourceDoc};
 
-/// Default `--token-budget` (§4.2).
-pub const DEFAULT_TOKEN_BUDGET: usize = 60_000;
+pub use crate::ingest::DEFAULT_TOKEN_BUDGET;
+
+/// Where converted office files are written and the path replies name them by (§2.2). Graphify
+/// uses `graphify-out/converted`; dijkstral keeps its outputs in its own directory, so office
+/// nodes are `dijkstral_out_converted_…` where Graphify's are `graphify_out_converted_…`, and
+/// `update` does not index the conversions as pages (quirk S2 is not reproduced).
+pub const CONVERTED_PREFIX: &str = "dijkstral-out/converted";
 
 /// The command-line options of the pass.
 #[derive(Debug, Clone)]
@@ -50,37 +55,53 @@ impl Default for PassOptions {
 /// A prepared pass: the corpus's non-code files and the backend that will read them.
 pub struct SemanticPass {
     opts: PassOptions,
+    root: PathBuf,
+    out_dir: PathBuf,
     docs: Vec<SourceDoc>,
-    skipped: Vec<String>,
+    notes: Vec<String>,
     backend: Box<dyn Backend>,
 }
 
+/// `<out or root>/dijkstral-out`.
+pub fn out_dir_for(root: &Path, out: Option<&Path>) -> PathBuf {
+    out.unwrap_or(root).join(OUT_DIR)
+}
+
 impl SemanticPass {
-    /// The pass for `root`, or `None` when no file needs a model (then no backend is needed and
-    /// none is selected, as Graphify asks for no key on a code-only corpus).
-    pub fn prepare(root: &Path, opts: PassOptions, env: &Env) -> Result<Option<SemanticPass>> {
-        // STAND-IN: `ingest`.
-        let collected = standin::collect(root)?;
-        if collected.docs.is_empty() {
+    /// The pass for `root` (outputs in `out_dir`), or `None` when no file needs a model (then no
+    /// backend is selected, as Graphify asks for no key on a code-only corpus).
+    pub fn prepare(
+        root: &Path,
+        out_dir: &Path,
+        opts: PassOptions,
+        env: &Env,
+    ) -> Result<Option<SemanticPass>> {
+        let found = discover_all(root, 1);
+        let converted_dir = out_dir.join("converted");
+        let ingested = ingest::ingest(
+            root,
+            &found.documents,
+            &IngestOptions {
+                converted_prefix: CONVERTED_PREFIX,
+                converted_dir: Some(&converted_dir),
+            },
+        );
+        let mut notes: Vec<String> = Vec::new();
+        for (rel, why) in ingested.skipped.iter().chain(&ingested.warnings) {
+            notes.push(format!("{rel}: {why}"));
+        }
+        if ingested.docs.is_empty() {
             return Ok(None);
         }
         let backend = run::select(&opts.backend, env)?;
         Ok(Some(SemanticPass {
             opts,
-            docs: collected.docs,
-            skipped: collected.skipped,
+            root: root.to_path_buf(),
+            out_dir: out_dir.to_path_buf(),
+            docs: ingested.docs,
+            notes,
             backend,
         }))
-    }
-
-    /// The pass over fixed documents (tests and benchmarks).
-    pub fn with_docs(opts: PassOptions, docs: Vec<SourceDoc>, backend: Box<dyn Backend>) -> Self {
-        SemanticPass {
-            opts,
-            docs,
-            skipped: Vec::new(),
-            backend,
-        }
     }
 
     pub fn docs(&self) -> &[SourceDoc] {
@@ -102,16 +123,29 @@ impl SemanticPass {
         eo
     }
 
-    /// Requests for the files that need the model, packed tightly, then one part per cached
-    /// file (which `run::extract` serves from the cache without a request).
+    /// Requests for the files that need the model, packed tightly (`run::cache_misses`), then
+    /// one part per cached file, which `run::extract` serves from the cache without a request.
     fn chunks(&self, eo: &ExtractOptions) -> Vec<Chunk> {
         let misses = run::cache_misses(&self.docs, self.backend.as_ref(), eo);
-        // STAND-IN: `ingest`'s chunking.
-        let mut chunks = standin::chunk(&self.docs, &misses, self.opts.token_budget);
+        let subset: Vec<SourceDoc> = misses.iter().map(|&i| self.docs[i].clone()).collect();
+        let mut chunks: Vec<Chunk> = ingest::chunk(&subset, self.opts.token_budget)
+            .into_iter()
+            .map(|c| Chunk {
+                index: c.index,
+                parts: c
+                    .parts
+                    .into_iter()
+                    .map(|p| Part {
+                        doc: misses[p.doc],
+                        piece: p.piece,
+                    })
+                    .collect(),
+            })
+            .collect();
         for i in (0..self.docs.len()).filter(|i| !misses.contains(i)) {
             chunks.push(Chunk {
                 index: chunks.len(),
-                parts: vec![crate::types::Part {
+                parts: vec![Part {
                     doc: i,
                     piece: None,
                 }],
@@ -121,8 +155,8 @@ impl SemanticPass {
     }
 }
 
-impl Semantic for SemanticPass {
-    fn fingerprint(&self, root: &Path, out_dir: &Path) -> Result<String> {
+impl Documents for SemanticPass {
+    fn fingerprint(&self) -> String {
         let mut h = Sha256::new();
         for part in [
             run::PROMPT_VERSION.to_string(),
@@ -139,28 +173,46 @@ impl Semantic for SemanticPass {
             h.update(b"\0");
         }
         for d in &self.docs {
-            h.update(d.rel.as_bytes());
+            h.update(d.dispatched().as_bytes());
             h.update(b"\0");
             h.update(d.sha256.as_bytes());
             h.update(b"\0");
         }
         // While any file still needs the model (failed, omitted, partial or new), a build is
         // never "unchanged": the next run asks again.
-        let eo = self.extract_options(root, out_dir);
+        let eo = self.extract_options(&self.root, &self.out_dir);
         if !run::cache_misses(&self.docs, self.backend.as_ref(), &eo).is_empty() {
             let now = SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .map_or(0, |d| d.as_nanos());
             h.update(now.to_le_bytes());
         }
-        Ok(hex(&h.finalize()))
+        hex(&h.finalize())
+    }
+
+    /// `extract` adds no markdown structure (§2.1): the model reads the files instead.
+    fn accepts(&self, _rel: &str) -> bool {
+        false
+    }
+
+    fn extract(&self, _root: &Path, _files: &[(SourceFile, Vec<u8>)]) -> DocumentFacts {
+        DocumentFacts::default()
+    }
+
+    fn resolve(&self, _views: &[View], _index: &Index) -> Resolution {
+        Resolution::default()
     }
 
     fn force(&self) -> bool {
         self.opts.force
     }
 
-    fn apply(&self, root: &Path, out_dir: &Path, graph: &mut Graph) -> Result<SemanticReport> {
+    fn augment(
+        &self,
+        root: &Path,
+        out_dir: &Path,
+        graph: &mut Graph,
+    ) -> Result<Option<SemanticReport>> {
         let eo = self.extract_options(root, out_dir);
         let chunks = self.chunks(&eo);
         let outcome = run::extract(&chunks, &self.docs, self.backend.as_ref(), &eo)?;
@@ -177,19 +229,15 @@ impl Semantic for SemanticPass {
             .map(|e| MergeInput::new(e.raw.clone(), e.cached))
             .collect();
         let stats = merge(graph, &dispatched(&self.docs), &inputs);
-        let mut notes = vec![outcome.summary(), outcome.usage.summary()];
+        let mut notes = self.notes.clone();
+        notes.push(outcome.summary());
+        notes.push(outcome.usage.summary());
         if !outcome.pending.is_empty() {
             notes.push(format!(
                 "{} request(s) written for your assistant under {}; answer them, then run \
                  `dijkstral semantic import`",
                 outcome.pending.len(),
                 run::backend::handoff::pending_dir(out_dir).display()
-            ));
-        }
-        if !self.skipped.is_empty() {
-            notes.push(format!(
-                "not read yet (PDF and office text extraction pending): {}",
-                self.skipped.join(", ")
             ));
         }
         notes.extend(stats.notes());
@@ -201,42 +249,44 @@ impl Semantic for SemanticPass {
             stats.files_with_nodes,
             self.docs.len()
         ));
-        Ok(SemanticReport {
+        Ok(Some(SemanticReport {
             input_tokens: outcome.usage.input_tokens,
             output_tokens: outcome.usage.output_tokens,
             calls: outcome.usage.requests,
             nodes_added: stats.nodes_added,
             edges_added: stats.edges_added,
             notes,
-        })
+        }))
     }
 }
 
-/// The files of this run, with the text the evidence check searches.
+/// The files of this run as replies name them, with the text the evidence check searches.
 pub fn dispatched(docs: &[SourceDoc]) -> Vec<Dispatched> {
     docs.iter()
         .map(|d| {
             let text =
                 matches!(d.kind, DocKind::Document | DocKind::VectorImage).then(|| d.text.clone());
-            Dispatched::new(d.rel.clone(), text)
+            Dispatched::new(d.dispatched(), text)
         })
         .collect()
 }
 
-/// After a no-model `update`: flag the semantic pass as stale when a non-code file changed or
-/// a new one appeared since it last ran (`check-update` then reports it, §9.3).
+/// After a no-model `update`: flag the semantic pass as stale when a non-code file it read
+/// changed, or a new one appeared, since it last ran (`check-update` then reports it, §9.3).
 pub fn note_pending_changes(root: &Path, out_dir: &Path) -> Result<bool> {
     let index = run::cache::Index::load(out_dir);
-    let new_file = || -> Result<bool> {
-        // STAND-IN: `ingest`.
-        let collected = standin::collect(root)?;
-        Ok(collected
-            .docs
+    if index.files.is_empty() {
+        // The semantic pass never ran here.
+        return Ok(false);
+    }
+    let new_file = || {
+        discover_all(root, 1)
+            .documents
             .iter()
-            .any(|d| !index.files.contains_key(&d.rel)))
+            .filter(|rel| ingest::classify(rel).is_some())
+            .any(|rel| !index.files.contains_key(rel.as_str()))
     };
-    let pending =
-        run::pending_changes(root, out_dir).is_some() || (!index.files.is_empty() && new_file()?);
+    let pending = run::pending_changes(root, out_dir).is_some() || new_file();
     if pending {
         run::mark_needs_update(out_dir)?;
     }
