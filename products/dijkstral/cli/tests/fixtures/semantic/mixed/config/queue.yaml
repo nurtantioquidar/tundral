@@ -1,0 +1,5 @@
+queue:
+  name: jobs
+  max_items: 1000
+cache:
+  policy: write-through

@@ -1,0 +1,5 @@
+Glossary
+
+job: a unit of work pushed onto the JobQueue.
+slug: a normalised job name produced by slugify.
+write-through: every write updates the cache and the store together.

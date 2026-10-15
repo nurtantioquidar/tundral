@@ -1,0 +1,480 @@
+{
+ "nodes": [
+  {
+   "id": "src_app_init",
+   "label": "__init__.py",
+   "file_type": "code",
+   "source_file": "src/app/__init__.py",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_service",
+   "label": "service.py",
+   "file_type": "code",
+   "source_file": "src/app/service.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_service_jobqueue",
+   "label": "JobQueue",
+   "file_type": "code",
+   "source_file": "src/app/service.py",
+   "source_location": "L6",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_service_jobqueue_init",
+   "label": ".__init__()",
+   "file_type": "code",
+   "source_file": "src/app/service.py",
+   "source_location": "L9",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_service_jobqueue_push",
+   "label": ".push()",
+   "file_type": "code",
+   "source_file": "src/app/service.py",
+   "source_location": "L12",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_service_run_job",
+   "label": "run_job",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "id": "src_app_service_rationale_1",
+   "label": "Job service: queue jobs and run them.",
+   "file_type": "rationale",
+   "source_file": "src/app/service.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_service_rationale_7",
+   "label": "In-memory queue of pending jobs.",
+   "file_type": "rationale",
+   "source_file": "src/app/service.py",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "src_app_util",
+   "label": "util file as doc",
+   "file_type": "document",
+   "source_file": "README.md"
+  },
+  {
+   "id": "src_app_util_slugify",
+   "label": "slugify()",
+   "file_type": "code",
+   "source_file": "src/app/util.py",
+   "source_location": "L1",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "readme_job_service",
+   "label": "Job Service",
+   "file_type": "document",
+   "source_file": "README.md"
+  },
+  {
+   "id": "readme_slugify",
+   "label": "slugify()",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "id": "Docs Guide/Operator Guide!",
+   "label": "Operator Guide",
+   "file_type": "document",
+   "source_file": "docs/guide.md"
+  },
+  {
+   "id": "glossary_term_job",
+   "label": "job",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "queue_cfg",
+   "label": "queue config",
+   "file_type": "widget",
+   "source_file": "config/queue.yaml"
+  },
+  {
+   "id": "dot_readme",
+   "label": "dot readme",
+   "file_type": "concept",
+   "source_file": "./README.md"
+  },
+  {
+   "id": "floating",
+   "label": "floating concept",
+   "file_type": "concept"
+  },
+  {
+   "id": "dup_node",
+   "label": "second",
+   "file_type": "concept",
+   "source_file": "README.md",
+   "source_location": "L9"
+  },
+  {
+   "id": "img",
+   "label": "diagram",
+   "file_type": "image",
+   "source_file": "images/architecture.png"
+  },
+  {
+   "id": "paper",
+   "label": "paper",
+   "file_type": "paper",
+   "source_file": "papers/write_through.pdf",
+   "source_location": "p1"
+  },
+  {
+   "id": "why_wt",
+   "label": "why write-through",
+   "file_type": "rationale",
+   "source_file": "README.md"
+  },
+  {
+   "id": "conv",
+   "label": "runbook",
+   "file_type": "document",
+   "source_file": "graphify-out/converted/runbook_b3207a85.md"
+  },
+  {
+   "id": "with_extra",
+   "label": "extra keys",
+   "file_type": "concept",
+   "source_file": "README.md",
+   "x_custom": 7,
+   "community": 99,
+   "confidence": "INFERRED"
+  },
+  {
+   "id": "readme",
+   "label": "readme id",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "id": "no_label",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "id": "code_typed",
+   "label": "code typed",
+   "file_type": "code",
+   "source_file": "README.md",
+   "verification": "unverified"
+  }
+ ],
+ "edges": [
+  {
+   "source": "src_app_service",
+   "target": "src_app_util",
+   "relation": "imports_from",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service",
+   "target": "src_app_service_jobqueue",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service_jobqueue",
+   "target": "src_app_service_jobqueue_init",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service_jobqueue",
+   "target": "src_app_service_jobqueue_push",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service",
+   "target": "src_app_service_run_job",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service_run_job",
+   "target": "src_app_service_jobqueue",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service_rationale_1",
+   "target": "src_app_service",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service_rationale_7",
+   "target": "src_app_service_jobqueue",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_util",
+   "target": "src_app_util_slugify",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/util.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service",
+   "target": "src_app_util_slugify",
+   "relation": "imports",
+   "context": "import",
+   "confidence": "EXTRACTED",
+   "source_file": "src/app/service.py",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service_jobqueue_push",
+   "target": "src_app_util_slugify",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/app/service.py",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_app_service_run_job",
+   "target": "src_app_service_jobqueue_push",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/app/service.py",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "readme_job_service",
+   "target": "src_app_service_run_job",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "README.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "readme_job_service",
+   "target": "src_app_util_slugify",
+   "relation": "mentions",
+   "confidence": "INFERRED",
+   "source_file": "README.md"
+  },
+  {
+   "source": "readme_job_service",
+   "target": "glossary_term_job",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.7,
+   "source_file": "README.md"
+  },
+  {
+   "source": "readme_slugify",
+   "target": "glossary_term_job",
+   "relation": "conceptually_related_to",
+   "confidence": "maybe",
+   "confidence_score": "high",
+   "source_file": "README.md"
+  },
+  {
+   "source": "queue_cfg",
+   "target": "floating",
+   "relation": "shares_data_with",
+   "source_file": "config/queue.yaml"
+  },
+  {
+   "source": "queue_cfg",
+   "target": "paper",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml"
+  },
+  {
+   "source": "readme_job_service",
+   "target": "readme_job_service",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "README.md"
+  },
+  {
+   "source": "readme_job_service",
+   "target": "glossary_term_job",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "README.md"
+  },
+  {
+   "source": "img",
+   "target": "paper",
+   "relation": "conceptually_related_to",
+   "confidence": "AMBIGUOUS",
+   "confidence_score": 0.2,
+   "source_file": "images/architecture.png"
+  },
+  {
+   "source": "paper",
+   "target": "why_wt",
+   "relation": "cites",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 0.5,
+   "source_file": "papers/write_through.pdf"
+  },
+  {
+   "source": "why_wt",
+   "target": "readme_job_service",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "README.md"
+  },
+  {
+   "source": "Docs Guide/Operator Guide!",
+   "target": "readme_job_service",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/guide.md"
+  },
+  {
+   "source": "dup_node",
+   "target": "src_app_util",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "confidence_score": 0.6,
+   "context": "probe",
+   "x_edge": 1,
+   "source_file": "README.md"
+  },
+  {
+   "source": "with_extra",
+   "target": "readme",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "README.md"
+  },
+  {
+   "source": "code_typed",
+   "target": "no_label",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "README.md"
+  }
+ ],
+ "hyperedges": [
+  {
+   "id": "h_ok",
+   "label": "ok group",
+   "nodes": [
+    "readme_job_service",
+    "paper",
+    "why_wt"
+   ],
+   "relation": "participate_in",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "README.md"
+  },
+  {
+   "id": "h_ghost",
+   "label": "ghost group",
+   "nodes": [
+    "readme_job_service",
+    "ghost_node",
+    "paper"
+   ],
+   "relation": "form",
+   "confidence": "INFERRED",
+   "confidence_score": 0.7,
+   "source_file": "README.md"
+  },
+  {
+   "label": "no id group",
+   "nodes": [
+    "readme_job_service",
+    "paper"
+   ],
+   "relation": "form"
+  },
+  {
+   "id": "h_code",
+   "label": "code group",
+   "nodes": [
+    "src_app_service_run_job",
+    "src_app_util_slugify"
+   ],
+   "relation": "form",
+   "confidence": "INFERRED",
+   "confidence_score": 0.8,
+   "source_file": "README.md"
+  }
+ ],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

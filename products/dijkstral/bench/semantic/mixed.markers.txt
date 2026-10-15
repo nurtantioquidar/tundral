@@ -1,0 +1,7 @@
+Write-Through Caching for Job Queues
+A. Example, B. Sample - Monet Labs, 2026
+We study a write-through cache placed in front of a durable job queue. Each
+Smith et al. [1] and show that write-through avoids stale reads.
+[1] J. Smith, L. Wong. Lazy Invalidation in Distributed Caches. 2019.
+<!-- converted from capacity.xlsx -->
+<!-- converted from runbook.docx -->

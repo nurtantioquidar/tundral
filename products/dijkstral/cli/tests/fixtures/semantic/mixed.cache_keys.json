@@ -1,0 +1,93 @@
+{
+ "cache_dirs": [
+  "semantic/p5e80268fecd6"
+ ],
+ "deep_cache_dirs": [
+  "semantic-deep/pd68e17f4cee0"
+ ],
+ "entries": {
+  "README.md": {
+   "readme.md": "238c98b487297a8e9b66484c4a30e41e5ef8ec62f04240f77de7dd86246da03a"
+  },
+  "config/queue.yaml": {
+   "config/queue.yaml": "ef0aca92f0d735b2321b045a3081c1ca70d19c3c712b18462f48062fe7179e6d"
+  },
+  "docs/glossary.txt": {
+   "docs/glossary.txt": "c3863631a2c942e4b138fd0504cb6b3f07e708f798ce1a3c9251135421cefd0b"
+  },
+  "docs/guide.md": {
+   "docs/guide.md": "8d034a38e6814671f32f9a648d562837cc62051db2d89f78562a8380d63ce07c"
+  },
+  "graphify-out/converted/capacity_e7fd8f6a.md": {
+   "graphify-out/converted/capacity_e7fd8f6a.md": "31ed2b09169bcc9ec470c4d7446c9118ea96319fcabceb290a04d8111eec8a00"
+  },
+  "graphify-out/converted/runbook_b3207a85.md": {
+   "graphify-out/converted/runbook_b3207a85.md": "79b25b194fc06b6d7104285c444906033983481ceaf7a3a970491155babb0e54"
+  },
+  "images/architecture.png": {
+   "images/architecture.png": "4d14b64dc139cddae3ba895dc97d5ade6d9d404f98d561a4ca765c53f057770b"
+  },
+  "papers/write_through.pdf": {
+   "papers/write_through.pdf": "33538efd43e1eda65845f64a2e4e70b411d45c269337b91a4cf0643b19a7f86d"
+  },
+  "src/app/__init__.py": {
+   "src/app/__init__.py": "301fa8d82dee0708fa9d26c29ae3f91d82b865f5c964ad7b95e66a427775b32f"
+  },
+  "src/app/service.py": {
+   "src/app/service.py": "a95aa08808b7ffecd77bdee07b7e455e1e032197ac2841e11940d2bd2f6356d8"
+  },
+  "src/app/util.py": {
+   "src/app/util.py": "745ae1545352e1cc696ca2918cfc3591077dca649f7fb24da82b1faaf6331e04"
+  }
+ },
+ "manifest_md5": {
+  "src/app/__init__.py": {
+   "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+   "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "src/app/service.py": {
+   "ast_hash": "aee41871a59cd2de6bade9e235d38c6f",
+   "semantic_hash": "aee41871a59cd2de6bade9e235d38c6f"
+  },
+  "src/app/util.py": {
+   "ast_hash": "4b9a9ca07c521bd3941e9c08b3a9dc29",
+   "semantic_hash": "4b9a9ca07c521bd3941e9c08b3a9dc29"
+  },
+  "README.md": {
+   "ast_hash": "cb6ac961dc55e355390268f23b6ca83b",
+   "semantic_hash": "cb6ac961dc55e355390268f23b6ca83b"
+  },
+  "config/queue.yaml": {
+   "ast_hash": "032f607f9c65cc287c34ab5ff6aff70f",
+   "semantic_hash": "032f607f9c65cc287c34ab5ff6aff70f"
+  },
+  "docs/glossary.txt": {
+   "ast_hash": "c85796feb67307b59107c5448ed66741",
+   "semantic_hash": "c85796feb67307b59107c5448ed66741"
+  },
+  "docs/guide.md": {
+   "ast_hash": "19df85247df3304eb0f907ec27345794",
+   "semantic_hash": "19df85247df3304eb0f907ec27345794"
+  },
+  "graphify-out/converted/capacity_e7fd8f6a.md": {
+   "ast_hash": "d208749c0640e9b9900610919cc7fbc3",
+   "semantic_hash": "d208749c0640e9b9900610919cc7fbc3"
+  },
+  "graphify-out/converted/runbook_b3207a85.md": {
+   "ast_hash": "d952908e2ab86b7e257bb7df6a5b08e6",
+   "semantic_hash": "d952908e2ab86b7e257bb7df6a5b08e6"
+  },
+  "papers/write_through.pdf": {
+   "ast_hash": "75fb8a15623080f0a9ae880f41b3724f",
+   "semantic_hash": "75fb8a15623080f0a9ae880f41b3724f"
+  },
+  "images/architecture.png": {
+   "ast_hash": "26ee50b2f90b36362dcff4be90e944b8",
+   "semantic_hash": "26ee50b2f90b36362dcff4be90e944b8"
+  }
+ },
+ "converted": [
+  "capacity_e7fd8f6a.md",
+  "runbook_b3207a85.md"
+ ]
+}

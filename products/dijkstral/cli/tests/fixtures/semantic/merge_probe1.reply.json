@@ -1,0 +1,324 @@
+{
+ "nodes": [
+  {
+   "id": "readme_job_service",
+   "label": "Job Service",
+   "file_type": "document",
+   "source_file": "README.md"
+  },
+  {
+   "id": "src_app_service_run_job",
+   "label": "run_job",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "id": "readme_slugify",
+   "label": "slugify()",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "id": "Docs Guide/Operator Guide!",
+   "label": "Operator Guide",
+   "file_type": "document",
+   "source_file": "docs/guide.md"
+  },
+  {
+   "id": "glossary_term_job",
+   "label": "job",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "queue_cfg",
+   "label": "queue config",
+   "file_type": "widget",
+   "source_file": "config/queue.yaml"
+  },
+  {
+   "id": "util_note",
+   "label": "util note",
+   "file_type": "concept",
+   "source_file": "src/app/util.py"
+  },
+  {
+   "id": "dot_readme",
+   "label": "dot readme",
+   "file_type": "concept",
+   "source_file": "./README.md"
+  },
+  {
+   "id": "floating",
+   "label": "floating concept",
+   "file_type": "concept"
+  },
+  {
+   "id": "dup_node",
+   "label": "first",
+   "file_type": "concept",
+   "source_file": "README.md",
+   "source_location": "L1"
+  },
+  {
+   "id": "dup_node",
+   "label": "second",
+   "file_type": "concept",
+   "source_file": "README.md",
+   "source_location": "L9"
+  },
+  {
+   "id": "img",
+   "label": "diagram",
+   "file_type": "image",
+   "source_file": "images/architecture.png"
+  },
+  {
+   "id": "paper",
+   "label": "paper",
+   "file_type": "paper",
+   "source_file": "papers/write_through.pdf",
+   "source_location": "p1"
+  },
+  {
+   "id": "why_wt",
+   "label": "why write-through",
+   "file_type": "rationale",
+   "source_file": "README.md"
+  },
+  {
+   "id": "conv",
+   "label": "runbook",
+   "file_type": "document",
+   "source_file": "graphify-out/converted/runbook_b3207a85.md"
+  },
+  {
+   "id": "conv_orig",
+   "label": "runbook orig",
+   "file_type": "document",
+   "source_file": "office/runbook.docx"
+  },
+  {
+   "id": "src_app_util",
+   "label": "util file as doc",
+   "file_type": "document",
+   "source_file": "README.md"
+  },
+  {
+   "id": "with_extra",
+   "label": "extra keys",
+   "file_type": "concept",
+   "source_file": "README.md",
+   "x_custom": 7,
+   "community": 99,
+   "confidence": "INFERRED"
+  },
+  {
+   "id": "readme",
+   "label": "readme id",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "label": "no id",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "id": "no_label",
+   "file_type": "concept",
+   "source_file": "README.md"
+  },
+  {
+   "id": "code_typed",
+   "label": "code typed",
+   "file_type": "code",
+   "source_file": "README.md"
+  }
+ ],
+ "edges": [
+  {
+   "source": "readme_job_service",
+   "target": "src_app_service_run_job",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "README.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "readme_job_service",
+   "target": "src_app_util_slugify",
+   "relation": "mentions",
+   "confidence": "INFERRED",
+   "source_file": "README.md"
+  },
+  {
+   "source": "readme_job_service",
+   "target": "ghost_node",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "README.md"
+  },
+  {
+   "source": "readme_job_service",
+   "target": "glossary_term_job",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.7,
+   "source_file": "README.md"
+  },
+  {
+   "source": "readme_slugify",
+   "target": "glossary_term_job",
+   "relation": "conceptually_related_to",
+   "confidence": "maybe",
+   "confidence_score": "high",
+   "source_file": "README.md"
+  },
+  {
+   "source": "queue_cfg",
+   "target": "floating",
+   "relation": "shares_data_with"
+  },
+  {
+   "source": "queue_cfg",
+   "target": "paper",
+   "confidence": "EXTRACTED"
+  },
+  {
+   "source": "readme_job_service",
+   "target": "readme_job_service",
+   "relation": "references",
+   "confidence": "EXTRACTED"
+  },
+  {
+   "source": "readme_job_service",
+   "target": "glossary_term_job",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0
+  },
+  {
+   "source": "img",
+   "target": "paper",
+   "relation": "conceptually_related_to",
+   "confidence": "AMBIGUOUS",
+   "confidence_score": 0.2
+  },
+  {
+   "source": "paper",
+   "target": "why_wt",
+   "relation": "cites",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "weight": 0.5
+  },
+  {
+   "source": "why_wt",
+   "target": "readme_job_service",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "README.md"
+  },
+  {
+   "source": "Job Service",
+   "target": "paper",
+   "relation": "references",
+   "confidence": "EXTRACTED"
+  },
+  {
+   "source": "conv",
+   "target": "conv_orig",
+   "relation": "references",
+   "confidence": "EXTRACTED"
+  },
+  {
+   "source": "Docs Guide/Operator Guide!",
+   "target": "readme_job_service",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0
+  },
+  {
+   "source": "dup_node",
+   "target": "src_app_util",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "confidence_score": 0.6,
+   "context": "probe",
+   "x_edge": 1
+  },
+  {
+   "source": "dot_readme",
+   "target": "util_note",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "confidence_score": 0.5
+  },
+  {
+   "source": "with_extra",
+   "target": "readme",
+   "relation": "references",
+   "confidence": "EXTRACTED"
+  },
+  {
+   "source": "code_typed",
+   "target": "no_label",
+   "relation": "references",
+   "confidence": "EXTRACTED"
+  }
+ ],
+ "hyperedges": [
+  {
+   "id": "h_ok",
+   "label": "ok group",
+   "nodes": [
+    "readme_job_service",
+    "paper",
+    "why_wt"
+   ],
+   "relation": "participate_in",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "README.md"
+  },
+  {
+   "id": "h_ghost",
+   "label": "ghost group",
+   "nodes": [
+    "readme_job_service",
+    "ghost_node",
+    "paper"
+   ],
+   "relation": "form",
+   "confidence": "INFERRED",
+   "confidence_score": 0.7,
+   "source_file": "README.md"
+  },
+  {
+   "label": "no id group",
+   "nodes": [
+    "readme_job_service",
+    "paper"
+   ],
+   "relation": "form"
+  },
+  {
+   "id": "h_code",
+   "label": "code group",
+   "nodes": [
+    "src_app_service_run_job",
+    "src_app_util_slugify"
+   ],
+   "relation": "form",
+   "confidence": "INFERRED",
+   "confidence_score": 0.8,
+   "source_file": "README.md"
+  }
+ ],
+ "input_tokens": 999,
+ "output_tokens": 555
+}

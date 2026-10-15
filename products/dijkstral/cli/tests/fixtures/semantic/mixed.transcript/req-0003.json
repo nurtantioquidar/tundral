@@ -1,0 +1,333 @@
+{
+ "index": 3,
+ "time": "2026-10-15T17:24:54",
+ "t_start": 1792056294.04,
+ "fingerprint": "e9ff8bcc52e59155b3ee9f27a5291b59c5445968160b10b73f2dea8e6f82511b",
+ "responder": "codex",
+ "codex_model": "gpt-6.1-sol",
+ "reasoning_effort": "medium",
+ "request": {
+  "params": {
+   "model": "codex-shim",
+   "stream": false,
+   "max_completion_tokens": 16384,
+   "temperature": 0
+  },
+  "messages": [
+   {
+    "role": "system",
+    "keys": [
+     "content",
+     "role"
+    ],
+    "content": {
+     "text": "<prompt text: 3589 chars>",
+     "chars": 3589,
+     "lines": 35,
+     "sha256": "334dd0a0112e1c414126425e82eb705f5968b393a1008369723926c2f751c074",
+     "md5": "537f66e8dedae9ab85923370fd7018ec",
+     "sha1": "aa7f6d55bc77befadda7fa3cf6644e9996337890",
+     "json_keys": [
+      "author",
+      "captured_at",
+      "confidence",
+      "confidence_score",
+      "contributor",
+      "edges",
+      "file_type",
+      "hyperedges",
+      "id",
+      "input_tokens",
+      "label",
+      "nodes",
+      "output_tokens",
+      "rationale",
+      "relation",
+      "source",
+      "source_file",
+      "source_location",
+      "source_url",
+      "target",
+      "weight"
+     ],
+     "quoted_tokens": [
+      "node_id",
+      "node_id1",
+      "node_id2",
+      "node_id3",
+      "snake_case_id",
+      "stem_entity"
+     ]
+    }
+   },
+   {
+    "role": "user",
+    "keys": [
+     "content",
+     "role"
+    ],
+    "content": [
+     {
+      "type": "text",
+      "text": "<prompt text: 3143 chars>",
+      "chars": 3143,
+      "lines": 89,
+      "sha256": "6f241b05b2424c001d086c7e30f043e702ca68b1e7c622e7828509376e1a665f",
+      "md5": "9ee31a0cbc079828c5f3e0e6fd3642a9",
+      "sha1": "465e3de9bd852513ed57143489a7c185d5d690ec",
+      "layout": [
+       {
+        "gap": 24
+       },
+       {
+        "at": 24,
+        "len": 9,
+        "kind": "path",
+        "path": "README.md"
+       },
+       {
+        "gap": 10
+       },
+       {
+        "at": 43,
+        "len": 64,
+        "kind": "sha256_of_file",
+        "path": "README.md"
+       },
+       {
+        "gap": 3
+       },
+       {
+        "at": 110,
+        "len": 450,
+        "kind": "file_content",
+        "path": "README.md",
+        "stripped": false
+       },
+       {
+        "at": 266,
+        "len": 13,
+        "kind": "path",
+        "path": "docs/guide.md",
+        "inside_previous": true
+       },
+       {
+        "at": 299,
+        "len": 24,
+        "kind": "path",
+        "path": "papers/write_through.pdf",
+        "inside_previous": true
+       },
+       {
+        "gap": 46
+       },
+       {
+        "at": 606,
+        "len": 17,
+        "kind": "path",
+        "path": "config/queue.yaml"
+       },
+       {
+        "gap": 10
+       },
+       {
+        "at": 633,
+        "len": 64,
+        "kind": "sha256_of_file",
+        "path": "config/queue.yaml"
+       },
+       {
+        "gap": 3
+       },
+       {
+        "at": 700,
+        "len": 69,
+        "kind": "file_content",
+        "path": "config/queue.yaml",
+        "stripped": false
+       },
+       {
+        "gap": 46
+       },
+       {
+        "at": 815,
+        "len": 17,
+        "kind": "path",
+        "path": "docs/glossary.txt"
+       },
+       {
+        "gap": 10
+       },
+       {
+        "at": 842,
+        "len": 64,
+        "kind": "sha256_of_file",
+        "path": "docs/glossary.txt"
+       },
+       {
+        "gap": 3
+       },
+       {
+        "at": 909,
+        "len": 174,
+        "kind": "file_content",
+        "path": "docs/glossary.txt",
+        "stripped": false
+       },
+       {
+        "gap": 46
+       },
+       {
+        "at": 1129,
+        "len": 13,
+        "kind": "path",
+        "path": "docs/guide.md"
+       },
+       {
+        "gap": 10
+       },
+       {
+        "at": 1152,
+        "len": 64,
+        "kind": "sha256_of_file",
+        "path": "docs/guide.md"
+       },
+       {
+        "gap": 3
+       },
+       {
+        "at": 1219,
+        "len": 203,
+        "kind": "file_content",
+        "path": "docs/guide.md",
+        "stripped": false
+       },
+       {
+        "at": 1261,
+        "len": 9,
+        "kind": "path",
+        "path": "README.md",
+        "inside_previous": true
+       },
+       {
+        "at": 1371,
+        "len": 20,
+        "kind": "path",
+        "path": "office/capacity.xlsx",
+        "inside_previous": true
+       },
+       {
+        "gap": 46
+       },
+       {
+        "at": 1468,
+        "len": 43,
+        "kind": "path",
+        "path": "graphify-out/converted/capacity_e7fd8f6a.md"
+       },
+       {
+        "gap": 10
+       },
+       {
+        "at": 1521,
+        "len": 64,
+        "kind": "sha256_of_file",
+        "path": "graphify-out/converted/capacity_e7fd8f6a.md"
+       },
+       {
+        "gap": 3
+       },
+       {
+        "at": 1588,
+        "len": 131,
+        "kind": "file_content",
+        "path": "graphify-out/converted/capacity_e7fd8f6a.md",
+        "stripped": false
+       },
+       {
+        "gap": 46
+       },
+       {
+        "at": 1765,
+        "len": 42,
+        "kind": "path",
+        "path": "graphify-out/converted/runbook_b3207a85.md"
+       },
+       {
+        "gap": 10
+       },
+       {
+        "at": 1817,
+        "len": 64,
+        "kind": "sha256_of_file",
+        "path": "graphify-out/converted/runbook_b3207a85.md"
+       },
+       {
+        "gap": 3
+       },
+       {
+        "at": 1884,
+        "len": 216,
+        "kind": "file_content",
+        "path": "graphify-out/converted/runbook_b3207a85.md",
+        "stripped": false
+       },
+       {
+        "gap": 46
+       },
+       {
+        "at": 2146,
+        "len": 24,
+        "kind": "path",
+        "path": "papers/write_through.pdf"
+       },
+       {
+        "gap": 950
+       },
+       {
+        "at": 3120,
+        "len": 23,
+        "kind": "path",
+        "path": "images/architecture.png"
+       }
+      ],
+      "json_keys": [
+       "file_type"
+      ],
+      "quoted_tokens": [
+       "JobQueue",
+       "image",
+       "run_job"
+      ]
+     },
+     {
+      "type": "image_url",
+      "url_head": "data:image/png;base64",
+      "url_chars": 12518,
+      "detail": "auto",
+      "sha256": "a720d5dce3b29ba92913447cb6b9407babfe8151c7e15cc799db6599b238b05c"
+     }
+    ]
+   }
+  ]
+ },
+ "t_end": 1792056354.59,
+ "status": 200,
+ "response": {
+  "ok": true,
+  "text": "{\"nodes\":[{\"id\":\"readme\",\"label\":\"Job Service README\",\"file_type\":\"document\",\"source_file\":\"README.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"readme_run_job\",\"label\":\"run_job\",\"file_type\":\"concept\",\"source_file\":\"README.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"readme_jobqueue\",\"label\":\"JobQueue\",\"file_type\":\"concept\",\"source_file\":\"README.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"readme_slugify\",\"label\":\"slugify\",\"file_type\":\"concept\",\"source_file\":\"README.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"readme_cache\",\"label\":\"Write-through cache\",\"file_type\":\"concept\",\"source_file\":\"README.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":\"Write-through caching was adopted because lazy invalidation caused stale reads. Keep it write-through and revisit if write latency exceeds 2 seconds.\"},{\"id\":\"config_queue\",\"label\":\"Queue configuration: jobs, maximum 1000 items, write-through cache\",\"file_type\":\"document\",\"source_file\":\"config/queue.yaml\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"docs_glossary\",\"label\":\"Job service glossary\",\"file_type\":\"document\",\"source_file\":\"docs/glossary.txt\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"docs_glossary_job\",\"label\":\"Job: a unit of queued work\",\"file_type\":\"concept\",\"source_file\":\"docs/glossary.txt\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"docs_glossary_slug\",\"label\":\"Slug: a normalized job name\",\"file_type\":\"concept\",\"source_file\":\"docs/glossary.txt\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"docs_glossary_store\",\"label\":\"Backing store\",\"file_type\":\"concept\",\"source_file\":\"docs/glossary.txt\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"docs_guide\",\"label\":\"Operator Guide\",\"file_type\":\"document\",\"source_file\":\"docs/guide.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"docs_guide_jobqueue_push\",\"label\":\"JobQueue.push\",\"file_type\":\"concept\",\"source_file\":\"docs/guide.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"office_capacity\",\"label\":\"Measured throughput spreadsheet\",\"file_type\":\"document\",\"source_file\":\"office/capacity.xlsx\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"graphify_out_converted_capacity_e7fd8f6a\",\"label\":\"Converted capacity sheet: JobQueue 120 jobs/s; Cache 900 jobs/s\",\"file_type\":\"document\",\"source_file\":\"graphify-out/converted/capacity_e7fd8f6a.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"graphify_out_converted_runbook_b3207a85\",\"label\":\"Queue Runbook: process pending jobs, monitor cache hits, escalate latency over 2 seconds\",\"file_type\":\"document\",\"source_file\":\"graphify-out/converted/runbook_b3207a85.md\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null},{\"id\":\"papers_write_through\",\"label\":\"Write-Through Caching for Job Queues\",\"file_type\":\"paper\",\"source_file\":\"papers/write_through.pdf\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":\"A. Example, B. Sample\",\"contributor\":null,\"rationale\":null},{\"id\":\"papers_write_through_lazy_invalidation\",\"label\":\"Lazy Invalidation in Distributed Caches (2019)\",\"file_type\":\"paper\",\"source_file\":\"papers/write_through.pdf\",\"source_location\":\"References [1]\",\"source_url\":null,\"captured_at\":null,\"author\":\"J. Smith, L. Wong\",\"contributor\":null,\"rationale\":null},{\"id\":\"images_architecture\",\"label\":\"Architecture diagram: README → run_job → JobQueue; run_job → slugify → Cache\",\"file_type\":\"image\",\"source_file\":\"images/architecture.png\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null,\"rationale\":null}],\"edges\":[{\"source\":\"readme\",\"target\":\"readme_run_job\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"README.md\",\"source_location\":null,\"weight\":1.0},{\"source\":\"readme\",\"target\":\"readme_jobqueue\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"README.md\",\"source_location\":null,\"weight\":1.0},{\"source\":\"readme\",\"target\":\"readme_slugify\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"README.md\",\"source_location\":\"Caching\",\"weight\":1.0},{\"source\":\"readme\",\"target\":\"readme_cache\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"README.md\",\"source_location\":\"Caching\",\"weight\":1.0},{\"source\":\"readme\",\"target\":\"docs_guide\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"README.md\",\"source_location\":null,\"weight\":1.0},{\"source\":\"readme\",\"target\":\"papers_write_through\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"README.md\",\"source_location\":null,\"weight\":1.0},{\"source\":\"config_queue\",\"target\":\"readme_jobqueue\",\"relation\":\"references\",\"confidence\":\"INFERRED\",\"confidence_score\":0.9,\"source_file\":\"config/queue.yaml\",\"source_location\":\"queue\",\"weight\":1.0},{\"source\":\"config_queue\",\"target\":\"readme_cache\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"config/queue.yaml\",\"source_location\":\"cache.policy\",\"weight\":1.0},{\"source\":\"docs_glossary\",\"target\":\"docs_glossary_job\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/glossary.txt\",\"source_location\":null,\"weight\":1.0},{\"source\":\"docs_glossary\",\"target\":\"docs_glossary_slug\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/glossary.txt\",\"source_location\":null,\"weight\":1.0},{\"source\":\"docs_glossary\",\"target\":\"readme_cache\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/glossary.txt\",\"source_location\":\"write-through definition\",\"weight\":1.0},{\"source\":\"docs_glossary_job\",\"target\":\"readme_jobqueue\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/glossary.txt\",\"source_location\":\"job definition\",\"weight\":1.0},{\"source\":\"docs_glossary_slug\",\"target\":\"readme_slugify\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/glossary.txt\",\"source_location\":\"slug definition\",\"weight\":1.0},{\"source\":\"docs_guide\",\"target\":\"readme\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/guide.md\",\"source_location\":null,\"weight\":1.0},{\"source\":\"docs_guide\",\"target\":\"docs_guide_jobqueue_push\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/guide.md\",\"source_location\":\"Running jobs\",\"weight\":1.0},{\"source\":\"docs_guide\",\"target\":\"readme_run_job\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/guide.md\",\"source_location\":\"Running jobs\",\"weight\":1.0},{\"source\":\"docs_guide\",\"target\":\"office_capacity\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/guide.md\",\"source_location\":\"Capacity\",\"weight\":1.0},{\"source\":\"readme_run_job\",\"target\":\"readme_jobqueue\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/guide.md\",\"source_location\":\"Running jobs\",\"weight\":1.0},{\"source\":\"docs_guide_jobqueue_push\",\"target\":\"readme_slugify\",\"relation\":\"calls\",\"confidence\":\"INFERRED\",\"confidence_score\":0.8,\"source_file\":\"papers/write_through.pdf\",\"source_location\":\"Abstract\",\"weight\":1.0},{\"source\":\"graphify_out_converted_capacity_e7fd8f6a\",\"target\":\"office_capacity\",\"relation\":\"references\",\"confidence\":\"INFERRED\",\"confidence_score\":0.9,\"source_file\":\"graphify-out/converted/capacity_e7fd8f6a.md\",\"source_location\":\"Conversion provenance comment\",\"weight\":1.0},{\"source\":\"graphify_out_converted_capacity_e7fd8f6a\",\"target\":\"readme_jobqueue\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"graphify-out/converted/capacity_e7fd8f6a.md\",\"source_location\":\"Sheet: Capacity\",\"weight\":1.0},{\"source\":\"graphify_out_converted_capacity_e7fd8f6a\",\"target\":\"readme_cache\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"graphify-out/converted/capacity_e7fd8f6a.md\",\"source_location\":\"Sheet: Capacity\",\"weight\":1.0},{\"source\":\"graphify_out_converted_runbook_b3207a85\",\"target\":\"readme_run_job\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"graphify-out/converted/runbook_b3207a85.md\",\"source_location\":\"Queue Runbook\",\"weight\":1.0},{\"source\":\"graphify_out_converted_runbook_b3207a85\",\"target\":\"readme_cache\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"graphify-out/converted/runbook_b3207a85.md\",\"source_location\":\"Queue Runbook\",\"weight\":1.0},{\"source\":\"graphify_out_converted_runbook_b3207a85\",\"target\":\"readme_jobqueue\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"graphify-out/converted/runbook_b3207a85.md\",\"source_location\":\"Escalation\",\"weight\":1.0},{\"source\":\"papers_write_through\",\"target\":\"docs_guide_jobqueue_push\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"papers/write_through.pdf\",\"source_location\":\"Abstract\",\"weight\":1.0},{\"source\":\"papers_write_through\",\"target\":\"readme_cache\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"papers/write_through.pdf\",\"source_location\":\"Abstract\",\"weight\":1.0},{\"source\":\"papers_write_through\",\"target\":\"papers_write_through_lazy_invalidation\",\"relation\":\"cites\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"papers/write_through.pdf\",\"source_location\":\"References [1]\",\"weight\":1.0},{\"source\":\"images_architecture\",\"target\":\"readme\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"images/architecture.png\",\"source_location\":null,\"weight\":1.0},{\"source\":\"images_architecture\",\"target\":\"readme_run_job\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"images/architecture.png\",\"source_location\":null,\"weight\":1.0},{\"source\":\"images_architecture\",\"target\":\"readme_jobqueue\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"images/architecture.png\",\"source_location\":null,\"weight\":1.0},{\"source\":\"images_architecture\",\"target\":\"readme_slugify\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"images/architecture.png\",\"source_location\":null,\"weight\":1.0},{\"source\":\"images_architecture\",\"target\":\"readme_cache\",\"relation\":\"references\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"images/architecture.png\",\"source_location\":null,\"weight\":1.0},{\"source\":\"readme_run_job\",\"target\":\"readme_slugify\",\"relation\":\"calls\",\"confidence\":\"AMBIGUOUS\",\"confidence_score\":0.55,\"source_file\":\"images/architecture.png\",\"source_location\":\"Downward arrow from run_job to slugify\",\"weight\":1.0}],\"hyperedges\":[{\"id\":\"queue_job_lifecycle\",\"label\":\"Jobs enter through JobQueue.push and are subsequently drained by run_job\",\"nodes\":[\"docs_glossary_job\",\"docs_guide_jobqueue_push\",\"readme_jobqueue\",\"readme_run_job\"],\"relation\":\"participate_in\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,\"source_file\":\"docs/guide.md\"},{\"id\":\"write_through_consistency\",\"label\":\"Every write updates the cache and backing store together\",\"nodes\":[\"docs_glossary_job\",\"readme_cache\",\"docs_glossary_store\"],\"relation\":\"participate_in\",\"confidence\":\"EXTRACTED\",\"confidence_score\":0.95,\"source_file\":\"docs/glossary.txt\"}],\"input_tokens\":0,\"output_tokens\":0}",
+  "usage": {
+   "input_tokens": 17671,
+   "cached_input_tokens": 12288,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 3211,
+   "reasoning_output_tokens": 69
+  },
+  "latency_s": 60.54,
+  "returncode": 0,
+  "tool_items": 0,
+  "stderr_tail": "",
+  "images": 1,
+  "output_schema": false
+ }
+}

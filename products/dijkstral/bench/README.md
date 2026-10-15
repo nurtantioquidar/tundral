@@ -18,6 +18,8 @@ outside the source tree under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstr
 | `accuracy/` | Stage-2 SCIP oracle: precision and recall of both tools' graphs against compiler-grade indexes ([accuracy/README.md](accuracy/README.md)) |
 | `query.py` | Stage-3 query benchmark: `latency` (fresh process per call, p50/p95, peak RSS; Graphify on its reference graph, dijkstral on its own `graph.dij` and on Graphify's `graph.json`) → `results/query-<epoch>.json`; `parity` (both tools on Graphify's reference graph, seeds, NODE lists, EDGE sets and full output compared) → `results/query-parity-<epoch>.json`; `mcp` (MCP servers over stdio: spawn → `tools/list`, first and warm `query_graph` calls, peak RSS) → `results/mcp-<epoch>.json`; `report` prints the tables |
 | `hook.py` | Hook-guard latency: one fresh process per Claude Code `PreToolUse` payload for both tools, interleaved with the exec floor (`/usr/bin/true`) → `results/hook-<epoch>.json` |
+| `llm_shim.py` | Stage-5 semantic pass: localhost OpenAI-compatible server that answers through `codex exec` (ChatGPT subscription, no API key), replays recorded replies, or serves static ones; writes clean-room request transcripts ([semantic/README.md](semantic/README.md)) |
+| `semantic/` | Semantic fixture binaries (`make_binaries.py`), markers, and how to run Graphify's model pass through the shim |
 
 Later stages add query latency, graph parity, SCIP precision/recall, and the paid
 agent-outcome runs (see `../DIJKSTRAL_DESIGN.md`).

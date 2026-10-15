@@ -1,0 +1,69 @@
+{
+ "index": 2,
+ "time": "2026-10-15T17:23:38",
+ "t_start": 1792056218.568,
+ "fingerprint": "cd17d39c5fd2ff9f917b011f7fa53bb2d33bc8cf0775eb786431742049726f04",
+ "responder": "codex",
+ "codex_model": "gpt-6.1-sol",
+ "reasoning_effort": "medium",
+ "request": {
+  "params": {
+   "model": "codex-shim",
+   "stream": false,
+   "max_completion_tokens": 448,
+   "temperature": 0
+  },
+  "messages": [
+   {
+    "role": "user",
+    "keys": [
+     "content",
+     "role"
+    ],
+    "content": {
+     "text": "<prompt text: 1094 chars>",
+     "chars": 1094,
+     "lines": 6,
+     "sha256": "f6ef709f7294951043c3d7ca77710f706e5e0b0ba4169e4a25f3019a267904a9",
+     "md5": "72101bd750d762fff51080fa1a2f3a5e",
+     "sha1": "06e0bff9b92cc5d7a583bb46072ccf0d1fc40170",
+     "layout": [
+      {
+       "gap": 395
+      },
+      {
+       "at": 395,
+       "len": 36,
+       "kind": "marker",
+       "marker": "Write-Through Caching for Job Queues"
+      },
+      {
+       "gap": 663
+      }
+     ],
+     "json_keys": [],
+     "quoted_tokens": []
+    }
+   }
+  ]
+ },
+ "t_end": 1792056224.493,
+ "status": 200,
+ "response": {
+  "ok": true,
+  "text": "{\"0\":\"Job Queue Caching\",\"1\":\"Job Queue Implementation\",\"2\":\"Job Service Documentation\",\"3\":\"Package Initialization\"}",
+  "usage": {
+   "input_tokens": 15160,
+   "cached_input_tokens": 12288,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 29,
+   "reasoning_output_tokens": 0
+  },
+  "latency_s": 5.92,
+  "returncode": 0,
+  "tool_items": 0,
+  "stderr_tail": "",
+  "images": 0,
+  "output_schema": false
+ }
+}

@@ -1,0 +1,155 @@
+{
+ "nodes": [
+  {
+   "id": "glossary",
+   "label": "stem only",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "glossary_x",
+   "label": "stem prefixed",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "docs_glossary_y",
+   "label": "full prefixed",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "glossary_y",
+   "label": "stem prefixed duplicate of y",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "Glossary_Z",
+   "label": "capital stem",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "x_glossary",
+   "label": "stem suffix",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "glossaryx",
+   "label": "stem no underscore",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "capacity_e7fd8f6a_sheet",
+   "label": "converted stem prefixed",
+   "file_type": "document",
+   "source_file": "graphify-out/converted/capacity_e7fd8f6a.md"
+  },
+  {
+   "id": "capacity_sheet",
+   "label": "original stem prefixed",
+   "file_type": "document",
+   "source_file": "graphify-out/converted/capacity_e7fd8f6a.md"
+  },
+  {
+   "id": "guide_slug",
+   "label": "stem of another file",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "t_video",
+   "label": "video typed",
+   "file_type": "video",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "t_audio",
+   "label": "audio typed",
+   "file_type": "audio",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "t_upper",
+   "label": "upper typed",
+   "file_type": "Document",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "t_code_ev",
+   "label": "JobQueue",
+   "file_type": "code",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "t_code_noev",
+   "label": "Nonexistent Thing",
+   "file_type": "code",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "t_concept_noev",
+   "label": "Another Missing Thing",
+   "file_type": "concept",
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "id": "t_rationale_noev",
+   "label": "Missing rationale",
+   "file_type": "rationale",
+   "source_file": "docs/glossary.txt"
+  }
+ ],
+ "edges": [
+  {
+   "source": "glossary_x",
+   "target": "glossary",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "source": "glossary_y",
+   "target": "docs_glossary_y",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.8,
+   "source_file": "docs/glossary.txt"
+  },
+  {
+   "source": "capacity_sheet",
+   "target": "capacity_e7fd8f6a_sheet",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "graphify-out/converted/capacity_e7fd8f6a.md"
+  },
+  {
+   "source": "t_code_ev",
+   "target": "src_app_service_jobqueue",
+   "relation": "implements",
+   "confidence": "INFERRED",
+   "confidence_score": 0.9,
+   "source_file": "docs/glossary.txt"
+  }
+ ],
+ "hyperedges": [
+  {
+   "id": "glossary_group",
+   "label": "renamed members",
+   "nodes": [
+    "glossary_x",
+    "glossary",
+    "Glossary_Z"
+   ],
+   "relation": "form",
+   "confidence": "INFERRED",
+   "confidence_score": 0.7,
+   "source_file": "docs/glossary.txt"
+  }
+ ]
+}

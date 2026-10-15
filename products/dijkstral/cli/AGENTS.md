@@ -40,7 +40,10 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   `graph.svg` (`svg.rs`); the Mermaid call-flow page (`callflow.rs`) and the D3 tree
   (`tree.rs`), whose pages are dijkstral's own (`*.html`, CDN scripts pinned with integrity).
   Their commands are in `crates/cli/src/exports/`.
-- `crates/semantic`: a later stage.
+- `crates/semantic`: a later stage. Graphify's semantic pass (files sent, chunking, request and
+  reply schema, merge, cache, model labelling) and the LLM-free markdown structure of `update` are
+  specified in `docs/graphify-semantic.md`, with goldens and recorded model replies in
+  `tests/fixtures/semantic/` (replayable through `../bench/llm_shim.py`).
 
 Compatibility is defined by `docs/graphify-format.md`, the black-box specification of Graphify's
 output, and enforced by `crates/core/tests/golden_<lang>.rs` against the goldens in
