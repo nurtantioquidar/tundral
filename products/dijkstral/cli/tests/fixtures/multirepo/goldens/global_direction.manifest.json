@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "repos": {
+    "dirt": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/dirt/graphify-out/graph.json",
+      "node_count": 4,
+      "edge_count": 2,
+      "source_hash": "c184db1eca97870f"
+    },
+    "stubs": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/stubs/graphify-out/graph.json",
+      "node_count": 1,
+      "edge_count": 3,
+      "source_hash": "0a045c8c9e84c865"
+    },
+    "caf\u00e9": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/caf\u00e9/graphify-out/graph.json",
+      "node_count": 1,
+      "edge_count": 0,
+      "source_hash": "05246442ad287e7c"
+    }
+  }
+}

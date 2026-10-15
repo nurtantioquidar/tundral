@@ -1,0 +1,41 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "f1",
+   "label": "one.py",
+   "source_file": "one.py",
+   "community": 0
+  },
+  {
+   "id": "s1",
+   "label": "Foo",
+   "norm_label": "foo",
+   "source_file": "",
+   "community": 1
+  },
+  {
+   "id": "new",
+   "label": "New",
+   "source_file": "one.py",
+   "community": 2
+  }
+ ],
+ "links": [
+  {
+   "source": "f1",
+   "target": "s1",
+   "relation": "references"
+  },
+  {
+   "source": "new",
+   "target": "f1",
+   "relation": "calls"
+  }
+ ],
+ "hyperedges": []
+}

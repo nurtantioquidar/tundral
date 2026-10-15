@@ -1,0 +1,48 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "a",
+   "community": 0
+  },
+  {
+   "id": "b",
+   "community": 0
+  },
+  {
+   "id": "c",
+   "community": 0
+  },
+  {
+   "id": "d",
+   "community": 0
+  }
+ ],
+ "links": [
+  {
+   "source": "c",
+   "target": "a",
+   "relation": "r1"
+  },
+  {
+   "source": "b",
+   "target": "a",
+   "relation": "r2"
+  },
+  {
+   "source": "d",
+   "target": "b",
+   "relation": "r3"
+  },
+  {
+   "source": "b",
+   "target": "c",
+   "relation": "r4"
+  }
+ ],
+ "hyperedges": []
+}

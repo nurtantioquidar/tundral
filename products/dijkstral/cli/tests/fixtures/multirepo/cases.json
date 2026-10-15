@@ -1,0 +1,1442 @@
+{
+ "tool": "graphify 0.9.86",
+ "how": "Each case copies `files` (workspace path -> source under tests/fixtures) into a fresh workspace and runs `steps` in order from <workspace>/<cwd>, HOME=<workspace>/home, GRAPHIFY_QUERY_LOG_DISABLE=1. `@global` is $HOME/.graphify for Graphify and $DIJKSTRAL_HOME (<workspace>/home/.dijkstral) for dijkstral. After a step, each `outputs` file must equal goldens/<name> byte for byte; manifests are compared after replacing added_at with <added_at> and the workspace path with <ws>. Stdout is not compared: messages are each tool's own.",
+ "cases": [
+  {
+   "name": "merge_py_go",
+   "files": {
+    "pyrepo/graphify-out/graph.json": "python.clustered.graphify.json",
+    "gorepo/graphify-out/graph.json": "go.clustered.graphify.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "pyrepo/graphify-out/graph.json",
+      "gorepo/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_py_go.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_py_go_rs",
+   "files": {
+    "pyrepo/graphify-out/graph.json": "python.clustered.graphify.json",
+    "gorepo/graphify-out/graph.json": "go.clustered.graphify.json",
+    "rsrepo/graphify-out/graph.json": "rust.clustered.graphify.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "pyrepo/graphify-out/graph.json",
+      "gorepo/graphify-out/graph.json",
+      "rsrepo/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_py_go_rs.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_py_twice",
+   "files": {
+    "pyrepo/graphify-out/graph.json": "python.clustered.graphify.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "pyrepo/graphify-out/graph.json",
+      "pyrepo/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_py_twice.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_alpha_beta",
+   "files": {
+    "alpha/graphify-out/graph.json": "multirepo/inputs/alpha.json",
+    "beta/graph.json": "multirepo/inputs/beta.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "alpha/graphify-out/graph.json",
+      "beta/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_alpha_beta.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_beta_alpha",
+   "files": {
+    "beta/graph.json": "multirepo/inputs/beta.json",
+    "alpha/graphify-out/graph.json": "multirepo/inputs/alpha.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "beta/graph.json",
+      "alpha/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_beta_alpha.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_offsets_nocomm",
+   "files": {
+    "nocomm/graphify-out/graph.json": "multirepo/inputs/nocomm.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "nocomm/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_offsets_nocomm.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_offsets_bigext",
+   "files": {
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json",
+    "bigext/graphify-out/graph.json": "multirepo/inputs/bigext.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ints/graphify-out/graph.json",
+      "bigext/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_offsets_bigext.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_offsets_negative",
+   "files": {
+    "neg/graphify-out/graph.json": "multirepo/inputs/neg.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "neg/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_offsets_negative.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_offsets_float_bool",
+   "files": {
+    "flt/graphify-out/graph.json": "multirepo/inputs/flt.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "flt/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_offsets_float_bool.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_ghost_endpoints",
+   "files": {
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json",
+    "ghost/graphify-out/graph.json": "multirepo/inputs/ghost.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ints/graphify-out/graph.json",
+      "ghost/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_ghost_endpoints.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_raw_edges",
+   "files": {
+    "rawedges/graphify-out/graph.json": "multirepo/inputs/rawedges.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "rawedges/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_raw_edges.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_directed",
+   "files": {
+    "directed/graphify-out/graph.json": "multirepo/inputs/directed.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "directed/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_directed.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_directed_order",
+   "files": {
+    "dord/graphify-out/graph.json": "multirepo/inputs/dord.json",
+    "one/graphify-out/graph.json": "multirepo/inputs/one.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "dord/graphify-out/graph.json",
+      "one/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_directed_order.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_multigraph",
+   "files": {
+    "multi/graphify-out/graph.json": "multirepo/inputs/multi.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "multi/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_multigraph.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_multigraph_order",
+   "files": {
+    "mord/graphify-out/graph.json": "multirepo/inputs/mord.json",
+    "one/graphify-out/graph.json": "multirepo/inputs/one.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "mord/graphify-out/graph.json",
+      "one/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_multigraph_order.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_edge_update",
+   "files": {
+    "upd/graphify-out/graph.json": "multirepo/inputs/upd.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "upd/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_edge_update.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_hyperedges",
+   "files": {
+    "hyper/graphify-out/graph.json": "multirepo/inputs/hyper.json",
+    "extnode/graphify-out/graph.json": "multirepo/inputs/extnode.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "hyper/graphify-out/graph.json",
+      "extnode/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_hyperedges.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_hyperedge_keys",
+   "files": {
+    "hk/graphify-out/graph.json": "multirepo/inputs/hk.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "hk/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_hyperedge_keys.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_hyperedges_graph_first",
+   "files": {
+    "hboth/graphify-out/graph.json": "multirepo/inputs/hboth.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "hboth/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_hyperedges_graph_first.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_hyperedges_graph_empty",
+   "files": {
+    "hgempty/graphify-out/graph.json": "multirepo/inputs/hgempty.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "hgempty/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_hyperedges_graph_empty.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_hyperedges_graph_empty_top",
+   "files": {
+    "hgempty2/graphify-out/graph.json": "multirepo/inputs/hgempty2.json",
+    "ext1/graphify-out/graph.json": "multirepo/inputs/ext1.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "hgempty2/graphify-out/graph.json",
+      "ext1/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_hyperedges_graph_empty_top.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_hyperedges_null",
+   "files": {
+    "hnull/graphify-out/graph.json": "multirepo/inputs/hnull.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "hnull/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_hyperedges_null.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_no_graph",
+   "files": {
+    "nograph/graphify-out/graph.json": "multirepo/inputs/nograph.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "nograph/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_no_graph.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_no_graph_at_all",
+   "files": {
+    "nog1/graphify-out/graph.json": "multirepo/inputs/nog1.json",
+    "nog2/graphify-out/graph.json": "multirepo/inputs/nog2.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "nog1/graphify-out/graph.json",
+      "nog2/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_no_graph_at_all.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_graph_attrs",
+   "files": {
+    "schema2/graphify-out/graph.json": "multirepo/inputs/schema2.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "schema2/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_graph_attrs.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_graph_attrs_late",
+   "files": {
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json",
+    "schema2/graphify-out/graph.json": "multirepo/inputs/schema2.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ints/graphify-out/graph.json",
+      "schema2/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_graph_attrs_late.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_premerged_first",
+   "files": {
+    "premerged/graphify-out/graph.json": "multirepo/inputs/premerged.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "premerged/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_premerged_first.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_premerged_second",
+   "files": {
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json",
+    "premerged/graphify-out/graph.json": "multirepo/inputs/premerged.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ints/graphify-out/graph.json",
+      "premerged/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_premerged_second.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_shared_external",
+   "files": {
+    "extnode/graphify-out/graph.json": "multirepo/inputs/extnode.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "extnode/graphify-out/graph.json",
+      "extnode/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_shared_external.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_external_truthy",
+   "files": {
+    "extstr/graphify-out/graph.json": "multirepo/inputs/extstr.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "extstr/graphify-out/graph.json",
+      "extstr/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_external_truthy.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_external_no_community",
+   "files": {
+    "extnocomm/graphify-out/graph.json": "multirepo/inputs/extnocomm.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "extnocomm/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_external_no_community.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_external_late",
+   "files": {
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json",
+    "extnocomm/graphify-out/graph.json": "multirepo/inputs/extnocomm.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ints/graphify-out/graph.json",
+      "extnocomm/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_external_late.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_numeric_ids",
+   "files": {
+    "numid/graphify-out/graph.json": "multirepo/inputs/numid.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "numid/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_numeric_ids.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_self_loop",
+   "files": {
+    "selfloop/graphify-out/graph.json": "multirepo/inputs/selfloop.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "selfloop/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_self_loop.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_duplicate_node",
+   "files": {
+    "dupnode/graphify-out/graph.json": "multirepo/inputs/dupnode.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "dupnode/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_duplicate_node.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_missing_ids",
+   "files": {
+    "noid/graphify-out/graph.json": "multirepo/inputs/noid.json",
+    "ext1/graphify-out/graph.json": "multirepo/inputs/ext1.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "noid/graphify-out/graph.json",
+      "ext1/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_missing_ids.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_empty_first",
+   "files": {
+    "empty/graphify-out/graph.json": "multirepo/inputs/empty.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "empty/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_empty_first.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_empty_last",
+   "files": {
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json",
+    "empty/graphify-out/graph.json": "multirepo/inputs/empty.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ints/graphify-out/graph.json",
+      "empty/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_empty_last.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_link_order",
+   "files": {
+    "ord/graphify-out/graph.json": "multirepo/inputs/ord.json",
+    "ints/graphify-out/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ord/graphify-out/graph.json",
+      "ints/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_link_order.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_external_adjacency",
+   "files": {
+    "ext1/graphify-out/graph.json": "multirepo/inputs/ext1.json",
+    "ext2/graphify-out/graph.json": "multirepo/inputs/ext2.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ext1/graphify-out/graph.json",
+      "ext2/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_external_adjacency.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_external_adjacency_directed",
+   "files": {
+    "ext1/graphify-out/graph.json": "multirepo/inputs/ext1.json",
+    "ext2d/graphify-out/graph.json": "multirepo/inputs/ext2d.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "ext1/graphify-out/graph.json",
+      "ext2d/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_external_adjacency_directed.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_previous",
+   "files": {
+    "prev.json": "multirepo/inputs/prev.json",
+    "one/graphify-out/graph.json": "multirepo/inputs/one.json",
+    "two/graphify-out/graph.json": "multirepo/inputs/two.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "one/graphify-out/graph.json",
+      "two/graphify-out/graph.json",
+      "--out",
+      "out.json",
+      "--previous",
+      "prev.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_previous.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_previous_partial",
+   "files": {
+    "prev.json": "multirepo/inputs/prev2.json",
+    "one/graphify-out/graph.json": "multirepo/inputs/one.json",
+    "two/graphify-out/graph.json": "multirepo/inputs/two.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "one/graphify-out/graph.json",
+      "two/graphify-out/graph.json",
+      "--out",
+      "out.json",
+      "--previous",
+      "prev.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_previous_partial.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_previous_missing",
+   "files": {
+    "one/graphify-out/graph.json": "multirepo/inputs/one.json",
+    "two/graphify-out/graph.json": "multirepo/inputs/two.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "one/graphify-out/graph.json",
+      "two/graphify-out/graph.json",
+      "--out",
+      "out.json",
+      "--previous",
+      "nope.json"
+     ],
+     "exit": 1,
+     "outputs": {}
+    }
+   ]
+  },
+  {
+   "name": "merge_missing_input",
+   "files": {
+    "one/graphify-out/graph.json": "multirepo/inputs/one.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "one/graphify-out/graph.json",
+      "nope/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 1,
+     "outputs": {}
+    }
+   ]
+  },
+  {
+   "name": "merge_tags_nested",
+   "files": {
+    "one/two/graph.json": "multirepo/inputs/small.json",
+    "three/four/merged.json": "multirepo/inputs/small.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "one/two/graph.json",
+      "three/four/merged.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_tags_nested.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_tags_default_repo",
+   "files": {
+    "graph.json": "multirepo/inputs/small.json",
+    "proj/graphify-out/graph.json": "multirepo/inputs/small.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "graph.json",
+      "proj/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_tags_default_repo.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_tags_qualified",
+   "files": {
+    "X/a/proj/graphify-out/graph.json": "multirepo/inputs/small.json",
+    "Y/a/proj/graphify-out/graph.json": "multirepo/inputs/small.json",
+    "Y/b/proj/graphify-out/graph.json": "multirepo/inputs/small.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "X/a/proj/graphify-out/graph.json",
+      "Y/a/proj/graphify-out/graph.json",
+      "Y/b/proj/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_tags_qualified.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_tags_mixed",
+   "files": {
+    "a_proj/graphify-out/graph.json": "multirepo/inputs/small.json",
+    "X/a/proj/graphify-out/graph.json": "multirepo/inputs/small.json",
+    "x/proj/graphify-out/graph.json": "multirepo/inputs/small.json",
+    "proj/graphify-out/graph.json": "multirepo/inputs/small.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "a_proj/graphify-out/graph.json",
+      "X/a/proj/graphify-out/graph.json",
+      "x/proj/graphify-out/graph.json",
+      "proj/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_tags_mixed.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_tags_suffix",
+   "files": {
+    "proj/graphify-out/graph.json": "multirepo/inputs/small.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "proj/graphify-out/graph.json",
+      "proj/graphify-out/graph.json",
+      "proj/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_tags_suffix.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_tags_suffix_taken",
+   "files": {
+    "proj/graphify-out/graph.json": "multirepo/inputs/small.json",
+    "proj-2/graphify-out/graph.json": "multirepo/inputs/small.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "merge-graphs",
+      "proj/graphify-out/graph.json",
+      "proj-2/graphify-out/graph.json",
+      "proj/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_tags_suffix_taken.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "merge_tags_dotdot",
+   "files": {
+    "sub/graphify-out/graph.json": "multirepo/inputs/small.json",
+    "z/o/graph.json": "multirepo/inputs/ints.json"
+   },
+   "steps": [
+    {
+     "cwd": "sub/graphify-out",
+     "args": [
+      "merge-graphs",
+      "../graphify-out/graph.json",
+      "../../z/o/graph.json",
+      "--out",
+      "../../out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "merge_tags_dotdot.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "global_py_go",
+   "files": {
+    "pyrepo/graphify-out/graph.json": "python.clustered.graphify.json",
+    "gorepo/graphify-out/graph.json": "go.clustered.graphify.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "global",
+      "add",
+      "pyrepo/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_py_go.1.graph.json",
+      "@global/global-manifest.json": "global_py_go.1.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "gorepo/graphify-out/graph.json",
+      "--as",
+      "golang"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_py_go.2.graph.json",
+      "@global/global-manifest.json": "global_py_go.2.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "gorepo/graphify-out/graph.json",
+      "--as",
+      "gox"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_py_go.3.graph.json",
+      "@global/global-manifest.json": "global_py_go.3.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "remove",
+      "pyrepo"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_py_go.4.graph.json",
+      "@global/global-manifest.json": "global_py_go.4.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "merge-graphs",
+      "@global/global-graph.json",
+      "pyrepo/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "global_py_go.5.merged.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "global_replace",
+   "files": {
+    "r1/graphify-out/graph.json": "multirepo/inputs/r1.json",
+    "r2/graphify-out/graph.json": "multirepo/inputs/r2.json",
+    "r1b/graphify-out/graph.json": "multirepo/inputs/r1b.json",
+    "nest/flat/graph.json": "multirepo/inputs/flat.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "global",
+      "remove",
+      "r1"
+     ],
+     "exit": 1,
+     "outputs": {}
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "r1/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_replace.1.graph.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "r2/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_replace.2.graph.json",
+      "@global/global-manifest.json": "global_replace.2.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "r2/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_replace.2.graph.json",
+      "@global/global-manifest.json": "global_replace.2.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "r1b/graphify-out/graph.json",
+      "--as",
+      "r1"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_replace.3.graph.json",
+      "@global/global-manifest.json": "global_replace.3.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "nest/flat/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-manifest.json": "global_replace.4.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "remove",
+      "r1"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_replace.5.graph.json",
+      "@global/global-manifest.json": "global_replace.5.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "remove",
+      "r2"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_replace.6.graph.json"
+     }
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "missing/graph.json"
+     ],
+     "exit": 1,
+     "outputs": {}
+    }
+   ]
+  },
+  {
+   "name": "global_stubs",
+   "files": {
+    "base/graphify-out/graph.json": "multirepo/inputs/base.json",
+    "probe/graphify-out/graph.json": "multirepo/inputs/probe.json",
+    "probe2/graphify-out/graph.json": "multirepo/inputs/probe2.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "global",
+      "add",
+      "base/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {}
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "probe/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {}
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "probe2/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_stubs.graph.json",
+      "@global/global-manifest.json": "global_stubs.manifest.json"
+     }
+    }
+   ]
+  },
+  {
+   "name": "global_direction",
+   "files": {
+    "dirt/graphify-out/graph.json": "multirepo/inputs/dirt.json",
+    "stubs/graphify-out/graph.json": "multirepo/inputs/stubs.json",
+    "café/graphify-out/graph.json": "multirepo/inputs/cafe.json"
+   },
+   "steps": [
+    {
+     "args": [
+      "global",
+      "add",
+      "dirt/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {}
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "stubs/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {}
+    },
+    {
+     "args": [
+      "global",
+      "add",
+      "café/graphify-out/graph.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "@global/global-graph.json": "global_direction.graph.json",
+      "@global/global-manifest.json": "global_direction.manifest.json"
+     }
+    },
+    {
+     "args": [
+      "merge-graphs",
+      "@global/global-graph.json",
+      "dirt/graphify-out/graph.json",
+      "--out",
+      "out.json"
+     ],
+     "exit": 0,
+     "outputs": {
+      "out.json": "global_direction.merged.json"
+     }
+    }
+   ]
+  }
+ ]
+}

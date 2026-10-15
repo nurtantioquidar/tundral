@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "repos": {
+    "r1": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/r1b/graphify-out/graph.json",
+      "node_count": 3,
+      "edge_count": 2,
+      "source_hash": "c86fe32dbd669fd7"
+    },
+    "r2": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/r2/graphify-out/graph.json",
+      "node_count": 5,
+      "edge_count": 5,
+      "source_hash": "0475fd7f0d846a68"
+    },
+    "nest": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/nest/flat/graph.json",
+      "node_count": 1,
+      "edge_count": 0,
+      "source_hash": "f4ef3ca8eb928f6f"
+    }
+  }
+}

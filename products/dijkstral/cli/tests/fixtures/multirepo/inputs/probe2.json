@@ -1,0 +1,46 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "h",
+   "label": "h.py",
+   "source_file": "h.py"
+  },
+  {
+   "id": "n1",
+   "source_file": ""
+  },
+  {
+   "id": "dd",
+   "label": "Dup",
+   "source_file": ""
+  },
+  {
+   "id": "ext",
+   "label": "Ext",
+   "source_file": ""
+  }
+ ],
+ "links": [
+  {
+   "source": "h",
+   "target": "n1",
+   "relation": "a"
+  },
+  {
+   "source": "h",
+   "target": "dd",
+   "relation": "b"
+  },
+  {
+   "source": "h",
+   "target": "ext",
+   "relation": "c"
+  }
+ ],
+ "hyperedges": []
+}

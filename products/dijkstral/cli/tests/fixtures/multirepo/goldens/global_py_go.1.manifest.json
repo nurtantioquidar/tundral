@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "repos": {
+    "pyrepo": {
+      "added_at": "<added_at>",
+      "source_path": "<ws>/pyrepo/graphify-out/graph.json",
+      "node_count": 59,
+      "edge_count": 107,
+      "source_hash": "90dd6b7a4afd7f0c"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"directed":false,"multigraph":false,"graph":{"schema_version":1,"hyperedges":[{"id":"hboth::g"}]},"nodes":[{"community":0,"repo":"hboth","local_id":"a","id":"hboth::a"},{"community":3,"repo":"ints","local_id":"a","local_community":2,"id":"ints::a"},{"community":1,"repo":"ints","local_id":"b","local_community":0,"id":"ints::b"}],"links":[],"hyperedges":[{"id":"hboth::g"}]}

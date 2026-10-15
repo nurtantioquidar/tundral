@@ -1,0 +1,118 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "g",
+   "label": "g.py",
+   "source_file": "g.py"
+  },
+  {
+   "id": "s_same",
+   "label": "Same",
+   "source_file": ""
+  },
+  {
+   "id": "s_e",
+   "label": "E",
+   "source_file": ""
+  },
+  {
+   "id": "s_stub",
+   "label": "Stub",
+   "source_file": ""
+  },
+  {
+   "id": "s_null",
+   "label": "NullSF",
+   "source_file": ""
+  },
+  {
+   "id": "d1",
+   "label": "Dup",
+   "source_file": ""
+  },
+  {
+   "id": "d2",
+   "label": "Dup",
+   "source_file": ""
+  },
+  {
+   "id": "nonstub",
+   "label": "Stub",
+   "source_file": "g.py"
+  },
+  {
+   "id": "nolabel",
+   "source_file": ""
+  },
+  {
+   "id": "loc",
+   "label": "Loc",
+   "source_file": "",
+   "source_location": "L3"
+  },
+  {
+   "id": "ext_f",
+   "label": "Ext",
+   "external": false,
+   "source_file": ""
+  }
+ ],
+ "links": [
+  {
+   "source": "g",
+   "target": "s_same",
+   "relation": "r_s_same"
+  },
+  {
+   "source": "g",
+   "target": "s_e",
+   "relation": "r_s_e"
+  },
+  {
+   "source": "g",
+   "target": "s_stub",
+   "relation": "r_s_stub"
+  },
+  {
+   "source": "g",
+   "target": "s_null",
+   "relation": "r_s_null"
+  },
+  {
+   "source": "g",
+   "target": "d1",
+   "relation": "r_d1"
+  },
+  {
+   "source": "g",
+   "target": "d2",
+   "relation": "r_d2"
+  },
+  {
+   "source": "g",
+   "target": "nonstub",
+   "relation": "r_nonstub"
+  },
+  {
+   "source": "g",
+   "target": "nolabel",
+   "relation": "r_nolabel"
+  },
+  {
+   "source": "g",
+   "target": "loc",
+   "relation": "r_loc"
+  },
+  {
+   "source": "g",
+   "target": "ext_f",
+   "relation": "r_ext_f"
+  }
+ ],
+ "hyperedges": []
+}

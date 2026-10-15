@@ -1,0 +1,34 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "one::a",
+   "community": 40
+  },
+  {
+   "id": "one::b",
+   "community": 41
+  },
+  {
+   "id": "two::a",
+   "community": "s"
+  },
+  {
+   "id": "x",
+   "community": 42
+  },
+  {
+   "id": "unknown::z",
+   "community": 99
+  },
+  {
+   "id": "two::d"
+  }
+ ],
+ "links": [],
+ "hyperedges": []
+}

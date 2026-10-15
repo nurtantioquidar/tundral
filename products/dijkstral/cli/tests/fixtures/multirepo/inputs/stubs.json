@@ -1,0 +1,48 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "x",
+   "label": "S",
+   "source_file": ""
+  },
+  {
+   "id": "y",
+   "label": "S",
+   "source_file": ""
+  },
+  {
+   "id": "z",
+   "label": "T",
+   "source_file": ""
+  },
+  {
+   "id": "f",
+   "label": "F",
+   "source_file": "f.py"
+  }
+ ],
+ "links": [
+  {
+   "source": "x",
+   "target": "y",
+   "relation": "loop"
+  },
+  {
+   "source": "y",
+   "target": "z",
+   "relation": "st",
+   "extra": 1
+  },
+  {
+   "source": "f",
+   "target": "x",
+   "relation": "ref"
+  }
+ ],
+ "hyperedges": []
+}

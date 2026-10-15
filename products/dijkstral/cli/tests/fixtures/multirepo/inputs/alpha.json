@@ -1,0 +1,101 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1,
+  "graphify_version": "0.9.80",
+  "name": "A"
+ },
+ "nodes": [
+  {
+   "id": "a1",
+   "label": "A1",
+   "community": 3,
+   "file_type": "code",
+   "source_file": "a.py",
+   "source_location": "L1"
+  },
+  {
+   "id": "a2",
+   "label": "Caf\u00e9\u2014",
+   "community": 7,
+   "file_type": "code",
+   "source_file": "a.py",
+   "source_location": "L2"
+  },
+  {
+   "id": "x",
+   "label": "x",
+   "community": 0,
+   "external": true,
+   "file_type": "concept",
+   "source_file": "",
+   "type": "external"
+  },
+  {
+   "id": "nofile",
+   "label": "nofile",
+   "community": 0,
+   "file_type": "concept",
+   "source_file": ""
+  },
+  {
+   "id": "typeext",
+   "label": "typeext",
+   "community": 0,
+   "type": "external",
+   "source_file": "t.py"
+  },
+  {
+   "id": "extfalse",
+   "label": "extfalse",
+   "community": 0,
+   "external": false,
+   "source_file": "t.py"
+  },
+  {
+   "id": "nocomm",
+   "label": "nocomm",
+   "source_file": "a.py"
+  },
+  {
+   "id": "strcomm",
+   "label": "strcomm",
+   "community": "9",
+   "source_file": "a.py"
+  }
+ ],
+ "links": [
+  {
+   "source": "a1",
+   "target": "a2",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "weight": 1.0
+  },
+  {
+   "source": "a2",
+   "target": "x",
+   "relation": "imports",
+   "confidence": "EXTRACTED"
+  },
+  {
+   "source": "x",
+   "target": "nofile",
+   "relation": "weird"
+  }
+ ],
+ "hyperedges": [
+  {
+   "id": "h1",
+   "nodes": [
+    "a1",
+    "a2",
+    "x"
+   ],
+   "relation": "group",
+   "label": "H1"
+  }
+ ],
+ "built_at_commit": "abc123"
+}

@@ -1,0 +1,63 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "f",
+   "label": "f.py",
+   "source_file": "f.py"
+  },
+  {
+   "id": "same",
+   "label": "Same",
+   "source_file": "f.py"
+  },
+  {
+   "id": "stub",
+   "label": "Stub",
+   "source_file": ""
+  },
+  {
+   "id": "stub2",
+   "label": "Stub",
+   "source_file": ""
+  },
+  {
+   "id": "nullsf",
+   "label": "NullSF",
+   "source_file": null
+  },
+  {
+   "id": "e",
+   "label": "E",
+   "external": true,
+   "source_file": ""
+  },
+  {
+   "id": "uni",
+   "label": "Caf\u00e9",
+   "source_file": "f.py"
+  }
+ ],
+ "links": [
+  {
+   "source": "f",
+   "target": "stub",
+   "relation": "r"
+  },
+  {
+   "source": "f",
+   "target": "stub2",
+   "relation": "r2"
+  },
+  {
+   "source": "f",
+   "target": "nullsf",
+   "relation": "r3"
+  }
+ ],
+ "hyperedges": []
+}

@@ -1,0 +1,89 @@
+{
+ "directed": false,
+ "multigraph": false,
+ "graph": {
+  "schema_version": 1
+ },
+ "nodes": [
+  {
+   "id": "f1",
+   "label": "one.py",
+   "source_file": "one.py",
+   "community": 0
+  },
+  {
+   "id": "s1",
+   "label": "Foo",
+   "norm_label": "foo",
+   "source_file": "",
+   "community": 1
+  },
+  {
+   "id": "s3",
+   "label": "Baz",
+   "norm_label": "baz",
+   "source_file": "",
+   "community": 1
+  },
+  {
+   "id": "nosf",
+   "label": "NoSF",
+   "community": 2
+  },
+  {
+   "id": "same",
+   "label": "Same",
+   "source_file": "one.py",
+   "community": 0
+  },
+  {
+   "id": "e",
+   "label": "e",
+   "external": true,
+   "source_file": "",
+   "community": 3
+  }
+ ],
+ "links": [
+  {
+   "source": "f1",
+   "target": "s1",
+   "relation": "references"
+  },
+  {
+   "source": "f1",
+   "target": "s3",
+   "relation": "references"
+  },
+  {
+   "source": "f1",
+   "target": "f1",
+   "relation": "self"
+  },
+  {
+   "source": "s1",
+   "target": "f1",
+   "relation": "back"
+  },
+  {
+   "source": "f1",
+   "target": "e",
+   "relation": "imports"
+  },
+  {
+   "source": "f1",
+   "target": "nosf",
+   "relation": "uses"
+  }
+ ],
+ "hyperedges": [
+  {
+   "id": "h",
+   "nodes": [
+    "f1",
+    "s1"
+   ],
+   "relation": "g"
+  }
+ ]
+}
