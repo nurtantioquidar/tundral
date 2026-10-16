@@ -6,12 +6,20 @@ use std::fs;
 use std::path::Path;
 
 use anyhow::{bail, Context, Result};
+use dijkstral_core::facts::Attr;
 use dijkstral_core::graph::Graph;
 use dijkstral_core::pipeline::Built;
 use serde_json::Value;
 
 /// Graphify's community-labels sidecar, read from next to the graph when present.
 pub const LABELS_FILE: &str = ".graphify_labels.json";
+
+/// The link attributes holding an edge's true direction, written by the global graph, whose
+/// `source`/`target` follow NetworkX iteration order (`docs/graphify-multirepo.md` §5.2). Every
+/// exporter but GraphML draws an edge from `_src` to `_tgt`, each taken separately when it is a
+/// string naming a node, else the link's own `source` or `target` (`docs/graphify-exports.md` §1).
+pub const TRUE_SOURCE: &str = "_src";
+pub const TRUE_TARGET: &str = "_tgt";
 
 /// A `graph.json` loaded for export, in file order.
 pub struct Loaded {
@@ -149,8 +157,11 @@ pub struct View<'a> {
     pub community: Vec<Option<u32>>,
     pub names: Names,
     pub hyperedges: String,
-    /// Endpoints of every edge: `(source, target)`.
+    /// Endpoints of every edge as the link stores them: `(source, target)`.
     pub ends: Vec<(u32, u32)>,
+    /// The direction `graph.html` draws every edge in (`docs/graphify-exports.md` §1, link
+    /// direction): `(from, to)`.
+    pub dir: Vec<(u32, u32)>,
     /// NetworkX degree: a self-loop counts twice.
     pub degree: Vec<u32>,
     /// Per node, `(neighbour, edge)` in the order NetworkX's adjacency holds them after loading
@@ -180,6 +191,24 @@ impl<'a> View<'a> {
             .iter()
             .map(|e| (index[e.source.as_str()], index[e.target.as_str()]))
             .collect();
+        let dir = graph
+            .edges
+            .iter()
+            .zip(&ends)
+            .map(|(e, &(s, t))| {
+                let end = |key: &str, stored: u32| {
+                    e.attrs
+                        .iter()
+                        .find(|(k, _)| k == key)
+                        .and_then(|(_, v)| match v {
+                            Attr::Str(id) => index.get(id.as_str()).copied(),
+                            _ => None,
+                        })
+                        .unwrap_or(stored)
+                };
+                (end(TRUE_SOURCE, s), end(TRUE_TARGET, t))
+            })
+            .collect();
         drop(index);
         let mut degree = vec![0u32; graph.nodes.len()];
         let mut adj: Vec<Vec<(u32, u32)>> = vec![Vec::new(); graph.nodes.len()];
@@ -200,6 +229,7 @@ impl<'a> View<'a> {
             names,
             hyperedges,
             ends,
+            dir,
             degree,
             adj,
             no_confidence: HashSet::new(),

@@ -79,6 +79,33 @@ fn vault_matches_graphify_byte_for_byte() {
     }
 }
 
+/// Global graphs (links with `_src`/`_tgt`, `source`/`target` often reversed): the vault is
+/// Graphify's byte for byte; `graph.canvas` draws each link from `_src` to `_tgt` (200 links of
+/// `global_py_go.3`, 99 of them stored reversed).
+#[test]
+fn global_vaults_match_graphify_byte_for_byte() {
+    for (golden, input) in [
+        ("global_direction", "global_direction"),
+        ("global_py_go", "global_py_go.3"),
+    ] {
+        let path = fixtures().join(format!("multirepo/goldens/{input}.graph.json"));
+        let g = NxGraph::read(&path).unwrap();
+        let tmp = tempfile::tempdir().unwrap();
+        let dir = tmp.path().join("vault");
+        obsidian::write(&g, &Names::Placeholder, &dir).unwrap();
+        let ours = tree(&dir);
+        let want = tree(&fixtures().join("exports").join(golden).join("obsidian"));
+        assert_eq!(
+            ours.keys().collect::<Vec<_>>(),
+            want.keys().collect::<Vec<_>>(),
+            "{golden}: file names"
+        );
+        for (name, bytes) in &want {
+            assert!(&ours[name] == bytes, "{golden}: {name} differs");
+        }
+    }
+}
+
 #[test]
 fn rendering_is_deterministic() {
     for lang in LANGS {

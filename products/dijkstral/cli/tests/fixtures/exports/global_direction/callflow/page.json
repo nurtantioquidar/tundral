@@ -1,0 +1,331 @@
+{
+ "title": "global_direction — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 6 nodes, 3 edges, 2 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "beta-bpy-alpha",
+   "Beta Bpy Alpha"
+  ],
+  [
+   "fpy-apy",
+   "Fpy Apy"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    BETA_BPY_ALPHA_D5134647(\"Beta Bpy Alpha<br/><small>4 nodes</small>\")",
+     "    class BETA_BPY_ALPHA_D5134647 module;",
+     "    FPY_APY_58811960(\"Fpy Apy<br/><small>2 nodes</small>\")",
+     "    class FPY_APY_58811960 module;",
+     "    FPY_APY_58811960 -->|ref| BETA_BPY_ALPHA_D5134647"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Beta Bpy Alpha",
+      "4",
+      "0"
+     ],
+     [
+      "Fpy Apy",
+      "2",
+      "unknown"
+     ]
+    ]
+   ],
+   "chain": [
+    "Fpy Apy -> Beta Bpy Alpha"
+   ]
+  },
+  {
+   "id": "beta-bpy-alpha",
+   "heading": "2. Beta Bpy Alpha",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Beta Bpy Alpha (4 nodes, 2 edges)",
+     "    subgraph beta_bpy_alpha_External_generated_230917f9[\"External / generated\"]",
+     "        dirt_s1_95020683(\"S\")",
+     "        dirt_s2_a844484d(\"T\")",
+     "    end",
+     "    dirt_a_895f32bb(\"Alpha<br/><small>a.py</small>\")",
+     "    dirt_b_c4fc327b(\"Beta<br/><small>b.py</small>\")",
+     "    dirt_a_895f32bb -->|calls| dirt_b_c4fc327b",
+     "    class dirt_s1_95020683 klass;",
+     "    class dirt_s2_a844484d klass;",
+     "    class dirt_a_895f32bb klass;",
+     "    class dirt_b_c4fc327b klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Beta Bpy Alpha groups implementation around beta, bpy, alpha, apy, mostly in b.py, a.py. This section covers 4 nodes and 2 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: calls x1, st x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "Beta",
+        "b.py"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "Alpha",
+        "a.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Beta node in b.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "Alpha",
+        "a.py"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Beta",
+        "b.py"
+       ]
+      ],
+      "Alpha node in a.py."
+     ],
+     [
+      "3",
+      [
+       [
+        "S",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "S node in project."
+     ],
+     [
+      "4",
+      [
+       [
+        "T",
+        ""
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "T node in project."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "a.py",
+      "1 nodes"
+     ],
+     [
+      "b.py",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "fpy-apy",
+   "heading": "3. Fpy Apy",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Fpy Apy (2 nodes, 0 edges)",
+     "    caf_a_76678fa8(\"é<br/><small>a.py</small>\")",
+     "    stubs_f_78eb4ca0(\"F<br/><small>f.py</small>\")",
+     "    class caf_a_76678fa8 function;",
+     "    class stubs_f_78eb4ca0 klass;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Fpy Apy groups implementation around fpy, apy, mostly in f.py, a.py. This section covers 2 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "F",
+        "f.py"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "F node in f.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "é",
+        "a.py"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "é node in a.py."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "a.py",
+      "1 nodes"
+     ],
+     [
+      "f.py",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "global_direction — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "6"
+     ],
+     [
+      "Edges",
+      "3"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "2"
+     ],
+     [
+      "Documented Sections",
+      "2"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "3"
+     ],
+     [
+      "INFERRED",
+      "0"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

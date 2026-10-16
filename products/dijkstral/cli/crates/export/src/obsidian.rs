@@ -526,7 +526,7 @@ fn canvas(g: &NxGraph, names: &Names, groups: &[(i64, Vec<u32>)], file: &[String
         .into_iter()
         .filter(|&(_, _, e)| {
             let edge = &g.edges[e as usize];
-            placed[edge.source as usize] && placed[edge.target as usize]
+            placed[edge.from as usize] && placed[edge.to as usize]
         })
         .map(|(_, _, e)| {
             let w = g.edges[e as usize].attrs.get("weight");
@@ -540,8 +540,8 @@ fn canvas(g: &NxGraph, names: &Names, groups: &[(i64, Vec<u32>)], file: &[String
         .map(|(_, e)| {
             let edge = &g.edges[e as usize];
             let (s, t) = (
-                &g.nodes[edge.source as usize].id,
-                &g.nodes[edge.target as usize].id,
+                &g.nodes[edge.from as usize].id,
+                &g.nodes[edge.to as usize].id,
             );
             let rel = g.edge_str(e, "relation").unwrap_or("");
             let label = format!("{rel} [{}]", confidence(g, e));

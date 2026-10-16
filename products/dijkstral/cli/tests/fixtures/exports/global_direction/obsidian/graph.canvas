@@ -1,0 +1,64 @@
+{
+  "nodes": [
+    {
+      "id": "g0",
+      "type": "group",
+      "label": "Community 0",
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400,
+      "color": "1"
+    },
+    {
+      "id": "n_dirt::a",
+      "type": "file",
+      "file": "Alpha.md",
+      "x": 20,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_dirt::b",
+      "type": "file",
+      "file": "Beta.md",
+      "x": 220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_dirt::s1",
+      "type": "file",
+      "file": "S.md",
+      "x": 20,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_dirt::s2",
+      "type": "file",
+      "file": "T.md",
+      "x": 220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_dirt::a_dirt::b",
+      "fromNode": "n_dirt::a",
+      "toNode": "n_dirt::b",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_dirt::s1_dirt::s2",
+      "fromNode": "n_dirt::s1",
+      "toNode": "n_dirt::s2",
+      "label": "st [EXTRACTED]"
+    }
+  ]
+}

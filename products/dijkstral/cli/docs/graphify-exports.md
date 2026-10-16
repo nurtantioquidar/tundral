@@ -56,6 +56,32 @@ does not reproduce it unless noted), **Open** (unresolved).
   `Community N`.
 - **Rule (missing community).** A node without `community` is drawn in community 0 in
   `graph.html`, gets `community` −1 in GraphML, and belongs to no community in the wiki.
+- **Rule (link direction, `_src`/`_tgt`).** The global graph (`graphify-multirepo.md` §5.2)
+  writes each link's true direction as `_src`/`_tgt` and its `source`/`target` in NetworkX
+  iteration order, so about half of them are reversed (`global_py_go.3`: 119 of 247 links). Every
+  exporter that shows a direction draws a link from `_src` to `_tgt`: `graph.html` (`from`/`to`,
+  vis and WebGL), `cypher.txt` and the push, the Obsidian canvas, the call-flow page (callers,
+  callees, relation summaries, internal-link counts, diagram and overview links) and dijkstral's
+  tree inspector. **GraphML is the exception**: it writes `G.edges()` order (§4) and drops
+  `_`-prefixed fields, so `_src`/`_tgt` change nothing there. The wiki, the Obsidian notes and
+  SVG show no direction.
+  - Each end is taken separately: the drawn source is `_src` when the link has that key, else its
+    `source`; the drawn target is `_tgt`, else `target`. Probe `exports/probes/direction`: a link
+    `b–c` with only `_src: "c"` is drawn `c→c`; a link `c–d` carrying `_src: "e", _tgt: "a"` is
+    drawn `e→a` (Quirk L1). Degree, adjacency and `G.edges()` order keep the stored ends.
+  - The ends are resolved per link before a simple graph merges a repeated pair, so the merged
+    edge takes the last link's drawn direction: `{e→f, _src f, _tgt e}` then a plain `e→f` gives
+    `e→f`; a plain `f→g` then `{f→g, _src g, _tgt f}` gives `g→f`.
+  - A link without either key keeps its own direction, so graphs without `_src`/`_tgt` (every
+    build's `graph.json`) are unaffected.
+  - **Quirk L2** (not reproduced). A `_src`/`_tgt` value naming no node is used as it is:
+    `graph.html` gets `"from": "zz"`, `7` or `null`; `cypher.txt` writes `MATCH (a {id: 'zz'})`
+    (which matches nothing) and crashes on a number or `null` (`TypeError`); the canvas and the
+    call-flow page leave the link out (and a `null` pair drops it from the call-flow page's edge
+    count). dijkstral uses the stored end instead. The global graph always names both ends.
+
+  dijkstral resolves the direction once while loading (`View::dir` in `view.rs`, `NxEdge::from`/
+  `to` in `nx.rs`); `TRUE_SOURCE`/`TRUE_TARGET` in `view.rs` name the keys.
 
 ## 2. `graph.html`
 
@@ -88,7 +114,8 @@ does not reproduce it unless noted), **Open** (unresolved).
 
 ### 2.3 `RAW_EDGES`, `LEGEND`, `hyperedges`
 
-- **Rule.** `RAW_EDGES` in `G.edges()` order, each with the link's own direction:
+- **Rule.** `RAW_EDGES` in `G.edges()` order, each with the link's own direction (`_src` →
+  `_tgt` when present, §1):
   `{"from", "to", "label": relation ("" when absent), "title": "<relation> [<CONF>]", "dashes":
   CONF != "EXTRACTED", "width": 2 if EXTRACTED else 1, "color": {"opacity": 0.7 if EXTRACTED else
   0.35}, "confidence": CONF}`; a link without `confidence` counts as `EXTRACTED`.
@@ -286,7 +313,8 @@ What NetworkX's `write_graphml` (ElementTree writer) produces for the loaded gra
   except names starting with `_` (`_origin`, `_callable`, …). In a graph with communities, a node
   without `community` gets `community` −1 appended after its other fields.
 - **Rule (edges).** `G.edges()` order with `source` = the endpoint met first (not the link's
-  direction); every field except `source`, `target` and `_…`, in order.
+  direction, and not `_src`/`_tgt` either: a global graph's GraphML has its links as stored);
+  every field except `source`, `target` and `_…`, in order.
 - **Rule (values).** Strings as text (`&`, `<`, `>` escaped; quotes not); characters XML 1.0
   forbids (U+0000–U+0008, U+000B, U+000C, U+000E–U+001F) removed; `\t`, `\n`, `\r` kept raw.
   Booleans `True`/`False`. Floats in Python `repr` (`1e-05`, `1e+17`). `null` and `""` → empty
@@ -306,6 +334,18 @@ after the product-name lines, with `ALLOWED` listing W3 (java index); every `RAW
 record equal in order (plus `source_location`), `LEGEND` filled. `escaping.rs` renders hostile
 labels, ids, relations, community names and titles in both views. `crates/cli/tests/export_build.rs`
 covers the build integration (§6).
+
+Global graphs (2026-10-16): `tests/fixtures/exports/global_direction/` and `global_py_go/` hold
+Graphify's `cypher.txt`, `graph.graphml`, `html_payload.json`, `wiki/`, the Obsidian vault, the
+call-flow page data (`callflow/page.json`) and the tree hierarchy (`tree/tree.json`) for the
+multirepo goldens `global_direction.graph.json` (3 links, 2 stored reversed) and
+`global_py_go.3.graph.json` (247 links, 119 reversed). `goldens.rs`, `cypher.rs` (also the push
+plan), `obsidian.rs`, `callflow.rs` and `tree.rs` in `crates/export/tests/` each have a test over
+them: all byte- or record-identical (wiki: W3 in `global_py_go`'s index; call-flow: open
+heuristics F4, F7, F11 listed in the test). Before the §1 direction rule,
+dijkstral's `cypher.txt` differed in 2 and 119 statements, `RAW_EDGES` in 2 and 119 records and
+the canvas in 1 of 2 and 99 of 200 links. `exports/probes/direction.{graph.json,cypher.txt}` is
+the per-field and merge probe.
 
 Beyond the fixtures (`dijkstral export … --no-label` against Graphify on the same reference graph,
 2026-10-14): GraphML byte-identical and every HTML record equal for monet, graphify, fastapi,
@@ -359,6 +399,9 @@ performance warnings); search, selection and the detail panel worked in each.
 | X2 | Quirk | `LEGEND` is empty without a labels file |
 | W3 | Quirk | index god-node links resolve by label, so duplicate labels point at the wrong article |
 | G1 | Quirk | `export graphml` crashes on a raw (`--no-cluster`) graph |
+| L1 | Quirk (reproduced) | `_src` and `_tgt` are taken separately and need not name the link's ends: one alone gives a self-loop, other nodes redirect the drawn link (§1) |
+| L2 | Quirk | a `_src`/`_tgt` naming no node (unknown id, number, `null`) is drawn to that value, crashes `cypher.txt` (number, `null`) or drops the link (canvas, call-flow); dijkstral keeps the stored end |
+| O6 | Open | `graph.html` and the wiki (`View`) keep every link of a pair repeated in a simple graph, so links and degrees differ; Graphify's NetworkX load merges them (probe `direction`: 7 links against dijkstral's 9). GraphML and the §9 formats merge as Graphify does. Builds and the global graph never repeat a pair |
 | O1 | Open | `graph.html` when every node has degree 0 (max degree 0): dijkstral divides by 1 |
 | O2 | Open | whether the slug's `unnamed` rule is "only dots" or a strip of leading/trailing dots |
 | O3 | Open | truncation and the `_n` suffix: dijkstral truncates to 200 characters before suffixing |
@@ -390,7 +433,8 @@ calls it, with every attribute kept raw (the stage-4a exporters read `View`). Ob
   end has not been visited (§1), parallel edges in link order. Directed: for each node, its
   outgoing edges grouped by successor in first-link order.
 - **Rule (attributes).** A node's fields minus `id`, a link's minus `source` and `target`, in
-  file order.
+  file order (`_src`/`_tgt` stay attributes; the drawn direction they give is resolved per link
+  as in §1 and kept beside the stored ends).
 
 ## 10. Cypher and `--push` (`export neo4j`, `export falkordb`)
 
@@ -422,8 +466,10 @@ MATCH (a {id: '<source>'}), (b {id: '<target>'}) MERGE (a)-[:<TYPE> {confidence:
                                                                          one per edge, G.edges() order
 ```
 
-- **Rule (direction).** Each edge is written with its own source and target (§9), not in walk
-  order: `pkg_init → pkg_models_admin` is listed under `pkg_models_admin`.
+- **Rule (direction).** Each edge is written with its own direction (§9; `_src` → `_tgt` when
+  present, §1), not in walk order: `pkg_init → pkg_models_admin` is listed under
+  `pkg_models_admin`; `global_direction`'s `Alpha → Beta`, stored `dirt::b`/`dirt::a`, is
+  `MATCH (a {id: 'dirt::a'}), (b {id: 'dirt::b'})`.
 - **Rule (label).** `file_type` (`unknown` when absent, null or empty), Python-`capitalize`d,
   keeping only `[A-Za-z0-9_]`; `Entity` unless the result starts with an ASCII letter. `code` →
   `Code`, `CONCEPT` → `Concept`, `code file` → `Codefile`, `c++` → `C`, `ß` → `Ss`, `ünï` → `n`,
@@ -458,7 +504,8 @@ Observed through a logging TCP proxy in front of Neo4j 5.26 Community (Bolt 5.8 
      label) are ignored.
   2. `MERGE (n:<L> {id: $id}) SET n += $props` per node in node order.
   3. `MATCH (a {id: $src}), (b {id: $tgt}) MERGE (a)-[r:<T>]->(b) SET r += $props` per edge in
-     `G.edges()` order, with the edge's own direction.
+     `G.edges()` order, with the edge's own direction (as `cypher.txt`; for `_src`/`_tgt`
+     see Open C8).
   FalkorDB receives the parameters as a `CYPHER id="…" props={`k`:v,…}` prefix to
   `GRAPH.QUERY graphify <query> --compact`; the graph key is always `graphify`.
 - **Rule (push label).** As §10.2's but with no `Entity` fallback for a leading digit or
@@ -547,6 +594,7 @@ See §15.
 | C5 | Quirk | push fails on integers beyond 64 bits and a `null` relation |
 | C6 | Quirk | push matches edge endpoints without a label: one full scan per edge |
 | C7 | Open | Bolt over TLS and Neo4j routing (`neo4j://` clusters) are untested in dijkstral; TLS is refused |
+| C8 | Open | the push of a global graph was not observed: the reference install has neither the `neo4j` nor the `falkordb` client (`ImportError`, 2026-10-16). dijkstral pushes `_src` → `_tgt`, as `cypher.txt` (observed) does |
 
 ## 11. Obsidian vault (`export obsidian`)
 
@@ -699,8 +747,9 @@ SORT file.name ASC
   at `(gx + 20 + 200·col, gy + 80 + 80·row)`, 180 × 60, `type` `file`, `id` `n_<node id>`,
   `file` `<note>.md`.
 - **Rule (edges).** Links between drawn nodes in `G.edges()` order (parallel links each), stably
-  sorted by `weight` descending (missing = 1), the first **200**; `id` `e_<source>_<target>` in
-  the link's direction (duplicates possible), `label` `"<relation> [<confidence>]"` stripped.
+  sorted by `weight` descending (missing = 1), the first **200**; `id` `e_<source>_<target>`,
+  `fromNode`, `toNode` in the link's direction (`_src` → `_tgt` when present, §1; "drawn" is
+  decided on those ends), duplicates possible, `label` `"<relation> [<confidence>]"` stripped.
 - **Rule.** `json.dumps(indent=2)`, ASCII-escaped, no trailing newline; an empty graph gives
   `{"nodes": [], "edges": []}`.
 
@@ -775,7 +824,10 @@ specified.
   line, stroke `#aaaaaa`, width 0.8 pt. A link whose `confidence` is present and not `EXTRACTED`
   (`INFERRED`, `AMBIGUOUS`, any other string) is dashed (`2.96,1.28`) at opacity 0.3; the rest,
   including links without `confidence`, are solid at opacity 0.6. A self-loop is a zero-length
-  line (invisible).
+  line (invisible). Lines have no arrowheads, so `_src`/`_tgt` (§1) change nothing. (On
+  2026-10-16 the reference install had lost the `svg` extra: `export svg` exits 1 with
+  `ImportError: matplotlib not installed` on every graph, the global ones included, before
+  reading it; that is the environment, not the graph.)
 - **Rule (nodes).** One filled circle per node in node order, colour Tableau 10 by
   `community mod 10` in lower case (`#4e79a7 #f28e2b #e15759 #76b7b2 #59a14f #edc948 #b07aa1
   #ff9da7 #9c755f #bab0ac`; a node without `community` takes `#4e79a7`), fill and stroke opacity
@@ -865,8 +917,16 @@ cells) is reproduced.
 
 ### 13.2 Sections
 
-- **Rule (communities).** Communities (integer `community` per node, members in node order)
-  sorted by size descending, ties by the community id *as a string* (`"103" < "104" < "99"`).
+- **Rule (communities).** Every node belongs to the community named by Python's `str` of its
+  `community`, a missing or `null` one being `unknown` (members in node order; probe: `unknown`
+  for 9 nodes without or with `null`, `0`, `x`, `7.5`, `True`); the global graph's nodes from
+  unclustered inputs form `unknown`. Sorted by size descending, ties by that name
+  (`"103" < "104" < "99"`). The subtitle and the stats count these names; the layers table shows
+  them.
+- **Open F12.** The page reads every link of the file, not NetworkX's merged graph: a pair
+  repeated in a simple graph counts and draws twice (direction probe: `calls f→e` and
+  `uses e→f`), and a link whose `_src` and `_tgt` are both `null` is dropped from the edge count.
+  dijkstral reads the §9 graph (one edge per pair). Links follow `_src` → `_tgt` (§1).
 - **Rule (category).** Each community is scored for nine categories, in priority order:
   `extract-pipeline` Extraction Pipeline, `build-graph` Graph Build, `analysis-clustering`
   Analysis & Clustering, `outputs-docs` Outputs & Docs, `cli-skills` CLI & Skill Installers,
@@ -918,8 +978,8 @@ cells) is reproduced.
 
 - Node `SLUGID("Title<br/><small>n nodes</small>")` + `class … module;` per section, id
   `mermaid_id(slug)` upper-cased (§13.6).
-- Edges: per ordered section pair, the number of links between them, labelled `rel xN`; the 12
-  busiest pairs. Without any cross-section link, consecutive sections joined by `-.->`.
+- Edges: per ordered section pair (`_src` → `_tgt`, §1), the number of links between them,
+  labelled `rel xN`, or `rel` alone for a single link; the 12 busiest pairs. Without any cross-section link, consecutive sections joined by `-.->`.
 - **Open F7.** The label relation and tie order: the most common relation explains most pairs,
   with `inherits`/`method` preferred in ties; 33 % of fixture overviews match exactly.
 - **Open F8.** "Core Flow" (up to 7 titles joined by ` -> `): a walk over section links; without
@@ -941,7 +1001,8 @@ cells) is reproduced.
   name; single nodes after the groups.
 - **Open F4 (order).** Linked nodes: up to six sources by (out − in, out, id) then the rest in
   edge order — 99 % of 280 fuzz graphs, fails on some cycles; unlinked nodes: non-rationale
-  first, then label (byte order). 69 % of fixture section diagrams match exactly.
+  first, then label (byte order; `global_direction` has `é` before `F`, against it). 69 % of
+  fixture section diagrams match exactly.
 - **Rule (node).** `id("label<br/><small>short/path</small>")`, file nodes and file-less nodes
   without the `<small>`. Label without a leading `.`; longer than 40 characters → first 39
   (trailing space dropped) + `...`; `"` → `'`; `{ } # ; `` ` `` `|` removed; whitespace
@@ -1097,8 +1158,8 @@ integrity. Data elements, each `type="application/json"`:
   entry in pre-order (`d` directory, `f` file, `s` symbol, `m` more); `leaves`, one record per
   leaf in pre-order — `null` for files without symbols and `(+N more)`, else
   `[id, file_type, source_file, source_location, community, degree, outbound total,
-  [[relation, target]…]]` with up to `--top-k-edges` outbound links (links whose direction starts at
-  the symbol), best-connected targets first, ties in adjacency order; `targets`:
+  [[relation, target]…]]` with up to `--top-k-edges` outbound links (links whose direction, `_src`
+  → `_tgt` when present (§1), starts at the symbol), best-connected targets first, ties in adjacency order; `targets`:
   `[label, source_file, source_location]`.
 
 All text reaches the DOM through `textContent`; the title is HTML-escaped. Offline, the page

@@ -424,8 +424,8 @@ fn inspector(g: &NxGraph, root: &Entry, top_k: usize, title: &str) -> String {
         let community = g.community(i).map_or("null".to_string(), |c| c.to_string());
         let mut outbound: Vec<(u32, u32)> = g.adj[i as usize]
             .iter()
-            .filter(|&&(_, e)| g.edges[e as usize].source == i)
-            .map(|&(v, e)| (v, e))
+            .filter(|&&(_, e)| g.edges[e as usize].from == i)
+            .map(|&(_, e)| (g.edges[e as usize].to, e))
             .collect();
         let total = outbound.len();
         // Best-connected targets first; ties keep adjacency order (the sort is stable).
