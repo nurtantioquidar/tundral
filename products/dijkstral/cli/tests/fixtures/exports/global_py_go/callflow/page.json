@@ -1,0 +1,1495 @@
+{
+ "title": "global_py_go.3 — Complete Call Flow & Architecture Documentation",
+ "subtitle": "Generated from graphify knowledge graph: 137 nodes, 247 edges, 10 communities. Commit: unknown",
+ "nav": [
+  [
+   "overview",
+   "Architecture Overview"
+  ],
+  [
+   "extract-pipeline",
+   "Extraction Pipeline"
+  ],
+  [
+   "tests-fixtures",
+   "Tests & Fixtures"
+  ]
+ ],
+ "sections": [
+  {
+   "id": "overview",
+   "heading": "1. Architecture Overview",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    EXTRACT_PIPELINE_5F350230(\"Extraction Pipeline<br/><small>116 nodes</small>\")",
+     "    class EXTRACT_PIPELINE_5F350230 module;",
+     "    TESTS_FIXTURES_B84B1DCC(\"Tests & Fixtures<br/><small>21 nodes</small>\")",
+     "    class TESTS_FIXTURES_B84B1DCC module;",
+     "    TESTS_FIXTURES_B84B1DCC -->|references x13| EXTRACT_PIPELINE_5F350230",
+     "    EXTRACT_PIPELINE_5F350230 -->|contains x11| TESTS_FIXTURES_B84B1DCC"
+    ]
+   ],
+   "h3": [],
+   "h4": [
+    "Architecture Layers",
+    "Core Flow"
+   ],
+   "paragraphs": [],
+   "tables": [
+    [
+     [
+      "Layer",
+      "Nodes",
+      "Communities"
+     ],
+     [
+      "Extraction Pipeline",
+      "116",
+      "0, 1, 2, 4, 3, 5, 8, 9"
+     ],
+     [
+      "Tests & Fixtures",
+      "21",
+      "6, 7"
+     ]
+    ]
+   ],
+   "chain": [
+    "Tests & Fixtures -> Extraction Pipeline"
+   ]
+  },
+  {
+   "id": "extract-pipeline",
+   "heading": "2. Extraction Pipeline",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Extraction Pipeline (116 nodes, 201 edges)",
+     "    subgraph extract_pipeline_pkg_service_py_8ceb66b1[\"pkg/service.py\"]",
+     "        pyrepo_pkg_service_54c1ce81(\"service.py\")",
+     "        pyrepo_pkg_service_run_d9ce29d6(\"run()<br/><small>pkg/service.py</small>\")",
+     "        pyrepo_pkg_service_userservice_b12a233d(\"UserService<br/><small>pkg/service.py</small>\")",
+     "        pyrepo_pkg_service_userservice_init_7daa0abe(\"__init__()<br/><small>pkg/service.py</small>\")",
+     "        pyrepo_pkg_service_userservice_register_c577ef42(\"register()<br/><small>pkg/service.py</small>\")",
+     "        pyrepo_pkg_service_userservice_promote_1217a61c(\"promote()<br/><small>pkg/service.py</small>\")",
+     "        pyrepo_pkg_service_userservice_export_21fd220c(\"export()<br/><small>pkg/service.py</small>\")",
+     "    end",
+     "    subgraph extract_pipeline_pkg_models_py_07bc7ae4[\"pkg/models.py\"]",
+     "        pyrepo_pkg_models_admin_9072296d(\"Admin<br/><small>pkg/models.py</small>\")",
+     "        pyrepo_pkg_models_admin_promote_dea621c3(\"promote()<br/><small>pkg/models.py</small>\")",
+     "        pyrepo_pkg_models_user_d54b123b(\"User<br/><small>pkg/models.py</small>\")",
+     "        pyrepo_pkg_models_user_display_3dc6c48a(\"display()<br/><small>pkg/models.py</small>\")",
+     "        pyrepo_pkg_models_user_guest_e1680610(\"guest()<br/><small>pkg/models.py</small>\")",
+     "        pyrepo_pkg_models_user_save_97f443ab(\"save()<br/><small>pkg/models.py</small>\")",
+     "    end",
+     "    subgraph extract_pipeline_cmd_app_main_go_6e718efb[\"cmd/app/main.go\"]",
+     "        golang_cmd_app_main_4681d703(\"main.go\")",
+     "        gox_cmd_app_main_fd38611f(\"main.go\")",
+     "    end",
+     "    subgraph extract_pipeline_service_service_go_385e692d[\"service/service.go\"]",
+     "        golang_service_service_ee1ecbb6(\"service.go\")",
+     "        gox_service_service_a83e7892(\"service.go\")",
+     "    end",
+     "    pyrepo_main_ddf9f26e(\"main.py\")",
+     "    pyrepo_pkg_models_admin_9072296d -->|method| pyrepo_pkg_models_admin_promote_dea621c3",
+     "    pyrepo_pkg_models_user_d54b123b -->|method| pyrepo_pkg_models_user_display_3dc6c48a",
+     "    pyrepo_pkg_models_user_d54b123b -->|method| pyrepo_pkg_models_user_guest_e1680610",
+     "    pyrepo_pkg_models_user_d54b123b -->|method| pyrepo_pkg_models_user_save_97f443ab",
+     "    pyrepo_pkg_service_run_d9ce29d6 -->|calls| pyrepo_pkg_service_userservice_b12a233d",
+     "    pyrepo_pkg_service_userservice_b12a233d -->|method| pyrepo_pkg_service_userservice_init_7daa0abe",
+     "    pyrepo_pkg_service_userservice_b12a233d -->|method| pyrepo_pkg_service_userservice_register_c577ef42",
+     "    pyrepo_pkg_service_userservice_b12a233d -->|method| pyrepo_pkg_service_userservice_promote_1217a61c",
+     "    pyrepo_pkg_service_userservice_b12a233d -->|method| pyrepo_pkg_service_userservice_export_21fd220c",
+     "    pyrepo_pkg_service_54c1ce81 -->|imports| pyrepo_pkg_models_admin_9072296d",
+     "    pyrepo_pkg_service_54c1ce81 -->|imports| pyrepo_pkg_models_user_d54b123b",
+     "    pyrepo_main_ddf9f26e -->|imports| pyrepo_pkg_service_userservice_b12a233d",
+     "    pyrepo_main_ddf9f26e -->|imports| pyrepo_pkg_service_run_d9ce29d6",
+     "    pyrepo_main_ddf9f26e -->|imports| pyrepo_pkg_service_54c1ce81",
+     "    golang_cmd_app_main_4681d703 -->|imports| golang_service_service_ee1ecbb6",
+     "    gox_cmd_app_main_fd38611f -->|imports| gox_service_service_a83e7892",
+     "    pyrepo_pkg_service_userservice_b12a233d -->|uses| pyrepo_pkg_models_user_d54b123b",
+     "    pyrepo_pkg_service_userservice_promote_1217a61c -->|calls| pyrepo_pkg_models_admin_promote_dea621c3",
+     "    pyrepo_pkg_service_run_d9ce29d6 -->|calls| pyrepo_pkg_service_userservice_register_c577ef42",
+     "    %% Omitted for readability: 98 nodes, 0 edges",
+     "    class pyrepo_pkg_service_54c1ce81 module;",
+     "    class pyrepo_pkg_service_run_d9ce29d6 function;",
+     "    class pyrepo_pkg_service_userservice_b12a233d klass;",
+     "    class pyrepo_pkg_service_userservice_init_7daa0abe function;",
+     "    class pyrepo_pkg_service_userservice_register_c577ef42 function;",
+     "    class pyrepo_pkg_service_userservice_promote_1217a61c function;",
+     "    class pyrepo_pkg_service_userservice_export_21fd220c function;",
+     "    class pyrepo_pkg_models_admin_9072296d klass;",
+     "    class pyrepo_pkg_models_admin_promote_dea621c3 function;",
+     "    class pyrepo_pkg_models_user_d54b123b klass;",
+     "    class pyrepo_pkg_models_user_display_3dc6c48a function;",
+     "    class pyrepo_pkg_models_user_guest_e1680610 function;",
+     "    class pyrepo_pkg_models_user_save_97f443ab function;",
+     "    class golang_cmd_app_main_4681d703 module;",
+     "    class gox_cmd_app_main_fd38611f module;",
+     "    class golang_service_service_ee1ecbb6 module;",
+     "    class gox_service_service_a83e7892 module;",
+     "    class pyrepo_main_ddf9f26e module;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Extraction Pipeline groups implementation around pkg, service, servicego, modelspy, mostly in service/service.go, pkg/models.py, store/store.go. This section covers 116 nodes and 201 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: contains x49, imports x40, references x31, calls x29. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "helper()",
+        "pkg/util.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ],
+       [
+        "slugify()",
+        "pkg/util.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "helper() node in pkg/util.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "slugify()",
+        "pkg/util.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "register()",
+        "pkg/service.py"
+       ],
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "helper()",
+        "pkg/util.py"
+       ],
+       [
+        "re"
+       ]
+      ],
+      "slugify() node in pkg/util.py."
+     ],
+     [
+      "3",
+      [
+       [
+        "traced()",
+        "pkg/util.py"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "wrapper()",
+        "pkg/util.py"
+       ]
+      ],
+      "traced() node in pkg/util.py."
+     ],
+     [
+      "4",
+      [
+       [
+        "wrapper()",
+        "pkg/util.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "traced()",
+        "pkg/util.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "wrapper() node in pkg/util.py."
+     ],
+     [
+      "5",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "main.py",
+        "main.py"
+       ],
+       [
+        "test_service.py",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       [
+        "__init__.py",
+        "pkg/__init__.py"
+       ],
+       [
+        "Admin",
+        "pkg/models.py"
+       ],
+       [
+        "collections"
+       ],
+       "+9 more"
+      ],
+      "Module file in pkg/service.py."
+     ],
+     [
+      "6",
+      [
+       [
+        "util.py",
+        "pkg/util.py"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       [
+        "functools"
+       ],
+       [
+        "re"
+       ]
+      ],
+      "Module file in pkg/util.py."
+     ],
+     [
+      "7",
+      [
+       [
+        "Service layer exercising every import and call form.",
+        "pkg/service.py"
+       ]
+      ],
+      "Concept",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Design note for Service layer exercising every import and call form.."
+     ],
+     [
+      "8",
+      [
+       [
+        "collections",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "collections node in project."
+     ],
+     [
+      "9",
+      [
+       [
+        "functools",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "util.py",
+        "pkg/util.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "functools node in project."
+     ],
+     [
+      "10",
+      [
+       [
+        "json",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "json node in project."
+     ],
+     [
+      "11",
+      [
+       [
+        "os_path",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.py",
+        "pkg/service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "os_path node in project."
+     ],
+     [
+      "12",
+      [
+       [
+        "re",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "slugify()",
+        "pkg/util.py"
+       ],
+       [
+        "util.py",
+        "pkg/util.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "re node in project."
+     ],
+     [
+      "13",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "go_pkg_fmt"
+       ],
+       [
+        "go_pkg_os"
+       ],
+       [
+        "helpers.go",
+        "store/helpers.go"
+       ],
+       "+3 more"
+      ],
+      "main.go node in cmd/app/main.go."
+     ],
+     [
+      "14",
+      [
+       [
+        "Greeter",
+        "service/service.go"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Greet()",
+        "service/service.go"
+       ]
+      ],
+      "Greeter node in service/service.go."
+     ],
+     [
+      "15",
+      [
+       [
+        ".Greet()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Greeter",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Greet() node in service/service.go."
+     ],
+     [
+      "16",
+      [
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      [
+       [
+        "com google uuid"
+       ],
+       [
+        "go_pkg_fmt"
+       ],
+       [
+        "go_pkg_sort"
+       ],
+       "+2 more"
+      ],
+      "service.go node in service/service.go."
+     ],
+     [
+      "17",
+      [
+       [
+        "apply()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Names()",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "apply() node in service/service.go."
+     ],
+     [
+      "18",
+      [
+       [
+        "logLine()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "logLine() node in service/service.go."
+     ],
+     [
+      "19",
+      [
+       [
+        "strings2upper()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "strings2upper() node in service/service.go."
+     ],
+     [
+      "20",
+      [
+       [
+        "go_pkg_fmt",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ],
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ],
+       [
+        "service.go",
+        "service/service.go"
+       ],
+       "+1 more"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "go_pkg_fmt node in project."
+     ],
+     [
+      "21",
+      [
+       [
+        "go_pkg_github_com_google_uuid",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.go",
+        "service/service.go"
+       ],
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Turns a local path or remote repository into analysis context."
+     ],
+     [
+      "22",
+      [
+       [
+        "go_pkg_os",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ],
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "go_pkg_os node in project."
+     ],
+     [
+      "23",
+      [
+       [
+        "go_pkg_sort",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "service.go",
+        "service/service.go"
+       ],
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "go_pkg_sort node in project."
+     ],
+     [
+      "24",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      "Module",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "go_pkg_fmt"
+       ],
+       [
+        "go_pkg_os"
+       ],
+       [
+        "helpers.go",
+        "store/helpers.go"
+       ],
+       "+3 more"
+      ],
+      "main.go node in cmd/app/main.go."
+     ],
+     [
+      "25",
+      [
+       [
+        "Greeter",
+        "service/service.go"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Greet()",
+        "service/service.go"
+       ]
+      ],
+      "Greeter node in service/service.go."
+     ],
+     [
+      "26",
+      [
+       [
+        ".Greet()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Greeter",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Greet() node in service/service.go."
+     ],
+     [
+      "27",
+      [
+       [
+        "service.go",
+        "service/service.go"
+       ]
+      ],
+      "Module",
+      [
+       [
+        "main.go",
+        "cmd/app/main.go"
+       ]
+      ],
+      [
+       [
+        "com google uuid"
+       ],
+       [
+        "go_pkg_fmt"
+       ],
+       [
+        "go_pkg_sort"
+       ],
+       "+2 more"
+      ],
+      "service.go node in service/service.go."
+     ],
+     [
+      "28",
+      [
+       [
+        "apply()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Names()",
+        "service/service.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "apply() node in service/service.go."
+     ],
+     [
+      "29",
+      [
+       [
+        "logLine()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "logLine() node in service/service.go."
+     ],
+     [
+      "30",
+      [
+       [
+        "strings2upper()",
+        "service/service.go"
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "strings2upper() node in service/service.go."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "service/service.go",
+      "26 nodes"
+     ],
+     [
+      "pkg/models.py",
+      "22 nodes"
+     ],
+     [
+      "store/store.go",
+      "12 nodes"
+     ],
+     [
+      "pkg/service.py",
+      "10 nodes"
+     ],
+     [
+      "store/helpers.go",
+      "8 nodes"
+     ],
+     [
+      "pkg/util.py",
+      "5 nodes"
+     ],
+     [
+      "cmd/app/main.go",
+      "4 nodes"
+     ],
+     [
+      "service/service_test.go",
+      "4 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "tests-fixtures",
+   "heading": "3. Tests & Fixtures",
+   "diagrams": [
+    [
+     "flowchart LR",
+     "    %% Section: Tests & Fixtures (21 nodes, 22 edges)",
+     "    subgraph tests_fixtures_store_store_go_4381e777[\"store/store.go\"]",
+     "        golang_store_store_t_de10b3cf(\"Store[T]<br/><small>store/store.go</small>\")",
+     "        gox_store_store_t_9c3bf5b3(\"Store[T]<br/><small>store/store.go</small>\")",
+     "        golang_store_store_go_store_model_2f54ace5(\"Model<br/><small>store/store.go</small>\")",
+     "        gox_store_store_go_store_model_49ab9691(\"Model<br/><small>store/store.go</small>\")",
+     "        golang_store_store_t_put_fa770d60(\"Put()<br/><small>store/store.go</small>\")",
+     "        golang_store_store_t_get_0f996e05(\"Get()<br/><small>store/store.go</small>\")",
+     "        golang_store_model_identity_a6f26cb1(\"Identity()<br/><small>store/store.go</small>\")",
+     "        gox_store_store_t_put_aa896b67(\"Put()<br/><small>store/store.go</small>\")",
+     "        gox_store_store_t_get_b1fd7743(\"Get()<br/><small>store/store.go</small>\")",
+     "        gox_store_model_identity_90e33d5e(\"Identity()<br/><small>store/store.go</small>\")",
+     "        golang_store_id_c1ea351f(\"ID<br/><small>store/store.go</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_tests_test_service_py_532580bc[\"tests/test_service.py\"]",
+     "        pyrepo_tests_test_service_testuserservice_60caf790(\"TestUserService<br/><small>tests/test_service.py</small>\")",
+     "        pyrepo_tests_test_service_7363b4ae(\"test_service.py\")",
+     "        pyrepo_tests_test_service_testuserservice_test_p_0df37912(\"test_parse()<br/><small>tests/test_service.py</small>\")",
+     "        pyrepo_tests_test_service_testuserservice_test_r_a0460b26(\"test_register()<br/><small>tests/test_service.py</small>\")",
+     "    end",
+     "    subgraph tests_fixtures_External_generated_473753cb[\"External / generated\"]",
+     "        pytest_0eaa389e(\"pytest\")",
+     "        pyrepo_fixture_2ebe7b00(\"fixture\")",
+     "    end",
+     "    pyrepo_pkg_models_user_parse_53e80917(\"parse()<br/><small>pkg/models.py</small>\")",
+     "    pyrepo_tests_test_service_testuserservice_60caf790 -->|method| pyrepo_tests_test_service_testuserservice_test_p_0df37912",
+     "    pyrepo_tests_test_service_testuserservice_60caf790 -->|method| pyrepo_tests_test_service_testuserservice_test_r_a0460b26",
+     "    pyrepo_tests_test_service_testuserservice_test_p_0df37912 -->|calls| pyrepo_pkg_models_user_parse_53e80917",
+     "    golang_store_store_t_de10b3cf -->|method| golang_store_store_t_put_fa770d60",
+     "    golang_store_store_t_de10b3cf -->|method| golang_store_store_t_get_0f996e05",
+     "    golang_store_store_t_put_fa770d60 -->|calls| golang_store_model_identity_a6f26cb1",
+     "    golang_store_store_go_store_model_2f54ace5 -->|method| golang_store_model_identity_a6f26cb1",
+     "    gox_store_store_t_9c3bf5b3 -->|method| gox_store_store_t_put_aa896b67",
+     "    gox_store_store_t_9c3bf5b3 -->|method| gox_store_store_t_get_b1fd7743",
+     "    gox_store_store_t_put_aa896b67 -->|calls| gox_store_model_identity_90e33d5e",
+     "    gox_store_store_go_store_model_49ab9691 -->|method| gox_store_model_identity_90e33d5e",
+     "    pyrepo_tests_test_service_7363b4ae -->|imports| pytest_0eaa389e",
+     "    %% Omitted for readability: 3 nodes, 0 edges",
+     "    class golang_store_store_t_de10b3cf ui;",
+     "    class gox_store_store_t_9c3bf5b3 ui;",
+     "    class golang_store_store_go_store_model_2f54ace5 klass;",
+     "    class gox_store_store_go_store_model_49ab9691 klass;",
+     "    class golang_store_store_t_put_fa770d60 function;",
+     "    class golang_store_store_t_get_0f996e05 function;",
+     "    class golang_store_model_identity_a6f26cb1 function;",
+     "    class gox_store_store_t_put_aa896b67 function;",
+     "    class gox_store_store_t_get_b1fd7743 function;",
+     "    class gox_store_model_identity_90e33d5e function;",
+     "    class golang_store_id_c1ea351f klass;",
+     "    class pyrepo_tests_test_service_testuserservice_60caf790 test;",
+     "    class pyrepo_tests_test_service_7363b4ae test;",
+     "    class pyrepo_tests_test_service_testuserservice_test_p_0df37912 test;",
+     "    class pyrepo_tests_test_service_testuserservice_test_r_a0460b26 test;",
+     "    class pytest_0eaa389e function;",
+     "    class pyrepo_fixture_2ebe7b00 function;",
+     "    class pyrepo_pkg_models_user_parse_53e80917 function;"
+    ]
+   ],
+   "h3": [
+    "Call Details"
+   ],
+   "h4": [
+    "Key Files",
+    "Design Notes"
+   ],
+   "paragraphs": [
+    "Tests & Fixtures groups implementation around store, storego, test, servicepy, mostly in store/store.go, tests/test_service.py, pkg/models.py. This section covers 21 nodes and 22 internal edges; the diagram shows only representative relationships to stay readable.",
+    "This section comes from graphify community clustering. Relationship summary: method x8, references x7, contains x3, calls x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory."
+   ],
+   "tables": [
+    [
+     [
+      "#",
+      "Node",
+      "Type",
+      "Caller",
+      "Callees",
+      "Description"
+     ],
+     [
+      "1",
+      [
+       [
+        "service()",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "run()",
+        "pkg/service.py"
+       ]
+      ],
+      "service() node in tests/test_service.py."
+     ],
+     [
+      "2",
+      [
+       [
+        "test_run()",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "3",
+      [
+       [
+        "fixture",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "fixture node in project."
+     ],
+     [
+      "4",
+      [
+       [
+        "test_service.py",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "models.py",
+        "pkg/models.py"
+       ],
+       [
+        "pytest"
+       ],
+       [
+        "run()",
+        "pkg/service.py"
+       ],
+       "+3 more"
+      ],
+      "Module file in tests/test_service.py."
+     ],
+     [
+      "5",
+      [
+       [
+        "pytest",
+        ""
+       ]
+      ],
+      "Function",
+      [
+       [
+        "test_service.py",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "6",
+      [
+       [
+        "Store[T]",
+        "store/store.go"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Get()",
+        "store/store.go"
+       ],
+       [
+        "Put()",
+        "store/store.go"
+       ]
+      ],
+      "Store[T] node in store/store.go."
+     ],
+     [
+      "7",
+      [
+       [
+        ".Get()",
+        "store/store.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Store[T]",
+        "store/store.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Get() node in store/store.go."
+     ],
+     [
+      "8",
+      [
+       [
+        ".Put()",
+        "store/store.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Store[T]",
+        "store/store.go"
+       ]
+      ],
+      [
+       [
+        "Identity()",
+        "store/store.go"
+       ]
+      ],
+      ".Put() node in store/store.go."
+     ],
+     [
+      "9",
+      [
+       [
+        "Store[T]",
+        "store/store.go"
+       ]
+      ],
+      "UI",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Get()",
+        "store/store.go"
+       ],
+       [
+        "Put()",
+        "store/store.go"
+       ]
+      ],
+      "Store[T] node in store/store.go."
+     ],
+     [
+      "10",
+      [
+       [
+        ".Get()",
+        "store/store.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Store[T]",
+        "store/store.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Get() node in store/store.go."
+     ],
+     [
+      "11",
+      [
+       [
+        ".Put()",
+        "store/store.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Store[T]",
+        "store/store.go"
+       ]
+      ],
+      [
+       [
+        "Identity()",
+        "store/store.go"
+       ]
+      ],
+      ".Put() node in store/store.go."
+     ],
+     [
+      "12",
+      [
+       [
+        "TestUserService",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "test_parse()",
+        "tests/test_service.py"
+       ],
+       [
+        "test_register()",
+        "tests/test_service.py"
+       ],
+       [
+        "User",
+        "pkg/models.py"
+       ],
+       "+1 more"
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "13",
+      [
+       [
+        ".parse()",
+        "pkg/models.py"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "test_parse()",
+        "tests/test_service.py"
+       ],
+       [
+        "User",
+        "pkg/models.py"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".parse() node in pkg/models.py."
+     ],
+     [
+      "14",
+      [
+       [
+        ".test_parse()",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "TestUserService",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       [
+        "parse()",
+        "pkg/models.py"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "15",
+      [
+       [
+        ".test_register()",
+        "tests/test_service.py"
+       ]
+      ],
+      "Test",
+      [
+       [
+        "TestUserService",
+        "tests/test_service.py"
+       ]
+      ],
+      [
+       [
+        "run()",
+        "pkg/service.py"
+       ]
+      ],
+      "Verifies imports, entry points, or version behavior."
+     ],
+     [
+      "16",
+      [
+       [
+        "ID",
+        "store/store.go"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "Normalize()",
+        "store/helpers.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ID node in store/store.go."
+     ],
+     [
+      "17",
+      [
+       [
+        ".Identity()",
+        "store/store.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "store/store.go"
+       ],
+       [
+        "Put()",
+        "store/store.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Identity() node in store/store.go."
+     ],
+     [
+      "18",
+      [
+       [
+        "Model",
+        "store/store.go"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Identity()",
+        "store/store.go"
+       ]
+      ],
+      "Model node in store/store.go."
+     ],
+     [
+      "19",
+      [
+       [
+        "ID",
+        "store/store.go"
+       ]
+      ],
+      "Class",
+      [
+       [
+        "Normalize()",
+        "store/helpers.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      "ID node in store/store.go."
+     ],
+     [
+      "20",
+      [
+       [
+        ".Identity()",
+        "store/store.go"
+       ]
+      ],
+      "Function",
+      [
+       [
+        "Model",
+        "store/store.go"
+       ],
+       [
+        "Put()",
+        "store/store.go"
+       ]
+      ],
+      [
+       "No direct outbound edge"
+      ],
+      ".Identity() node in store/store.go."
+     ],
+     [
+      "21",
+      [
+       [
+        "Model",
+        "store/store.go"
+       ]
+      ],
+      "Class",
+      [
+       "External entry / no inbound edge"
+      ],
+      [
+       [
+        "Identity()",
+        "store/store.go"
+       ]
+      ],
+      "Model node in store/store.go."
+     ]
+    ],
+    [
+     [
+      "File",
+      "Coverage"
+     ],
+     [
+      "store/store.go",
+      "12 nodes"
+     ],
+     [
+      "tests/test_service.py",
+      "6 nodes"
+     ],
+     [
+      "pkg/models.py",
+      "1 nodes"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "heading": "Project Statistics",
+   "diagrams": [],
+   "h3": [],
+   "h4": [
+    "Graph",
+    "Edge Confidence"
+   ],
+   "paragraphs": [
+    "global_py_go.3 — Architecture Documentation",
+    "Generated: <time> · graphify callflow-html"
+   ],
+   "tables": [
+    [
+     [
+      "Nodes",
+      "137"
+     ],
+     [
+      "Edges",
+      "247"
+     ],
+     [
+      "Hyperedges",
+      "0"
+     ],
+     [
+      "Communities",
+      "10"
+     ],
+     [
+      "Documented Sections",
+      "2"
+     ]
+    ],
+    [
+     [
+      "EXTRACTED",
+      "232"
+     ],
+     [
+      "INFERRED",
+      "15"
+     ],
+     [
+      "AMBIGUOUS",
+      "0"
+     ]
+    ]
+   ]
+  }
+ ]
+}

@@ -205,6 +205,123 @@ fn page_data_matches_graphify() {
     );
 }
 
+/// `(golden directory, multirepo golden)`: global graphs, whose links carry `_src`/`_tgt` with
+/// `source`/`target` often reversed. Graphify draws them from `_src` to `_tgt`; the global graph
+/// also has nodes without a community, grouped as `unknown`.
+const GLOBAL: [(&str, &str); 2] = [
+    ("global_direction", "global_direction"),
+    ("global_py_go", "global_py_go.3"),
+];
+
+/// Components of the global pages allowed to differ, each an open heuristic of §13.
+const GLOBAL_ALLOWED: [(&str, &str); 6] = [
+    // F4: order of unlinked nodes (Graphify puts `é` before `F`).
+    ("global_direction", "02:fpy-apy/diagram"),
+    // F7: the overview label of a pair with several relations (`references` against `imports`).
+    ("global_py_go", "00:overview/edges"),
+    // F11: Go module labels shown as `com google uuid`.
+    ("global_py_go", "01:extract-pipeline/calls/16/callees"),
+    ("global_py_go", "01:extract-pipeline/calls/27/callees"),
+    // F4: which 24 links a 116-node section shows, and the order of a section's nodes.
+    ("global_py_go", "01:extract-pipeline/diagram"),
+    ("global_py_go", "02:tests-fixtures/diagram"),
+];
+
+/// Every component of the global graphs' pages matches Graphify's: callers, callees, relation
+/// summaries, internal link counts and diagram links all follow `_src` → `_tgt`.
+#[test]
+fn global_graphs_follow_the_true_direction() {
+    let mut failures = Vec::new();
+    for (golden, input) in GLOBAL {
+        let want = normalise(
+            &serde_json::from_slice(
+                &fs::read(fixtures().join(format!("exports/{golden}/callflow/page.json"))).unwrap(),
+            )
+            .unwrap(),
+        );
+        let g = NxGraph::read(&fixtures().join(format!("multirepo/goldens/{input}.graph.json")))
+            .unwrap();
+        let ours = callflow::build(&g, &options(input)).data();
+        let (w, o) = (components(&want), components(&ours));
+        let keys: std::collections::BTreeSet<&String> = w.keys().chain(o.keys()).collect();
+        for k in keys {
+            let allowed = GLOBAL_ALLOWED.contains(&(golden, k.as_str()));
+            if (w.get(k) == o.get(k)) == allowed {
+                failures.push(format!(
+                    "{golden} {k} (allowed: {allowed})\n  graphify: {}\n  ours:     {}",
+                    w.get(k).map_or("-".into(), |v| v.to_string()),
+                    o.get(k).map_or("-".into(), |v| v.to_string())
+                ));
+            }
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
+}
+
+/// Communities are grouped by Python's `str` of the value, a missing or `null` one as
+/// `unknown` (Graphify's page for this graph: layers `unknown` 9, `0` 6, `x` 3, `7.5` 2,
+/// `True` 1; 5 communities), and a single cross-section link is labelled without ` x1`.
+#[test]
+fn communities_are_grouped_by_their_text() {
+    let comms = [
+        (json!(0), 6),
+        (Value::Null, 5),
+        (json!(null), 4),
+        (json!("x"), 3),
+        (json!(7.5), 2),
+        (json!(true), 1),
+    ];
+    let mut nodes = Vec::new();
+    for (k, (c, n)) in comms.iter().enumerate() {
+        for _ in 0..*n {
+            let i = nodes.len();
+            let mut node = json!({"id": format!("n{i}"), "label": format!("Fn{i}()"),
+                                  "file_type": "code", "source_file": format!("m{}.py", i % 3)});
+            if k != 1 {
+                node["community"] = c.clone();
+            }
+            nodes.push(node);
+        }
+    }
+    let links: Vec<Value> = (1..nodes.len())
+        .map(|i| {
+            json!({"source": format!("n{}", i - 1), "target": format!("n{i}"),
+                        "relation": "calls", "confidence": "EXTRACTED"})
+        })
+        .collect();
+    let g = NxGraph::from_json(json!({"directed": false, "multigraph": false, "graph": {},
+                                      "nodes": nodes, "links": links}))
+    .unwrap();
+    let d = callflow::build(&g, &options("comm")).data();
+    assert_eq!(
+        d["subtitle"],
+        "Generated from dijkstral knowledge graph: 21 nodes, 20 edges, 5 communities. Commit: unknown"
+    );
+    let layers: Vec<(String, String)> = d["sections"][0]["tables"][0]
+        .as_array()
+        .unwrap()
+        .iter()
+        .skip(1)
+        .map(|r| (r[1].as_str().unwrap().into(), r[2].as_str().unwrap().into()))
+        .collect();
+    let want = [
+        ("9", "unknown"),
+        ("6", "0"),
+        ("3", "x"),
+        ("2", "7.5"),
+        ("1", "True"),
+    ];
+    assert_eq!(layers, want.map(|(n, c)| (n.to_string(), c.to_string())));
+    let edges: Vec<&str> = d["sections"][0]["diagrams"][0]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter_map(|l| l.as_str().filter(|l| l.contains("-->")))
+        .collect();
+    assert_eq!(edges.len(), 4);
+    assert!(edges.iter().all(|l| l.contains("-->|calls| ")), "{edges:?}");
+}
+
 const HOSTILE: [&str; 9] = [
     "</script><script>alert(1)</script>",
     "<img src=x onerror=alert(2)>",

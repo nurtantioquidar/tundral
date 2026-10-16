@@ -19,6 +19,7 @@ use serde_json::{json, Value};
 
 use crate::html::{escape_html, fill};
 use crate::nx::{Attr, NxGraph};
+use dijkstral_core::pyjson::float_repr;
 
 /// Graphify's file name: `<project>-callflow.html`.
 pub const CALLFLOW_SUFFIX: &str = "-callflow.html";
@@ -554,7 +555,8 @@ pub struct CallRow {
 pub struct Section {
     pub slug: String,
     pub title: String,
-    pub communities: Vec<i64>,
+    /// Community keys (`community_key`).
+    pub communities: Vec<String>,
     pub members: Vec<u32>,
     pub heading: String,
     pub intro: String,
@@ -678,13 +680,37 @@ fn classify(ctx: &Ctx, members: &[u32]) -> (Option<usize>, Tally) {
     (best.map(|(_, k)| k), names)
 }
 
+/// A node's community as the page groups and names it (§13.2): Python's `str` of the value,
+/// `unknown` when it is absent or `null`.
+fn community_key(g: &NxGraph, i: u32) -> String {
+    match g.nodes[i as usize].attrs.get("community") {
+        None | Some(Attr::Null) => "unknown".into(),
+        Some(Attr::Int(c)) => c.to_string(),
+        Some(Attr::Float(f)) => float_repr(*f),
+        Some(Attr::Bool(b)) => if *b { "True" } else { "False" }.into(),
+        Some(Attr::Str(s)) => s.to_string(),
+        Some(Attr::Json(v)) => v.to_string(),
+    }
+}
+
+/// Every node's community, in order of first member, members in node order.
+fn communities(g: &NxGraph) -> Vec<(String, Vec<u32>)> {
+    let mut slot: HashMap<String, usize> = HashMap::new();
+    let mut out: Vec<(String, Vec<u32>)> = Vec::new();
+    for i in 0..g.nodes.len() as u32 {
+        let c = community_key(g, i);
+        let k = *slot.entry(c.clone()).or_insert_with(|| {
+            out.push((c, Vec::new()));
+            out.len() - 1
+        });
+        out[k].1.push(i);
+    }
+    out
+}
+
 fn plan_sections(ctx: &Ctx, max_sections: i64) -> Vec<Section> {
-    let mut comms = ctx.g.communities();
-    comms.sort_by(|a, b| {
-        b.1.len()
-            .cmp(&a.1.len())
-            .then_with(|| a.0.to_string().cmp(&b.0.to_string()))
-    });
+    let mut comms = communities(ctx.g);
+    comms.sort_by(|a, b| b.1.len().cmp(&a.1.len()).then_with(|| a.0.cmp(&b.0)));
     let mut by_cat: Vec<Option<Section>> = (0..CATEGORIES.len()).map(|_| None).collect();
     let mut generated = Vec::new();
     for (c, members) in comms {
@@ -1413,10 +1439,13 @@ fn overview(ctx: &Ctx, secs: &[Section]) -> (Vec<String>, String) {
     order.sort_by_key(|&k| std::cmp::Reverse(pairs[k].1));
     for k in order.into_iter().take(MAX_OVERVIEW_EDGES) {
         let ((a, b), n, rels) = &pairs[k];
+        // A single link is labelled with its relation alone (`ref`, not `ref x1`).
+        let rel = mermaid_text(&w.relation(&label(rels)));
+        let text = if *n == 1 { rel } else { format!("{rel} x{n}") };
         lines.push(format!(
             "    {} -->|{}| {}",
             ids[*a],
-            edge_label(&format!("{} x{n}", mermaid_text(&w.relation(&label(rels))))),
+            edge_label(&text),
             ids[*b]
         ));
     }
@@ -1486,8 +1515,8 @@ pub fn build(g: &NxGraph, opts: &CallflowOptions) -> Page {
         s.note = design_note(&ctx, &links);
     }
     let (overview_diagram, chain) = overview(&ctx, &secs);
-    let communities: HashSet<i64> = (0..g.nodes.len() as u32)
-        .filter_map(|i| g.community(i))
+    let communities: HashSet<String> = (0..g.nodes.len() as u32)
+        .map(|i| community_key(g, i))
         .collect();
     let commit = opts
         .commit
