@@ -142,6 +142,8 @@ def bare(sym: str) -> str:
     s = sym.rstrip(".#!/():")
     i =max(s.rfind("#"), s.rfind("/"), s.rfind("."), s.rfind(" "))
     name = s[i + 1 :]
+    if "]" in name:  # rust-analyzer: `impl#[Type][Trait]method().`
+        name = name[name.rindex("]") + 1 :]
     if "(" in name:
         name = name[: name.index("(")]
     return name.strip("`")
