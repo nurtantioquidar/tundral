@@ -1,0 +1,3502 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d18" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d17" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d16" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d15" for="edge" attr.name="context" attr.type="string" />
+  <key id="d14" for="edge" attr.name="confidence_score" attr.type="double" />
+  <key id="d13" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d12" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d11" for="node" attr.name="ecosystem" attr.type="string" />
+  <key id="d10" for="node" attr.name="type" attr.type="string" />
+  <key id="d9" for="node" attr.name="external" attr.type="boolean" />
+  <key id="d8" for="node" attr.name="metadata" attr.type="string" />
+  <key id="d7" for="node" attr.name="local_id" attr.type="string" />
+  <key id="d6" for="node" attr.name="repo" attr.type="string" />
+  <key id="d5" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d4" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d3" for="node" attr.name="norm_label" attr.type="string" />
+  <key id="d2" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d1" for="node" attr.name="community" attr.type="long" />
+  <key id="d0" for="node" attr.name="label" attr.type="string" />
+  <graph edgedefault="undirected">
+    <node id="pyrepo::pkg_models_admin">
+      <data key="d0">Admin</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">admin</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L48</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_admin</data>
+    </node>
+    <node id="pyrepo::pkg_models_user">
+      <data key="d0">User</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">user</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L23</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_user</data>
+    </node>
+    <node id="pyrepo::pkg_service_userservice">
+      <data key="d0">UserService</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">userservice</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L21</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_userservice</data>
+    </node>
+    <node id="pyrepo::pkg_models_base">
+      <data key="d0">Base</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">base</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L11</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_base</data>
+    </node>
+    <node id="pyrepo::pkg_models_repo">
+      <data key="d0">Repo</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d8">{"python_opaque_bases": true}</data>
+      <data key="d3">repo</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L59</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_repo</data>
+    </node>
+    <node id="pyrepo::tests_test_service_testuserservice">
+      <data key="d0">TestUserService</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">testuserservice</data>
+      <data key="d4">tests/test_service.py</data>
+      <data key="d5">L7</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">tests_test_service_testuserservice</data>
+    </node>
+    <node id="pyrepo::pkg_util_helper">
+      <data key="d0">helper()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">helper()</data>
+      <data key="d4">pkg/util.py</data>
+      <data key="d5">L18</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_util_helper</data>
+    </node>
+    <node id="pyrepo::pkg_util_slugify">
+      <data key="d0">slugify()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">slugify()</data>
+      <data key="d4">pkg/util.py</data>
+      <data key="d5">L14</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_util_slugify</data>
+    </node>
+    <node id="pyrepo::pkg_util_traced">
+      <data key="d0">traced()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">traced()</data>
+      <data key="d4">pkg/util.py</data>
+      <data key="d5">L5</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_util_traced</data>
+    </node>
+    <node id="pyrepo::pkg_util_traced_wrapper">
+      <data key="d0">wrapper()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">wrapper()</data>
+      <data key="d4">pkg/util.py</data>
+      <data key="d5">L7</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_util_traced_wrapper</data>
+    </node>
+    <node id="pyrepo::pkg_models_admin_promote">
+      <data key="d0">.promote()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">.promote()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L51</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_admin_promote</data>
+    </node>
+    <node id="pyrepo::pkg_models_admin_promote_bump">
+      <data key="d0">bump()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">bump()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L52</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_admin_promote_bump</data>
+    </node>
+    <node id="pyrepo::pkg_models_user_guest">
+      <data key="d0">.guest()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">.guest()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L39</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_user_guest</data>
+    </node>
+    <node id="pyrepo::pkg_service_userservice_promote">
+      <data key="d0">.promote()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">.promote()</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L33</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_userservice_promote</data>
+    </node>
+    <node id="pyrepo::pkg_models_format_name">
+      <data key="d0">format_name()</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">format_name()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L76</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_format_name</data>
+    </node>
+    <node id="pyrepo::pkg_models_helper">
+      <data key="d0">helper()</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">helper()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L81</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_helper</data>
+    </node>
+    <node id="pyrepo::pkg_models_user_display">
+      <data key="d0">.display()</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">.display()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L31</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_user_display</data>
+    </node>
+    <node id="pyrepo::main_main">
+      <data key="d0">main()</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">main()</data>
+      <data key="d4">main.py</data>
+      <data key="d5">L10</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">main_main</data>
+    </node>
+    <node id="pyrepo::pkg_service_run">
+      <data key="d0">run()</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">run()</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L42</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_run</data>
+    </node>
+    <node id="pyrepo::pkg_service_userservice_register">
+      <data key="d0">.register()</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">.register()</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L26</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_userservice_register</data>
+    </node>
+    <node id="pyrepo::pkg_models_base_describe">
+      <data key="d0">.describe()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.describe()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L18</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_base_describe</data>
+    </node>
+    <node id="pyrepo::pkg_models_base_save">
+      <data key="d0">.save()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.save()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L14</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_base_save</data>
+    </node>
+    <node id="pyrepo::pkg_models_user_save">
+      <data key="d0">.save()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.save()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L42</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_user_save</data>
+    </node>
+    <node id="pyrepo::pkg_models_validate">
+      <data key="d0">validate()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">validate()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L72</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_validate</data>
+    </node>
+    <node id="pyrepo::pkg_models_repo_add">
+      <data key="d0">.add()</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">.add()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L65</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_repo_add</data>
+    </node>
+    <node id="pyrepo::pkg_models_repo_get">
+      <data key="d0">.get()</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">.get()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L68</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_repo_get</data>
+    </node>
+    <node id="pyrepo::pkg_models_repo_init">
+      <data key="d0">.__init__()</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">.__init__()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L62</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_repo_init</data>
+    </node>
+    <node id="pyrepo::pkg_service_userservice_init">
+      <data key="d0">.__init__()</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">.__init__()</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L22</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_userservice_init</data>
+    </node>
+    <node id="pyrepo::tests_test_service_service">
+      <data key="d0">service()</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">service()</data>
+      <data key="d4">tests/test_service.py</data>
+      <data key="d5">L17</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">tests_test_service_service</data>
+    </node>
+    <node id="pyrepo::tests_test_service_test_run">
+      <data key="d0">test_run()</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">test_run()</data>
+      <data key="d4">tests/test_service.py</data>
+      <data key="d5">L21</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">tests_test_service_test_run</data>
+    </node>
+    <node id="pyrepo::pkg_models_user_parse">
+      <data key="d0">.parse()</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">.parse()</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L35</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_user_parse</data>
+    </node>
+    <node id="pyrepo::tests_test_service_testuserservice_test_parse">
+      <data key="d0">.test_parse()</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">.test_parse()</data>
+      <data key="d4">tests/test_service.py</data>
+      <data key="d5">L12</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">tests_test_service_testuserservice_test_parse</data>
+    </node>
+    <node id="pyrepo::tests_test_service_testuserservice_test_register">
+      <data key="d0">.test_register()</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">.test_register()</data>
+      <data key="d4">tests/test_service.py</data>
+      <data key="d5">L8</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">tests_test_service_testuserservice_test_register</data>
+    </node>
+    <node id="pyrepo::pkg_service_helper">
+      <data key="d0">helper()</data>
+      <data key="d1">8</data>
+      <data key="d2">code</data>
+      <data key="d3">helper()</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L16</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_helper</data>
+    </node>
+    <node id="pyrepo::pkg_service_userservice_export">
+      <data key="d0">.export()</data>
+      <data key="d1">8</data>
+      <data key="d2">code</data>
+      <data key="d3">.export()</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L36</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_userservice_export</data>
+    </node>
+    <node id="pyrepo::pkg_service">
+      <data key="d0">service.py</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">service.py</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L1</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service</data>
+    </node>
+    <node id="pyrepo::pkg_util">
+      <data key="d0">util.py</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">util.py</data>
+      <data key="d4">pkg/util.py</data>
+      <data key="d5">L1</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_util</data>
+    </node>
+    <node id="pyrepo::pkg_service_rationale_1">
+      <data key="d0">Service layer exercising every import and call form.</data>
+      <data key="d1">0</data>
+      <data key="d2">rationale</data>
+      <data key="d3">service layer exercising every import and call form.</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L1</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_rationale_1</data>
+    </node>
+    <node id="pyrepo::pkg_init">
+      <data key="d0">__init__.py</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">__init__.py</data>
+      <data key="d4">pkg/__init__.py</data>
+      <data key="d5">L1</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_init</data>
+    </node>
+    <node id="pyrepo::pkg_init_rationale_1">
+      <data key="d0">Fixture package: re-exports the public model types.</data>
+      <data key="d1">1</data>
+      <data key="d2">rationale</data>
+      <data key="d3">fixture package: re-exports the public model types.</data>
+      <data key="d4">pkg/__init__.py</data>
+      <data key="d5">L1</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_init_rationale_1</data>
+    </node>
+    <node id="pyrepo::pkg_models_rationale_24">
+      <data key="d0">A person who can sign in.</data>
+      <data key="d1">1</data>
+      <data key="d2">rationale</data>
+      <data key="d3">a person who can sign in.</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L24</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_rationale_24</data>
+    </node>
+    <node id="pyrepo::pkg_models">
+      <data key="d0">models.py</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">models.py</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L1</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models</data>
+    </node>
+    <node id="pyrepo::pkg_models_rationale_15">
+      <data key="d0"># NOTE: persistence is faked in this fixture.</data>
+      <data key="d1">2</data>
+      <data key="d2">rationale</data>
+      <data key="d3"># note: persistence is faked in this fixture.</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L15</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_rationale_15</data>
+    </node>
+    <node id="pyrepo::pkg_models_rationale_77">
+      <data key="d0"># WHY: names are displayed title-cased everywhere.</data>
+      <data key="d1">2</data>
+      <data key="d2">rationale</data>
+      <data key="d3"># why: names are displayed title-cased everywhere.</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L77</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_rationale_77</data>
+    </node>
+    <node id="pyrepo::main">
+      <data key="d0">main.py</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">main.py</data>
+      <data key="d4">main.py</data>
+      <data key="d5">L1</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">main</data>
+    </node>
+    <node id="pyrepo::pkg_models_rationale_12">
+      <data key="d0">Root of the model hierarchy.</data>
+      <data key="d1">4</data>
+      <data key="d2">rationale</data>
+      <data key="d3">root of the model hierarchy.</data>
+      <data key="d4">pkg/models.py</data>
+      <data key="d5">L12</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_models_rationale_12</data>
+    </node>
+    <node id="pyrepo::t">
+      <data key="d0">T</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">t</data>
+      <data key="d4" />
+      <data key="d5" />
+      <data key="d6">pyrepo</data>
+      <data key="d7">t</data>
+    </node>
+    <node id="pyrepo::fixture">
+      <data key="d0">fixture</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">fixture</data>
+      <data key="d4" />
+      <data key="d5" />
+      <data key="d6">pyrepo</data>
+      <data key="d7">fixture</data>
+    </node>
+    <node id="pyrepo::tests_test_service">
+      <data key="d0">test_service.py</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">test_service.py</data>
+      <data key="d4">tests/test_service.py</data>
+      <data key="d5">L1</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">tests_test_service</data>
+    </node>
+    <node id="pyrepo::pkg_service_rationale_17">
+      <data key="d0">Duplicate name: also defined in models and util.</data>
+      <data key="d1">8</data>
+      <data key="d2">rationale</data>
+      <data key="d3">duplicate name: also defined in models and util.</data>
+      <data key="d4">pkg/service.py</data>
+      <data key="d5">L17</data>
+      <data key="d6">pyrepo</data>
+      <data key="d7">pkg_service_rationale_17</data>
+    </node>
+    <node id="collections">
+      <data key="d0">collections</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">collections</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="functools">
+      <data key="d0">functools</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">functools</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="json">
+      <data key="d0">json</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">json</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="os_path">
+      <data key="d0">os_path</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">os_path</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="re">
+      <data key="d0">re</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">re</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="dataclasses">
+      <data key="d0">dataclasses</data>
+      <data key="d1">2</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">dataclasses</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="typing">
+      <data key="d0">typing</data>
+      <data key="d1">2</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">typing</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="sys">
+      <data key="d0">sys</data>
+      <data key="d1">3</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">sys</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="pytest">
+      <data key="d0">pytest</data>
+      <data key="d1">6</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">pytest</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="golang::cmd_app_main">
+      <data key="d0">main.go</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">main.go</data>
+      <data key="d4">cmd/app/main.go</data>
+      <data key="d5">L1</data>
+      <data key="d6">golang</data>
+      <data key="d7">cmd_app_main</data>
+    </node>
+    <node id="golang::service_greeter">
+      <data key="d0">Greeter</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">greeter</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L22</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_greeter</data>
+    </node>
+    <node id="golang::service_greeter_greet">
+      <data key="d0">.Greet()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">.greet()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L23</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_greeter_greet</data>
+    </node>
+    <node id="golang::service_service">
+      <data key="d0">service.go</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">service.go</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L1</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_service</data>
+    </node>
+    <node id="golang::service_service_apply">
+      <data key="d0">apply()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">apply()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L63</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_service_apply</data>
+    </node>
+    <node id="golang::service_service_logline">
+      <data key="d0">logLine()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">logline()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L59</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_service_logline</data>
+    </node>
+    <node id="golang::service_service_strings2upper">
+      <data key="d0">strings2upper()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">strings2upper()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L69</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_service_strings2upper</data>
+    </node>
+    <node id="golang::cmd_app_main_main">
+      <data key="d0">main()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">main()</data>
+      <data key="d4">cmd/app/main.go</data>
+      <data key="d5">L11</data>
+      <data key="d6">golang</data>
+      <data key="d7">cmd_app_main_main</data>
+    </node>
+    <node id="golang::n">
+      <data key="d0">N</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">n</data>
+      <data key="d4" />
+      <data key="d5" />
+      <data key="d6">golang</data>
+      <data key="d7">n</data>
+    </node>
+    <node id="golang::service_service_newuserservice">
+      <data key="d0">NewUserService()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">newuserservice()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L33</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_service_newuserservice</data>
+    </node>
+    <node id="golang::store_helpers_format">
+      <data key="d0">Format()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">format()</data>
+      <data key="d4">store/helpers.go</data>
+      <data key="d5">L18</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_helpers_format</data>
+    </node>
+    <node id="golang::store_store_sum">
+      <data key="d0">Sum()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">sum()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L64</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_store_sum</data>
+    </node>
+    <node id="golang::store_helpers">
+      <data key="d0">helpers.go</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">helpers.go</data>
+      <data key="d4">store/helpers.go</data>
+      <data key="d5">L1</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_helpers</data>
+    </node>
+    <node id="golang::store_helpers_clean">
+      <data key="d0">clean()</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">clean()</data>
+      <data key="d4">store/helpers.go</data>
+      <data key="d5">L14</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_helpers_clean</data>
+    </node>
+    <node id="golang::store_helpers_normalize">
+      <data key="d0">Normalize()</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">normalize()</data>
+      <data key="d4">store/helpers.go</data>
+      <data key="d5">L9</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_helpers_normalize</data>
+    </node>
+    <node id="golang::go_type_testing_t">
+      <data key="d0">testing.T</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">testing.t</data>
+      <data key="d4" />
+      <data key="d5" />
+      <data key="d6">golang</data>
+      <data key="d7">go_type_testing_t</data>
+    </node>
+    <node id="golang::service_service_clean">
+      <data key="d0">clean()</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">clean()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L74</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_service_clean</data>
+    </node>
+    <node id="golang::service_service_test">
+      <data key="d0">service_test.go</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">service_test.go</data>
+      <data key="d4">service/service_test.go</data>
+      <data key="d5">L1</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_service_test</data>
+    </node>
+    <node id="golang::service_service_test_testregister">
+      <data key="d0">TestRegister()</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">testregister()</data>
+      <data key="d4">service/service_test.go</data>
+      <data key="d5">L5</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_service_test_testregister</data>
+    </node>
+    <node id="golang::service_user">
+      <data key="d0">User</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">user</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L15</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_user</data>
+    </node>
+    <node id="golang::service_userservice">
+      <data key="d0">UserService</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">userservice</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L27</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_userservice</data>
+    </node>
+    <node id="golang::service_userservice_greet">
+      <data key="d0">.Greet()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.greet()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L45</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_userservice_greet</data>
+    </node>
+    <node id="golang::service_userservice_names">
+      <data key="d0">.Names()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.names()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L49</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_userservice_names</data>
+    </node>
+    <node id="golang::service_userservice_register">
+      <data key="d0">.Register()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.register()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L37</data>
+      <data key="d6">golang</data>
+      <data key="d7">service_userservice_register</data>
+    </node>
+    <node id="golang::store_number">
+      <data key="d0">Number</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">number</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L34</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_number</data>
+    </node>
+    <node id="golang::store_store_go_store_store">
+      <data key="d0">Store</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">store</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L39</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_store_go_store_store</data>
+    </node>
+    <node id="golang::store_store_newstore">
+      <data key="d0">NewStore()</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">newstore()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L44</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_store_newstore</data>
+    </node>
+    <node id="golang::store_store_t">
+      <data key="d0">Store[T]</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">store[t]</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L49</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_store_t</data>
+    </node>
+    <node id="golang::store_store_t_get">
+      <data key="d0">.Get()</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">.get()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L54</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_store_t_get</data>
+    </node>
+    <node id="golang::store_store_t_put">
+      <data key="d0">.Put()</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">.put()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L49</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_store_t_put</data>
+    </node>
+    <node id="golang::store_id">
+      <data key="d0">ID</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">id</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L12</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_id</data>
+    </node>
+    <node id="golang::store_model_identity">
+      <data key="d0">.Identity()</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">.identity()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L29</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_model_identity</data>
+    </node>
+    <node id="golang::store_store_go_store_model">
+      <data key="d0">Model</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">model</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L23</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_store_go_store_model</data>
+    </node>
+    <node id="golang::store_entity">
+      <data key="d0">Entity</data>
+      <data key="d1">8</data>
+      <data key="d2">code</data>
+      <data key="d3">entity</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L18</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_entity</data>
+    </node>
+    <node id="golang::store_entity_identity">
+      <data key="d0">.Identity()</data>
+      <data key="d1">8</data>
+      <data key="d2">code</data>
+      <data key="d3">.identity()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L19</data>
+      <data key="d6">golang</data>
+      <data key="d7">store_entity_identity</data>
+    </node>
+    <node id="golang::pkg_example_com_shop">
+      <data key="d0">example.com/shop</data>
+      <data key="d1">9</data>
+      <data key="d11">go</data>
+      <data key="d2">code</data>
+      <data key="d3">example.com/shop</data>
+      <data key="d4">go.mod</data>
+      <data key="d5">L1</data>
+      <data key="d10">package</data>
+      <data key="d6">golang</data>
+      <data key="d7">pkg_example_com_shop</data>
+    </node>
+    <node id="go_pkg_fmt">
+      <data key="d0">go_pkg_fmt</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">go_pkg_fmt</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_github_com_google_uuid">
+      <data key="d0">go_pkg_github_com_google_uuid</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">go_pkg_github_com_google_uuid</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_os">
+      <data key="d0">go_pkg_os</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">go_pkg_os</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_sort">
+      <data key="d0">go_pkg_sort</data>
+      <data key="d1">0</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">go_pkg_sort</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_strconv">
+      <data key="d0">go_pkg_strconv</data>
+      <data key="d1">2</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">go_pkg_strconv</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_strings">
+      <data key="d0">go_pkg_strings</data>
+      <data key="d1">2</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">go_pkg_strings</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_testing">
+      <data key="d0">go_pkg_testing</data>
+      <data key="d1">3</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">go_pkg_testing</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="go_pkg_errors">
+      <data key="d0">go_pkg_errors</data>
+      <data key="d1">5</data>
+      <data key="d9">True</data>
+      <data key="d2">concept</data>
+      <data key="d3">go_pkg_errors</data>
+      <data key="d4" />
+      <data key="d10">external</data>
+    </node>
+    <node id="gox::cmd_app_main">
+      <data key="d0">main.go</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">main.go</data>
+      <data key="d4">cmd/app/main.go</data>
+      <data key="d5">L1</data>
+      <data key="d6">gox</data>
+      <data key="d7">cmd_app_main</data>
+    </node>
+    <node id="gox::service_greeter">
+      <data key="d0">Greeter</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">greeter</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L22</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_greeter</data>
+    </node>
+    <node id="gox::service_greeter_greet">
+      <data key="d0">.Greet()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">.greet()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L23</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_greeter_greet</data>
+    </node>
+    <node id="gox::service_service">
+      <data key="d0">service.go</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">service.go</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L1</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_service</data>
+    </node>
+    <node id="gox::service_service_apply">
+      <data key="d0">apply()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">apply()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L63</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_service_apply</data>
+    </node>
+    <node id="gox::service_service_logline">
+      <data key="d0">logLine()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">logline()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L59</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_service_logline</data>
+    </node>
+    <node id="gox::service_service_strings2upper">
+      <data key="d0">strings2upper()</data>
+      <data key="d1">0</data>
+      <data key="d2">code</data>
+      <data key="d3">strings2upper()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L69</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_service_strings2upper</data>
+    </node>
+    <node id="gox::cmd_app_main_main">
+      <data key="d0">main()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">main()</data>
+      <data key="d4">cmd/app/main.go</data>
+      <data key="d5">L11</data>
+      <data key="d6">gox</data>
+      <data key="d7">cmd_app_main_main</data>
+    </node>
+    <node id="gox::service_service_newuserservice">
+      <data key="d0">NewUserService()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">newuserservice()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L33</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_service_newuserservice</data>
+    </node>
+    <node id="gox::store_helpers_format">
+      <data key="d0">Format()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">format()</data>
+      <data key="d4">store/helpers.go</data>
+      <data key="d5">L18</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_helpers_format</data>
+    </node>
+    <node id="gox::store_store_sum">
+      <data key="d0">Sum()</data>
+      <data key="d1">1</data>
+      <data key="d2">code</data>
+      <data key="d3">sum()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L64</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_store_sum</data>
+    </node>
+    <node id="gox::store_helpers">
+      <data key="d0">helpers.go</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">helpers.go</data>
+      <data key="d4">store/helpers.go</data>
+      <data key="d5">L1</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_helpers</data>
+    </node>
+    <node id="gox::store_helpers_clean">
+      <data key="d0">clean()</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">clean()</data>
+      <data key="d4">store/helpers.go</data>
+      <data key="d5">L14</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_helpers_clean</data>
+    </node>
+    <node id="gox::store_helpers_normalize">
+      <data key="d0">Normalize()</data>
+      <data key="d1">2</data>
+      <data key="d2">code</data>
+      <data key="d3">normalize()</data>
+      <data key="d4">store/helpers.go</data>
+      <data key="d5">L9</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_helpers_normalize</data>
+    </node>
+    <node id="gox::service_service_clean">
+      <data key="d0">clean()</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">clean()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L74</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_service_clean</data>
+    </node>
+    <node id="gox::service_service_test">
+      <data key="d0">service_test.go</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">service_test.go</data>
+      <data key="d4">service/service_test.go</data>
+      <data key="d5">L1</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_service_test</data>
+    </node>
+    <node id="gox::service_service_test_testregister">
+      <data key="d0">TestRegister()</data>
+      <data key="d1">3</data>
+      <data key="d2">code</data>
+      <data key="d3">testregister()</data>
+      <data key="d4">service/service_test.go</data>
+      <data key="d5">L5</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_service_test_testregister</data>
+    </node>
+    <node id="gox::service_user">
+      <data key="d0">User</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">user</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L15</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_user</data>
+    </node>
+    <node id="gox::service_userservice">
+      <data key="d0">UserService</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">userservice</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L27</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_userservice</data>
+    </node>
+    <node id="gox::service_userservice_greet">
+      <data key="d0">.Greet()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.greet()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L45</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_userservice_greet</data>
+    </node>
+    <node id="gox::service_userservice_names">
+      <data key="d0">.Names()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.names()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L49</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_userservice_names</data>
+    </node>
+    <node id="gox::service_userservice_register">
+      <data key="d0">.Register()</data>
+      <data key="d1">4</data>
+      <data key="d2">code</data>
+      <data key="d3">.register()</data>
+      <data key="d4">service/service.go</data>
+      <data key="d5">L37</data>
+      <data key="d6">gox</data>
+      <data key="d7">service_userservice_register</data>
+    </node>
+    <node id="gox::store_number">
+      <data key="d0">Number</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">number</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L34</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_number</data>
+    </node>
+    <node id="gox::store_store_go_store_store">
+      <data key="d0">Store</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">store</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L39</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_store_go_store_store</data>
+    </node>
+    <node id="gox::store_store_newstore">
+      <data key="d0">NewStore()</data>
+      <data key="d1">5</data>
+      <data key="d2">code</data>
+      <data key="d3">newstore()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L44</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_store_newstore</data>
+    </node>
+    <node id="gox::store_store_t">
+      <data key="d0">Store[T]</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">store[t]</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L49</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_store_t</data>
+    </node>
+    <node id="gox::store_store_t_get">
+      <data key="d0">.Get()</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">.get()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L54</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_store_t_get</data>
+    </node>
+    <node id="gox::store_store_t_put">
+      <data key="d0">.Put()</data>
+      <data key="d1">6</data>
+      <data key="d2">code</data>
+      <data key="d3">.put()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L49</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_store_t_put</data>
+    </node>
+    <node id="gox::store_id">
+      <data key="d0">ID</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">id</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L12</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_id</data>
+    </node>
+    <node id="gox::store_model_identity">
+      <data key="d0">.Identity()</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">.identity()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L29</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_model_identity</data>
+    </node>
+    <node id="gox::store_store_go_store_model">
+      <data key="d0">Model</data>
+      <data key="d1">7</data>
+      <data key="d2">code</data>
+      <data key="d3">model</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L23</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_store_go_store_model</data>
+    </node>
+    <node id="gox::store_entity">
+      <data key="d0">Entity</data>
+      <data key="d1">8</data>
+      <data key="d2">code</data>
+      <data key="d3">entity</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L18</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_entity</data>
+    </node>
+    <node id="gox::store_entity_identity">
+      <data key="d0">.Identity()</data>
+      <data key="d1">8</data>
+      <data key="d2">code</data>
+      <data key="d3">.identity()</data>
+      <data key="d4">store/store.go</data>
+      <data key="d5">L19</data>
+      <data key="d6">gox</data>
+      <data key="d7">store_entity_identity</data>
+    </node>
+    <node id="gox::pkg_example_com_shop">
+      <data key="d0">example.com/shop</data>
+      <data key="d1">9</data>
+      <data key="d11">go</data>
+      <data key="d2">code</data>
+      <data key="d3">example.com/shop</data>
+      <data key="d4">go.mod</data>
+      <data key="d5">L1</data>
+      <data key="d10">package</data>
+      <data key="d6">gox</data>
+      <data key="d7">pkg_example_com_shop</data>
+    </node>
+    <edge source="pyrepo::pkg_models_admin" target="pyrepo::pkg_init">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_admin" target="pyrepo::pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_admin" target="pyrepo::pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L48</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_admin" target="pyrepo::pkg_models_user">
+      <data key="d12">inherits</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L48</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_admin" target="pyrepo::pkg_models_admin_promote">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L51</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_service_userservice_init">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_init">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::tests_test_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_models_admin_promote">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L51</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_service_userservice_promote">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_service_userservice_register">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L26</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_models_base">
+      <data key="d12">inherits</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_models_user_display">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L31</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_models_user_parse">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L35</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_models_user_guest">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L39</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_models_user_save">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L42</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_models_rationale_24">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::pkg_service_userservice">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user" target="pyrepo::tests_test_service_testuserservice">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L13</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::pkg_service_run">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L43</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::main">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::tests_test_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::pkg_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L21</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::pkg_service_userservice_init">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::pkg_service_userservice_register">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L26</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::pkg_service_userservice_promote">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::pkg_service_userservice_export">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L36</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::main_main">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L11</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::pkg_models_repo">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_userservice" target="pyrepo::tests_test_service_testuserservice">
+      <data key="d12">uses</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.95</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">0.8</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_base" target="pyrepo::pkg_models_validate">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L72</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_base" target="pyrepo::pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_base" target="pyrepo::pkg_models_base_save">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L14</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_base" target="pyrepo::pkg_models_base_describe">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_base" target="pyrepo::pkg_models_rationale_12">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo" target="pyrepo::pkg_service_run">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L43</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo" target="pyrepo::pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo" target="pyrepo::pkg_service_userservice_init">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo" target="pyrepo::pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L59</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo" target="pyrepo::pkg_models_repo_init">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L62</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo" target="pyrepo::pkg_models_repo_add">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L65</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo" target="pyrepo::pkg_models_repo_get">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L68</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::tests_test_service_testuserservice" target="pyrepo::tests_test_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::tests_test_service_testuserservice" target="pyrepo::tests_test_service_testuserservice_test_parse">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::tests_test_service_testuserservice" target="pyrepo::tests_test_service_testuserservice_test_register">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_helper" target="pyrepo::pkg_util_slugify">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_helper" target="pyrepo::pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_helper" target="pyrepo::pkg_util">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_slugify" target="pyrepo::pkg_service_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_slugify" target="re">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_slugify" target="pyrepo::pkg_util_traced">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">decorator</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_slugify" target="pyrepo::pkg_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_slugify" target="pyrepo::pkg_util">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L14</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_traced" target="pyrepo::pkg_util">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util_traced" target="pyrepo::pkg_util_traced_wrapper">
+      <data key="d12">indirect_call</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">return</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_admin_promote" target="pyrepo::pkg_models_admin_promote_bump">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L52</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_admin_promote" target="pyrepo::pkg_service_userservice_promote">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_format_name" target="pyrepo::pkg_models_user_display">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L32</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_format_name" target="pyrepo::pkg_service_run">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L45</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_format_name" target="pyrepo::pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L76</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_helper" target="pyrepo::pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L81</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::main_main" target="pyrepo::pkg_service_run">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::main_main" target="pyrepo::main">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_run" target="pyrepo::tests_test_service_service">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_run" target="pyrepo::tests_test_service_testuserservice_test_register">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_run" target="pyrepo::main">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_run" target="pyrepo::pkg_init">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_run" target="pyrepo::tests_test_service">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_run" target="pyrepo::pkg_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L42</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_run" target="pyrepo::pkg_service_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_base_describe" target="pyrepo::pkg_models_user_save">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_base_save" target="pyrepo::pkg_models_validate">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_base_save" target="pyrepo::pkg_models_user_save">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L43</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_validate" target="pyrepo::pkg_models">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L72</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo_add" target="pyrepo::t">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L65</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_repo_get" target="pyrepo::t">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L68</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::tests_test_service_service" target="pyrepo::fixture">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">decorator</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::tests_test_service_service" target="pyrepo::tests_test_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L17</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::tests_test_service_test_run" target="pyrepo::tests_test_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L21</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models_user_parse" target="pyrepo::tests_test_service_testuserservice_test_parse">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L13</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_helper" target="pyrepo::pkg_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_helper" target="pyrepo::pkg_service_rationale_17">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L17</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service_helper" target="pyrepo::pkg_service_userservice_export">
+      <data key="d12">indirect_call</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">argument</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="json">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="os_path">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="pyrepo::main">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="pyrepo::pkg_util">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L10</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="collections">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="typing">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="pyrepo::pkg_init">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="pyrepo::tests_test_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="pyrepo::pkg_models">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">submodule_import</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_service" target="pyrepo::pkg_service_rationale_1">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/service.py</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util" target="re">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_util" target="functools">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/util.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_init" target="pyrepo::pkg_models">
+      <data key="d12">re_exports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">export</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L2</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_init" target="pyrepo::main">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_init" target="pyrepo::pkg_init_rationale_1">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/__init__.py</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models" target="dataclasses">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models" target="typing">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models" target="pyrepo::tests_test_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models" target="pyrepo::pkg_models_rationale_15">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::pkg_models" target="pyrepo::pkg_models_rationale_77">
+      <data key="d12">rationale_for</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">pkg/models.py</data>
+      <data key="d17">L77</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::main" target="sys">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">main.py</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::t" target="golang::store_store_go_store_store">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L40</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::t" target="golang::store_store_newstore">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::t" target="golang::store_store_t_get">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::t" target="golang::store_store_t_put">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::t" target="gox::store_store_go_store_store">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L40</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::t" target="gox::store_store_newstore">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::t" target="gox::store_store_t_get">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::t" target="gox::store_store_t_put">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="pyrepo::tests_test_service" target="pytest">
+      <data key="d12">imports</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">tests/test_service.py</data>
+      <data key="d17">L1</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main" target="go_pkg_fmt">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main" target="go_pkg_os">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main" target="golang::service_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main" target="golang::service_service_test">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main" target="golang::store_helpers">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main" target="golang::store_store_go_store_store">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main" target="golang::cmd_app_main_main">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_greeter" target="golang::service_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_greeter" target="golang::service_greeter_greet">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_greeter_greet" target="golang::service_user">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="go_pkg_github_com_google_uuid">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="go_pkg_fmt">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="go_pkg_sort">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::store_helpers">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::store_store_go_store_store">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::service_user">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::service_userservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L27</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::service_service_newuserservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::service_service_logline">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L59</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::service_service_apply">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L63</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::service_service_strings2upper">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L69</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service" target="golang::service_service_clean">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L74</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service_apply" target="golang::service_userservice_names">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L55</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main_main" target="golang::service_service_newuserservice">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main_main" target="golang::store_helpers_format">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::cmd_app_main_main" target="golang::store_store_sum">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::n" target="golang::store_store_sum">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L64</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::n" target="gox::store_store_sum">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L64</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service_newuserservice" target="golang::service_userservice">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service_newuserservice" target="golang::service_service_test_testregister">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_helpers_format" target="golang::store_helpers">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_sum" target="golang::store_store_go_store_store">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L64</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_helpers" target="go_pkg_strings">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_helpers" target="go_pkg_strconv">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_helpers" target="golang::store_helpers_clean">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L14</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_helpers" target="golang::store_helpers_normalize">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_helpers_clean" target="golang::store_helpers_normalize">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_helpers_normalize" target="golang::store_id">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_helpers_normalize" target="golang::service_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L38</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::go_type_testing_t" target="golang::service_service_test_testregister">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::go_type_testing_t" target="gox::service_service_test_testregister">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service_clean" target="golang::service_service_test_testregister">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service_test" target="go_pkg_testing">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_service_test" target="golang::service_service_test_testregister">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_user" target="golang::service_userservice">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L28</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_user" target="golang::service_userservice_greet">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L45</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_user" target="golang::service_userservice_names">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_user" target="golang::service_userservice_register">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_user" target="golang::store_store_go_store_model">
+      <data key="d12">embeds</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_userservice" target="golang::store_store_go_store_store">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L28</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_userservice" target="golang::service_userservice_register">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_userservice" target="golang::service_userservice_greet">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L45</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::service_userservice" target="golang::service_userservice_names">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_number" target="golang::store_store_go_store_store">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_go_store_store" target="go_pkg_errors">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_go_store_store" target="golang::store_id">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_go_store_store" target="golang::store_entity">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_go_store_store" target="golang::store_store_go_store_model">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_go_store_store" target="golang::store_store_newstore">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_t" target="golang::store_store_t_put">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_t" target="golang::store_store_t_get">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_t_get" target="golang::store_id">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_store_t_put" target="golang::store_model_identity">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L51</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_id" target="golang::store_store_go_store_model">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_id" target="golang::store_entity_identity">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_id" target="golang::store_model_identity">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_model_identity" target="golang::store_store_go_store_model">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="golang::store_entity" target="golang::store_entity_identity">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_fmt" target="gox::cmd_app_main">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_fmt" target="gox::service_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_github_com_google_uuid" target="gox::service_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_os" target="gox::cmd_app_main">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_sort" target="gox::service_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_strconv" target="gox::store_helpers">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_strings" target="gox::store_helpers">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_testing" target="gox::service_service_test">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L3</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="go_pkg_errors" target="gox::store_store_go_store_store">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L4</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::cmd_app_main" target="gox::service_service">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::cmd_app_main" target="gox::service_service_test">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::cmd_app_main" target="gox::store_helpers">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::cmd_app_main" target="gox::store_store_go_store_store">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::cmd_app_main" target="gox::cmd_app_main_main">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_greeter" target="gox::service_service">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L22</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_greeter" target="gox::service_greeter_greet">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_greeter_greet" target="gox::service_user">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::store_helpers">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::store_store_go_store_store">
+      <data key="d12">imports_from</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">import</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L8</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::service_user">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L15</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::service_userservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L27</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::service_service_newuserservice">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::service_service_logline">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L59</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::service_service_apply">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L63</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::service_service_strings2upper">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L69</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service" target="gox::service_service_clean">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L74</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service_apply" target="gox::service_userservice_names">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L55</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::cmd_app_main_main" target="gox::service_service_newuserservice">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::cmd_app_main_main" target="gox::store_helpers_format">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::cmd_app_main_main" target="gox::store_store_sum">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">cmd/app/main.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service_newuserservice" target="gox::service_userservice">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L33</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service_newuserservice" target="gox::service_service_test_testregister">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L6</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_helpers_format" target="gox::store_helpers">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_sum" target="gox::store_store_go_store_store">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L64</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_helpers" target="gox::store_helpers_clean">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L14</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_helpers" target="gox::store_helpers_normalize">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L9</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_helpers_clean" target="gox::store_helpers_normalize">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_helpers_normalize" target="gox::store_id">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/helpers.go</data>
+      <data key="d17">L11</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_helpers_normalize" target="gox::service_userservice_register">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L38</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service_clean" target="gox::service_service_test_testregister">
+      <data key="d12">calls</data>
+      <data key="d13">INFERRED</data>
+      <data key="d14">0.85</data>
+      <data key="d15">call</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L7</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_service_test" target="gox::service_service_test_testregister">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service_test.go</data>
+      <data key="d17">L5</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_user" target="gox::service_userservice">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">generic_arg</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L28</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_user" target="gox::service_userservice_greet">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L45</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_user" target="gox::service_userservice_names">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_user" target="gox::service_userservice_register">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_user" target="gox::store_store_go_store_model">
+      <data key="d12">embeds</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L16</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_userservice" target="gox::store_store_go_store_store">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L28</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_userservice" target="gox::service_userservice_register">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L37</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_userservice" target="gox::service_userservice_greet">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L45</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::service_userservice" target="gox::service_userservice_names">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">service/service.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_number" target="gox::store_store_go_store_store">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L34</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_go_store_store" target="gox::store_id">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L12</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_go_store_store" target="gox::store_entity">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L18</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_go_store_store" target="gox::store_store_go_store_model">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L23</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_go_store_store" target="gox::store_store_newstore">
+      <data key="d12">contains</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L44</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_t" target="gox::store_store_t_put">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L49</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_t" target="gox::store_store_t_get">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_t_get" target="gox::store_id">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">parameter_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L54</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_store_t_put" target="gox::store_model_identity">
+      <data key="d12">calls</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">call</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L51</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_id" target="gox::store_store_go_store_model">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">field</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L24</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_id" target="gox::store_entity_identity">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_id" target="gox::store_model_identity">
+      <data key="d12">references</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d15">return_type</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_model_identity" target="gox::store_store_go_store_model">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L29</data>
+      <data key="d18">1.0</data>
+    </edge>
+    <edge source="gox::store_entity" target="gox::store_entity_identity">
+      <data key="d12">method</data>
+      <data key="d13">EXTRACTED</data>
+      <data key="d14">1.0</data>
+      <data key="d16">store/store.go</data>
+      <data key="d17">L19</data>
+      <data key="d18">1.0</data>
+    </edge>
+  </graph>
+</graphml>

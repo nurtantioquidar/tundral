@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d11" for="edge" attr.name="extra" attr.type="long" />
+  <key id="d10" for="edge" attr.name="source_location" attr.type="string" />
+  <key id="d9" for="edge" attr.name="source_file" attr.type="string" />
+  <key id="d8" for="edge" attr.name="confidence" attr.type="string" />
+  <key id="d7" for="edge" attr.name="relation" attr.type="string" />
+  <key id="d6" for="node" attr.name="local_id" attr.type="string" />
+  <key id="d5" for="node" attr.name="repo" attr.type="string" />
+  <key id="d4" for="node" attr.name="community" attr.type="long" />
+  <key id="d3" for="node" attr.name="source_location" attr.type="string" />
+  <key id="d2" for="node" attr.name="file_type" attr.type="string" />
+  <key id="d1" for="node" attr.name="source_file" attr.type="string" />
+  <key id="d0" for="node" attr.name="label" attr.type="string" />
+  <graph edgedefault="undirected">
+    <node id="dirt::b">
+      <data key="d0">Beta</data>
+      <data key="d1">b.py</data>
+      <data key="d2">code</data>
+      <data key="d3">L1</data>
+      <data key="d4">0</data>
+      <data key="d5">dirt</data>
+      <data key="d6">b</data>
+    </node>
+    <node id="dirt::a">
+      <data key="d0">Alpha</data>
+      <data key="d1">a.py</data>
+      <data key="d2">code</data>
+      <data key="d3">L1</data>
+      <data key="d4">0</data>
+      <data key="d5">dirt</data>
+      <data key="d6">a</data>
+    </node>
+    <node id="dirt::s1">
+      <data key="d0">S</data>
+      <data key="d1" />
+      <data key="d4">0</data>
+      <data key="d5">dirt</data>
+      <data key="d6">s1</data>
+    </node>
+    <node id="dirt::s2">
+      <data key="d0">T</data>
+      <data key="d1" />
+      <data key="d4">0</data>
+      <data key="d5">dirt</data>
+      <data key="d6">s2</data>
+    </node>
+    <node id="stubs::f">
+      <data key="d0">F</data>
+      <data key="d1">f.py</data>
+      <data key="d5">stubs</data>
+      <data key="d6">f</data>
+      <data key="d4">-1</data>
+    </node>
+    <node id="café::a">
+      <data key="d0">é</data>
+      <data key="d1">a.py</data>
+      <data key="d5">café</data>
+      <data key="d6">a</data>
+      <data key="d4">-1</data>
+    </node>
+    <edge source="dirt::b" target="dirt::a">
+      <data key="d7">calls</data>
+      <data key="d8">EXTRACTED</data>
+      <data key="d9">a.py</data>
+      <data key="d10">L2</data>
+    </edge>
+    <edge source="dirt::s1" target="dirt::s2">
+      <data key="d7">st</data>
+      <data key="d11">1</data>
+    </edge>
+    <edge source="dirt::s1" target="stubs::f">
+      <data key="d7">ref</data>
+    </edge>
+  </graph>
+</graphml>

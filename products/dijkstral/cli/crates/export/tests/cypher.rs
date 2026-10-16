@@ -21,7 +21,7 @@ const LANGS: [&str; 7] = [
     "mixed",
 ];
 
-const PROBES: [&str; 8] = [
+const PROBES: [&str; 9] = [
     "hostile",
     "names",
     "multigraph",
@@ -30,6 +30,7 @@ const PROBES: [&str; 8] = [
     "graph",
     "noedge",
     "empty",
+    "direction",
 ];
 
 fn fixtures() -> PathBuf {
@@ -76,6 +77,50 @@ fn cypher_matches_graphify_on_probes() {
             &dir.join(format!("{p}.cypher.txt")),
         );
     }
+}
+
+/// Global graphs: links carry `_src`/`_tgt` and their `source`/`target` are often reversed
+/// (`global_direction`: 2 of 3, `global_py_go.3`: 119 of 247); Graphify matches `_src` → `_tgt`.
+#[test]
+fn cypher_matches_graphify_on_global_graphs() {
+    for (golden, input) in [
+        ("global_direction", "global_direction"),
+        ("global_py_go", "global_py_go.3"),
+    ] {
+        check(
+            &fixtures().join(format!("multirepo/goldens/{input}.graph.json")),
+            &fixtures().join(format!("exports/{golden}/cypher.txt")),
+        );
+    }
+}
+
+/// The push loads the same relationships as `cypher.txt`, in the true direction.
+#[test]
+fn push_plan_follows_the_true_direction() {
+    let g = load(&fixtures().join("multirepo/goldens/global_direction.graph.json"));
+    let plan = push_plan(&g);
+    let mut edges: Vec<(String, String, String)> = plan
+        .edges
+        .iter()
+        .flat_map(|((_, ty, _), es)| {
+            es.iter()
+                .map(move |e| (e.source.clone(), ty.clone(), e.target.clone()))
+        })
+        .collect();
+    edges.sort();
+    let want = [
+        ("dirt::a", "CALLS", "dirt::b"),
+        ("dirt::s1", "ST", "dirt::s2"),
+        ("stubs::f", "REF", "dirt::s1"),
+    ];
+    assert_eq!(
+        edges,
+        want.map(|(s, t, d)| (s.to_string(), t.to_string(), d.to_string()))
+    );
+    // Batches are keyed by the labels of the true source and target.
+    assert!(plan
+        .edges
+        .contains_key(&("Entity".into(), "REF".into(), "Entity".into())));
 }
 
 /// The body of a single-quoted Cypher string starting at `s[0]`, and the rest after the closing

@@ -30,7 +30,7 @@ use serde::de::{self, DeserializeSeed, Deserializer, IgnoredAny, MapAccess, SeqA
 use serde::Deserialize;
 use serde_json::{Map, Value};
 
-use crate::view::Names;
+use crate::view::{Names, TRUE_SOURCE, TRUE_TARGET};
 
 /// One attribute value. Numbers keep whether they were written as integers or floats.
 #[derive(Debug, Clone, PartialEq)]
@@ -211,6 +211,10 @@ pub struct NxEdge {
     /// The link's direction (in a simple graph, the last link's for the pair).
     pub source: u32,
     pub target: u32,
+    /// The direction the exporters draw (`view::TRUE_SOURCE`): the link's `_src` and `_tgt`
+    /// when they name nodes, else `source` and `target` (in a simple graph, the last link's).
+    pub from: u32,
+    pub to: u32,
     /// Every field but `source` and `target` (merged in link order in a simple graph).
     pub attrs: Attrs,
 }
@@ -440,6 +444,10 @@ impl NxGraph {
             let t = attrs.remove("target").map(id_text).unwrap_or_default();
             let s = g.node_or_add(s);
             let t = g.node_or_add(t);
+            let (from, to) = (
+                g.true_end(&attrs, TRUE_SOURCE, s),
+                g.true_end(&attrs, TRUE_TARGET, t),
+            );
             if !multigraph {
                 let key = if directed {
                     (s, t)
@@ -450,6 +458,8 @@ impl NxGraph {
                     let edge = &mut g.edges[e as usize];
                     edge.source = s;
                     edge.target = t;
+                    edge.from = from;
+                    edge.to = to;
                     edge.attrs.extend(attrs);
                     continue;
                 }
@@ -459,6 +469,8 @@ impl NxGraph {
             g.edges.push(NxEdge {
                 source: s,
                 target: t,
+                from,
+                to,
                 attrs,
             });
         }
@@ -487,6 +499,15 @@ impl NxGraph {
         self.index.insert(id.clone(), i);
         self.nodes.push(NxNode { id, attrs });
         i
+    }
+
+    /// A link's `_src` or `_tgt` as a node, else its stored end.
+    fn true_end(&self, attrs: &Attrs, key: &str, stored: u32) -> u32 {
+        attrs
+            .get(key)
+            .and_then(Attr::as_str)
+            .and_then(|id| self.index.get(id).copied())
+            .unwrap_or(stored)
     }
 
     fn node_or_add(&mut self, id: String) -> u32 {
@@ -673,6 +694,47 @@ mod tests {
                 )
             })
             .collect()
+    }
+
+    /// `_src`/`_tgt` give the drawn direction, each separately, resolved per link before a simple
+    /// graph merges repeated pairs (Graphify's `cypher.txt` of `exports/probes/direction`); a
+    /// value that names no node keeps the stored end.
+    #[test]
+    fn true_direction_follows_src_and_tgt() {
+        let g = NxGraph::from_json(json!({
+            "directed": false, "multigraph": false,
+            "nodes": [{"id": "a"}, {"id": "b"}, {"id": "c"}, {"id": "d"}],
+            "links": [
+                {"source": "a", "target": "b", "_src": "b", "_tgt": "a", "relation": "swapped"},
+                {"source": "b", "target": "c", "_src": "c", "relation": "only_src"},
+                {"source": "c", "target": "d", "_src": "d", "_tgt": "a", "relation": "elsewhere"},
+                {"source": "d", "target": "a", "_src": 7, "_tgt": "zz", "relation": "unnamed"},
+                {"source": "c", "target": "b", "_src": "b", "_tgt": "c", "relation": "again"},
+                {"source": "a", "target": "b", "relation": "plain"},
+            ],
+        }))
+        .unwrap();
+        let dir: Vec<String> = g
+            .edges
+            .iter()
+            .enumerate()
+            .map(|(e, edge)| {
+                format!(
+                    "{}>{}:{}",
+                    g.nodes[edge.from as usize].id,
+                    g.nodes[edge.to as usize].id,
+                    g.edge_str(e as u32, "relation").unwrap_or("")
+                )
+            })
+            .collect();
+        assert_eq!(
+            dir,
+            ["a>b:plain", "b>c:again", "d>a:elsewhere", "d>a:unnamed"]
+        );
+        // The stored ends, adjacency and walk are unchanged.
+        let e = &g.edges[2];
+        assert_eq!((e.source, e.target), (2, 3));
+        assert_eq!(g.degree(0), 2);
     }
 
     /// The four graph kinds, each against what Graphify's `cypher.txt` lists for these links.

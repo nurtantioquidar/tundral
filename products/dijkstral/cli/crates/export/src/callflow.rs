@@ -1260,7 +1260,7 @@ fn count_internal(ctx: &Ctx, members: &[u32]) -> usize {
     ctx.g
         .edges
         .iter()
-        .filter(|e| inside.contains(&e.source) && inside.contains(&e.target))
+        .filter(|e| inside.contains(&e.from) && inside.contains(&e.to))
         .count()
 }
 
@@ -1373,7 +1373,7 @@ fn overview(ctx: &Ctx, secs: &[Section]) -> (Vec<String>, String) {
     let mut index: HashMap<(usize, usize), usize> = HashMap::new();
     let mut flow: HashMap<(usize, usize), usize> = HashMap::new();
     for e in &ctx.g.edges {
-        let (Some(&a), Some(&b)) = (sec_of.get(&e.source), sec_of.get(&e.target)) else {
+        let (Some(&a), Some(&b)) = (sec_of.get(&e.from), sec_of.get(&e.to)) else {
             continue;
         };
         if a == b {
@@ -1462,8 +1462,8 @@ pub fn build(g: &NxGraph, opts: &CallflowOptions) -> Page {
     let mut out: Vec<Vec<(u32, u32)>> = vec![Vec::new(); g.nodes.len()];
     let mut inn: Vec<Vec<(u32, u32)>> = vec![Vec::new(); g.nodes.len()];
     for (k, e) in g.edges.iter().enumerate() {
-        out[e.source as usize].push((e.target, k as u32));
-        inn[e.target as usize].push((e.source, k as u32));
+        out[e.from as usize].push((e.to, k as u32));
+        inn[e.to as usize].push((e.from, k as u32));
     }
     let ctx = Ctx {
         g,

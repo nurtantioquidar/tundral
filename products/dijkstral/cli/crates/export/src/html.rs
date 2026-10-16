@@ -247,10 +247,11 @@ fn vis_records(view: &View, out: &mut String) {
         let edge = &view.graph.edges[e as usize];
         let conf = edge.confidence.as_str();
         let extracted = edge.confidence == Confidence::Extracted;
+        let (from, to) = view.dir[e as usize];
         out.push_str("{\"from\":");
-        json_str(&edge.source, out);
+        json_str(&view.graph.nodes[from as usize].id, out);
         out.push_str(",\"to\":");
-        json_str(&edge.target, out);
+        json_str(&view.graph.nodes[to as usize].id, out);
         out.push_str(",\"label\":");
         json_str(&edge.relation, out);
         out.push_str(",\"title\":");
@@ -305,7 +306,7 @@ fn columns(view: &View, out: &mut String) {
             relations.push(edge.relation.as_str());
             relations.len() as u32 - 1
         });
-        let (s, t) = view.ends[e as usize];
+        let (s, t) = view.dir[e as usize];
         let c = match edge.confidence {
             Confidence::Extracted => 0,
             Confidence::Inferred => 1,

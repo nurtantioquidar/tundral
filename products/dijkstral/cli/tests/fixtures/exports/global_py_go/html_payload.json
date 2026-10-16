@@ -1,0 +1,6123 @@
+{
+ "RAW_NODES": [
+  {
+   "id": "pyrepo::pkg_models_admin",
+   "label": "Admin",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 18.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Admin",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 5
+  },
+  {
+   "id": "pyrepo::pkg_models_user",
+   "label": "User",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 38.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "User",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 17
+  },
+  {
+   "id": "pyrepo::pkg_service_userservice",
+   "label": "UserService",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 30.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "UserService",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 12
+  },
+  {
+   "id": "pyrepo::pkg_models_base",
+   "label": "Base",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Base",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "pyrepo::pkg_models_repo",
+   "label": "Repo",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 23.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Repo",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 8
+  },
+  {
+   "id": "pyrepo::tests_test_service_testuserservice",
+   "label": "TestUserService",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 18.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "TestUserService",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 5
+  },
+  {
+   "id": "pyrepo::pkg_util_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_util_slugify",
+   "label": "slugify()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "slugify()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "pyrepo::pkg_util_traced",
+   "label": "traced()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "traced()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_util_traced_wrapper",
+   "label": "wrapper()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "wrapper()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_models_admin_promote",
+   "label": ".promote()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".promote()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "pyrepo::pkg_models_admin_promote_bump",
+   "label": "bump()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "bump()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_models_user_guest",
+   "label": ".guest()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".guest()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_service_userservice_promote",
+   "label": ".promote()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".promote()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_models_format_name",
+   "label": "format_name()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "format_name()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_models_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_models_user_display",
+   "label": ".display()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".display()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pyrepo::main_main",
+   "label": "main()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "main.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_service_run",
+   "label": "run()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 28.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "run()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 11
+  },
+  {
+   "id": "pyrepo::pkg_service_userservice_register",
+   "label": ".register()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".register()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "pyrepo::pkg_models_base_describe",
+   "label": ".describe()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".describe()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pyrepo::pkg_models_base_save",
+   "label": ".save()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".save()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_models_user_save",
+   "label": ".save()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".save()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_models_validate",
+   "label": "validate()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "validate()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_models_repo_add",
+   "label": ".add()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".add()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pyrepo::pkg_models_repo_get",
+   "label": ".get()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".get()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pyrepo::pkg_models_repo_init",
+   "label": ".__init__()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".__init__()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_service_userservice_init",
+   "label": ".__init__()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".__init__()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::tests_test_service_service",
+   "label": "service()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::tests_test_service_test_run",
+   "label": "test_run()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "test_run()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_models_user_parse",
+   "label": ".parse()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".parse()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pyrepo::tests_test_service_testuserservice_test_parse",
+   "label": ".test_parse()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".test_parse()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pyrepo::tests_test_service_testuserservice_test_register",
+   "label": ".test_register()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".test_register()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pyrepo::pkg_service_helper",
+   "label": "helper()",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helper()",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "pyrepo::pkg_service_userservice_export",
+   "label": ".export()",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".export()",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "pyrepo::pkg_service",
+   "label": "service.py",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 40.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service.py",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/service.py",
+   "file_type": "code",
+   "degree": 18
+  },
+  {
+   "id": "pyrepo::pkg_util",
+   "label": "util.py",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "util.py",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/util.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "pyrepo::pkg_service_rationale_1",
+   "label": "Service layer exercising every import and call form.",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Service layer exercising every import and call form.",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "pkg/service.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_init",
+   "label": "__init__.py",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "__init__.py",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/__init__.py",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "pyrepo::pkg_init_rationale_1",
+   "label": "Fixture package: re-exports the public model types.",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Fixture package: re-exports the public model types.",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/__init__.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_models_rationale_24",
+   "label": "A person who can sign in.",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "A person who can sign in.",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "pkg/models.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_models",
+   "label": "models.py",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 33.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "models.py",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "code",
+   "degree": 14
+  },
+  {
+   "id": "pyrepo::pkg_models_rationale_15",
+   "label": "# NOTE: persistence is faked in this fixture.",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "# NOTE: persistence is faked in this fixture.",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::pkg_models_rationale_77",
+   "label": "# WHY: names are displayed title-cased everywhere.",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "# WHY: names are displayed title-cased everywhere.",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "pkg/models.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::main",
+   "label": "main.py",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main.py",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "main.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "pyrepo::pkg_models_rationale_12",
+   "label": "Root of the model hierarchy.",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Root of the model hierarchy.",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "pkg/models.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::t",
+   "label": "T",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 26.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "T",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 10
+  },
+  {
+   "id": "pyrepo::fixture",
+   "label": "fixture",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "fixture",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "pyrepo::tests_test_service",
+   "label": "test_service.py",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 25.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "test_service.py",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "tests/test_service.py",
+   "file_type": "code",
+   "degree": 9
+  },
+  {
+   "id": "pyrepo::pkg_service_rationale_17",
+   "label": "Duplicate name: also defined in models and util.",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Duplicate name: also defined in models and util.",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "pkg/service.py",
+   "file_type": "rationale",
+   "degree": 1
+  },
+  {
+   "id": "collections",
+   "label": "collections",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "collections",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "functools",
+   "label": "functools",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "functools",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "json",
+   "label": "json",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "json",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "os_path",
+   "label": "os_path",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "os_path",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "re",
+   "label": "re",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "re",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "dataclasses",
+   "label": "dataclasses",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "dataclasses",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "typing",
+   "label": "typing",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "typing",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "sys",
+   "label": "sys",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "sys",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "pytest",
+   "label": "pytest",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "pytest",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 1
+  },
+  {
+   "id": "golang::cmd_app_main",
+   "label": "main.go",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main.go",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "cmd/app/main.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "golang::service_greeter",
+   "label": "Greeter",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Greeter",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::service_greeter_greet",
+   "label": ".Greet()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Greet()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::service_service",
+   "label": "service.go",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 33.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service.go",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 14
+  },
+  {
+   "id": "golang::service_service_apply",
+   "label": "apply()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "apply()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::service_service_logline",
+   "label": "logLine()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "logLine()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "golang::service_service_strings2upper",
+   "label": "strings2upper()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "strings2upper()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "golang::cmd_app_main_main",
+   "label": "main()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "cmd/app/main.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "golang::n",
+   "label": "N",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "N",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::service_service_newuserservice",
+   "label": "NewUserService()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "NewUserService()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "golang::store_helpers_format",
+   "label": "Format()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Format()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::store_store_sum",
+   "label": "Sum()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Sum()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "golang::store_helpers",
+   "label": "helpers.go",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helpers.go",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "golang::store_helpers_clean",
+   "label": "clean()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "clean()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::store_helpers_normalize",
+   "label": "Normalize()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Normalize()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "golang::go_type_testing_t",
+   "label": "testing.T",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "testing.T",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::service_service_clean",
+   "label": "clean()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "clean()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::service_service_test",
+   "label": "service_test.go",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service_test.go",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service_test.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "golang::service_service_test_testregister",
+   "label": "TestRegister()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "TestRegister()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service_test.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "golang::service_user",
+   "label": "User",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "User",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "golang::service_userservice",
+   "label": "UserService",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "UserService",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "golang::service_userservice_greet",
+   "label": ".Greet()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Greet()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::service_userservice_names",
+   "label": ".Names()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Names()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "golang::service_userservice_register",
+   "label": ".Register()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Register()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "golang::store_number",
+   "label": "Number",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Number",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "golang::store_store_go_store_store",
+   "label": "Store",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 28.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Store",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 11
+  },
+  {
+   "id": "golang::store_store_newstore",
+   "label": "NewStore()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "NewStore()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::store_store_t",
+   "label": "Store[T]",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Store[T]",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::store_store_t_get",
+   "label": ".Get()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Get()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "golang::store_store_t_put",
+   "label": ".Put()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Put()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "golang::store_id",
+   "label": "ID",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "ID",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "golang::store_model_identity",
+   "label": ".Identity()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Identity()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "golang::store_store_go_store_model",
+   "label": "Model",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Model",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "golang::store_entity",
+   "label": "Entity",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Entity",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::store_entity_identity",
+   "label": ".Identity()",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Identity()",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "golang::pkg_example_com_shop",
+   "label": "example.com/shop",
+   "color": {
+    "background": "#BAB0AC",
+    "border": "#BAB0AC",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#BAB0AC"
+    }
+   },
+   "size": 10.0,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "example.com/shop",
+   "community": 9,
+   "community_name": "Community 9",
+   "source_file": "go.mod",
+   "file_type": "code",
+   "degree": 0
+  },
+  {
+   "id": "go_pkg_fmt",
+   "label": "go_pkg_fmt",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_fmt",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 4
+  },
+  {
+   "id": "go_pkg_github_com_google_uuid",
+   "label": "go_pkg_github_com_google_uuid",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_github_com_google_uuid",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "go_pkg_os",
+   "label": "go_pkg_os",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_os",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "go_pkg_sort",
+   "label": "go_pkg_sort",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_sort",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "go_pkg_strconv",
+   "label": "go_pkg_strconv",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_strconv",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "go_pkg_strings",
+   "label": "go_pkg_strings",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_strings",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "go_pkg_testing",
+   "label": "go_pkg_testing",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_testing",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "go_pkg_errors",
+   "label": "go_pkg_errors",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "go_pkg_errors",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "",
+   "file_type": "concept",
+   "degree": 2
+  },
+  {
+   "id": "gox::cmd_app_main",
+   "label": "main.go",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main.go",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "cmd/app/main.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "gox::service_greeter",
+   "label": "Greeter",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Greeter",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::service_greeter_greet",
+   "label": ".Greet()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Greet()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::service_service",
+   "label": "service.go",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 33.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service.go",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 14
+  },
+  {
+   "id": "gox::service_service_apply",
+   "label": "apply()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "apply()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::service_service_logline",
+   "label": "logLine()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "logLine()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "gox::service_service_strings2upper",
+   "label": "strings2upper()",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "strings2upper()",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "gox::cmd_app_main_main",
+   "label": "main()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "main()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "cmd/app/main.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "gox::service_service_newuserservice",
+   "label": "NewUserService()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "NewUserService()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "gox::store_helpers_format",
+   "label": "Format()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Format()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::store_store_sum",
+   "label": "Sum()",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Sum()",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "gox::store_helpers",
+   "label": "helpers.go",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "helpers.go",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "gox::store_helpers_clean",
+   "label": "clean()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "clean()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::store_helpers_normalize",
+   "label": "Normalize()",
+   "color": {
+    "background": "#E15759",
+    "border": "#E15759",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#E15759"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Normalize()",
+   "community": 2,
+   "community_name": "Community 2",
+   "source_file": "store/helpers.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "gox::service_service_clean",
+   "label": "clean()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "clean()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::service_service_test",
+   "label": "service_test.go",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "service_test.go",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service_test.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "gox::service_service_test_testregister",
+   "label": "TestRegister()",
+   "color": {
+    "background": "#76B7B2",
+    "border": "#76B7B2",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#76B7B2"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "TestRegister()",
+   "community": 3,
+   "community_name": "Community 3",
+   "source_file": "service/service_test.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "gox::service_user",
+   "label": "User",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "User",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "gox::service_userservice",
+   "label": "UserService",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 21.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "UserService",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 7
+  },
+  {
+   "id": "gox::service_userservice_greet",
+   "label": ".Greet()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Greet()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::service_userservice_names",
+   "label": ".Names()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Names()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "gox::service_userservice_register",
+   "label": ".Register()",
+   "color": {
+    "background": "#59A14F",
+    "border": "#59A14F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#59A14F"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Register()",
+   "community": 4,
+   "community_name": "Community 4",
+   "source_file": "service/service.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "gox::store_number",
+   "label": "Number",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 11.7,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Number",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 1
+  },
+  {
+   "id": "gox::store_store_go_store_store",
+   "label": "Store",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 28.3,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Store",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 11
+  },
+  {
+   "id": "gox::store_store_newstore",
+   "label": "NewStore()",
+   "color": {
+    "background": "#EDC948",
+    "border": "#EDC948",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#EDC948"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "NewStore()",
+   "community": 5,
+   "community_name": "Community 5",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::store_store_t",
+   "label": "Store[T]",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Store[T]",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::store_store_t_get",
+   "label": ".Get()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Get()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "gox::store_store_t_put",
+   "label": ".Put()",
+   "color": {
+    "background": "#B07AA1",
+    "border": "#B07AA1",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#B07AA1"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Put()",
+   "community": 6,
+   "community_name": "Community 6",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "gox::store_id",
+   "label": "ID",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "ID",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "gox::store_model_identity",
+   "label": ".Identity()",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": ".Identity()",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "gox::store_store_go_store_model",
+   "label": "Model",
+   "color": {
+    "background": "#FF9DA7",
+    "border": "#FF9DA7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#FF9DA7"
+    }
+   },
+   "size": 16.7,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "Model",
+   "community": 7,
+   "community_name": "Community 7",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 4
+  },
+  {
+   "id": "gox::store_entity",
+   "label": "Entity",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "Entity",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::store_entity_identity",
+   "label": ".Identity()",
+   "color": {
+    "background": "#9C755F",
+    "border": "#9C755F",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#9C755F"
+    }
+   },
+   "size": 13.3,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": ".Identity()",
+   "community": 8,
+   "community_name": "Community 8",
+   "source_file": "store/store.go",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "gox::pkg_example_com_shop",
+   "label": "example.com/shop",
+   "color": {
+    "background": "#BAB0AC",
+    "border": "#BAB0AC",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#BAB0AC"
+    }
+   },
+   "size": 10.0,
+   "font": {
+    "size": 0,
+    "color": "#ffffff"
+   },
+   "title": "example.com/shop",
+   "community": 9,
+   "community_name": "Community 9",
+   "source_file": "go.mod",
+   "file_type": "code",
+   "degree": 0
+  }
+ ],
+ "RAW_EDGES": [
+  {
+   "from": "pyrepo::pkg_init",
+   "to": "pyrepo::pkg_models_admin",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_models_admin",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "pyrepo::pkg_models_admin",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_admin",
+   "to": "pyrepo::pkg_models_user",
+   "label": "inherits",
+   "title": "inherits [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_admin",
+   "to": "pyrepo::pkg_models_admin_promote",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice_init",
+   "to": "pyrepo::pkg_models_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_init",
+   "to": "pyrepo::pkg_models_user",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_models_user",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pyrepo::pkg_models_user",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_admin_promote",
+   "to": "pyrepo::pkg_models_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice_promote",
+   "to": "pyrepo::pkg_models_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice_register",
+   "to": "pyrepo::pkg_models_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "pyrepo::pkg_models_user",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_user",
+   "to": "pyrepo::pkg_models_base",
+   "label": "inherits",
+   "title": "inherits [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_user",
+   "to": "pyrepo::pkg_models_user_display",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_user",
+   "to": "pyrepo::pkg_models_user_parse",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_user",
+   "to": "pyrepo::pkg_models_user_guest",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_user",
+   "to": "pyrepo::pkg_models_user_save",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_rationale_24",
+   "to": "pyrepo::pkg_models_user",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice",
+   "to": "pyrepo::pkg_models_user",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::tests_test_service_testuserservice",
+   "to": "pyrepo::pkg_models_user",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::pkg_service_run",
+   "to": "pyrepo::pkg_service_userservice",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::main",
+   "to": "pyrepo::pkg_service_userservice",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pyrepo::pkg_service_userservice",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_service_userservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice",
+   "to": "pyrepo::pkg_service_userservice_init",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice",
+   "to": "pyrepo::pkg_service_userservice_register",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice",
+   "to": "pyrepo::pkg_service_userservice_promote",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice",
+   "to": "pyrepo::pkg_service_userservice_export",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::main_main",
+   "to": "pyrepo::pkg_service_userservice",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice",
+   "to": "pyrepo::pkg_models_repo",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::tests_test_service_testuserservice",
+   "to": "pyrepo::pkg_service_userservice",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::pkg_models_validate",
+   "to": "pyrepo::pkg_models_base",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "pyrepo::pkg_models_base",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_base",
+   "to": "pyrepo::pkg_models_base_save",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_base",
+   "to": "pyrepo::pkg_models_base_describe",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_rationale_12",
+   "to": "pyrepo::pkg_models_base",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_run",
+   "to": "pyrepo::pkg_models_repo",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_models_repo",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice_init",
+   "to": "pyrepo::pkg_models_repo",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "pyrepo::pkg_models_repo",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_repo",
+   "to": "pyrepo::pkg_models_repo_init",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_repo",
+   "to": "pyrepo::pkg_models_repo_add",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_repo",
+   "to": "pyrepo::pkg_models_repo_get",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pyrepo::tests_test_service_testuserservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service_testuserservice",
+   "to": "pyrepo::tests_test_service_testuserservice_test_parse",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service_testuserservice",
+   "to": "pyrepo::tests_test_service_testuserservice_test_register",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util_slugify",
+   "to": "pyrepo::pkg_util_helper",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_util_helper",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util",
+   "to": "pyrepo::pkg_util_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice_register",
+   "to": "pyrepo::pkg_util_slugify",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util_slugify",
+   "to": "re",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util_slugify",
+   "to": "pyrepo::pkg_util_traced",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_util_slugify",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util",
+   "to": "pyrepo::pkg_util_slugify",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util",
+   "to": "pyrepo::pkg_util_traced",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util_traced",
+   "to": "pyrepo::pkg_util_traced_wrapper",
+   "label": "indirect_call",
+   "title": "indirect_call [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::pkg_models_admin_promote",
+   "to": "pyrepo::pkg_models_admin_promote_bump",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice_promote",
+   "to": "pyrepo::pkg_models_admin_promote",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::pkg_models_user_display",
+   "to": "pyrepo::pkg_models_format_name",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_run",
+   "to": "pyrepo::pkg_models_format_name",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "pyrepo::pkg_models_format_name",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "pyrepo::pkg_models_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::main_main",
+   "to": "pyrepo::pkg_service_run",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::main",
+   "to": "pyrepo::main_main",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service_service",
+   "to": "pyrepo::pkg_service_run",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service_testuserservice_test_register",
+   "to": "pyrepo::pkg_service_run",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::main",
+   "to": "pyrepo::pkg_service_run",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_init",
+   "to": "pyrepo::pkg_service_run",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pyrepo::pkg_service_run",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_service_run",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_run",
+   "to": "pyrepo::pkg_service_userservice_register",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::pkg_models_user_save",
+   "to": "pyrepo::pkg_models_base_describe",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_base_save",
+   "to": "pyrepo::pkg_models_validate",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_user_save",
+   "to": "pyrepo::pkg_models_base_save",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "pyrepo::pkg_models_validate",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_repo_add",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_repo_get",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service_service",
+   "to": "pyrepo::fixture",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pyrepo::tests_test_service_service",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pyrepo::tests_test_service_test_run",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service_testuserservice_test_parse",
+   "to": "pyrepo::pkg_models_user_parse",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_service_helper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_rationale_17",
+   "to": "pyrepo::pkg_service_helper",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_userservice_export",
+   "to": "pyrepo::pkg_service_helper",
+   "label": "indirect_call",
+   "title": "indirect_call [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "json",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "os_path",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::main",
+   "to": "pyrepo::pkg_service",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_util",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "collections",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "typing",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_init",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pyrepo::pkg_service",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service",
+   "to": "pyrepo::pkg_models",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_service_rationale_1",
+   "to": "pyrepo::pkg_service",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util",
+   "to": "re",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_util",
+   "to": "functools",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_init",
+   "to": "pyrepo::pkg_models",
+   "label": "re_exports",
+   "title": "re_exports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::main",
+   "to": "pyrepo::pkg_init",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_init_rationale_1",
+   "to": "pyrepo::pkg_init",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "dataclasses",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models",
+   "to": "typing",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pyrepo::pkg_models",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_rationale_15",
+   "to": "pyrepo::pkg_models",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::pkg_models_rationale_77",
+   "to": "pyrepo::pkg_models",
+   "label": "rationale_for",
+   "title": "rationale_for [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::main",
+   "to": "sys",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_store",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_newstore",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_t_get",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_t_put",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_store",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_newstore",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_t_get",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_t_put",
+   "to": "pyrepo::t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "pyrepo::tests_test_service",
+   "to": "pytest",
+   "label": "imports",
+   "title": "imports [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main",
+   "to": "go_pkg_fmt",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main",
+   "to": "go_pkg_os",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main",
+   "to": "golang::service_service",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main",
+   "to": "golang::service_service_test",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main",
+   "to": "golang::store_helpers",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main",
+   "to": "golang::store_store_go_store_store",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main",
+   "to": "golang::cmd_app_main_main",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::service_greeter",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_greeter",
+   "to": "golang::service_greeter_greet",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_greeter_greet",
+   "to": "golang::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "go_pkg_github_com_google_uuid",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "go_pkg_fmt",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "go_pkg_sort",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::store_helpers",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::store_store_go_store_store",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::service_user",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::service_userservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::service_service_newuserservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::service_service_logline",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::service_service_apply",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::service_service_strings2upper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service",
+   "to": "golang::service_service_clean",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice_names",
+   "to": "golang::service_service_apply",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main_main",
+   "to": "golang::service_service_newuserservice",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main_main",
+   "to": "golang::store_helpers_format",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::cmd_app_main_main",
+   "to": "golang::store_store_sum",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_sum",
+   "to": "golang::n",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_sum",
+   "to": "golang::n",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service_newuserservice",
+   "to": "golang::service_userservice",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service_test_testregister",
+   "to": "golang::service_service_newuserservice",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "golang::store_helpers",
+   "to": "golang::store_helpers_format",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_store",
+   "to": "golang::store_store_sum",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_helpers",
+   "to": "go_pkg_strings",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_helpers",
+   "to": "go_pkg_strconv",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_helpers",
+   "to": "golang::store_helpers_clean",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_helpers",
+   "to": "golang::store_helpers_normalize",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_helpers_normalize",
+   "to": "golang::store_helpers_clean",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_helpers_normalize",
+   "to": "golang::store_id",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice_register",
+   "to": "golang::store_helpers_normalize",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "golang::service_service_test_testregister",
+   "to": "golang::go_type_testing_t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service_test_testregister",
+   "to": "golang::go_type_testing_t",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service_test_testregister",
+   "to": "golang::service_service_clean",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "golang::service_service_test",
+   "to": "go_pkg_testing",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_service_test",
+   "to": "golang::service_service_test_testregister",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice",
+   "to": "golang::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice_greet",
+   "to": "golang::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice_names",
+   "to": "golang::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice_register",
+   "to": "golang::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_user",
+   "to": "golang::store_store_go_store_model",
+   "label": "embeds",
+   "title": "embeds [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice",
+   "to": "golang::store_store_go_store_store",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice",
+   "to": "golang::service_userservice_register",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice",
+   "to": "golang::service_userservice_greet",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::service_userservice",
+   "to": "golang::service_userservice_names",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_store",
+   "to": "golang::store_number",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_store",
+   "to": "go_pkg_errors",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_store",
+   "to": "golang::store_id",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_store",
+   "to": "golang::store_entity",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_store",
+   "to": "golang::store_store_go_store_model",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_store",
+   "to": "golang::store_store_newstore",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_t",
+   "to": "golang::store_store_t_put",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_t",
+   "to": "golang::store_store_t_get",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_t_get",
+   "to": "golang::store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_t_put",
+   "to": "golang::store_model_identity",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_model",
+   "to": "golang::store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_entity_identity",
+   "to": "golang::store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_model_identity",
+   "to": "golang::store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_store_go_store_model",
+   "to": "golang::store_model_identity",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "golang::store_entity",
+   "to": "golang::store_entity_identity",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main",
+   "to": "go_pkg_fmt",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "go_pkg_fmt",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "go_pkg_github_com_google_uuid",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main",
+   "to": "go_pkg_os",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "go_pkg_sort",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_helpers",
+   "to": "go_pkg_strconv",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_helpers",
+   "to": "go_pkg_strings",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service_test",
+   "to": "go_pkg_testing",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_store",
+   "to": "go_pkg_errors",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main",
+   "to": "gox::service_service",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main",
+   "to": "gox::service_service_test",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main",
+   "to": "gox::store_helpers",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main",
+   "to": "gox::store_store_go_store_store",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main",
+   "to": "gox::cmd_app_main_main",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::service_greeter",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_greeter",
+   "to": "gox::service_greeter_greet",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_greeter_greet",
+   "to": "gox::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::store_helpers",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::store_store_go_store_store",
+   "label": "imports_from",
+   "title": "imports_from [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::service_user",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::service_userservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::service_service_newuserservice",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::service_service_logline",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::service_service_apply",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::service_service_strings2upper",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service",
+   "to": "gox::service_service_clean",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice_names",
+   "to": "gox::service_service_apply",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main_main",
+   "to": "gox::service_service_newuserservice",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main_main",
+   "to": "gox::store_helpers_format",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::cmd_app_main_main",
+   "to": "gox::store_store_sum",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service_newuserservice",
+   "to": "gox::service_userservice",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_service_test_testregister",
+   "to": "gox::service_service_newuserservice",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "gox::store_helpers",
+   "to": "gox::store_helpers_format",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_store",
+   "to": "gox::store_store_sum",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_helpers",
+   "to": "gox::store_helpers_clean",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_helpers",
+   "to": "gox::store_helpers_normalize",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_helpers_normalize",
+   "to": "gox::store_helpers_clean",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_helpers_normalize",
+   "to": "gox::store_id",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice_register",
+   "to": "gox::store_helpers_normalize",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "gox::service_service_test_testregister",
+   "to": "gox::service_service_clean",
+   "label": "calls",
+   "title": "calls [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "gox::service_service_test",
+   "to": "gox::service_service_test_testregister",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice",
+   "to": "gox::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice_greet",
+   "to": "gox::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice_names",
+   "to": "gox::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice_register",
+   "to": "gox::service_user",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_user",
+   "to": "gox::store_store_go_store_model",
+   "label": "embeds",
+   "title": "embeds [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice",
+   "to": "gox::store_store_go_store_store",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice",
+   "to": "gox::service_userservice_register",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice",
+   "to": "gox::service_userservice_greet",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::service_userservice",
+   "to": "gox::service_userservice_names",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_store",
+   "to": "gox::store_number",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_store",
+   "to": "gox::store_id",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_store",
+   "to": "gox::store_entity",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_store",
+   "to": "gox::store_store_go_store_model",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_store",
+   "to": "gox::store_store_newstore",
+   "label": "contains",
+   "title": "contains [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_t",
+   "to": "gox::store_store_t_put",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_t",
+   "to": "gox::store_store_t_get",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_t_get",
+   "to": "gox::store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_t_put",
+   "to": "gox::store_model_identity",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_model",
+   "to": "gox::store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_entity_identity",
+   "to": "gox::store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_model_identity",
+   "to": "gox::store_id",
+   "label": "references",
+   "title": "references [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_store_go_store_model",
+   "to": "gox::store_model_identity",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "gox::store_entity",
+   "to": "gox::store_entity_identity",
+   "label": "method",
+   "title": "method [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  }
+ ],
+ "LEGEND": [],
+ "hyperedges": []
+}

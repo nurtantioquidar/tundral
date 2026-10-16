@@ -16,7 +16,7 @@ use std::path::{Path, PathBuf};
 
 use dijkstral_export::html::{self, HtmlOptions, Mode};
 use dijkstral_export::{graphml, wiki, Loaded, Names};
-use serde_json::Value;
+use serde_json::{json, Value};
 
 const LANGS: [&str; 7] = [
     "python",
@@ -164,6 +164,92 @@ fn html_payload_matches_graphify() {
             assert_eq!(c["color"], html::PALETTE[cid as usize % 10]);
         }
     }
+}
+
+/// `(golden directory, multirepo golden)`: global graphs, whose links carry the true direction
+/// in `_src`/`_tgt` while `source`/`target` follow NetworkX iteration order (often reversed).
+const GLOBAL: [(&str, &str); 2] = [
+    ("global_direction", "global_direction"),
+    ("global_py_go", "global_py_go.3"),
+];
+
+fn global_graph(input: &str) -> Value {
+    let path = fixtures().join(format!("multirepo/goldens/{input}.graph.json"));
+    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+}
+
+/// `graph.html` draws every link from `_src` to `_tgt`; GraphML keeps the stored `source` and
+/// `target` (it writes `G.edges()` order, never the link's direction); the wiki shows no
+/// direction.
+#[test]
+fn global_graphs_match_graphify() {
+    for (golden, input) in GLOBAL {
+        let doc = global_graph(input);
+        let dir = fixtures().join("exports").join(golden);
+        let ours = graphml::render(&doc).unwrap();
+        let want = fs::read_to_string(dir.join("graph.graphml")).unwrap();
+        assert_eq!(ours, want, "{golden}: graph.graphml");
+
+        let loaded = Loaded::from_json(&doc).unwrap();
+        let view = loaded.view(Names::Placeholder);
+        let ours = embedded(&html::render(&view, &HtmlOptions::default()));
+        let want: Value =
+            serde_json::from_slice(&fs::read(dir.join("html_payload.json")).unwrap()).unwrap();
+        assert_eq!(ours["RAW_EDGES"], want["RAW_EDGES"], "{golden}: links");
+        // The WebGL view's links point the same way.
+        let small = HtmlOptions {
+            node_limit: 3,
+            ..HtmlOptions::default()
+        };
+        let gl = embedded(&html::render(&view, &small));
+        let rows = gl["edges"].as_array().unwrap();
+        assert_eq!(rows.len(), want["RAW_EDGES"].as_array().unwrap().len());
+        for (row, w) in rows.iter().zip(want["RAW_EDGES"].as_array().unwrap()) {
+            let id = |k: usize| gl["nodes"][row[k].as_u64().unwrap() as usize][0].clone();
+            assert_eq!(
+                (id(0), id(1)),
+                (w["from"].clone(), w["to"].clone()),
+                "{golden}"
+            );
+        }
+        let (on, wn) = (
+            ours["RAW_NODES"].as_array().unwrap(),
+            want["RAW_NODES"].as_array().unwrap(),
+        );
+        assert_eq!(on.len(), wn.len(), "{golden}: node count");
+        for (o, w) in on.iter().zip(wn) {
+            for (k, v) in w.as_object().unwrap() {
+                assert_eq!(&o[k], v, "{golden}: node {} field {k}", w["id"]);
+            }
+        }
+
+        let ours: BTreeMap<String, String> = wiki::render(&view).unwrap().into_iter().collect();
+        for entry in fs::read_dir(dir.join("wiki")).unwrap() {
+            let entry = entry.unwrap();
+            let name = entry.file_name().to_string_lossy().into_owned();
+            // Quirk W3: two `User` god nodes from different repositories are both linked to
+            // `User.md` in Graphify's index.
+            if golden == "global_py_go" && name == "index.md" {
+                continue;
+            }
+            let text = normalise_wiki(&fs::read_to_string(entry.path()).unwrap());
+            assert_eq!(ours[&name], text, "{golden}: wiki/{name}");
+        }
+    }
+    // The reversed links really are reversed in the input and drawn the other way.
+    let doc = global_graph("global_direction");
+    let link = &doc["links"][0];
+    assert_eq!(
+        (&link["source"], &link["target"]),
+        (&json!("dirt::b"), &json!("dirt::a"))
+    );
+    let loaded = Loaded::from_json(&doc).unwrap();
+    let page = html::render(&loaded.view(Names::Placeholder), &HtmlOptions::default());
+    let edge = &embedded(&page)["RAW_EDGES"][0];
+    assert_eq!(
+        (&edge["from"], &edge["to"]),
+        (&json!("dirt::a"), &json!("dirt::b"))
+    );
 }
 
 /// Above the node limit the same records are embedded column-wise; expanding them gives back

@@ -140,9 +140,9 @@ pub fn write_to(g: &NxGraph, w: &mut impl Write) -> io::Result<()> {
             .get("confidence")
             .map_or_else(|| "EXTRACTED".to_string(), text);
         out.push_str("\nMATCH (a {id: '");
-        escape(&g.nodes[edge.source as usize].id, &mut out);
+        escape(&g.nodes[edge.from as usize].id, &mut out);
         out.push_str("'}), (b {id: '");
-        escape(&g.nodes[edge.target as usize].id, &mut out);
+        escape(&g.nodes[edge.to as usize].id, &mut out);
         let _ = write!(
             out,
             "'}}) MERGE (a)-[:{} {{confidence: '",
@@ -285,13 +285,13 @@ pub fn push_plan(g: &NxGraph) -> PushPlan {
     for (_, _, e) in g.edge_walk() {
         let edge = &g.edges[e as usize];
         let key = (
-            labels_of[edge.source as usize].clone(),
+            labels_of[edge.from as usize].clone(),
             push_type(edge.attrs.get("relation")),
-            labels_of[edge.target as usize].clone(),
+            labels_of[edge.to as usize].clone(),
         );
         edges.entry(key).or_default().push(PushEdge {
-            source: g.nodes[edge.source as usize].id.clone(),
-            target: g.nodes[edge.target as usize].id.clone(),
+            source: g.nodes[edge.from as usize].id.clone(),
+            target: g.nodes[edge.to as usize].id.clone(),
             props: props(&edge.attrs),
         });
     }

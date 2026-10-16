@@ -128,6 +128,48 @@ fn leaves_line_up_with_inspector_records() {
     assert!(degrees.windows(2).all(|w| w[0] >= w[1]), "{degrees:?}");
 }
 
+/// Global graphs (links with `_src`/`_tgt`, `source`/`target` often reversed): the hierarchy
+/// matches Graphify's, and the inspector lists a symbol's outbound links in the true direction.
+#[test]
+fn global_graphs_match_and_list_true_outbound_links() {
+    for (golden, input) in [
+        ("global_direction", "global_direction"),
+        ("global_py_go", "global_py_go.3"),
+    ] {
+        let g = NxGraph::read(&fixtures().join(format!("multirepo/goldens/{input}.graph.json")))
+            .unwrap();
+        let want = fs::read_to_string(fixtures().join(format!("exports/{golden}/tree/tree.json")))
+            .unwrap();
+        let page = page(&g, &TreeOptions::default());
+        assert_eq!(tree::embedded_tree(&page), Some(want.as_str()), "{golden}");
+    }
+    // `Alpha → Beta` is stored as `source: dirt::b, target: dirt::a`.
+    let g =
+        NxGraph::read(&fixtures().join("multirepo/goldens/global_direction.graph.json")).unwrap();
+    let info = inspector(&page(&g, &TreeOptions::default()));
+    let targets = info["targets"].as_array().unwrap();
+    let outbound = |id: &str| -> Vec<(String, String)> {
+        let rec = info["leaves"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|r| r[0] == id)
+            .unwrap();
+        assert_eq!(rec[6], rec[7].as_array().unwrap().len());
+        rec[7]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|o| {
+                let t = &targets[o[1].as_u64().unwrap() as usize];
+                (o[0].as_str().unwrap().into(), t[0].as_str().unwrap().into())
+            })
+            .collect()
+    };
+    assert_eq!(outbound("dirt::a"), [("calls".into(), "Beta".into())]);
+    assert!(outbound("dirt::b").is_empty());
+}
+
 const HOSTILE: [&str; 7] = [
     "</script><script>alert(1)</script>",
     "</SCRIPT ><img src=x onerror=alert(2)>",
