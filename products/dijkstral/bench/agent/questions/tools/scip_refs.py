@@ -194,6 +194,9 @@ def lookup(
     """Definitions, reference occurrences and referencing definitions of one symbol name."""
     defs = resolve(occ, query, def_file, exact)
     syms = {s for s, _, _ in defs}
+    if not defs and " " in query:
+        # a full symbol defined outside the indexed scope: references only
+        syms = {query}
     refs = {}
     for f, os_ in sorted(occ.items()):
         if within and within not in f:

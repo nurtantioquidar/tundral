@@ -53,6 +53,10 @@ GRAPH_WORDS = re.compile(
 )
 
 
+# Words that are domain vocabulary in a corpus repo rather than graph wording.
+DOMAIN_WORDS = {"kubernetes": ("node", "nodes")}
+
+
 class Repo:
     def __init__(self, root: Path, commit: str):
         self.root = root
@@ -129,8 +133,9 @@ def check_repo(path: Path, pins: dict[str, str], corpus_root: Path, counts: Coun
             errs.append(f"{where}: semantic must be false")
         if t.get("kind") not in KINDS:
             errs.append(f"{where}: kind {t.get('kind')}")
-        m = GRAPH_WORDS.search(t.get("question", ""))
-        if m:
+        for m in GRAPH_WORDS.finditer(t.get("question", "")):
+            if m.group(0).lower() in DOMAIN_WORDS.get(repo_name, ()):
+                continue  # e.g. a Kubernetes Node is the domain term, not graph wording
             errs.append(f"{where}: question uses graph/tool wording {m.group(0)!r}")
         facts = t.get("facts", [])
         if not 2 <= len(facts) <= 5:
@@ -168,9 +173,17 @@ def check_repo(path: Path, pins: dict[str, str], corpus_root: Path, counts: Coun
                 manifest = repo.text(fact.rstrip("/") + "/Cargo.toml") or ""
                 pkg = re.search(r'^name\s*=\s*"([^"]+)"', manifest, re.M)
                 names = {pkg.group(1), pkg.group(1) + " crate"} if pkg else set()
+                base = fact.rstrip("/").rsplit("/", 1)[-1]
+                dirs = {x.rsplit("/", 1)[0] for x in all_files if "/" in x}
+                same_base = {d for d in dirs if d == base or d.endswith("/" + base)}
+                if same_base == {fact.rstrip("/")}:
+                    names.add(base)  # a directory (Go package) name unique in the repo
                 for a in f["aliases"]:
                     if a not in names:
-                        errs.append(f"{where}: alias {a!r} is not the package name of {fact}")
+                        errs.append(
+                            f"{where}: alias {a!r} is neither the package name of {fact} "
+                            "nor its unique directory name"
+                        )
             elif p["type"] == "symbol":
                 if not p["in"]:
                     errs.append(f"{where}: symbol {fact} lists no files")
