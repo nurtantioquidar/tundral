@@ -1,0 +1,242 @@
+{
+ "RAW_NODES": [
+  {
+   "id": "a",
+   "label": "A",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 40.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "A",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "a.py",
+   "file_type": "code",
+   "degree": 6
+  },
+  {
+   "id": "b",
+   "label": "B",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "B",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "b.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "c",
+   "label": "C",
+   "color": {
+    "background": "#4E79A7",
+    "border": "#4E79A7",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#4E79A7"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "C",
+   "community": 0,
+   "community_name": "Community 0",
+   "source_file": "c.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "d",
+   "label": "D",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 25.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "D",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "d.py",
+   "file_type": "code",
+   "degree": 3
+  },
+  {
+   "id": "e",
+   "label": "E",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 20.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "E",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "e.py",
+   "file_type": "code",
+   "degree": 2
+  },
+  {
+   "id": "f",
+   "label": "F",
+   "color": {
+    "background": "#F28E2B",
+    "border": "#F28E2B",
+    "highlight": {
+     "background": "#ffffff",
+     "border": "#F28E2B"
+    }
+   },
+   "size": 15.0,
+   "font": {
+    "size": 12,
+    "color": "#ffffff"
+   },
+   "title": "F",
+   "community": 1,
+   "community_name": "Community 1",
+   "source_file": "f.py",
+   "file_type": "code",
+   "degree": 1
+  }
+ ],
+ "RAW_EDGES": [
+  {
+   "from": "a",
+   "to": "b",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "b",
+   "to": "a",
+   "label": "uses",
+   "title": "uses [INFERRED]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "INFERRED"
+  },
+  {
+   "from": "a",
+   "to": "a",
+   "label": "recurses",
+   "title": "recurses [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "a",
+   "to": "a",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "c",
+   "to": "d",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "c",
+   "to": "d",
+   "label": "imports",
+   "title": "imports [AMBIGUOUS]",
+   "dashes": true,
+   "width": 1,
+   "color": {
+    "opacity": 0.35
+   },
+   "confidence": "AMBIGUOUS"
+  },
+  {
+   "from": "d",
+   "to": "e",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  },
+  {
+   "from": "e",
+   "to": "f",
+   "label": "calls",
+   "title": "calls [EXTRACTED]",
+   "dashes": false,
+   "width": 2,
+   "color": {
+    "opacity": 0.7
+   },
+   "confidence": "EXTRACTED"
+  }
+ ],
+ "LEGEND": [],
+ "hyperedges": []
+}

@@ -50,6 +50,22 @@ does not reproduce it unless noted), **Open** (unresolved).
   that introduced them; a self-loop appears once. *`G.edges()` order*: for each node `u` in node
   order, each neighbour `v` in adjacency order not yet visited as a `u` (self-loops included), with
   `u` first.
+- **Rule (repeated pairs).** A simple graph (`"multigraph": false`; a missing flag reads as a
+  multigraph) holds one edge per node pair, per ordered pair when `"directed": true`. A repeated
+  pair merges into the first link's place as Python's `dict.update`: the later link's keys win,
+  `source`/`target` and `_src`/`_tgt` included, and keys it lacks keep their earlier values
+  (probe `duplicates`: `a→b calls EXTRACTED` then `b→a uses INFERRED` is one edge `b→a uses
+  INFERRED`; a self-loop `recurses` then `calls` without `confidence` is `calls EXTRACTED`; 8 links
+  become 5). A directed simple graph merges only same-direction repeats (`duplicates_directed`: 6);
+  a multigraph keeps every link (`duplicates_multigraph`: 8).
+- **Rule (directed graphs and multigraphs).** In a directed graph `G.edges()` walks each node's
+  successors only, and a node's wiki article and its community's links to other communities
+  follow out-edges only (its connection count stays the full degree). In a multigraph a
+  neighbour's parallel edges come together in `G.edges()` where the neighbour first appeared, an
+  article lists each neighbour once by its first parallel edge, and a community's audit trail
+  counts every parallel edge while its links to other communities count each neighbour once.
+  Goldens: Graphify's `graph.html` constants and wiki for `tests/fixtures/exports/probes/
+  duplicates*.graph.json`.
 - **Rule (community names).** Names come only from a labels file: `--labels P`, else
   `.graphify_labels.json` next to the graph (`{"0": "name", …}`; its `.sig` file is not needed).
   `community_name` fields inside `graph.json` are ignored. Without a labels file every community is
@@ -401,7 +417,6 @@ performance warnings); search, selection and the detail panel worked in each.
 | G1 | Quirk | `export graphml` crashes on a raw (`--no-cluster`) graph |
 | L1 | Quirk (reproduced) | `_src` and `_tgt` are taken separately and need not name the link's ends: one alone gives a self-loop, other nodes redirect the drawn link (§1) |
 | L2 | Quirk | a `_src`/`_tgt` naming no node (unknown id, number, `null`) is drawn to that value, crashes `cypher.txt` (number, `null`) or drops the link (canvas, call-flow); dijkstral keeps the stored end |
-| O6 | Open | `graph.html` and the wiki (`View`) keep every link of a pair repeated in a simple graph, so links and degrees differ; Graphify's NetworkX load merges them (probe `direction`: 7 links against dijkstral's 9). GraphML and the §9 formats merge as Graphify does. Builds and the global graph never repeat a pair |
 | O1 | Open | `graph.html` when every node has degree 0 (max degree 0): dijkstral divides by 1 |
 | O2 | Open | whether the slug's `unnamed` rule is "only dots" or a strip of leading/trailing dots |
 | O3 | Open | truncation and the `_n` suffix: dijkstral truncates to 200 characters before suffixing |
@@ -923,10 +938,12 @@ cells) is reproduced.
   unclustered inputs form `unknown`. Sorted by size descending, ties by that name
   (`"103" < "104" < "99"`). The subtitle and the stats count these names; the layers table shows
   them.
-- **Open F12.** The page reads every link of the file, not NetworkX's merged graph: a pair
-  repeated in a simple graph counts and draws twice (direction probe: `calls f→e` and
-  `uses e→f`), and a link whose `_src` and `_tgt` are both `null` is dropped from the edge count.
-  dijkstral reads the §9 graph (one edge per pair). Links follow `_src` → `_tgt` (§1).
+- **Quirk F12 (not reproduced).** The page reads every link of the file, not NetworkX's merged
+  graph: a pair repeated in a simple graph counts and draws twice (direction probe: `calls f→e`
+  and `uses e→f`), and a link whose `_src` and `_tgt` are both `null` is dropped from the edge
+  count, so its numbers disagree with Graphify's own `graph.html` and wiki of the same file.
+  dijkstral reads the §9 graph (one edge per pair), consistent with every other exporter. Links
+  follow `_src` → `_tgt` (§1).
 - **Rule (category).** Each community is scored for nine categories, in priority order:
   `extract-pipeline` Extraction Pipeline, `build-graph` Graph Build, `analysis-clustering`
   Analysis & Clustering, `outputs-docs` Outputs & Docs, `cli-skills` CLI & Skill Installers,

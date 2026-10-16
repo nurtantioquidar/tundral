@@ -250,7 +250,10 @@ fn community_article(view: &View, c: u32, members: &[u32], files: &HashMap<u32, 
     let mut audit: BTreeMap<u8, usize> = BTreeMap::new();
     let mut seen_edges: HashSet<u32> = HashSet::new();
     for &i in members {
-        for &(v, e) in &view.adj[i as usize] {
+        // The audit counts every edge (a multigraph's parallel ones too); the links to other
+        // communities count each neighbour once.
+        let mut neighbours: HashSet<u32> = HashSet::new();
+        for (v, e) in view.edges_of(i) {
             if seen_edges.insert(e) {
                 let conf = match view.graph.edges[e as usize].confidence {
                     Confidence::Extracted => 0,
@@ -258,6 +261,9 @@ fn community_article(view: &View, c: u32, members: &[u32], files: &HashMap<u32, 
                     Confidence::Ambiguous => 2,
                 };
                 *audit.entry(conf).or_default() += 1;
+            }
+            if !neighbours.insert(v) {
+                continue;
             }
             match view.community[v as usize] {
                 Some(other) if other != c => {
@@ -341,7 +347,7 @@ fn god_article(
     }
     s.push_str("## Connections by Relation\n\n");
     let mut groups: BTreeMap<&str, Vec<(u32, u32)>> = BTreeMap::new();
-    for &(v, e) in &view.adj[g as usize] {
+    for (v, e) in view.neighbors(g) {
         groups
             .entry(view.graph.edges[e as usize].relation.as_str())
             .or_default()

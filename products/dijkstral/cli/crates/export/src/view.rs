@@ -30,10 +30,14 @@ pub struct Loaded {
     pub hyperedges: String,
     /// Edges whose link has no `confidence` (the graph reads them as `EXTRACTED`).
     pub no_confidence: HashSet<u32>,
+    /// The document's `directed` flag (NetworkX reads a missing one as undirected).
+    pub directed: bool,
 }
 
 impl Loaded {
     pub fn from_json(doc: &Value) -> Result<Loaded> {
+        let merged = merge_repeated_pairs(doc);
+        let doc = merged.as_ref().unwrap_or(doc);
         let graph = Graph::from_graphify_json(doc).map_err(anyhow::Error::msg)?;
         // The graph keeps the links whose endpoints exist, in file order.
         let ids: HashSet<&str> = graph.nodes.iter().map(|n| n.id.as_str()).collect();
@@ -65,11 +69,16 @@ impl Loaded {
         let hyperedges = doc
             .get("hyperedges")
             .map_or_else(|| "[]".to_string(), Value::to_string);
+        let directed = doc
+            .get("directed")
+            .and_then(Value::as_bool)
+            .unwrap_or(false);
         Ok(Loaded {
             graph,
             community,
             hyperedges,
             no_confidence,
+            directed,
         })
     }
 
@@ -92,8 +101,66 @@ impl Loaded {
             self.hyperedges.clone(),
         );
         view.no_confidence = self.no_confidence.clone();
+        view.directed = self.directed;
         view
     }
+}
+
+/// A simple graph (`"multigraph": false`; NetworkX reads a missing flag as a multigraph) holds one
+/// edge per node pair, per ordered pair when `directed`: Graphify's NetworkX load folds a repeated
+/// pair into the first link, the later link's keys overwriting (its ends included) and the rest
+/// kept (`docs/graphify-exports.md` §1). `None` when nothing repeats, so the usual load reads
+/// the document as it is.
+fn merge_repeated_pairs(doc: &Value) -> Option<Value> {
+    if doc
+        .get("multigraph")
+        .and_then(Value::as_bool)
+        .unwrap_or(true)
+    {
+        return None;
+    }
+    let directed = doc
+        .get("directed")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    let key = if doc.get("links").is_some() {
+        "links"
+    } else {
+        "edges"
+    };
+    let links = doc.get(key)?.as_array()?;
+    let end = |l: &Value, k: &str| match l.get(k) {
+        Some(Value::String(s)) => s.clone(),
+        Some(v) => v.to_string(),
+        None => String::new(),
+    };
+    let mut at: HashMap<(String, String), usize> = HashMap::with_capacity(links.len());
+    let mut out: Vec<Value> = Vec::with_capacity(links.len());
+    let mut repeated = false;
+    for l in links {
+        let (s, t) = (end(l, "source"), end(l, "target"));
+        let pair = if directed || s <= t { (s, t) } else { (t, s) };
+        match at.get(&pair) {
+            Some(&i) => {
+                repeated = true;
+                if let (Some(into), Some(from)) = (out[i].as_object_mut(), l.as_object()) {
+                    for (k, v) in from {
+                        into.insert(k.clone(), v.clone());
+                    }
+                }
+            }
+            None => {
+                at.insert(pair, out.len());
+                out.push(l.clone());
+            }
+        }
+    }
+    if !repeated {
+        return None;
+    }
+    let mut merged = doc.clone();
+    merged[key] = Value::Array(out);
+    Some(merged)
 }
 
 /// Community names.
@@ -169,6 +236,8 @@ pub struct View<'a> {
     pub adj: Vec<Vec<(u32, u32)>>,
     /// Edges whose link carried no `confidence` (only for a loaded `graph.json`).
     pub no_confidence: HashSet<u32>,
+    /// A directed graph: `G.edges()` walks each node's successors only.
+    pub directed: bool,
 }
 
 impl<'a> View<'a> {
@@ -233,6 +302,7 @@ impl<'a> View<'a> {
             degree,
             adj,
             no_confidence: HashSet::new(),
+            directed: false,
         }
     }
 
@@ -260,14 +330,47 @@ impl<'a> View<'a> {
         self.community.iter().any(Option::is_some)
     }
 
-    /// `G.edges()`: `(u, v, edge)` with `u` the endpoint met first in node order.
+    /// `G.edges(u)`: every `(neighbour, edge)` of `u`, parallel edges included, in adjacency
+    /// order; in a directed graph, out-edges only.
+    pub fn edges_of(&self, u: u32) -> impl Iterator<Item = (u32, u32)> + '_ {
+        self.adj[u as usize]
+            .iter()
+            .copied()
+            .filter(move |&(_, e)| !self.directed || self.ends[e as usize].0 == u)
+    }
+
+    /// `G[u]`: each neighbour once with its first edge (a multigraph's parallel edges share one
+    /// entry), in adjacency order; in a directed graph, successors only.
+    pub fn neighbors(&self, u: u32) -> impl Iterator<Item = (u32, u32)> + '_ {
+        let mut seen = HashSet::new();
+        self.edges_of(u).filter(move |&(v, _)| seen.insert(v))
+    }
+
+    /// `G.edges()`: `(u, v, edge)` with `u` the endpoint met first in node order, or, in a
+    /// directed graph, each node's successors. NetworkX's adjacency is a dict of neighbours, so a
+    /// neighbour's parallel edges (a multigraph's) come together, where it first appeared.
     pub fn edge_walk(&self) -> Vec<(u32, u32, u32)> {
         let mut seen = vec![false; self.graph.nodes.len()];
         let mut out = Vec::with_capacity(self.edges.len());
+        let mut order: Vec<u32> = Vec::new();
+        let mut by: HashMap<u32, Vec<u32>> = HashMap::new();
         for &u in &self.nodes {
+            order.clear();
+            by.clear();
             for &(v, e) in &self.adj[u as usize] {
-                if !seen[v as usize] {
-                    out.push((u, v, e));
+                if self.directed && self.ends[e as usize].0 != u {
+                    continue;
+                }
+                by.entry(v)
+                    .or_insert_with(|| {
+                        order.push(v);
+                        Vec::new()
+                    })
+                    .push(e);
+            }
+            for &v in &order {
+                if self.directed || !seen[v as usize] {
+                    out.extend(by[&v].iter().map(|&e| (u, v, e)));
                 }
             }
             seen[u as usize] = true;

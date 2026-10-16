@@ -252,6 +252,54 @@ fn global_graphs_match_graphify() {
     );
 }
 
+/// A repeated node pair in a simple graph is one edge, as Graphify's NetworkX load makes it: the
+/// later link's keys win and the rest stay (`docs/graphify-exports.md` §1). A directed graph
+/// merges only same-direction repeats; a multigraph keeps every link. Graphify's pages and wikis
+/// of `probes/duplicates*.graph.json` are the goldens.
+#[test]
+fn repeated_pairs_merge_like_graphify() {
+    for (probe, links) in [
+        ("duplicates", 5),
+        ("duplicates_directed", 6),
+        ("duplicates_multigraph", 8),
+    ] {
+        let probes = fixtures().join("exports/probes");
+        let doc: Value =
+            serde_json::from_slice(&fs::read(probes.join(format!("{probe}.graph.json"))).unwrap())
+                .unwrap();
+        let loaded = Loaded::from_json(&doc).unwrap();
+        let view = loaded.view(Names::Placeholder);
+        let ours = embedded(&html::render(&view, &HtmlOptions::default()));
+        let want: Value = serde_json::from_slice(
+            &fs::read(probes.join(probe).join("html_payload.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            want["RAW_EDGES"].as_array().unwrap().len(),
+            links,
+            "{probe}"
+        );
+        assert_eq!(ours["RAW_EDGES"], want["RAW_EDGES"], "{probe}: links");
+        let (on, wn) = (
+            ours["RAW_NODES"].as_array().unwrap(),
+            want["RAW_NODES"].as_array().unwrap(),
+        );
+        assert_eq!(on.len(), wn.len(), "{probe}: node count");
+        for (o, w) in on.iter().zip(wn) {
+            for (k, v) in w.as_object().unwrap() {
+                assert_eq!(&o[k], v, "{probe}: node {} field {k}", w["id"]);
+            }
+        }
+        let ours: BTreeMap<String, String> = wiki::render(&view).unwrap().into_iter().collect();
+        for entry in fs::read_dir(probes.join(probe).join("wiki")).unwrap() {
+            let entry = entry.unwrap();
+            let name = entry.file_name().to_string_lossy().into_owned();
+            let text = normalise_wiki(&fs::read_to_string(entry.path()).unwrap());
+            assert_eq!(ours[&name], text, "{probe}: wiki/{name}");
+        }
+    }
+}
+
 /// Above the node limit the same records are embedded column-wise; expanding them gives back
 /// the per-item form exactly.
 #[test]

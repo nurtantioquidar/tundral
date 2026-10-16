@@ -1,0 +1,115 @@
+{
+ "directed": false,
+ "multigraph": true,
+ "graph": {},
+ "nodes": [
+  {
+   "id": "a",
+   "label": "A",
+   "file_type": "code",
+   "source_file": "a.py",
+   "source_location": "L1",
+   "community": 0
+  },
+  {
+   "id": "b",
+   "label": "B",
+   "file_type": "code",
+   "source_file": "b.py",
+   "source_location": "L1",
+   "community": 0
+  },
+  {
+   "id": "c",
+   "label": "C",
+   "file_type": "code",
+   "source_file": "c.py",
+   "source_location": "L1",
+   "community": 0
+  },
+  {
+   "id": "d",
+   "label": "D",
+   "file_type": "code",
+   "source_file": "d.py",
+   "source_location": "L1",
+   "community": 1
+  },
+  {
+   "id": "e",
+   "label": "E",
+   "file_type": "code",
+   "source_file": "e.py",
+   "source_location": "L1",
+   "community": 1
+  },
+  {
+   "id": "f",
+   "label": "F",
+   "file_type": "code",
+   "source_file": "f.py",
+   "source_location": "L1",
+   "community": 1
+  }
+ ],
+ "links": [
+  {
+   "source": "a",
+   "target": "b",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "a.py"
+  },
+  {
+   "source": "b",
+   "target": "a",
+   "relation": "uses",
+   "confidence": "INFERRED",
+   "confidence_score": 0.8,
+   "source_file": "b.py"
+  },
+  {
+   "source": "c",
+   "target": "d",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "c.py"
+  },
+  {
+   "source": "d",
+   "target": "e",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "d.py"
+  },
+  {
+   "source": "c",
+   "target": "d",
+   "relation": "imports",
+   "confidence": "AMBIGUOUS",
+   "weight": 2.0,
+   "source_file": "c.py"
+  },
+  {
+   "source": "e",
+   "target": "f",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "e.py"
+  },
+  {
+   "source": "a",
+   "target": "a",
+   "relation": "recurses",
+   "confidence": "EXTRACTED",
+   "source_file": "a.py"
+  },
+  {
+   "source": "a",
+   "target": "a",
+   "relation": "calls",
+   "source_file": "a.py"
+  }
+ ],
+ "hyperedges": []
+}
