@@ -1,0 +1,11 @@
+{"type":"thread.started","thread_id":"01a14534-3ace-7bc0-894c-e9c386a9d1c3"}
+{"type":"item.completed","item":{"id":"item_0","type":"error","message":"`--dangerously-bypass-hook-trust` is enabled. Enabled hooks may run without review for this invocation."}}
+{"type":"item.completed","item":{"id":"item_1","type":"error","message":"`--dangerously-bypass-hook-trust` is enabled. Enabled hooks may run without review for this invocation."}}
+{"type":"item.completed","item":{"id":"item_2","type":"error","message":"Model metadata for `fake-model` not found. Defaulting to fallback metadata; this can degrade performance and cause issues."}}
+{"type":"turn.started"}
+{"type":"item.started","item":{"id":"item_3","type":"command_execution","command":"/bin/zsh -lc 'cat notes.txt'","aggregated_output":"","exit_code":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_3","type":"command_execution","command":"/bin/zsh -lc 'cat notes.txt'","aggregated_output":"The launch code word is PELICAN.\n","exit_code":0,"status":"completed"}}
+{"type":"item.started","item":{"id":"item_4","type":"mcp_tool_call","server":"dijkstral","tool":"graph_stats","arguments":{},"result":null,"error":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_4","type":"mcp_tool_call","server":"dijkstral","tool":"graph_stats","arguments":{},"result":{"content":[{"type":"text","text":"Nodes: 3\nEdges: 3\nCommunities: 1\nEXTRACTED: 100%\nINFERRED: 0%\nAMBIGUOUS: 0%\n"}],"structured_content":null},"error":null,"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_5","type":"agent_message","text":"FAKE ANSWER"}}
+{"type":"turn.completed","usage":{"input_tokens":300,"cached_input_tokens":120,"cache_write_input_tokens":0,"output_tokens":15,"reasoning_output_tokens":3}}
