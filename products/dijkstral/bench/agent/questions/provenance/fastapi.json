@@ -1,0 +1,2256 @@
+{
+ "repo": "fastapi",
+ "commit": "f5c6e9b4f9cadc1bf0f9a1fd672e621206b63007",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [
+  "$DIJKSTRAL_BENCH_HOME/scip/fastapi/parts/python.scip"
+ ],
+ "indexers": [
+  {
+   "part": "python",
+   "name": "scip-python",
+   "version": "0.6.6"
+  }
+ ],
+ "oracle_commit": "f5c6e9b4f9cadc1bf0f9a1fd672e621206b63007",
+ "questions": {
+  "fastapi-k01": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "fastapi/routing.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "get_request_handler",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "RequestValidationError",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py",
+      "fastapi/exceptions.py"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "fastapi/routing.py",
+     "lines": "385-485",
+     "note": "body read: Form via request.form(), JSON by content-type, JSONDecodeError -> RequestValidationError(json_invalid), other errors -> HTTPException(400)"
+    }
+   ]
+  },
+  "fastapi-k02": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "_should_embed_body_fields",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py",
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "fastapi/dependencies/utils.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "_build_dependant_with_parameterless_dependencies",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "_should_embed_body_fields",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/_should_embed_body_fields().",
+       "file": "fastapi/dependencies/utils.py",
+       "line": 888
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/routing.py": [
+       62,
+       901
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/routing.py",
+       "line": 888,
+       "chain": "_build_dependant_with_parameterless_dependencies",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_build_dependant_with_parameterless_dependencies().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/dependencies/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/dependencies/utils.py",
+     "lines": "888-909",
+     "note": "embed rules"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "888-902",
+     "note": "embed flag computed per route"
+    }
+   ]
+  },
+  "fastapi-k03": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "generate_unique_id",
+     "type": "symbol",
+     "in": [
+      "fastapi/utils.py"
+     ]
+    },
+    {
+     "fact": "fastapi/utils.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "_populate_api_route_state",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "get_openapi_operation_metadata",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "get_openapi_operation_metadata",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi_operation_metadata().",
+       "file": "fastapi/openapi/utils.py",
+       "line": 287
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/openapi/utils.py": [
+       344
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 311,
+       "chain": "get_openapi_path",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi_path().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/openapi/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/utils.py",
+     "lines": "95-100",
+     "note": "generate_unique_id"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "1053-1061",
+     "note": "route.unique_id = operation_id or generate_unique_id(route)"
+    },
+    {
+     "file": "fastapi/openapi/utils.py",
+     "lines": "287-308",
+     "note": "operationId = operation_id or unique_id"
+    }
+   ]
+  },
+  "fastapi-k04": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "request_validation_exception_handler",
+     "type": "symbol",
+     "in": [
+      "fastapi/exception_handlers.py",
+      "fastapi/applications.py"
+     ]
+    },
+    {
+     "fact": "fastapi/exception_handlers.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "fastapi/applications.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "request_validation_exception_handler",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.exception_handlers`/request_validation_exception_handler().",
+       "file": "fastapi/exception_handlers.py",
+       "line": 20
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/applications.py": [
+       11,
+       1024
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/applications.py",
+       "line": 64,
+       "chain": "__init__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.applications`/FastAPI#__init__().",
+       "families": [
+        "mentions"
+       ]
+      }
+     ],
+     "def_file": "fastapi/exception_handlers.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/exception_handlers.py",
+     "lines": "20-26",
+     "note": "422 handler"
+    },
+    {
+     "file": "fastapi/applications.py",
+     "lines": "1019-1031",
+     "note": "setdefault registration"
+    },
+    {
+     "file": "fastapi/applications.py",
+     "lines": "1054-1105",
+     "note": "ExceptionMiddleware(handlers=...)"
+    }
+   ]
+  },
+  "fastapi-k05": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "fastapi/sse.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "format_sse_event",
+     "type": "symbol",
+     "in": [
+      "fastapi/sse.py",
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "_serialize_sse_item",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "KEEPALIVE_COMMENT",
+     "type": "symbol",
+     "in": [
+      "fastapi/sse.py",
+      "fastapi/routing.py"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "format_sse_event",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.sse`/format_sse_event().",
+       "file": "fastapi/sse.py",
+       "line": 165
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/routing.py": [
+       82,
+       560,
+       570
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/routing.py",
+       "line": 545,
+       "chain": "_serialize_sse_item<app<get_request_handler",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_request_handler().app()._serialize_sse_item().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/sse.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/sse.py",
+     "lines": "165-241",
+     "note": "format_sse_event, KEEPALIVE_COMMENT, _PING_INTERVAL"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "537-626",
+     "note": "_serialize_sse_item and _keepalive_inserter"
+    }
+   ]
+  },
+  "fastapi-k06": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "get_request_handler",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "get_websocket_app",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "_solve_dependencies",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "fastapi/routing.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "solve_dependencies",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/solve_dependencies().",
+       "file": "fastapi/dependencies/utils.py",
+       "line": 586
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/dependencies/utils.py": [
+       640
+      ],
+      "fastapi/routing.py": [
+       67,
+       499,
+       810,
+       2281
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 586,
+       "chain": "solve_dependencies",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/solve_dependencies().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 416,
+       "chain": "app<get_request_handler",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_request_handler().app().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 792,
+       "chain": "app<get_websocket_app",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_websocket_app().app().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 2263,
+       "chain": "_solve_dependencies",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_FrontendRouteGroup#_solve_dependencies().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/dependencies/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/routing.py",
+     "lines": "2263-2300",
+     "note": "_FrontendRouteGroup._solve_dependencies"
+    }
+   ]
+  },
+  "fastapi-k07": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "fastapi/security/http.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "fastapi/security/oauth2.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "HTTPBearer",
+     "type": "symbol",
+     "in": [
+      "fastapi/security/http.py"
+     ]
+    },
+    {
+     "fact": "OAuth2PasswordBearer",
+     "type": "symbol",
+     "in": [
+      "fastapi/security/oauth2.py"
+     ]
+    },
+    {
+     "fact": "OAuth2AuthorizationCodeBearer",
+     "type": "symbol",
+     "in": [
+      "fastapi/security/oauth2.py"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "get_authorization_scheme_param",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.security.utils`/get_authorization_scheme_param().",
+       "file": "fastapi/security/utils.py",
+       "line": 1
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/security/http.py": [
+       10,
+       96,
+       206,
+       305,
+       406
+      ],
+      "fastapi/security/oauth2.py": [
+       9,
+       538,
+       644
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/security/http.py",
+       "line": 94,
+       "chain": "__call__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.security.http`/HTTPBase#__call__().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/security/http.py",
+       "line": 202,
+       "chain": "__call__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.security.http`/HTTPBasic#__call__().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/security/http.py",
+       "line": 303,
+       "chain": "__call__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.security.http`/HTTPBearer#__call__().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/security/http.py",
+       "line": 404,
+       "chain": "__call__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.security.http`/HTTPDigest#__call__().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/security/oauth2.py",
+       "line": 536,
+       "chain": "__call__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.security.oauth2`/OAuth2PasswordBearer#__call__().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/security/oauth2.py",
+       "line": 642,
+       "chain": "__call__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.security.oauth2`/OAuth2AuthorizationCodeBearer#__call__().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/security/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/security/http.py",
+     "lines": "69-417",
+     "note": "__call__ at 94 (HTTPBase), 202 (HTTPBasic), 303 (HTTPBearer), 404 (HTTPDigest)"
+    },
+    {
+     "file": "fastapi/security/oauth2.py",
+     "lines": "433-650",
+     "note": "__call__ at 536 (OAuth2PasswordBearer), 642 (OAuth2AuthorizationCodeBearer)"
+    }
+   ]
+  },
+  "fastapi-k08": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "_get_openapi_security_definitions",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "_get_openapi_operation_parameters",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "get_openapi_operation_request_body",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "get_openapi",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "get_swagger_ui_html",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/docs.py"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "jsonable_encoder",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.encoders`/jsonable_encoder().",
+       "file": "fastapi/encoders.py",
+       "line": 129
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/openapi/docs.py": [
+       5,
+       172,
+       186
+      ],
+      "fastapi/openapi/utils.py": [
+       32,
+       140,
+       222,
+       224,
+       257,
+       261,
+       679
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/openapi/docs.py",
+       "line": 40,
+       "chain": "get_swagger_ui_html",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.docs`/get_swagger_ui_html().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 132,
+       "chain": "_get_openapi_security_definitions",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/_get_openapi_security_definitions().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 159,
+       "chain": "_get_openapi_operation_parameters",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/_get_openapi_operation_parameters().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 231,
+       "chain": "get_openapi_operation_request_body",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi_operation_request_body().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 585,
+       "chain": "get_openapi",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/encoders.py",
+     "within": "fastapi/openapi/"
+    }
+   ],
+   "read": []
+  },
+  "fastapi-k09": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "analyze_param",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "_get_body_field",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "_populate_api_route_state",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "fastapi/dependencies/utils.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "fastapi/routing.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "create_model_field",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.utils`/create_model_field().",
+       "file": "fastapi/utils.py",
+       "line": 58
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/dependencies/utils.py": [
+       71,
+       529,
+       1042
+      ],
+      "fastapi/routing.py": [
+       93,
+       1080,
+       1141,
+       1150
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 381,
+       "chain": "analyze_param",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/analyze_param().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 1001,
+       "chain": "_get_body_field",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/_get_body_field().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 994,
+       "chain": "_populate_api_route_state",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_populate_api_route_state().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": []
+  },
+  "fastapi-k10": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "http_exception_handler",
+     "type": "symbol",
+     "in": [
+      "fastapi/exception_handlers.py"
+     ]
+    },
+    {
+     "fact": "get_openapi_path",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "get_request_handler",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "_populate_api_route_state",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "is_body_allowed_for_status_code",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.utils`/is_body_allowed_for_status_code().",
+       "file": "fastapi/utils.py",
+       "line": 26
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/exception_handlers.py": [
+       3,
+       13
+      ],
+      "fastapi/openapi/utils.py": [
+       43,
+       419
+      ],
+      "fastapi/routing.py": [
+       96,
+       770,
+       1076,
+       1137
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/exception_handlers.py",
+       "line": 11,
+       "chain": "http_exception_handler",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.exception_handlers`/http_exception_handler().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 311,
+       "chain": "get_openapi_path",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 416,
+       "chain": "app<get_request_handler",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_request_handler().app().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 994,
+       "chain": "_populate_api_route_state",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_populate_api_route_state().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": []
+  },
+  "fastapi-k11": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "get_openapi_path",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "get_openapi",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py",
+      "fastapi/applications.py"
+     ]
+    },
+    {
+     "fact": "fastapi/applications.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "_get_openapi_operation_parameters",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/_get_openapi_operation_parameters().",
+       "file": "fastapi/openapi/utils.py",
+       "line": 159
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/openapi/utils.py": [
+       357
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 311,
+       "chain": "get_openapi_path",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi_path().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/openapi/utils.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "get_openapi_path",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi_path().",
+       "file": "fastapi/openapi/utils.py",
+       "line": 311
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/openapi/utils.py": [
+       394,
+       631,
+       651
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 311,
+       "chain": "get_openapi_path",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 585,
+       "chain": "get_openapi",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/openapi/utils.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "get_openapi",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi().",
+       "file": "fastapi/openapi/utils.py",
+       "line": 585
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/applications.py": [
+       22,
+       1123
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/applications.py",
+       "line": 1107,
+       "chain": "openapi",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.applications`/FastAPI#openapi().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/openapi/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/applications.py",
+     "lines": "1107-1157",
+     "note": "FastAPI.openapi -> get_openapi; setup registers the openapi route"
+    }
+   ]
+  },
+  "fastapi-k12": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "_validate_value_with_model_field",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "serialize_response",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "_serialize_data",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "fastapi/dependencies/utils.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "scip-python python fastapi f5c6e9b4f9ca `fastapi._compat.v2`/ModelField#validate().",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi._compat.v2`/ModelField#validate().",
+       "file": "fastapi/_compat/v2.py",
+       "line": 173
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/dependencies/utils.py": [
+       742
+      ],
+      "fastapi/routing.py": [
+       324,
+       327,
+       518
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 734,
+       "chain": "_validate_value_with_model_field",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/_validate_value_with_model_field().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 308,
+       "chain": "serialize_response",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/serialize_response().",
+       "families": [
+        "calls",
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 516,
+       "chain": "_serialize_data<app<get_request_handler",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_request_handler().app()._serialize_data().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/_compat/v2.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "_validate_value_with_model_field",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/_validate_value_with_model_field().",
+       "file": "fastapi/dependencies/utils.py",
+       "line": 734
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/dependencies/utils.py": [
+       847,
+       859,
+       977,
+       991
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 780,
+       "chain": "request_params_to_args",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/request_params_to_args().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 951,
+       "chain": "request_body_to_args",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/request_body_to_args().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/dependencies/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/_compat/v2.py",
+     "lines": "173-189",
+     "note": "validate returns (value, errors)"
+    }
+   ]
+  },
+  "fastapi-k13": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "get_parameterless_sub_dependant",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "solve_dependencies",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "_build_dependant_with_parameterless_dependencies",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "fastapi/routing.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "get_dependant",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/get_dependant().",
+       "file": "fastapi/dependencies/utils.py",
+       "line": 271
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/dependencies/utils.py": [
+       139,
+       322,
+       632
+      ],
+      "fastapi/routing.py": [
+       63,
+       894
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 132,
+       "chain": "get_parameterless_sub_dependant",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/get_parameterless_sub_dependant().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 271,
+       "chain": "get_dependant",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/get_dependant().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 586,
+       "chain": "solve_dependencies",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/solve_dependencies().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 888,
+       "chain": "_build_dependant_with_parameterless_dependencies",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_build_dependant_with_parameterless_dependencies().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/dependencies/utils.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": []
+  },
+  "fastapi-k14": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "solve_dependencies",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "get_flat_params",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "_get_openapi_dependency_data",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "fastapi/dependencies/models.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "_get_cache_key",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.models`/_get_cache_key().",
+       "file": "fastapi/dependencies/models.py",
+       "line": 82
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/dependencies/utils.py": [
+       59,
+       179,
+       656
+      ],
+      "fastapi/openapi/utils.py": [
+       21,
+       106
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 169,
+       "chain": "get_flat_params",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/get_flat_params().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 586,
+       "chain": "solve_dependencies",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/solve_dependencies().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 99,
+       "chain": "_get_openapi_dependency_data",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/_get_openapi_dependency_data().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/dependencies/models.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/dependencies/models.py",
+     "lines": "82-96",
+     "note": "key = (call, scopes, computed scope)"
+    }
+   ]
+  },
+  "fastapi-k15": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "_IncludedRouter",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "_RouterIncludeContext",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "_EffectiveRouteContext",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "from_api_route",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "fastapi/routing.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "_IncludedRouter",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_IncludedRouter#",
+       "file": "fastapi/routing.py",
+       "line": 1623
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/routing.py": [
+       1629,
+       1638,
+       1646,
+       1648,
+       1650,
+       1677,
+       1679,
+       1770,
+       1827,
+       1849,
+       1889,
+       2629,
+       2643,
+       2817,
+       2866,
+       2876,
+       2888,
+       3390
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/routing.py",
+       "line": 1623,
+       "chain": "_IncludedRouter",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_IncludedRouter#",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 1638,
+       "chain": "effective_candidates",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_IncludedRouter#effective_candidates().",
+       "families": [
+        "calls",
+        "mentions",
+        "references"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 1663,
+       "chain": "effective_low_priority_routes",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_IncludedRouter#effective_low_priority_routes().",
+       "families": [
+        "calls",
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 1765,
+       "chain": "_match",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_IncludedRouter#_match().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 1819,
+       "chain": "_handle_selected",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_IncludedRouter#_handle_selected().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 1847,
+       "chain": "effective_route_contexts",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_IncludedRouter#effective_route_contexts().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 1885,
+       "chain": "_iter_routes_with_context",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_iter_routes_with_context().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 2620,
+       "chain": "_get_routes_version",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRouter#_get_routes_version().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 2633,
+       "chain": "_contains_router",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRouter#_contains_router().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 2766,
+       "chain": "app",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRouter#app().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 2863,
+       "chain": "handle",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRouter#handle().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 2873,
+       "chain": "matches",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRouter#matches().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 2883,
+       "chain": "_iter_low_priority_routes",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRouter#_iter_low_priority_routes().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 3213,
+       "chain": "include_router",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRouter#include_router().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/routing.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "from_api_route",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_EffectiveRouteContext#from_api_route().",
+       "file": "fastapi/routing.py",
+       "line": 1456
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/routing.py": [
+       1694
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/routing.py",
+       "line": 1690,
+       "chain": "_build_effective_context",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_IncludedRouter#_build_effective_context().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/routing.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/routing.py",
+     "lines": "3213-3400",
+     "note": "include_router appends _IncludedRouter(original_router, include_context)"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "1403-1520",
+     "note": "_EffectiveRouteContext.from_api_route"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "1623-1735",
+     "note": "_IncludedRouter.effective_candidates cached by routes version"
+    }
+   ]
+  },
+  "fastapi-k16": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "AsyncExitStackMiddleware",
+     "type": "symbol",
+     "in": [
+      "fastapi/middleware/asyncexitstack.py",
+      "fastapi/applications.py"
+     ]
+    },
+    {
+     "fact": "fastapi/middleware/asyncexitstack.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "request_response",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "solve_dependencies",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "build_middleware_stack",
+     "type": "symbol",
+     "in": [
+      "fastapi/applications.py"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "AsyncExitStackMiddleware",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.middleware.asyncexitstack`/AsyncExitStackMiddleware#",
+       "file": "fastapi/middleware/asyncexitstack.py",
+       "line": 8
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/applications.py": [
+       16,
+       1098
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/applications.py",
+       "line": 1054,
+       "chain": "build_middleware_stack",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.applications`/FastAPI#build_middleware_stack().",
+       "families": [
+        "mentions"
+       ]
+      }
+     ],
+     "def_file": "fastapi/middleware/asyncexitstack.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "request_response",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/request_response().",
+       "file": "fastapi/routing.py",
+       "line": 128
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/routing.py": [
+       1256,
+       1512
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/routing.py",
+       "line": 1194,
+       "chain": "__init__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRoute#__init__().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 1456,
+       "chain": "from_api_route",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_EffectiveRouteContext#from_api_route().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/routing.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/middleware/asyncexitstack.py",
+     "lines": "1-18",
+     "note": "fastapi_middleware_astack"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "128-168",
+     "note": "fastapi_inner_astack / fastapi_function_astack"
+    },
+    {
+     "file": "fastapi/dependencies/utils.py",
+     "lines": "662-672",
+     "note": "use_astack = request_astack or function_astack by scope"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "419-446",
+     "note": "form body close pushed onto fastapi_middleware_astack"
+    }
+   ]
+  },
+  "fastapi-k17": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "fastapi/telemetry/_asgi.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "NativeTelemetry",
+     "type": "symbol",
+     "in": [
+      "fastapi/telemetry/_asgi.py",
+      "fastapi/applications.py"
+     ]
+    },
+    {
+     "fact": "fastapi/telemetry/_api.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "_operation",
+     "type": "symbol",
+     "in": [
+      "fastapi/telemetry/_api.py",
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "fastapi/telemetry/_runtime.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "NativeTelemetry",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.telemetry._asgi`/NativeTelemetry#",
+       "file": "fastapi/telemetry/_asgi.py",
+       "line": 157
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/applications.py": [
+       27,
+       1046
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/applications.py",
+       "line": 64,
+       "chain": "__init__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.applications`/FastAPI#__init__().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/telemetry/_asgi.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "_operation",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.telemetry._api`/_operation().",
+       "file": "fastapi/telemetry/_api.py",
+       "line": 190
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/background.py": [
+       5,
+       66
+      ],
+      "fastapi/routing.py": [
+       85,
+       359,
+       498,
+       748,
+       809,
+       828
+      ],
+      "fastapi/telemetry/_api.py": [
+       243
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/background.py",
+       "line": 64,
+       "chain": "__call__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.background`/BackgroundTasks#__call__().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 351,
+       "chain": "run_endpoint_function",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/run_endpoint_function().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 416,
+       "chain": "app<get_request_handler",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_request_handler().app().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/routing.py",
+       "line": 792,
+       "chain": "app<get_websocket_app",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_websocket_app().app().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/telemetry/_api.py",
+       "line": 240,
+       "chain": "_run_sync_endpoint",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.telemetry._api`/_run_sync_endpoint().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/telemetry/_api.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "lifespan",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.telemetry._runtime`/lifespan().",
+       "file": "fastapi/telemetry/_runtime.py",
+       "line": 210
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/applications.py": [
+       1201,
+       1203
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/applications.py",
+       "line": 1197,
+       "chain": "__call__",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.applications`/FastAPI#__call__().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/telemetry/_runtime.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/applications.py",
+     "lines": "1033-1046",
+     "note": "NativeTelemetry created (line 1046)"
+    },
+    {
+     "file": "fastapi/applications.py",
+     "lines": "1197-1227",
+     "note": "__call__ routes lifespan to telemetry lifespan, requests through NativeTelemetry"
+    },
+    {
+     "file": "fastapi/telemetry/_runtime.py",
+     "lines": "210-238",
+     "note": "configure on startup, flush on shutdown"
+    }
+   ]
+  },
+  "fastapi-k18": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "get_dependant",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "analyze_param",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "solve_dependencies",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py",
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "run_endpoint_function",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "fastapi/dependencies/utils.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "analyze_param",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/analyze_param().",
+       "file": "fastapi/dependencies/utils.py",
+       "line": 381
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/dependencies/utils.py": [
+       296
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/dependencies/utils.py",
+       "line": 271,
+       "chain": "get_dependant",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/get_dependant().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/dependencies/utils.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "run_endpoint_function",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/run_endpoint_function().",
+       "file": "fastapi/routing.py",
+       "line": 351
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/routing.py": [
+       727
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/routing.py",
+       "line": 416,
+       "chain": "app<get_request_handler",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_request_handler().app().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/routing.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/dependencies/utils.py",
+     "lines": "271-347",
+     "note": "get_dependant/analyze_param build sub-dependant"
+    },
+    {
+     "file": "fastapi/dependencies/utils.py",
+     "lines": "586-731",
+     "note": "solve_dependencies"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "351-364",
+     "note": "run_endpoint_function"
+    }
+   ]
+  },
+  "fastapi-k19": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "get_typed_return_annotation",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py",
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "_populate_api_route_state",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "get_fields_from_routes",
+     "type": "symbol",
+     "in": [
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "get_definitions",
+     "type": "symbol",
+     "in": [
+      "fastapi/_compat/v2.py",
+      "fastapi/openapi/utils.py"
+     ]
+    },
+    {
+     "fact": "fastapi/openapi/utils.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "get_typed_return_annotation",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.dependencies.utils`/get_typed_return_annotation().",
+       "file": "fastapi/dependencies/utils.py",
+       "line": 239
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/routing.py": [
+       66,
+       1115
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/routing.py",
+       "line": 994,
+       "chain": "_populate_api_route_state",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/_populate_api_route_state().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/dependencies/utils.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "get_fields_from_routes",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_fields_from_routes().",
+       "file": "fastapi/openapi/utils.py",
+       "line": 551
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/openapi/utils.py": [
+       575,
+       620
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 551,
+       "chain": "get_fields_from_routes",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_fields_from_routes().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 585,
+       "chain": "get_openapi",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/openapi/utils.py",
+     "within": "fastapi/"
+    },
+    {
+     "name": "get_definitions",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi._compat.v2`/get_definitions().",
+       "file": "fastapi/_compat/v2.py",
+       "line": 285
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/_compat/__init__.py": [
+       31
+      ],
+      "fastapi/openapi/utils.py": [
+       12,
+       623
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/openapi/utils.py",
+       "line": 585,
+       "chain": "get_openapi",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.openapi.utils`/get_openapi().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/_compat/v2.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/routing.py",
+     "lines": "1113-1146",
+     "note": "return annotation -> response_model -> response_field"
+    },
+    {
+     "file": "fastapi/openapi/utils.py",
+     "lines": "551-628",
+     "note": "get_fields_from_routes, get_definitions"
+    }
+   ]
+  },
+  "fastapi-k20": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "fastapi/applications.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "dependency_overrides_provider",
+     "type": "symbol",
+     "in": [
+      "fastapi/applications.py",
+      "fastapi/routing.py",
+      "fastapi/dependencies/utils.py"
+     ]
+    },
+    {
+     "fact": "get_request_handler",
+     "type": "symbol",
+     "in": [
+      "fastapi/routing.py"
+     ]
+    },
+    {
+     "fact": "solve_dependencies",
+     "type": "symbol",
+     "in": [
+      "fastapi/dependencies/utils.py"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "get_request_handler",
+     "definitions": [
+      {
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/get_request_handler().",
+       "file": "fastapi/routing.py",
+       "line": 385
+      }
+     ],
+     "reference_occurrences": {
+      "fastapi/routing.py": [
+       1265
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "fastapi/routing.py",
+       "line": 1258,
+       "chain": "get_route_handler",
+       "symbol": "scip-python python fastapi f5c6e9b4f9ca `fastapi.routing`/APIRoute#get_route_handler().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "fastapi/routing.py",
+     "within": "fastapi/"
+    }
+   ],
+   "read": [
+    {
+     "file": "fastapi/applications.py",
+     "lines": "1003-1018",
+     "note": "APIRouter(dependency_overrides_provider=self)"
+    },
+    {
+     "file": "fastapi/routing.py",
+     "lines": "1258-1282",
+     "note": "get_route_handler passes provider"
+    },
+    {
+     "file": "fastapi/dependencies/utils.py",
+     "lines": "620-640",
+     "note": "dependency_overrides lookup"
+    }
+   ]
+  }
+ }
+}

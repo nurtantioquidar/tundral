@@ -1,0 +1,293 @@
+[
+  {
+    "id": "fastapi-k01", "kind": "locate",
+    "question": "When a request comes in with a body, where does FastAPI decide whether to read it as form data, parse it as JSON, or keep the raw bytes, and what happens when the JSON is malformed?",
+    "reference": "In the inner `app` closure of `get_request_handler` in fastapi/routing.py: form bodies go through `request.form()`, JSON is parsed only for an application/json or +json content type (or no content type when strict checking is off), anything else stays bytes; a `json.JSONDecodeError` becomes a `RequestValidationError` of type json_invalid.",
+    "facts": [
+      {"fact": "fastapi/routing.py", "aliases": ["routing.py"], "in": []},
+      {"fact": "get_request_handler", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "RequestValidationError", "aliases": [], "in": ["fastapi/routing.py", "fastapi/exceptions.py"]}
+    ],
+    "min_facts": 3,
+    "scip": [],
+    "read": [{"file": "fastapi/routing.py", "lines": "385-485", "note": "body read: Form via request.form(), JSON by content-type, JSONDecodeError -> RequestValidationError(json_invalid), other errors -> HTTPException(400)"}]
+  },
+  {
+    "id": "fastapi-k02", "kind": "locate",
+    "question": "Where does FastAPI decide whether a single request-body parameter is expected at the top level of the JSON body or embedded under its parameter name, and where is that decision made for a route?",
+    "reference": "`_should_embed_body_fields` in fastapi/dependencies/utils.py decides (more than one body param, `embed=True`, or a non-model Form field means embed); it is called from `_build_dependant_with_parameterless_dependencies` in fastapi/routing.py when a route is built, and the flag is then used by `_get_body_field` and `request_body_to_args`.",
+    "facts": [
+      {"fact": "_should_embed_body_fields", "aliases": [], "in": ["fastapi/dependencies/utils.py", "fastapi/routing.py"]},
+      {"fact": "fastapi/dependencies/utils.py", "aliases": ["dependencies/utils.py"], "in": []},
+      {"fact": "_build_dependant_with_parameterless_dependencies", "aliases": [], "in": ["fastapi/routing.py"]}
+    ],
+    "min_facts": 2,
+    "scip": [{"name": "_should_embed_body_fields", "def_file": "fastapi/dependencies/utils.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/dependencies/utils.py", "lines": "888-909", "note": "embed rules"}, {"file": "fastapi/routing.py", "lines": "888-902", "note": "embed flag computed per route"}]
+  },
+  {
+    "id": "fastapi-k03", "kind": "locate",
+    "question": "If I don't pass operation_id to a path operation, where does the operationId that appears in the OpenAPI document come from?",
+    "reference": "`generate_unique_id` in fastapi/utils.py builds it from the route name, path and first method; `_populate_api_route_state` in fastapi/routing.py stores it as `route.unique_id` (unless an explicit operation_id or custom generate_unique_id_function is given), and `get_openapi_operation_metadata` in fastapi/openapi/utils.py emits `operation_id or unique_id`, warning on duplicates.",
+    "facts": [
+      {"fact": "generate_unique_id", "aliases": [], "in": ["fastapi/utils.py"]},
+      {"fact": "fastapi/utils.py", "aliases": [], "in": []},
+      {"fact": "_populate_api_route_state", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "get_openapi_operation_metadata", "aliases": [], "in": ["fastapi/openapi/utils.py"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "get_openapi_operation_metadata", "def_file": "fastapi/openapi/utils.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/utils.py", "lines": "95-100", "note": "generate_unique_id"}, {"file": "fastapi/routing.py", "lines": "1053-1061", "note": "route.unique_id = operation_id or generate_unique_id(route)"}, {"file": "fastapi/openapi/utils.py", "lines": "287-308", "note": "operationId = operation_id or unique_id"}]
+  },
+  {
+    "id": "fastapi-k04", "kind": "locate",
+    "question": "Where is the default handler that turns request validation failures into a 422 JSON response defined, and where is it installed on the application?",
+    "reference": "`request_validation_exception_handler` in fastapi/exception_handlers.py returns a 422 with `jsonable_encoder(exc.errors())`; `FastAPI.__init__` in fastapi/applications.py registers it with `exception_handlers.setdefault(RequestValidationError, ...)`, and `build_middleware_stack` hands the handlers to Starlette's `ExceptionMiddleware`.",
+    "facts": [
+      {"fact": "request_validation_exception_handler", "aliases": [], "in": ["fastapi/exception_handlers.py", "fastapi/applications.py"]},
+      {"fact": "fastapi/exception_handlers.py", "aliases": ["exception_handlers.py"], "in": []},
+      {"fact": "fastapi/applications.py", "aliases": ["applications.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "request_validation_exception_handler", "def_file": "fastapi/exception_handlers.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/exception_handlers.py", "lines": "20-26", "note": "422 handler"}, {"file": "fastapi/applications.py", "lines": "1019-1031", "note": "setdefault registration"}, {"file": "fastapi/applications.py", "lines": "1054-1105", "note": "ExceptionMiddleware(handlers=...)"}]
+  },
+  {
+    "id": "fastapi-k05", "kind": "locate",
+    "question": "For endpoints that stream Server-Sent Events, where are the individual event frames (data:, event:, id:, retry:) formatted, and where are keep-alive pings inserted?",
+    "reference": "`format_sse_event` in fastapi/sse.py writes the frame; `_serialize_sse_item` inside `get_request_handler` (fastapi/routing.py) calls it per yielded item, and the `_keepalive_inserter` task there sends `KEEPALIVE_COMMENT` (defined in sse.py, every `_PING_INTERVAL` seconds) when no item arrives in time.",
+    "facts": [
+      {"fact": "fastapi/sse.py", "aliases": ["sse.py"], "in": []},
+      {"fact": "format_sse_event", "aliases": [], "in": ["fastapi/sse.py", "fastapi/routing.py"]},
+      {"fact": "_serialize_sse_item", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "KEEPALIVE_COMMENT", "aliases": [], "in": ["fastapi/sse.py", "fastapi/routing.py"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "format_sse_event", "def_file": "fastapi/sse.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/sse.py", "lines": "165-241", "note": "format_sse_event, KEEPALIVE_COMMENT, _PING_INTERVAL"}, {"file": "fastapi/routing.py", "lines": "537-626", "note": "_serialize_sse_item and _keepalive_inserter"}]
+  },
+  {
+    "id": "fastapi-k06", "kind": "callers",
+    "question": "Which functions in the fastapi package call solve_dependencies?",
+    "reference": "In fastapi/routing.py: the request handler built by `get_request_handler`, the websocket handler built by `get_websocket_app`, and `_FrontendRouteGroup._solve_dependencies`; `solve_dependencies` also calls itself recursively for sub-dependencies in fastapi/dependencies/utils.py.",
+    "facts": [
+      {"fact": "get_request_handler", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "get_websocket_app", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "_solve_dependencies", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "fastapi/routing.py", "aliases": ["routing.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "solve_dependencies", "def_file": "fastapi/dependencies/utils.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/routing.py", "lines": "2263-2300", "note": "_FrontendRouteGroup._solve_dependencies"}]
+  },
+  {
+    "id": "fastapi-k07", "kind": "callers",
+    "question": "Which of FastAPI's security classes parse the Authorization header with get_authorization_scheme_param?",
+    "reference": "The `__call__` methods of `HTTPBase`, `HTTPBasic`, `HTTPBearer` and `HTTPDigest` in fastapi/security/http.py, and of `OAuth2PasswordBearer` and `OAuth2AuthorizationCodeBearer` in fastapi/security/oauth2.py.",
+    "facts": [
+      {"fact": "fastapi/security/http.py", "aliases": ["security/http.py"], "in": []},
+      {"fact": "fastapi/security/oauth2.py", "aliases": ["oauth2.py"], "in": []},
+      {"fact": "HTTPBearer", "aliases": [], "in": ["fastapi/security/http.py"]},
+      {"fact": "OAuth2PasswordBearer", "aliases": [], "in": ["fastapi/security/oauth2.py"]},
+      {"fact": "OAuth2AuthorizationCodeBearer", "aliases": [], "in": ["fastapi/security/oauth2.py"]}
+    ],
+    "min_facts": 4,
+    "scip": [{"name": "get_authorization_scheme_param", "def_file": "fastapi/security/utils.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/security/http.py", "lines": "69-417", "note": "__call__ at 94 (HTTPBase), 202 (HTTPBasic), 303 (HTTPBearer), 404 (HTTPDigest)"}, {"file": "fastapi/security/oauth2.py", "lines": "433-650", "note": "__call__ at 536 (OAuth2PasswordBearer), 642 (OAuth2AuthorizationCodeBearer)"}]
+  },
+  {
+    "id": "fastapi-k08", "kind": "callers",
+    "question": "Within the OpenAPI generation code (fastapi/openapi), which functions call jsonable_encoder?",
+    "reference": "In fastapi/openapi/utils.py: `_get_openapi_security_definitions`, `_get_openapi_operation_parameters`, `get_openapi_operation_request_body` and `get_openapi` (which encodes the whole `OpenAPI` model); in fastapi/openapi/docs.py: `get_swagger_ui_html`.",
+    "facts": [
+      {"fact": "_get_openapi_security_definitions", "aliases": [], "in": ["fastapi/openapi/utils.py"]},
+      {"fact": "_get_openapi_operation_parameters", "aliases": [], "in": ["fastapi/openapi/utils.py"]},
+      {"fact": "get_openapi_operation_request_body", "aliases": [], "in": ["fastapi/openapi/utils.py"]},
+      {"fact": "get_openapi", "aliases": [], "in": ["fastapi/openapi/utils.py"]},
+      {"fact": "get_swagger_ui_html", "aliases": [], "in": ["fastapi/openapi/docs.py"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "jsonable_encoder", "def_file": "fastapi/encoders.py", "within": "fastapi/openapi/"}],
+    "read": []
+  },
+  {
+    "id": "fastapi-k09", "kind": "callers",
+    "question": "Who calls create_model_field, the helper that wraps a Python type into a validation field?",
+    "reference": "`analyze_param` and `_get_body_field` in fastapi/dependencies/utils.py (parameter and combined body fields), and `_populate_api_route_state` in fastapi/routing.py (response model, extra response models and stream item fields).",
+    "facts": [
+      {"fact": "analyze_param", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "_get_body_field", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "_populate_api_route_state", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "fastapi/dependencies/utils.py", "aliases": ["dependencies/utils.py"], "in": []},
+      {"fact": "fastapi/routing.py", "aliases": ["routing.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "create_model_field", "def_file": "fastapi/utils.py", "within": "fastapi/"}],
+    "read": []
+  },
+  {
+    "id": "fastapi-k10", "kind": "callers",
+    "question": "What calls is_body_allowed_for_status_code, the check that a status code may carry a response body?",
+    "reference": "`http_exception_handler` (fastapi/exception_handlers.py, sends an empty response for e.g. 204/304), `get_openapi_path` (fastapi/openapi/utils.py), the request handler from `get_request_handler` (blanks the body) and `_populate_api_route_state` (asserts at route creation) in fastapi/routing.py.",
+    "facts": [
+      {"fact": "http_exception_handler", "aliases": [], "in": ["fastapi/exception_handlers.py"]},
+      {"fact": "get_openapi_path", "aliases": [], "in": ["fastapi/openapi/utils.py"]},
+      {"fact": "get_request_handler", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "_populate_api_route_state", "aliases": [], "in": ["fastapi/routing.py"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "is_body_allowed_for_status_code", "def_file": "fastapi/utils.py", "within": "fastapi/"}],
+    "read": []
+  },
+  {
+    "id": "fastapi-k11", "kind": "impact",
+    "question": "If I change how _get_openapi_operation_parameters builds the parameter entries, which functions up the call chain are affected before the result reaches the /openapi.json endpoint?",
+    "reference": "It is called only by `get_openapi_path`, which is called by `get_openapi` (both fastapi/openapi/utils.py); `get_openapi` is called by `FastAPI.openapi` in fastapi/applications.py, which the openapi route registered in `FastAPI.setup` serves.",
+    "facts": [
+      {"fact": "get_openapi_path", "aliases": [], "in": ["fastapi/openapi/utils.py"]},
+      {"fact": "get_openapi", "aliases": [], "in": ["fastapi/openapi/utils.py", "fastapi/applications.py"]},
+      {"fact": "fastapi/applications.py", "aliases": ["applications.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [
+      {"name": "_get_openapi_operation_parameters", "def_file": "fastapi/openapi/utils.py", "within": "fastapi/"},
+      {"name": "get_openapi_path", "def_file": "fastapi/openapi/utils.py", "within": "fastapi/"},
+      {"name": "get_openapi", "def_file": "fastapi/openapi/utils.py", "within": "fastapi/"}
+    ],
+    "read": [{"file": "fastapi/applications.py", "lines": "1107-1157", "note": "FastAPI.openapi -> get_openapi; setup registers the openapi route"}]
+  },
+  {
+    "id": "fastapi-k12", "kind": "impact",
+    "question": "If ModelField.validate in the Pydantic compatibility layer stopped returning a (value, errors) tuple, which call sites would have to change?",
+    "reference": "`_validate_value_with_model_field` in fastapi/dependencies/utils.py (used for query/path/header/cookie and body values), and in fastapi/routing.py `serialize_response` and the `_serialize_data` closure inside `get_request_handler` (response and stream-item validation).",
+    "facts": [
+      {"fact": "_validate_value_with_model_field", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "serialize_response", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "_serialize_data", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "fastapi/dependencies/utils.py", "aliases": ["dependencies/utils.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [
+      {"name": "scip-python python fastapi f5c6e9b4f9ca `fastapi._compat.v2`/ModelField#validate().", "def_file": "fastapi/_compat/v2.py", "within": "fastapi/"},
+      {"name": "_validate_value_with_model_field", "def_file": "fastapi/dependencies/utils.py", "within": "fastapi/"}
+    ],
+    "read": [{"file": "fastapi/_compat/v2.py", "lines": "173-189", "note": "validate returns (value, errors)"}]
+  },
+  {
+    "id": "fastapi-k13", "kind": "impact",
+    "question": "If the signature of get_dependant (which turns a callable into a dependency tree) changed, which callers would need updating?",
+    "reference": "`get_parameterless_sub_dependant`, `solve_dependencies` (rebuilds the tree for dependency overrides) and `get_dependant` itself (recursion for sub-dependencies) in fastapi/dependencies/utils.py, plus `_build_dependant_with_parameterless_dependencies` in fastapi/routing.py.",
+    "facts": [
+      {"fact": "get_parameterless_sub_dependant", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "solve_dependencies", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "_build_dependant_with_parameterless_dependencies", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "fastapi/routing.py", "aliases": ["routing.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "get_dependant", "def_file": "fastapi/dependencies/utils.py", "within": "fastapi/"}],
+    "read": []
+  },
+  {
+    "id": "fastapi-k14", "kind": "impact",
+    "question": "If the dependency cache key produced by _get_cache_key changed, which pieces of FastAPI would behave differently?",
+    "reference": "`_get_cache_key` (fastapi/dependencies/models.py) is used by `solve_dependencies` (reusing a dependency's value within a request when use_cache is on), `get_flat_params` (deduplicating parameters, fastapi/dependencies/utils.py) and `_get_openapi_dependency_data` (deduplicating dependencies when building OpenAPI parameters and security, fastapi/openapi/utils.py).",
+    "facts": [
+      {"fact": "solve_dependencies", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "get_flat_params", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "_get_openapi_dependency_data", "aliases": [], "in": ["fastapi/openapi/utils.py"]},
+      {"fact": "fastapi/dependencies/models.py", "aliases": ["dependencies/models.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "_get_cache_key", "def_file": "fastapi/dependencies/models.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/dependencies/models.py", "lines": "82-96", "note": "key = (call, scopes, computed scope)"}]
+  },
+  {
+    "id": "fastapi-k15", "kind": "architecture",
+    "question": "How does include_router apply a prefix, tags and dependencies to the routes of an included router? Are the routes copied into the parent router?",
+    "reference": "No copy: `APIRouter.include_router` appends an `_IncludedRouter` holding a `_RouterIncludeContext` (prefix, tags, dependencies, responses...); the effective per-route view is an `_EffectiveRouteContext` built lazily by `_EffectiveRouteContext.from_api_route` (re-running `_populate_api_route_state` with the combined settings) and cached by the router's routes version, all in fastapi/routing.py.",
+    "facts": [
+      {"fact": "_IncludedRouter", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "_RouterIncludeContext", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "_EffectiveRouteContext", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "from_api_route", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "fastapi/routing.py", "aliases": ["routing.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "_IncludedRouter", "def_file": "fastapi/routing.py", "within": "fastapi/"}, {"name": "from_api_route", "def_file": "fastapi/routing.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/routing.py", "lines": "3213-3400", "note": "include_router appends _IncludedRouter(original_router, include_context)"}, {"file": "fastapi/routing.py", "lines": "1403-1520", "note": "_EffectiveRouteContext.from_api_route"}, {"file": "fastapi/routing.py", "lines": "1623-1735", "note": "_IncludedRouter.effective_candidates cached by routes version"}]
+  },
+  {
+    "id": "fastapi-k16", "kind": "architecture",
+    "question": "How is cleanup organised for uploaded files and for dependencies that use yield: which exit stacks exist, and where is each one created?",
+    "reference": "`AsyncExitStackMiddleware` (fastapi/middleware/asyncexitstack.py, added innermost by `FastAPI.build_middleware_stack`) creates `fastapi_middleware_astack`, which closes uploaded form files; `request_response` in fastapi/routing.py creates `fastapi_inner_astack` (request scope) and `fastapi_function_astack` (function scope); `solve_dependencies` enters each yield dependency on one of the two according to its scope.",
+    "facts": [
+      {"fact": "AsyncExitStackMiddleware", "aliases": [], "in": ["fastapi/middleware/asyncexitstack.py", "fastapi/applications.py"]},
+      {"fact": "fastapi/middleware/asyncexitstack.py", "aliases": ["asyncexitstack.py"], "in": []},
+      {"fact": "request_response", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "solve_dependencies", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "build_middleware_stack", "aliases": [], "in": ["fastapi/applications.py"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "AsyncExitStackMiddleware", "def_file": "fastapi/middleware/asyncexitstack.py", "within": "fastapi/"}, {"name": "request_response", "def_file": "fastapi/routing.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/middleware/asyncexitstack.py", "lines": "1-18", "note": "fastapi_middleware_astack"}, {"file": "fastapi/routing.py", "lines": "128-168", "note": "fastapi_inner_astack / fastapi_function_astack"}, {"file": "fastapi/dependencies/utils.py", "lines": "662-672", "note": "use_astack = request_astack or function_astack by scope"}, {"file": "fastapi/routing.py", "lines": "419-446", "note": "form body close pushed onto fastapi_middleware_astack"}]
+  },
+  {
+    "id": "fastapi-k17", "kind": "architecture",
+    "question": "How is FastAPI's built-in OpenTelemetry support organised across modules: what wraps each request, what records the finer-grained steps, and what sets up exporters?",
+    "reference": "fastapi/telemetry/_asgi.py: `NativeTelemetry` (created in `FastAPI.__init__`, invoked from `FastAPI.__call__`) wraps each HTTP/websocket request, and `ExceptionTelemetryMiddleware` sits in the middleware stack; fastapi/telemetry/_api.py: `_operation` spans around dependencies, endpoint and serialization, plus `get_telemetry_data`; fastapi/telemetry/_runtime.py: `lifespan` configures OTLP exporters from the environment on startup and flushes them on shutdown.",
+    "facts": [
+      {"fact": "fastapi/telemetry/_asgi.py", "aliases": ["_asgi.py"], "in": []},
+      {"fact": "NativeTelemetry", "aliases": [], "in": ["fastapi/telemetry/_asgi.py", "fastapi/applications.py"]},
+      {"fact": "fastapi/telemetry/_api.py", "aliases": ["_api.py"], "in": []},
+      {"fact": "_operation", "aliases": [], "in": ["fastapi/telemetry/_api.py", "fastapi/routing.py"]},
+      {"fact": "fastapi/telemetry/_runtime.py", "aliases": ["_runtime.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "NativeTelemetry", "def_file": "fastapi/telemetry/_asgi.py", "within": "fastapi/"}, {"name": "_operation", "def_file": "fastapi/telemetry/_api.py", "within": "fastapi/"}, {"name": "lifespan", "def_file": "fastapi/telemetry/_runtime.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/applications.py", "lines": "1033-1046", "note": "NativeTelemetry created (line 1046)"}, {"file": "fastapi/applications.py", "lines": "1197-1227", "note": "__call__ routes lifespan to telemetry lifespan, requests through NativeTelemetry"}, {"file": "fastapi/telemetry/_runtime.py", "lines": "210-238", "note": "configure on startup, flush on shutdown"}]
+  },
+  {
+    "id": "fastapi-k18", "kind": "flow",
+    "question": "How does a parameter declared as `x: Annotated[str, Depends(get_x)]` travel from the endpoint's signature to the value the endpoint receives at request time?",
+    "reference": "At route creation `get_dependant` (fastapi/dependencies/utils.py) inspects the signature and `analyze_param` recognises the Depends, producing a sub-`Dependant`; `_populate_api_route_state` stores the tree on the route. Per request the handler from `get_request_handler` calls `solve_dependencies`, which resolves sub-dependencies recursively and calls `get_x`, and `run_endpoint_function` passes the solved values to the endpoint.",
+    "facts": [
+      {"fact": "get_dependant", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "analyze_param", "aliases": [], "in": ["fastapi/dependencies/utils.py"]},
+      {"fact": "solve_dependencies", "aliases": [], "in": ["fastapi/dependencies/utils.py", "fastapi/routing.py"]},
+      {"fact": "run_endpoint_function", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "fastapi/dependencies/utils.py", "aliases": ["dependencies/utils.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "analyze_param", "def_file": "fastapi/dependencies/utils.py", "within": "fastapi/"}, {"name": "run_endpoint_function", "def_file": "fastapi/routing.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/dependencies/utils.py", "lines": "271-347", "note": "get_dependant/analyze_param build sub-dependant"}, {"file": "fastapi/dependencies/utils.py", "lines": "586-731", "note": "solve_dependencies"}, {"file": "fastapi/routing.py", "lines": "351-364", "note": "run_endpoint_function"}]
+  },
+  {
+    "id": "fastapi-k19", "kind": "flow",
+    "question": "How does an endpoint's return type annotation end up as a schema under components.schemas in the generated OpenAPI document?",
+    "reference": "`_populate_api_route_state` (fastapi/routing.py) reads it with `get_typed_return_annotation`, uses it as response_model and wraps it with `create_model_field` into `route.response_field`; `get_openapi` (fastapi/openapi/utils.py) gathers response fields via `get_fields_from_routes`, builds the schemas with `get_definitions` (fastapi/_compat/v2.py), and `get_openapi_path` references them in the 200 response.",
+    "facts": [
+      {"fact": "get_typed_return_annotation", "aliases": [], "in": ["fastapi/dependencies/utils.py", "fastapi/routing.py"]},
+      {"fact": "_populate_api_route_state", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "get_fields_from_routes", "aliases": [], "in": ["fastapi/openapi/utils.py"]},
+      {"fact": "get_definitions", "aliases": [], "in": ["fastapi/_compat/v2.py", "fastapi/openapi/utils.py"]},
+      {"fact": "fastapi/openapi/utils.py", "aliases": ["openapi/utils.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "get_typed_return_annotation", "def_file": "fastapi/dependencies/utils.py", "within": "fastapi/"}, {"name": "get_fields_from_routes", "def_file": "fastapi/openapi/utils.py", "within": "fastapi/"}, {"name": "get_definitions", "def_file": "fastapi/_compat/v2.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/routing.py", "lines": "1113-1146", "note": "return annotation -> response_model -> response_field"}, {"file": "fastapi/openapi/utils.py", "lines": "551-628", "note": "get_fields_from_routes, get_definitions"}]
+  },
+  {
+    "id": "fastapi-k20", "kind": "flow",
+    "question": "How do the overrides registered in app.dependency_overrides get from the FastAPI application object to the code that resolves dependencies for a request?",
+    "reference": "`FastAPI.__init__` (fastapi/applications.py) creates its `APIRouter` with `dependency_overrides_provider=self`; the router passes the provider to every `APIRoute`, whose `get_route_handler` hands it to `get_request_handler`; at request time `solve_dependencies` (fastapi/dependencies/utils.py) looks the original callable up in `provider.dependency_overrides` and rebuilds that sub-dependency with `get_dependant`.",
+    "facts": [
+      {"fact": "fastapi/applications.py", "aliases": ["applications.py"], "in": []},
+      {"fact": "dependency_overrides_provider", "aliases": [], "in": ["fastapi/applications.py", "fastapi/routing.py", "fastapi/dependencies/utils.py"]},
+      {"fact": "get_request_handler", "aliases": [], "in": ["fastapi/routing.py"]},
+      {"fact": "solve_dependencies", "aliases": [], "in": ["fastapi/dependencies/utils.py"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "get_request_handler", "def_file": "fastapi/routing.py", "within": "fastapi/"}],
+    "read": [{"file": "fastapi/applications.py", "lines": "1003-1018", "note": "APIRouter(dependency_overrides_provider=self)"}, {"file": "fastapi/routing.py", "lines": "1258-1282", "note": "get_route_handler passes provider"}, {"file": "fastapi/dependencies/utils.py", "lines": "620-640", "note": "dependency_overrides lookup"}]
+  }
+]
