@@ -3,15 +3,15 @@
 
 /// `additionalContext` for a `Grep` or a search program run through `Bash`.
 pub const SEARCH_NUDGE: &str = "dijkstral: this project has a code graph in dijkstral-out/. \
-For who calls or uses a symbol run `dijkstral explain <symbol>`, for what a change affects \
-`dijkstral affected <symbol>`, for how two symbols connect `dijkstral path <a> <b>`, for a broad \
-topic `dijkstral query \"<question>\"`; each answer cites file:line. Text search remains right \
-for literal strings the graph cannot know.";
+For who calls or uses a symbol run `dijkstral explain <symbol> --incoming`, for what a change \
+affects `dijkstral affected <symbol>`, for how two symbols connect `dijkstral path <a> <b>`, for \
+a broad topic `dijkstral query \"<question>\"`; each answer cites file:line. Text search remains \
+right for literal strings the graph cannot know.";
 
 /// `additionalContext` for reading a source file, or globbing for source files.
 pub const READ_NUDGE: &str = "dijkstral: this project has a code graph in dijkstral-out/. \
 Before reading source to find where something lives or how parts connect, ask the graph: \
-`dijkstral explain <symbol>` for a symbol, its definition, callers and callees, \
+`dijkstral explain <symbol>` for a symbol and its connections (`--incoming` for its callers), \
 `dijkstral affected <symbol>` for what depends on it, `dijkstral path <a> <b>` for how two \
 symbols link, `dijkstral query \"<question>\"` for a broad topic. Answers cite file:line, so you \
 can read just those lines. Give any subagent you start the same instruction.";
@@ -40,8 +40,9 @@ with its communities and most connected symbols).
 Ask the graph before grepping or reading source broadly. Pick the command that fits the
 question; each cites `file:line`, so read only those lines next:
 
-- Where a symbol is defined, and what calls it or what it calls: `dijkstral explain <symbol>`
-  (`<--` lines are callers and users, `-->` lines what it uses; `--all` lists every connection).
+- Where a symbol is defined and what it connects to: `dijkstral explain <symbol>`; what calls or
+  uses it: `dijkstral explain <symbol> --incoming` (`--outgoing` for what it calls, `--all` for
+  every connection).
 - What a change to a symbol would affect: `dijkstral affected <symbol>`.
 - How one symbol reaches another: `dijkstral path <from> <to>`.
 - A broad topic or feature with no symbol name yet: `dijkstral query \"<question>\"`; it returns
@@ -62,8 +63,9 @@ Ask the graph before running `rg`, `grep` or `find` over the source, or opening 
 the code's structure. Pick the command that fits the question; each cites `file:line`, so
 read only those lines next:
 
-- Where a symbol is defined, and what calls it or what it calls: `dijkstral explain <symbol>`
-  (`<--` lines are callers and users, `-->` lines what it uses; `--all` lists every connection).
+- Where a symbol is defined and what it connects to: `dijkstral explain <symbol>`; what calls or
+  uses it: `dijkstral explain <symbol> --incoming` (`--outgoing` for what it calls, `--all` for
+  every connection).
 - What a change to a symbol would affect: `dijkstral affected <symbol>`.
 - How one symbol reaches another: `dijkstral path <from> <to>`.
 - A broad topic or feature with no symbol name yet: `dijkstral query \"<question>\"`; it returns
@@ -111,7 +113,8 @@ for it: it uses their model quota.
 Pick the command that fits the question:
 
 - `dijkstral explain <symbol>`: one symbol, where it is defined, and what it connects to; `<--`
-  lines are its callers and users, `-->` lines what it uses (`--all` lists every connection).
+  lines are its callers and users, `-->` lines what it uses. `--incoming` lists only the callers
+  and users, `--outgoing` only what it uses, `--all` every connection.
 - `dijkstral affected <symbol>`: what depends on the symbol, following calls, imports and
   inheritance backwards (`--depth N`, default 2): what a change to it would affect.
 - `dijkstral path <from> <to>`: the shortest chain of relations linking two symbols.
