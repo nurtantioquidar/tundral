@@ -573,6 +573,9 @@ graphify affected "<X>" [--relation R]... [--depth N] [--graph PATH]
   **unique** case-insensitive label substring. No `()` stripping, no `path::symbol`, no prefix
   tier. Otherwise stdout `No unique node match for <X>` with **exit 0** (**Quirk**), whether the
   name is ambiguous or unknown.
+  dijkstral extension: when these find no single node and the name is `path::symbol`, it
+  resolves as `explain` does (§4), so the qualified name `explain`'s ambiguity message suggests
+  works for `affected` too (Graphify prints `No unique node match` for it).
 - **Rule (traversal).** Reverse BFS from the node over **incoming** links whose relation is in the
   set, up to `--depth` layers (default 2). Each node is listed once, with the relation and
   `source_file:source_location` of the link that first reached it, in BFS layer order; within a

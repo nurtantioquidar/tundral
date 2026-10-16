@@ -26,8 +26,17 @@ pub const DEFAULT_RELATIONS: &[&str] = &[
 pub const DEFAULT_DEPTH: i64 = 2;
 
 /// `affected`'s own resolution: id exact, else a unique case-insensitive exact label, else a
-/// unique case-insensitive label substring.
+/// unique case-insensitive label substring. When those find no single node, a `path::symbol`
+/// name resolves as `explain` resolves it (§4), so the qualified name `explain`'s ambiguity
+/// message suggests works here too; Graphify's `affected` rejects it (dijkstral extension, §7).
 pub fn resolve(ix: &Index, name: &str) -> Option<u32> {
+    graphify_resolve(ix, name).or_else(|| match crate::resolve::resolve(ix, name) {
+        crate::resolve::Resolved::Found(i) if name.contains("::") => Some(i),
+        _ => None,
+    })
+}
+
+fn graphify_resolve(ix: &Index, name: &str) -> Option<u32> {
     if let Some(i) = ix.by_id(name) {
         return Some(i);
     }

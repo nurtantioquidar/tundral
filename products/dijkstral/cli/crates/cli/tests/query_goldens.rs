@@ -118,3 +118,29 @@ fn query_goldens() {
         failures.join("\n")
     );
 }
+
+/// dijkstral extension (`docs/graphify-query.md` §7): `affected` takes the `path::symbol` name
+/// `explain` suggests for an ambiguous one; the bare ambiguous name keeps Graphify's message.
+#[test]
+fn affected_accepts_path_qualified_names() {
+    let graph = fixtures().join("python.graphify.json");
+    let run = |name: &str| {
+        let out = std::process::Command::new(env!("CARGO_BIN_EXE_dijkstral"))
+            .args(["affected", name, "--graph"])
+            .arg(&graph)
+            .output()
+            .unwrap();
+        assert!(out.status.success());
+        String::from_utf8(out.stdout).unwrap()
+    };
+    assert_eq!(run("helper"), "No unique node match for helper\n");
+    let qualified = run("pkg/util.py::helper");
+    assert!(
+        qualified.starts_with("Affected nodes for helper()\n"),
+        "{qualified}"
+    );
+    assert!(
+        qualified.contains("- slugify() [calls] pkg/util.py:L15\n"),
+        "{qualified}"
+    );
+}
