@@ -1,0 +1,4852 @@
+{
+ "repo": "ripgrep",
+ "commit": "e89fff89ac9af12e8d4ce9d5fd07beb408ca730f",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [
+  "$DIJKSTRAL_BENCH_HOME/scip/ripgrep/parts/rust.scip"
+ ],
+ "indexers": [
+  {
+   "part": "rust",
+   "name": "rust-analyzer",
+   "version": "0.3.3065-standalone (03fcb77246 2026-09-27)"
+  }
+ ],
+ "oracle_commit": "e89fff89ac9af12e8d4ce9d5fd07beb408ca730f",
+ "questions": {
+  "ripgrep-k01": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "crates/core/flags/hiargs.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/core/search.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "is_explicit",
+     "type": "symbol",
+     "in": [
+      "crates/core/search.rs",
+      "crates/core/haystack.rs"
+     ]
+    },
+    {
+     "fact": "set_binary_detection",
+     "type": "symbol",
+     "in": [
+      "crates/core/search.rs",
+      "crates/searcher/src/searcher/mod.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo ripgrep 15.2.0 haystack/impl#[Haystack]is_explicit().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 haystack/impl#[Haystack]is_explicit().",
+       "file": "crates/core/haystack.rs",
+       "line": 131
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/haystack.rs": [
+       56
+      ],
+      "crates/core/search.rs": [
+       249
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/haystack.rs",
+       "line": 49,
+       "chain": "build",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 haystack/impl#[HaystackBuilder]build().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/core/search.rs",
+       "line": 245,
+       "chain": "search",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/impl#[`SearchWorker<W>`]search().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/core/haystack.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "set_binary_detection",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]set_binary_detection().",
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 798
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/search.rs": [
+       257
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/search.rs",
+       "line": 245,
+       "chain": "search",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/impl#[`SearchWorker<W>`]search().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/searcher/src/searcher/mod.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/flags/hiargs.rs",
+     "lines": "1150-1176",
+     "note": "BinaryDetection::from_low_args: implicit quit(0), explicit convert(0)"
+    },
+    {
+     "file": "crates/core/search.rs",
+     "lines": "245-268",
+     "note": "SearchWorker::search picks explicit/implicit"
+    }
+   ]
+  },
+  "ripgrep-k02": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "crates/ignore/src/dir.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "matched_ignore",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/dir.rs"
+     ]
+    },
+    {
+     "fact": "should_skip_entry",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/walk.rs"
+     ]
+    },
+    {
+     "fact": "matched_dir_entry",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/dir.rs",
+      "crates/ignore/src/walk.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "matched_ignore",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ignore 0.4.29 dir/impl#[Ignore]matched_ignore().",
+       "file": "crates/ignore/src/dir.rs",
+       "line": 548
+      }
+     ],
+     "reference_occurrences": {
+      "crates/ignore/src/dir.rs": [
+       527
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/ignore/src/dir.rs",
+       "line": 500,
+       "chain": "matched",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 dir/impl#[Ignore]matched().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/ignore/src/dir.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "matched_dir_entry",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ignore 0.4.29 dir/impl#[Ignore]matched_dir_entry().",
+       "file": "crates/ignore/src/dir.rs",
+       "line": 485
+      }
+     ],
+     "reference_occurrences": {
+      "crates/ignore/src/walk.rs": [
+       2009
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/ignore/src/walk.rs",
+       "line": 2008,
+       "chain": "should_skip_entry",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 walk/should_skip_entry().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/ignore/src/dir.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "should_skip_entry",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ignore 0.4.29 walk/should_skip_entry().",
+       "file": "crates/ignore/src/walk.rs",
+       "line": 2008
+      }
+     ],
+     "reference_occurrences": {
+      "crates/ignore/src/walk.rs": [
+       1108,
+       1838
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/ignore/src/walk.rs",
+       "line": 1095,
+       "chain": "skip_entry",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 walk/impl#[Walk]skip_entry().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/walk.rs",
+       "line": 1808,
+       "chain": "generate_work",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 walk/impl#[`Worker<'s>`]generate_work().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/ignore/src/walk.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/ignore/src/dir.rs",
+     "lines": "485-690",
+     "note": "matched_dir_entry, matched (overrides > ignore files > types), matched_ignore precedence"
+    }
+   ]
+  },
+  "ripgrep-k03": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "crates/searcher/src/searcher/mmap.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "MmapChoice",
+     "type": "symbol",
+     "in": [
+      "crates/searcher/src/searcher/mmap.rs",
+      "crates/core/flags/hiargs.rs"
+     ]
+    },
+    {
+     "fact": "crates/core/flags/hiargs.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "search_file_maybe_path",
+     "type": "symbol",
+     "in": [
+      "crates/searcher/src/searcher/mod.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo grep-searcher 0.1.17 searcher/mmap/impl#[MmapChoice]open().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/mmap/impl#[MmapChoice]open().",
+       "file": "crates/searcher/src/searcher/mmap.rs",
+       "line": 65
+      }
+     ],
+     "reference_occurrences": {
+      "crates/searcher/src/searcher/mod.rs": [
+       689
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 678,
+       "chain": "search_file_maybe_path",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file_maybe_path().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/searcher/src/searcher/mmap.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "MmapChoice",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/mmap/MmapChoice#",
+       "file": "crates/searcher/src/searcher/mmap.rs",
+       "line": 13
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/hiargs.rs": [
+       72,
+       232,
+       233
+      ],
+      "crates/searcher/src/lib.rs": [
+       89
+      ],
+      "crates/searcher/src/searcher/mmap.rs": [
+       21,
+       22,
+       23,
+       27,
+       49,
+       50,
+       54,
+       55
+      ],
+      "crates/searcher/src/searcher/mod.rs": [
+       23,
+       170,
+       197,
+       497
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 36,
+       "chain": "HiArgs",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/HiArgs#",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 113,
+       "chain": "from_low_args",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]from_low_args().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mmap.rs",
+       "line": 22,
+       "chain": "default",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/mmap/impl#[MmapChoice][Default]default().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mmap.rs",
+       "line": 49,
+       "chain": "auto",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/mmap/impl#[MmapChoice]auto().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mmap.rs",
+       "line": 54,
+       "chain": "never",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/mmap/impl#[MmapChoice]never().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 151,
+       "chain": "Config",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/Config#",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 188,
+       "chain": "default",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Config][Default]default().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 495,
+       "chain": "memory_map",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[SearcherBuilder]memory_map().",
+       "families": [
+        "references"
+       ]
+      }
+     ],
+     "def_file": "crates/searcher/src/searcher/mmap.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/flags/hiargs.rs",
+     "lines": "222-245",
+     "note": "mmap_choice: auto only for <= 10 file paths"
+    },
+    {
+     "file": "crates/searcher/src/searcher/mmap.rs",
+     "lines": "65-80",
+     "note": "open: None on macOS"
+    },
+    {
+     "file": "crates/searcher/src/searcher/mod.rs",
+     "lines": "678-713",
+     "note": "search_file_maybe_path tries mmap first"
+    }
+   ]
+  },
+  "ripgrep-k04": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "crates/core/flags/hiargs.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "take_hyperlink_config",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/hiargs.rs"
+     ]
+    },
+    {
+     "fact": "wsl_prefix",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/hiargs.rs"
+     ]
+    },
+    {
+     "fact": "HyperlinkEnvironment",
+     "type": "symbol",
+     "in": [
+      "crates/printer/src/hyperlink/mod.rs",
+      "crates/core/flags/hiargs.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "take_hyperlink_config",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/take_hyperlink_config().",
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 1272
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/hiargs.rs": [
+       148
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 113,
+       "chain": "from_low_args",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]from_low_args().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/core/flags/hiargs.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "wsl_prefix",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/wsl_prefix().",
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 1402
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/hiargs.rs": [
+       1281
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 1272,
+       "chain": "take_hyperlink_config",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/take_hyperlink_config().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/core/flags/hiargs.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/flags/hiargs.rs",
+     "lines": "1272-1290",
+     "note": "take_hyperlink_config"
+    },
+    {
+     "file": "crates/core/flags/hiargs.rs",
+     "lines": "1325-1420",
+     "note": "hostname and wsl_prefix"
+    }
+   ]
+  },
+  "ripgrep-k05": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "crates/ignore/src/default_types.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "DEFAULT_TYPES",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/default_types.rs",
+      "crates/ignore/src/types.rs"
+     ]
+    },
+    {
+     "fact": "add_defaults",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/types.rs",
+      "crates/core/flags/hiargs.rs"
+     ]
+    },
+    {
+     "fact": "crates/core/flags/hiargs.rs",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "DEFAULT_TYPES",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ignore 0.4.29 default_types/DEFAULT_TYPES.",
+       "file": "crates/ignore/src/default_types.rs",
+       "line": 12
+      }
+     ],
+     "reference_occurrences": {
+      "crates/ignore/src/default_types.rs": [
+       350,
+       354,
+       371
+      ],
+      "crates/ignore/src/types.rs": [
+       94,
+       484
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/ignore/src/default_types.rs",
+       "line": 353,
+       "chain": "default_types_are_sorted",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 default_types/tests/default_types_are_sorted().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/default_types.rs",
+       "line": 370,
+       "chain": "default_types_aliases_are_sorted",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 default_types/tests/default_types_aliases_are_sorted().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/types.rs",
+       "line": 482,
+       "chain": "add_defaults",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 types/impl#[TypesBuilder]add_defaults().",
+       "families": [
+        "mentions"
+       ]
+      }
+     ],
+     "def_file": "crates/ignore/src/default_types.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "rust-analyzer cargo ignore 0.4.29 types/impl#[TypesBuilder]add_defaults().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ignore 0.4.29 types/impl#[TypesBuilder]add_defaults().",
+       "file": "crates/ignore/src/types.rs",
+       "line": 482
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/hiargs.rs": [
+       1188
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 1186,
+       "chain": "types",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/types().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/ignore/src/types.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/flags/hiargs.rs",
+     "lines": "1186-1208",
+     "note": "types(): add_defaults then type changes"
+    }
+   ]
+  },
+  "ripgrep-k06": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "crates/ignore/src/dir.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/core/search.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "should_preprocess",
+     "type": "symbol",
+     "in": [
+      "crates/core/search.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo ignore 0.4.29 overrides/impl#[Override]matched().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/impl#[Override]matched().",
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 97
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/search.rs": [
+       291
+      ],
+      "crates/ignore/src/dir.rs": [
+       519
+      ],
+      "crates/ignore/src/overrides.rs": [
+       203,
+       204,
+       205,
+       211,
+       212,
+       213,
+       214,
+       215,
+       216,
+       222,
+       223,
+       224,
+       225,
+       231,
+       232,
+       233,
+       239,
+       240,
+       241,
+       242,
+       243,
+       244,
+       245,
+       246,
+       253,
+       254,
+       255,
+       256,
+       257,
+       258,
+       259,
+       260,
+       266,
+       278,
+       279,
+       280,
+       281,
+       288,
+       289,
+       290,
+       291
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/search.rs",
+       "line": 284,
+       "chain": "should_preprocess",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/impl#[`SearchWorker<W>`]should_preprocess().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/dir.rs",
+       "line": 500,
+       "chain": "matched",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 dir/impl#[Ignore]matched().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 201,
+       "chain": "empty",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/empty().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 209,
+       "chain": "simple",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/simple().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 220,
+       "chain": "only_ignores",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/only_ignores().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 229,
+       "chain": "precedence",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/precedence().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 237,
+       "chain": "gitignore",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/gitignore().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 250,
+       "chain": "allow_directories",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/allow_directories().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 264,
+       "chain": "absolute_path",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/absolute_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 270,
+       "chain": "case_insensitive",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/case_insensitive().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 285,
+       "chain": "default_case_sensitive",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/tests/default_case_sensitive().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/ignore/src/overrides.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/search.rs",
+     "lines": "284-294",
+     "note": "should_preprocess uses preprocessor_globs.matched"
+    }
+   ]
+  },
+  "ripgrep-k07": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "matched_ignore",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/dir.rs"
+     ]
+    },
+    {
+     "fact": "crates/ignore/src/dir.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/ignore/src/overrides.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "Override",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/overrides.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo ignore 0.4.29 gitignore/impl#[Gitignore]matched().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ignore 0.4.29 gitignore/impl#[Gitignore]matched().",
+       "file": "crates/ignore/src/gitignore.rs",
+       "line": 202
+      }
+     ],
+     "reference_occurrences": {
+      "crates/ignore/src/dir.rs": [
+       569,
+       576,
+       583,
+       590,
+       636,
+       643,
+       650,
+       657,
+       668,
+       673
+      ],
+      "crates/ignore/src/gitignore.rs": [
+       873,
+       874,
+       875,
+       876
+      ],
+      "crates/ignore/src/overrides.rs": [
+       105
+      ],
+      "crates/ignore/tests/gitignore_skip_bom.rs": [
+       16
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/ignore/src/dir.rs",
+       "line": 548,
+       "chain": "matched_ignore",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 dir/impl#[Ignore]matched_ignore().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/gitignore.rs",
+       "line": 865,
+       "chain": "case_insensitive",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 gitignore/tests/case_insensitive().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/src/overrides.rs",
+       "line": 97,
+       "chain": "matched",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 overrides/impl#[Override]matched().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/ignore/tests/gitignore_skip_bom.rs",
+       "line": 10,
+       "chain": "gitignore_skip_bom",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 gitignore_skip_bom().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/ignore/src/gitignore.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/ignore/src/overrides.rs",
+     "lines": "97-110",
+     "note": "Override::matched delegates to its Gitignore"
+    }
+   ]
+  },
+  "ripgrep-k08": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "crates/printer/src/standard.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/printer/src/json.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/printer/src/summary.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "record_matches",
+     "type": "symbol",
+     "in": [
+      "crates/printer/src/standard.rs",
+      "crates/printer/src/json.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "find_iter_at_in_context",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 util/find_iter_at_in_context().",
+       "file": "crates/printer/src/util.rs",
+       "line": 473
+      }
+     ],
+     "reference_occurrences": {
+      "crates/printer/src/json.rs": [
+       16,
+       661
+      ],
+      "crates/printer/src/standard.rs": [
+       26,
+       716
+      ],
+      "crates/printer/src/summary.rs": [
+       20,
+       649
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 647,
+       "chain": "record_matches",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/impl#[`JSONSink<'p, 's, M, W>`]record_matches().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 698,
+       "chain": "record_matches",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/impl#[`StandardSink<'p, 's, M, W>`]record_matches().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 633,
+       "chain": "matched",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/impl#[`SummarySink<'p, 's, M, W>`][Sink]matched().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/printer/src/util.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": []
+  },
+  "ripgrep-k09": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "crates/core/search.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/core/flags/hiargs.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "default_decompression_commands",
+     "type": "symbol",
+     "in": [
+      "crates/cli/src/decompress.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "resolve_binary",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-cli 0.1.12 decompress/resolve_binary().",
+       "file": "crates/cli/src/decompress.rs",
+       "line": 420
+      }
+     ],
+     "reference_occurrences": {
+      "crates/cli/src/decompress.rs": [
+       501
+      ],
+      "crates/cli/src/lib.rs": [
+       137
+      ],
+      "crates/core/flags/hiargs.rs": [
+       1327
+      ],
+      "crates/core/search.rs": [
+       97
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/cli/src/decompress.rs",
+       "line": 500,
+       "chain": "add<default_decompression_commands",
+       "symbol": "rust-analyzer cargo grep-cli 0.1.12 decompress/add().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 1325,
+       "chain": "hostname",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/hostname().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/core/search.rs",
+       "line": 92,
+       "chain": "preprocessor",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/impl#[SearchWorkerBuilder]preprocessor().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/cli/src/decompress.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/search.rs",
+     "lines": "92-106",
+     "note": "preprocessor -> resolve_binary"
+    }
+   ]
+  },
+  "ripgrep-k10": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "search_file_maybe_path",
+     "type": "symbol",
+     "in": [
+      "crates/searcher/src/searcher/mod.rs"
+     ]
+    },
+    {
+     "fact": "search_slice",
+     "type": "symbol",
+     "in": [
+      "crates/searcher/src/searcher/mod.rs"
+     ]
+    },
+    {
+     "fact": "crates/core/search.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/searcher/src/searcher/mod.rs",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_reader().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_reader().",
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 727
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/search.rs": [
+       426,
+       434,
+       442
+      ],
+      "crates/printer/src/json.rs": [
+       940,
+       956,
+       984,
+       1001,
+       1015,
+       1031,
+       1047
+      ],
+      "crates/printer/src/standard.rs": [
+       1788,
+       1798,
+       1813,
+       1824,
+       1841,
+       1868,
+       1873,
+       1878,
+       1904,
+       1936,
+       1947,
+       1987,
+       1998,
+       2032,
+       2059,
+       2087,
+       2111,
+       2134,
+       2158,
+       2181,
+       2192,
+       2217,
+       2228,
+       2256,
+       2281,
+       2305,
+       2327,
+       2350,
+       2376,
+       2400,
+       2427,
+       2452,
+       2479,
+       2504,
+       2529,
+       2555,
+       2581,
+       2608,
+       2633,
+       2662,
+       2686,
+       2710,
+       2731,
+       2756,
+       2780,
+       2811,
+       2833,
+       2860,
+       2885,
+       2913,
+       2937,
+       2961,
+       2986,
+       3011,
+       3039,
+       3067,
+       3095,
+       3123,
+       3156,
+       3190,
+       3219,
+       3250,
+       3277,
+       3305,
+       3333,
+       3362,
+       3392,
+       3421,
+       3449,
+       3474,
+       3502,
+       3532,
+       3558,
+       3580,
+       3602,
+       3629,
+       3657,
+       3682,
+       3709,
+       3734,
+       3760,
+       3787,
+       3817,
+       3848,
+       3880,
+       3909,
+       3939,
+       3963,
+       3977
+      ],
+      "crates/printer/src/summary.rs": [
+       818,
+       832,
+       848,
+       864,
+       883,
+       903,
+       923,
+       943,
+       963,
+       983,
+       1003,
+       1018,
+       1037,
+       1056,
+       1075,
+       1094,
+       1115,
+       1138
+      ],
+      "crates/searcher/examples/search-stdin.rs": [
+       25
+      ],
+      "crates/searcher/src/searcher/glue.rs": [
+       674,
+       695,
+       1512
+      ],
+      "crates/searcher/src/searcher/mod.rs": [
+       712,
+       786
+      ],
+      "crates/searcher/src/testutil.rs": [
+       696
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/search.rs",
+       "line": 416,
+       "chain": "search_reader",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/search_reader().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 922,
+       "chain": "binary_detection",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/tests/binary_detection().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 950,
+       "chain": "max_matches",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/tests/max_matches().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 964,
+       "chain": "max_matches_after_context",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/tests/max_matches_after_context().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 996,
+       "chain": "no_match",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/tests/no_match().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 1009,
+       "chain": "always_begin_end_no_match",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/tests/always_begin_end_no_match().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 1024,
+       "chain": "missing_crlf",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/tests/missing_crlf().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 1781,
+       "chain": "reports_match",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/reports_match().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 1804,
+       "chain": "reports_binary",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/reports_binary().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 1830,
+       "chain": "reports_stats",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/reports_stats().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 1857,
+       "chain": "reports_stats_multiple",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/reports_stats_multiple().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 1894,
+       "chain": "context_break",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/context_break().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 1924,
+       "chain": "context_break_multiple_no_heading",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/context_break_multiple_no_heading().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 1974,
+       "chain": "context_break_multiple_heading",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/context_break_multiple_heading().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2025,
+       "chain": "path",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2048,
+       "chain": "separator_field",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/separator_field().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2079,
+       "chain": "separator_path",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/separator_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2103,
+       "chain": "path_terminator",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/path_terminator().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2127,
+       "chain": "heading",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/heading().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2151,
+       "chain": "no_heading",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/no_heading().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2174,
+       "chain": "no_heading_multiple",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/no_heading_multiple().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2210,
+       "chain": "heading_multiple",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/heading_multiple().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2248,
+       "chain": "trim_ascii",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/trim_ascii().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2271,
+       "chain": "trim_ascii_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/trim_ascii_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2296,
+       "chain": "trim_ascii_with_line_term",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/trim_ascii_with_line_term().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2321,
+       "chain": "line_number",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/line_number().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2343,
+       "chain": "line_number_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/line_number_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2369,
+       "chain": "column_number",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/column_number().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2392,
+       "chain": "column_number_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/column_number_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2419,
+       "chain": "byte_offset",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/byte_offset().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2443,
+       "chain": "byte_offset_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/byte_offset_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2471,
+       "chain": "max_columns",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_columns().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2495,
+       "chain": "max_columns_preview",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_columns_preview().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2520,
+       "chain": "max_columns_with_count",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_columns_with_count().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2545,
+       "chain": "max_columns_with_count_preview_no_match",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_columns_with_count_preview_no_match().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2571,
+       "chain": "max_columns_with_count_preview_one_match",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_columns_with_count_preview_one_match().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2597,
+       "chain": "max_columns_with_count_preview_two_matches",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_columns_with_count_preview_two_matches().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2624,
+       "chain": "max_columns_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_columns_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2649,
+       "chain": "max_columns_multi_line_preview",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_columns_multi_line_preview().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2679,
+       "chain": "max_matches",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_matches().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2701,
+       "chain": "max_matches_context",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_matches_context().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2800,
+       "chain": "max_matches_context_invert",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_matches_context_invert().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2905,
+       "chain": "max_matches_multi_line1",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_matches_multi_line1().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2928,
+       "chain": "max_matches_multi_line2",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_matches_multi_line2().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2953,
+       "chain": "max_matches_multi_line3",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_matches_multi_line3().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 2977,
+       "chain": "max_matches_multi_line4",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/max_matches_multi_line4().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3002,
+       "chain": "only_matching",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3028,
+       "chain": "only_matching_multi_line1",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching_multi_line1().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3056,
+       "chain": "only_matching_multi_line2",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching_multi_line2().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3085,
+       "chain": "only_matching_max_columns",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching_max_columns().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3112,
+       "chain": "only_matching_max_columns_preview",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching_max_columns_preview().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3140,
+       "chain": "only_matching_max_columns_multi_line1",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching_max_columns_multi_line1().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3173,
+       "chain": "only_matching_max_columns_preview_multi_line1",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching_max_columns_preview_multi_line1().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3207,
+       "chain": "only_matching_max_columns_multi_line2",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching_max_columns_multi_line2().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3237,
+       "chain": "only_matching_max_columns_preview_multi_line2",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/only_matching_max_columns_preview_multi_line2().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3268,
+       "chain": "per_match",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/per_match().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3294,
+       "chain": "per_match_multi_line1",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/per_match_multi_line1().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3322,
+       "chain": "per_match_multi_line2",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/per_match_multi_line2().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3351,
+       "chain": "per_match_multi_line3",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/per_match_multi_line3().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3380,
+       "chain": "per_match_multi_line1_only_first_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/per_match_multi_line1_only_first_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3409,
+       "chain": "per_match_multi_line2_only_first_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/per_match_multi_line2_only_first_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3437,
+       "chain": "per_match_multi_line3_only_first_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/per_match_multi_line3_only_first_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3465,
+       "chain": "replacement_passthru",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_passthru().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3494,
+       "chain": "replacement",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3523,
+       "chain": "replacement_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3545,
+       "chain": "replacement_multi_line_diff_line_term",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_multi_line_diff_line_term().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3571,
+       "chain": "replacement_multi_line_combine_lines",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_multi_line_combine_lines().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3593,
+       "chain": "replacement_max_columns",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_max_columns().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3619,
+       "chain": "replacement_max_columns_preview1",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_max_columns_preview1().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3646,
+       "chain": "replacement_max_columns_preview2",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_max_columns_preview2().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3673,
+       "chain": "replacement_only_matching",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_only_matching().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3700,
+       "chain": "replacement_per_match",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/replacement_per_match().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3727,
+       "chain": "invert",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/invert().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3752,
+       "chain": "invert_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/invert_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3778,
+       "chain": "invert_context",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/invert_context().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3807,
+       "chain": "invert_context_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/invert_context_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3837,
+       "chain": "invert_context_only_matching",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/invert_context_only_matching().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3868,
+       "chain": "invert_context_only_matching_multi_line",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/invert_context_only_matching_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3900,
+       "chain": "regression_search_empty_with_crlf",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/regression_search_empty_with_crlf().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3917,
+       "chain": "regression_after_context_with_match",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/regression_after_context_with_match().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 3952,
+       "chain": "regression_crlf_preserve",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/tests/regression_crlf_preserve().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 813,
+       "chain": "path_with_match_error",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/path_with_match_error().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 827,
+       "chain": "path_without_match_error",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/path_without_match_error().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 841,
+       "chain": "count_no_path",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_no_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 856,
+       "chain": "count_no_path_even_with_path",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_no_path_even_with_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 876,
+       "chain": "count_path",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 895,
+       "chain": "count_path_with_zero",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_path_with_zero().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 915,
+       "chain": "count_path_without_zero",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_path_without_zero().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 935,
+       "chain": "count_path_field_separator",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_path_field_separator().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 955,
+       "chain": "count_path_terminator",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_path_terminator().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 975,
+       "chain": "count_path_separator",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_path_separator().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 995,
+       "chain": "count_max_matches",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_max_matches().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 1011,
+       "chain": "count_matches",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/count_matches().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 1030,
+       "chain": "path_with_match_found",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/path_with_match_found().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 1049,
+       "chain": "path_with_match_not_found",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/path_with_match_not_found().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 1068,
+       "chain": "path_without_match_found",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/path_without_match_found().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 1087,
+       "chain": "path_without_match_not_found",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/path_without_match_not_found().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 1106,
+       "chain": "quiet",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/quiet().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 1128,
+       "chain": "quiet_with_stats",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/tests/quiet_with_stats().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/examples/search-stdin.rs",
+       "line": 17,
+       "chain": "example",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 example().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/glue.rs",
+       "line": 659,
+       "chain": "big_error_one_line",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/glue/tests/big_error_one_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/glue.rs",
+       "line": 679,
+       "chain": "big_error_multi_line",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/glue/tests/big_error_multi_line().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/glue.rs",
+       "line": 1495,
+       "chain": "scratch",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/glue/tests/scratch().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 678,
+       "chain": "search_file_maybe_path",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file_maybe_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 769,
+       "chain": "search_slice",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_slice().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/testutil.rs",
+       "line": 693,
+       "chain": "search_reader",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 testutil/impl#[TesterConfig]search_reader().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/searcher/src/searcher/mod.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/search.rs",
+     "lines": "416-449",
+     "note": "search_reader helper calls searcher.search_reader"
+    }
+   ]
+  },
+  "ripgrep-k11": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "StandardSink",
+     "type": "symbol",
+     "in": [
+      "crates/printer/src/standard.rs"
+     ]
+    },
+    {
+     "fact": "SummarySink",
+     "type": "symbol",
+     "in": [
+      "crates/printer/src/summary.rs"
+     ]
+    },
+    {
+     "fact": "JSONSink",
+     "type": "symbol",
+     "in": [
+      "crates/printer/src/json.rs"
+     ]
+    },
+    {
+     "fact": "crates/searcher/src/sink.rs",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "Sink",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 sink/Sink#",
+       "file": "crates/searcher/src/sink.rs",
+       "line": 102
+      }
+     ],
+     "reference_occurrences": {
+      "crates/printer/src/json.rs": [
+       10,
+       719
+      ],
+      "crates/printer/src/standard.rs": [
+       14,
+       763
+      ],
+      "crates/printer/src/summary.rs": [
+       11,
+       630
+      ],
+      "crates/searcher/src/lib.rs": [
+       93
+      ],
+      "crates/searcher/src/searcher/core.rs": [
+       10,
+       39
+      ],
+      "crates/searcher/src/searcher/glue.rs": [
+       7,
+       21,
+       102,
+       149
+      ],
+      "crates/searcher/src/searcher/mod.rs": [
+       20,
+       652,
+       673,
+       687,
+       736,
+       777,
+       940,
+       975
+      ],
+      "crates/searcher/src/sink.rs": [
+       225,
+       278,
+       522,
+       544,
+       592,
+       642
+      ],
+      "crates/searcher/src/testutil.rs": [
+       13,
+       128
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 596,
+       "chain": "JSONSink",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/JSONSink#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 639,
+       "chain": "StandardSink",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/StandardSink#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 484,
+       "chain": "SummarySink",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/SummarySink#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 643,
+       "chain": "search_path",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_path().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 665,
+       "chain": "search_file",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 678,
+       "chain": "search_file_maybe_path",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file_maybe_path().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 727,
+       "chain": "search_reader",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_reader().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 769,
+       "chain": "search_slice",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_slice().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 940,
+       "chain": "fill_multi_line_buffer_from_file",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]fill_multi_line_buffer_from_file().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 975,
+       "chain": "fill_multi_line_buffer_from_reader",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]fill_multi_line_buffer_from_reader().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/sink.rs",
+       "line": 540,
+       "chain": "UTF8",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 sink/sinks/UTF8#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/sink.rs",
+       "line": 588,
+       "chain": "Lossy",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 sink/sinks/Lossy#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/sink.rs",
+       "line": 638,
+       "chain": "Bytes",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 sink/sinks/Bytes#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/testutil.rs",
+       "line": 113,
+       "chain": "KitchenSink",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 testutil/KitchenSink#",
+       "families": [
+        "inherits"
+       ]
+      }
+     ],
+     "def_file": "crates/searcher/src/sink.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "rust-analyzer cargo grep-searcher 0.1.17 sink/Sink#matched().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 sink/Sink#matched().",
+       "file": "crates/searcher/src/sink.rs",
+       "line": 124
+      }
+     ],
+     "reference_occurrences": {
+      "crates/searcher/src/searcher/core.rs": [
+       536
+      ],
+      "crates/searcher/src/sink.rs": [
+       234,
+       287
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/searcher/src/searcher/core.rs",
+       "line": 522,
+       "chain": "sink_matched",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/core/impl#[`Core<'s, M, S>`]sink_matched().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/sink.rs",
+       "line": 229,
+       "chain": "matched",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 sink/impl#[`&'a mut S`][Sink]matched().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/sink.rs",
+       "line": 282,
+       "chain": "matched",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 sink/impl#[`Box<S>`][Sink]matched().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/searcher/src/sink.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/searcher/src/sink.rs",
+     "lines": "540-660",
+     "note": "impl Sink for UTF8/Lossy/Bytes"
+    }
+   ]
+  },
+  "ripgrep-k12": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "crates/regex/src/matcher.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/pcre2/src/matcher.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "RegexMatcher",
+     "type": "symbol",
+     "in": [
+      "crates/regex/src/matcher.rs",
+      "crates/pcre2/src/matcher.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "Matcher",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-matcher 0.1.9 Matcher#",
+       "file": "crates/matcher/src/lib.rs",
+       "line": 546
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/search.rs": [
+       12,
+       380,
+       416
+      ],
+      "crates/matcher/src/lib.rs": [
+       1133
+      ],
+      "crates/matcher/tests/test_matcher.rs": [
+       2
+      ],
+      "crates/matcher/tests/util.rs": [
+       4,
+       28,
+       69
+      ],
+      "crates/pcre2/src/matcher.rs": [
+       4,
+       315
+      ],
+      "crates/printer/src/json.rs": [
+       9,
+       504,
+       531,
+       596,
+       608,
+       719
+      ],
+      "crates/printer/src/standard.rs": [
+       12,
+       515,
+       547,
+       639,
+       652,
+       763,
+       876,
+       884,
+       1594,
+       1611
+      ],
+      "crates/printer/src/summary.rs": [
+       10,
+       390,
+       423,
+       484,
+       495,
+       630
+      ],
+      "crates/printer/src/util.rs": [
+       5,
+       14,
+       18,
+       27,
+       37,
+       481,
+       567
+      ],
+      "crates/regex/src/matcher.rs": [
+       3,
+       409
+      ],
+      "crates/searcher/src/searcher/core.rs": [
+       3,
+       39
+      ],
+      "crates/searcher/src/searcher/glue.rs": [
+       1,
+       19,
+       102,
+       149
+      ],
+      "crates/searcher/src/searcher/mod.rs": [
+       11,
+       651,
+       672,
+       686,
+       734,
+       776,
+       805,
+       896
+      ],
+      "crates/searcher/src/testutil.rs": [
+       6,
+       63
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/search.rs",
+       "line": 380,
+       "chain": "search_path",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/search_path().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/search.rs",
+       "line": 416,
+       "chain": "search_reader",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/search_reader().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/matcher/tests/util.rs",
+       "line": 9,
+       "chain": "RegexMatcher",
+       "symbol": "rust-analyzer cargo grep-matcher 0.1.9 util/RegexMatcher#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/matcher/tests/util.rs",
+       "line": 67,
+       "chain": "RegexMatcherNoCaps",
+       "symbol": "rust-analyzer cargo grep-matcher 0.1.9 util/RegexMatcherNoCaps#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/pcre2/src/matcher.rs",
+       "line": 302,
+       "chain": "RegexMatcher",
+       "symbol": "rust-analyzer cargo grep-pcre2 0.1.10 matcher/RegexMatcher#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 504,
+       "chain": "sink",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/impl#[`JSON<W>`]sink().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/printer/src/json.rs",
+       "line": 525,
+       "chain": "sink_with_path",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 json/impl#[`JSON<W>`]sink_with_path().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 515,
+       "chain": "sink",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/impl#[`Standard<W>`]sink().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/printer/src/standard.rs",
+       "line": 541,
+       "chain": "sink_with_path",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/impl#[`Standard<W>`]sink_with_path().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 390,
+       "chain": "sink",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/impl#[`Summary<W>`]sink().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/printer/src/summary.rs",
+       "line": 417,
+       "chain": "sink_with_path",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 summary/impl#[`Summary<W>`]sink_with_path().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/printer/src/util.rs",
+       "line": 473,
+       "chain": "find_iter_at_in_context",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 util/find_iter_at_in_context().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/printer/src/util.rs",
+       "line": 557,
+       "chain": "replace_with_captures_in_context",
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 util/replace_with_captures_in_context().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/regex/src/matcher.rs",
+       "line": 367,
+       "chain": "RegexMatcher",
+       "symbol": "rust-analyzer cargo grep-regex 0.1.14 matcher/RegexMatcher#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 643,
+       "chain": "search_path",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_path().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 665,
+       "chain": "search_file",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 678,
+       "chain": "search_file_maybe_path",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file_maybe_path().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 727,
+       "chain": "search_reader",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_reader().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 769,
+       "chain": "search_slice",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_slice().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 805,
+       "chain": "check_config",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]check_config().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 896,
+       "chain": "multi_line_with_matcher",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]multi_line_with_matcher().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/testutil.rs",
+       "line": 24,
+       "chain": "RegexMatcher",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 testutil/RegexMatcher#",
+       "families": [
+        "inherits"
+       ]
+      }
+     ],
+     "def_file": "crates/matcher/src/lib.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/regex/src/matcher.rs",
+     "lines": "409-412",
+     "note": "impl Matcher for RegexMatcher"
+    },
+    {
+     "file": "crates/pcre2/src/matcher.rs",
+     "lines": "315-318",
+     "note": "impl Matcher for RegexMatcher"
+    }
+   ]
+  },
+  "ripgrep-k13": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "crates/core/flags/defs.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/core/flags/parse.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "LowArgs",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/parse.rs",
+      "crates/core/flags/defs.rs",
+      "crates/core/flags/lowargs.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo ripgrep 15.2.0 flags/Flag#update().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/Flag#update().",
+       "file": "crates/core/flags/mod.rs",
+       "line": 177
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/parse.rs": [
+       286
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/parse.rs",
+       "line": 221,
+       "chain": "parse",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/parse/impl#[Parser]parse().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/core/flags/mod.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "Flag",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/Flag#",
+       "file": "crates/core/flags/mod.rs",
+       "line": 71
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/defs.rs": [
+       25,
+       44,
+       158,
+       244,
+       343,
+       429,
+       520,
+       580,
+       640,
+       693,
+       816,
+       947,
+       1000,
+       1140,
+       1249,
+       1324,
+       1384,
+       1458,
+       1508,
+       1584,
+       1693,
+       1785,
+       1893,
+       1989,
+       2133,
+       2176,
+       2232,
+       2287,
+       2343,
+       2401,
+       2506,
+       2596,
+       2653,
+       2712,
+       2772,
+       2839,
+       2900,
+       3093,
+       3150,
+       3211,
+       3274,
+       3332,
+       3380,
+       3438,
+       3539,
+       3603,
+       3656,
+       3712,
+       3763,
+       3821,
+       3876,
+       3940,
+       4008,
+       4064,
+       4128,
+       4216,
+       4278,
+       4323,
+       4395,
+       4444,
+       4491,
+       4537,
+       4585,
+       4634,
+       4683,
+       4739,
+       4786,
+       4834,
+       4888,
+       4967,
+       5016,
+       5081,
+       5141,
+       5188,
+       5277,
+       5334,
+       5413,
+       5455,
+       5573,
+       5642,
+       5699,
+       5766,
+       5846,
+       5975,
+       6064,
+       6143,
+       6215,
+       6303,
+       6404,
+       6518,
+       6574,
+       6633,
+       6713,
+       6773,
+       6818,
+       6864,
+       6940,
+       7027,
+       7089,
+       7169,
+       7212,
+       7296,
+       7352,
+       7408,
+       7460,
+       7519
+      ],
+      "crates/core/flags/doc/help.rs": [
+       11,
+       51,
+       131
+      ],
+      "crates/core/flags/doc/man.rs": [
+       7,
+       46
+      ],
+      "crates/core/flags/parse.rs": [
+       10,
+       148,
+       330
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 156,
+       "chain": "AfterContext",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/AfterContext#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 242,
+       "chain": "AutoHybridRegex",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/AutoHybridRegex#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 341,
+       "chain": "BeforeContext",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/BeforeContext#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 427,
+       "chain": "Binary",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Binary#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 518,
+       "chain": "BlockBuffered",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/BlockBuffered#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 578,
+       "chain": "ByteOffset",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/ByteOffset#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 638,
+       "chain": "CaseSensitive",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/CaseSensitive#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 691,
+       "chain": "Color",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Color#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 814,
+       "chain": "Colors",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Colors#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 945,
+       "chain": "Column",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Column#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 998,
+       "chain": "Context",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Context#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1138,
+       "chain": "ContextSeparator",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/ContextSeparator#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1247,
+       "chain": "Count",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Count#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1322,
+       "chain": "CountMatches",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/CountMatches#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1382,
+       "chain": "Crlf",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Crlf#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1456,
+       "chain": "Debug",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Debug#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1506,
+       "chain": "DfaSizeLimit",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/DfaSizeLimit#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1582,
+       "chain": "Encoding",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Encoding#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1691,
+       "chain": "Engine",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Engine#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1783,
+       "chain": "FieldContextSeparator",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/FieldContextSeparator#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1891,
+       "chain": "FieldMatchSeparator",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/FieldMatchSeparator#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 1987,
+       "chain": "File",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/File#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2131,
+       "chain": "Files",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Files#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2174,
+       "chain": "FilesWithMatches",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/FilesWithMatches#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2230,
+       "chain": "FilesWithoutMatch",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/FilesWithoutMatch#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2285,
+       "chain": "FixedStrings",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/FixedStrings#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2341,
+       "chain": "Follow",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Follow#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2399,
+       "chain": "Generate",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Generate#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2504,
+       "chain": "Glob",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Glob#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2594,
+       "chain": "GlobCaseInsensitive",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/GlobCaseInsensitive#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2651,
+       "chain": "Heading",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Heading#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2710,
+       "chain": "Help",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Help#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2770,
+       "chain": "Hidden",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Hidden#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2837,
+       "chain": "HostnameBin",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/HostnameBin#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 2898,
+       "chain": "HyperlinkFormat",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/HyperlinkFormat#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3091,
+       "chain": "IGlob",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/IGlob#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3148,
+       "chain": "IgnoreCase",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/IgnoreCase#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3209,
+       "chain": "IgnoreFile",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/IgnoreFile#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3272,
+       "chain": "IgnoreFileCaseInsensitive",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/IgnoreFileCaseInsensitive#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3330,
+       "chain": "IncludeZero",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/IncludeZero#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3378,
+       "chain": "InvertMatch",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/InvertMatch#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3436,
+       "chain": "JSON",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/JSON#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3537,
+       "chain": "LineBuffered",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/LineBuffered#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3601,
+       "chain": "LineNumber",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/LineNumber#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3654,
+       "chain": "LineNumberNo",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/LineNumberNo#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3710,
+       "chain": "LineRegexp",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/LineRegexp#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3761,
+       "chain": "MaxColumns",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/MaxColumns#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3819,
+       "chain": "MaxColumnsPreview",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/MaxColumnsPreview#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3874,
+       "chain": "MaxCount",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/MaxCount#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 3938,
+       "chain": "MaxDepth",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/MaxDepth#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4006,
+       "chain": "MaxFilesize",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/MaxFilesize#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4062,
+       "chain": "Mmap",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Mmap#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4126,
+       "chain": "Multiline",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Multiline#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4214,
+       "chain": "MultilineDotall",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/MultilineDotall#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4276,
+       "chain": "NoConfig",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoConfig#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4321,
+       "chain": "NoIgnore",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoIgnore#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4393,
+       "chain": "NoIgnoreDot",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoIgnoreDot#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4442,
+       "chain": "NoIgnoreExclude",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoIgnoreExclude#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4489,
+       "chain": "NoIgnoreFiles",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoIgnoreFiles#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4535,
+       "chain": "NoIgnoreGlobal",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoIgnoreGlobal#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4583,
+       "chain": "NoIgnoreMessages",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoIgnoreMessages#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4632,
+       "chain": "NoIgnoreParent",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoIgnoreParent#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4681,
+       "chain": "NoIgnoreVcs",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoIgnoreVcs#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4737,
+       "chain": "NoMessages",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoMessages#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4784,
+       "chain": "NoPcre2Unicode",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoPcre2Unicode#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4832,
+       "chain": "NoRequireGit",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoRequireGit#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4886,
+       "chain": "NoUnicode",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NoUnicode#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 4965,
+       "chain": "Null",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Null#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5014,
+       "chain": "NullData",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/NullData#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5079,
+       "chain": "OneFileSystem",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/OneFileSystem#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5139,
+       "chain": "OnlyMatching",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/OnlyMatching#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5186,
+       "chain": "PathSeparator",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/PathSeparator#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5275,
+       "chain": "Passthru",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Passthru#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5332,
+       "chain": "PCRE2",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/PCRE2#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5411,
+       "chain": "PCRE2Version",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/PCRE2Version#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5453,
+       "chain": "Pre",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Pre#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5571,
+       "chain": "PreGlob",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/PreGlob#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5640,
+       "chain": "Pretty",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Pretty#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5697,
+       "chain": "Quiet",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Quiet#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5764,
+       "chain": "RegexSizeLimit",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/RegexSizeLimit#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5844,
+       "chain": "Regexp",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Regexp#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 5973,
+       "chain": "Replace",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Replace#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6062,
+       "chain": "SearchZip",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/SearchZip#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6141,
+       "chain": "SmartCase",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/SmartCase#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6213,
+       "chain": "SortFiles",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/SortFiles#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6301,
+       "chain": "Sort",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Sort#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6402,
+       "chain": "Sortr",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Sortr#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6516,
+       "chain": "Stats",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Stats#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6572,
+       "chain": "StopOnNonmatch",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/StopOnNonmatch#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6631,
+       "chain": "Text",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Text#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6711,
+       "chain": "Threads",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Threads#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6771,
+       "chain": "Trace",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Trace#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6816,
+       "chain": "Trim",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Trim#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6862,
+       "chain": "Type",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Type#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 6938,
+       "chain": "TypeAdd",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/TypeAdd#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7025,
+       "chain": "TypeClear",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/TypeClear#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7087,
+       "chain": "TypeNot",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/TypeNot#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7167,
+       "chain": "TypeList",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/TypeList#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7210,
+       "chain": "Unrestricted",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Unrestricted#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7294,
+       "chain": "Version",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Version#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7350,
+       "chain": "Vimgrep",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/Vimgrep#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7406,
+       "chain": "WithFilename",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/WithFilename#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7458,
+       "chain": "WithFilenameNo",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/WithFilenameNo#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/defs.rs",
+       "line": 7517,
+       "chain": "WordRegexp",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/defs/WordRegexp#",
+       "families": [
+        "inherits"
+       ]
+      },
+      {
+       "file": "crates/core/flags/doc/help.rs",
+       "line": 51,
+       "chain": "generate_short_flag",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/doc/help/generate_short_flag().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/doc/help.rs",
+       "line": 131,
+       "chain": "generate_long_flag",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/doc/help/generate_long_flag().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/doc/man.rs",
+       "line": 46,
+       "chain": "generate_flag",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/doc/man/generate_flag().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/parse.rs",
+       "line": 148,
+       "chain": "lookup",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/parse/lookup().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/parse.rs",
+       "line": 328,
+       "chain": "FlagInfo",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/parse/FlagInfo#",
+       "families": [
+        "references"
+       ]
+      }
+     ],
+     "def_file": "crates/core/flags/mod.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/flags/parse.rs",
+     "lines": "221-291",
+     "note": "Parser::parse calls flag.update(value, args)"
+    }
+   ]
+  },
+  "ripgrep-k14": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "crates/core/search.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "crates/core/flags/hiargs.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "matcher_rust",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/hiargs.rs"
+     ]
+    },
+    {
+     "fact": "matcher_pcre2",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/hiargs.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "PatternMatcher",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/PatternMatcher#",
+       "file": "crates/core/search.rs",
+       "line": 193
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/hiargs.rs": [
+       23,
+       368,
+       411,
+       447,
+       461,
+       513,
+       696
+      ],
+      "crates/core/search.rs": [
+       65,
+       238,
+       343,
+       367
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 368,
+       "chain": "matcher",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]matcher().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 411,
+       "chain": "matcher_pcre2",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]matcher_pcre2().",
+       "families": [
+        "mentions",
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 461,
+       "chain": "matcher_rust",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]matcher_rust().",
+       "families": [
+        "mentions",
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 694,
+       "chain": "search_worker",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]search_worker().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/search.rs",
+       "line": 63,
+       "chain": "build",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/impl#[SearchWorkerBuilder]build().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/search.rs",
+       "line": 230,
+       "chain": "SearchWorker",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/SearchWorker#",
+       "families": [
+        "references"
+       ]
+      }
+     ],
+     "def_file": "crates/core/search.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/search.rs",
+     "lines": "342-378",
+     "note": "search_path/search_reader match PatternMatcher"
+    },
+    {
+     "file": "crates/core/flags/hiargs.rs",
+     "lines": "368-470",
+     "note": "matcher / matcher_pcre2 / matcher_rust"
+    }
+   ]
+  },
+  "ripgrep-k15": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "crates/ignore",
+     "type": "dir",
+     "in": []
+    },
+    {
+     "fact": "crates/searcher",
+     "type": "dir",
+     "in": []
+    },
+    {
+     "fact": "crates/printer",
+     "type": "dir",
+     "in": []
+    },
+    {
+     "fact": "crates/matcher",
+     "type": "dir",
+     "in": []
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "crates/core/search.rs",
+     "lines": "193-241",
+     "note": "the binary wraps grep::regex / grep::pcre2 matchers, grep::printer printers, grep::searcher::Searcher and grep::cli readers"
+    },
+    {
+     "file": "Cargo.toml",
+     "lines": "1-117",
+     "note": "workspace members"
+    }
+   ]
+  },
+  "ripgrep-k16": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "search_file_maybe_path",
+     "type": "symbol",
+     "in": [
+      "crates/searcher/src/searcher/mod.rs"
+     ]
+    },
+    {
+     "fact": "ReadByLine",
+     "type": "symbol",
+     "in": [
+      "crates/searcher/src/searcher/glue.rs",
+      "crates/searcher/src/searcher/mod.rs"
+     ]
+    },
+    {
+     "fact": "SliceByLine",
+     "type": "symbol",
+     "in": [
+      "crates/searcher/src/searcher/glue.rs",
+      "crates/searcher/src/searcher/mod.rs"
+     ]
+    },
+    {
+     "fact": "MultiLine",
+     "type": "symbol",
+     "in": [
+      "crates/searcher/src/searcher/glue.rs",
+      "crates/searcher/src/searcher/mod.rs"
+     ]
+    },
+    {
+     "fact": "crates/searcher/src/searcher/glue.rs",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file_maybe_path().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file_maybe_path().",
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 678
+      }
+     ],
+     "reference_occurrences": {
+      "crates/searcher/src/searcher/mod.rs": [
+       656,
+       675
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 643,
+       "chain": "search_path",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/searcher/src/searcher/mod.rs",
+       "line": 665,
+       "chain": "search_file",
+       "symbol": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/searcher/src/searcher/mod.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/searcher/src/searcher/mod.rs",
+     "lines": "678-795",
+     "note": "search_file_maybe_path, search_reader, search_slice strategy choice"
+    }
+   ]
+  },
+  "ripgrep-k17": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "crates/ignore/src/walk.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "WalkParallel",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/walk.rs"
+     ]
+    },
+    {
+     "fact": "ParallelVisitor",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/walk.rs"
+     ]
+    },
+    {
+     "fact": "new_for_each_thread",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/walk.rs"
+     ]
+    },
+    {
+     "fact": "run_one",
+     "type": "symbol",
+     "in": [
+      "crates/ignore/src/walk.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "WalkParallel",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ignore 0.4.29 walk/WalkParallel#",
+       "file": "crates/ignore/src/walk.rs",
+       "line": 1352
+      }
+     ],
+     "reference_occurrences": {
+      "crates/ignore/src/lib.rs": [
+       53
+      ],
+      "crates/ignore/src/walk.rs": [
+       652,
+       657,
+       1365
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/ignore/src/walk.rs",
+       "line": 652,
+       "chain": "build_parallel",
+       "symbol": "rust-analyzer cargo ignore 0.4.29 walk/impl#[WalkBuilder]build_parallel().",
+       "families": [
+        "mentions",
+        "references"
+       ]
+      }
+     ],
+     "def_file": "crates/ignore/src/walk.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/ignore/src/walk.rs",
+     "lines": "1352-1460",
+     "note": "WalkParallel::run/visit spawns workers"
+    },
+    {
+     "file": "crates/ignore/src/walk.rs",
+     "lines": "1583-1720",
+     "note": "Stack work stealing; Worker::run/run_one"
+    }
+   ]
+  },
+  "ripgrep-k18": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "build_from_result",
+     "type": "symbol",
+     "in": [
+      "crates/core/haystack.rs",
+      "crates/core/main.rs"
+     ]
+    },
+    {
+     "fact": "SearchWorker",
+     "type": "symbol",
+     "in": [
+      "crates/core/search.rs"
+     ]
+    },
+    {
+     "fact": "sink_with_path",
+     "type": "symbol",
+     "in": [
+      "crates/core/search.rs",
+      "crates/printer/src/standard.rs"
+     ]
+    },
+    {
+     "fact": "StandardSink",
+     "type": "symbol",
+     "in": [
+      "crates/printer/src/standard.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo ripgrep 15.2.0 haystack/impl#[HaystackBuilder]build_from_result().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 haystack/impl#[HaystackBuilder]build_from_result().",
+       "file": "crates/core/haystack.rs",
+       "line": 31
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/main.rs": [
+       113,
+       184,
+       240,
+       301
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/main.rs",
+       "line": 107,
+       "chain": "search",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/core/main.rs",
+       "line": 160,
+       "chain": "search_parallel",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search_parallel().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/core/main.rs",
+       "line": 235,
+       "chain": "files",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 files().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/core/main.rs",
+       "line": 271,
+       "chain": "files_parallel",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 files_parallel().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/core/haystack.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "sink_with_path",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-printer 0.3.1 standard/impl#[`Standard<W>`]sink_with_path().",
+       "file": "crates/printer/src/standard.rs",
+       "line": 541
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/search.rs": [
+       388,
+       425
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/search.rs",
+       "line": 380,
+       "chain": "search_path",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/search_path().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "crates/core/search.rs",
+       "line": 416,
+       "chain": "search_reader",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/search_reader().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/printer/src/standard.rs",
+     "within": "crates/core/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/main.rs",
+     "lines": "160-230",
+     "note": "search_parallel: build_from_result then searcher.search"
+    },
+    {
+     "file": "crates/core/search.rs",
+     "lines": "245-268",
+     "note": "SearchWorker::search"
+    },
+    {
+     "file": "crates/core/search.rs",
+     "lines": "380-414",
+     "note": "search_path helper: sink_with_path + Searcher::search_path"
+    }
+   ]
+  },
+  "ripgrep-k19": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "crates/core/flags/parse.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "parse_low",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/parse.rs"
+     ]
+    },
+    {
+     "fact": "crates/core/flags/config.rs",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "from_low_args",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/parse.rs",
+      "crates/core/flags/hiargs.rs"
+     ]
+    },
+    {
+     "fact": "LowArgs",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/parse.rs",
+      "crates/core/flags/lowargs.rs"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]from_low_args().",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]from_low_args().",
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 113
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/parse.rs": [
+       50
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/parse.rs",
+       "line": 49,
+       "chain": "parse",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/parse/parse().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/core/flags/hiargs.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "parse_low",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/parse/parse_low().",
+       "file": "crates/core/flags/parse.rs",
+       "line": 64
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/flags/parse.rs": [
+       50
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/flags/parse.rs",
+       "line": 49,
+       "chain": "parse",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/parse/parse().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/core/flags/parse.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/flags/parse.rs",
+     "lines": "49-113",
+     "note": "parse -> parse_low -> config::args -> re-parse"
+    },
+    {
+     "file": "crates/core/flags/config.rs",
+     "lines": "16-40",
+     "note": "args() reads RIPGREP_CONFIG_PATH"
+    }
+   ]
+  },
+  "ripgrep-k20": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "search_worker",
+     "type": "symbol",
+     "in": [
+      "crates/core/flags/hiargs.rs"
+     ]
+    },
+    {
+     "fact": "should_preprocess",
+     "type": "symbol",
+     "in": [
+      "crates/core/search.rs"
+     ]
+    },
+    {
+     "fact": "search_preprocessor",
+     "type": "symbol",
+     "in": [
+      "crates/core/search.rs"
+     ]
+    },
+    {
+     "fact": "CommandReader",
+     "type": "symbol",
+     "in": [
+      "crates/cli/src/process.rs"
+     ]
+    },
+    {
+     "fact": "crates/cli/src/process.rs",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "search_preprocessor",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/impl#[`SearchWorker<W>`]search_preprocessor().",
+       "file": "crates/core/search.rs",
+       "line": 296
+      }
+     ],
+     "reference_occurrences": {
+      "crates/core/search.rs": [
+       261
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/core/search.rs",
+       "line": 245,
+       "chain": "search",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 search/impl#[`SearchWorker<W>`]search().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "crates/core/search.rs",
+     "within": "crates/"
+    },
+    {
+     "name": "CommandReader",
+     "definitions": [
+      {
+       "symbol": "rust-analyzer cargo grep-cli 0.1.12 process/CommandReader#",
+       "file": "crates/cli/src/process.rs",
+       "line": 171
+      }
+     ],
+     "reference_occurrences": {
+      "crates/cli/src/decompress.rs": [
+       11,
+       333
+      ],
+      "crates/cli/src/lib.rs": [
+       146
+      ],
+      "crates/cli/src/process.rs": [
+       107,
+       117,
+       180,
+       197,
+       246,
+       254
+      ],
+      "crates/core/flags/hiargs.rs": [
+       1339
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "crates/cli/src/decompress.rs",
+       "line": 332,
+       "chain": "DecompressionReader",
+       "symbol": "rust-analyzer cargo grep-cli 0.1.12 decompress/DecompressionReader#",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/cli/src/process.rs",
+       "line": 104,
+       "chain": "build",
+       "symbol": "rust-analyzer cargo grep-cli 0.1.12 process/impl#[CommandReaderBuilder]build().",
+       "families": [
+        "mentions",
+        "references"
+       ]
+      },
+      {
+       "file": "crates/cli/src/process.rs",
+       "line": 195,
+       "chain": "new",
+       "symbol": "rust-analyzer cargo grep-cli 0.1.12 process/impl#[CommandReader]new().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "crates/core/flags/hiargs.rs",
+       "line": 1325,
+       "chain": "hostname",
+       "symbol": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/hostname().",
+       "families": [
+        "mentions"
+       ]
+      }
+     ],
+     "def_file": "crates/cli/src/process.rs",
+     "within": "crates/"
+    }
+   ],
+   "read": [
+    {
+     "file": "crates/core/flags/hiargs.rs",
+     "lines": "694-709",
+     "note": "search_worker sets preprocessor"
+    },
+    {
+     "file": "crates/core/search.rs",
+     "lines": "284-327",
+     "note": "should_preprocess, search_preprocessor"
+    }
+   ]
+  }
+ }
+}
