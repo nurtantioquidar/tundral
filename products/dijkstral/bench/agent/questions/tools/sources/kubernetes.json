@@ -1,0 +1,293 @@
+[
+  {
+    "id": "kubernetes-k01", "kind": "locate",
+    "question": "In a large cluster kube-scheduler stops looking for feasible nodes once it has found 'enough' of them. Where is that number computed, and where is it used to cut filtering short?",
+    "reference": "`Scheduler.numFeasibleNodesToFind` in pkg/scheduler/schedule_one.go derives it from the profile's or global percentageOfNodesToScore (adaptive 50% - nodes/125 when unset, with minFeasibleNodesToFind and minFeasibleNodesPercentageToFind floors); `findNodesThatPassFilters` in the same file uses it to stop the parallel Filter run once that many nodes fit.",
+    "facts": [
+      {"fact": "pkg/scheduler/schedule_one.go", "aliases": ["schedule_one.go"], "in": []},
+      {"fact": "numFeasibleNodesToFind", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "findNodesThatPassFilters", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "numFeasibleNodesToFind", "def_file": "pkg/scheduler/schedule_one.go", "within": "pkg/scheduler/"}],
+    "read": [{"file": "pkg/scheduler/schedule_one.go", "lines": "779-893", "note": "findNodesThatPassFilters and numFeasibleNodesToFind"}]
+  },
+  {
+    "id": "kubernetes-k02", "kind": "locate",
+    "question": "Where is the list of scheduler plugins that are enabled by default defined, where are those defaults applied to a scheduler profile, and where are the in-tree plugin constructors registered by name?",
+    "reference": "`getDefaultPlugins` in pkg/scheduler/apis/config/v1/default_plugins.go returns the default MultiPoint plugin set; `setDefaults_KubeSchedulerProfile` in pkg/scheduler/apis/config/v1/defaults.go merges it into each profile; `NewInTreeRegistry` in pkg/scheduler/framework/plugins/registry.go maps plugin names to factory functions (merged with out-of-tree plugins in `scheduler.New`).",
+    "facts": [
+      {"fact": "pkg/scheduler/apis/config/v1/default_plugins.go", "aliases": ["default_plugins.go"], "in": []},
+      {"fact": "getDefaultPlugins", "aliases": [], "in": ["pkg/scheduler/apis/config/v1/default_plugins.go", "pkg/scheduler/apis/config/v1/defaults.go"]},
+      {"fact": "setDefaults_KubeSchedulerProfile", "aliases": [], "in": ["pkg/scheduler/apis/config/v1/defaults.go"]},
+      {"fact": "NewInTreeRegistry", "aliases": [], "in": ["pkg/scheduler/framework/plugins/registry.go", "pkg/scheduler/scheduler.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [
+      {"name": "getDefaultPlugins", "def_file": "pkg/scheduler/apis/config/v1/default_plugins.go", "within": "pkg/scheduler/"},
+      {"name": "NewInTreeRegistry", "def_file": "pkg/scheduler/framework/plugins/registry.go", "within": "pkg/scheduler/"}
+    ],
+    "read": [{"file": "pkg/scheduler/framework/plugins/registry.go", "lines": "51-81", "note": "NewInTreeRegistry"}, {"file": "pkg/scheduler/scheduler.go", "lines": "311-315", "note": "in-tree registry merged with out-of-tree"}]
+  },
+  {
+    "id": "kubernetes-k03", "kind": "locate",
+    "question": "Where is a label selector string such as `app=web,tier notin (db)` tokenized and parsed into requirements, and which API conversion function uses that parser for the labelSelector of list requests?",
+    "reference": "In staging/src/k8s.io/apimachinery/pkg/labels/selector.go: `Parse` -> `parse` builds a `Parser` over a `Lexer`, and `Parser.parseRequirement` reads key, operator and values, validated by `NewRequirement`; `Convert_string_To_labels_Selector` in apimachinery's pkg/apis/meta/v1/conversion.go calls `labels.Parse`, and the generated `autoConvert_v1_ListOptions_To_internalversion_ListOptions` uses it for ListOptions.LabelSelector.",
+    "facts": [
+      {"fact": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go", "aliases": ["apimachinery/pkg/labels/selector.go"], "in": []},
+      {"fact": "Lexer", "aliases": [], "in": ["staging/src/k8s.io/apimachinery/pkg/labels/selector.go"]},
+      {"fact": "parseRequirement", "aliases": [], "in": ["staging/src/k8s.io/apimachinery/pkg/labels/selector.go"]},
+      {"fact": "Convert_string_To_labels_Selector", "aliases": [], "in": ["staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/conversion.go", "staging/src/k8s.io/apimachinery/pkg/apis/meta/internalversion/zz_generated.conversion.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [
+      {"name": "Parse", "def_file": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go", "within": "staging/src/k8s.io/apimachinery/"},
+      {"name": "Convert_string_To_labels_Selector", "def_file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/conversion.go", "within": "staging/src/k8s.io/apimachinery/"}
+    ],
+    "read": [{"file": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go", "lines": "692-760", "note": "Parser.parse / parseRequirement"}, {"file": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go", "lines": "910-930", "note": "Parse -> parse with Lexer"}, {"file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/internalversion/zz_generated.conversion.go", "lines": "123-127", "note": "ListOptions.LabelSelector conversion"}]
+  },
+  {
+    "id": "kubernetes-k04", "kind": "locate",
+    "question": "After a pod fails to schedule, how long does kube-scheduler wait before retrying it, and where is that backoff computed?",
+    "reference": "In pkg/scheduler/backend/queue/backoff_queue.go: `backoffQueue.getBackoffTime` takes the entity's unschedulable count (or consecutive error count) and `calculateBackoffDuration` doubles podInitialBackoff per attempt, capped at podMaxBackoff (scaled by the square root of the group size for pod groups); the result is aligned to the ordering window and stored as the backoff expiration.",
+    "facts": [
+      {"fact": "pkg/scheduler/backend/queue/backoff_queue.go", "aliases": ["backoff_queue.go"], "in": []},
+      {"fact": "calculateBackoffDuration", "aliases": [], "in": ["pkg/scheduler/backend/queue/backoff_queue.go"]},
+      {"fact": "getBackoffTime", "aliases": [], "in": ["pkg/scheduler/backend/queue/backoff_queue.go"]}
+    ],
+    "min_facts": 2,
+    "scip": [{"name": "calculateBackoffDuration", "def_file": "pkg/scheduler/backend/queue/backoff_queue.go", "within": "pkg/scheduler/"}],
+    "read": [{"file": "pkg/scheduler/backend/queue/backoff_queue.go", "lines": "213-266", "note": "getBackoffTime / calculateBackoffDuration"}]
+  },
+  {
+    "id": "kubernetes-k05", "kind": "locate",
+    "question": "When the kubelet admits a pod, where does it reuse kube-scheduler's own fit checks (resources, node affinity, node name, ports) instead of reimplementing them?",
+    "reference": "The kubelet's `predicateAdmitHandler.Admit` in pkg/kubelet/lifecycle/predicate.go calls `generalFilter`, which calls the scheduler's exported `AdmissionCheck` in pkg/scheduler/eventhandlers.go; `AdmissionCheck` runs `noderesources.Fits`, required node affinity, `nodename.Fits` and node ports checks against a scheduler `NodeInfo`.",
+    "facts": [
+      {"fact": "pkg/kubelet/lifecycle/predicate.go", "aliases": ["lifecycle/predicate.go"], "in": []},
+      {"fact": "generalFilter", "aliases": [], "in": ["pkg/kubelet/lifecycle/predicate.go"]},
+      {"fact": "AdmissionCheck", "aliases": [], "in": ["pkg/kubelet/lifecycle/predicate.go", "pkg/scheduler/eventhandlers.go"]},
+      {"fact": "pkg/scheduler/eventhandlers.go", "aliases": ["eventhandlers.go"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "AdmissionCheck", "def_file": "pkg/scheduler/eventhandlers.go", "within": null}],
+    "read": [{"file": "pkg/kubelet/lifecycle/predicate.go", "lines": "430-445", "note": "generalFilter -> scheduler.AdmissionCheck (pkg/kubelet is outside the SCIP-indexed subset; found by reading)"}, {"file": "pkg/scheduler/eventhandlers.go", "lines": "857-900", "note": "AdmissionCheck"}]
+  },
+  {
+    "id": "kubernetes-k06", "kind": "callers",
+    "question": "Which scheduler plugins call helper.DefaultNormalizeScore to rescale their scores?",
+    "reference": "The `NormalizeScore` methods of NodeAffinity (pkg/scheduler/framework/plugins/nodeaffinity/node_affinity.go), TaintToleration (pkg/scheduler/framework/plugins/tainttoleration/taint_toleration.go) and DynamicResources (pkg/scheduler/framework/plugins/dynamicresources/dynamicresources.go).",
+    "facts": [
+      {"fact": "pkg/scheduler/framework/plugins/nodeaffinity/node_affinity.go", "aliases": ["node_affinity.go"], "in": []},
+      {"fact": "pkg/scheduler/framework/plugins/tainttoleration/taint_toleration.go", "aliases": ["taint_toleration.go"], "in": []},
+      {"fact": "pkg/scheduler/framework/plugins/dynamicresources/dynamicresources.go", "aliases": ["dynamicresources/dynamicresources.go"], "in": []},
+      {"fact": "NormalizeScore", "aliases": [], "in": ["pkg/scheduler/framework/plugins/nodeaffinity/node_affinity.go", "pkg/scheduler/framework/plugins/tainttoleration/taint_toleration.go", "pkg/scheduler/framework/plugins/dynamicresources/dynamicresources.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "DefaultNormalizeScore", "def_file": "pkg/scheduler/framework/plugins/helper/normalize_score.go", "within": "pkg/scheduler/"}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k07", "kind": "callers",
+    "question": "Which parts of kube-scheduler call util.PatchPodStatus to patch a pod's status on the API server?",
+    "reference": "`updatePod` in pkg/scheduler/schedule_one.go (PodScheduled condition and nominated node after a failure or in binding), the async `PodStatusPatchCall.Execute` in pkg/scheduler/framework/api_calls/pod_status_patch.go, `clearNominatedNodeName` and `NewExecutor` in pkg/scheduler/framework/preemption/executor.go, and the DRA plugin's `patchPodExtendedResourceClaimStatus` / `patchNodeAllocatableResourceClaimStatus`.",
+    "facts": [
+      {"fact": "updatePod", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "pkg/scheduler/framework/api_calls/pod_status_patch.go", "aliases": ["pod_status_patch.go"], "in": []},
+      {"fact": "clearNominatedNodeName", "aliases": [], "in": ["pkg/scheduler/framework/preemption/executor.go"]},
+      {"fact": "patchPodExtendedResourceClaimStatus", "aliases": [], "in": ["pkg/scheduler/framework/plugins/dynamicresources/extendeddynamicresources.go"]},
+      {"fact": "pkg/scheduler/framework/preemption/executor.go", "aliases": ["preemption/executor.go"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "PatchPodStatus", "def_file": "pkg/scheduler/util/utils.go", "within": "pkg/scheduler/"}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k08", "kind": "callers",
+    "question": "Where in kube-scheduler (outside test helpers) is metav1.LabelSelectorAsSelector used to turn an API label selector into a labels.Selector?",
+    "reference": "`DefaultSelector` in pkg/scheduler/framework/plugins/helper/spread.go (service/controller selectors), `filterTopologySpreadConstraints` in pkg/scheduler/framework/plugins/podtopologyspread/common.go, `nodeHasAccess` in pkg/scheduler/framework/plugins/volumebinding/binder.go (CSIStorageCapacity node topology) and `FilterVictimsWithPDBViolation` in pkg/scheduler/framework/preemption/util.go (PodDisruptionBudget selectors).",
+    "facts": [
+      {"fact": "DefaultSelector", "aliases": [], "in": ["pkg/scheduler/framework/plugins/helper/spread.go"]},
+      {"fact": "filterTopologySpreadConstraints", "aliases": [], "in": ["pkg/scheduler/framework/plugins/podtopologyspread/common.go"]},
+      {"fact": "nodeHasAccess", "aliases": [], "in": ["pkg/scheduler/framework/plugins/volumebinding/binder.go"]},
+      {"fact": "FilterVictimsWithPDBViolation", "aliases": [], "in": ["pkg/scheduler/framework/preemption/util.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "LabelSelectorAsSelector", "def_file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/helpers.go", "within": "pkg/scheduler/"}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k09", "kind": "callers",
+    "question": "Which scheduler code calls helper.GetPodGroupStates to look up the scheduling state of pod groups?",
+    "reference": "`getScheduledPodsCount` in the podgrouppodscount plugin (pkg/scheduler/framework/plugins/podgrouppodscount/podgroup_pods_count.go), `getScheduledPods` in the topologyaware plugin (pkg/scheduler/framework/plugins/topologyaware/topology_placement.go) and `searchCrossNodesVictimPods` in pkg/scheduler/framework/preemption/types.go.",
+    "facts": [
+      {"fact": "getScheduledPodsCount", "aliases": [], "in": ["pkg/scheduler/framework/plugins/podgrouppodscount/podgroup_pods_count.go"]},
+      {"fact": "getScheduledPods", "aliases": [], "in": ["pkg/scheduler/framework/plugins/topologyaware/topology_placement.go"]},
+      {"fact": "searchCrossNodesVictimPods", "aliases": [], "in": ["pkg/scheduler/framework/preemption/types.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "GetPodGroupStates", "def_file": "pkg/scheduler/framework/plugins/helper/podgroup.go", "within": "pkg/scheduler/"}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k10", "kind": "callers",
+    "question": "In apimachinery, which decoders and schemes report a missing kind by calling runtime.NewMissingKindErr?",
+    "reference": "The `Decode` methods of the JSON, protobuf and CBOR serializers (runtime/serializer/json/json.go, runtime/serializer/protobuf/protobuf.go, runtime/serializer/cbor/cbor.go, the latter also in `unmarshal`), `Scheme.ObjectKinds` in runtime/scheme.go, plus the unstructured JSON scheme's `ObjectKinds` and the unstructured `Decode` helper.",
+    "facts": [
+      {"fact": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/json/json.go", "aliases": ["serializer/json/json.go"], "in": []},
+      {"fact": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/protobuf/protobuf.go", "aliases": ["serializer/protobuf/protobuf.go"], "in": []},
+      {"fact": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/cbor/cbor.go", "aliases": ["serializer/cbor/cbor.go"], "in": []},
+      {"fact": "ObjectKinds", "aliases": [], "in": ["staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "NewMissingKindErr", "def_file": "staging/src/k8s.io/apimachinery/pkg/runtime/error.go", "within": "staging/src/k8s.io/apimachinery/"}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k11", "kind": "impact",
+    "question": "If the scheduler's parallelize.NewResultChannel helper (used to collect the first error from parallel work) changed behaviour, which scheduling and preemption steps would be affected?",
+    "reference": "In pkg/scheduler/framework/runtime/framework.go: `RunScorePlugins`, `normalizeScores`, `RunPlacementScorePlugins` and `RunPreBindPlugins`; in pkg/scheduler/schedule_one.go: `findNodesThatPassFilters`; in pkg/scheduler/framework/preemption/executor.go: `prepareCandidate` and `prepareCandidateAsync` (victim eviction).",
+    "facts": [
+      {"fact": "RunScorePlugins", "aliases": [], "in": ["pkg/scheduler/framework/runtime/framework.go"]},
+      {"fact": "RunPreBindPlugins", "aliases": [], "in": ["pkg/scheduler/framework/runtime/framework.go"]},
+      {"fact": "findNodesThatPassFilters", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "prepareCandidate", "aliases": [], "in": ["pkg/scheduler/framework/preemption/executor.go"]},
+      {"fact": "pkg/scheduler/framework/runtime/framework.go", "aliases": ["runtime/framework.go"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "NewResultChannel", "def_file": "pkg/scheduler/framework/parallelize/result_channel.go", "within": "pkg/scheduler/"}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k12", "kind": "impact",
+    "question": "If the scheduler framework's plugin Registry type (name to plugin factory) changed, which code that builds, merges or consumes registries would need updating?",
+    "reference": "`NewInTreeRegistry` in pkg/scheduler/framework/plugins/registry.go builds it; `scheduler.New` and the `WithFrameworkOutOfTreeRegistry` option in pkg/scheduler/scheduler.go merge in out-of-tree plugins; `NewMap`/`newProfile` in pkg/scheduler/profile/profile.go pass it on; `NewFramework` in pkg/scheduler/framework/runtime/framework.go instantiates plugins from it; Register/Unregister/Merge live in pkg/scheduler/framework/runtime/registry.go.",
+    "facts": [
+      {"fact": "NewInTreeRegistry", "aliases": [], "in": ["pkg/scheduler/framework/plugins/registry.go"]},
+      {"fact": "WithFrameworkOutOfTreeRegistry", "aliases": [], "in": ["pkg/scheduler/scheduler.go"]},
+      {"fact": "pkg/scheduler/profile/profile.go", "aliases": ["scheduler/profile/profile.go"], "in": []},
+      {"fact": "NewFramework", "aliases": [], "in": ["pkg/scheduler/framework/runtime/framework.go", "pkg/scheduler/profile/profile.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "Registry", "def_file": "pkg/scheduler/framework/runtime/registry.go", "within": "pkg/scheduler/"}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k13", "kind": "impact",
+    "question": "If framework.NewPodInfo (which precomputes affinity terms and other per-pod data) changed its signature, which callers across the scheduler would break?",
+    "reference": "`newQueuedPodInfo` in pkg/scheduler/backend/queue/scheduling_queue.go, the InterPodAffinity plugin's `PreFilter` (filtering.go) and `PreScore` (scoring.go), `searchCrossNodesVictimPods` in pkg/scheduler/framework/preemption/types.go, `handleSchedulingFailure` in pkg/scheduler/schedule_one.go and `NodeInfo.AddPod` in pkg/scheduler/framework/types.go.",
+    "facts": [
+      {"fact": "newQueuedPodInfo", "aliases": [], "in": ["pkg/scheduler/backend/queue/scheduling_queue.go"]},
+      {"fact": "handleSchedulingFailure", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "searchCrossNodesVictimPods", "aliases": [], "in": ["pkg/scheduler/framework/preemption/types.go"]},
+      {"fact": "pkg/scheduler/framework/plugins/interpodaffinity", "aliases": ["interpodaffinity"], "in": [], "type": "dir"}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "NewPodInfo", "def_file": "pkg/scheduler/framework/types.go", "within": "pkg/scheduler/"}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k14", "kind": "impact",
+    "question": "If runtime.Scheme.AddKnownTypes in apimachinery changed its signature, which type registrations would have to be updated (ignoring tests)?",
+    "reference": "The scheduler's component-config `addKnownTypes` in pkg/scheduler/apis/config/register.go; metav1's `AddToGroupVersion` and `AddMetaToScheme` (pkg/apis/meta/v1/register.go), meta/internalversion's `addToGroupVersion`, meta/v1beta1's `AddMetaToScheme`, and `Scheme.AddUnversionedTypes` in runtime/scheme.go itself (plus the testapigroup registrations).",
+    "facts": [
+      {"fact": "pkg/scheduler/apis/config/register.go", "aliases": ["scheduler/apis/config/register.go"], "in": []},
+      {"fact": "AddToGroupVersion", "aliases": [], "in": ["staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/register.go"]},
+      {"fact": "AddMetaToScheme", "aliases": [], "in": ["staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/register.go", "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1beta1/register.go"]},
+      {"fact": "AddUnversionedTypes", "aliases": [], "in": ["staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "AddKnownTypes", "def_file": "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go", "within": null}],
+    "read": []
+  },
+  {
+    "id": "kubernetes-k15", "kind": "architecture",
+    "question": "How is kube-scheduler's scheduling queue organised internally: which sub-queues hold pods that are ready, backing off, or deemed unschedulable, and how do pods move between them?",
+    "reference": "`PriorityQueue` in pkg/scheduler/backend/queue/scheduling_queue.go composes an `activeQueue` (active_queue.go, heap popped by `Pop`), a `backoffQueue` (backoff_queue.go) and `unschedulableEntities` (unschedulable_entities.go); `PriorityQueue.Run` periodically runs `flushBackoffQCompleted` and `flushUnschedulableEntitiesLeftover`, and cluster events move pods back via `MoveAllToActiveOrBackoffQueue` using queueing hints.",
+    "facts": [
+      {"fact": "PriorityQueue", "aliases": [], "in": ["pkg/scheduler/backend/queue/scheduling_queue.go"]},
+      {"fact": "activeQueue", "aliases": [], "in": ["pkg/scheduler/backend/queue/active_queue.go"]},
+      {"fact": "backoffQueue", "aliases": [], "in": ["pkg/scheduler/backend/queue/backoff_queue.go"]},
+      {"fact": "unschedulableEntities", "aliases": [], "in": ["pkg/scheduler/backend/queue/unschedulable_entities.go", "pkg/scheduler/backend/queue/scheduling_queue.go"]},
+      {"fact": "MoveAllToActiveOrBackoffQueue", "aliases": [], "in": ["pkg/scheduler/backend/queue/scheduling_queue.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "PriorityQueue", "def_file": "pkg/scheduler/backend/queue/scheduling_queue.go", "within": "pkg/scheduler/"}],
+    "read": [{"file": "pkg/scheduler/backend/queue/scheduling_queue.go", "lines": "207-272", "note": "PriorityQueue fields"}, {"file": "pkg/scheduler/backend/queue/scheduling_queue.go", "lines": "508-516", "note": "Run flushes backoff and unschedulable"}]
+  },
+  {
+    "id": "kubernetes-k16", "kind": "architecture",
+    "question": "kube-scheduler can serve several scheduler names (profiles) from one process. How is that organised: how is each profile's plugin set built, and how is a pod matched to the right one?",
+    "reference": "`scheduler.New` (pkg/scheduler/scheduler.go) merges the in-tree and out-of-tree registries and calls `profile.NewMap` (pkg/scheduler/profile/profile.go), which builds one framework per KubeSchedulerProfile via `newProfile` -> `frameworkruntime.NewFramework`; the resulting `Map` is keyed by schedulerName. Event handlers accept pods via `responsibleForPod` (`Map.HandlesSchedulerName`), and `Scheduler.frameworkForPod` picks the framework for `pod.Spec.SchedulerName`.",
+    "facts": [
+      {"fact": "pkg/scheduler/profile/profile.go", "aliases": ["scheduler/profile/profile.go"], "in": []},
+      {"fact": "NewMap", "aliases": [], "in": ["pkg/scheduler/profile/profile.go", "pkg/scheduler/scheduler.go"]},
+      {"fact": "NewFramework", "aliases": [], "in": ["pkg/scheduler/profile/profile.go", "pkg/scheduler/framework/runtime/framework.go"]},
+      {"fact": "frameworkForPod", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "HandlesSchedulerName", "aliases": [], "in": ["pkg/scheduler/profile/profile.go", "pkg/scheduler/eventhandlers.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "NewMap", "def_file": "pkg/scheduler/profile/profile.go", "within": "pkg/scheduler/"}, {"name": "frameworkForPod", "def_file": "pkg/scheduler/schedule_one.go", "within": "pkg/scheduler/"}],
+    "read": [{"file": "pkg/scheduler/profile/profile.go", "lines": "38-72", "note": "newProfile, NewMap, HandlesSchedulerName"}, {"file": "pkg/scheduler/schedule_one.go", "lines": "540-546", "note": "frameworkForPod"}, {"file": "pkg/scheduler/eventhandlers.go", "lines": "463-466", "note": "responsibleForPod"}]
+  },
+  {
+    "id": "kubernetes-k17", "kind": "architecture",
+    "question": "How do kube-scheduler's node cache and the per-cycle snapshot relate: what does each scheduling cycle read, how is the snapshot kept cheap to refresh, and where are 'assumed' pods recorded before binding finishes?",
+    "reference": "`cacheImpl` in pkg/scheduler/backend/cache/cache.go keeps NodeInfos in a doubly linked list with the most recently changed at `headNode`, each with a generation number; at the start of every cycle `schedulingCycle` calls `Cache.UpdateSnapshot`, which copies only NodeInfos newer than the `Snapshot`'s generation into the `Snapshot` (pkg/scheduler/backend/cache/snapshot.go) that plugins read. After a node is chosen, `Scheduler.assume` records the pod with `AssumePod` in both the snapshot and the cache until binding finishes or it is forgotten.",
+    "facts": [
+      {"fact": "pkg/scheduler/backend/cache/cache.go", "aliases": ["cache/cache.go"], "in": []},
+      {"fact": "UpdateSnapshot", "aliases": [], "in": ["pkg/scheduler/backend/cache/cache.go", "pkg/scheduler/schedule_one.go"]},
+      {"fact": "headNode", "aliases": [], "in": ["pkg/scheduler/backend/cache/cache.go"]},
+      {"fact": "pkg/scheduler/backend/cache/snapshot.go", "aliases": ["cache/snapshot.go"], "in": []},
+      {"fact": "AssumePod", "aliases": [], "in": ["pkg/scheduler/backend/cache/cache.go", "pkg/scheduler/schedule_one.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "UpdateSnapshot", "def_file": "pkg/scheduler/backend/cache/cache.go", "within": "pkg/scheduler/"}],
+    "read": [{"file": "pkg/scheduler/backend/cache/cache.go", "lines": "55-98", "note": "cacheImpl, headNode linked list"}, {"file": "pkg/scheduler/backend/cache/cache.go", "lines": "200-260", "note": "UpdateSnapshot generation-based copy"}, {"file": "pkg/scheduler/schedule_one.go", "lines": "169-178", "note": "schedulingCycle calls Cache.UpdateSnapshot"}, {"file": "pkg/scheduler/schedule_one.go", "lines": "1060-1098", "note": "assume: snapshot and cache AssumePod"}]
+  },
+  {
+    "id": "kubernetes-k18", "kind": "flow",
+    "question": "Trace one pod through kube-scheduler from being taken off the queue to being bound to a node: which functions run the scheduling cycle, pick the node, and perform the binding?",
+    "reference": "In pkg/scheduler/schedule_one.go: `ScheduleOne` -> `scheduleOnePod` -> `schedulingCycle` (cache snapshot) -> `schedulingAlgorithm` -> `schedulePod`, which runs `findNodesThatFitPod` (PreFilter/Filter, extenders) and `prioritizeNodes` (Score) and selects a host; `assumeAndReserve` and Permit follow, then `runBindingCycle` (a goroutine) -> `bindingCycle` -> `bind`, which tries extenders and then `RunBindPlugins` (DefaultBinder).",
+    "facts": [
+      {"fact": "scheduleOnePod", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "schedulingCycle", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "findNodesThatFitPod", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "prioritizeNodes", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]},
+      {"fact": "bindingCycle", "aliases": [], "in": ["pkg/scheduler/schedule_one.go"]}
+    ],
+    "min_facts": 4,
+    "scip": [{"name": "prioritizeNodes", "def_file": "pkg/scheduler/schedule_one.go", "within": "pkg/scheduler/"}, {"name": "bindingCycle", "def_file": "pkg/scheduler/schedule_one.go", "within": "pkg/scheduler/"}],
+    "read": [{"file": "pkg/scheduler/schedule_one.go", "lines": "67-195", "note": "ScheduleOne, scheduleOnePod, runBindingCycle, schedulingCycle"}, {"file": "pkg/scheduler/schedule_one.go", "lines": "572-630", "note": "schedulePod: findNodesThatFitPod, prioritizeNodes"}, {"file": "pkg/scheduler/schedule_one.go", "lines": "1100-1111", "note": "bind: extenders then RunBindPlugins"}]
+  },
+  {
+    "id": "kubernetes-k19", "kind": "flow",
+    "question": "How does a newly created, still unscheduled pod get from the API server's watch stream into kube-scheduler's queue and then get picked up for a scheduling attempt?",
+    "reference": "`addAllEventHandlers` (pkg/scheduler/eventhandlers.go) registers `addPod` on the pod informer; for an unassigned pod that `responsibleForPod` accepts, `addPodToSchedulingQueue` calls `SchedulingQueue.Add`, i.e. `PriorityQueue.Add` in pkg/scheduler/backend/queue/scheduling_queue.go. `scheduler.New` sets `NextEntity` to the queue's `Pop`, which `ScheduleOne` calls to take the next pod.",
+    "facts": [
+      {"fact": "addAllEventHandlers", "aliases": [], "in": ["pkg/scheduler/eventhandlers.go"]},
+      {"fact": "addPodToSchedulingQueue", "aliases": [], "in": ["pkg/scheduler/eventhandlers.go"]},
+      {"fact": "responsibleForPod", "aliases": [], "in": ["pkg/scheduler/eventhandlers.go"]},
+      {"fact": "pkg/scheduler/backend/queue/scheduling_queue.go", "aliases": ["scheduling_queue.go"], "in": []},
+      {"fact": "NextEntity", "aliases": [], "in": ["pkg/scheduler/scheduler.go", "pkg/scheduler/schedule_one.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "addPodToSchedulingQueue", "def_file": "pkg/scheduler/eventhandlers.go", "within": "pkg/scheduler/"}, {"name": "addAllEventHandlers", "def_file": "pkg/scheduler/eventhandlers.go", "within": "pkg/scheduler/"}],
+    "read": [{"file": "pkg/scheduler/eventhandlers.go", "lines": "129-145", "note": "addPod"}, {"file": "pkg/scheduler/eventhandlers.go", "lines": "238-248", "note": "addPodToSchedulingQueue -> SchedulingQueue.Add"}, {"file": "pkg/scheduler/eventhandlers.go", "lines": "624-650", "note": "pod informer handlers"}, {"file": "pkg/scheduler/scheduler.go", "lines": "473-473", "note": "NextEntity = podQueue.Pop"}]
+  },
+  {
+    "id": "kubernetes-k20", "kind": "flow",
+    "question": "When no node fits a pod, how does kube-scheduler's default preemption get triggered, choose victims and a node, and actually evict the victims?",
+    "reference": "`schedulingAlgorithm` (pkg/scheduler/schedule_one.go) calls `RunPostFilterPlugins` (pkg/scheduler/framework/runtime/framework.go), which runs `DefaultPreemption.PostFilter` (pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go) -> `Evaluator.Preempt` -> `evaluate`: `findCandidates` (`DryRunPreemption`, which calls the plugin's `SelectVictimsOnNode` per node), extenders, `SelectCandidate`; then `Executor.actuatePodPreemption` -> `prepareCandidate` (or async) in pkg/scheduler/framework/preemption/executor.go evicts victims, and the nominated node is returned in the PostFilterResult.",
+    "facts": [
+      {"fact": "RunPostFilterPlugins", "aliases": [], "in": ["pkg/scheduler/framework/runtime/framework.go", "pkg/scheduler/schedule_one.go"]},
+      {"fact": "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go", "aliases": ["default_preemption.go"], "in": []},
+      {"fact": "SelectCandidate", "aliases": [], "in": ["pkg/scheduler/framework/preemption/preemption.go"]},
+      {"fact": "actuatePodPreemption", "aliases": [], "in": ["pkg/scheduler/framework/preemption/preemption.go", "pkg/scheduler/framework/preemption/executor.go"]},
+      {"fact": "prepareCandidate", "aliases": [], "in": ["pkg/scheduler/framework/preemption/executor.go"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "SelectCandidate", "def_file": "pkg/scheduler/framework/preemption/preemption.go", "within": "pkg/scheduler/"}, {"name": "actuatePodPreemption", "def_file": "pkg/scheduler/framework/preemption/executor.go", "within": "pkg/scheduler/"}],
+    "read": [{"file": "pkg/scheduler/schedule_one.go", "lines": "250-313", "note": "schedulingAlgorithm -> RunPostFilterPlugins"}, {"file": "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go", "lines": "152-163", "note": "PostFilter -> Evaluator.Preempt"}, {"file": "pkg/scheduler/framework/preemption/preemption.go", "lines": "98-199", "note": "evaluate / Preempt"}, {"file": "pkg/scheduler/framework/preemption/executor.go", "lines": "168-200", "note": "actuatePodPreemption -> prepareCandidate(Async)"}]
+  }
+]

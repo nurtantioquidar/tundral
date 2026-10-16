@@ -1,0 +1,295 @@
+[
+  {
+    "id": "ripgrep-k01", "kind": "locate",
+    "question": "ripgrep stops searching a binary file it finds while recursing a directory, yet still searches a binary file I name explicitly on the command line. Where is that difference decided and applied?",
+    "reference": "`BinaryDetection::from_low_args` in crates/core/flags/hiargs.rs sets implicit detection to quit on NUL and explicit detection to convert; `SearchWorker::search` in crates/core/search.rs picks one per file with `Haystack::is_explicit` and passes it to the searcher via `set_binary_detection`.",
+    "facts": [
+      {"fact": "crates/core/flags/hiargs.rs", "aliases": ["hiargs.rs"], "in": []},
+      {"fact": "crates/core/search.rs", "aliases": ["core/search.rs"], "in": []},
+      {"fact": "is_explicit", "aliases": [], "in": ["crates/core/search.rs", "crates/core/haystack.rs"]},
+      {"fact": "set_binary_detection", "aliases": [], "in": ["crates/core/search.rs", "crates/searcher/src/searcher/mod.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [
+      {"name": "rust-analyzer cargo ripgrep 15.2.0 haystack/impl#[Haystack]is_explicit().", "def_file": "crates/core/haystack.rs", "within": "crates/"},
+      {"name": "set_binary_detection", "def_file": "crates/searcher/src/searcher/mod.rs", "within": "crates/"}
+    ],
+    "read": [{"file": "crates/core/flags/hiargs.rs", "lines": "1150-1176", "note": "BinaryDetection::from_low_args: implicit quit(0), explicit convert(0)"}, {"file": "crates/core/search.rs", "lines": "245-268", "note": "SearchWorker::search picks explicit/implicit"}]
+  },
+  {
+    "id": "ripgrep-k02", "kind": "locate",
+    "question": "While walking directories, where is the precedence decided between --glob overrides, .rgignore/.ignore files, .gitignore files and --type filters when determining whether a path is skipped?",
+    "reference": "`Ignore::matched` in crates/ignore/src/dir.rs checks overrides first, then ignore files via `matched_ignore` (custom .rgignore over .ignore over .gitignore over .git/info/exclude over the global gitignore over explicit ignore files), then file types; the walker calls it through `matched_dir_entry` from `should_skip_entry` in crates/ignore/src/walk.rs.",
+    "facts": [
+      {"fact": "crates/ignore/src/dir.rs", "aliases": ["dir.rs"], "in": []},
+      {"fact": "matched_ignore", "aliases": [], "in": ["crates/ignore/src/dir.rs"]},
+      {"fact": "should_skip_entry", "aliases": [], "in": ["crates/ignore/src/walk.rs"]},
+      {"fact": "matched_dir_entry", "aliases": [], "in": ["crates/ignore/src/dir.rs", "crates/ignore/src/walk.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [
+      {"name": "matched_ignore", "def_file": "crates/ignore/src/dir.rs", "within": "crates/"},
+      {"name": "matched_dir_entry", "def_file": "crates/ignore/src/dir.rs", "within": "crates/"},
+      {"name": "should_skip_entry", "def_file": "crates/ignore/src/walk.rs", "within": "crates/"}
+    ],
+    "read": [{"file": "crates/ignore/src/dir.rs", "lines": "485-690", "note": "matched_dir_entry, matched (overrides > ignore files > types), matched_ignore precedence"}]
+  },
+  {
+    "id": "ripgrep-k03", "kind": "locate",
+    "question": "Where does ripgrep decide whether to read a file through a memory map instead of buffered reads, and where is the macOS exception?",
+    "reference": "`HiArgs::from_low_args` (crates/core/flags/hiargs.rs) chooses `MmapChoice::auto()` only for at most 10 explicit file paths, otherwise never; `MmapChoice::open` in crates/searcher/src/searcher/mmap.rs returns None on macOS or when disabled, and it is consulted by `Searcher::search_file_maybe_path` in crates/searcher/src/searcher/mod.rs.",
+    "facts": [
+      {"fact": "crates/searcher/src/searcher/mmap.rs", "aliases": ["mmap.rs"], "in": []},
+      {"fact": "MmapChoice", "aliases": [], "in": ["crates/searcher/src/searcher/mmap.rs", "crates/core/flags/hiargs.rs"]},
+      {"fact": "crates/core/flags/hiargs.rs", "aliases": ["hiargs.rs"], "in": []},
+      {"fact": "search_file_maybe_path", "aliases": [], "in": ["crates/searcher/src/searcher/mod.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [
+      {"name": "rust-analyzer cargo grep-searcher 0.1.17 searcher/mmap/impl#[MmapChoice]open().", "def_file": "crates/searcher/src/searcher/mmap.rs", "within": "crates/"},
+      {"name": "MmapChoice", "def_file": "crates/searcher/src/searcher/mmap.rs", "within": "crates/"}
+    ],
+    "read": [{"file": "crates/core/flags/hiargs.rs", "lines": "222-245", "note": "mmap_choice: auto only for <= 10 file paths"}, {"file": "crates/searcher/src/searcher/mmap.rs", "lines": "65-80", "note": "open: None on macOS"}, {"file": "crates/searcher/src/searcher/mod.rs", "lines": "678-713", "note": "search_file_maybe_path tries mmap first"}]
+  },
+  {
+    "id": "ripgrep-k04", "kind": "locate",
+    "question": "When printing clickable file links with --hyperlink-format, where does ripgrep work out the hostname and the WSL path prefix to put into the links?",
+    "reference": "`take_hyperlink_config` in crates/core/flags/hiargs.rs fills a `HyperlinkEnvironment` (crates/printer/src/hyperlink/mod.rs) using `hostname()` (optionally running --hostname-bin) and `wsl_prefix()`, then builds the `HyperlinkConfig` handed to the printers.",
+    "facts": [
+      {"fact": "crates/core/flags/hiargs.rs", "aliases": ["hiargs.rs"], "in": []},
+      {"fact": "take_hyperlink_config", "aliases": [], "in": ["crates/core/flags/hiargs.rs"]},
+      {"fact": "wsl_prefix", "aliases": [], "in": ["crates/core/flags/hiargs.rs"]},
+      {"fact": "HyperlinkEnvironment", "aliases": [], "in": ["crates/printer/src/hyperlink/mod.rs", "crates/core/flags/hiargs.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "take_hyperlink_config", "def_file": "crates/core/flags/hiargs.rs", "within": "crates/"}, {"name": "wsl_prefix", "def_file": "crates/core/flags/hiargs.rs", "within": "crates/"}],
+    "read": [{"file": "crates/core/flags/hiargs.rs", "lines": "1272-1290", "note": "take_hyperlink_config"}, {"file": "crates/core/flags/hiargs.rs", "lines": "1325-1420", "note": "hostname and wsl_prefix"}]
+  },
+  {
+    "id": "ripgrep-k05", "kind": "locate",
+    "question": "Where are the built-in file types used by -t/--type (for example rust meaning *.rs) defined, and where are they loaded when ripgrep builds its file type filter?",
+    "reference": "The table `DEFAULT_TYPES` in crates/ignore/src/default_types.rs; `TypesBuilder::add_defaults` in crates/ignore/src/types.rs loads it, called from the `types` function in crates/core/flags/hiargs.rs before user --type-add/--type-clear changes are applied.",
+    "facts": [
+      {"fact": "crates/ignore/src/default_types.rs", "aliases": ["default_types.rs"], "in": []},
+      {"fact": "DEFAULT_TYPES", "aliases": [], "in": ["crates/ignore/src/default_types.rs", "crates/ignore/src/types.rs"]},
+      {"fact": "add_defaults", "aliases": [], "in": ["crates/ignore/src/types.rs", "crates/core/flags/hiargs.rs"]},
+      {"fact": "crates/core/flags/hiargs.rs", "aliases": ["hiargs.rs"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [
+      {"name": "DEFAULT_TYPES", "def_file": "crates/ignore/src/default_types.rs", "within": "crates/"},
+      {"name": "rust-analyzer cargo ignore 0.4.29 types/impl#[TypesBuilder]add_defaults().", "def_file": "crates/ignore/src/types.rs", "within": "crates/"}
+    ],
+    "read": [{"file": "crates/core/flags/hiargs.rs", "lines": "1186-1208", "note": "types(): add_defaults then type changes"}]
+  },
+  {
+    "id": "ripgrep-k06", "kind": "callers",
+    "question": "Which non-test code calls Override::matched from the ignore crate, the check that applies glob overrides?",
+    "reference": "`Ignore::matched` in crates/ignore/src/dir.rs (applying --glob/--iglob during the walk) and `SearchWorker::should_preprocess` in crates/core/search.rs (applying --pre-glob to decide whether to run the --pre command).",
+    "facts": [
+      {"fact": "crates/ignore/src/dir.rs", "aliases": ["dir.rs"], "in": []},
+      {"fact": "crates/core/search.rs", "aliases": ["core/search.rs"], "in": []},
+      {"fact": "should_preprocess", "aliases": [], "in": ["crates/core/search.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "rust-analyzer cargo ignore 0.4.29 overrides/impl#[Override]matched().", "def_file": "crates/ignore/src/overrides.rs", "within": "crates/"}],
+    "read": [{"file": "crates/core/search.rs", "lines": "284-294", "note": "should_preprocess uses preprocessor_globs.matched"}]
+  },
+  {
+    "id": "ripgrep-k07", "kind": "callers",
+    "question": "What calls Gitignore::matched, the gitignore-style glob matcher in the ignore crate (excluding tests)?",
+    "reference": "`Ignore::matched_ignore` in crates/ignore/src/dir.rs (for .gitignore, .ignore, .rgignore, git exclude, global and explicit ignore files) and `Override::matched` in crates/ignore/src/overrides.rs, because overrides are compiled into a `Gitignore` matcher.",
+    "facts": [
+      {"fact": "matched_ignore", "aliases": [], "in": ["crates/ignore/src/dir.rs"]},
+      {"fact": "crates/ignore/src/dir.rs", "aliases": ["dir.rs"], "in": []},
+      {"fact": "crates/ignore/src/overrides.rs", "aliases": ["overrides.rs"], "in": []},
+      {"fact": "Override", "aliases": [], "in": ["crates/ignore/src/overrides.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "rust-analyzer cargo ignore 0.4.29 gitignore/impl#[Gitignore]matched().", "def_file": "crates/ignore/src/gitignore.rs", "within": "crates/"}],
+    "read": [{"file": "crates/ignore/src/overrides.rs", "lines": "97-110", "note": "Override::matched delegates to its Gitignore"}]
+  },
+  {
+    "id": "ripgrep-k08", "kind": "callers",
+    "question": "Which printers call find_iter_at_in_context, the helper that re-finds match positions inside a reported line or block?",
+    "reference": "All three printer sinks in the grep-printer crate: `StandardSink::record_matches` (crates/printer/src/standard.rs), `JSONSink::record_matches` (crates/printer/src/json.rs) and `SummarySink::matched` (crates/printer/src/summary.rs); the helper itself is in crates/printer/src/util.rs.",
+    "facts": [
+      {"fact": "crates/printer/src/standard.rs", "aliases": ["standard.rs"], "in": []},
+      {"fact": "crates/printer/src/json.rs", "aliases": ["printer/src/json.rs"], "in": []},
+      {"fact": "crates/printer/src/summary.rs", "aliases": ["summary.rs"], "in": []},
+      {"fact": "record_matches", "aliases": [], "in": ["crates/printer/src/standard.rs", "crates/printer/src/json.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "find_iter_at_in_context", "def_file": "crates/printer/src/util.rs", "within": "crates/"}],
+    "read": []
+  },
+  {
+    "id": "ripgrep-k09", "kind": "callers",
+    "question": "Which parts of ripgrep call resolve_binary from the grep-cli crate to locate an executable before running it?",
+    "reference": "`SearchWorkerBuilder::preprocessor` in crates/core/search.rs (the --pre command), `hostname` in crates/core/flags/hiargs.rs (--hostname-bin), and the `add` closure in `default_decompression_commands` in crates/cli/src/decompress.rs (gzip, xz and friends for -z).",
+    "facts": [
+      {"fact": "crates/core/search.rs", "aliases": ["core/search.rs"], "in": []},
+      {"fact": "crates/core/flags/hiargs.rs", "aliases": ["hiargs.rs"], "in": []},
+      {"fact": "default_decompression_commands", "aliases": [], "in": ["crates/cli/src/decompress.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "resolve_binary", "def_file": "crates/cli/src/decompress.rs", "within": "crates/"}],
+    "read": [{"file": "crates/core/search.rs", "lines": "92-106", "note": "preprocessor -> resolve_binary"}]
+  },
+  {
+    "id": "ripgrep-k10", "kind": "callers",
+    "question": "Outside tests and examples, what calls Searcher::search_reader in the grep-searcher crate?",
+    "reference": "Inside grep-searcher, `Searcher::search_file_maybe_path` (files not memory-mapped and not multi-line) and `Searcher::search_slice` (slices that need transcoding) in crates/searcher/src/searcher/mod.rs; in ripgrep itself, the generic `search_reader` helper in crates/core/search.rs (stdin, --pre output and decompressed streams).",
+    "facts": [
+      {"fact": "search_file_maybe_path", "aliases": [], "in": ["crates/searcher/src/searcher/mod.rs"]},
+      {"fact": "search_slice", "aliases": [], "in": ["crates/searcher/src/searcher/mod.rs"]},
+      {"fact": "crates/core/search.rs", "aliases": ["core/search.rs"], "in": []},
+      {"fact": "crates/searcher/src/searcher/mod.rs", "aliases": ["searcher/mod.rs"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_reader().", "def_file": "crates/searcher/src/searcher/mod.rs", "within": "crates/"}],
+    "read": [{"file": "crates/core/search.rs", "lines": "416-449", "note": "search_reader helper calls searcher.search_reader"}]
+  },
+  {
+    "id": "ripgrep-k11", "kind": "impact",
+    "question": "If the Sink trait in grep-searcher changed (say the matched callback got a new parameter), which implementations in the workspace would have to be updated?",
+    "reference": "The printer sinks `StandardSink` (crates/printer/src/standard.rs), `SummarySink` (crates/printer/src/summary.rs) and `JSONSink` (crates/printer/src/json.rs), the convenience sinks `UTF8`, `Lossy` and `Bytes` in crates/searcher/src/sink.rs (plus the blanket impls for &mut S and Box<S> there), and the test `KitchenSink`.",
+    "facts": [
+      {"fact": "StandardSink", "aliases": [], "in": ["crates/printer/src/standard.rs"]},
+      {"fact": "SummarySink", "aliases": [], "in": ["crates/printer/src/summary.rs"]},
+      {"fact": "JSONSink", "aliases": [], "in": ["crates/printer/src/json.rs"]},
+      {"fact": "crates/searcher/src/sink.rs", "aliases": ["sink.rs"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "Sink", "def_file": "crates/searcher/src/sink.rs", "within": "crates/"}, {"name": "rust-analyzer cargo grep-searcher 0.1.17 sink/Sink#matched().", "def_file": "crates/searcher/src/sink.rs", "within": "crates/"}],
+    "read": [{"file": "crates/searcher/src/sink.rs", "lines": "540-660", "note": "impl Sink for UTF8/Lossy/Bytes"}]
+  },
+  {
+    "id": "ripgrep-k12", "kind": "impact",
+    "question": "If the Matcher trait in grep-matcher gained a new required method, which regex engine implementations in the workspace would need it?",
+    "reference": "The two `RegexMatcher` types: the default Rust-regex one in crates/regex/src/matcher.rs (grep-regex) and the PCRE2 one in crates/pcre2/src/matcher.rs (grep-pcre2); the only other implementation is a test matcher in crates/searcher/src/testutil.rs.",
+    "facts": [
+      {"fact": "crates/regex/src/matcher.rs", "aliases": ["regex/src/matcher.rs"], "in": []},
+      {"fact": "crates/pcre2/src/matcher.rs", "aliases": ["pcre2/src/matcher.rs"], "in": []},
+      {"fact": "RegexMatcher", "aliases": [], "in": ["crates/regex/src/matcher.rs", "crates/pcre2/src/matcher.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "Matcher", "def_file": "crates/matcher/src/lib.rs", "within": "crates/"}],
+    "read": [{"file": "crates/regex/src/matcher.rs", "lines": "409-412", "note": "impl Matcher for RegexMatcher"}, {"file": "crates/pcre2/src/matcher.rs", "lines": "315-318", "note": "impl Matcher for RegexMatcher"}]
+  },
+  {
+    "id": "ripgrep-k13", "kind": "impact",
+    "question": "If the update method of ripgrep's Flag trait (the hook each command-line flag uses to record its value) changed its signature, what code would have to change?",
+    "reference": "Every flag type implementing `Flag` in crates/core/flags/defs.rs (AfterContext, Binary, Glob, ... about a hundred), and its single caller `Parser::parse` in crates/core/flags/parse.rs, which looks a flag up and calls `update` with the `LowArgs` being filled.",
+    "facts": [
+      {"fact": "crates/core/flags/defs.rs", "aliases": ["defs.rs"], "in": []},
+      {"fact": "crates/core/flags/parse.rs", "aliases": ["parse.rs"], "in": []},
+      {"fact": "LowArgs", "aliases": [], "in": ["crates/core/flags/parse.rs", "crates/core/flags/defs.rs", "crates/core/flags/lowargs.rs"]}
+    ],
+    "min_facts": 2,
+    "scip": [{"name": "rust-analyzer cargo ripgrep 15.2.0 flags/Flag#update().", "def_file": "crates/core/flags/mod.rs", "within": "crates/"}, {"name": "Flag", "def_file": "crates/core/flags/mod.rs", "within": "crates/"}],
+    "read": [{"file": "crates/core/flags/parse.rs", "lines": "221-291", "note": "Parser::parse calls flag.update(value, args)"}]
+  },
+  {
+    "id": "ripgrep-k14", "kind": "impact",
+    "question": "If ripgrep's PatternMatcher enum gained a variant for a third regex engine, which functions would have to construct or handle the new variant?",
+    "reference": "In crates/core/search.rs, `SearchWorker::search_path` and `SearchWorker::search_reader` match on every variant (and `SearchWorkerBuilder::build` takes it); in crates/core/flags/hiargs.rs, `HiArgs::matcher` chooses the engine and `matcher_rust` / `matcher_pcre2` construct the variants.",
+    "facts": [
+      {"fact": "crates/core/search.rs", "aliases": ["core/search.rs"], "in": []},
+      {"fact": "crates/core/flags/hiargs.rs", "aliases": ["hiargs.rs"], "in": []},
+      {"fact": "matcher_rust", "aliases": [], "in": ["crates/core/flags/hiargs.rs"]},
+      {"fact": "matcher_pcre2", "aliases": [], "in": ["crates/core/flags/hiargs.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "PatternMatcher", "def_file": "crates/core/search.rs", "within": "crates/"}],
+    "read": [{"file": "crates/core/search.rs", "lines": "342-378", "note": "search_path/search_reader match PatternMatcher"}, {"file": "crates/core/flags/hiargs.rs", "lines": "368-470", "note": "matcher / matcher_pcre2 / matcher_rust"}]
+  },
+  {
+    "id": "ripgrep-k15", "kind": "architecture",
+    "question": "How is ripgrep's work divided among its library crates: which crate walks directories and applies ignore rules, which reads files and finds matching lines, which formats the output, and which defines the interface a regex engine must provide?",
+    "reference": "crates/ignore (`ignore`: WalkBuilder, gitignore/override/type matching), crates/searcher (`grep-searcher`: Searcher and the Sink callback trait), crates/printer (`grep-printer`: Standard, Summary and JSON printers) and crates/matcher (`grep-matcher`: the Matcher trait implemented by grep-regex and grep-pcre2); crates/core is the rg binary that wires them together.",
+    "facts": [
+      {"fact": "crates/ignore", "aliases": ["ignore crate"], "in": [], "type": "dir"},
+      {"fact": "crates/searcher", "aliases": ["grep-searcher"], "in": [], "type": "dir"},
+      {"fact": "crates/printer", "aliases": ["grep-printer"], "in": [], "type": "dir"},
+      {"fact": "crates/matcher", "aliases": ["grep-matcher"], "in": [], "type": "dir"}
+    ],
+    "min_facts": 3,
+    "scip": [],
+    "read": [{"file": "crates/core/search.rs", "lines": "193-241", "note": "the binary wraps grep::regex / grep::pcre2 matchers, grep::printer printers, grep::searcher::Searcher and grep::cli readers"}, {"file": "Cargo.toml", "lines": "1-117", "note": "workspace members"}]
+  },
+  {
+    "id": "ripgrep-k16", "kind": "architecture",
+    "question": "Inside grep-searcher, how does the searcher choose its strategy for a file: memory map, reading the whole file for multi-line search, or streaming line by line?",
+    "reference": "`Searcher::search_file_maybe_path` in crates/searcher/src/searcher/mod.rs tries a memory map first (then `search_slice`, which uses `SliceByLine` or `MultiLine`), reads the whole file onto the heap for multi-line mode (`MultiLine`), and otherwise calls `search_reader`, which streams through a `LineBufferReader` with `ReadByLine`; the strategies live in crates/searcher/src/searcher/glue.rs.",
+    "facts": [
+      {"fact": "search_file_maybe_path", "aliases": [], "in": ["crates/searcher/src/searcher/mod.rs"]},
+      {"fact": "ReadByLine", "aliases": [], "in": ["crates/searcher/src/searcher/glue.rs", "crates/searcher/src/searcher/mod.rs"]},
+      {"fact": "SliceByLine", "aliases": [], "in": ["crates/searcher/src/searcher/glue.rs", "crates/searcher/src/searcher/mod.rs"]},
+      {"fact": "MultiLine", "aliases": [], "in": ["crates/searcher/src/searcher/glue.rs", "crates/searcher/src/searcher/mod.rs"]},
+      {"fact": "crates/searcher/src/searcher/glue.rs", "aliases": ["glue.rs"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "rust-analyzer cargo grep-searcher 0.1.17 searcher/impl#[Searcher]search_file_maybe_path().", "def_file": "crates/searcher/src/searcher/mod.rs", "within": "crates/"}],
+    "read": [{"file": "crates/searcher/src/searcher/mod.rs", "lines": "678-795", "note": "search_file_maybe_path, search_reader, search_slice strategy choice"}]
+  },
+  {
+    "id": "ripgrep-k17", "kind": "architecture",
+    "question": "How is ripgrep's parallel directory traversal organised: how is work shared between threads, and how does the caller receive each directory entry?",
+    "reference": "In crates/ignore/src/walk.rs, `WalkParallel::run`/`visit` seeds the roots and starts one `Worker` per thread; each worker owns a LIFO deque in a `Stack` (built by `Stack::new_for_each_thread`) and steals batches from the others when empty; `Worker::run_one` hands each entry to a per-thread `ParallelVisitor` (the caller's closure), whose returned `WalkState` can skip a directory or quit.",
+    "facts": [
+      {"fact": "crates/ignore/src/walk.rs", "aliases": ["ignore/src/walk.rs"], "in": []},
+      {"fact": "WalkParallel", "aliases": [], "in": ["crates/ignore/src/walk.rs"]},
+      {"fact": "ParallelVisitor", "aliases": [], "in": ["crates/ignore/src/walk.rs"]},
+      {"fact": "new_for_each_thread", "aliases": [], "in": ["crates/ignore/src/walk.rs"]},
+      {"fact": "run_one", "aliases": [], "in": ["crates/ignore/src/walk.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "WalkParallel", "def_file": "crates/ignore/src/walk.rs", "within": "crates/"}],
+    "read": [{"file": "crates/ignore/src/walk.rs", "lines": "1352-1460", "note": "WalkParallel::run/visit spawns workers"}, {"file": "crates/ignore/src/walk.rs", "lines": "1583-1720", "note": "Stack work stealing; Worker::run/run_one"}]
+  },
+  {
+    "id": "ripgrep-k18", "kind": "flow",
+    "question": "Trace a single file from the moment the directory walker yields it to the moment its matching lines are written out in the default output format.",
+    "reference": "In crates/core/main.rs the walker's entry is turned into a `Haystack` by `HaystackBuilder::build_from_result` (crates/core/haystack.rs); `SearchWorker::search` (crates/core/search.rs) chooses binary detection and the read path, the `search_path` helper creates a sink with `Standard::sink_with_path` and calls `Searcher::search_path` (grep-searcher), which reports matches to the `StandardSink` (crates/printer/src/standard.rs) that writes them.",
+    "facts": [
+      {"fact": "build_from_result", "aliases": [], "in": ["crates/core/haystack.rs", "crates/core/main.rs"]},
+      {"fact": "SearchWorker", "aliases": [], "in": ["crates/core/search.rs"]},
+      {"fact": "sink_with_path", "aliases": [], "in": ["crates/core/search.rs", "crates/printer/src/standard.rs"]},
+      {"fact": "StandardSink", "aliases": [], "in": ["crates/printer/src/standard.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "rust-analyzer cargo ripgrep 15.2.0 haystack/impl#[HaystackBuilder]build_from_result().", "def_file": "crates/core/haystack.rs", "within": "crates/"}, {"name": "sink_with_path", "def_file": "crates/printer/src/standard.rs", "within": "crates/core/"}],
+    "read": [{"file": "crates/core/main.rs", "lines": "160-230", "note": "search_parallel: build_from_result then searcher.search"}, {"file": "crates/core/search.rs", "lines": "245-268", "note": "SearchWorker::search"}, {"file": "crates/core/search.rs", "lines": "380-414", "note": "search_path helper: sink_with_path + Searcher::search_path"}]
+  },
+  {
+    "id": "ripgrep-k19", "kind": "flow",
+    "question": "How do the command-line arguments, together with any config file named by RIPGREP_CONFIG_PATH, become the settings ripgrep actually searches with?",
+    "reference": "`parse` in crates/core/flags/parse.rs calls `parse_low`, which parses argv into `LowArgs` with the `Parser` built from the flag definitions (each flag's `update`), then reads extra arguments from the config file via `args()` in crates/core/flags/config.rs and re-parses config-then-CLI arguments; `HiArgs::from_low_args` (crates/core/flags/hiargs.rs) then derives the high-level settings.",
+    "facts": [
+      {"fact": "crates/core/flags/parse.rs", "aliases": ["parse.rs"], "in": []},
+      {"fact": "parse_low", "aliases": [], "in": ["crates/core/flags/parse.rs"]},
+      {"fact": "crates/core/flags/config.rs", "aliases": ["flags/config.rs"], "in": []},
+      {"fact": "from_low_args", "aliases": [], "in": ["crates/core/flags/parse.rs", "crates/core/flags/hiargs.rs"]},
+      {"fact": "LowArgs", "aliases": [], "in": ["crates/core/flags/parse.rs", "crates/core/flags/lowargs.rs"]}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "rust-analyzer cargo ripgrep 15.2.0 flags/hiargs/impl#[HiArgs]from_low_args().", "def_file": "crates/core/flags/hiargs.rs", "within": "crates/"}, {"name": "parse_low", "def_file": "crates/core/flags/parse.rs", "within": "crates/"}],
+    "read": [{"file": "crates/core/flags/parse.rs", "lines": "49-113", "note": "parse -> parse_low -> config::args -> re-parse"}, {"file": "crates/core/flags/config.rs", "lines": "16-40", "note": "args() reads RIPGREP_CONFIG_PATH"}]
+  },
+  {
+    "id": "ripgrep-k20", "kind": "flow",
+    "question": "When a user passes --pre with a preprocessor command, how does that command end up being run on each file and its output searched?",
+    "reference": "`HiArgs::search_worker` (crates/core/flags/hiargs.rs) passes the command to `SearchWorkerBuilder::preprocessor`, which resolves the binary; per file, `SearchWorker::search` (crates/core/search.rs) checks `should_preprocess` (honouring --pre-glob) and `search_preprocessor` spawns the command through `CommandReaderBuilder::build`, getting a `CommandReader` (crates/cli/src/process.rs) whose output is searched with `search_reader`.",
+    "facts": [
+      {"fact": "search_worker", "aliases": [], "in": ["crates/core/flags/hiargs.rs"]},
+      {"fact": "should_preprocess", "aliases": [], "in": ["crates/core/search.rs"]},
+      {"fact": "search_preprocessor", "aliases": [], "in": ["crates/core/search.rs"]},
+      {"fact": "CommandReader", "aliases": [], "in": ["crates/cli/src/process.rs"]},
+      {"fact": "crates/cli/src/process.rs", "aliases": ["process.rs"], "in": []}
+    ],
+    "min_facts": 3,
+    "scip": [{"name": "search_preprocessor", "def_file": "crates/core/search.rs", "within": "crates/"}, {"name": "CommandReader", "def_file": "crates/cli/src/process.rs", "within": "crates/"}],
+    "read": [{"file": "crates/core/flags/hiargs.rs", "lines": "694-709", "note": "search_worker sets preprocessor"}, {"file": "crates/core/search.rs", "lines": "284-327", "note": "should_preprocess, search_preprocessor"}]
+  }
+]

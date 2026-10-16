@@ -1,0 +1,4606 @@
+{
+ "repo": "kubernetes",
+ "commit": "f78e722310e50bcaca9276be22276d9e91d91308",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [
+  "$DIJKSTRAL_BENCH_HOME/scip/kubernetes/parts/go.scip"
+ ],
+ "indexers": [
+  {
+   "part": "go",
+   "name": "scip-go",
+   "version": "0.2.7",
+   "arguments": [
+    "index",
+    "--output",
+    "/Users/hades/.cache/dijkstral-bench/scip/kubernetes/parts/go.scip",
+    "--module-version",
+    "f78e722310e5",
+    "./pkg/scheduler/...",
+    "./staging/src/k8s.io/apimachinery/..."
+   ]
+  }
+ ],
+ "oracle_commit": "f78e722310e50bcaca9276be22276d9e91d91308",
+ "questions": {
+  "kubernetes-k01": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "pkg/scheduler/schedule_one.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "numFeasibleNodesToFind",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "findNodesThatPassFilters",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "numFeasibleNodesToFind",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#numFeasibleNodesToFind().",
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 866
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/schedule_one.go": [
+       787
+      ],
+      "pkg/scheduler/schedule_one_test.go": [
+       4623,
+       4660
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 779,
+       "chain": "findNodesThatPassFilters",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#findNodesThatPassFilters().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_test.go",
+       "line": 4562,
+       "chain": "TestNumFeasibleNodesToFind",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestNumFeasibleNodesToFind().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_test.go",
+       "line": 4630,
+       "chain": "TestFairEvaluationForNodes",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestFairEvaluationForNodes().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/schedule_one.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/schedule_one.go",
+     "lines": "779-893",
+     "note": "findNodesThatPassFilters and numFeasibleNodesToFind"
+    }
+   ]
+  },
+  "kubernetes-k02": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "pkg/scheduler/apis/config/v1/default_plugins.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "getDefaultPlugins",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/apis/config/v1/default_plugins.go",
+      "pkg/scheduler/apis/config/v1/defaults.go"
+     ]
+    },
+    {
+     "fact": "setDefaults_KubeSchedulerProfile",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/apis/config/v1/defaults.go"
+     ]
+    },
+    {
+     "fact": "NewInTreeRegistry",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/registry.go",
+      "pkg/scheduler/scheduler.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "getDefaultPlugins",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/apis/config/v1`/getDefaultPlugins().",
+       "file": "pkg/scheduler/apis/config/v1/default_plugins.go",
+       "line": 32
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/apis/config/v1/default_plugins_test.go": [
+       246
+      ],
+      "pkg/scheduler/apis/config/v1/defaults.go": [
+       74
+      ],
+      "pkg/scheduler/apis/config/v1/defaults_test.go": [
+       172,
+       210,
+       265,
+       431,
+       468,
+       506,
+       543,
+       584,
+       627,
+       669,
+       705
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/apis/config/v1/default_plugins_test.go",
+       "line": 34,
+       "chain": "TestApplyFeatureGates",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/apis/config/v1`/TestApplyFeatureGates().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/apis/config/v1/defaults.go",
+       "line": 72,
+       "chain": "setDefaults_KubeSchedulerProfile",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/apis/config/v1`/setDefaults_KubeSchedulerProfile().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/apis/config/v1/defaults_test.go",
+       "line": 133,
+       "chain": "TestSchedulerDefaults",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/apis/config/v1`/TestSchedulerDefaults().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/apis/config/v1/default_plugins.go",
+     "within": "pkg/scheduler/"
+    },
+    {
+     "name": "NewInTreeRegistry",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins`/NewInTreeRegistry().",
+       "file": "pkg/scheduler/framework/plugins/registry.go",
+       "line": 51
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/scheduler.go": [
+       311
+      ],
+      "pkg/scheduler/scheduler_test.go": [
+       1126
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/scheduler.go",
+       "line": 286,
+       "chain": "New",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/New().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler_test.go",
+       "line": 857,
+       "chain": "Test_UnionedGVKs",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Test_UnionedGVKs().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/framework/plugins/registry.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/framework/plugins/registry.go",
+     "lines": "51-81",
+     "note": "NewInTreeRegistry"
+    },
+    {
+     "file": "pkg/scheduler/scheduler.go",
+     "lines": "311-315",
+     "note": "in-tree registry merged with out-of-tree"
+    }
+   ]
+  },
+  "kubernetes-k03": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "Lexer",
+     "type": "symbol",
+     "in": [
+      "staging/src/k8s.io/apimachinery/pkg/labels/selector.go"
+     ]
+    },
+    {
+     "fact": "parseRequirement",
+     "type": "symbol",
+     "in": [
+      "staging/src/k8s.io/apimachinery/pkg/labels/selector.go"
+     ]
+    },
+    {
+     "fact": "Convert_string_To_labels_Selector",
+     "type": "symbol",
+     "in": [
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/conversion.go",
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/internalversion/zz_generated.conversion.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "Parse",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/labels`/Parse().",
+       "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go",
+       "line": 910
+      }
+     ],
+     "reference_occurrences": {
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/conversion.go": [
+       227
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/helpers_test.go": [
+       39
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/labels/selector_test.go": [
+       56,
+       65,
+       73,
+       74,
+       84,
+       95,
+       710,
+       1214
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/conversion.go",
+       "line": 226,
+       "chain": "Convert_string_To_labels_Selector",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1`/Convert_string_To_labels_Selector().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/helpers_test.go",
+       "line": 31,
+       "chain": "TestLabelSelectorAsSelector",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1`/TestLabelSelectorAsSelector().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector_test.go",
+       "line": 36,
+       "chain": "TestSelectorParse",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/labels`/TestSelectorParse().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector_test.go",
+       "line": 72,
+       "chain": "TestDeterministicParse",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/labels`/TestDeterministicParse().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector_test.go",
+       "line": 83,
+       "chain": "expectMatch",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/labels`/expectMatch().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector_test.go",
+       "line": 94,
+       "chain": "expectNoMatch",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/labels`/expectNoMatch().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector_test.go",
+       "line": 604,
+       "chain": "TestSetSelectorParser",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/labels`/TestSetSelectorParser().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector_test.go",
+       "line": 1118,
+       "chain": "TestMatchesNothing",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/labels`/TestMatchesNothing().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go",
+     "within": "staging/src/k8s.io/apimachinery/"
+    },
+    {
+     "name": "Convert_string_To_labels_Selector",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1`/Convert_string_To_labels_Selector().",
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/conversion.go",
+       "line": 226
+      }
+     ],
+     "reference_occurrences": {
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/internalversion/zz_generated.conversion.go": [
+       124
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/zz_generated.conversion.go": [
+       215
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/internalversion/zz_generated.conversion.go",
+       "line": 123,
+       "chain": "autoConvert_v1_ListOptions_To_internalversion_ListOptions",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/internalversion`/autoConvert_v1_ListOptions_To_internalversion_ListOptions().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/zz_generated.conversion.go",
+       "line": 43,
+       "chain": "RegisterConversions",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1`/RegisterConversions().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/conversion.go",
+     "within": "staging/src/k8s.io/apimachinery/"
+    }
+   ],
+   "read": [
+    {
+     "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go",
+     "lines": "692-760",
+     "note": "Parser.parse / parseRequirement"
+    },
+    {
+     "file": "staging/src/k8s.io/apimachinery/pkg/labels/selector.go",
+     "lines": "910-930",
+     "note": "Parse -> parse with Lexer"
+    },
+    {
+     "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/internalversion/zz_generated.conversion.go",
+     "lines": "123-127",
+     "note": "ListOptions.LabelSelector conversion"
+    }
+   ]
+  },
+  "kubernetes-k04": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "pkg/scheduler/backend/queue/backoff_queue.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "calculateBackoffDuration",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/queue/backoff_queue.go"
+     ]
+    },
+    {
+     "fact": "getBackoffTime",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/queue/backoff_queue.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "calculateBackoffDuration",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/backoffQueue#calculateBackoffDuration().",
+       "file": "pkg/scheduler/backend/queue/backoff_queue.go",
+       "line": 249
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/backend/queue/backoff_queue.go": [
+       239
+      ],
+      "pkg/scheduler/backend/queue/backoff_queue_test.go": [
+       184
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/backend/queue/backoff_queue.go",
+       "line": 220,
+       "chain": "getBackoffTime",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/backoffQueue#getBackoffTime().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/backoff_queue_test.go",
+       "line": 115,
+       "chain": "TestBackoffQueue_calculateBackoffDuration",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestBackoffQueue_calculateBackoffDuration().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/backend/queue/backoff_queue.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/backend/queue/backoff_queue.go",
+     "lines": "213-266",
+     "note": "getBackoffTime / calculateBackoffDuration"
+    }
+   ]
+  },
+  "kubernetes-k05": {
+   "kind": "locate",
+   "facts": [
+    {
+     "fact": "pkg/kubelet/lifecycle/predicate.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "generalFilter",
+     "type": "symbol",
+     "in": [
+      "pkg/kubelet/lifecycle/predicate.go"
+     ]
+    },
+    {
+     "fact": "AdmissionCheck",
+     "type": "symbol",
+     "in": [
+      "pkg/kubelet/lifecycle/predicate.go",
+      "pkg/scheduler/eventhandlers.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/eventhandlers.go",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "AdmissionCheck",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/AdmissionCheck().",
+       "file": "pkg/scheduler/eventhandlers.go",
+       "line": 857
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/eventhandlers_test.go": [
+       797
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/eventhandlers_test.go",
+       "line": 623,
+       "chain": "TestAdmissionCheck",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestAdmissionCheck().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/eventhandlers.go",
+     "within": null
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/kubelet/lifecycle/predicate.go",
+     "lines": "430-445",
+     "note": "generalFilter -> scheduler.AdmissionCheck (pkg/kubelet is outside the SCIP-indexed subset; found by reading)"
+    },
+    {
+     "file": "pkg/scheduler/eventhandlers.go",
+     "lines": "857-900",
+     "note": "AdmissionCheck"
+    }
+   ]
+  },
+  "kubernetes-k06": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "pkg/scheduler/framework/plugins/nodeaffinity/node_affinity.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "pkg/scheduler/framework/plugins/tainttoleration/taint_toleration.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "pkg/scheduler/framework/plugins/dynamicresources/dynamicresources.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "NormalizeScore",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/nodeaffinity/node_affinity.go",
+      "pkg/scheduler/framework/plugins/tainttoleration/taint_toleration.go",
+      "pkg/scheduler/framework/plugins/dynamicresources/dynamicresources.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "DefaultNormalizeScore",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/helper`/DefaultNormalizeScore().",
+       "file": "pkg/scheduler/framework/plugins/helper/normalize_score.go",
+       "line": 27
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/framework/plugins/dynamicresources/dynamicresources.go": [
+       1466
+      ],
+      "pkg/scheduler/framework/plugins/helper/normalize_score_test.go": [
+       87
+      ],
+      "pkg/scheduler/framework/plugins/nodeaffinity/node_affinity.go": [
+       298
+      ],
+      "pkg/scheduler/framework/plugins/tainttoleration/taint_toleration.go": [
+       213
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/framework/plugins/dynamicresources/dynamicresources.go",
+       "line": 1462,
+       "chain": "NormalizeScore",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/dynamicresources`/DynamicResources#NormalizeScore().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/helper/normalize_score_test.go",
+       "line": 27,
+       "chain": "TestDefaultNormalizeScore",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/helper`/TestDefaultNormalizeScore().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/nodeaffinity/node_affinity.go",
+       "line": 297,
+       "chain": "NormalizeScore",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/nodeaffinity`/NodeAffinity#NormalizeScore().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/tainttoleration/taint_toleration.go",
+       "line": 212,
+       "chain": "NormalizeScore",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/tainttoleration`/TaintToleration#NormalizeScore().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/framework/plugins/helper/normalize_score.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k07": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "updatePod",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/framework/api_calls/pod_status_patch.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "clearNominatedNodeName",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/preemption/executor.go"
+     ]
+    },
+    {
+     "fact": "patchPodExtendedResourceClaimStatus",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/dynamicresources/extendeddynamicresources.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/framework/preemption/executor.go",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "PatchPodStatus",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/util`/PatchPodStatus().",
+       "file": "pkg/scheduler/util/utils.go",
+       "line": 121
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/framework/api_calls/pod_status_patch.go": [
+       114
+      ],
+      "pkg/scheduler/framework/plugins/dynamicresources/extendeddynamicresources.go": [
+       582
+      ],
+      "pkg/scheduler/framework/plugins/dynamicresources/nodeallocatabledynamicresources.go": [
+       631
+      ],
+      "pkg/scheduler/framework/preemption/executor.go": [
+       136,
+       435
+      ],
+      "pkg/scheduler/schedule_one.go": [
+       1306
+      ],
+      "pkg/scheduler/util/utils_test.go": [
+       342
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/framework/api_calls/pod_status_patch.go",
+       "line": 90,
+       "chain": "Execute",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/api_calls`/PodStatusPatchCall#Execute().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/dynamicresources/extendeddynamicresources.go",
+       "line": 562,
+       "chain": "patchPodExtendedResourceClaimStatus",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/dynamicresources`/DynamicResources#patchPodExtendedResourceClaimStatus().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/dynamicresources/nodeallocatabledynamicresources.go",
+       "line": 610,
+       "chain": "patchNodeAllocatableResourceClaimStatus",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/dynamicresources`/DynamicResources#patchNodeAllocatableResourceClaimStatus().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/executor.go",
+       "line": 95,
+       "chain": "NewExecutor",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/NewExecutor().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/executor.go",
+       "line": 420,
+       "chain": "clearNominatedNodeName",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/clearNominatedNodeName().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 1275,
+       "chain": "updatePod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/updatePod().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/util/utils_test.go",
+       "line": 169,
+       "chain": "TestPatchPodStatus",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/util`/TestPatchPodStatus().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/util/utils.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k08": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "DefaultSelector",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/helper/spread.go"
+     ]
+    },
+    {
+     "fact": "filterTopologySpreadConstraints",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/podtopologyspread/common.go"
+     ]
+    },
+    {
+     "fact": "nodeHasAccess",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/volumebinding/binder.go"
+     ]
+    },
+    {
+     "fact": "FilterVictimsWithPDBViolation",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/preemption/util.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "LabelSelectorAsSelector",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1`/LabelSelectorAsSelector().",
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/helpers.go",
+       "line": 36
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/framework/plugins/helper/spread.go": [
+       74,
+       82
+      ],
+      "pkg/scheduler/framework/plugins/podtopologyspread/common.go": [
+       91
+      ],
+      "pkg/scheduler/framework/plugins/podtopologyspread/filtering_test.go": [
+       2405
+      ],
+      "pkg/scheduler/framework/plugins/volumebinding/binder.go": [
+       1041
+      ],
+      "pkg/scheduler/framework/preemption/util.go": [
+       207
+      ],
+      "pkg/scheduler/testing/framework/fake_listers.go": [
+       126,
+       166
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/framework/plugins/helper/spread.go",
+       "line": 37,
+       "chain": "DefaultSelector",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/helper`/DefaultSelector().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/podtopologyspread/common.go",
+       "line": 87,
+       "chain": "filterTopologySpreadConstraints",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/podtopologyspread`/PodTopologySpread#filterTopologySpreadConstraints().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/podtopologyspread/filtering_test.go",
+       "line": 2403,
+       "chain": "mustConvertLabelSelectorAsSelector",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/podtopologyspread`/mustConvertLabelSelectorAsSelector().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/volumebinding/binder.go",
+       "line": 1035,
+       "chain": "nodeHasAccess",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/volumebinding`/volumeBinder#nodeHasAccess().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/util.go",
+       "line": 196,
+       "chain": "FilterVictimsWithPDBViolation",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/FilterVictimsWithPDBViolation().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/testing/framework/fake_listers.go",
+       "line": 119,
+       "chain": "GetPodReplicaSets",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/testing/framework`/ReplicaSetLister#GetPodReplicaSets().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/testing/framework/fake_listers.go",
+       "line": 159,
+       "chain": "GetPodStatefulSets",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/testing/framework`/StatefulSetLister#GetPodStatefulSets().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/helpers.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k09": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "getScheduledPodsCount",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/podgrouppodscount/podgroup_pods_count.go"
+     ]
+    },
+    {
+     "fact": "getScheduledPods",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/topologyaware/topology_placement.go"
+     ]
+    },
+    {
+     "fact": "searchCrossNodesVictimPods",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/preemption/types.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "GetPodGroupStates",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/helper`/GetPodGroupStates().",
+       "file": "pkg/scheduler/framework/plugins/helper/podgroup.go",
+       "line": 39
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/framework/plugins/helper/podgroup_test.go": [
+       245,
+       283
+      ],
+      "pkg/scheduler/framework/plugins/podgrouppodscount/podgroup_pods_count.go": [
+       96
+      ],
+      "pkg/scheduler/framework/plugins/topologyaware/topology_placement.go": [
+       140
+      ],
+      "pkg/scheduler/framework/preemption/types.go": [
+       302
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/framework/plugins/helper/podgroup_test.go",
+       "line": 132,
+       "chain": "TestGetPodGroupStates",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/helper`/TestGetPodGroupStates().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/helper/podgroup_test.go",
+       "line": 264,
+       "chain": "TestGetPodGroupStates_EarlyBreak",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/helper`/TestGetPodGroupStates_EarlyBreak().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/podgrouppodscount/podgroup_pods_count.go",
+       "line": 93,
+       "chain": "getScheduledPodsCount",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/podgrouppodscount`/PodGroupPodsCount#getScheduledPodsCount().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/topologyaware/topology_placement.go",
+       "line": 137,
+       "chain": "getScheduledPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/topologyaware`/TopologyPlacement#getScheduledPods().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/types.go",
+       "line": 284,
+       "chain": "searchCrossNodesVictimPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/searchCrossNodesVictimPods().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/framework/plugins/helper/podgroup.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k10": {
+   "kind": "callers",
+   "facts": [
+    {
+     "fact": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/json/json.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/protobuf/protobuf.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/cbor/cbor.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "ObjectKinds",
+     "type": "symbol",
+     "in": [
+      "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "NewMissingKindErr",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime`/NewMissingKindErr().",
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/error.go",
+       "line": 85
+      }
+     ],
+     "reference_occurrences": {
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/helpers.go": [
+       390
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructured_conversion_test.go": [
+       124,
+       145,
+       313
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructuredscheme/scheme.go": [
+       94
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go": [
+       260
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/cbor/cbor.go": [
+       270,
+       326,
+       353
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/json/json.go": [
+       181,
+       198
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/protobuf/protobuf.go": [
+       173,
+       419
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/helpers.go",
+       "line": 376,
+       "chain": "Decode",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1/unstructured`/unstructuredJSONScheme#Decode().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructured_conversion_test.go",
+       "line": 107,
+       "chain": "TestUnstructuredToObjectConversion",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1/unstructured_test`/TestUnstructuredToObjectConversion().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructured_conversion_test.go",
+       "line": 265,
+       "chain": "TestUnstructuredToGVConversion",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1/unstructured_test`/TestUnstructuredToGVConversion().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructuredscheme/scheme.go",
+       "line": 87,
+       "chain": "ObjectKinds",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructuredscheme`/unstructuredObjectTyper#ObjectKinds().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go",
+       "line": 254,
+       "chain": "ObjectKinds",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime`/Scheme#ObjectKinds().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/cbor/cbor.go",
+       "line": 213,
+       "chain": "unmarshal",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer/cbor`/serializer#unmarshal().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/cbor/cbor.go",
+       "line": 307,
+       "chain": "Decode",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer/cbor`/serializer#Decode().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/json/json.go",
+       "line": 139,
+       "chain": "Decode",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer/json`/Serializer#Decode().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/protobuf/protobuf.go",
+       "line": 115,
+       "chain": "Decode",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer/protobuf`/Serializer#Decode().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/protobuf/protobuf.go",
+       "line": 371,
+       "chain": "Decode",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer/protobuf`/RawSerializer#Decode().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "staging/src/k8s.io/apimachinery/pkg/runtime/error.go",
+     "within": "staging/src/k8s.io/apimachinery/"
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k11": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "RunScorePlugins",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/runtime/framework.go"
+     ]
+    },
+    {
+     "fact": "RunPreBindPlugins",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/runtime/framework.go"
+     ]
+    },
+    {
+     "fact": "findNodesThatPassFilters",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "prepareCandidate",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/preemption/executor.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/framework/runtime/framework.go",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "NewResultChannel",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/parallelize`/NewResultChannel().",
+       "file": "pkg/scheduler/framework/parallelize/result_channel.go",
+       "line": 56
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/framework/parallelize/result_channel_test.go": [
+       28
+      ],
+      "pkg/scheduler/framework/preemption/executor.go": [
+       220,
+       332
+      ],
+      "pkg/scheduler/framework/runtime/framework.go": [
+       1430,
+       1530,
+       1645,
+       1780
+      ],
+      "pkg/scheduler/schedule_one.go": [
+       803
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/framework/parallelize/result_channel_test.go",
+       "line": 27,
+       "chain": "TestErrorChannel",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/parallelize`/TestErrorChannel().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/executor.go",
+       "line": 199,
+       "chain": "prepareCandidateAsync",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/Executor#prepareCandidateAsync().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/executor.go",
+       "line": 318,
+       "chain": "prepareCandidate",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/Executor#prepareCandidate().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework.go",
+       "line": 1405,
+       "chain": "RunScorePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/frameworkImpl#RunScorePlugins().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework.go",
+       "line": 1526,
+       "chain": "normalizeScores",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/frameworkImpl#normalizeScores().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework.go",
+       "line": 1625,
+       "chain": "RunPlacementScorePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/frameworkImpl#RunPlacementScorePlugins().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework.go",
+       "line": 1766,
+       "chain": "RunPreBindPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/frameworkImpl#RunPreBindPlugins().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 779,
+       "chain": "findNodesThatPassFilters",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#findNodesThatPassFilters().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/framework/parallelize/result_channel.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k12": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "NewInTreeRegistry",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/plugins/registry.go"
+     ]
+    },
+    {
+     "fact": "WithFrameworkOutOfTreeRegistry",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/scheduler.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/profile/profile.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "NewFramework",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/runtime/framework.go",
+      "pkg/scheduler/profile/profile.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "Registry",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/Registry#",
+       "file": "pkg/scheduler/framework/runtime/registry.go",
+       "line": 71
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/framework/plugins/registry.go": [
+       51,
+       53
+      ],
+      "pkg/scheduler/framework/runtime/batch_test.go": [
+       142
+      ],
+      "pkg/scheduler/framework/runtime/framework.go": [
+       59,
+       338
+      ],
+      "pkg/scheduler/framework/runtime/framework_test.go": [
+       464,
+       465,
+       516,
+       722,
+       1086,
+       1698,
+       1824,
+       1866,
+       2840,
+       3028,
+       3122,
+       3209,
+       3416,
+       3560,
+       3699,
+       3892,
+       4179,
+       4341,
+       4480,
+       4740,
+       4871,
+       4936,
+       5009,
+       5356,
+       5633,
+       5674
+      ],
+      "pkg/scheduler/framework/runtime/registry.go": [
+       75,
+       85,
+       94
+      ],
+      "pkg/scheduler/framework/runtime/registry_test.go": [
+       78,
+       123,
+       124,
+       125,
+       130,
+       133,
+       136,
+       144,
+       147,
+       150,
+       178,
+       181,
+       186,
+       189,
+       196,
+       201,
+       229,
+       231,
+       236,
+       241,
+       248,
+       250
+      ],
+      "pkg/scheduler/profile/profile.go": [
+       38,
+       49
+      ],
+      "pkg/scheduler/profile/profile_test.go": [
+       34
+      ],
+      "pkg/scheduler/schedule_one_podgroup_test.go": [
+       650,
+       722,
+       825,
+       1079,
+       1852,
+       4324,
+       4440,
+       4517,
+       4689
+      ],
+      "pkg/scheduler/schedule_one_test.go": [
+       508,
+       627
+      ],
+      "pkg/scheduler/scheduler.go": [
+       143,
+       213
+      ],
+      "pkg/scheduler/scheduler_test.go": [
+       793,
+       1159,
+       1256
+      ],
+      "pkg/scheduler/testing/framework/framework_helpers.go": [
+       36,
+       49,
+       123
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/framework/plugins/registry.go",
+       "line": 51,
+       "chain": "NewInTreeRegistry",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins`/NewInTreeRegistry().",
+       "families": [
+        "mentions",
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/batch_test.go",
+       "line": 141,
+       "chain": "newBatchTestFramework",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/newBatchTestFramework().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework.go",
+       "line": 58,
+       "chain": "frameworkImpl",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/frameworkImpl#",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework.go",
+       "line": 338,
+       "chain": "NewFramework",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/NewFramework().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 516,
+       "chain": "newFrameworkWithQueueSortAndBind",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/newFrameworkWithQueueSortAndBind().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 669,
+       "chain": "TestNewFramework_PlacementFeasible",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestNewFramework_PlacementFeasible().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 909,
+       "chain": "TestRunPodGroupPostFilterPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunPodGroupPostFilterPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 1675,
+       "chain": "TestPreEnqueuePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestPreEnqueuePlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 1733,
+       "chain": "TestRunPreScorePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunPreScorePlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 1863,
+       "chain": "TestRunScorePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunScorePlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 2837,
+       "chain": "TestPreFilterPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestPreFilterPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 2883,
+       "chain": "TestRunPreFilterPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunPreFilterPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 3072,
+       "chain": "TestRunPreFilterExtensionRemovePod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunPreFilterExtensionRemovePod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 3159,
+       "chain": "TestRunPreFilterExtensionAddPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunPreFilterExtensionAddPod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 3247,
+       "chain": "TestFilterPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestFilterPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 3453,
+       "chain": "TestPostFilterPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestPostFilterPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 3598,
+       "chain": "TestFilterPluginsWithNominatedPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestFilterPluginsWithNominatedPods().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 3766,
+       "chain": "TestPreBindPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestPreBindPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 4111,
+       "chain": "TestPreBindPreFlightPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestPreBindPreFlightPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 4215,
+       "chain": "TestReservePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestReservePlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 4377,
+       "chain": "TestPermitPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestPermitPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 4527,
+       "chain": "TestRecordingMetrics",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRecordingMetrics().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 4798,
+       "chain": "TestRunBindPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunBindPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 4914,
+       "chain": "TestPermitWaitDurationMetric",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestPermitWaitDurationMetric().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 4976,
+       "chain": "TestWaitOnPermit",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestWaitOnPermit().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 5273,
+       "chain": "TestRunPlacementGeneratePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunPlacementGeneratePlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 5424,
+       "chain": "TestRunPlacementScorePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRunPlacementScorePlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 5667,
+       "chain": "TestPluginEvaluationTotalMetric",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestPluginEvaluationTotalMetric().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/registry.go",
+       "line": 75,
+       "chain": "Register",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/Registry#Register().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/registry.go",
+       "line": 85,
+       "chain": "Unregister",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/Registry#Unregister().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/registry.go",
+       "line": 94,
+       "chain": "Merge",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/Registry#Merge().",
+       "families": [
+        "mentions",
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/registry_test.go",
+       "line": 78,
+       "chain": "isRegistryEqual",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/isRegistryEqual().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/registry_test.go",
+       "line": 118,
+       "chain": "TestMerge",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestMerge().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/registry_test.go",
+       "line": 173,
+       "chain": "TestRegister",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestRegister().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/registry_test.go",
+       "line": 224,
+       "chain": "TestUnregister",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/TestUnregister().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/profile/profile.go",
+       "line": 38,
+       "chain": "newProfile",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/profile`/newProfile().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/profile/profile.go",
+       "line": 49,
+       "chain": "NewMap",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/profile`/NewMap().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 623,
+       "chain": "TestSkipPodGroupPodSchedule",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestSkipPodGroupPodSchedule().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 698,
+       "chain": "TestScheduleOnePodGroup_FinishesAttemptWhenAllPoppedPodsAreAssumed",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestScheduleOnePodGroup_FinishesAttemptWhenAllPoppedPodsAreAssumed().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 800,
+       "chain": "TestPodGroupCycle_UpdateSnapshotError",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestPodGroupCycle_UpdateSnapshotError().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 1015,
+       "chain": "TestPodGroupCycle_PodGroupPostFilter",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestPodGroupCycle_PodGroupPostFilter().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 1568,
+       "chain": "TestSubmitPodGroupAlgorithmResult",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestSubmitPodGroupAlgorithmResult().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 4290,
+       "chain": "TestPodGroupCycle_NominatedNodes",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestPodGroupCycle_NominatedNodes().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 4416,
+       "chain": "TestScheduleOnePodGroup_PodGroupNotFound",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestScheduleOnePodGroup_PodGroupNotFound().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 4497,
+       "chain": "TestScheduleOnePodGroup_SchedulerNameMismatchUpdatesStatus",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestScheduleOnePodGroup_SchedulerNameMismatchUpdatesStatus().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 4590,
+       "chain": "TestCPGHierarchicalScheduling_ScheduleOnePodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestCPGHierarchicalScheduling_ScheduleOnePodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_test.go",
+       "line": 436,
+       "chain": "TestSchedulerMultipleProfilesScheduling",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestSchedulerMultipleProfilesScheduling().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_test.go",
+       "line": 570,
+       "chain": "TestSchedulerGuaranteeNonNilNodeInSchedulingCycle",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestSchedulerGuaranteeNonNilNodeInSchedulingCycle().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler.go",
+       "line": 133,
+       "chain": "schedulerOptions",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/schedulerOptions#",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler.go",
+       "line": 213,
+       "chain": "WithFrameworkOutOfTreeRegistry",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/WithFrameworkOutOfTreeRegistry().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler_test.go",
+       "line": 672,
+       "chain": "Test_buildQueueingHintMap",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Test_buildQueueingHintMap().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler_test.go",
+       "line": 1159,
+       "chain": "newFramework",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/newFramework().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler_test.go",
+       "line": 1169,
+       "chain": "TestFrameworkHandler_IterateOverWaitingPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestFrameworkHandler_IterateOverWaitingPods().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/testing/framework/framework_helpers.go",
+       "line": 35,
+       "chain": "NewFramework",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/testing/framework`/NewFramework().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/testing/framework/framework_helpers.go",
+       "line": 122,
+       "chain": "RegisterPluginAsExtensionsWithWeight",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/testing/framework`/RegisterPluginAsExtensionsWithWeight().",
+       "families": [
+        "mentions"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/framework/runtime/registry.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k13": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "newQueuedPodInfo",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/queue/scheduling_queue.go"
+     ]
+    },
+    {
+     "fact": "handleSchedulingFailure",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "searchCrossNodesVictimPods",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/preemption/types.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/framework/plugins/interpodaffinity",
+     "type": "dir",
+     "in": []
+    }
+   ],
+   "scip": [
+    {
+     "name": "NewPodInfo",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework`/NewPodInfo().",
+       "file": "pkg/scheduler/framework/types.go",
+       "line": 1524
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/backend/cache/cache_test.go": [
+       2534,
+       2542,
+       2551
+      ],
+      "pkg/scheduler/backend/cache/snapshot_test.go": [
+       520,
+       521,
+       522,
+       697,
+       1121,
+       1525,
+       1822
+      ],
+      "pkg/scheduler/backend/queue/scheduling_queue.go": [
+       2208
+      ],
+      "pkg/scheduler/backend/queue/scheduling_queue_test.go": [
+       5497,
+       5505,
+       9506
+      ],
+      "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption_test.go": [
+       3807,
+       3808
+      ],
+      "pkg/scheduler/framework/plugins/gangscheduling/gangscheduling_test.go": [
+       1221
+      ],
+      "pkg/scheduler/framework/plugins/interpodaffinity/filtering.go": [
+       513
+      ],
+      "pkg/scheduler/framework/plugins/interpodaffinity/filtering_test.go": [
+       1611
+      ],
+      "pkg/scheduler/framework/plugins/interpodaffinity/scoring.go": [
+       170
+      ],
+      "pkg/scheduler/framework/plugins/noderesources/fit_test.go": [
+       2712
+      ],
+      "pkg/scheduler/framework/plugins/podgrouppodscount/podgroup_pods_count_test.go": [
+       83,
+       84
+      ],
+      "pkg/scheduler/framework/plugins/podtopologyspread/filtering_test.go": [
+       3453
+      ],
+      "pkg/scheduler/framework/plugins/queuesort/priority_sort_test.go": [
+       101
+      ],
+      "pkg/scheduler/framework/preemption/podgrouppreemption_test.go": [
+       1364,
+       1646
+      ],
+      "pkg/scheduler/framework/preemption/preemption_test.go": [
+       657
+      ],
+      "pkg/scheduler/framework/preemption/types.go": [
+       323
+      ],
+      "pkg/scheduler/framework/preemption/types_test.go": [
+       887,
+       992,
+       993,
+       994,
+       995,
+       996,
+       1132
+      ],
+      "pkg/scheduler/framework/preemption/util_test.go": [
+       37,
+       268
+      ],
+      "pkg/scheduler/framework/runtime/framework_test.go": [
+       5256
+      ],
+      "pkg/scheduler/framework/types.go": [
+       385
+      ],
+      "pkg/scheduler/framework/types_test.go": [
+       3270,
+       3301,
+       3312,
+       3325,
+       3331,
+       3416,
+       3505
+      ],
+      "pkg/scheduler/schedule_one.go": [
+       1222
+      ],
+      "pkg/scheduler/schedule_one_podgroup_test.go": [
+       2482,
+       3416,
+       3596,
+       3600,
+       4016,
+       4020,
+       5583
+      ],
+      "pkg/scheduler/schedule_one_test.go": [
+       4043,
+       4995
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/backend/cache/cache_test.go",
+       "line": 2346,
+       "chain": "TestSchedulerCache_UpdateSnapshot",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestSchedulerCache_UpdateSnapshot().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/cache/snapshot_test.go",
+       "line": 511,
+       "chain": "TestSnapshot_AssumeForget",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestSnapshot_AssumeForget().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/cache/snapshot_test.go",
+       "line": 652,
+       "chain": "TestSnapshot_AssumeForgetAffinityAndPVC",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestSnapshot_AssumeForgetAffinityAndPVC().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/cache/snapshot_test.go",
+       "line": 974,
+       "chain": "TestSnapshot_Placement",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestSnapshot_Placement().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/cache/snapshot_test.go",
+       "line": 1522,
+       "chain": "TestSnapshot_AddRemovePodWithoutMutations",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestSnapshot_AddRemovePodWithoutMutations().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/cache/snapshot_test.go",
+       "line": 1560,
+       "chain": "TestSnapshot_AddRemovePod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestSnapshot_AddRemovePod().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2204,
+       "chain": "newQueuedPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#newQueuedPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 5496,
+       "chain": "mustNewTestPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/mustNewTestPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 5504,
+       "chain": "mustNewPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/mustNewPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 9460,
+       "chain": "TestPriorityQueue_DeferredPodGroupCompatibility",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPriorityQueue_DeferredPodGroupCompatibility().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption_test.go",
+       "line": 3522,
+       "chain": "TestPreEnqueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/defaultpreemption`/TestPreEnqueue().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/gangscheduling/gangscheduling_test.go",
+       "line": 830,
+       "chain": "TestGangSchedulingFlow",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/gangscheduling`/TestGangSchedulingFlow().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/interpodaffinity/filtering.go",
+       "line": 505,
+       "chain": "PreFilter",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/interpodaffinity`/InterPodAffinity#PreFilter().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/interpodaffinity/filtering_test.go",
+       "line": 1610,
+       "chain": "mustNewPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/interpodaffinity`/mustNewPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/interpodaffinity/scoring.go",
+       "line": 128,
+       "chain": "PreScore",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/interpodaffinity`/InterPodAffinity#PreScore().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/noderesources/fit_test.go",
+       "line": 2490,
+       "chain": "TestScorePlacement_Resources",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/noderesources`/TestScorePlacement_Resources().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/podgrouppodscount/podgroup_pods_count_test.go",
+       "line": 73,
+       "chain": "TestScorePlacement",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/podgrouppodscount`/TestScorePlacement().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/podtopologyspread/filtering_test.go",
+       "line": 3452,
+       "chain": "mustNewPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/podtopologyspread`/mustNewPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/queuesort/priority_sort_test.go",
+       "line": 100,
+       "chain": "mustNewPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/queuesort`/mustNewPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/podgrouppreemption_test.go",
+       "line": 1344,
+       "chain": "TestPodGroupEvaluator_SelectVictimsOnDomain_NominatedNodes",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/TestPodGroupEvaluator_SelectVictimsOnDomain_NominatedNodes().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/podgrouppreemption_test.go",
+       "line": 1645,
+       "chain": "GetPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/mockProposedAssignment#GetPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/preemption_test.go",
+       "line": 655,
+       "chain": "TestGetVictimsOnNode",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/TestGetVictimsOnNode().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/types.go",
+       "line": 284,
+       "chain": "searchCrossNodesVictimPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/searchCrossNodesVictimPods().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/types_test.go",
+       "line": 295,
+       "chain": "TestNewDomainForWorkloadPreemption",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/TestNewDomainForWorkloadPreemption().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/types_test.go",
+       "line": 981,
+       "chain": "TestNewVictim",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/TestNewVictim().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/types_test.go",
+       "line": 1080,
+       "chain": "TestNewDomainVictim",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/TestNewDomainVictim().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/util_test.go",
+       "line": 35,
+       "chain": "TestFilterVictimsWithPDBViolation",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/TestFilterVictimsWithPDBViolation().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/util_test.go",
+       "line": 266,
+       "chain": "TestMoreImportantVictim",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/TestMoreImportantVictim().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/runtime/framework_test.go",
+       "line": 5255,
+       "chain": "mustNewPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/runtime`/mustNewPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/types.go",
+       "line": 382,
+       "chain": "AddPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework`/NodeInfo#AddPod().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/types_test.go",
+       "line": 3265,
+       "chain": "TestQueuedPodInfo_UpdateInvalidatesSignature",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework`/TestQueuedPodInfo_UpdateInvalidatesSignature().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/types_test.go",
+       "line": 3286,
+       "chain": "TestPodInfo_Update",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework`/TestPodInfo_Update().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/types_test.go",
+       "line": 3362,
+       "chain": "TestNewPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework`/TestNewPodInfo().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/types_test.go",
+       "line": 3435,
+       "chain": "TestNodeInfo_PodsWithRequiredNonHostScopedAntiAffinity",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework`/TestNodeInfo_PodsWithRequiredNonHostScopedAntiAffinity().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 1152,
+       "chain": "handleSchedulingFailure",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#handleSchedulingFailure().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 2465,
+       "chain": "TestPodGroupSchedulingPlacementAlgorithm",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestPodGroupSchedulingPlacementAlgorithm().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 3400,
+       "chain": "TestPlacementCycleStateLifecycle_MultiLevel",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestPlacementCycleStateLifecycle_MultiLevel().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 3572,
+       "chain": "TestCPGSchedulingPlacementAlgorithm",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestCPGSchedulingPlacementAlgorithm().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 3996,
+       "chain": "TestCPGSchedulingPlacementAlgorithm_Scoring",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestCPGSchedulingPlacementAlgorithm_Scoring().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup_test.go",
+       "line": 5569,
+       "chain": "TestScorePlacementPodGroupAssignments",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestScorePlacementPodGroupAssignments().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_test.go",
+       "line": 3985,
+       "chain": "TestFindFitPredicateCallCounts",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestFindFitPredicateCallCounts().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_test.go",
+       "line": 4994,
+       "chain": "mustNewPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/mustNewPodInfo().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/framework/types.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k14": {
+   "kind": "impact",
+   "facts": [
+    {
+     "fact": "pkg/scheduler/apis/config/register.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "AddToGroupVersion",
+     "type": "symbol",
+     "in": [
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/register.go"
+     ]
+    },
+    {
+     "fact": "AddMetaToScheme",
+     "type": "symbol",
+     "in": [
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/register.go",
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1beta1/register.go"
+     ]
+    },
+    {
+     "fact": "AddUnversionedTypes",
+     "type": "symbol",
+     "in": [
+      "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "AddKnownTypes",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime`/Scheme#AddKnownTypes().",
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go",
+       "line": 151
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/apis/config/register.go": [
+       39
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/internalversion/register.go": [
+       52,
+       59
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/register.go": [
+       73,
+       90
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructured_conversion_test.go": [
+       268,
+       269
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1beta1/register.go": [
+       39
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/testapigroup/register.go": [
+       47
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/apis/testapigroup/v1/register.go": [
+       58
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/embedded_test.go": [
+       39,
+       75,
+       77,
+       152,
+       232
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go": [
+       135
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/scheme_test.go": [
+       481,
+       482,
+       516,
+       517
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/codec_test.go": [
+       82,
+       83,
+       329,
+       330
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/recognizer/testing/recognizer_test.go": [
+       37
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/sparse_test.go": [
+       51,
+       52
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/test/runtime_serializer_protobuf_protobuf_test.go": [
+       335
+      ],
+      "staging/src/k8s.io/apimachinery/pkg/test/util.go": [
+       55,
+       60
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/apis/config/register.go",
+       "line": 38,
+       "chain": "addKnownTypes",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/apis/config`/addKnownTypes().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/internalversion/register.go",
+       "line": 46,
+       "chain": "addToGroupVersion",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/internalversion`/addToGroupVersion().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/register.go",
+       "line": 66,
+       "chain": "AddToGroupVersion",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1`/AddToGroupVersion().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/register.go",
+       "line": 89,
+       "chain": "AddMetaToScheme",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1`/AddMetaToScheme().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructured_conversion_test.go",
+       "line": 265,
+       "chain": "TestUnstructuredToGVConversion",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1/unstructured_test`/TestUnstructuredToGVConversion().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/meta/v1beta1/register.go",
+       "line": 38,
+       "chain": "AddMetaToScheme",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/meta/v1beta1`/AddMetaToScheme().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/testapigroup/register.go",
+       "line": 46,
+       "chain": "addKnownTypes",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/testapigroup`/addKnownTypes().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/apis/testapigroup/v1/register.go",
+       "line": 57,
+       "chain": "addKnownTypes",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/apis/testapigroup/v1`/addKnownTypes().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/embedded_test.go",
+       "line": 33,
+       "chain": "TestDecodeEmptyRawExtensionAsObject",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime_test`/TestDecodeEmptyRawExtensionAsObject().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/embedded_test.go",
+       "line": 70,
+       "chain": "TestArrayOfRuntimeObject",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime_test`/TestArrayOfRuntimeObject().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/embedded_test.go",
+       "line": 146,
+       "chain": "TestNestedObject",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime_test`/TestNestedObject().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/embedded_test.go",
+       "line": 226,
+       "chain": "TestDeepCopyOfRuntimeObject",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime_test`/TestDeepCopyOfRuntimeObject().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go",
+       "line": 133,
+       "chain": "AddUnversionedTypes",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime`/Scheme#AddUnversionedTypes().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/scheme_test.go",
+       "line": 470,
+       "chain": "GetTestScheme",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime_test`/GetTestScheme().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/scheme_test.go",
+       "line": 512,
+       "chain": "TestAddKnownTypesIdemPotent",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime_test`/TestAddKnownTypesIdemPotent().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/codec_test.go",
+       "line": 73,
+       "chain": "GetTestScheme",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer`/GetTestScheme().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/codec_test.go",
+       "line": 321,
+       "chain": "GetDirectCodecTestScheme",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer`/GetDirectCodecTestScheme().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/recognizer/testing/recognizer_test.go",
+       "line": 35,
+       "chain": "TestRecognizer",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer/recognizer/testing`/TestRecognizer().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/runtime/serializer/sparse_test.go",
+       "line": 46,
+       "chain": "TestSparse",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/runtime/serializer`/TestSparse().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/test/runtime_serializer_protobuf_protobuf_test.go",
+       "line": 285,
+       "chain": "TestDecodeObjects",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/test`/TestDecodeObjects().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "staging/src/k8s.io/apimachinery/pkg/test/util.go",
+       "line": 50,
+       "chain": "TestScheme",
+       "symbol": "scip-go gomod k8s.io/apimachinery f78e722310e5 `k8s.io/apimachinery/pkg/test`/TestScheme().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "staging/src/k8s.io/apimachinery/pkg/runtime/scheme.go",
+     "within": null
+    }
+   ],
+   "read": []
+  },
+  "kubernetes-k15": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "PriorityQueue",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/queue/scheduling_queue.go"
+     ]
+    },
+    {
+     "fact": "activeQueue",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/queue/active_queue.go"
+     ]
+    },
+    {
+     "fact": "backoffQueue",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/queue/backoff_queue.go"
+     ]
+    },
+    {
+     "fact": "unschedulableEntities",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/queue/unschedulable_entities.go",
+      "pkg/scheduler/backend/queue/scheduling_queue.go"
+     ]
+    },
+    {
+     "fact": "MoveAllToActiveOrBackoffQueue",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/queue/scheduling_queue.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "PriorityQueue",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#",
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 207
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/backend/queue/scheduling_queue.go": [
+       400,
+       417,
+       434,
+       452,
+       508,
+       530,
+       551,
+       564,
+       587,
+       707,
+       731,
+       766,
+       795,
+       811,
+       847,
+       873,
+       882,
+       900,
+       933,
+       949,
+       970,
+       1002,
+       1026,
+       1032,
+       1073,
+       1147,
+       1166,
+       1289,
+       1306,
+       1335,
+       1341,
+       1345,
+       1353,
+       1471,
+       1485,
+       1536,
+       1563,
+       1601,
+       1624,
+       1675,
+       1716,
+       1742,
+       1808,
+       1824,
+       1884,
+       1894,
+       1919,
+       1963,
+       1968,
+       1973,
+       1987,
+       1995,
+       2002,
+       2024,
+       2047,
+       2083,
+       2111,
+       2124,
+       2137,
+       2156,
+       2167,
+       2185,
+       2204,
+       2280
+      ],
+      "pkg/scheduler/backend/queue/scheduling_queue_test.go": [
+       132,
+       358,
+       699,
+       701,
+       703,
+       712,
+       753,
+       754,
+       764,
+       775,
+       808,
+       817,
+       908,
+       979,
+       1219,
+       1388,
+       1573,
+       1578,
+       1587,
+       1597,
+       1605,
+       1612,
+       1620,
+       1629,
+       1642,
+       1658,
+       1668,
+       2841,
+       3792,
+       3808,
+       3815,
+       3829,
+       3844,
+       3859,
+       3872,
+       3886,
+       3900,
+       3912,
+       4051,
+       4091,
+       4094,
+       4097,
+       4103,
+       4124,
+       4142,
+       4145,
+       4148,
+       4162,
+       4165,
+       4170,
+       4173,
+       4176,
+       4180,
+       4183,
+       4187,
+       4190,
+       4193,
+       4841,
+       4848,
+       4857,
+       4881,
+       4909,
+       5069,
+       5074,
+       5086,
+       5108,
+       5161,
+       5166,
+       5178,
+       5200,
+       5219,
+       5241,
+       5266,
+       5953,
+       5956,
+       5961,
+       5966,
+       5971,
+       5976,
+       6256,
+       6260,
+       6266,
+       6273,
+       6417,
+       8295,
+       8418,
+       8436,
+       8610,
+       8684,
+       8706,
+       8727,
+       8835,
+       8939,
+       8961,
+       8978,
+       9175,
+       9225,
+       9246,
+       9264,
+       9280,
+       9370,
+       9387,
+       9402
+      ],
+      "pkg/scheduler/backend/queue/testing.go": [
+       31,
+       42,
+       59
+      ],
+      "pkg/scheduler/scheduler_test.go": [
+       473
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 417,
+       "chain": "newQueuedPodGroupInfoFromRootLookup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#newQueuedPodGroupInfoFromRootLookup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 430,
+       "chain": "NewPriorityQueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/NewPriorityQueue().",
+       "families": [
+        "mentions",
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 508,
+       "chain": "Run",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#Run().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 530,
+       "chain": "isEventOfInterest",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#isEventOfInterest().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 551,
+       "chain": "isPodGroupMember",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#isPodGroupMember().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 564,
+       "chain": "isEntityWorthRequeuing",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#isEntityWorthRequeuing().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 587,
+       "chain": "isPodWorthRequeuing",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#isPodWorthRequeuing().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 707,
+       "chain": "runPreEnqueuePlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#runPreEnqueuePlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 731,
+       "chain": "runPreEnqueuePluginsForPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#runPreEnqueuePluginsForPod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 766,
+       "chain": "runPreEnqueuePlugin",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#runPreEnqueuePlugin().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 795,
+       "chain": "AddNominatedPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#AddNominatedPod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 811,
+       "chain": "moveToActiveQ",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#moveToActiveQ().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 847,
+       "chain": "moveToBackoffQ",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#moveToBackoffQ().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 873,
+       "chain": "Add",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#Add().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 882,
+       "chain": "addPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#addPod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 900,
+       "chain": "addPodGroupMember",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#addPodGroupMember().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 933,
+       "chain": "deleteFromAnyQueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#deleteFromAnyQueue().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 949,
+       "chain": "addToPodGroupIfExists",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#addToPodGroupIfExists().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 970,
+       "chain": "Activate",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#Activate().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1002,
+       "chain": "activate",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#activate().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1026,
+       "chain": "SchedulingCycle",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#SchedulingCycle().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1032,
+       "chain": "determineSchedulingHintForInFlightPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#determineSchedulingHintForInFlightPod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1073,
+       "chain": "AddUnschedulablePodIfNotPresent",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#AddUnschedulablePodIfNotPresent().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1147,
+       "chain": "addUnschedulablePodGroupMember",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#addUnschedulablePodGroupMember().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1166,
+       "chain": "AddAttemptedPodGroupIfNeeded",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#AddAttemptedPodGroupIfNeeded().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1289,
+       "chain": "flushBackoffQCompleted",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#flushBackoffQCompleted().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1306,
+       "chain": "flushUnschedulableEntitiesLeftover",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#flushUnschedulableEntitiesLeftover().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1335,
+       "chain": "Pop",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#Pop().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1341,
+       "chain": "Done",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#Done().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1345,
+       "chain": "InFlightPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#InFlightPods().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1353,
+       "chain": "Update",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#Update().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1471,
+       "chain": "Delete",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#Delete().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1485,
+       "chain": "deletePodGroupMember",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#deletePodGroupMember().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1536,
+       "chain": "deletePod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#deletePod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1563,
+       "chain": "AddPodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#AddPodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1601,
+       "chain": "UpdatePodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#UpdatePodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1624,
+       "chain": "DeletePodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#DeletePodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1675,
+       "chain": "AddCompositePodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#AddCompositePodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1716,
+       "chain": "UpdateCompositePodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#UpdateCompositePodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1742,
+       "chain": "DeleteCompositePodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#DeleteCompositePodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1808,
+       "chain": "moveAllToActiveOrBackoffQueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#moveAllToActiveOrBackoffQueue().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1824,
+       "chain": "collectEntitiesToEvaluate",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#collectEntitiesToEvaluate().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1884,
+       "chain": "MoveAllToActiveOrBackoffQueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#MoveAllToActiveOrBackoffQueue().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1894,
+       "chain": "requeueEntityWithQueueingStrategy",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#requeueEntityWithQueueingStrategy().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1919,
+       "chain": "moveEntitiesToActiveOrBackoffQueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#moveEntitiesToActiveOrBackoffQueue().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1963,
+       "chain": "PodsInActiveQ",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#PodsInActiveQ().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1968,
+       "chain": "PodsInBackoffQ",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#PodsInBackoffQ().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1973,
+       "chain": "UnschedulablePods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#UnschedulablePods().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1987,
+       "chain": "PendingPodGroupPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#PendingPodGroupPods().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 1995,
+       "chain": "IncompletePodGroupPodsPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#IncompletePodGroupPodsPods().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2002,
+       "chain": "GetPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#GetPod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2024,
+       "chain": "GetPodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#GetPodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2047,
+       "chain": "getPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#getPod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2083,
+       "chain": "PendingPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#PendingPods().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2111,
+       "chain": "PatchPodStatus",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#PatchPodStatus().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2124,
+       "chain": "nominatedPodToInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#nominatedPodToInfo().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2137,
+       "chain": "getEntityFromAnyQueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#getEntityFromAnyQueue().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2156,
+       "chain": "Close",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#Close().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2167,
+       "chain": "NominatedPodsForNode",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#NominatedPodsForNode().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2185,
+       "chain": "signPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#signPod().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2204,
+       "chain": "newQueuedPodInfo",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#newQueuedPodInfo().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+       "line": 2280,
+       "chain": "runPreQueueingHintPlugins",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/PriorityQueue#runPreQueueingHintPlugins().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 132,
+       "chain": "getUnschedulablePod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/getUnschedulablePod().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 333,
+       "chain": "Test_InFlightPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/Test_InFlightPods().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 1219,
+       "chain": "popPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/popPod().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 1388,
+       "chain": "tryPop",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/tryPop().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 1538,
+       "chain": "TestPriorityQueue_Update",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPriorityQueue_Update().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 2841,
+       "chain": "expectInFlightPods",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/expectInFlightPods().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 3783,
+       "chain": "TestAddAttemptedPodGroupIfNeeded",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestAddAttemptedPodGroupIfNeeded().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 3997,
+       "chain": "TestPriorityQueue_initPodMaxInUnschedulablePodsDuration",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPriorityQueue_initPodMaxInUnschedulablePodsDuration().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 4832,
+       "chain": "TestPerPodSchedulingMetrics",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPerPodSchedulingMetrics().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 5047,
+       "chain": "TestIncomingEntitiesMetrics",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestIncomingEntitiesMetrics().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 5140,
+       "chain": "TestQueuedEntitiesMetrics",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestQueuedEntitiesMetrics().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 5952,
+       "chain": "TestUnschedulablePodsMetric",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestUnschedulablePodsMetric().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 6238,
+       "chain": "TestPriorityQueue_UpdateRecomputesSignature",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPriorityQueue_UpdateRecomputesSignature().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 6417,
+       "chain": "setupInitialPodGroupState",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/setupInitialPodGroupState().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 8289,
+       "chain": "TestPriorityQueue_AddCompositePodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPriorityQueue_AddCompositePodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 8604,
+       "chain": "TestPriorityQueue_DeleteCompositePodGroup",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPriorityQueue_DeleteCompositePodGroup().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 8828,
+       "chain": "TestPriorityQueue_AddPodGroup_Hierarchical",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPriorityQueue_AddPodGroup_Hierarchical().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 9168,
+       "chain": "TestPriorityQueue_DeletePodGroup_Hierarchical",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/TestPriorityQueue_DeletePodGroup_Hierarchical().",
+       "families": [
+        "mentions"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 9370,
+       "chain": "getActivePodGroupInfos",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/getActivePodGroupInfos().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 9387,
+       "chain": "getActivePodGroups",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/getActivePodGroups().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/scheduling_queue_test.go",
+       "line": 9402,
+       "chain": "findPodGroupInfoInActiveQ",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/findPodGroupInfoInActiveQ().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/testing.go",
+       "line": 31,
+       "chain": "NewTestQueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/NewTestQueue().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/testing.go",
+       "line": 37,
+       "chain": "NewTestQueueWithObjects",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/NewTestQueueWithObjects().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/queue/testing.go",
+       "line": 54,
+       "chain": "NewTestQueueWithInformerFactory",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/queue`/NewTestQueueWithInformerFactory().",
+       "families": [
+        "references"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler_test.go",
+       "line": 473,
+       "chain": "getPodFromPriorityQueue",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/getPodFromPriorityQueue().",
+       "families": [
+        "references"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+     "lines": "207-272",
+     "note": "PriorityQueue fields"
+    },
+    {
+     "file": "pkg/scheduler/backend/queue/scheduling_queue.go",
+     "lines": "508-516",
+     "note": "Run flushes backoff and unschedulable"
+    }
+   ]
+  },
+  "kubernetes-k16": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "pkg/scheduler/profile/profile.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "NewMap",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/profile/profile.go",
+      "pkg/scheduler/scheduler.go"
+     ]
+    },
+    {
+     "fact": "NewFramework",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/profile/profile.go",
+      "pkg/scheduler/framework/runtime/framework.go"
+     ]
+    },
+    {
+     "fact": "frameworkForPod",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "HandlesSchedulerName",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/profile/profile.go",
+      "pkg/scheduler/eventhandlers.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "NewMap",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/profile`/NewMap().",
+       "file": "pkg/scheduler/profile/profile.go",
+       "line": 49
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/profile/profile_test.go": [
+       253
+      ],
+      "pkg/scheduler/scheduler.go": [
+       369
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/profile/profile_test.go",
+       "line": 41,
+       "chain": "TestNewMap",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/profile`/TestNewMap().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler.go",
+       "line": 286,
+       "chain": "New",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/New().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/profile/profile.go",
+     "within": "pkg/scheduler/"
+    },
+    {
+     "name": "frameworkForPod",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#frameworkForPod().",
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 540
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/eventhandlers.go": [
+       281
+      ],
+      "pkg/scheduler/schedule_one.go": [
+       103
+      ],
+      "pkg/scheduler/schedule_one_podgroup.go": [
+       180
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/eventhandlers.go",
+       "line": 268,
+       "chain": "handleAssumedPodDeletion",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#handleAssumedPodDeletion().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 93,
+       "chain": "scheduleOnePod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#scheduleOnePod().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_podgroup.go",
+       "line": 177,
+       "chain": "handlePodGroupFailureBeforeScheduling",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#handlePodGroupFailureBeforeScheduling().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/schedule_one.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/profile/profile.go",
+     "lines": "38-72",
+     "note": "newProfile, NewMap, HandlesSchedulerName"
+    },
+    {
+     "file": "pkg/scheduler/schedule_one.go",
+     "lines": "540-546",
+     "note": "frameworkForPod"
+    },
+    {
+     "file": "pkg/scheduler/eventhandlers.go",
+     "lines": "463-466",
+     "note": "responsibleForPod"
+    }
+   ]
+  },
+  "kubernetes-k17": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "pkg/scheduler/backend/cache/cache.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "UpdateSnapshot",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/cache/cache.go",
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "headNode",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/cache/cache.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/backend/cache/snapshot.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "AssumePod",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/backend/cache/cache.go",
+      "pkg/scheduler/schedule_one.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "UpdateSnapshot",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/cacheImpl#UpdateSnapshot().",
+       "file": "pkg/scheduler/backend/cache/cache.go",
+       "line": 206
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/backend/cache/cache_test.go": [
+       1391,
+       1403,
+       2083,
+       2603,
+       2993,
+       3821,
+       3839,
+       3874,
+       3897
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/backend/cache/cache_test.go",
+       "line": 1337,
+       "chain": "TestUpdatePodGroupStateSnapshot",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestUpdatePodGroupStateSnapshot().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/cache/cache_test.go",
+       "line": 1908,
+       "chain": "TestNodeOperators",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestNodeOperators().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/cache/cache_test.go",
+       "line": 2346,
+       "chain": "TestSchedulerCache_UpdateSnapshot",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestSchedulerCache_UpdateSnapshot().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/backend/cache/cache_test.go",
+       "line": 3747,
+       "chain": "TestCache_HavePodsWithRequiredNonHostScopedAntiAffinity",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/backend/cache`/TestCache_HavePodsWithRequiredNonHostScopedAntiAffinity().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/backend/cache/cache.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/backend/cache/cache.go",
+     "lines": "55-98",
+     "note": "cacheImpl, headNode linked list"
+    },
+    {
+     "file": "pkg/scheduler/backend/cache/cache.go",
+     "lines": "200-260",
+     "note": "UpdateSnapshot generation-based copy"
+    },
+    {
+     "file": "pkg/scheduler/schedule_one.go",
+     "lines": "169-178",
+     "note": "schedulingCycle calls Cache.UpdateSnapshot"
+    },
+    {
+     "file": "pkg/scheduler/schedule_one.go",
+     "lines": "1060-1098",
+     "note": "assume: snapshot and cache AssumePod"
+    }
+   ]
+  },
+  "kubernetes-k18": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "scheduleOnePod",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "schedulingCycle",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "findNodesThatFitPod",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "prioritizeNodes",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "bindingCycle",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/schedule_one.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "prioritizeNodes",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/prioritizeNodes().",
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 945
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/schedule_one.go": [
+       608
+      ],
+      "pkg/scheduler/schedule_one_test.go": [
+       4540
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 572,
+       "chain": "schedulePod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#schedulePod().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/schedule_one_test.go",
+       "line": 4065,
+       "chain": "Test_prioritizeNodes",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Test_prioritizeNodes().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/schedule_one.go",
+     "within": "pkg/scheduler/"
+    },
+    {
+     "name": "bindingCycle",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#bindingCycle().",
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 399
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/schedule_one.go": [
+       159
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/schedule_one.go",
+       "line": 145,
+       "chain": "runBindingCycle",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#runBindingCycle().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/schedule_one.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/schedule_one.go",
+     "lines": "67-195",
+     "note": "ScheduleOne, scheduleOnePod, runBindingCycle, schedulingCycle"
+    },
+    {
+     "file": "pkg/scheduler/schedule_one.go",
+     "lines": "572-630",
+     "note": "schedulePod: findNodesThatFitPod, prioritizeNodes"
+    },
+    {
+     "file": "pkg/scheduler/schedule_one.go",
+     "lines": "1100-1111",
+     "note": "bind: extenders then RunBindPlugins"
+    }
+   ]
+  },
+  "kubernetes-k19": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "addAllEventHandlers",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/eventhandlers.go"
+     ]
+    },
+    {
+     "fact": "addPodToSchedulingQueue",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/eventhandlers.go"
+     ]
+    },
+    {
+     "fact": "responsibleForPod",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/eventhandlers.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/backend/queue/scheduling_queue.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "NextEntity",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/scheduler.go",
+      "pkg/scheduler/schedule_one.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "addPodToSchedulingQueue",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#addPodToSchedulingQueue().",
+       "file": "pkg/scheduler/eventhandlers.go",
+       "line": 238
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/eventhandlers.go": [
+       139,
+       168
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/eventhandlers.go",
+       "line": 129,
+       "chain": "addPod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#addPod().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/eventhandlers.go",
+       "line": 146,
+       "chain": "updatePod",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/Scheduler#updatePod().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/eventhandlers.go",
+     "within": "pkg/scheduler/"
+    },
+    {
+     "name": "addAllEventHandlers",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/addAllEventHandlers().",
+       "file": "pkg/scheduler/eventhandlers.go",
+       "line": 624
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/eventhandlers_test.go": [
+       534,
+       594
+      ],
+      "pkg/scheduler/scheduler.go": [
+       476
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/eventhandlers_test.go",
+       "line": 282,
+       "chain": "TestAddAllEventHandlers",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestAddAllEventHandlers().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/eventhandlers_test.go",
+       "line": 562,
+       "chain": "TestAddAllEventHandlersPodEventResources",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/TestAddAllEventHandlersPodEventResources().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/scheduler.go",
+       "line": 286,
+       "chain": "New",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler`/New().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/eventhandlers.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/eventhandlers.go",
+     "lines": "129-145",
+     "note": "addPod"
+    },
+    {
+     "file": "pkg/scheduler/eventhandlers.go",
+     "lines": "238-248",
+     "note": "addPodToSchedulingQueue -> SchedulingQueue.Add"
+    },
+    {
+     "file": "pkg/scheduler/eventhandlers.go",
+     "lines": "624-650",
+     "note": "pod informer handlers"
+    },
+    {
+     "file": "pkg/scheduler/scheduler.go",
+     "lines": "473-473",
+     "note": "NextEntity = podQueue.Pop"
+    }
+   ]
+  },
+  "kubernetes-k20": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "RunPostFilterPlugins",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/runtime/framework.go",
+      "pkg/scheduler/schedule_one.go"
+     ]
+    },
+    {
+     "fact": "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "SelectCandidate",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/preemption/preemption.go"
+     ]
+    },
+    {
+     "fact": "actuatePodPreemption",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/preemption/preemption.go",
+      "pkg/scheduler/framework/preemption/executor.go"
+     ]
+    },
+    {
+     "fact": "prepareCandidate",
+     "type": "symbol",
+     "in": [
+      "pkg/scheduler/framework/preemption/executor.go"
+     ]
+    }
+   ],
+   "scip": [
+    {
+     "name": "SelectCandidate",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/Evaluator#SelectCandidate().",
+       "file": "pkg/scheduler/framework/preemption/preemption.go",
+       "line": 288
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption_test.go": [
+       1742,
+       2085
+      ],
+      "pkg/scheduler/framework/preemption/preemption.go": [
+       157
+      ],
+      "pkg/scheduler/framework/preemption/preemption_test.go": [
+       375
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption_test.go",
+       "line": 1535,
+       "chain": "TestSelectBestCandidate",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/defaultpreemption`/TestSelectBestCandidate().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption_test.go",
+       "line": 1760,
+       "chain": "TestCustomSelection",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/plugins/defaultpreemption`/TestCustomSelection().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/preemption.go",
+       "line": 98,
+       "chain": "evaluate",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/Evaluator#evaluate().",
+       "families": [
+        "calls"
+       ]
+      },
+      {
+       "file": "pkg/scheduler/framework/preemption/preemption_test.go",
+       "line": 290,
+       "chain": "TestSelectCandidate",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/TestSelectCandidate().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/framework/preemption/preemption.go",
+     "within": "pkg/scheduler/"
+    },
+    {
+     "name": "actuatePodPreemption",
+     "definitions": [
+      {
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/Executor#actuatePodPreemption().",
+       "file": "pkg/scheduler/framework/preemption/executor.go",
+       "line": 168
+      }
+     ],
+     "reference_occurrences": {
+      "pkg/scheduler/framework/preemption/preemption.go": [
+       192
+      ]
+     },
+     "referencing_definitions": [
+      {
+       "file": "pkg/scheduler/framework/preemption/preemption.go",
+       "line": 181,
+       "chain": "Preempt",
+       "symbol": "scip-go gomod k8s.io/kubernetes f78e722310e5 `k8s.io/kubernetes/pkg/scheduler/framework/preemption`/Evaluator#Preempt().",
+       "families": [
+        "calls"
+       ]
+      }
+     ],
+     "def_file": "pkg/scheduler/framework/preemption/executor.go",
+     "within": "pkg/scheduler/"
+    }
+   ],
+   "read": [
+    {
+     "file": "pkg/scheduler/schedule_one.go",
+     "lines": "250-313",
+     "note": "schedulingAlgorithm -> RunPostFilterPlugins"
+    },
+    {
+     "file": "pkg/scheduler/framework/plugins/defaultpreemption/default_preemption.go",
+     "lines": "152-163",
+     "note": "PostFilter -> Evaluator.Preempt"
+    },
+    {
+     "file": "pkg/scheduler/framework/preemption/preemption.go",
+     "lines": "98-199",
+     "note": "evaluate / Preempt"
+    },
+    {
+     "file": "pkg/scheduler/framework/preemption/executor.go",
+     "lines": "168-200",
+     "note": "actuatePodPreemption -> prepareCandidate(Async)"
+    }
+   ]
+  }
+ }
+}
