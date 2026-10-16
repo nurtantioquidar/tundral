@@ -1,5 +1,6 @@
-//! `dijkstral watch [PATH]` (`docs/graphify-git.md` §5): rebuild the graph with `dijkstral update`
-//! once the files under PATH have been quiet for the debounce time. Only changes to files a build
+//! `dijkstral watch [PATH]` (`docs/graphify-git.md` §5), run by `dijkstral` in this binary: rebuild
+//! the graph with `dijkstral update` once the files under PATH have been quiet for the debounce
+//! time. Only changes to files a build
 //! would read count (the corpus after ignore rules, skipped directories and the sensitive-file
 //! filter), so the build's own writes under `dijkstral-out/` never trigger another one. Ctrl-C
 //! stops it between rebuilds; a second Ctrl-C exits at once.
@@ -12,7 +13,6 @@ use std::sync::mpsc::{self, RecvTimeoutError};
 use std::sync::Arc;
 use std::time::Duration;
 
-use clap::Args;
 use dijkstral_core::discover::{discover_all, SKIP_DIRS};
 use dijkstral_core::pipeline::OUT_DIR;
 use notify::{RecursiveMode, Watcher};
@@ -21,24 +21,15 @@ const TAG: &str = "[dijkstral watch]";
 /// Files whose edits change what the corpus is.
 const IGNORE_FILES: &[&str] = &[".gitignore", ".graphifyignore", ".dijkstralignore"];
 
-#[derive(Args, Debug)]
-pub struct WatchArgs {
-    /// Directory to watch; its dijkstral-out/ is rebuilt.
-    #[arg(default_value = ".")]
-    path: PathBuf,
-    /// Seconds without changes before a rebuild starts.
-    #[arg(long, value_name = "SECS", default_value_t = 1.0)]
-    debounce: f64,
-}
-
 enum Msg {
     Changed(Vec<PathBuf>),
     Failed(String),
     Stop,
 }
 
-pub fn run(a: WatchArgs) -> ExitCode {
-    match watch(a) {
+/// Watch `path`, running `exe update` (the `dijkstral` binary that started this one).
+pub fn run(exe: &Path, path: &Path, debounce: f64) -> ExitCode {
+    match watch(exe, path, debounce) {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
             eprintln!("error: {e:#}");
@@ -47,19 +38,17 @@ pub fn run(a: WatchArgs) -> ExitCode {
     }
 }
 
-fn watch(a: WatchArgs) -> anyhow::Result<()> {
+fn watch(exe: &Path, path: &Path, secs: f64) -> anyhow::Result<()> {
     use anyhow::Context;
-    let root = a
-        .path
+    let root = path
         .canonicalize()
-        .with_context(|| format!("reading {}", a.path.display()))?;
+        .with_context(|| format!("reading {}", path.display()))?;
     anyhow::ensure!(root.is_dir(), "{} is not a directory", root.display());
     anyhow::ensure!(
-        a.debounce.is_finite() && a.debounce >= 0.0,
+        secs.is_finite() && secs >= 0.0,
         "--debounce must be a number of seconds"
     );
-    let debounce = Duration::from_secs_f64(a.debounce);
-    let exe = std::env::current_exe().context("locating the dijkstral binary")?;
+    let debounce = Duration::from_secs_f64(secs);
 
     let (tx, rx) = mpsc::channel();
     let stopping = Arc::new(AtomicBool::new(false));
@@ -89,10 +78,10 @@ fn watch(a: WatchArgs) -> anyhow::Result<()> {
     println!(
         "{TAG} code and document changes run `dijkstral update` after {}s of quiet; no model is \
          called",
-        a.debounce
+        secs
     );
     let mut known = corpus(&root);
-    update(&exe, &root);
+    update(exe, &root);
 
     let out = root.join(OUT_DIR);
     let mut stop = false;
@@ -134,7 +123,7 @@ fn watch(a: WatchArgs) -> anyhow::Result<()> {
         }
         println!();
         println!("{TAG} {}", describe(&relevant));
-        update(&exe, &root);
+        update(exe, &root);
     }
     drop(watcher);
     println!("{TAG} stopped");

@@ -336,7 +336,8 @@ Observed on synthetic graphs and the fixture cases:
 
 ### 5.5 dijkstral's `watch`
 
-`crates/cli/src/watch_cmd.rs`, tests in `crates/cli/tests/watch_cli.rs`.
+`crates/cli/src/bin/dijkstral-live/watch.rs` (the `dijkstral-live` helper binary, which
+`dijkstral watch` replaces itself with), tests in `crates/cli/tests/watch_cli.rs`.
 
 - `dijkstral watch [PATH] [--debounce SECS]` (default `.` and **1.0 s**, trailing) uses native
   file events (`notify`: FSEvents, inotify, ReadDirectoryChangesW).

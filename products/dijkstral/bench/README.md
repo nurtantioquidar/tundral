@@ -601,7 +601,13 @@ two release builds on this machine: the stage 5 tip (`1537eda`) against the stag
 - Cause of both: the binary now links four macOS frameworks that dyld loads at every start
   (`--version` max RSS 4.1 → 8.4 MB): CoreServices through `notify`'s FSEvents backend (`watch`),
   libobjc through `ctrlc` (`dispatch2`/`objc2`, `watch`), and SystemConfiguration and Foundation
-  through `whoami`, which `postgres` uses for the default user (`--postgres`). **Open:** keep
-  these off the hook path (own Postgres wire client like the Bolt/RESP ones, signal handling
-  without `ctrlc`, a framework-free watch backend, or a separate binary for the long-running
-  commands).
+  through `whoami`, which `postgres` uses for the default user (`--postgres`).
+- Resolved the same day: `watch` and the PostgreSQL client moved into a second binary,
+  `dijkstral-live`, which `dijkstral` runs from its own directory. A probe binary per framework
+  set showed CoreServices alone, or SystemConfiguration and Foundation alone, cost the whole
+  4 MB / ~0.6 ms (libobjc alone costs nothing measurable), so both had to leave. `dijkstral`
+  now links only libSystem and libiconv (`crates/cli/tests/live_cli.rs`), `--version` max RSS
+  is 4.4 MB, and `hook.py` (100 runs per case, two rounds) puts dijkstral 3.3–4.2 ms over the
+  exec floor (mean about 3.7), back at or below stage 5. What remains over `/usr/bin/true` is
+  the cost macOS charges any non-Apple binary at launch: a Rust program that does nothing
+  measured the same as `dijkstral --version` and `hook-guard` (p50 about 10 ms against 8 ms).

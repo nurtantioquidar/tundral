@@ -5,6 +5,7 @@ mod export_cmd;
 mod exports;
 mod git_cmd;
 mod inputs_cmd;
+mod live;
 mod mcp_cmd;
 mod memory_cmd;
 mod multirepo_cmd;
@@ -13,7 +14,6 @@ mod prs_cmd;
 mod query_cmds;
 mod semantic_build;
 mod semantic_cmd;
-mod watch_cmd;
 mod work_cmds;
 
 use std::path::PathBuf;
@@ -83,7 +83,7 @@ enum Command {
     /// install` registers it).
     MergeDriver(git_cmd::MergeDriverArgs),
     /// Watch a directory and run `update` whenever its code or documents change (Ctrl-C stops).
-    Watch(watch_cmd::WatchArgs),
+    Watch(live::WatchArgs),
     /// Manage custom OpenAI-compatible model providers for `--backend <name>`.
     Provider(provider_cmd::ProviderArgs),
     #[command(flatten)]
@@ -157,7 +157,7 @@ fn main() -> ExitCode {
         Command::Clone(args) => return clone_cmd::run(args),
         Command::Hook(args) => return git_cmd::run_hook(args),
         Command::MergeDriver(args) => return git_cmd::run_merge_driver(args),
-        Command::Watch(args) => return watch_cmd::run(args),
+        Command::Watch(args) => return live::watch(args),
         Command::Provider(args) => return provider_cmd::run(args),
         Command::Work(cmd) => return work_cmds::run(cmd),
         Command::ClusterOnly(args) => {

@@ -11,7 +11,14 @@ stages are in `../DIJKSTRAL_DESIGN.md`; the head-to-head benchmark is in `../ben
 A Cargo workspace. Crates are added when their stage begins, never ahead of an implementation:
 
 - `crates/cli`: the `dijkstral` binary and command surface; the cross-repo commands are
-  `multirepo_cmd.rs` (`merge-graphs`, `global`, `extract --global`) and `clone_cmd.rs`.
+  `multirepo_cmd.rs` (`merge-graphs`, `global`, `extract --global`) and `clone_cmd.rs`. Its second
+  binary, `dijkstral-live` (`src/bin/dijkstral-live/`), holds the file watcher (`watch.rs`) and
+  the PostgreSQL client (`pg.rs`): their macOS frameworks load at every process start, and
+  `dijkstral` starts on every assistant hook call, so `dijkstral` must link only the system
+  libraries (`crates/cli/tests/live_cli.rs` checks it with `otool`). `src/live.rs` finds the
+  helper next to the executable, checks it is the same version, hands `watch` to it (`exec` on
+  Unix) and reads `--postgres` catalogs from it, the DSN over stdin. The two binaries ship
+  together; a dependency that links a framework goes into the helper.
 - `crates/core`: discovery (`discover.rs`), per-file extraction (`extract/<lang>.rs`), the
   content-addressed cache (`cache.rs`), the cross-file build stage (`resolve/mod.rs` plus
   `resolve/<lang>.rs`), the graph fold and `graph.json` writer (`graph.rs`), Leiden clustering
@@ -25,7 +32,7 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   graph (`core/src/inputs/cargo.rs`, `--cargo`, manifests read without running cargo) and a
   PostgreSQL schema mapped from catalog rows (`core/src/inputs/postgres.rs`); both enter the
   build digest through `core::build_inputs`. The only database client is
-  `crates/cli/src/inputs_cmd.rs` (`--postgres`, `--no-gitignore`). Google Workspace exports run
+  `crates/cli/src/bin/dijkstral-live/pg.rs` (`--postgres`; flags in `inputs_cmd.rs`). Google Workspace exports run
   through the `gws` CLI inside the semantic pass (`crates/semantic/src/gws.rs`). Custom
   OpenAI-compatible providers (`dijkstral provider`, `crates/cli/src/provider_cmd.rs`) live in
   `crates/semantic/src/run/backend/provider.rs`: dijkstral's `~/.dijkstral/providers.json` plus
@@ -79,8 +86,8 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   three-way and writes a build's canonical order; `attributes.rs` and `install.rs` wire it into
   the local git config and `.gitattributes`, in the repository `repo.rs` resolves through `git`
   (`core.hooksPath`, linked worktrees). Commands are in `crates/cli/src/git_cmd.rs`; `watch`
-  (`crates/cli/src/watch_cmd.rs`) runs `update` when files of the corpus change, through
-  `notify`. `crates/git/tests/merge_goldens.rs` compares merges with Graphify's as data, applying
+  (`crates/cli/src/bin/dijkstral-live/watch.rs`, in the helper binary) runs `update` when files of
+  the corpus change, through `notify`. `crates/git/tests/merge_goldens.rs` compares merges with Graphify's as data, applying
   each deliberate difference explicitly; `crates/cli/tests/git_cli.rs` and `watch_cli.rs` drive
   the commands in scratch repositories with the user's git config shut out
   (`GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`) and bounded waits.
@@ -112,7 +119,7 @@ The extra inputs, walk flags and custom providers are specified in `docs/graphif
 goldens in `tests/fixtures/inputs/`: `crates/core/tests/inputs_goldens.rs` must match Graphify's
 `--cargo` and `--postgres` graphs record for record (communities exact; its `ALLOWED` list names
 the quirks not reproduced), building PostgreSQL graphs offline from the catalog snapshots
-(`<db>.catalog.json`) that the `#[ignore]`d live test in `crates/cli/src/inputs_cmd.rs` checks
+(`<db>.catalog.json`) that the `#[ignore]`d live test in `crates/cli/src/bin/dijkstral-live/pg.rs` checks
 (`DIJKSTRAL_PG_TEST_DSN`); `crates/cli/tests/inputs_cli.rs` drives the flags with a scratch `HOME`,
 a fake `gws` and a fake model server. `docs/graphify-cli-checklist.md` maps every Graphify command
 and flag to dijkstral; a new command or flag updates it.

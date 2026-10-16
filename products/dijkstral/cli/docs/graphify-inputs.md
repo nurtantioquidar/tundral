@@ -51,7 +51,7 @@ Tests: `crates/core/tests/inputs_goldens.rs` (cargo and postgres graphs record f
 communities exact), `crates/core/src/inputs/*` and `crates/semantic/src/{gws.rs,run/backend/
 provider.rs}` unit tests, `crates/cli/tests/inputs_cli.rs` (every flag end to end with a scratch
 `HOME`, a fake `gws` and a fake model server), and the `#[ignore]`d live catalog test in
-`crates/cli/src/inputs_cmd.rs` (`DIJKSTRAL_PG_TEST_DSN`).
+`crates/cli/src/bin/dijkstral-live/pg.rs` (`DIJKSTRAL_PG_TEST_DSN`).
 
 ## 2. `--cargo`
 
@@ -158,7 +158,9 @@ malformed DSN (`nonsense`) is an uncaught exception, exit 1.
 
 ### 3.1 dijkstral's catalog reader
 
-`crates/cli/src/inputs_cmd.rs` connects with the pure-Rust `postgres` crate (plain TCP; a server
+The `dijkstral-live` helper (`crates/cli/src/bin/dijkstral-live/pg.rs`; `dijkstral` writes it the
+DSN over stdin and reads the catalog back as JSON) connects with the pure-Rust `postgres` crate
+(plain TCP; a server
 that requires TLS fails with `error performing TLS handshake`), filling a missing host, port,
 user, password and database from `PGHOST` (else `localhost`), `PGPORT`, `PGUSER` (else `USER`),
 `PGPASSWORD` and `PGDATABASE`, and reads `pg_class` (`relkind` `r`/`p` and `v`, with
