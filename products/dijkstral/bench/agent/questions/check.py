@@ -9,6 +9,8 @@ For every questions/<repo>.jsonl:
   2-5 facts, 1 <= min_facts <= len(facts), no fact or alias repeated;
 - provenance: provenance/<repo>.json exists, records the pinned commit, and lists exactly the
   question's facts, each typed `file` or `symbol`;
+- directory facts contain files at the pinned commit, and their aliases are the package name
+  in the directory's Cargo.toml (optionally followed by " crate");
 - file facts exist at the pinned commit (read from the corpus repository's object store with
   `git show <commit>:<path>`, never from the working tree), and a file alias resolves to exactly
   one path in the repository (it equals or ends with `/<alias>`);
@@ -160,6 +162,15 @@ def check_repo(path: Path, pins: dict[str, str], corpus_root: Path, counts: Coun
                     hits = [x for x in all_files if x == a or x.endswith("/" + a)]
                     if hits != [fact]:
                         errs.append(f"{where}: alias {a!r} resolves to {hits[:4]}")
+            elif p["type"] == "dir":
+                if not any(x.startswith(fact.rstrip("/") + "/") for x in all_files):
+                    errs.append(f"{where}: directory {fact} not at {repo.commit[:12]}")
+                manifest = repo.text(fact.rstrip("/") + "/Cargo.toml") or ""
+                pkg = re.search(r'^name\s*=\s*"([^"]+)"', manifest, re.M)
+                names = {pkg.group(1), pkg.group(1) + " crate"} if pkg else set()
+                for a in f["aliases"]:
+                    if a not in names:
+                        errs.append(f"{where}: alias {a!r} is not the package name of {fact}")
             elif p["type"] == "symbol":
                 if not p["in"]:
                     errs.append(f"{where}: symbol {fact} lists no files")

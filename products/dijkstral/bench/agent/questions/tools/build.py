@@ -73,7 +73,7 @@ def build(repo: str, commit: str) -> None:
             "facts": [
                 {
                     "fact": f["fact"],
-                    "type": "symbol" if f["in"] else "file",
+                    "type": f.get("type") or ("symbol" if f["in"] else "file"),
                     "in": f["in"],
                 }
                 for f in q["facts"]
