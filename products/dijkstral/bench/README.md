@@ -572,10 +572,36 @@ dijkstral at this commit (release). Four Codex calls in all; reruns made none. R
 - The dijkstral `mixed` row is its recorded reply merged again from the cache after one fix (no
   extra call): dijkstral's requests frame office files by their own path, so the model attributed
   6 nodes to `office/*.docx`/`.xlsx`, which the first run dropped as out of scope (6 of 8 files,
-  18 nodes, 31 links). The pass now accepts both the original and the converted path.
+  18 nodes, 31 links). The pass now accepts both the original and the converted path, and
+  requests now frame office files by their converted path (`327d5d4`).
 - Neither tool's model linked a document to a code node: both prompts show only the documents,
   so the models create their own concept nodes (`readme_jobqueue` next to the code
   `src_app_service_jobqueue`) instead of naming code ids. `update`'s backtick references
   (no model) are what connect docs to code today.
 - Token counts are Codex's own usage through the shim (they include about 12k tokens of Codex's
   instructions, mostly cached); a direct API call would report less for both tools.
+
+### Stage 6: git, cross-repo, memory and input commands — 2026-10-16
+
+Stage 6 adds commands without touching extraction, so its check is a regression comparison of
+two release builds on this machine: the stage 5 tip (`1537eda`) against the stage 6 merge
+(`653bf4a`). Every corpus repository was built cold with `extract --code-only --no-viz`
+(`SOURCE_DATE_EPOCH` fixed) by both binaries.
+
+- `graph.json`, `GRAPH_REPORT.md` and `.graphify_analysis.json` are byte-identical on all 19
+  repositories. Build wall times match within noise (Kubernetes, four alternating pairs on a
+  loaded machine: 12.5 s vs 12.8 s median, about 62 s CPU each).
+- `query.py latency` (20 runs, graph.dij), stage 5 → stage 6 p50 ms: fastapi query 10.6 → 7.8,
+  path 7.8 → 8.0, explain 7.7 → 8.0; Kubernetes query 15.0 → 15.8, path 8.0 → 10.4, explain
+  6.8 → 10.9. The spawn floor moved between 3.5 and 10 ms during these runs; the differences are
+  within that noise except for a steady rise of about 4–5 MB RSS per command (fastapi path 6 →
+  11 MB).
+- `hook.py` (100 runs per case, two rounds each): p50 stays 11.5–12.8 ms, but dijkstral's cost
+  over the exec floor rises from about 4.0 ms to about 4.6 ms on every case.
+- Cause of both: the binary now links four macOS frameworks that dyld loads at every start
+  (`--version` max RSS 4.1 → 8.4 MB): CoreServices through `notify`'s FSEvents backend (`watch`),
+  libobjc through `ctrlc` (`dispatch2`/`objc2`, `watch`), and SystemConfiguration and Foundation
+  through `whoami`, which `postgres` uses for the default user (`--postgres`). **Open:** keep
+  these off the hook path (own Postgres wire client like the Bolt/RESP ones, signal handling
+  without `ctrlc`, a framework-free watch backend, or a separate binary for the long-running
+  commands).
