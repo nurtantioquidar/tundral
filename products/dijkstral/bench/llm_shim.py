@@ -361,6 +361,8 @@ def run_codex(st: State, body: dict[str, Any]) -> dict[str, Any]:
         latency = time.monotonic() - t0
         usage: dict[str, Any] = {}
         tool_items = 0
+        # Codex's own fatal messages (e.g. a usage limit); never request text.
+        errors: list[str] = []
         for line in proc.stdout.splitlines():
             try:
                 ev = json.loads(line)
@@ -368,6 +370,10 @@ def run_codex(st: State, body: dict[str, Any]) -> dict[str, Any]:
                 continue
             if ev.get("type") == "turn.completed":
                 usage = ev.get("usage", {})
+            elif ev.get("type") == "turn.failed":
+                errors.append(str((ev.get("error") or {}).get("message", ""))[:300])
+            elif ev.get("type") == "error":
+                errors.append(str(ev.get("message", ""))[:300])
             item = ev.get("item") or {}
             if ev.get("type") == "item.completed" and item.get("type") not in (
                 "agent_message",
@@ -384,6 +390,7 @@ def run_codex(st: State, body: dict[str, Any]) -> dict[str, Any]:
             "returncode": proc.returncode,
             "tool_items": tool_items,
             "stderr_tail": proc.stderr[-400:] if proc.returncode else "",
+            "errors": errors,
             "images": len(images),
             "output_schema": schema is not None and a.output_schema,
         }
@@ -545,6 +552,7 @@ class Handler(BaseHTTPRequestHandler):
                 {
                     "error": {
                         "message": result.get("note")
+                        or "; ".join(result.get("errors") or [])
                         or result.get("stderr_tail")
                         or "codex failed",
                         "type": "shim_error",
