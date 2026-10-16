@@ -1,6 +1,7 @@
 [package]
 name = "dijkstral"
 description = "A fast code knowledge graph for AI coding agents"
+default-run = "dijkstral"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
