@@ -367,6 +367,7 @@ Observed on synthetic graphs and the fixture cases:
 | hooks without a graph | Open | do nothing |
 | non-shell hook | Open | refused, exit 1 |
 | status/uninstall wording | §3 | own wording, same three-line shape |
+| top-level `uninstall` | removes the git hooks and merge driver too (`graphify-query.md` §12.4) | same: runs `hook uninstall` inside a git work tree |
 | outside a work tree | `status` exit 0, `uninstall` traceback | every action: stderr error, exit 1 |
 | merge semantics | base ignored (G1, G2), hyperedges dropped (G3), raw → multigraph (G4), NetworkX order (G5), empty base fails (G6) | three-way, deletions stand, hyperedges kept, raw stays raw, build order, empty base is a union (§4.6) |
 | `watch` start | no build | one `update` at start |

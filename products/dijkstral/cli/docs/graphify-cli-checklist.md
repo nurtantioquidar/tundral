@@ -105,7 +105,7 @@ where Graphify sometimes ignores unknown flags.
 | `install`, `--platform claude`, `--platform codex` | same | done | qry §12.4 |
 | `install --project`, `--strict` | same | done | qry §12 |
 | `install --platform` windows, codebuddy, opencode, aider, amp, agents, claw, droid, trae, trae-cn, gemini, cursor, antigravity, antigravity-windows, hermes, kiro, pi, devin, kimi, kilo, copilot | | deferred | design doc |
-| `uninstall` | same (Claude Code and Codex footprints) | done | qry §12.3 |
+| `uninstall` | same (Claude Code and Codex footprints, git hooks and merge driver) | done | qry §12.3–§12.4, git §3 |
 | `uninstall --purge` | | deferred | design doc |
 | `claude install`, `claude uninstall` | same | done | qry §12.1, §12.3 |
 | `codex install`, `codex uninstall` | same | done | qry §12.2, §12.3 |

@@ -1435,6 +1435,9 @@ lines and JSON structure are recorded.
   (`CLAUDE.md` + `.claude/settings.json`, `CODEBUDDY.md`, `GEMINI.md`, Cursor rule, Antigravity rule,
   `AGENTS.md` + `.codex/hooks.json`, git hooks, merge driver), each reporting "nothing to do" when
   absent; exit 0. `--purge` also deletes `graphify-out/`.
+  dijkstral's `uninstall` does the same for Claude Code and Codex and, inside a git work tree,
+  runs `hook uninstall` (`graphify-git.md` §3); the other platforms and `--purge` are deferred
+  (`../../DIJKSTRAL_DESIGN.md`).
 - **Quirk.** Neither `uninstall` nor `claude uninstall` removes the `# graphify` section from
   `~/.claude/CLAUDE.md`.
 

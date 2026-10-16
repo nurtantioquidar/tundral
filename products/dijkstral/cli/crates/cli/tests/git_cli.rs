@@ -489,3 +489,44 @@ fn merge_driver_leaves_a_conflict_on_bad_input() {
     let out = dij(tmp.path(), &["merge-driver", "missing", "A", "B"]);
     assert!(out.status.success());
 }
+
+#[test]
+fn top_level_uninstall_also_removes_the_git_integration() {
+    let tmp = tempfile::tempdir().unwrap();
+    let root = repo(tmp.path(), None);
+    let home = tmp.path().join("home");
+    fs::create_dir(&home).unwrap();
+    dij_ok(&root, &["hook", "install"]);
+    assert!(root.join(".git/hooks/post-commit").exists());
+
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_dijkstral"));
+    isolated(&mut cmd, &root);
+    let out = cmd.env("HOME", &home).arg("uninstall").output().unwrap();
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        out.status.success(),
+        "{stdout}{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    assert!(stdout.contains("post-commit: removed "), "{stdout}");
+    assert!(
+        stdout.contains("merge driver: removed git config"),
+        "{stdout}"
+    );
+    assert!(!root.join(".git/hooks/post-commit").exists());
+    assert!(!root.join(".git/hooks/post-checkout").exists());
+
+    // Outside a git work tree there is nothing git-related to report.
+    let plain = tmp.path().join("plain");
+    fs::create_dir(&plain).unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_dijkstral"));
+    isolated(&mut cmd, &plain);
+    let out = cmd
+        .env("HOME", &home)
+        .env("GIT_CEILING_DIRECTORIES", tmp.path())
+        .arg("uninstall")
+        .output()
+        .unwrap();
+    assert!(out.status.success());
+    assert!(!String::from_utf8_lossy(&out.stdout).contains("merge driver"));
+}

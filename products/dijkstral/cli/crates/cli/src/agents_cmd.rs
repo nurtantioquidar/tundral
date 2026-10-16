@@ -16,8 +16,8 @@ pub enum AgentCommand {
     /// Install the dijkstral skill for an assistant: user-wide by default, or into this project
     /// with --project (which also writes the project's instructions and hooks).
     Install(InstallArgs),
-    /// Remove every dijkstral integration: the user-wide skills and this project's Claude Code
-    /// and Codex files.
+    /// Remove every dijkstral integration: the user-wide skills, this project's Claude Code and
+    /// Codex files, and (inside a git work tree) its git hooks and graph.json merge driver.
     Uninstall,
     /// Claude Code integration for this project: a CLAUDE.md section and PreToolUse hooks that
     /// point searches and source reads at the graph.
@@ -160,6 +160,16 @@ fn execute(cmd: AgentCommand) -> anyhow::Result<()> {
             report(&install::skill_uninstall(Platform::Codex, &home)?);
             report(&install::claude_project_uninstall(&cwd)?);
             report(&install::codex_project_uninstall(&cwd)?);
+            // The git integration is part of "every integration" (`hook uninstall` alone).
+            if let Some(repo) = dijkstral_git::repo::Repo::find(&cwd)? {
+                let r = dijkstral_git::install::uninstall(&repo);
+                for line in &r.lines {
+                    println!("{line}");
+                }
+                if !r.ok {
+                    anyhow::bail!("could not remove every git hook");
+                }
+            }
         }
         AgentCommand::Claude(ClaudeAction::Install { strict }) => {
             report(&install::claude_project_install(&cwd, &program(), strict)?);
