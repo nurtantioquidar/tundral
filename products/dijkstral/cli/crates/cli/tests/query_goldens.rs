@@ -144,3 +144,30 @@ fn affected_accepts_path_qualified_names() {
         "{qualified}"
     );
 }
+
+/// dijkstral extension (`docs/graphify-query.md` §6): `explain --incoming` keeps the links into
+/// the node and `--outgoing` the links out of it; without them the output is Graphify's.
+#[test]
+fn explain_filters_one_direction() {
+    let graph = fixtures().join("python.graphify.json");
+    let run = |extra: &[&str]| {
+        let out = std::process::Command::new(env!("CARGO_BIN_EXE_dijkstral"))
+            .args(["explain", "pkg/service.py::UserService"])
+            .args(extra)
+            .arg("--graph")
+            .arg(&graph)
+            .output()
+            .unwrap();
+        assert!(out.status.success());
+        String::from_utf8(out.stdout).unwrap()
+    };
+    let both = run(&[]);
+    let incoming = run(&["--incoming"]);
+    let outgoing = run(&["--outgoing"]);
+    let lines = |s: &str, arrow: &str| s.lines().filter(|l| l.contains(arrow)).count();
+    assert!(lines(&both, "<--") > 0 && lines(&both, "-->") > 0, "{both}");
+    assert_eq!(lines(&incoming, "-->"), 0, "{incoming}");
+    assert_eq!(lines(&incoming, "<--"), lines(&both, "<--"), "{incoming}");
+    assert_eq!(lines(&outgoing, "<--"), 0, "{outgoing}");
+    assert_eq!(lines(&outgoing, "-->"), lines(&both, "-->"), "{outgoing}");
+}

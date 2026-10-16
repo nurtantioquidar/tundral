@@ -562,6 +562,10 @@ Connections (<n>):
   for 1. With 20 or fewer connections, or with `--all`, there is no footer.
 - **Rule.** A node without connections prints only the header block: no blank line and no
   `Connections (0):`.
+- dijkstral extension: `--incoming` keeps only the links into the node (its callers and users,
+  the `<--` lines) and `--outgoing` only the links out of it; the count, the cut at 20 and the
+  file summary then cover those links alone. Without either flag the output is Graphify's.
+
 
 ## 7. `affected`
 

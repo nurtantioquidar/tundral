@@ -66,8 +66,19 @@ fn connection_line(ix: &Index, c: &Connection) -> String {
 
 /// Graphify's `explain` text (no trailing newline).
 pub fn render(ix: &Index, node: u32, all: bool) -> String {
+    render_only(ix, node, all, None)
+}
+
+/// [`render`] limited to one direction when `outgoing` is given: `Some(false)` keeps the links
+/// into the node (its callers and users), `Some(true)` the links out of it (dijkstral's
+/// `--incoming` / `--outgoing`, §6). Counts, the cut at [`TOP`] and the file summary then cover
+/// only those links.
+pub fn render_only(ix: &Index, node: u32, all: bool, outgoing: Option<bool>) -> String {
     let n = ix.node(node);
-    let conns = connections(ix, node);
+    let mut conns = connections(ix, node);
+    if let Some(dir) = outgoing {
+        conns.retain(|c| c.outgoing == dir);
+    }
     let source = format!("  Source:    {} {}", n.source_file, n.source_location);
     let mut out = vec![
         format!("Node: {}", n.label),

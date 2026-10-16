@@ -83,6 +83,12 @@ pub struct ExplainArgs {
     /// List every connection (default: the first 20 and a summary by file).
     #[arg(long)]
     all: bool,
+    /// Only the links into the node: its callers and users.
+    #[arg(long, conflicts_with = "outgoing")]
+    incoming: bool,
+    /// Only the links out of the node: what it calls and uses.
+    #[arg(long)]
+    outgoing: bool,
     #[command(flatten)]
     graph: GraphArg,
 }
@@ -253,7 +259,16 @@ fn run_explain(a: ExplainArgs) -> Result<ExitCode, ExitCode> {
     };
     let (ix, _) = open(a.graph.graph.as_deref())?;
     let node = resolve_or_exit(&ix, &name, false)?;
-    Ok(emit(&explain::render(&ix, node, a.all), false, 0))
+    let only = match (a.incoming, a.outgoing) {
+        (true, _) => Some(false),
+        (_, true) => Some(true),
+        _ => None,
+    };
+    Ok(emit(
+        &explain::render_only(&ix, node, a.all, only),
+        false,
+        0,
+    ))
 }
 
 fn run_affected(a: AffectedArgs) -> Result<ExitCode, ExitCode> {
