@@ -336,7 +336,9 @@ class Harness(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
         self.old_home = os.environ.get("DIJKSTRAL_BENCH_HOME")
+        self.old_ws = os.environ.get("AGENT_BENCH_WS")
         os.environ["DIJKSTRAL_BENCH_HOME"] = str(self.tmp)
+        os.environ["AGENT_BENCH_WS"] = str(self.tmp / "ws")
         self.ctx = run.Ctx(
             home=self.tmp,
             codex="/usr/bin/false",
@@ -363,6 +365,10 @@ class Harness(unittest.TestCase):
             os.environ.pop("DIJKSTRAL_BENCH_HOME", None)
         else:
             os.environ["DIJKSTRAL_BENCH_HOME"] = self.old_home
+        if self.old_ws is None:
+            os.environ.pop("AGENT_BENCH_WS", None)
+        else:
+            os.environ["AGENT_BENCH_WS"] = self.old_ws
 
     def fake_runner(self, *fixtures: str):
         """A runner that writes the next fixture as Codex's stdout; exit 0 only for an answer."""
@@ -414,8 +420,12 @@ class Harness(unittest.TestCase):
         )
         self.assertNotIn(
             "dijkstral",
-            str(self.ctx.workspace("fastapi", "none").relative_to(self.tmp / "agent")),
+            str(self.ctx.workspace("fastapi", "none").relative_to(self.tmp / "ws")),
         )
+        # By default the workspaces sit beside the bench home, outside its tool-named path.
+        os.environ.pop("AGENT_BENCH_WS")
+        self.assertEqual(run.ws_root(), self.tmp.parent / "codebench" / "ws")
+        os.environ["AGENT_BENCH_WS"] = str(self.tmp / "ws")
 
     def test_session_env(self):
         os.environ["SOME_API_KEY"] = "x"

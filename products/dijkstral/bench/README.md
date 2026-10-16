@@ -79,7 +79,8 @@ default 900) and `--retries` (default 2).
 
 **Workspaces.** `prepare` copies the corpus (`/bin/cp -cR`, an APFS clone; the tools' own
 `graphify-out/` and `dijkstral-out/` are dropped, the checkouts are never written) to
-`$DIJKSTRAL_BENCH_HOME/agent/ws/<opaque id>/<corpus_id>/`, so the working directory names no arm.
+`codebench/ws/<opaque id>/<corpus_id>/` beside the bench home (or `$AGENT_BENCH_WS`), so the
+working directory names neither the arm nor either tool.
 Builds and installs run with a scrubbed environment and a scratch `HOME`; after the install that
 `HOME` must still be empty, or `prepare` stops (verified for both tools: each writes exactly
 `AGENTS.md` and `.codex/hooks.json` in the workspace). `agent/manifests/<corpus_id>.<arm>.json`

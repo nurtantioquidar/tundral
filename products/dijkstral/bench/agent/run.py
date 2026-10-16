@@ -14,7 +14,7 @@ Arms (identical model, prompt, sandbox and budget; each tool gets what its own i
   dijkstral  copy + `dijkstral extract --code-only` (semantic: its Codex backend) +
              `dijkstral codex install` + `dijkstral mcp` attached for the call
 
-`prepare` builds one workspace per (corpus_id, arm) under $DIJKSTRAL_BENCH_HOME/agent/ws and
+`prepare` builds one workspace per (corpus_id, arm) under codebench/ws next to the bench home and
 records build and install time, model calls and tokens in agent/manifests/. `run` executes one
 `codex exec --json` session per (task, arm), read-only, and stores the raw events and a result
 per session under agent/sessions/<arm>/ (raw events can contain repository text: they never go
@@ -203,8 +203,9 @@ class Ctx:
         return self.home / "agent"
 
     def pair_dir(self, corpus_id: str, arm: str) -> Path:
-        # Opaque directory name: the session's working directory does not name the arm.
-        return self.agent / "ws" / sha("ws", corpus_id, arm, n=10)
+        # Opaque directory name under a neutral root: the session's working directory names
+        # neither the arm nor either tool (the bench home is called dijkstral-bench).
+        return ws_root() / sha("ws", corpus_id, arm, n=10)
 
     def workspace(self, corpus_id: str, arm: str) -> Path:
         return self.pair_dir(corpus_id, arm) / corpus_id
@@ -376,10 +377,16 @@ def rm_tree(path: Path) -> None:
     Corpus checkouts are outside it, so they can never be deleted from here."""
     p = path.resolve()
     agent = (bench_home() / "agent").resolve()
-    roots = [agent, Path(tempfile.gettempdir()).resolve()]
+    roots = [agent, ws_root().resolve(), Path(tempfile.gettempdir()).resolve()]
     if not any(str(p).startswith(str(r) + os.sep) for r in roots):
         raise SystemExit(f"refusing to delete {p}: outside {agent}")
     shutil.rmtree(p, ignore_errors=True)
+
+
+def ws_root() -> Path:
+    """Where arm workspaces live: a neutral path, so no arm sees a tool's name in its cwd."""
+    explicit = os.environ.get("AGENT_BENCH_WS")
+    return Path(explicit) if explicit else bench_home().parent / "codebench" / "ws"
 
 
 def bench_home() -> Path:
