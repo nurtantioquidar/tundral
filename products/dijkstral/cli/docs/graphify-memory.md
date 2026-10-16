@@ -44,8 +44,10 @@ Status labels, as in the other specifications:
   holds crafted graphs, analyses and labels, and the python fixture graph and analysis are used by
   path. `reflect/<case>.graphify.md` is Graphify's output. Because every date is fixed and every
   ordering depends only on date differences (§4.4), these outputs do not depend on the day they
-  were captured, except for the dates in the future (2030, 2031), which are clamped (§4.4) and
-  stay valid until then.
+  were captured, except for the dates in the future (2030, 2031), which are clamped (§4.4). The
+  tests pin dijkstral's clock to the capture day with the test-only `DIJKSTRAL_NOW` (seconds since
+  the epoch; `SOURCE_DATE_EPOCH` is deliberately not used, since build shells export it), so those
+  dates stay in the future.
 - `diagnose/<case>.txt|json` are the reports over the fixture graphs and the crafted graphs in
   `diagnose/*.json`. Every run passes `--extract-path diagnose/scan_probe.py.txt`, a crafted file,
   so no golden contains Graphify's own extractor source (§6.7).
@@ -410,8 +412,10 @@ items never change the state).
 - **Rule.** Age is whole days, floor of (now − `updatedAt`) (23 hours is 0, 13 days 23 hours is
   13); in the future it is negative.
 - **Rule (order).** Rank `CI-FAIL`, `CHANGES-REQ`, `DRAFT`, `STALE`, `PENDING`, `APPROVED`,
-  `READY` (note: `PENDING` ranks above `APPROVED` although `APPROVED` wins the status), then
-  `updatedAt` newest first, then `gh`'s order.
+  `READY` (note: `PENDING` ranks above `APPROVED` although `APPROVED` wins the status), then age
+  in whole days (newest first), then `gh`'s order: within one day the hour does not count
+  (fastapi, 2026-10-16: #14939 updated 07:15 stays before #14865 updated 08:28, both 80 days old,
+  as `gh` listed them).
 
 ### 5.4 Dashboard
 

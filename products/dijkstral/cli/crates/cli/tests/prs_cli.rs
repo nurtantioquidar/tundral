@@ -11,7 +11,6 @@ use std::fs;
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output, Stdio};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde_json::{json, Value};
 
@@ -117,11 +116,12 @@ fn setup() -> Env {
     }
 }
 
+/// Noon on the day the goldens were captured (2026-10-15), for this test and, through
+/// `DIJKSTRAL_NOW`, for dijkstral: fixed `updatedAt` dates keep the ages recorded then.
+const CAPTURED: i64 = 1_792_065_600;
+
 fn now() -> i64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs() as i64
+    CAPTURED
 }
 
 /// Days since the epoch → (y, m, d), for RFC 3339 stamps.
@@ -213,6 +213,7 @@ fn path_var(env: &Env) -> String {
 fn command(env: &Env) -> Command {
     let mut c = Command::new(env!("CARGO_BIN_EXE_dijkstral"));
     c.current_dir(&env.repo)
+        .env("DIJKSTRAL_NOW", CAPTURED.to_string())
         .env("PATH", path_var(env))
         .env("FAKE_GH_DIR", &env.gh)
         .env("GIT_CONFIG_GLOBAL", "/dev/null")
@@ -561,6 +562,7 @@ fn prs_without_gh_fails_cleanly() {
     let out = Command::new(env!("CARGO_BIN_EXE_dijkstral"))
         .arg("prs")
         .current_dir(&env.repo)
+        .env("DIJKSTRAL_NOW", CAPTURED.to_string())
         .env("PATH", env.gh.display().to_string())
         .output()
         .unwrap();

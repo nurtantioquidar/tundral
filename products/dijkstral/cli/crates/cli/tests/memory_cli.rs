@@ -33,9 +33,13 @@ fn copy_dir(from: &Path, to: &Path) {
     }
 }
 
+/// The day the goldens were captured (2026-10-16): their 2030 and 2031 results stay in the future.
+const CAPTURED: &str = "1792108800";
+
 fn run_in(dir: &Path, args: &[String]) -> Output {
     Command::new(env!("CARGO_BIN_EXE_dijkstral"))
         .args(args)
+        .env("DIJKSTRAL_NOW", CAPTURED)
         .current_dir(dir)
         .output()
         .unwrap()

@@ -141,7 +141,8 @@ or skill text; only Graphify's documented formats and observable behaviour are r
   and never sends files excluded by ignore rules or the sensitive-file filter.
 - Never log or store prompts, API keys or file contents outside the cache under `dijkstral-out/`.
 - Tests never touch a real home or the network: they set `DIJKSTRAL_HOME`, and `clone` tests use a
-  local repository through the test-only `DIJKSTRAL_CLONE_BASE`.
+  local repository through the test-only `DIJKSTRAL_CLONE_BASE`; tests that depend on today's date
+  pin it with the test-only `DIJKSTRAL_NOW`.
 
 ## Commands
 

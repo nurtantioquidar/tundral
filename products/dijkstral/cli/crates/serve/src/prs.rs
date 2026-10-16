@@ -347,7 +347,8 @@ pub struct Listing {
 }
 
 impl Listing {
-    /// Sorted by rank, then most recently updated (missing dates last), then `gh`'s order.
+    /// Sorted by rank, then age in whole days (newest first, missing dates last), then `gh`'s
+    /// order: two PRs updated the same number of days ago keep `gh`'s order whatever the hour.
     pub fn new(base: String, prs: Vec<Pr>, now: f64) -> Listing {
         let mut prs: Vec<(Pr, Status)> = prs
             .into_iter()
@@ -356,15 +357,7 @@ impl Listing {
                 (p, s)
             })
             .collect();
-        prs.sort_by(|(a, sa), (b, sb)| {
-            sa.cmp(sb).then_with(|| {
-                let (ua, ub) = (
-                    a.updated.unwrap_or(f64::NEG_INFINITY),
-                    b.updated.unwrap_or(f64::NEG_INFINITY),
-                );
-                ub.partial_cmp(&ua).unwrap_or(std::cmp::Ordering::Equal)
-            })
-        });
+        prs.sort_by_key(|(p, s)| (*s, p.age_days(now).unwrap_or(i64::MAX)));
         Listing { base, prs }
     }
 
@@ -801,6 +794,21 @@ mod tests {
             ci,
             updated: Some(1_000_000_000.0 - days * 86_400.0),
         }
+    }
+
+    /// fastapi, 2026-10-16: #14939 (80 days, 07:15) stayed before #14865 (80 days, 08:28), in
+    /// `gh`'s order, although #14865 was updated later the same day.
+    #[test]
+    fn same_day_ages_keep_gh_order() {
+        let prs = vec![
+            pr(14939, 80.40, "", false, Ci::Success),
+            pr(14865, 80.35, "", false, Ci::Success),
+            pr(15859, 84.1, "", false, Ci::Success),
+            pr(16152, 50.2, "", false, Ci::Success),
+        ];
+        let l = Listing::new("main".into(), prs, 1_000_000_000.0);
+        let order: Vec<i64> = l.prs.iter().map(|(p, _)| p.number).collect();
+        assert_eq!(order, [16152, 14939, 14865, 15859]);
     }
 
     #[test]

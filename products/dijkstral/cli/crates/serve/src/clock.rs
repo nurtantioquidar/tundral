@@ -3,8 +3,21 @@
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
+/// A fixed "now" for tests: `DIJKSTRAL_NOW`, seconds since the Unix epoch. Not
+/// `SOURCE_DATE_EPOCH`, which build shells export and which would skew real ages.
+fn pinned() -> Option<f64> {
+    std::env::var("DIJKSTRAL_NOW")
+        .ok()?
+        .trim()
+        .parse::<f64>()
+        .ok()
+}
+
 /// Seconds since the Unix epoch, now.
 pub fn now() -> f64 {
+    if let Some(t) = pinned() {
+        return t;
+    }
     match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(d) => d.as_secs_f64(),
         Err(e) => -e.duration().as_secs_f64(),
@@ -45,6 +58,13 @@ pub struct Instant {
 impl Instant {
     /// Now, from the system clock.
     pub fn now() -> Instant {
+        if let Some(t) = pinned() {
+            let micros = (t * 1e6).round() as i64;
+            return Instant {
+                secs: micros.div_euclid(1_000_000),
+                micros: micros.rem_euclid(1_000_000) as u32,
+            };
+        }
         let t = match SystemTime::now().duration_since(UNIX_EPOCH) {
             Ok(d) => d.as_micros() as i64,
             Err(e) => -(e.duration().as_micros() as i64),
