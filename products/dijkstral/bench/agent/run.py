@@ -189,6 +189,11 @@ class Ctx:
     sessions_dir: Path
     judge_dir: Path
     fake: bool = False  # --fake-provider: local fake model, separate result directories
+    # The judge and the semantic graph builds keep their own model, whatever model answers.
+    judge_model: str = MODEL
+    judge_effort: str = EFFORT
+    build_model: str = MODEL
+    build_effort: str = EFFORT
     fake_provider_flags: list[str] = field(default_factory=list)
     runner: Callable | None = None
     stop: threading.Event = field(default_factory=threading.Event)
@@ -259,11 +264,12 @@ def mcp_flags(ctx: Ctx, arm: str, ws: Path, semantic: bool) -> list[str]:
     return flags
 
 
-def codex_base(ctx: Ctx, cwd: Path) -> list[str]:
-    model = ctx.effective_model
+def codex_base(ctx: Ctx, cwd: Path, judge: bool = False) -> list[str]:
+    model = "fake-model" if ctx.fake else (ctx.judge_model if judge else ctx.model)
+    effort = ctx.judge_effort if judge else ctx.effort
     return [
         ctx.codex, "exec", "--ephemeral", "--ignore-user-config",
-        "-m", model, "-c", f'model_reasoning_effort="{ctx.effort}"',
+        "-m", model, "-c", f'model_reasoning_effort="{effort}"',
         "-s", "read-only", "-C", str(cwd), "--json", "--skip-git-repo-check",
         *COMMON_FLAGS, *ctx.fake_provider_flags,
     ]  # fmt: skip
@@ -627,15 +633,21 @@ def judge_spec(task: dict, answer: str) -> tuple[str, bool]:
 
 
 def judge_key(ctx: Ctx, task: dict, answer: str) -> str:
-    model = ctx.effective_model
-    return sha(JUDGE_VERSION, model, ctx.effort, *judge_spec(task, answer), n=24)
+    model = "fake-model" if ctx.fake else ctx.judge_model
+    return sha(JUDGE_VERSION, model, ctx.judge_effort, *judge_spec(task, answer), n=24)
 
 
 def judge_command(
     ctx: Ctx, scratch: Path, schema: Path | None, last: Path, prompt: str
 ) -> list[str]:
     schema_flags = ["--output-schema", str(schema)] if schema else []
-    return [*codex_base(ctx, scratch), *schema_flags, "-o", str(last), prompt]
+    return [
+        *codex_base(ctx, scratch, judge=True),
+        *schema_flags,
+        "-o",
+        str(last),
+        prompt,
+    ]
 
 
 def parse_verdict(text: str) -> dict | None:
@@ -880,8 +892,8 @@ def build_command(ctx: Ctx, arm: str, ws: Path, semantic: bool) -> list[str]:
             else [g, "extract", str(ws), "--code-only"]
         )
     if semantic:
-        return [str(ctx.dijkstral), "extract", str(ws), "--backend", "codex", "--model", ctx.model,
-                "--reasoning-effort", ctx.effort]  # fmt: skip
+        return [str(ctx.dijkstral), "extract", str(ws), "--backend", "codex",
+                "--model", ctx.build_model, "--reasoning-effort", ctx.build_effort]  # fmt: skip
     return [str(ctx.dijkstral), "extract", str(ws), "--code-only"]
 
 
@@ -900,7 +912,7 @@ def shim_command(
     return [
         sys.executable, str(BENCH / "llm_shim.py"), "--port", port, "--transcript-dir", str(transcripts),
         "--max-requests", str(max_requests), "--parallel", "2", "--responder", "codex", "--codex", ctx.codex,
-        "--model", ctx.model, "--reasoning-effort", ctx.effort,
+        "--model", ctx.build_model, "--reasoning-effort", ctx.build_effort,
     ]  # fmt: skip
 
 
@@ -1339,8 +1351,9 @@ def render(summary: dict, prep: list[dict]) -> str:
     out.append(
         f"Model `{m['model']}` (reasoning effort {m['effort']}), {m['codex']}, tasks `{m['tasks_file']}`, "
         f"{m['date']}. Pass = key facts matched (all, or `min_facts`); score = the suite's own rule (LOCOMO per "
-        "category, LongMemEval abstention or F1 proxy); judge = "
-        "blind same-model judge score (0–1). Tokens = input (incl. cached) + output per session."
+        "category, LongMemEval abstention or F1 proxy); judge = blind judge score (0–1; judge "
+        f"`{m.get('judge_model', m['model'])}`, effort {m.get('judge_effort', m['effort'])}). "
+        "Tokens = input (incl. cached) + output per session."
     )
     out += [
         "",
@@ -1436,6 +1449,10 @@ def report(ctx: Ctx, tasks: list[dict], arms: list[str], tasks_file: Path) -> No
             "date": time.strftime("%Y-%m-%d"),
             "model": ctx.effective_model,
             "effort": ctx.effort,
+            "judge_model": "fake-model" if ctx.fake else ctx.judge_model,
+            "judge_effort": ctx.judge_effort,
+            "build_model": ctx.build_model,
+            "build_effort": ctx.build_effort,
             "codex": run_text([ctx.codex, "--version"]),
             "tasks_file": str(tasks_file),
             "arms": arms,
@@ -1481,6 +1498,7 @@ def make_ctx(args: argparse.Namespace) -> Ctx:
         else home
         / "agent"
         / ("sessions-fake" if getattr(args, "fake_provider", False) else "sessions")
+        / f"{args.model}-{args.effort}"
     )
     judge = (
         Path(args.judge_dir)
@@ -1494,6 +1512,10 @@ def make_ctx(args: argparse.Namespace) -> Ctx:
         codex=codex,
         model=args.model,
         effort=args.effort,
+        judge_model=args.judge_model,
+        judge_effort=args.judge_effort,
+        build_model=args.build_model,
+        build_effort=args.build_effort,
         timeout=args.timeout,
         retries=args.retries,
         backoff=args.backoff,
@@ -1708,8 +1730,14 @@ def main(argv: list[str] | None = None) -> None:
     common.add_argument(
         "--dry-run", action="store_true", help="print the exact commands; call no model"
     )
-    common.add_argument("--model", default=MODEL)
+    common.add_argument("--model", default=MODEL, help="the answering model")
     common.add_argument("--effort", default=EFFORT, help="model_reasoning_effort")
+    common.add_argument("--judge-model", default=MODEL)
+    common.add_argument("--judge-effort", default=EFFORT)
+    common.add_argument(
+        "--build-model", default=MODEL, help="model of the semantic graph builds"
+    )
+    common.add_argument("--build-effort", default=EFFORT)
     common.add_argument(
         "--timeout", type=float, default=900, help="seconds per Codex call"
     )

@@ -427,6 +427,28 @@ class Harness(unittest.TestCase):
         self.assertEqual(run.ws_root(), self.tmp.parent / "codebench" / "ws")
         os.environ["AGENT_BENCH_WS"] = str(self.tmp / "ws")
 
+    def test_answering_judge_and_build_models_are_separate(self):
+        import dataclasses
+
+        ctx = dataclasses.replace(self.ctx, model="gpt-6-luna", effort="low")
+        answer = run.codex_base(ctx, self.tmp)
+        judge = run.codex_base(ctx, self.tmp, judge=True)
+        self.assertEqual(answer[answer.index("-m") + 1], "gpt-6-luna")
+        self.assertIn('model_reasoning_effort="low"', answer)
+        self.assertEqual(judge[judge.index("-m") + 1], run.MODEL)
+        self.assertIn(f'model_reasoning_effort="{run.EFFORT}"', judge)
+        # The judge cache does not depend on the answering model.
+        task = {
+            "id": "t",
+            "suite": "keyfacts",
+            "question": "q",
+            "reference": "r",
+            "facts": [],
+        }
+        self.assertEqual(
+            run.judge_key(ctx, task, "a"), run.judge_key(self.ctx, task, "a")
+        )
+
     def test_session_env(self):
         os.environ["SOME_API_KEY"] = "x"
         os.environ["HERDR_PANE_ID"] = "1"
