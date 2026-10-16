@@ -5,6 +5,9 @@ with dijkstral's graph. Tasks are JSONL files in `tasks/`, one suite per file. G
 and every run output live under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstral-bench`),
 never in the repository.
 
+The runner (`run.py`: prepare, run, judge, report), its Codex flags and scoring rules are
+documented in [../README.md](../README.md#stage-7-agent-outcome).
+
 ## Task contract
 
 One JSON object per line:

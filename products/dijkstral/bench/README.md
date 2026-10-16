@@ -21,9 +21,10 @@ outside the source tree under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstr
 | `llm_shim.py` | Stage-5 semantic pass: localhost OpenAI-compatible server that answers through `codex exec` (ChatGPT subscription, no API key), replays recorded replies, or serves static ones; writes clean-room request transcripts ([semantic/README.md](semantic/README.md)) |
 | `semantic.py` | Stage-5 same-model semantic benchmark: Graphify and dijkstral through one Codex-backed shim (`--max-requests` caps Codex calls, `--dry-run` uses static replies) → `results/semantic-<epoch>.json` and a table |
 | `semantic/` | Semantic fixture binaries (`make_binaries.py`), markers, and how to run Graphify's model pass through the shim |
+| `agent/` | Stage-7 agent-outcome benchmark: task files, `run.py` (`prepare`, `run`, `judge`, `report` across the `none`, `graphify` and `dijkstral` arms) → `results/agent-<epoch>.{md,json}` ([Stage 7](#stage-7-agent-outcome)) |
 
-Later stages add query latency, graph parity, SCIP precision/recall, and the paid
-agent-outcome runs (see `../DIJKSTRAL_DESIGN.md`).
+The paid agent-outcome runs (stage 7) are explicit commands; nothing here calls a model on its own
+(see `../DIJKSTRAL_DESIGN.md`).
 
 ## Run
 
@@ -44,6 +45,118 @@ cli/target/release/dijkstral cluster-only /tmp/co
 uv run --no-project bench/parity.py /tmp/co/dijkstral-out/graph.json \
   ~/.cache/dijkstral-bench/reference/fastapi.graph.json --samples 0
 ```
+
+## Stage 7: agent outcome
+
+`agent/run.py` measures what each tool does for an agent: the same Codex model answers every task of
+a task file three times, and the answers are scored. Task files: `agent/questions/<repo>.jsonl`
+(key facts on fastapi, ripgrep and Kubernetes, [agent/questions/README.md](agent/questions/README.md))
+and `agent/tasks/{locomo,longmemeval}.jsonl` (memory suites, [agent/README.md](agent/README.md)).
+
+| Arm | Workspace (one per corpus, reused by every task) | Attached for the call |
+|---|---|---|
+| `none` | a copy of the corpus | nothing |
+| `graphify` | copy + `graphify extract <ws> --code-only` (semantic tasks: `graphify extract <ws> --backend openai` through `llm_shim.py --responder codex`, as `semantic.py` does) + `graphify codex install` | `graphify-mcp <ws>/graphify-out/graph.json` |
+| `dijkstral` | copy + `dijkstral extract <ws> --code-only` (semantic: `--backend codex --model gpt-6.1-sol --reasoning-effort medium`) + `dijkstral codex install` | `dijkstral mcp <ws>/dijkstral-out/graph.dij` |
+
+```bash
+cd products/dijkstral
+cargo build --release --manifest-path cli/Cargo.toml       # or pass --dijkstral <binary> everywhere
+T=bench/agent/questions/fastapi.jsonl
+uv run --no-project bench/agent/run.py prepare --tasks $T --dry-run   # print every command, call nothing
+uv run --no-project bench/agent/run.py prepare --tasks $T             # build the workspaces once
+uv run --no-project bench/agent/run.py run     --tasks $T --dry-run   # print each session's codex command
+uv run --no-project bench/agent/run.py run     --tasks $T --fake-provider --limit 1   # end to end, no model
+uv run --no-project bench/agent/run.py run     --tasks $T --jobs 2    # paid: the answering sessions
+uv run --no-project bench/agent/run.py judge   --tasks $T             # paid: the blind judge
+uv run --no-project bench/agent/run.py report  --tasks $T             # results/agent-<epoch>.{md,json}
+uv run --no-project python -m unittest discover -s bench/agent -p 'test_*.py'
+```
+
+Every command takes `--arms`, `--limit N`, `--ids a,b`, `--jobs N` (default 2), `--model`
+(default `gpt-6.1-sol`), `--effort` (default `medium`), `--timeout` (seconds per Codex call,
+default 900) and `--retries` (default 2).
+
+**Workspaces.** `prepare` copies the corpus (`/bin/cp -cR`, an APFS clone; the tools' own
+`graphify-out/` and `dijkstral-out/` are dropped, the checkouts are never written) to
+`$DIJKSTRAL_BENCH_HOME/agent/ws/<opaque id>/<corpus_id>/`, so the working directory names no arm.
+Builds and installs run with a scrubbed environment and a scratch `HOME`; after the install that
+`HOME` must still be empty, or `prepare` stops (verified for both tools: each writes exactly
+`AGENTS.md` and `.codex/hooks.json` in the workspace). `agent/manifests/<corpus_id>.<arm>.json`
+records the build and install commands and times, model calls (Graphify: shim transcripts;
+dijkstral: a counting `codex` wrapper passed as `DIJKSTRAL_CODEX`), the tool's own token counts,
+graph size, install footprint, hook commands and versions. The manifest is written last, so an
+interrupted `prepare` resumes per corpus, reusing a finished copy and the tools' semantic caches.
+Workspaces bake in the tool paths (hooks, MCP command), so `run` refuses a different `--dijkstral`.
+
+**Sessions.** One fixed prompt for every arm: `Question: …`, `Question date: …` when the task has
+one, then "Answer from this repository. Cite file paths and symbol names where relevant. Be
+concise." (memory suites: "Answer from these notes (the files in this directory). Cite file paths
+where relevant. Be concise."). Nothing about graphs: the tools' installed instructions do that. No
+other task field (`reference`, `facts`, `source_id`, `distractor`) reaches the agent or, apart
+from the reference and facts, the judge. The command, per arm:
+
+```text
+codex exec --ephemeral --ignore-user-config -m gpt-6.1-sol -c model_reasoning_effort="medium" \
+  -s read-only -C <workspace> --json --skip-git-repo-check \
+  --disable apps -c web_search="disabled" --color never \
+  [-c mcp_servers.<tool>.command="<binary>" -c mcp_servers.<tool>.args=[...] \
+   -c mcp_servers.<tool>.startup_timeout_sec=120 -c mcp_servers.<tool>.tool_timeout_sec=120 \
+   -c mcp_servers.<tool>.default_tools_approval_mode="approve" \
+   (graphify: -c mcp_servers.graphify.env={GRAPHIFY_QUERY_LOG_DISABLE = "1"})] \
+  -o <session>.last.txt "<prompt>"
+```
+
+The environment is the caller's minus `HERDR_*`, `GRAPHIFY_*`, `DIJKSTRAL_*`, `*_API_KEY` and
+`OPENAI_BASE_URL`, plus `GRAPHIFY_QUERY_LOG_DISABLE=1`; `PATH` drops any directory that already
+provides `graphify` or `dijkstral`, and a graph arm gets a directory holding only its own
+executables first (as an installed tool would be). Codex configuration is never written:
+everything is a per-call flag. What Codex 0.162.1 does with these flags, established on a local
+fake Responses-API provider (no model call; `--fake-provider` runs the same thing):
+
+- `--ignore-user-config` skips `~/.codex/config.toml` but not instructions: the global
+  `~/.codex/AGENTS.md` and the workspace's `AGENTS.md` (with each tool's installed section) are in
+  the prompt of every arm.
+- The ChatGPT-account apps (GitHub, Slack, …) and web search are tools by default; both would let
+  an answer come from outside the corpus, so `--disable apps -c web_search="disabled"` is passed to
+  every arm and to the judge.
+- An MCP tool call needs approval, which `codex exec` cannot give ("MCP tool call requires
+  approval, but approval policy is never"); `default_tools_approval_mode="approve"` on the
+  attached server allows it, as a user who approves the tool would.
+- Hooks: no project `.codex/hooks.json` hook ran in `codex exec`, with or without
+  `--dangerously-bypass-hook-trust`, with or without `-c projects."<ws>".trust_level="trusted"`,
+  and (for the `PreToolUse` probe) with the user config loaded; probe hooks on `SessionStart` and
+  `PreToolUse` that only append to a file. Both tools
+  install only a Codex `PreToolUse` `Bash` → `<tool> hook-check` entry, which prints nothing and
+  exits 0 (`cli/docs/graphify-query.md` §11.7), so whether it runs changes nothing the model sees.
+  The harness therefore passes neither flag, for every arm: hook trust is not bypassed anywhere.
+
+`--json` events are parsed for the final answer, token usage (`input_tokens` including
+`cached_input_tokens`, `output_tokens`, `reasoning_output_tokens`), tool calls by type, shell
+commands by program (and those running `graphify`/`dijkstral`), MCP calls by `server.tool` and
+failures, warnings and wall time. Raw events stay under `$DIJKSTRAL_BENCH_HOME/agent/sessions/<arm>/`
+(they contain repository text). A session with a result file is skipped, so a rerun resumes; a
+transient failure (non-zero exit, no answer, failed turn, timeout) is retried with backoff up to
+`--retries` times, then recorded as `.failed.json` and retried on the next run. A Codex usage
+limit (`You've hit your usage limit`, `usage_limit_reached`, `Quota exceeded`, rate-limit / 429
+errors in the events or stderr) is not retried: no new session starts, running ones finish, and the
+command prints `QUOTA EXHAUSTED — resume with the same command` and exits 75. `prepare` applies
+the same rule to the semantic builds.
+
+**Scoring.** Key facts (`agent/score.py`): a fact or alias counts when the answer names it,
+case-sensitively on identifier boundaries (`get_openapi` is not credited by `get_openapi_path`;
+`Foo.updatePod` and `updatePod()` credit `updatePod`) or, for paths, with either separator and
+not as the tail of a longer path; the workspace prefix of absolute paths is removed first. Recall
+= matched / facts; pass = matched ≥ `min_facts` (all when absent). LOCOMO and LongMemEval use
+`agent/memory.py` (`locomo_score`, `longmemeval_score`). The blind judge is a separate `codex exec`
+with the same flags in an empty scratch directory, no MCP: keyfacts and LOCOMO get the fixed
+prompt in `run.py` (question, reference, key facts, one answer) with `--output-schema`
+`{correct, score, reason}`; LongMemEval gets its official yes/no answer-check prompt
+(`memory.longmemeval_judge_prompt`). Answers are judged one at a time in shuffled order
+(`--seed`), without the arm, and verdicts are cached by content (`agent/judge/`).
+`report` writes per suite × arm pass rate, recall, suite score, judge score and correct rate,
+median and total tokens, cached input, tool, MCP and graph-CLI calls and wall time, a per-kind
+breakdown and the build table to `results/agent-<epoch>.md` and `.json` (no answers or events).
 
 ## Method
 
