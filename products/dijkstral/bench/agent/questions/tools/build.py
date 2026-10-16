@@ -24,7 +24,7 @@ QDIR = HERE.parent
 BENCH_SRC = QDIR.parent.parent  # products/dijkstral/bench
 sys.path.insert(0, str(HERE))
 
-import scip_refs  # noqa: E402
+import scip_refs
 
 TASK_KEYS = ("id", "kind", "question", "reference", "facts", "min_facts")
 
@@ -64,7 +64,9 @@ def build(repo: str, commit: str) -> None:
                 repo, occ, s["name"], s["def_file"], s.get("within"), exact=True
             )
             if not r["definitions"]:
-                sys.exit(f"{q['id']}: no SCIP definition of {s['name']} in {s['def_file']}")
+                sys.exit(
+                    f"{q['id']}: no SCIP definition of {s['name']} in {s['def_file']}"
+                )
             r["def_file"] = s["def_file"]
             r["within"] = s.get("within")
             lookups.append(r)
@@ -92,7 +94,9 @@ def build(repo: str, commit: str) -> None:
             "re-checked against the source at the pinned commit (check.py). locate/architecture/"
             "flow facts: the source ranges listed under `read`."
         ),
-        "scip_parts": [f"$DIJKSTRAL_BENCH_HOME/scip/{repo}/parts/{p.name}" for p in parts],
+        "scip_parts": [
+            f"$DIJKSTRAL_BENCH_HOME/scip/{repo}/parts/{p.name}" for p in parts
+        ],
         "indexers": oracle.get("indexers", []),
         "oracle_commit": oracle.get("commit"),
         "questions": prov_q,

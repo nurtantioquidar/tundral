@@ -8,9 +8,12 @@ For every questions/<repo>.jsonl:
 - schema: field names and types of the shared task contract, unique ids `<repo>-kNN`, kind,
   2-5 facts, 1 <= min_facts <= len(facts), no fact or alias repeated;
 - provenance: provenance/<repo>.json exists, records the pinned commit, and lists exactly the
-  question's facts, each typed `file` or `symbol`;
-- directory facts contain files at the pinned commit, and their aliases are the package name
-  in the directory's Cargo.toml (optionally followed by " crate");
+  question's facts, each typed `file`, `dir` or `symbol`;
+- no graph or tool wording in a question (node, edge, community, graph, either tool's name),
+  except domain vocabulary such as a Kubernetes node;
+- directory facts contain files at the pinned commit, and an alias is the package name in the
+  directory's Cargo.toml (optionally followed by " crate") or the directory's own name when no
+  other directory in the repository has it;
 - file facts exist at the pinned commit (read from the corpus repository's object store with
   `git show <commit>:<path>`, never from the working tree), and a file alias resolves to exactly
   one path in the repository (it equals or ends with `/<alias>`);
@@ -49,7 +52,8 @@ KEYS = {
     "min_facts": int,
 }
 GRAPH_WORDS = re.compile(
-    r"\b(node|nodes|edge|edges|community|communities|god node|graph|graphify|dijkstral)\b", re.I
+    r"\b(node|nodes|edge|edges|community|communities|god node|graph|graphify|dijkstral)\b",
+    re.IGNORECASE,
 )
 
 
@@ -75,7 +79,9 @@ class Repo:
         if self._files is None:
             r = self.git("ls-tree", "-r", "--name-only", self.commit)
             if r.returncode:
-                sys.exit(f"cannot list {self.root} at {self.commit}: {r.stderr.decode()}")
+                sys.exit(
+                    f"cannot list {self.root} at {self.commit}: {r.stderr.decode()}"
+                )
             self._files = r.stdout.decode().splitlines()
         return self._files
 
@@ -92,7 +98,9 @@ def word_in(word: str, text: str) -> bool:
     return re.search(r"(?<![\w])" + re.escape(word) + r"(?![\w])", text) is not None
 
 
-def check_repo(path: Path, pins: dict[str, str], corpus_root: Path, counts: Counter) -> list[str]:
+def check_repo(
+    path: Path, pins: dict[str, str], corpus_root: Path, counts: Counter
+) -> list[str]:
     errs: list[str] = []
     repo_name = path.stem
     if repo_name not in pins:
@@ -103,7 +111,9 @@ def check_repo(path: Path, pins: dict[str, str], corpus_root: Path, counts: Coun
         return [f"{path.name}: missing {prov_path.relative_to(QDIR)}"]
     prov = json.loads(prov_path.read_text())
     if prov.get("commit") != repo.commit:
-        errs.append(f"provenance/{prov_path.name}: commit {prov.get('commit')} != pinned {repo.commit}")
+        errs.append(
+            f"provenance/{prov_path.name}: commit {prov.get('commit')} != pinned {repo.commit}"
+        )
     seen_ids: set[str] = set()
     all_files = repo.files()
     for n, line in enumerate(path.read_text().splitlines(), 1):
@@ -171,7 +181,7 @@ def check_repo(path: Path, pins: dict[str, str], corpus_root: Path, counts: Coun
                 if not any(x.startswith(fact.rstrip("/") + "/") for x in all_files):
                     errs.append(f"{where}: directory {fact} not at {repo.commit[:12]}")
                 manifest = repo.text(fact.rstrip("/") + "/Cargo.toml") or ""
-                pkg = re.search(r'^name\s*=\s*"([^"]+)"', manifest, re.M)
+                pkg = re.search(r'^name\s*=\s*"([^"]+)"', manifest, re.MULTILINE)
                 names = {pkg.group(1), pkg.group(1) + " crate"} if pkg else set()
                 base = fact.rstrip("/").rsplit("/", 1)[-1]
                 dirs = {x.rsplit("/", 1)[0] for x in all_files if "/" in x}
@@ -190,7 +200,9 @@ def check_repo(path: Path, pins: dict[str, str], corpus_root: Path, counts: Coun
                 for file in p["in"]:
                     text = repo.text(file)
                     if text is None:
-                        errs.append(f"{where}: {file} (for {fact}) not at {repo.commit[:12]}")
+                        errs.append(
+                            f"{where}: {file} (for {fact}) not at {repo.commit[:12]}"
+                        )
                         continue
                     for s in (fact, *f["aliases"]):
                         if not word_in(s, text):
@@ -205,7 +217,9 @@ def check_repo(path: Path, pins: dict[str, str], corpus_root: Path, counts: Coun
             a, _, b = r["lines"].partition("-")
             nlines = text.count("\n") + (0 if text.endswith("\n") else 1)
             if not (1 <= int(a) <= int(b or a) <= nlines):
-                errs.append(f"{where}: read {r['file']}:{r['lines']} outside 1-{nlines}")
+                errs.append(
+                    f"{where}: read {r['file']}:{r['lines']} outside 1-{nlines}"
+                )
         for s in pq.get("scip", []):
             if not s.get("definitions"):
                 errs.append(f"{where}: SCIP lookup {s.get('name')} has no definition")
@@ -218,7 +232,9 @@ def main() -> None:
     ap.add_argument(
         "--corpus-root",
         default=os.path.join(
-            os.environ.get("DIJKSTRAL_BENCH_HOME", os.path.expanduser("~/.cache/dijkstral-bench")),
+            os.environ.get(
+                "DIJKSTRAL_BENCH_HOME", os.path.expanduser("~/.cache/dijkstral-bench")
+            ),
             "corpus",
         ),
     )

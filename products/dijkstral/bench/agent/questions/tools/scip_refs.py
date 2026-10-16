@@ -26,7 +26,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-BENCH = Path(os.environ.get("DIJKSTRAL_BENCH_HOME", Path.home() / ".cache/dijkstral-bench"))
+BENCH = Path(
+    os.environ.get("DIJKSTRAL_BENCH_HOME", Path.home() / ".cache/dijkstral-bench")
+)
 
 
 # --------------------------------------------------------------------------- protobuf
@@ -127,7 +129,11 @@ def occurrences(repo: str) -> dict[str, list[list]]:
             r = os.path.normpath(os.path.join(os.path.relpath(rootp, base), rel))
             if r.startswith("..") or r in out:
                 continue
-            out[r] = [[s, ln + 1, 1 if roles & 1 else 0] for s, ln, roles in occs if not s.startswith("local ")]
+            out[r] = [
+                [s, ln + 1, 1 if roles & 1 else 0]
+                for s, ln, roles in occs
+                if not s.startswith("local ")
+            ]
     cache.parent.mkdir(parents=True, exist_ok=True)
     cache.write_text(json.dumps(out))
     return out
@@ -140,7 +146,7 @@ def oracle(repo: str) -> dict:
 def bare(sym: str) -> str:
     """Last descriptor name of a SCIP symbol: `pkg/Foo#bar().` -> `bar`."""
     s = sym.rstrip(".#!/():")
-    i =max(s.rfind("#"), s.rfind("/"), s.rfind("."), s.rfind(" "))
+    i = max(s.rfind("#"), s.rfind("/"), s.rfind("."), s.rfind(" "))
     name = s[i + 1 :]
     if "]" in name:  # rust-analyzer: `impl#[Type][Trait]method().`
         name = name[name.rindex("]") + 1 :]
@@ -171,7 +177,9 @@ def main() -> None:
     ap.add_argument("cmd", choices=["defs", "refs", "callers"])
     ap.add_argument("queries", nargs="+")
     ap.add_argument("--file", help="definition file substring")
-    ap.add_argument("--in", dest="within", help="only references in files containing this")
+    ap.add_argument(
+        "--in", dest="within", help="only references in files containing this"
+    )
     a = ap.parse_args()
     occ = occurrences(a.repo)
     for q in a.queries:
