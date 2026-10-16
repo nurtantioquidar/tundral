@@ -239,7 +239,10 @@ Both commands load each input with NetworkX's node-link reader and build the res
 - **Rule.** Each link is its attributes, then `_src` and `_tgt` (the true direction, as ids), then
   `source` and `target` in `G.edges()` iteration order, which is often the reverse direction
   (fixture `global_direction`: `Alpha → Beta` is written `"source":"dirt::b","target":"dirt::a"`).
-  Graphify's readers (`path`, `explain`, `query`, `merge-graphs`) follow `_src`/`_tgt`.
+  Graphify's readers (`path`, `explain`, `query`, `merge-graphs`) follow `_src`/`_tgt`, and so
+  does every exporter that shows a direction (`graph.html`, Cypher and the push, the Obsidian
+  canvas, the call-flow page); GraphML writes the links as stored (`graphify-exports.md` §1, with
+  goldens of both global fixtures in `tests/fixtures/exports/global_*`).
 - **Rule.** Each add or remove reloads the file (links in file order) and writes it back; the
   edge sequence of an unchanged part is stable across rewrites.
 
