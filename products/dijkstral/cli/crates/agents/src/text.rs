@@ -49,7 +49,11 @@ question; each cites `file:line`, so read only those lines next:
   a neighbourhood of matching symbols, so `explain` the ones that look central.
 - A name in several files is reported as ambiguous with its candidates; retry as
   `path/to/file.py::symbol`.
-- Text search is still right for literal strings, log messages and configuration values.
+- Every command is a round trip, so batch: `dijkstral explain A B C` explains several symbols at
+  once, and one `sed -n` call can print several cited ranges.
+- The graph is a map, not a full record: use it to find where things are, then search the text
+  (`rg`) for literal strings, exact values and dates, and whenever a question needs every
+  occurrence (how many, all of, the latest).
 - Run `dijkstral update` after changing code; it re-extracts only the files that changed.
 ";
 
@@ -72,7 +76,11 @@ read only those lines next:
   a neighbourhood of matching symbols, so `explain` the ones that look central.
 - A name in several files is reported as ambiguous with its candidates; retry as
   `path/to/file.py::symbol`.
-- Text search is still right for literal strings, log messages and configuration values.
+- Every command is a round trip, so batch: `dijkstral explain A B C` explains several symbols at
+  once, and one `sed -n` call can print several cited ranges.
+- The graph is a map, not a full record: use it to find where things are, then search the text
+  (`rg`) for literal strings, exact values and dates, and whenever a question needs every
+  occurrence (how many, all of, the latest).
 - Run `dijkstral update` after changing code; it re-extracts only the files that changed.
 ";
 
@@ -112,9 +120,10 @@ for it: it uses their model quota.
 
 Pick the command that fits the question:
 
-- `dijkstral explain <symbol>`: one symbol, where it is defined, and what it connects to; `<--`
-  lines are its callers and users, `-->` lines what it uses. `--incoming` lists only the callers
-  and users, `--outgoing` only what it uses, `--all` every connection.
+- `dijkstral explain <symbol>...`: each symbol, where it is defined, and what it connects to;
+  `<--` lines are its callers and users, `-->` lines what it uses. `--incoming` lists only the
+  callers and users, `--outgoing` only what it uses, `--all` every connection. Name several
+  symbols in one call rather than one call each.
 - `dijkstral affected <symbol>`: what depends on the symbol, following calls, imports and
   inheritance backwards (`--depth N`, default 2): what a change to it would affect.
 - `dijkstral path <from> <to>`: the shortest chain of relations linking two symbols.
@@ -129,7 +138,8 @@ means the name was ambiguous (candidates are listed), 4 that nothing matched.
 - Read `dijkstral-out/GRAPH_REPORT.md` once for orientation: communities, the most connected
   symbols, and surprising cross-module links.
 - Open files only at the cited lines, not whole directories.
-- Use plain text search for literal strings (error messages, config keys) the graph does not
-  model.
+- The graph is a map, not a full record: use plain text search for literal strings (error
+  messages, config keys), exact values and dates, and whenever a question needs every
+  occurrence (how many, all of, the latest).
 - If an answer looks wrong after recent edits, run `dijkstral update` and ask again.
 ";
