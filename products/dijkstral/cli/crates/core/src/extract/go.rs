@@ -78,14 +78,13 @@ pub struct GoFacts {
     /// Unqualified type names not declared in the file: (local stub id, name).
     pub bare_stubs: Vec<(String, String)>,
     pub calls: Vec<GoCall>,
-    /// Methods: (receiver type name without type arguments, method name, local id).
-    pub methods: Vec<(String, String, String)>,
+    /// Methods: (receiver type name without type arguments, method name, index of the node
+    /// holding its id).
+    pub methods: Vec<(String, String, u32)>,
     /// Interface types the file declares: a call through one dispatches at run time.
     pub interfaces: Vec<String>,
-    /// Every field of the file's struct types (embedded fields under their type's name).
-    pub fields: Vec<GoField>,
-    /// Struct types the file declares.
-    pub structs: Vec<String>,
+    /// The file's struct types with every field.
+    pub structs: Vec<GoStruct>,
     /// Package-level variables: (name, index of their type in [`GoFacts::tys`]).
     pub vars: Vec<(String, u32)>,
     /// Declared results of the file's functions and methods.
@@ -96,6 +95,13 @@ pub struct GoFacts {
     pub method_calls: Vec<GoMethodCall>,
 }
 
+/// A struct type and its fields (embedded fields under their type's name).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GoStruct {
+    pub name: String,
+    pub fields: Vec<GoField>,
+}
+
 /// A named type as written: `T` or `pkg.T` (pointers and type arguments peeled).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GoWritten {
@@ -104,10 +110,9 @@ pub struct GoWritten {
     pub name: String,
 }
 
-/// A field `owner.name`, with its type when that is a named type.
+/// A struct field, with its type when that is a named type.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GoField {
-    pub owner: String,
     pub name: String,
     pub ty: Option<GoWritten>,
     /// Embedded: its methods and fields are promoted.
@@ -117,8 +122,8 @@ pub struct GoField {
 /// The declared results of a function or method (`None` where a result is not a named type).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GoReturn {
-    /// Local id of the function or method.
-    pub id: String,
+    /// Index of the node holding the function's or method's id.
+    pub node: u32,
     pub results: Vec<Option<GoWritten>>,
 }
 
@@ -151,14 +156,14 @@ pub enum GoTy {
 /// `recv.M(..)` with a typed receiver.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GoMethodCall {
-    /// Local id of the calling function or method.
-    pub caller: String,
+    /// The calling function or method: index of its node.
+    pub caller: u32,
     /// Index of the receiver's type in [`GoFacts::tys`].
     pub recv: u32,
     pub name: String,
     pub line: u32,
-    /// Local id of the node the in-file name rule chose (G5), if any.
-    pub in_file: Option<String>,
+    /// Index of the node the in-file name rule chose (G5), if any.
+    pub in_file: Option<u32>,
 }
 
 /// Predeclared types: unqualified references to them produce nothing.
@@ -572,7 +577,7 @@ impl<'a> Go<'_, 'a> {
         let mut refs = Vec::new();
         match body.kind() {
             "struct_type" => {
-                self.facts.structs.push(name.to_string());
+                let mut fields = Vec::new();
                 let Some(list) = named_children(body)
                     .into_iter()
                     .find(|n| n.kind() == "field_declaration_list")
@@ -601,8 +606,7 @@ impl<'a> Go<'_, 'a> {
                         names
                     };
                     for fname in names {
-                        self.facts.fields.push(GoField {
-                            owner: name.to_string(),
+                        fields.push(GoField {
                             name: fname,
                             ty: w.clone(),
                             embedded,
@@ -614,6 +618,10 @@ impl<'a> Go<'_, 'a> {
                         self.type_refs(ty, Some("field"), fline, &scope, &mut refs);
                     }
                 }
+                self.facts.structs.push(GoStruct {
+                    name: name.to_string(),
+                    fields,
+                });
             }
             "interface_type" => {
                 self.facts.interfaces.push(name.to_string());
@@ -875,6 +883,7 @@ impl<'a> Go<'_, 'a> {
         let id = self.final_id(name, &Ctx::child_id(&self.cx.file_id, name));
         let line = Ctx::line(decl);
         let kept = self.put(id.clone(), format!("{name}()"), line, Slot::Func);
+        let node = self.slots[&id].0 as u32;
         let file_id = self.cx.file_id.clone();
         self.cx.add_edge(&file_id, &id, "contains", line, None);
         let mut scope = Vec::new();
@@ -883,9 +892,9 @@ impl<'a> Go<'_, 'a> {
         }
         let refs = self.signature(decl, &scope, line);
         self.flush(&id, refs);
-        self.record_results(&id, decl, &scope);
+        self.record_results(node, decl, &scope);
         if let Some(body) = decl.child_by_field_name("body") {
-            self.walk_body(&id, decl, body, &scope, None, kept);
+            self.walk_body(&id, kept.then_some(node), decl, body, &scope, None);
         }
     }
 
@@ -907,27 +916,24 @@ impl<'a> Go<'_, 'a> {
                 .or_insert_with(|| owner.clone());
         }
         let kept = self.put(id.clone(), format!(".{name}()"), line, Slot::Method);
+        let node = self.slots[&id].0 as u32;
         self.cx.add_edge(&owner, &id, "method", line, None);
         let refs = self.signature(decl, &scope, line);
         self.flush(&id, refs);
         let base = recv.split('[').next().unwrap_or(&recv).to_string();
-        self.facts
-            .methods
-            .push((base, name.to_string(), id.clone()));
-        self.record_results(&id, decl, &scope);
+        self.facts.methods.push((base, name.to_string(), node));
+        self.record_results(node, decl, &scope);
         if let Some(body) = decl.child_by_field_name("body") {
-            self.walk_body(&id, decl, body, &scope, Some(&recv), kept);
+            self.walk_body(&id, kept.then_some(node), decl, body, &scope, Some(&recv));
         }
     }
 
-    /// The declared results of function or method `id`, when any is a named type.
-    fn record_results(&mut self, id: &str, decl: TsNode, scope: &[String]) {
+    /// The declared results of the function or method at node `node`, when any is a named
+    /// type.
+    fn record_results(&mut self, node: u32, decl: TsNode, scope: &[String]) {
         let results = self.results(decl, scope);
         if results.iter().any(Option::is_some) {
-            self.facts.returns.push(GoReturn {
-                id: id.to_string(),
-                results,
-            });
+            self.facts.returns.push(GoReturn { node, results });
         }
     }
 
@@ -1000,12 +1006,13 @@ impl<'a> Go<'_, 'a> {
     /// receiver nodes and type stubs alike; G5), and a bare name that is not in the file goes to
     /// the cross-file pass. One edge per (caller, callee), first site kept.
     fn bind_calls(&mut self) {
-        let mut table: HashMap<&str, &str> = HashMap::new();
-        for n in &self.cx.facts.nodes {
+        // Name → (id, node index) of the last node carrying it.
+        let mut table: HashMap<&str, (&str, usize)> = HashMap::new();
+        for (i, n) in self.cx.facts.nodes.iter().enumerate() {
             if n.kind == NodeKind::File || n.kind == NodeKind::External {
                 continue;
             }
-            table.insert(call_name(&n.label), n.id.as_str());
+            table.insert(call_name(&n.label), (n.id.as_str(), i));
         }
         let mut local: Vec<(String, String, u32)> = Vec::new();
         let mut seen: HashSet<(&str, &str)> = HashSet::new();
@@ -1015,7 +1022,7 @@ impl<'a> Go<'_, 'a> {
                 continue;
             }
             if c.path.is_none() {
-                if let Some(&target) = table.get(c.name.as_str()) {
+                if let Some(&(target, _)) = table.get(c.name.as_str()) {
                     if target != c.caller && seen.insert((c.caller.as_str(), target)) {
                         local.push((c.caller.clone(), target.to_string(), c.line));
                     }

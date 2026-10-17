@@ -15,33 +15,158 @@
 //! type here.
 
 use std::collections::HashMap;
+use std::hash::{BuildHasherDefault, Hasher};
 
-use tree_sitter::Node as TsNode;
+use tree_sitter::{Node as TsNode, TreeCursor};
 
 use super::{is_builtin_type, named_children, Go, GoCallee, GoMethodCall, GoTy, GoWritten};
 use crate::extract::Ctx;
 
 /// A `recv.M(..)` site, before the file's in-file targets are known.
 pub(super) struct RawGoCall {
-    caller: String,
+    /// Index of the caller's node.
+    caller: u32,
     recv: u32,
     name: String,
     line: u32,
 }
 
+/// Top-level packages of the Go standard library, sorted (an import path without a dot in its
+/// first element that starts with one of them).
+const STD_ROOTS: &[&str] = &[
+    "archive",
+    "bufio",
+    "bytes",
+    "cmp",
+    "compress",
+    "container",
+    "context",
+    "crypto",
+    "database",
+    "debug",
+    "embed",
+    "encoding",
+    "errors",
+    "expvar",
+    "flag",
+    "fmt",
+    "go",
+    "hash",
+    "html",
+    "image",
+    "index",
+    "io",
+    "iter",
+    "log",
+    "maps",
+    "math",
+    "mime",
+    "net",
+    "os",
+    "path",
+    "plugin",
+    "reflect",
+    "regexp",
+    "runtime",
+    "slices",
+    "sort",
+    "strconv",
+    "strings",
+    "sync",
+    "syscall",
+    "testing",
+    "text",
+    "time",
+    "unicode",
+    "unique",
+    "unsafe",
+    "weak",
+];
+
 /// Nesting beyond which a body is walked for its calls only (no inference), on an explicit
 /// stack.
 const MAX_DEPTH: u32 = 512;
+
+/// The node kinds the body walk dispatches on, as grammar ids (every node of every body is
+/// visited, so string comparisons would dominate).
+struct Kinds {
+    call: u16,
+    func_literal: u16,
+    type_switch: u16,
+    short_var: u16,
+    var_spec: u16,
+    range_clause: u16,
+    receive: u16,
+    /// Kinds that open a scope.
+    scopes: [u16; 8],
+}
+
+static KINDS: std::sync::LazyLock<Kinds> = std::sync::LazyLock::new(|| {
+    let lang: tree_sitter::Language = tree_sitter_go::LANGUAGE.into();
+    let id = |k: &str| lang.id_for_node_kind(k, true);
+    Kinds {
+        call: id("call_expression"),
+        func_literal: id("func_literal"),
+        type_switch: id("type_switch_statement"),
+        short_var: id("short_var_declaration"),
+        var_spec: id("var_spec"),
+        range_clause: id("range_clause"),
+        receive: id("receive_statement"),
+        scopes: [
+            id("block"),
+            id("if_statement"),
+            id("for_statement"),
+            id("expression_switch_statement"),
+            id("expression_case"),
+            id("default_case"),
+            id("communication_case"),
+            id("select_statement"),
+        ],
+    }
+});
+
+/// A multiplicative hash for tree-sitter node ids (the memo's keys), cheaper than SipHash.
+#[derive(Default)]
+struct NodeHasher(u64);
+
+impl Hasher for NodeHasher {
+    fn write(&mut self, bytes: &[u8]) {
+        for &b in bytes {
+            self.write_u64(u64::from(b));
+        }
+    }
+
+    fn write_u64(&mut self, i: u64) {
+        self.0 = (self.0.rotate_left(5) ^ i).wrapping_mul(0x517c_c1b7_2722_0a95);
+    }
+
+    fn write_usize(&mut self, i: usize) {
+        self.write_u64(i as u64);
+    }
+
+    fn finish(&self) -> u64 {
+        self.0
+    }
+}
+
+/// Child lists while walking a body: one buffer used as a stack and one cursor, so visiting a
+/// node allocates nothing.
+struct Kids<'t> {
+    buf: Vec<TsNode<'t>>,
+    cursor: TreeCursor<'t>,
+}
 
 struct Scope<'a> {
     /// (name, type when fixed, scope level), innermost last.
     vars: Vec<(&'a str, Option<u32>, u32)>,
     level: u32,
     /// Types by expression node id.
-    memo: HashMap<usize, Option<u32>>,
+    memo: HashMap<usize, Option<u32>, BuildHasherDefault<NodeHasher>>,
     /// Type parameters in scope: never a type here.
     type_params: Vec<String>,
     caller: String,
+    /// Index of the caller's node.
+    caller_node: u32,
     /// The caller's definition holds its id in the file: only then do its method calls count
     /// (a method sharing an interface method's id would start edges from the interface).
     record: bool,
@@ -106,10 +231,16 @@ impl<'a> Go<'_, 'a> {
                     name: name.to_string(),
                 })
             }
-            "qualified_type" => Some(GoWritten {
-                qual: Some(self.text(ty.child_by_field_name("package")?).to_string()),
-                name: self.text(ty.child_by_field_name("name")?).to_string(),
-            }),
+            "qualified_type" => {
+                let q = self.text(ty.child_by_field_name("package")?);
+                if self.std_qualifier(q) {
+                    return None;
+                }
+                Some(GoWritten {
+                    qual: Some(q.to_string()),
+                    name: self.text(ty.child_by_field_name("name")?).to_string(),
+                })
+            }
             _ => None,
         }
     }
@@ -132,6 +263,15 @@ impl<'a> Go<'_, 'a> {
             out.extend(std::iter::repeat_n(ty, names));
         }
         out
+    }
+
+    /// An import of the standard library (`testing`, `net/http`): nothing it declares is in
+    /// the repository, so nothing reached through it is recorded.
+    fn std_qualifier(&self, q: &str) -> bool {
+        self.qualifiers.get(q).is_some_and(|p| {
+            let root = p.split('/').next().unwrap_or(p);
+            STD_ROOTS.binary_search(&root).is_ok()
+        })
     }
 
     fn alloc(&mut self, t: GoTy) -> u32 {
@@ -167,21 +307,23 @@ impl<'a> Go<'_, 'a> {
     }
 
     /// Walk one function or method body: record its calls (as the plain walk did, in source
-    /// order) and, for typed receivers, its method calls.
+    /// order) and, for typed receivers, its method calls. `node` is the index of the caller's
+    /// node when its definition holds its id (only then are method calls recorded).
     pub(super) fn walk_body(
         &mut self,
         caller: &str,
+        node: Option<u32>,
         decl: TsNode,
         body: TsNode,
         type_params: &[String],
         receiver: Option<&str>,
-        kept: bool,
     ) {
         let mut s = Scope {
-            record: kept,
+            caller_node: node.unwrap_or(0),
+            record: node.is_some(),
             vars: Vec::new(),
             level: 0,
-            memo: HashMap::new(),
+            memo: HashMap::default(),
             type_params: type_params.to_vec(),
             caller: caller.to_string(),
         };
@@ -199,49 +341,61 @@ impl<'a> Go<'_, 'a> {
         }
         self.bind_params(&mut s, decl.child_by_field_name("parameters"));
         self.bind_params(&mut s, decl.child_by_field_name("result"));
-        self.walk(&mut s, body, 0);
+        let mut k = Kids {
+            buf: Vec::new(),
+            cursor: body.walk(),
+        };
+        self.walk(&mut s, &mut k, body, 0);
     }
 
-    fn walk_children(&mut self, s: &mut Scope<'a>, n: TsNode, depth: u32) {
-        for c in named_children(n) {
-            self.walk(s, c, depth + 1);
+    fn walk_children<'t>(
+        &mut self,
+        s: &mut Scope<'a>,
+        k: &mut Kids<'t>,
+        n: TsNode<'t>,
+        depth: u32,
+    ) {
+        let start = k.buf.len();
+        k.buf.extend(n.named_children(&mut k.cursor));
+        for i in start..k.buf.len() {
+            let c = k.buf[i];
+            self.walk(s, k, c, depth + 1);
         }
+        k.buf.truncate(start);
     }
 
-    fn walk(&mut self, s: &mut Scope<'a>, n: TsNode, depth: u32) {
+    fn walk<'t>(&mut self, s: &mut Scope<'a>, k: &mut Kids<'t>, n: TsNode<'t>, depth: u32) {
         if depth > MAX_DEPTH {
-            self.plain_calls(&s.caller.clone(), n);
+            let caller = std::mem::take(&mut s.caller);
+            self.plain_calls(&caller, n);
+            s.caller = caller;
             return;
         }
-        match n.kind() {
-            "call_expression" => {
+        let kinds = &*KINDS;
+        match n.kind_id() {
+            id if id == kinds.call => {
                 if let Some(f) = n.child_by_field_name("function") {
                     let line = Ctx::line(n);
-                    self.call(&s.caller.clone(), f, line);
+                    let caller = std::mem::take(&mut s.caller);
+                    self.call(&caller, f, line);
+                    s.caller = caller;
                     self.method_site(s, f, line);
                 }
-                self.walk_children(s, n, depth);
+                self.walk_children(s, k, n, depth);
             }
-            "func_literal" => {
+            id if id == kinds.func_literal => {
                 let mark = s.open();
                 self.bind_params(s, n.child_by_field_name("parameters"));
                 self.bind_params(s, n.child_by_field_name("result"));
-                self.walk_children(s, n, depth);
+                self.walk_children(s, k, n, depth);
                 s.close(mark);
             }
-            "block"
-            | "if_statement"
-            | "for_statement"
-            | "expression_switch_statement"
-            | "expression_case"
-            | "default_case"
-            | "communication_case"
-            | "select_statement" => {
+            id if kinds.scopes.contains(&id) => {
                 let mark = s.open();
-                self.walk_children(s, n, depth);
+                self.walk_children(s, k, n, depth);
                 s.close(mark);
             }
-            "type_switch_statement" => {
+            id if id == kinds.type_switch => {
                 let mark = s.open();
                 let alias: Vec<&'a str> = n
                     .child_by_field_name("alias")
@@ -271,18 +425,18 @@ impl<'a> Go<'_, 'a> {
                             for a in &alias {
                                 s.declare(a, ty);
                             }
-                            self.walk_children(s, c, depth);
+                            self.walk_children(s, k, c, depth);
                             s.close(case);
                         }
-                        _ => self.walk(s, c, depth + 1),
+                        _ => self.walk(s, k, c, depth + 1),
                     }
                 }
                 s.close(mark);
             }
-            "short_var_declaration" => {
-                if let Some(r) = n.child_by_field_name("right") {
-                    self.walk(s, r, depth + 1);
-                }
+            id if id == kinds.short_var => {
+                // Every child, as the plain call walk did (a recovered parse can put calls
+                // anywhere); the names bind afterwards.
+                self.walk_children(s, k, n, depth);
                 let names = self.left_names(n.child_by_field_name("left"));
                 let types = self.right_types(s, n.child_by_field_name("right"), names.len());
                 for (name, ty) in names.into_iter().zip(types) {
@@ -291,10 +445,8 @@ impl<'a> Go<'_, 'a> {
                     }
                 }
             }
-            "var_spec" => {
-                if let Some(v) = n.child_by_field_name("value") {
-                    self.walk(s, v, depth + 1);
-                }
+            id if id == kinds.var_spec => {
+                self.walk_children(s, k, n, depth);
                 let mut c = n.walk();
                 let names: Vec<&'a str> = n
                     .children_by_field_name("name", &mut c)
@@ -311,10 +463,8 @@ impl<'a> Go<'_, 'a> {
                     s.declare(name, ty);
                 }
             }
-            "range_clause" | "receive_statement" => {
-                if let Some(r) = n.child_by_field_name("right") {
-                    self.walk(s, r, depth + 1);
-                }
+            id if id == kinds.range_clause || id == kinds.receive => {
+                self.walk_children(s, k, n, depth);
                 // `for k, v := range xs`, `v := <-ch`: element types are not tracked, and an
                 // unknown binding shadows whatever the name meant (for `=` too, conservatively).
                 for name in self
@@ -325,17 +475,18 @@ impl<'a> Go<'_, 'a> {
                     s.declare(name, None);
                 }
             }
-            _ => self.walk_children(s, n, depth),
+            _ => self.walk_children(s, k, n, depth),
         }
     }
 
     /// Package-level `var` declarations: each name's symbolic type (no calls are recorded).
     pub(super) fn package_vars(&mut self, decl: TsNode) {
         let mut s = Scope {
+            caller_node: 0,
             record: false,
             vars: Vec::new(),
             level: 0,
-            memo: HashMap::new(),
+            memo: HashMap::default(),
             type_params: Vec::new(),
             caller: String::new(),
         };
@@ -451,7 +602,7 @@ impl<'a> Go<'_, 'a> {
             return;
         };
         self.method_calls_raw.push(RawGoCall {
-            caller: s.caller.clone(),
+            caller: s.caller_node,
             recv,
             name: self.text(field).to_string(),
             line,
@@ -505,9 +656,12 @@ impl<'a> Go<'_, 'a> {
                     && s.var(self.text(operand)).is_none()
                     && self.qualifiers.contains_key(self.text(operand))
                 {
-                    let q = self.text(operand).to_string();
+                    let q = self.text(operand);
+                    if self.std_qualifier(q) {
+                        return None;
+                    }
                     let name = self.text(n.child_by_field_name("field")?).to_string();
-                    return Some(self.alloc(GoTy::QualVar(q, name)));
+                    return Some(self.alloc(GoTy::QualVar(q.to_string(), name)));
                 }
                 let recv = self.expr_ty(s, operand)?;
                 let name = self.text(n.child_by_field_name("field")?).to_string();
@@ -525,6 +679,9 @@ impl<'a> Go<'_, 'a> {
             // `F[T](..)` / `pkg.F[T](..)`; an index into a local value is no instantiation.
             let callee = match q {
                 Some(q) if s.var(q).is_none() && self.qualifiers.contains_key(q) => {
+                    if self.std_qualifier(q) {
+                        return None;
+                    }
                     GoCallee::Qual(q.to_string(), name.to_string())
                 }
                 None if s.var(name).is_none() && !s.type_params.iter().any(|p| p == name) => {
@@ -560,6 +717,9 @@ impl<'a> Go<'_, 'a> {
                     && s.var(q).is_none()
                     && self.qualifiers.contains_key(q)
                 {
+                    if self.std_qualifier(q) {
+                        return None;
+                    }
                     GoCallee::Qual(q.to_string(), name)
                 } else {
                     GoCallee::Method(self.expr_ty(s, operand)?, name)
@@ -577,23 +737,24 @@ pub(super) fn finish_inference(
     raw: Vec<RawGoCall>,
     mut tys: Vec<GoTy>,
     vars: &mut [(String, u32)],
-    table: &HashMap<&str, &str>,
+    table: &HashMap<&str, (&str, usize)>,
 ) -> (Vec<GoTy>, Vec<GoMethodCall>) {
-    let mut seen = std::collections::HashSet::new();
+    // One call per (caller, receiver, name), at its first site.
+    let mut seen: std::collections::HashSet<(u32, u32, &str)> = std::collections::HashSet::new();
     let mut calls = Vec::new();
-    for c in raw {
-        if !seen.insert((c.caller.clone(), c.recv, c.name.clone())) {
+    for c in &raw {
+        if !seen.insert((c.caller, c.recv, c.name.as_str())) {
             continue;
         }
         let in_file = if super::is_unbound_name(&c.name, false) {
             None
         } else {
-            table.get(c.name.as_str()).map(|t| t.to_string())
+            table.get(c.name.as_str()).map(|&(_, i)| i as u32)
         };
         calls.push(GoMethodCall {
             caller: c.caller,
             recv: c.recv,
-            name: c.name,
+            name: c.name.clone(),
             line: c.line,
             in_file,
         });
@@ -639,4 +800,35 @@ pub(super) fn finish_inference(
         *t = remap[*t as usize];
     }
     (out, calls)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn std_roots_are_sorted_for_binary_search() {
+        assert!(STD_ROOTS.windows(2).all(|w| w[0] < w[1]));
+    }
+
+    #[test]
+    fn method_calls_record_typed_receivers_only() {
+        let f = crate::extract::extract_file(
+            crate::lang::Lang::Go,
+            "a/a.go",
+            b"package a\n\nimport \"testing\"\n\nfunc F(t *testing.T, x T, y interface{ M() }) {\n\
+              \tt.Errorf(\"\")\n\tx.M()\n\ty.M()\n\tfor _, x := range y.L() {\n\t\tx.M()\n\t}\n}\n",
+        );
+        let crate::facts::LangFacts::Go(g) = &f.lang else {
+            panic!()
+        };
+        // `t` is from the standard library and `y` has no named type; the range variable
+        // shadows `x`. Only `x.M()` on the parameter remains.
+        let names: Vec<(&str, u32)> = g
+            .method_calls
+            .iter()
+            .map(|c| (c.name.as_str(), c.line))
+            .collect();
+        assert_eq!(names, [("M", 7)]);
+    }
 }

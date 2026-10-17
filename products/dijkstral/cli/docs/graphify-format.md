@@ -1512,8 +1512,9 @@ fields promote from embedded fields at the shallowest depth that has the name, a
 every type at that depth is a struct of the repository. Scopes follow blocks (`if`/`for`/
 `switch` headers included); `:=` redeclares only in a new scope, and range variables, receive
 statements and closure parameters without a named type shadow as unknown. Interfaces, type
-parameters, slices, maps and anything else a declaration does not fix resolve nothing; edges
-start only from a caller whose definition holds its id. `pkg.F[T](..)` is a call of `F`, and
+parameters, slices, maps, values typed by the standard library (`t *testing.T`) and anything
+else a declaration does not fix resolve nothing; edges start only from a caller whose definition
+holds its id. `pkg.F[T](..)` is a call of `F`, and
 `pkg.F(..)` binds to the package's unique function `F` even when methods share the name (a
 method is never `pkg.M`). Fixture: `main → UserService.Register` (`svc :=
 NewUserService()`), `TestRegister → UserService.Register`, `Register → Store[T].Put` (field
