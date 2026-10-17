@@ -3,18 +3,16 @@
 
 /// `additionalContext` for a `Grep` or a search program run through `Bash`.
 pub const SEARCH_NUDGE: &str = "dijkstral: this project has a code graph in dijkstral-out/. \
-For who calls or uses a symbol run `dijkstral explain <symbol> --incoming`, for what a change \
-affects `dijkstral affected <symbol>`, for how two symbols connect `dijkstral path <a> <b>`, for \
-a broad topic `dijkstral query \"<question>\"`; each answer cites file:line. Text search remains \
-right for literal strings the graph cannot know.";
+Run `dijkstral context \"<question>\"` first: one call returns the symbols the question is \
+about with their definition lines, callers (with the calling lines) and callees. Text search \
+remains right for literal strings and for every occurrence of something.";
 
 /// `additionalContext` for reading a source file, or globbing for source files.
 pub const READ_NUDGE: &str = "dijkstral: this project has a code graph in dijkstral-out/. \
-Before reading source to find where something lives or how parts connect, ask the graph: \
-`dijkstral explain <symbol>` for a symbol and its connections (`--incoming` for its callers), \
-`dijkstral affected <symbol>` for what depends on it, `dijkstral path <a> <b>` for how two \
-symbols link, `dijkstral query \"<question>\"` for a broad topic. Answers cite file:line, so you \
-can read just those lines. Give any subagent you start the same instruction.";
+Before reading source to find where something lives or how parts connect, run \
+`dijkstral context \"<question>\"`: one call returns the relevant definitions, callers with \
+their calling lines, and callees, each cited by file:line. Give any subagent you start the \
+same instruction.";
 
 /// `additionalContext` for reading a file that changed after the graph was built.
 pub const STALE_NOTE: &str = "dijkstral: this file changed after the code graph was last \
@@ -23,10 +21,9 @@ built, so graph answers about it may be out of date. Reading it directly is the 
 
 /// `permissionDecisionReason` for the once-per-session denial under `hook-guard read --strict`.
 pub const STRICT_DENY: &str = "dijkstral strict mode: consult the code graph before reading \
-source in this session. Run `dijkstral explain <symbol>`, `dijkstral affected <symbol>`, \
-`dijkstral path <a> <b>` or `dijkstral query \"<question>\"`; each answer cites file:line, so \
-afterwards you can read only the lines that matter. This check blocks a single read per session; \
-retrying the read now is allowed.";
+source in this session. Run `dijkstral context \"<question>\"`; it cites file:line, so \
+afterwards you can read only the lines that matter. This check blocks a single read per \
+session; retrying the read now is allowed.";
 
 /// Heading of the project section in `CLAUDE.md` and `AGENTS.md`.
 pub const PROJECT_TITLE: &str = "dijkstral";
@@ -34,61 +31,40 @@ pub const PROJECT_TITLE: &str = "dijkstral";
 /// Project `CLAUDE.md` section (Claude Code also gets nudges from the installed hooks).
 pub const CLAUDE_SECTION: &str = "## dijkstral
 
-This project has a dijkstral code graph in `dijkstral-out/` (`graph.json`, plus `GRAPH_REPORT.md`
-with its communities and most connected symbols).
+This project has a dijkstral code graph in `dijkstral-out/`.
 
-Ask the graph before grepping or reading source broadly. Pick the command that fits the
-question; each cites `file:line`, so read only those lines next:
-
-- Where a symbol is defined and what it connects to: `dijkstral explain <symbol>`; what calls or
-  uses it: `dijkstral explain <symbol> --incoming` (`--outgoing` for what it calls, `--all` for
-  every connection).
-- What a change to a symbol would affect: `dijkstral affected <symbol>`.
-- How one symbol reaches another: `dijkstral path <from> <to>`.
-- A broad topic or feature with no symbol name yet: `dijkstral query \"<question>\"`; it returns
-  a neighbourhood of matching symbols, so `explain` the ones that look central.
-- A name in several files is reported as ambiguous with its candidates; retry as
-  `path/to/file.py::symbol`.
-- Every command is a round trip, so batch: `dijkstral explain A B C` explains several symbols at
-  once, and one `sed -n` call can print several cited ranges.
-- The graph is a map, not a full record: use it to find where things are, then search the text
-  (`rg`) for literal strings, exact values and dates, and whenever a question needs every
-  occurrence (how many, all of, the latest).
+- Start every question about this code with one call: `dijkstral context \"<question>\"`. It
+  returns the symbols the question is about with their definition lines, their callers (with the
+  calling lines) and what they call, often the whole answer: answer from it.
+- Only for what it lacks: `dijkstral explain A B --incoming` (callers of several symbols),
+  `dijkstral affected <symbol>` (what a change affects), `dijkstral path <a> <b>`. Each cites
+  `file:line`; read only those lines, several ranges in one `sed -n` call.
+- The graph is a map, not a full record: for literal strings, exact values and dates, and when a
+  question needs every occurrence (how many, all of, the latest), also search the text with `rg`.
 - Run `dijkstral update` after changing code; it re-extracts only the files that changed.
 ";
 
 /// Project `AGENTS.md` section for Codex, which gets no hook nudges, so it says when to ask.
 pub const AGENTS_SECTION: &str = "## dijkstral
 
-This project has a dijkstral code graph in `dijkstral-out/` (`graph.json`, plus `GRAPH_REPORT.md`
-with its communities and most connected symbols).
+This project has a dijkstral code graph in `dijkstral-out/`.
 
-Ask the graph before running `rg`, `grep` or `find` over the source, or opening files to learn
-the code's structure. Pick the command that fits the question; each cites `file:line`, so
-read only those lines next:
-
-- Where a symbol is defined and what it connects to: `dijkstral explain <symbol>`; what calls or
-  uses it: `dijkstral explain <symbol> --incoming` (`--outgoing` for what it calls, `--all` for
-  every connection).
-- What a change to a symbol would affect: `dijkstral affected <symbol>`.
-- How one symbol reaches another: `dijkstral path <from> <to>`.
-- A broad topic or feature with no symbol name yet: `dijkstral query \"<question>\"`; it returns
-  a neighbourhood of matching symbols, so `explain` the ones that look central.
-- A name in several files is reported as ambiguous with its candidates; retry as
-  `path/to/file.py::symbol`.
-- Every command is a round trip, so batch: `dijkstral explain A B C` explains several symbols at
-  once, and one `sed -n` call can print several cited ranges.
-- The graph is a map, not a full record: use it to find where things are, then search the text
-  (`rg`) for literal strings, exact values and dates, and whenever a question needs every
-  occurrence (how many, all of, the latest).
+- Start every question about this code with one call: `dijkstral context \"<question>\"`. It
+  returns the symbols the question is about with their definition lines, their callers (with the
+  calling lines) and what they call, often the whole answer: answer from it.
+- Only for what it lacks: `dijkstral explain A B --incoming` (callers of several symbols),
+  `dijkstral affected <symbol>` (what a change affects), `dijkstral path <a> <b>`. Each cites
+  `file:line`; read only those lines, several ranges in one `sed -n` call.
+- The graph is a map, not a full record: for literal strings, exact values and dates, and when a
+  question needs every occurrence (how many, all of, the latest), also search the text with `rg`.
 - Run `dijkstral update` after changing code; it re-extracts only the files that changed.
 ";
 
 /// Level-1 section for the user-level (or project-level) `.claude/CLAUDE.md` next to the skill.
 pub const SKILL_POINTER_SECTION: &str = "# dijkstral
 
-When a project contains `dijkstral-out/graph.json`, use the `dijkstral` skill: ask the code graph
-(`dijkstral explain`, `affected`, `path`, `query`) before searching or reading source broadly.
+When a project contains `dijkstral-out/graph.json`, use the `dijkstral` skill: start with
+`dijkstral context \"<question>\"` before searching or reading source broadly.
 ";
 
 /// `SKILL.md` for Claude Code and Codex.
@@ -118,17 +94,15 @@ for it: it uses their model quota.
 
 ## Ask
 
-Pick the command that fits the question:
-
-- `dijkstral explain <symbol>...`: each symbol, where it is defined, and what it connects to;
-  `<--` lines are its callers and users, `-->` lines what it uses. `--incoming` lists only the
-  callers and users, `--outgoing` only what it uses, `--all` every connection. Name several
-  symbols in one call rather than one call each.
-- `dijkstral affected <symbol>`: what depends on the symbol, following calls, imports and
-  inheritance backwards (`--depth N`, default 2): what a change to it would affect.
+- `dijkstral context \"<question>\"`: start here. One call returns the symbols the question is
+  about (or the best-matching ones) with their definition lines, callers with the calling lines,
+  and callees; for documents, the matching facts with their source lines and a search for every
+  occurrence. Often the whole answer.
+- `dijkstral explain <symbol>...`: symbols and all their connections; `--incoming` only callers
+  and users, `--outgoing` only what they use, `--all` every connection.
+- `dijkstral affected <symbol>`: what depends on the symbol (`--depth N`, default 2).
 - `dijkstral path <from> <to>`: the shortest chain of relations linking two symbols.
-- `dijkstral query \"<question>\"`: a neighbourhood of the symbols matching a broad question,
-  cut to a token budget; use it to find the central symbols, then `explain` them.
+- `dijkstral query \"<question>\"`: a neighbourhood of matching symbols, Graphify's format.
 
 Names can be qualified as `path/to/file.py::Symbol` when a bare name is ambiguous. Exit code 3
 means the name was ambiguous (candidates are listed), 4 that nothing matched.
