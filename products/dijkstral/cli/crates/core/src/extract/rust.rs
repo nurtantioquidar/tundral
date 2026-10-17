@@ -5,8 +5,9 @@
 //! emits nodes and structural edges in source order and records call sites. Calls are resolved at
 //! the end of the file, once every function, method, variant and macro is known; bare calls left
 //! unresolved go to the cross-file pass (`crate::resolve::rust`) through [`RustFacts`], and so do
-//! every path-qualified call, every `self.field.m()` call and every struct field's declared type
-//! (module and field-type resolution, Q23).
+//! every path-qualified call, every `self.field.m()` call, every struct field's declared type
+//! (module and field-type resolution, Q23), every function's declared return type and the
+//! symbolic receiver type of every other method call ([`infer`], local type inference).
 //!
 //! Deliberate departures from Graphify 0.9.86 (quirks in §15 not reproduced):
 //!
@@ -31,6 +32,8 @@ use tree_sitter::{Node as TsNode, Tree};
 
 use super::{slug, Ctx};
 use crate::facts::{Attr, LangFacts};
+
+mod infer;
 
 /// Facts the cross-file pass (`crate::resolve::rust`) needs from one file. Ids are local (before
 /// collision renaming).
@@ -68,6 +71,75 @@ pub struct RustFacts {
     pub inline_mods: Vec<String>,
     /// `type Name = a::B<..>;` aliases of a path type.
     pub aliases: Vec<RsAlias>,
+    /// Symbolic types of method-call receivers (local type inference, [`infer`]); the
+    /// [`MethodCall`]s and other entries index into it.
+    pub tys: Vec<RsTy>,
+    /// `recv.m(..)` calls whose receiver has a symbolic type, other than `self.m()` and
+    /// `self.a.b.m()` (those are [`SelfCall`]s and [`FieldCall`]s), in call order.
+    pub method_calls: Vec<MethodCall>,
+    /// Declared return types of the file's functions and methods.
+    pub returns: Vec<RsReturn>,
+}
+
+/// A type as written: path segments (generic arguments dropped; `Self` replaced by the impl's
+/// type), whether `Box`, `Arc` or `Rc` wraps it, and its first generic argument (the `T` of
+/// `Option<T>` and `Result<T, E>`).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RsPathTy {
+    pub path: Vec<String>,
+    pub wrapped: bool,
+    pub inner: Option<Box<RsPathTy>>,
+}
+
+/// The symbolic type of an expression in a function body, as far as a declaration fixes it. The
+/// cross-file pass evaluates it against the repository's declarations; anything else (generic
+/// parameters, trait objects, closures, patterns) has no `RsTy` at all.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum RsTy {
+    /// A type written in the body or the signature (`let x: T`, `x: &T`, `T { .. }`, `self`),
+    /// resolved where the call is.
+    Written(RsPathTy),
+    /// What `a::b::f(..)` / `T::f(..)` returns (a tuple struct or variant constructs its type).
+    PathRet { qual: Vec<String>, name: String },
+    /// What a bare `f(..)` returns; the name is no local binding.
+    BareRet(String),
+    /// What `recv.name(..)` returns.
+    MethodRet { recv: u32, name: String },
+    /// The declared type of the field `recv.name`.
+    Field { recv: u32, name: String },
+    /// `recv?`: the `T` of an `Option<T>` / `Result<T, E>`.
+    Unwrap(u32),
+    /// `recv.await` on what an `async fn` returns.
+    Await(u32),
+    /// `Box::new(x)`, `Arc::new(x)`, `Rc::new(x)`: `x` behind a pointer.
+    Wrap(u32),
+}
+
+/// `recv.name(..)` with a typed receiver.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct MethodCall {
+    /// Local id of the calling function or method.
+    pub caller: String,
+    /// Index of the receiver's type in [`RustFacts::tys`].
+    pub recv: u32,
+    pub name: String,
+    /// Enclosing inline `mod` blocks at the call site.
+    pub depth: u32,
+    pub line: u32,
+    /// Local id of the node in-file resolution chose, if any.
+    pub in_file: Option<String>,
+}
+
+/// The declared return type of a function or method whose node the build keeps.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RsReturn {
+    /// Local id of the function or method.
+    pub id: String,
+    /// Enclosing inline `mod` blocks.
+    pub depth: u32,
+    pub ty: RsPathTy,
+    /// An `async fn`: callers get a future, and `.await` yields `ty`.
+    pub is_async: bool,
 }
 
 /// `type name = ty;` where `ty` is a path (generic arguments dropped).
@@ -136,6 +208,8 @@ pub struct RsField {
     pub ty: Vec<String>,
     /// The type sits inside `Box`, `Arc` or `Rc`, whose own trait methods come first.
     pub wrapped: bool,
+    /// The first generic argument as written (`Option<T>`), for local type inference.
+    pub inner: Option<Box<RsPathTy>>,
 }
 
 /// One leaf of a `use` tree.
@@ -370,6 +444,11 @@ struct Walker<'c, 'a> {
     traits: Vec<String>,
     inline_mods: Vec<String>,
     aliases: Vec<RsAlias>,
+    /// The impl's (or struct's) type path while its body is walked: what `Self` names.
+    self_path: Vec<&'a str>,
+    tys: Vec<RsTy>,
+    method_calls_raw: Vec<infer::RawMethodCall<'a>>,
+    returns: Vec<RsReturn>,
 }
 
 fn push_distinct(v: &mut Vec<String>, id: &str) {
@@ -425,6 +504,10 @@ impl<'c, 'a> Walker<'c, 'a> {
             traits: Vec::new(),
             inline_mods: Vec::new(),
             aliases: Vec::new(),
+            self_path: Vec::new(),
+            tys: Vec::new(),
+            method_calls_raw: Vec::new(),
+            returns: Vec::new(),
         }
     }
 
@@ -725,7 +808,9 @@ impl<'c, 'a> Walker<'c, 'a> {
         let mark = self.push_generics(n.child_by_field_name("type_parameters"));
         if let Some(body) = n.child_by_field_name("body") {
             self.field_list_refs(&id, body);
+            let outer = std::mem::replace(&mut self.self_path, vec![name]);
             self.record_fields(name, body);
+            self.self_path = outer;
         }
         self.generics.truncate(mark);
     }
@@ -760,12 +845,14 @@ impl<'c, 'a> Walker<'c, 'a> {
             if segs.first().is_some_and(|s| self.generics.contains(s)) {
                 continue;
             }
+            let inner = self.written_ty(ty).and_then(|t| t.inner);
             self.fields.push(RsField {
                 owner: owner.to_string(),
                 depth: self.mod_path.len() as u32,
                 name,
                 ty: segs.iter().map(|s| s.to_string()).collect(),
                 wrapped,
+                inner,
             });
         }
     }
@@ -875,7 +962,9 @@ impl<'c, 'a> Walker<'c, 'a> {
             }
         }
         if let Some(body) = n.child_by_field_name("body") {
+            let outer = std::mem::take(&mut self.self_path);
             self.assoc_items(&id, None, body);
+            self.self_path = outer;
         }
         self.generics.truncate(mark);
     }
@@ -944,9 +1033,19 @@ impl<'c, 'a> Walker<'c, 'a> {
             self_ty: base.unwrap_or(""),
             key,
         };
+        let mut path = Vec::new();
+        // What `Self` names in the body: the impl's plain type path (`impl<T> Trait for T` and
+        // `impl Trait for &Foo` have none).
+        let plain = ty.kind() != "reference_type"
+            && self.field_type_path(ty, false, &mut path) == Some(false);
+        if !plain || path.first().is_some_and(|s| self.generics.contains(s)) {
+            path.clear();
+        }
+        let outer = std::mem::replace(&mut self.self_path, path);
         if let Some(body) = n.child_by_field_name("body") {
             self.assoc_items(&owner, Some(&scope), body);
         }
+        self.self_path = outer;
         self.generics.truncate(mark);
     }
 
@@ -1001,6 +1100,9 @@ impl<'c, 'a> Walker<'c, 'a> {
                     self.edge(owner, &id, "method", line, None);
                     let mark = self.push_generics(item.child_by_field_name("type_parameters"));
                     self.signature_refs(&id, item, line);
+                    if kept {
+                        self.record_return(&id, item);
+                    }
                     self.generics.truncate(mark);
                     if let Some(block) = item.child_by_field_name("body") {
                         // Inside an impl, `Self` is the impl's type and `self.m()` prefers the
@@ -1017,6 +1119,9 @@ impl<'c, 'a> Walker<'c, 'a> {
                                 .or_insert_with(|| id.clone());
                         }
                         self.calls_in(&id, imp.cloned(), block, kept);
+                        if kept {
+                            self.infer_fn(&id, item, block, imp.is_some());
+                        }
                     }
                 }
                 "const_item" => {
@@ -1049,9 +1154,15 @@ impl<'c, 'a> Walker<'c, 'a> {
         self.edge(&file, &id, "contains", line, None);
         let mark = self.push_generics(n.child_by_field_name("type_parameters"));
         self.signature_refs(&id, n, line);
+        if kept {
+            self.record_return(&id, n);
+        }
         self.generics.truncate(mark);
         if let Some(block) = n.child_by_field_name("body") {
             self.calls_in(&id, None, block, kept);
+            if kept {
+                self.infer_fn(&id, n, block, false);
+            }
         }
     }
 
@@ -1615,6 +1726,7 @@ impl<'c, 'a> Walker<'c, 'a> {
             path_calls,
             field_calls,
         } = self.resolve_calls();
+        let (tys, method_calls) = self.finish_inference();
         // `_rust_declaration_count` lands on whichever node holds the declared id first.
         for (id, count) in std::mem::take(&mut self.decl_count) {
             if let Some(&i) = self.first_node.get(&id) {
@@ -1645,6 +1757,9 @@ impl<'c, 'a> Walker<'c, 'a> {
             traits: std::mem::take(&mut self.traits),
             inline_mods: std::mem::take(&mut self.inline_mods),
             aliases: std::mem::take(&mut self.aliases),
+            tys,
+            method_calls,
+            returns: std::mem::take(&mut self.returns),
         });
     }
 }

@@ -1323,10 +1323,24 @@ fields' declared types (`should_preprocess` → `Override::matched` in ripgrep).
 imported from outside the repository no longer falls back to a same-named repository function.
 Edges start only from a caller whose node the build keeps for its id (not a `#[cfg]` twin, a
 same-named method of another impl or a fn sharing a struct's id). Trait-qualified calls
-(`Trait::m(x)`), method calls on locals and parameters, and calls inside macro arguments stay
-unresolved. Fixture: `build → Circle::new`, `main → build`, `main → Circle::new` (also through
-`Round::new`), `main → classify`, `main → run_all`, `util::render → fmt::render` (alias
-`render_shape`).
+(`Trait::m(x)`) and calls inside macro arguments stay unresolved. Fixture: `build →
+Circle::new`, `main → build`, `main → Circle::new` (also through `Round::new`), `main →
+classify`, `main → run_all`, `util::render → fmt::render` (alias `render_shape`).
+
+**Local type inference (dijkstral, Q23).** `recv.m(..)` on a local, a parameter or any
+expression whose type a declaration fixes resolves to the unique method `m` over every impl of
+that type (inherent and trait impls alike; two candidates resolve nothing), EXTRACTED 1.0, beside
+whatever the in-file name rule chose. A receiver's type comes from `let x: T`, a parameter
+`x: &T`, a struct literal `T { .. }`, `self`, the declared return type of the function or method
+a call reaches (`T::new()`, `f()`, `a.b().c()`, builder chains returning `&mut Self`; tuple
+structs and variants construct their type; `T::default()`, `T::from(..)`, `.clone()`), a field's
+declared type, `?`, `.unwrap()` / `.expect()` and `Some(x)` / `Ok(x)` patterns on an `Option<T>` or
+`Result<T, E>` written with its `T`, `.await` on an `async fn`, and `Box`/`Arc`/`Rc::new(x)` (whose
+own `clone`, `as_ref`… come first). Scopes follow blocks: a later `let`, closure parameter,
+`for`/`match`/`if let` pattern or nested item shadows a name, and anything not fixed by a
+declaration is unknown, so trait objects, generic parameters, `impl Trait`, closures, iterator
+items and patterns resolve nothing. Rust variables keep their type on assignment, so only
+shadowing invalidates.
 
 ### 11.6 Cargo.toml (in `--code-only`)
 
@@ -1892,7 +1906,7 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 | Q20 | Kotlin: declarations found inside `init` blocks, secondary constructors, misparsed headers and anonymous objects outside functions become top-level functions of the file; Scala does the same for `def`s in expression blocks of a class body. | §21.1, §22.1 |
 | Q21 | Kotlin: references to a qualified type use its **first** segment (`Interceptor.Chain` → `Interceptor`, `java.io.File` → `java`). | §21.2 |
 | Q22 | Scala: imports link to the first path segment (`import shop.model.User` → `shop`). | §22.2 |
-| Q23 | Rust cross-file calls bind bare names only: path-qualified calls (`a::b::f()`, `Type::f()` across files), `use … as` aliases and `self.field.m()` are never resolved, imported denylisted names (`build`) are dropped, and an imported external name still binds to a same-named repository function. | §11.5 |
+| Q23 | Rust cross-file calls bind bare names only: path-qualified calls (`a::b::f()`, `Type::f()` across files), `use … as` aliases, `self.field.m()` and method calls on typed locals and parameters (`let x = T::new(); x.m()`, builder chains) are never resolved, imported denylisted names (`build`) are dropped, and an imported external name still binds to a same-named repository function. | §11.5 |
 
 ### 15.2 Open questions
 
