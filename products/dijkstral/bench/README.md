@@ -1004,3 +1004,23 @@ it to answer straight away cut fresh tokens 21% — below no graph — but also 
 partial answers (judge correct −10 points); limiting it to one `context` call changed nothing.
 Neither guidance change was kept: accuracy comes first, and the remaining cost is the model's own
 verification, which only fuller `context` answers remove.
+
+### Stage 7 follow-up: comments as descriptions — 2026-10-17
+
+`context` now counts comment lines and Python docstrings as each function's description, at the
+same weight as its code (`d1e37cf`): comments are the code described in the words questions use
+("memory-map the file" beside `mmap`). Offline coverage 0.66 → 0.72 (tuning 0.75 → 0.77; held out
+0.49 → 0.61, 9 → 13 of 20 questions complete); half and 1.5× weights were both worse.
+
+Key facts, `gpt-6-luna` (medium), three runs:
+
+| arm | pass | judge | judge correct | median tokens | fresh tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|
+| no graph | 60% ± 9 | 0.70 ± 0.06 | 48% ± 11 | 40,876 | 0.58M ± 0.14 | 20.1k |
+| Graphify | 74% ± 5 | 0.76 ± 0.03 | 56% ± 4 | 60,209 | 0.70M ± 0.09 | 21.3k |
+| dijkstral `2aa0c46` | 88% ± 2 | 0.87 ± 0.01 | 74% ± 4 | 55,447 | 0.61M ± 0.02 | 13.6k |
+| dijkstral `d1e37cf` | 84% ± 3 | **0.88 ± 0.02** | **76% ± 4** | 50,855 | **0.58M ± 0.03** | **12.6k** |
+
+Fresh tokens per run now equal no graph's mean (0.575M each) with a seventh of its spread, and
+the blind judge rates the answers as good or better; the key-fact pass rate dipped 4 points
+(about 1.5 standard deviations).
