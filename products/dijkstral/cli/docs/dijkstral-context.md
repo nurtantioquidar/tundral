@@ -75,7 +75,7 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
 
 ```text
 ## <enclosing › label>  <file>:<line>
-  <line>| <the first 6 lines of its definition, for code>
+  <line>| <the first 4 lines of its definition, for code>
   matching lines:
   <line>| <its best lines for the question, for a code-text anchor (§1)>
   <line>| <up to 2 source lines best matching its label, for a document fact>
@@ -90,7 +90,7 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   `get_request_handler() › app()`); file nodes are never shown as enclosing.
 - **Rule.** Callers and users are the incoming links with relation `calls`, `indirect_call`,
   `uses`, `references`, `inherits`, `extends`, `implements`, `mixes_in`, `embeds` or
-  `instantiates`. Callers outside tests, examples and benchmarks are listed by file and line, at
+  `instantiates`, each with its call-site line cut to 80 characters. Callers outside tests, examples and benchmarks are listed by file and line, at
   most 12, with a pointer to `explain --incoming --all` for the rest; the others are one line:
   their count and two names. Importers (`imports`, `imports_from`,
   `re_exports`, `dynamic_import`) are listed by file, at most 8. Callees are the outgoing

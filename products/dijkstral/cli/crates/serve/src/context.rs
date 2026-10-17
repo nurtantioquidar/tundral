@@ -18,7 +18,7 @@ use crate::resolve::{self, Resolved};
 pub const DEFAULT_BUDGET: usize = 1500;
 const MAX_ANCHORS: usize = 4;
 const MAX_DOC_ANCHORS: usize = 8;
-const DEF_LINES: usize = 6;
+const DEF_LINES: usize = 4;
 const MAX_CALLERS: usize = 12;
 const MAX_CALLEES: usize = 10;
 const MAX_IMPORTERS: usize = 8;
@@ -87,6 +87,19 @@ impl Sources {
     /// Line `n` (1-based) of `rel`.
     fn line(&mut self, rel: &str, n: usize) -> Option<String> {
         self.lines(rel)?.get(n.checked_sub(1)?).cloned()
+    }
+}
+
+/// Call-site code shown after a caller: the call itself is what matters, not the rest of the line.
+const CALL_SITE_CHARS: usize = 80;
+
+fn clip_to(s: &str, n: usize) -> String {
+    if s.chars().count() <= n {
+        s.to_string()
+    } else {
+        let mut t: String = s.chars().take(n).collect();
+        t.push('…');
+        t
     }
 }
 
@@ -639,7 +652,7 @@ fn section(
             let at = line.map_or(file.to_string(), |l| format!("{file}:{l}"));
             let code = line
                 .and_then(|l| src.line(file, l))
-                .map(|t| format!("  | {}", t.trim()))
+                .map(|t| format!("  | {}", clip_to(t.trim(), CALL_SITE_CHARS)))
                 .unwrap_or_default();
             let _ = writeln!(s, "    {} [{}] {at}{code}", display(ix, c), ix.relation(e));
         }
