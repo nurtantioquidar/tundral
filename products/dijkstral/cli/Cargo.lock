@@ -599,6 +599,7 @@ dependencies = [
  "anyhow",
  "dijkstral-core",
  "memchr",
+ "rayon",
  "serde_json",
  "tempfile",
 ]

@@ -46,7 +46,9 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   `subsystem`), the answer adds a map of the code's areas: each top-level directory, or each of
   its subdirectories when it holds three or more (`crates/*`, `pkg/*`), with its symbol count and
   its four most connected symbols outside tests; areas whose path or top symbols carry the
-  question's subject words come first, then larger ones; at most 12.
+  question's subject words come first, then larger ones; at most 12. When the first area matches
+  the question, its subdirectories follow the same way (`Inside <area>/`), so a question about
+  one subsystem of a large repository sees how that subsystem is divided.
 
 - **Rule (flow).** A flow question that names no symbol — text after `from` up to ` to `,
   ` until `, ` into ` or ` through to `, or around `end up (as|in)`, `get(s) to`, `reach(es)`,
@@ -57,6 +59,11 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   node, at most 6 hops, each step with its relation and the line of the link.
 - **Rule.** Bare CamelCase names (above) never stop the code-text and flow searches; they are
   added after what those found.
+
+- **Rule (speed).** The code is scanned once per question, files in parallel, for the union of
+  the terms of the whole question and of a flow's two ends; a line is split into words only when
+  its lower case contains one of the terms (a stem is a substring of every word it matches).
+  About 0.4 s on Kubernetes with a warm page cache.
 
 ## 2. One anchor
 

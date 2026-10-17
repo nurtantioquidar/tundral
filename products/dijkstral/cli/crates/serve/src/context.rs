@@ -760,9 +760,9 @@ const CODE_SCAFFOLD: &[&str] = &[
 ];
 const TEXT_ANCHORS: usize = 4;
 
-/// Per node: how often each question term occurs, and its matching lines with their counts of
-/// distinct terms.
-type NodeHits = (Vec<u32>, Vec<(usize, usize)>);
+/// Per node: how often each question term occurs, and its matching lines with the terms each
+/// carries (a bit per term).
+type NodeHits = (Vec<u32>, Vec<(usize, u64)>);
 const HIT_LINES: usize = 3;
 
 /// Words of a source line: identifiers split at `_` and lower-to-upper case changes
@@ -845,114 +845,191 @@ fn code_spans(ix: &Index) -> HashMap<String, Vec<(usize, u32)>> {
 
 /// For a code question that names no symbol: the functions and classes whose text carries the
 /// most of the question's subject words (rarer words weigh more), with their matching lines.
-fn code_search(ix: &Index, src: &mut Sources, question: &str) -> Vec<(u32, Vec<(usize, String)>)> {
-    let terms: Vec<String> = subject_stems(question)
+/// The question's code-search terms: subject words without words that describe code in general.
+fn code_terms(question: &str) -> Vec<String> {
+    subject_stems(question)
         .into_iter()
         .filter(|t| !CODE_SCAFFOLD.iter().any(|c| t == c))
-        .collect();
-    if terms.is_empty() {
-        return Vec::new();
-    }
-    let need = terms.len().min(2);
-    let spans = code_spans(ix);
-    let mut files: Vec<&String> = spans.keys().collect();
-    files.sort();
-    let mut df = vec![0usize; terms.len()];
-    let mut lines_seen = 0usize;
-    // node → (per-term counts, matching lines (line, distinct terms))
-    let mut per: HashMap<u32, NodeHits> = HashMap::new();
-    for f in files {
-        let Some(lines) = src.lines(f) else { continue };
-        let starts = &spans[f];
-        for (k, line) in lines.iter().enumerate() {
-            lines_seen += 1;
-            if is_comment(line) {
-                continue;
+        .collect()
+}
+
+/// One pass over the code for a set of terms: per node, how often each term occurs and its
+/// matching lines (with the terms each carries); and each term's line frequency.
+struct Scan {
+    terms: Vec<String>,
+    df: Vec<usize>,
+    lines: usize,
+    per: HashMap<u32, NodeHits>,
+    spans: HashMap<String, Vec<(usize, u32)>>,
+}
+
+impl Scan {
+    /// Files are scanned in parallel; a line is split into identifier words only when its lower
+    /// case contains one of the terms (a stem is a substring of every word it matches).
+    fn new(ix: &Index, root: &Path, terms: Vec<String>) -> Scan {
+        use rayon::prelude::*;
+        let terms: Vec<String> = terms.into_iter().take(64).collect();
+        let spans = code_spans(ix);
+        let mut files: Vec<&String> = spans.keys().collect();
+        files.sort();
+        let finders: Vec<memchr::memmem::Finder> = terms
+            .iter()
+            .map(|t| memchr::memmem::Finder::new(t.as_bytes()).into_owned())
+            .collect();
+        type FileHits = (usize, Vec<usize>, Vec<(u32, usize, u64)>);
+        let results: Vec<FileHits> = files
+            .par_iter()
+            .map(|f| {
+                let mut df = vec![0usize; terms.len()];
+                let mut hits: Vec<(u32, usize, u64)> = Vec::new();
+                let path = root.join(f.as_str());
+                let ok = std::fs::metadata(&path)
+                    .is_ok_and(|m| m.is_file() && m.len() <= MAX_FILE_BYTES);
+                let Some(bytes) = ok.then(|| std::fs::read(&path).ok()).flatten() else {
+                    return (0, df, hits);
+                };
+                let text = String::from_utf8_lossy(&bytes);
+                let starts = &spans[f.as_str()];
+                let mut n_lines = 0;
+                for (k, line) in text.lines().enumerate() {
+                    n_lines += 1;
+                    let lower = line.to_ascii_lowercase();
+                    if !finders.iter().any(|fd| fd.find(lower.as_bytes()).is_some()) {
+                        continue;
+                    }
+                    if is_comment(line) {
+                        continue;
+                    }
+                    let ws = ident_words(line);
+                    let mut mask = 0u64;
+                    for (t, term) in terms.iter().enumerate() {
+                        if ws.iter().any(|w| w == term) {
+                            mask |= 1 << t;
+                            df[t] += 1;
+                        }
+                    }
+                    if mask == 0 {
+                        continue;
+                    }
+                    let n = k + 1;
+                    let pos = starts.partition_point(|&(l, _)| l <= n);
+                    if let Some(p) = pos.checked_sub(1) {
+                        hits.push((starts[p].1, n, mask));
+                    }
+                }
+                (n_lines, df, hits)
+            })
+            .collect();
+        let mut df = vec![0usize; terms.len()];
+        let mut lines = 0;
+        let mut per: HashMap<u32, NodeHits> = HashMap::new();
+        for (n, d, hits) in results {
+            lines += n;
+            for (t, c) in d.into_iter().enumerate() {
+                df[t] += c;
             }
-            let ws = ident_words(line);
-            let hit: Vec<usize> = (0..terms.len())
-                .filter(|&t| ws.iter().any(|w| *w == terms[t]))
-                .collect();
-            if hit.is_empty() {
-                continue;
+            for (node, line, mask) in hits {
+                let e = per
+                    .entry(node)
+                    .or_insert_with(|| (vec![0; terms.len()], Vec::new()));
+                for (t, c) in e.0.iter_mut().enumerate() {
+                    if mask & (1 << t) != 0 {
+                        *c += 1;
+                    }
+                }
+                e.1.push((line, mask));
             }
-            for &t in &hit {
-                df[t] += 1;
-            }
-            let n = k + 1;
-            let pos = starts.partition_point(|&(l, _)| l <= n);
-            let Some(&(_, node)) = pos.checked_sub(1).map(|p| &starts[p]) else {
-                continue;
-            };
-            let e = per
-                .entry(node)
-                .or_insert_with(|| (vec![0; terms.len()], Vec::new()));
-            for &t in &hit {
-                e.0[t] += 1;
-            }
-            e.1.push((n, hit.len()));
+        }
+        Scan {
+            terms,
+            df,
+            lines,
+            per,
+            spans,
         }
     }
-    let idf: Vec<f64> = df
-        .iter()
-        .map(|&d| ((lines_seen as f64 + 1.0) / (d as f64 + 1.0)).ln().max(0.0))
-        .collect();
-    // A node's span runs to the next node of its file; long spans are damped so a dense match
-    // in a focused function beats scattered words in a long one.
-    let span_len = |node: u32| -> f64 {
-        let file = ix.source_file(node);
-        let start = line_no(ix.node(node).source_location).unwrap_or(1);
-        let next = spans[file]
+
+    /// The best nodes for the terms in `wanted`, each with its best matching lines.
+    fn rank(
+        &self,
+        ix: &Index,
+        src: &mut Sources,
+        wanted: &[String],
+    ) -> Vec<(u32, Vec<(usize, String)>)> {
+        let mask: u64 = self
+            .terms
             .iter()
-            .map(|&(l, _)| l)
-            .find(|&l| l > start)
-            .unwrap_or(start + 200);
-        (next - start) as f64
-    };
-    let mut ranked: Vec<(f64, bool, u32)> = per
-        .iter()
-        .filter_map(|(&node, (counts, _))| {
-            let distinct = counts.iter().filter(|&&c| c > 0).count();
-            if distinct < need {
-                return None;
-            }
-            let weight: f64 = counts
+            .enumerate()
+            .filter(|(_, t)| wanted.contains(t))
+            .fold(0, |m, (k, _)| m | (1 << k));
+        let n_wanted = (mask.count_ones() as usize).min(2);
+        if n_wanted == 0 {
+            return Vec::new();
+        }
+        let idf: Vec<f64> = self
+            .df
+            .iter()
+            .map(|&d| ((self.lines as f64 + 1.0) / (d as f64 + 1.0)).ln().max(0.0))
+            .collect();
+        let span_len = |node: u32| -> f64 {
+            let file = ix.source_file(node);
+            let start = line_no(ix.node(node).source_location).unwrap_or(1);
+            let next = self.spans[file]
                 .iter()
-                .zip(&idf)
-                .filter(|(&c, _)| c > 0)
-                .map(|(&c, w)| w * (1.0 + (c as f64).ln()))
-                .sum();
-            // The node's own name is the strongest evidence: each question word it contains
-            // counts again, three times over.
-            let name = ident_words(ix.label(node));
-            let named: f64 = terms
-                .iter()
-                .zip(&idf)
-                .filter(|(t, _)| name.iter().any(|w| w == *t))
-                .map(|(_, w)| 3.0 * w)
-                .sum();
-            let score = (weight + named) * distinct as f64 / (1.0 + span_len(node) / 40.0).sqrt();
-            Some((score, is_test_node(ix, node), node))
-        })
-        .collect();
-    // Tests last; then score; then node order.
-    ranked.sort_by(|a, b| a.1.cmp(&b.1).then(b.0.total_cmp(&a.0)).then(a.2.cmp(&b.2)));
-    ranked
-        .into_iter()
-        .take(TEXT_ANCHORS)
-        .map(|(_, _, node)| {
-            let mut hits = per[&node].1.clone();
-            hits.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
-            hits.truncate(HIT_LINES);
-            hits.sort_unstable();
-            let file = ix.source_file(node).to_string();
-            let lines = hits
-                .into_iter()
-                .filter_map(|(n, _)| src.line(&file, n).map(|t| (n, t)))
-                .collect();
-            (node, lines)
-        })
-        .collect()
+                .map(|&(l, _)| l)
+                .find(|&l| l > start)
+                .unwrap_or(start + 200);
+            (next - start) as f64
+        };
+        let mut ranked: Vec<(f64, bool, u32)> = self
+            .per
+            .iter()
+            .filter_map(|(&node, (counts, _))| {
+                let on = |t: usize| mask & (1 << t) != 0 && counts[t] > 0;
+                let distinct = (0..self.terms.len()).filter(|&t| on(t)).count();
+                if distinct < n_wanted {
+                    return None;
+                }
+                let weight: f64 = (0..self.terms.len())
+                    .filter(|&t| on(t))
+                    .map(|t| idf[t] * (1.0 + (counts[t] as f64).ln()))
+                    .sum();
+                // The node's own name is the strongest evidence: each question word it
+                // contains counts again, three times over.
+                let name = ident_words(ix.label(node));
+                let named: f64 = (0..self.terms.len())
+                    .filter(|&t| mask & (1 << t) != 0 && name.iter().any(|w| *w == self.terms[t]))
+                    .map(|t| 3.0 * idf[t])
+                    .sum();
+                let score =
+                    (weight + named) * distinct as f64 / (1.0 + span_len(node) / 40.0).sqrt();
+                Some((score, is_test_node(ix, node), node))
+            })
+            .collect();
+        // Tests last; then score; then node order.
+        ranked.sort_by(|a, b| a.1.cmp(&b.1).then(b.0.total_cmp(&a.0)).then(a.2.cmp(&b.2)));
+        ranked
+            .into_iter()
+            .take(TEXT_ANCHORS)
+            .map(|(_, _, node)| {
+                let mut hits: Vec<(usize, u32)> = self.per[&node]
+                    .1
+                    .iter()
+                    .map(|&(n, m)| (n, (m & mask).count_ones()))
+                    .filter(|&(_, c)| c > 0)
+                    .collect();
+                hits.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
+                hits.truncate(HIT_LINES);
+                hits.sort_unstable();
+                let file = ix.source_file(node).to_string();
+                let lines = hits
+                    .into_iter()
+                    .filter_map(|(n, _)| src.line(&file, n).map(|t| (n, t)))
+                    .collect();
+                (node, lines)
+            })
+            .collect()
+    }
 }
 
 /// The two ends of a flow question ("trace a file from the walker to the printer", "how does the
@@ -1146,6 +1223,47 @@ fn overview(ix: &Index, question: &str) -> String {
     if total > AREAS {
         let _ = writeln!(s, "  … {} more areas", total - AREAS);
     }
+    // Zoom into the best-matching area: its subdirectories, so a question about one subsystem
+    // of a large repository sees how that subsystem is divided.
+    if let Some((hits, _, area, ns)) = areas.first() {
+        if *hits > 0 {
+            let depth = area.split('/').count();
+            let mut sub: HashMap<String, Vec<u32>> = HashMap::new();
+            for &i in ns {
+                let parts: Vec<&str> = ix.source_file(i).split('/').collect();
+                if parts.len() > depth + 1 {
+                    sub.entry(parts[..=depth].join("/")).or_default().push(i);
+                }
+            }
+            if sub.len() >= 2 {
+                let mut subs: Vec<(usize, usize, String, Vec<u32>)> = sub
+                    .into_iter()
+                    .map(|(dir, ns)| {
+                        let mut w: HashSet<String> = ident_words(&dir).into_iter().collect();
+                        for &i in ns.iter().take(30) {
+                            w.extend(ident_words(ix.label(i)));
+                        }
+                        let h = subject.iter().filter(|t| w.contains(*t)).count();
+                        (h, ns.len(), dir, ns)
+                    })
+                    .collect();
+                subs.sort_by(|a, b| b.0.cmp(&a.0).then(b.1.cmp(&a.1)).then(a.2.cmp(&b.2)));
+                let _ = writeln!(s, "Inside {area}/ ({} parts):", subs.len());
+                for (_, n, dir, ns) in subs.iter().take(AREAS) {
+                    let mut ns = ns.clone();
+                    ns.sort_by_key(|&i| (std::cmp::Reverse(ix.degree(i)), i));
+                    let mut seen = HashSet::new();
+                    let names: Vec<&str> = ns
+                        .iter()
+                        .map(|&i| ix.label(i))
+                        .filter(|l| seen.insert(*l))
+                        .take(4)
+                        .collect();
+                    let _ = writeln!(s, "  {dir}/ ({n} symbols): {}", names.join(", "));
+                }
+            }
+        }
+    }
     s
 }
 
@@ -1164,9 +1282,20 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
     let mut chain_text = String::new();
     if anchors.is_empty() && (0..ix.node_count() as u32).any(|i| is_code(ix, i)) {
         // A flow question: find each end, then the call chain between them.
-        if let Some((start, end)) = flow_ends(question) {
-            let a: Vec<(u32, Vec<(usize, String)>)> = code_search(ix, &mut src, &start);
-            let b: Vec<(u32, Vec<(usize, String)>)> = code_search(ix, &mut src, &end);
+        let whole = code_terms(question);
+        let ends = flow_ends(question).map(|(a, b)| (code_terms(&a), code_terms(&b)));
+        let mut all = whole.clone();
+        if let Some((a, b)) = &ends {
+            for t in a.iter().chain(b) {
+                if !all.contains(t) {
+                    all.push(t.clone());
+                }
+            }
+        }
+        let scan = Scan::new(ix, root, all);
+        if let Some((start, end)) = &ends {
+            let a = scan.rank(ix, &mut src, start);
+            let b = scan.rank(ix, &mut src, end);
             let froms: Vec<u32> = a.iter().take(2).map(|x| x.0).collect();
             let tos: Vec<u32> = b.iter().take(2).map(|x| x.0).collect();
             if let Some(chain) = call_chain(ix, &froms, &tos) {
@@ -1179,7 +1308,7 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
                 }
             }
         }
-        for (node, lines) in code_search(ix, &mut src, question) {
+        for (node, lines) in scan.rank(ix, &mut src, &whole) {
             if anchors.len() >= TEXT_ANCHORS {
                 break;
             }
