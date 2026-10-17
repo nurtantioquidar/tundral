@@ -120,6 +120,13 @@ fn is_file_node(ix: &Index, i: u32) -> bool {
     !file.is_empty() && !label.is_empty() && (file == label || file.ends_with(&format!("/{label}")))
 }
 
+/// A test: in a test file, or a node of an inline test module (Rust `mod tests`).
+fn is_test_node(ix: &Index, i: u32) -> bool {
+    is_test_path(ix.source_file(i))
+        || ix.id(i).contains("_tests_")
+        || ix.label(i).trim_start_matches('.').starts_with("test")
+}
+
 fn is_test_path(p: &str) -> bool {
     let p = p.to_ascii_lowercase();
     p.split('/').any(|seg| {
@@ -147,6 +154,9 @@ fn named_symbols(question: &str) -> Vec<String> {
         push(&after[..b]);
         rest = &after[b + 1..];
     }
+    for t in kind_names(question) {
+        push(&t);
+    }
     for word in question.split(|c: char| c.is_whitespace() || c == ',' || c == ';') {
         let w = word.trim_matches(|c: char| !(c.is_alphanumeric() || c == '_' || c == ')'));
         let w = w.trim_start_matches('(');
@@ -169,6 +179,36 @@ fn named_symbols(question: &str) -> Vec<String> {
     out
 }
 
+/// `the Sink trait`, `struct Searcher`, `class APIRouter`: a capitalised word beside a kind word
+/// names a symbol.
+fn kind_names(question: &str) -> Vec<String> {
+    const KINDS: &[&str] = &[
+        "trait",
+        "struct",
+        "class",
+        "interface",
+        "enum",
+        "type",
+        "protocol",
+        "module",
+        "object",
+    ];
+    let toks: Vec<&str> = question
+        .split(|c: char| !(c.is_alphanumeric() || c == '_'))
+        .filter(|t| !t.is_empty())
+        .collect();
+    let kind = |j: Option<&&str>| j.is_some_and(|w| KINDS.contains(&w.to_lowercase().as_str()));
+    toks.iter()
+        .enumerate()
+        .filter(|&(k, t)| {
+            t.starts_with(char::is_uppercase)
+                && t.len() >= 3
+                && (kind(toks.get(k + 1)) || kind(k.checked_sub(1).and_then(|p| toks.get(p))))
+        })
+        .map(|(_, t)| t.to_string())
+        .collect()
+}
+
 /// Resolve one named symbol: exact, else its last `.`/`::` segment; ambiguous names keep up to
 /// two non-test candidates.
 fn resolve_name(ix: &Index, name: &str) -> Vec<u32> {
@@ -187,6 +227,27 @@ fn resolve_name(ix: &Index, name: &str) -> Vec<u32> {
             Resolved::NotFound => Vec::new(),
         }
     };
+    // `Type::method` / `Type.method`: the method whose enclosing type is `Type`.
+    let bare = name.trim_end_matches("()");
+    if let Some((qual, member)) = bare.rsplit_once("::").or_else(|| bare.rsplit_once('.')) {
+        let qual = qual.rsplit(['.', ':']).next().unwrap_or(qual);
+        if !qual.is_empty() && member.len() >= 2 {
+            let mut hits: Vec<u32> = (0..ix.node_count() as u32)
+                .filter(|&i| {
+                    ix.label(i).trim_start_matches('.').trim_end_matches("()") == member
+                        && enclosing(ix, i).is_some_and(|p| {
+                            let l = ix.label(p).trim_end_matches("()");
+                            l == qual || l.split(['<', ' ']).next() == Some(qual)
+                        })
+                })
+                .collect();
+            if !hits.is_empty() {
+                hits.sort_by_key(|&i| (is_test_node(ix, i), std::cmp::Reverse(ix.degree(i))));
+                hits.truncate(2);
+                return hits;
+            }
+        }
+    }
     let found = pick(resolve::resolve(ix, name));
     if !found.is_empty() {
         return found;
@@ -202,22 +263,50 @@ fn resolve_name(ix: &Index, name: &str) -> Vec<u32> {
     Vec::new()
 }
 
-/// The nodes the answer is about.
-pub fn anchors(ix: &Index, question: &str) -> Vec<u32> {
+/// The nodes the question names (code-like words resolved as `explain` does).
+pub fn named_anchors(ix: &Index, question: &str) -> Vec<u32> {
+    let explicit_marks =
+        |n: &str| n.contains('_') || n.contains('.') || n.contains("::") || n.ends_with("()");
+    let mut backticked: Vec<String> = named_symbols(&backticks_only(question));
+    backticked.extend(kind_names(question));
+    let hub = query::hub_threshold(ix);
     let mut out: Vec<u32> = Vec::new();
     for name in named_symbols(question) {
+        let explicit = explicit_marks(&name) || backticked.contains(&name);
         for i in resolve_name(ix, &name) {
+            // A bare CamelCase word (`FastAPI`, `Sink`) is a symbol only when a label spells it
+            // exactly and it is not a hub every part of the code touches.
+            if !explicit {
+                let label = ix.label(i).trim_start_matches('.').trim_end_matches("()");
+                if label != name || f64::from(ix.degree(i)) >= hub {
+                    continue;
+                }
+            }
             if !out.contains(&i) {
                 out.push(i);
             }
         }
     }
-    if out.is_empty() {
-        let terms = query::terms(question);
-        out = query::seeds(ix, &terms);
-    }
-    // A fact node of a document costs one line, so documents get more of them; but only nodes
-    // that share a subject word with the question (not just "few" or "years").
+    out.truncate(MAX_ANCHORS);
+    out
+}
+
+/// Only the backticked spans of a question, so their names count as explicit.
+fn backticks_only(question: &str) -> String {
+    question
+        .split('`')
+        .enumerate()
+        .filter(|(k, _)| k % 2 == 1)
+        .map(|(_, s)| format!("`{s}`"))
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+/// `query`'s seeds for the question. A fact node of a document costs one line, so documents
+/// get more of them; but only nodes that share a subject word with the question (not just
+/// "few" or "years").
+fn anchors_from_seeds(ix: &Index, question: &str) -> Vec<u32> {
+    let mut out = query::seeds(ix, &query::terms(question));
     let docs = !out.is_empty() && out.iter().all(|&i| !is_code(ix, i));
     if docs {
         let subject = subject_stems(question);
@@ -226,8 +315,7 @@ pub fn anchors(ix: &Index, question: &str) -> Vec<u32> {
             subject.iter().any(|t| ws.iter().any(|w| matches(w, t)))
         });
     }
-    let cap = if docs { MAX_DOC_ANCHORS } else { MAX_ANCHORS };
-    out.truncate(cap);
+    out.truncate(if docs { MAX_DOC_ANCHORS } else { MAX_ANCHORS });
     out
 }
 
@@ -268,7 +356,12 @@ fn place(ix: &Index, i: u32) -> String {
 /// A crude stem, so `babies` finds `baby` and `walking` finds `walk`.
 fn stem(w: &str) -> String {
     let n = w.len();
-    if let Some(b) = w.strip_suffix("ies").filter(|_| n > 4) {
+    if let Some(b) = w
+        .strip_suffix("ly")
+        .filter(|_| n > 6 && (w.ends_with("tly") || w.ends_with("ally") || w.ends_with("sly")))
+    {
+        b.to_string()
+    } else if let Some(b) = w.strip_suffix("ies").filter(|_| n > 4) {
         format!("{b}y")
     } else if let Some(b) = w.strip_suffix("ing").filter(|_| n > 5) {
         b.to_string()
@@ -430,7 +523,7 @@ fn label_lines(src: &mut Sources, file: &str, label: &str) -> Vec<(usize, String
 }
 
 /// One anchor's section.
-fn section(ix: &Index, src: &mut Sources, i: u32) -> String {
+fn section(ix: &Index, src: &mut Sources, i: u32, hits: &[(usize, String)]) -> String {
     let mut s = String::new();
     let _ = writeln!(s, "## {}  {}", display(ix, i), place(ix, i));
     let node = ix.node(i);
@@ -440,6 +533,12 @@ fn section(ix: &Index, src: &mut Sources, i: u32) -> String {
                 for (k, l) in lines.iter().enumerate().skip(start - 1).take(DEF_LINES) {
                     let _ = writeln!(s, "  {:>5}| {l}", k + 1);
                 }
+            }
+        }
+        if !hits.is_empty() {
+            let _ = writeln!(s, "  matching lines:");
+            for (n, text) in hits {
+                let _ = writeln!(s, "  {n:>5}| {text}");
             }
         }
     } else if !is_file_node(ix, i) {
@@ -587,22 +686,242 @@ fn search_hint(w: &Weights) -> String {
     )
 }
 
+/// Words that describe code in general, not this question's subject.
+const CODE_SCAFFOLD: &[&str] = &[
+    "function",
+    "method",
+    "code",
+    "file",
+    "class",
+    "package",
+    "module",
+    "crate",
+    "repo",
+    "repository",
+    "defin",
+    "implement",
+    "implementation",
+    "type",
+    "struct",
+    "trait",
+];
+const TEXT_ANCHORS: usize = 3;
+
+/// Per node: how often each question term occurs, and its matching lines with their counts of
+/// distinct terms.
+type NodeHits = (Vec<u32>, Vec<(usize, usize)>);
+const HIT_LINES: usize = 3;
+
+/// Words of a source line: identifiers split at `_` and lower-to-upper case changes
+/// (`readJSONBody` → read, json, body; `is_body_form` → is, body, form), lower-cased and stemmed,
+/// plus each whole identifier.
+fn ident_words(line: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    for tok in line
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|t| !t.is_empty())
+    {
+        out.push(stem(&tok.to_lowercase()));
+        let cs: Vec<char> = tok.chars().collect();
+        let mut start = 0;
+        for k in 1..cs.len() {
+            // `readJSON|Body`: lower→upper, and the last capital of a run before a lower one.
+            let lower_upper =
+                cs[k].is_uppercase() && (cs[k - 1].is_lowercase() || cs[k - 1].is_ascii_digit());
+            let acronym_end = cs[k].is_uppercase()
+                && cs[k - 1].is_uppercase()
+                && cs.get(k + 1).is_some_and(|c| c.is_lowercase());
+            if lower_upper || acronym_end {
+                out.push(stem(
+                    &cs[start..k].iter().collect::<String>().to_lowercase(),
+                ));
+                start = k;
+            }
+        }
+        if start > 0 {
+            out.push(stem(&cs[start..].iter().collect::<String>().to_lowercase()));
+        }
+    }
+    out
+}
+
+/// Configuration and data files: their keys are not the code a question asks about.
+fn is_config(path: &str) -> bool {
+    let ext = path.rsplit('.').next().unwrap_or("").to_ascii_lowercase();
+    matches!(
+        ext.as_str(),
+        "toml" | "json" | "yaml" | "yml" | "lock" | "cfg" | "ini" | "xml" | "md" | "txt" | "csv"
+    )
+}
+
+/// Comment lines (`#`, `//`, `/*`, ` * `, docstring quotes) and prose inside string literals
+/// (help text: six or more words and no code punctuation) repeat every word of a question.
+fn is_comment(line: &str) -> bool {
+    let t = line.trim_start();
+    if ["#", "//", "/*", "*", "\"\"\"", "\'\'\'", "--", ";"]
+        .iter()
+        .any(|p| t.starts_with(p))
+    {
+        return true;
+    }
+    let words = t.split_whitespace().count();
+    words >= 6 && !t.contains(['(', ')', '=', '{', '}', ';', '[', ']'])
+}
+
+/// Code nodes of each file by start line: the spans a text hit is credited to (the innermost
+/// node starting at or before the hit's line).
+fn code_spans(ix: &Index) -> HashMap<String, Vec<(usize, u32)>> {
+    let mut spans: HashMap<String, Vec<(usize, u32)>> = HashMap::new();
+    for i in 0..ix.node_count() as u32 {
+        if !is_code(ix, i) || is_file_node(ix, i) || is_config(ix.source_file(i)) {
+            continue;
+        }
+        let n = ix.node(i);
+        if let Some(l) = line_no(n.source_location) {
+            spans
+                .entry(n.source_file.to_string())
+                .or_default()
+                .push((l, i));
+        }
+    }
+    for v in spans.values_mut() {
+        v.sort_unstable();
+    }
+    spans
+}
+
+/// For a code question that names no symbol: the functions and classes whose text carries the
+/// most of the question's subject words (rarer words weigh more), with their matching lines.
+fn code_search(ix: &Index, src: &mut Sources, question: &str) -> Vec<(u32, Vec<(usize, String)>)> {
+    let terms: Vec<String> = subject_stems(question)
+        .into_iter()
+        .filter(|t| !CODE_SCAFFOLD.iter().any(|c| t == c))
+        .collect();
+    if terms.is_empty() {
+        return Vec::new();
+    }
+    let need = terms.len().min(2);
+    let spans = code_spans(ix);
+    let mut files: Vec<&String> = spans.keys().collect();
+    files.sort();
+    let mut df = vec![0usize; terms.len()];
+    let mut lines_seen = 0usize;
+    // node → (per-term counts, matching lines (line, distinct terms))
+    let mut per: HashMap<u32, NodeHits> = HashMap::new();
+    for f in files {
+        let Some(lines) = src.lines(f) else { continue };
+        let starts = &spans[f];
+        for (k, line) in lines.iter().enumerate() {
+            lines_seen += 1;
+            if is_comment(line) {
+                continue;
+            }
+            let ws = ident_words(line);
+            let hit: Vec<usize> = (0..terms.len())
+                .filter(|&t| ws.iter().any(|w| *w == terms[t]))
+                .collect();
+            if hit.is_empty() {
+                continue;
+            }
+            for &t in &hit {
+                df[t] += 1;
+            }
+            let n = k + 1;
+            let pos = starts.partition_point(|&(l, _)| l <= n);
+            let Some(&(_, node)) = pos.checked_sub(1).map(|p| &starts[p]) else {
+                continue;
+            };
+            let e = per
+                .entry(node)
+                .or_insert_with(|| (vec![0; terms.len()], Vec::new()));
+            for &t in &hit {
+                e.0[t] += 1;
+            }
+            e.1.push((n, hit.len()));
+        }
+    }
+    let idf: Vec<f64> = df
+        .iter()
+        .map(|&d| ((lines_seen as f64 + 1.0) / (d as f64 + 1.0)).ln().max(0.0))
+        .collect();
+    // A node's span runs to the next node of its file; long spans are damped so a dense match
+    // in a focused function beats scattered words in a long one.
+    let span_len = |node: u32| -> f64 {
+        let file = ix.source_file(node);
+        let start = line_no(ix.node(node).source_location).unwrap_or(1);
+        let next = spans[file]
+            .iter()
+            .map(|&(l, _)| l)
+            .find(|&l| l > start)
+            .unwrap_or(start + 200);
+        (next - start) as f64
+    };
+    let mut ranked: Vec<(f64, bool, u32)> = per
+        .iter()
+        .filter_map(|(&node, (counts, _))| {
+            let distinct = counts.iter().filter(|&&c| c > 0).count();
+            if distinct < need {
+                return None;
+            }
+            let weight: f64 = counts
+                .iter()
+                .zip(&idf)
+                .filter(|(&c, _)| c > 0)
+                .map(|(&c, w)| w * (1.0 + (c as f64).ln()))
+                .sum();
+            let score = weight * distinct as f64 / (1.0 + span_len(node) / 40.0).sqrt();
+            Some((score, is_test_node(ix, node), node))
+        })
+        .collect();
+    // Tests last; then score; then node order.
+    ranked.sort_by(|a, b| a.1.cmp(&b.1).then(b.0.total_cmp(&a.0)).then(a.2.cmp(&b.2)));
+    ranked
+        .into_iter()
+        .take(TEXT_ANCHORS)
+        .map(|(_, _, node)| {
+            let mut hits = per[&node].1.clone();
+            hits.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
+            hits.truncate(HIT_LINES);
+            hits.sort_unstable();
+            let file = ix.source_file(node).to_string();
+            let lines = hits
+                .into_iter()
+                .filter_map(|(n, _)| src.line(&file, n).map(|t| (n, t)))
+                .collect();
+            (node, lines)
+        })
+        .collect()
+}
+
 /// The `context` answer for `question` within about `budget` tokens; `None` when nothing in the
 /// graph matches it.
 pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<String> {
-    let anchors = anchors(ix, question);
-    if anchors.is_empty() {
-        return None;
-    }
     let mut src = Sources {
         root: root.to_path_buf(),
         files: HashMap::new(),
     };
+    // Named symbols first; for a code question that names none, the functions whose text
+    // matches it; otherwise `query`'s seeds (documents keep their facts).
+    let mut hits: HashMap<u32, Vec<(usize, String)>> = HashMap::new();
+    let mut anchors: Vec<u32> = named_anchors(ix, question);
+    if anchors.is_empty() && (0..ix.node_count() as u32).any(|i| is_code(ix, i)) {
+        for (node, lines) in code_search(ix, &mut src, question) {
+            anchors.push(node);
+            hits.insert(node, lines);
+        }
+    }
+    if anchors.is_empty() {
+        anchors = anchors_from_seeds(ix, question);
+    }
+    if anchors.is_empty() {
+        return None;
+    }
     let limit = budget.max(200) * 4;
     let mut out = String::new();
     let mut cut = 0;
     for &i in &anchors {
-        let sec = section(ix, &mut src, i);
+        let none = Vec::new();
+        let sec = section(ix, &mut src, i, hits.get(&i).unwrap_or(&none));
         if !out.is_empty() && out.len() + sec.len() > limit {
             cut += 1;
             continue;
@@ -642,7 +961,7 @@ mod tests {
         );
         assert_eq!(
             named_symbols("If the Sink trait changed, which implementations must be updated?"),
-            Vec::<String>::new()
+            ["Sink"]
         );
         assert_eq!(
             named_symbols("Which non-test code calls Override::matched from the ignore crate?"),
@@ -706,6 +1025,25 @@ mod tests {
             )]
         );
         assert!(label_lines(&mut src, "missing.md", "anything here").is_empty());
+    }
+
+    #[test]
+    fn identifier_words_and_kinds() {
+        let w = ident_words("body_bytes = await readJSONBody(request)");
+        for want in ["body", "byte", "read", "json", "request"] {
+            assert!(w.iter().any(|x| x == want), "{want} in {w:?}");
+        }
+        assert_eq!(
+            kind_names("If the Sink trait changed, which struct Searcher uses it?"),
+            ["Sink", "Searcher"]
+        );
+        assert!(is_comment("    # a comment"));
+        assert!(is_comment(
+            "    This flag controls whether binary files are searched at all."
+        ));
+        assert!(!is_comment("    if self.binary.is_explicit() {"));
+        assert!(is_config("pyproject.toml") && !is_config("src/main.rs"));
+        assert_eq!(stem("explicitly"), "explicit");
     }
 
     #[test]
