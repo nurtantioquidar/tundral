@@ -32,7 +32,9 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   abbreviations — `config`/`cfg` for configuration, `err`, `dir`, `req`, `buf`, `ctx` and about
   forty more — and a two-word phrase code spells as one word adds that word: `mmap`, `regex`,
   `stdin`, `timeout`), plus 3 × idf for each of them its own name
-  contains (`_should_embed_body_fields` for "embedded … body"), times the number of distinct terms, damped
+  contains (`_should_embed_body_fields` for "embedded … body"), plus a quarter of the scores of its three best-scoring
+  callers and callees (`calls`, `indirect_call`, `uses`: the graph's view of where the answer
+  lives), times the number of distinct terms, damped
   by √(1 + span/40) where its span runs to the next node of its file; it needs two distinct terms
   (or the only one). The top 4, tests last (test files, Rust `mod tests`, `test…` names, and
   examples, documentation code and benchmarks: `examples/`, `docs_src/`, `samples/`, `bench…/`),

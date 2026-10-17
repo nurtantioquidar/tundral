@@ -1068,32 +1068,50 @@ impl Scan {
                 .unwrap_or(start + 200);
             (next - start) as f64
         };
-        let mut ranked: Vec<(f64, bool, u32)> = self
+        // A node's own evidence: its matching words (rarer weigh more) and the question words its
+        // name carries (three times over: the name is the strongest evidence).
+        let strength = |node: u32, counts: &[u32]| -> (f64, usize) {
+            let on = |t: usize| mask & (1 << t) != 0 && counts[t] > 0;
+            let distinct = (0..self.terms.len()).filter(|&t| on(t)).count();
+            let weight: f64 = (0..self.terms.len())
+                .filter(|&t| on(t))
+                .map(|t| idf[t] * (1.0 + (counts[t] as f64).ln()))
+                .sum();
+            let name = ident_words(ix.label(node));
+            let named: f64 = (0..self.terms.len())
+                .filter(|&t| {
+                    let spelled = spellings(&self.terms[t]);
+                    mask & (1 << t) != 0 && name.iter().any(|w| spelled.contains(w))
+                })
+                .map(|t| 3.0 * idf[t])
+                .sum();
+            (weight + named, distinct)
+        };
+        let own: HashMap<u32, (f64, usize)> = self
             .per
             .iter()
-            .filter_map(|(&node, (counts, _))| {
-                let on = |t: usize| mask & (1 << t) != 0 && counts[t] > 0;
-                let distinct = (0..self.terms.len()).filter(|&t| on(t)).count();
-                if distinct < n_wanted {
-                    return None;
-                }
-                let weight: f64 = (0..self.terms.len())
-                    .filter(|&t| on(t))
-                    .map(|t| idf[t] * (1.0 + (counts[t] as f64).ln()))
-                    .sum();
-                // The node's own name is the strongest evidence: each question word it
-                // contains counts again, three times over.
-                let name = ident_words(ix.label(node));
-                let named: f64 = (0..self.terms.len())
-                    .filter(|&t| {
-                        let spelled = spellings(&self.terms[t]);
-                        mask & (1 << t) != 0 && name.iter().any(|w| spelled.contains(w))
+            .map(|(&node, (counts, _))| (node, strength(node, counts)))
+            .collect();
+        let mut ranked: Vec<(f64, bool, u32)> = own
+            .iter()
+            .filter(|(_, &(_, distinct))| distinct >= n_wanted)
+            .map(|(&node, &(weight, distinct))| {
+                // The graph's view: callers and callees that match the question too make a node
+                // likelier to be the answer (its three strongest such neighbours count a quarter).
+                let mut near: Vec<f64> = ix
+                    .incident(node)
+                    .filter(|&e| matches!(ix.relation(e), "calls" | "indirect_call" | "uses"))
+                    .filter_map(|e| {
+                        let (a, b) = ix.endpoints(e);
+                        let other = if a == node { b } else { a };
+                        own.get(&other).map(|o| o.0)
                     })
-                    .map(|t| 3.0 * idf[t])
-                    .sum();
+                    .collect();
+                near.sort_by(|a, b| b.total_cmp(a));
+                let neighbours: f64 = near.iter().take(3).sum::<f64>() * 0.25;
                 let score =
-                    (weight + named) * distinct as f64 / (1.0 + span_len(node) / 40.0).sqrt();
-                Some((score, is_test_node(ix, node), node))
+                    (weight + neighbours) * distinct as f64 / (1.0 + span_len(node) / 40.0).sqrt();
+                (score, is_test_node(ix, node), node)
             })
             .collect();
         // Tests last; then score; then node order.
