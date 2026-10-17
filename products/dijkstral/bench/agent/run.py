@@ -73,7 +73,14 @@ COMMON_FLAGS = ["--disable", "apps", "-c", 'web_search="disabled"', "--color", "
 
 INSTRUCTION = {
     "keyfacts": "Answer from this repository. Cite file paths and symbol names where relevant. Be concise.",
-    "notes": "Answer from these notes (the files in this directory). Cite file paths where relevant. Be concise.",
+    # v2: models such as gpt-6-luna often claimed they could not read the notes and asked for
+    # them to be pasted (all arms, 4-33 of 60-120 sessions); naming the shell tools fixes that
+    # without mentioning either graph tool.
+    "notes": (
+        "Answer from these notes: the Markdown files in the current directory, which you can list, "
+        "search and read with shell commands such as ls, rg and sed. Cite file paths where relevant. "
+        "Be concise."
+    ),
 }
 
 JUDGE_VERSION = "judge-v1"
