@@ -171,3 +171,33 @@ fn explain_filters_one_direction() {
     assert_eq!(lines(&outgoing, "<--"), 0, "{outgoing}");
     assert_eq!(lines(&outgoing, "-->"), lines(&both, "-->"), "{outgoing}");
 }
+
+/// dijkstral extension (`docs/graphify-query.md` §6): several names in one `explain`, each answer
+/// as the single-name call prints it, unknown names reported in place.
+#[test]
+fn explain_takes_several_names() {
+    let graph = fixtures().join("python.graphify.json");
+    let run = |names: &[&str]| {
+        let out = std::process::Command::new(env!("CARGO_BIN_EXE_dijkstral"))
+            .arg("explain")
+            .args(names)
+            .arg("--graph")
+            .arg(&graph)
+            .output()
+            .unwrap();
+        (out.status.code(), String::from_utf8(out.stdout).unwrap())
+    };
+    let (_, a) = run(&["pkg/util.py::helper"]);
+    let (_, b) = run(&["slugify"]);
+    let (code, both) = run(&["pkg/util.py::helper", "slugify", "nosuchthing"]);
+    assert_eq!(code, Some(0));
+    assert_eq!(
+        both,
+        format!(
+            "{}\n\n{}\n\nNo node matching 'nosuchthing' found.\n",
+            a.trim_end(),
+            b.trim_end()
+        )
+    );
+    assert_eq!(run(&["nosuchthing", "otherthing"]).0, Some(4));
+}

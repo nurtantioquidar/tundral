@@ -565,6 +565,9 @@ Connections (<n>):
 - dijkstral extension: `--incoming` keeps only the links into the node (its callers and users,
   the `<--` lines) and `--outgoing` only the links out of it; the count, the cut at 20 and the
   file summary then cover those links alone. Without either flag the output is Graphify's.
+- dijkstral extension: several names (`explain A B C`) explain each in turn, separated by a blank
+  line, an ambiguous or unknown name printing its usual message in its place; exit 0 when any
+  name resolved, else the first failure's code. One name behaves exactly as Graphify's.
 
 
 ## 7. `affected`

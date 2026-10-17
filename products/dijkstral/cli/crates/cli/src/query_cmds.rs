@@ -79,7 +79,8 @@ pub struct PathArgs {
 
 #[derive(Args, Debug)]
 pub struct ExplainArgs {
-    node: Option<String>,
+    /// The node; several names explain each in turn, in one answer (dijkstral extension).
+    nodes: Vec<String>,
     /// List every connection (default: the first 20 and a summary by file).
     #[arg(long)]
     all: bool,
@@ -252,23 +253,46 @@ fn run_path(a: PathArgs) -> Result<ExitCode, ExitCode> {
 }
 
 fn run_explain(a: ExplainArgs) -> Result<ExitCode, ExitCode> {
-    let Some(name) = a.node else {
+    if a.nodes.is_empty() {
         return Err(fail(
             "Usage: dijkstral explain \"<node>\" [--all] [--graph path]",
         ));
-    };
+    }
     let (ix, _) = open(a.graph.graph.as_deref())?;
-    let node = resolve_or_exit(&ix, &name, false)?;
     let only = match (a.incoming, a.outgoing) {
         (true, _) => Some(false),
         (_, true) => Some(true),
         _ => None,
     };
-    Ok(emit(
-        &explain::render_only(&ix, node, a.all, only),
-        false,
-        0,
-    ))
+    if let [name] = &a.nodes[..] {
+        let node = resolve_or_exit(&ix, name, false)?;
+        return Ok(emit(
+            &explain::render_only(&ix, node, a.all, only),
+            false,
+            0,
+        ));
+    }
+    // Several names: each answer (or its ambiguity / not-found message) in turn, so one call
+    // replaces a round trip per symbol. Exit 0 when any name resolved, else the first failure's.
+    let mut parts = Vec::with_capacity(a.nodes.len());
+    let mut code = None;
+    for name in &a.nodes {
+        parts.push(match resolve::resolve(&ix, name) {
+            resolve::Resolved::Found(i) => {
+                code = Some(0);
+                explain::render_only(&ix, i, a.all, only)
+            }
+            resolve::Resolved::Ambiguous(c) => {
+                code.get_or_insert(3);
+                resolve::ambiguous(&ix, name, &c)
+            }
+            resolve::Resolved::NotFound => {
+                code.get_or_insert(4);
+                resolve::not_found(name)
+            }
+        });
+    }
+    Ok(emit(&parts.join("\n\n"), false, code.unwrap_or(0)))
 }
 
 fn run_affected(a: AffectedArgs) -> Result<ExitCode, ExitCode> {
