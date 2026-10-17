@@ -980,3 +980,27 @@ both other arms. Fresh tokens per run are now within no graph's own run-to-run s
 0.04 against 0.58M ± 0.14); per correct answer dijkstral costs about a third less than either.
 The median session stays higher than no graph's because `gpt-6-luna` without a graph often
 answers in one turn without opening a file — and is wrong about half the time.
+
+### Stage 7 follow-up: graph-aware ranking and guidance experiments — 2026-10-17
+
+`context`: the code-area map ranks symbols by how many other files use them (`caffd6a`), a
+code-text match gains a quarter of its three best-matching callers' and callees' scores
+(`df28213`; held out 0.46 → 0.49, held-out architecture 0.13 → 0.33), and definition previews
+and call-site lines are shorter (`d6f7c9a`, about 6% less output). Offline coverage 0.66 (tuning
+0.75, held out 0.49).
+
+Key facts, `gpt-6-luna` (medium), three runs each (no graph: pass 60% ± 9, judge correct 48% ±
+11, fresh tokens per run 0.58M ± 0.14):
+
+| dijkstral | pass | judge | judge correct | median tokens | fresh tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|
+| `2aa0c46` (shipped guidance) | 88% ± 2 | 0.87 ± 0.01 | 74% ± 4 | 55,447 | 0.61M ± 0.02 | 13.6k |
+| + "answer straight from it; do not re-check" | 82% ± 2 | 0.83 ± 0.00 | 64% ± 3 | 51,428 | 0.48M ± 0.06 | 12.6k |
+| + "one `context` call; check only what is open" | 89% ± 3 | 0.87 ± 0.01 | 73% ± 2 | 53,524 | 0.63M ± 0.05 | 14.3k |
+
+In the shipped runs `context`'s first answer already held the key facts in 102 of 180 sessions,
+yet `gpt-6-luna` ran 1.6 more commands in those (rephrased `context` calls, `rg` re-checks). Telling
+it to answer straight away cut fresh tokens 21% — below no graph — but also stopped it early on
+partial answers (judge correct −10 points); limiting it to one `context` call changed nothing.
+Neither guidance change was kept: accuracy comes first, and the remaining cost is the model's own
+verification, which only fuller `context` answers remove.
