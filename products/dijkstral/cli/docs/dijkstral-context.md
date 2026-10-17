@@ -88,13 +88,13 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
 - **Rule.** `enclosing ›` names the function or class a nested node sits in, found by trimming its
   id back to the nearest node of the same file (`…_get_request_handler_app` →
   `get_request_handler() › app()`); file nodes are never shown as enclosing.
-- **Rule.** Callers and users are the incoming links with relation `calls`, `indirect_call`,
-  `uses`, `references`, `inherits`, `extends`, `implements`, `mixes_in`, `embeds` or
-  `instantiates`, each with its call-site line cut to 80 characters. Callers outside tests, examples and benchmarks are listed by file and line, at
-  most 12, with a pointer to `explain --incoming --all` for the rest; the others are one line:
-  their count and two names. Importers (`imports`, `imports_from`,
-  `re_exports`, `dynamic_import`) are listed by file, at most 8. Callees are the outgoing
-  `calls`, `indirect_call` and `uses` links, by label, at most 10.
+- **Rule.** Callers and users are the incoming links with relation `calls`, `indirect_call`, `uses`,
+  `references`, `inherits`, `extends`, `implements`, `mixes_in`, `embeds` or `instantiates`, each
+  with its call-site line cut to 80 characters. Callers outside tests, examples and benchmarks are
+  listed by file and line, at most 12, with a pointer to `explain --incoming --all` for the rest;
+  the others are one line: their count and two names. Importers (`imports`, `imports_from`,
+  `re_exports`, `dynamic_import`) are listed by file, at most 8. Callees are the outgoing `calls`,
+  `indirect_call` and `uses` links, by label, at most 10.
 - **Rule.** Source lines are read from `--root`, by default the directory holding the graph's
   `dijkstral-out/` or `graphify-out/` (else the current directory), cut to 160 characters; a file
   above 2 MiB or unreadable contributes no lines.
