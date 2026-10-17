@@ -11,12 +11,19 @@
 //!   bare `F()` not defined in its file binds to the unique `F` among the other files of its
 //!   directory, else to the unique `F` in the repository (INFERRED 0.85).
 //! - Files at the scan root: their `@root` type and method ids take the root directory's name.
+//! - Method calls on typed receivers (dijkstral-native, G5 not reproduced for them): a receiver's
+//!   symbolic type (`crate::extract::go::GoTy`, local type inference) evaluates against the
+//!   package's declared types, results and fields to a named non-interface type, whose method
+//!   of that name gets an EXTRACTED `calls` edge with score 1.0 when in-file resolution chose
+//!   another target or none. Interfaces, embedded (promoted) methods and anything a declaration
+//!   does not fix resolve nothing.
 
+use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 use super::{Index, Resolution, View};
-use crate::extract::go::{GoFacts, ROOT_DIR};
+use crate::extract::go::{GoCallee, GoFacts, GoField, GoReturn, GoTy, GoWritten, ROOT_DIR};
 use crate::extract::{external_node, origin, slug};
 use crate::facts::{Confidence, Edge, LangFacts, Loc, Node, NodeKind};
 use crate::lang::Lang;
@@ -276,9 +283,33 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             .is_some_and(|n| n.kind == NodeKind::Stub)
     };
 
+    // Declarations for local type inference, by package directory.
+    let dirs: Vec<&str> = go.iter().map(|(v, _)| parent(&v.file.rel)).collect();
+    let quals: Vec<HashMap<&str, Option<&str>>> = go
+        .iter()
+        .map(|(_, g)| {
+            let mut m = HashMap::new();
+            for imp in &g.imports {
+                let q = match imp.alias.as_deref() {
+                    Some("." | "_") => None,
+                    Some(a) => Some(a),
+                    None => imp.path.rsplit('/').next(),
+                };
+                if let Some(q) = q {
+                    m.entry(q).or_insert_with(|| {
+                        local_dir(&imp.path)
+                            .and_then(|d| dir_files.get_key_value(d.as_str()).map(|(k, _)| *k))
+                    });
+                }
+            }
+            m
+        })
+        .collect();
+    let decls = Decls::new(&go, dirs, quals, &types, fid, fix);
+
     let mut externals: HashSet<String> = HashSet::new();
     let mut go_types: HashSet<String> = HashSet::new();
-    for (v, g) in &go {
+    for (fi, (v, g)) in go.iter().enumerate() {
         let rel = v.file.rel.as_str();
         let file_id = fid(v, &g.file_id);
         let mut qualifiers: HashMap<&str, &str> = HashMap::new();
@@ -373,7 +404,12 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             let (target, confidence, score) = match &c.path {
                 Some(path) => {
                     let Some(d) = local_dir(path) else { continue };
-                    match lookup(&callables, &d, &c.name) {
+                    // A method is never `pkg.M`: when the name is also a method of the
+                    // package, its unique function decides (dijkstral-native).
+                    let found = lookup(&callables, &d, &c.name).or_else(|| {
+                        unique(decls.funcs.get(&(d.as_str(), c.name.as_str()))).cloned()
+                    });
+                    match found {
                         Some(t) => (t, Confidence::Extracted, Some(1.0)),
                         None => continue,
                     }
@@ -399,8 +435,276 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             };
             res.edges.push(edge(caller, target, &spec));
         }
+
+        // Method calls on typed receivers.
+        for c in &g.method_calls {
+            let Some(target) = decls.method_call(fi, c.recv, &c.name) else {
+                continue;
+            };
+            // Only from the caller's own node (not another file's definition of its id).
+            if index
+                .get(files, v.id(&c.caller))
+                .is_none_or(|n| n.source_file != v.file.rel)
+            {
+                continue;
+            }
+            let caller = fid(v, &c.caller);
+            if c.in_file.as_deref().is_some_and(|t| fid(v, t) == target)
+                || target == caller
+                || !called.insert((caller.clone(), target.clone()))
+            {
+                continue;
+            }
+            let spec = EdgeSpec {
+                relation: "calls",
+                rel,
+                line: c.line,
+                context: "call",
+                confidence: Confidence::Extracted,
+                score: Some(1.0),
+            };
+            res.edges.push(edge(caller, target, &spec));
+        }
     }
     res
+}
+
+/// A named type: (package directory, name).
+type Named<'t> = (&'t str, &'t str);
+
+/// A struct's fields: (declaring Go file, field).
+type Fields<'t> = Vec<(usize, &'t GoField)>;
+
+/// What a selector `x.name` reaches on a named type.
+enum Member<'t> {
+    Method(String),
+    /// A field of a named type, written in Go file `.0`.
+    Field(usize, &'t GoWritten),
+    /// A field whose type is not a named type.
+    Opaque,
+}
+
+/// The declarations local type inference evaluates against.
+struct Decls<'t> {
+    /// Per Go file: its package directory.
+    dirs: Vec<&'t str>,
+    /// Per Go file: import qualifier → the repository directory it names (`None` outside).
+    quals: Vec<HashMap<&'t str, Option<&'t str>>>,
+    /// Per Go file: its symbolic types.
+    tys: Vec<&'t [GoTy]>,
+    types: &'t Table<'t>,
+    interfaces: HashSet<Named<'t>>,
+    /// (directory, receiver type, method) → method ids.
+    methods: HashMap<(&'t str, &'t str, &'t str), Vec<String>>,
+    /// (directory, function) → function ids.
+    funcs: HashMap<(&'t str, &'t str), Vec<String>>,
+    /// Struct → (number of declarations, fields of every declaration).
+    structs: HashMap<Named<'t>, (usize, Fields<'t>)>,
+    /// Function or method id → (declaring file, results), every definition.
+    returns: HashMap<String, Vec<(usize, &'t GoReturn)>>,
+    /// (directory, package-level variable) → (declaring file, its type), every declaration.
+    vars: HashMap<Named<'t>, Vec<(usize, u32)>>,
+    memo: RefCell<HashMap<(usize, u32), Option<Named<'t>>>>,
+}
+
+impl<'t> Decls<'t> {
+    fn new(
+        go: &'t [(&'t View<'t>, &'t GoFacts)],
+        dirs: Vec<&'t str>,
+        quals: Vec<HashMap<&'t str, Option<&'t str>>>,
+        types: &'t Table<'t>,
+        fid: impl Fn(&View, &str) -> String,
+        fix: impl Fn(&str) -> String,
+    ) -> Self {
+        let mut d = Decls {
+            dirs,
+            quals,
+            tys: go.iter().map(|(_, g)| g.tys.as_slice()).collect(),
+            types,
+            interfaces: HashSet::new(),
+            methods: HashMap::new(),
+            funcs: HashMap::new(),
+            structs: HashMap::new(),
+            returns: HashMap::new(),
+            vars: HashMap::new(),
+            memo: RefCell::new(HashMap::new()),
+        };
+        for (fi, (v, g)) in go.iter().enumerate() {
+            let dir = d.dirs[fi];
+            for name in &g.interfaces {
+                d.interfaces.insert((dir, name));
+            }
+            for (ty, name, id) in &g.methods {
+                push_unique(d.methods.entry((dir, ty, name)).or_default(), fid(v, id));
+            }
+            for name in &g.structs {
+                d.structs.entry((dir, name)).or_default().0 += 1;
+            }
+            for f in &g.fields {
+                d.structs
+                    .entry((dir, &f.owner))
+                    .or_default()
+                    .1
+                    .push((fi, f));
+            }
+            for r in &g.returns {
+                d.returns.entry(fid(v, &r.id)).or_default().push((fi, r));
+            }
+            for (name, ty) in &g.vars {
+                d.vars.entry((dir, name)).or_default().push((fi, *ty));
+            }
+            for n in v.facts.nodes.iter().filter(|n| n.kind == NodeKind::Def) {
+                if let Some(name) = n.label.strip_suffix("()").filter(|l| !l.starts_with('.')) {
+                    push_unique(d.funcs.entry((dir, name)).or_default(), fix(&n.id));
+                }
+            }
+        }
+        d
+    }
+
+    /// The method `recv.name(..)` calls.
+    fn method_call(&self, f: usize, recv: u32, name: &str) -> Option<String> {
+        let (d, t) = self.eval(f, recv)?;
+        match self.member(d, t, name)? {
+            Member::Method(id) => Some(id),
+            _ => None,
+        }
+    }
+
+    /// What `x.name` selects on a value of type `(d, t)`: its own method or field, else the
+    /// one promoted from the shallowest level of embedded fields that has the name, when that
+    /// level has exactly one. A level holding a type whose members are not all known (an
+    /// interface, a type from outside the repository, a non-struct or twice-declared type)
+    /// decides nothing.
+    fn member(&self, d: &'t str, t: &'t str, name: &str) -> Option<Member<'t>> {
+        let mut level: Vec<Named<'t>> = vec![(d, t)];
+        let mut seen: HashSet<Named<'t>> = HashSet::new();
+        for _ in 0..8 {
+            let mut found = None;
+            let mut count = 0;
+            let mut unknown = false;
+            let mut next = Vec::new();
+            for &(d, t) in &level {
+                if let Some(ids) = self.methods.get(&(d, t, name)) {
+                    count += ids.len();
+                    found = Some(Member::Method(ids[0].clone()));
+                }
+                match self.structs.get(&(d, t)) {
+                    Some((1, fields)) => {
+                        for &(g, f) in fields {
+                            if f.name == name {
+                                count += 1;
+                                found = Some(match &f.ty {
+                                    Some(w) => Member::Field(g, w),
+                                    None => Member::Opaque,
+                                });
+                            }
+                            if f.embedded {
+                                match f.ty.as_ref().and_then(|w| self.written(g, w)) {
+                                    Some(e) if seen.insert(e) => next.push(e),
+                                    Some(_) => {}
+                                    None => unknown = true,
+                                }
+                            }
+                        }
+                    }
+                    _ => unknown = true,
+                }
+            }
+            match count {
+                0 if !unknown && !next.is_empty() => level = next,
+                1 => return found,
+                _ => return None,
+            }
+        }
+        None
+    }
+
+    fn eval(&self, f: usize, i: u32) -> Option<Named<'t>> {
+        if let Some(v) = self.memo.borrow().get(&(f, i)) {
+            return *v;
+        }
+        // Entries only point at earlier ones and variables cannot initialise each other in
+        // Go; the marker guards malformed input.
+        self.memo.borrow_mut().insert((f, i), None);
+        let v = self.eval_uncached(f, i);
+        self.memo.borrow_mut().insert((f, i), v);
+        v
+    }
+
+    fn eval_uncached(&self, f: usize, i: u32) -> Option<Named<'t>> {
+        match self.tys.get(f)?.get(i as usize)? {
+            GoTy::Written(w) => self.written(f, w),
+            GoTy::Call { callee, index } => match callee {
+                GoCallee::Bare(name) => self.call_in(self.dirs[f], name, *index),
+                GoCallee::Qual(q, name) => {
+                    let d = (*self.quals[f].get(q.as_str())?)?;
+                    self.call_in(d, name, *index)
+                }
+                GoCallee::Method(r, name) => {
+                    let (d, t) = self.eval(f, *r)?;
+                    match self.member(d, t, name)? {
+                        Member::Method(m) => self.returned(&m, *index),
+                        _ => None,
+                    }
+                }
+            },
+            GoTy::Field { recv, name } => {
+                let (d, t) = self.eval(f, *recv)?;
+                match self.member(d, t, name)? {
+                    Member::Field(g, w) => self.written(g, w),
+                    _ => None,
+                }
+            }
+            GoTy::PkgVar(name) => self.var(self.dirs[f], name),
+            GoTy::QualVar(q, name) => {
+                let d = (*self.quals[f].get(q.as_str())?)?;
+                self.var(d, name)
+            }
+        }
+    }
+
+    /// The type of package-level variable `name` of directory `d` (declared once).
+    fn var(&self, d: &'t str, name: &str) -> Option<Named<'t>> {
+        match self.vars.get(&(d, name)).map(Vec::as_slice) {
+            Some(&[(g, i)]) => self.eval(g, i),
+            _ => None,
+        }
+    }
+
+    /// The non-interface named type `w` denotes in Go file `f`.
+    fn written(&self, f: usize, w: &GoWritten) -> Option<Named<'t>> {
+        let d = match &w.qual {
+            None => self.dirs[f],
+            Some(q) => (*self.quals[f].get(q.as_str())?)?,
+        };
+        let (&name, _) = self.types.get(d)?.get_key_value(w.name.as_str())?;
+        (!self.interfaces.contains(&(d, name))).then_some((d, name))
+    }
+
+    /// Result `index` of `name(..)` in package directory `d`: a function's declared result,
+    /// or the type a conversion `T(x)` names.
+    fn call_in(&self, d: &'t str, name: &str, index: u32) -> Option<Named<'t>> {
+        if let Some((&t, _)) = self.types.get(d).and_then(|m| m.get_key_value(name)) {
+            return (index == 0 && !self.interfaces.contains(&(d, t))).then_some((d, t));
+        }
+        let id = unique(self.funcs.get(&(d, name)))?;
+        self.returned(id, index)
+    }
+
+    /// Result `index` of function or method `id` (every definition must agree).
+    fn returned(&self, id: &str, index: u32) -> Option<Named<'t>> {
+        let rets = self.returns.get(id)?;
+        let pick = |(g, r): &(usize, &'t GoReturn)| {
+            let w = r.results.get(index as usize)?.as_ref()?;
+            self.written(*g, w)
+        };
+        let first = pick(&rets[0])?;
+        rets[1..]
+            .iter()
+            .all(|r| pick(r) == Some(first))
+            .then_some(first)
+    }
 }
 
 #[cfg(test)]

@@ -1501,6 +1501,25 @@ Observed (fixture + probe `p4`):
 5. **Dropped**: method calls on values whose method lives in another file (`svc.Register()`, `t.Only()` in `b.go`, `s.users.Put`), calls through fields/vars/closures (`s.log(...)`, `cb()`, `run()`), unknown qualified names (`ml.Missing()`), all external package calls (`fmt.Println`, `strings.ToLower`, `sort.Slice`, `uuidlib.New`) — Go never emits `calls` to `go_pkg_*`, composite literals `&T{}` / `T{}` (no constructor edge), `go f()` / `defer f()` count as plain calls.
 6. One `calls` edge per (caller, callee) pair; the first call site's line is kept.
 
+**dijkstral (Q24 not reproduced).** A method call whose receiver's type a declaration fixes
+resolves to that type's method wherever the package declares it, EXTRACTED with score 1.0, beside
+whatever the same-file name rule (G5) chose. The receiver's type comes from the method receiver,
+parameters and named results, `var x T`, `x := T{..}` / `&T{..}` / `new(T)` / `v.(T)`, a
+type switch case with a single type, the declared results of the function or method a call
+reaches (`x, err := NewT()`, `a.B().C()`, conversions `T(x)`, explicitly instantiated
+`pkg.F[T]()`), a field's declared type and package-level variables (`pkg.Var.M()`). Methods and
+fields promote from embedded fields at the shallowest depth that has the name, and only when
+every type at that depth is a struct of the repository. Scopes follow blocks (`if`/`for`/
+`switch` headers included); `:=` redeclares only in a new scope, and range variables, receive
+statements and closure parameters without a named type shadow as unknown. Interfaces, type
+parameters, slices, maps and anything else a declaration does not fix resolve nothing; edges
+start only from a caller whose definition holds its id. `pkg.F[T](..)` is a call of `F`, and
+`pkg.F(..)` binds to the package's unique function `F` even when methods share the name (a
+method is never `pkg.M`). Fixture: `main → UserService.Register` (`svc :=
+NewUserService()`), `TestRegister → UserService.Register`, `Register → Store[T].Put` (field
+`s.users`), `Register → Model.Identity` (promoted), `NewUserService → NewStore`
+(`store.NewStore[User]()`).
+
 ### 12.3 Test files
 
 `*_test.go` are ordinary code files: `service_service_test` / `service_service_test_testregister`,
@@ -1907,6 +1926,7 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 | Q21 | Kotlin: references to a qualified type use its **first** segment (`Interceptor.Chain` → `Interceptor`, `java.io.File` → `java`). | §21.2 |
 | Q22 | Scala: imports link to the first path segment (`import shop.model.User` → `shop`). | §22.2 |
 | Q23 | Rust cross-file calls bind bare names only: path-qualified calls (`a::b::f()`, `Type::f()` across files), `use … as` aliases, `self.field.m()` and method calls on typed locals and parameters (`let x = T::new(); x.m()`, builder chains) are never resolved, imported denylisted names (`build`) are dropped, and an imported external name still binds to a same-named repository function. | §11.5 |
+| Q24 | Go method calls bind by bare name within the file (G5): a method call on a typed local, parameter, field or call result whose method lives in another file is dropped, as are `pkg.F[T](..)` and `pkg.F(..)` when a method of the package shares the name. | §12.2 |
 
 ### 15.2 Open questions
 
