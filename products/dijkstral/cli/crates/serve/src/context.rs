@@ -1252,6 +1252,24 @@ const STRUCTURE_WORDS: &[&str] = &[
 ];
 const AREAS: usize = 12;
 
+/// How many other files use a symbol (incoming links other than containment): a steadier sign of
+/// a symbol that represents its area than its degree, which many calls inside one file inflate.
+fn user_files(ix: &Index, i: u32) -> usize {
+    let own = ix.source_file(i);
+    let mut files: HashSet<&str> = HashSet::new();
+    for e in ix.incident(i) {
+        let (a, b) = ix.endpoints(e);
+        let rel = ix.relation(e);
+        if b == i && a != i && rel != "contains" && rel != "method" {
+            let f = ix.source_file(a);
+            if f != own && !is_test_path(f) {
+                files.insert(f);
+            }
+        }
+    }
+    files.len()
+}
+
 fn asks_structure(question: &str) -> bool {
     words(question).any(|w| STRUCTURE_WORDS.iter().any(|s| w.starts_with(s)))
 }
@@ -1288,7 +1306,13 @@ fn overview(ix: &Index, question: &str) -> String {
     let mut areas: Vec<(usize, usize, String, Vec<u32>)> = nodes_in
         .into_iter()
         .map(|(area, mut ns)| {
-            ns.sort_by_key(|&i| (std::cmp::Reverse(ix.degree(i)), i));
+            ns.sort_by_key(|&i| {
+                (
+                    std::cmp::Reverse(user_files(ix, i)),
+                    std::cmp::Reverse(ix.degree(i)),
+                    i,
+                )
+            });
             let mut words_here: HashSet<String> = ident_words(&area).into_iter().collect();
             for &i in ns.iter().take(30) {
                 words_here.extend(ident_words(ix.label(i)));
@@ -1341,7 +1365,13 @@ fn overview(ix: &Index, question: &str) -> String {
                 let _ = writeln!(s, "Inside {area}/ ({} parts):", subs.len());
                 for (_, n, dir, ns) in subs.iter().take(AREAS) {
                     let mut ns = ns.clone();
-                    ns.sort_by_key(|&i| (std::cmp::Reverse(ix.degree(i)), i));
+                    ns.sort_by_key(|&i| {
+                        (
+                            std::cmp::Reverse(user_files(ix, i)),
+                            std::cmp::Reverse(ix.degree(i)),
+                            i,
+                        )
+                    });
                     let mut seen = HashSet::new();
                     let names: Vec<&str> = ns
                         .iter()

@@ -48,7 +48,8 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   `responsib`, `layer`, `layout`, `overview`, `crate`, `package`, `module`, `component` or
   `subsystem`), the answer adds a map of the code's areas: each top-level directory, or each of
   its subdirectories when it holds three or more (`crates/*`, `pkg/*`), with its symbol count and
-  its four most connected symbols outside tests; areas whose path or top symbols carry the
+  the four symbols outside tests used from the most other files (then by degree: many calls inside
+  one file do not make a symbol representative); areas whose path or top symbols carry the
   question's subject words come first, then larger ones; at most 12. When the first area matches
   the question, its subdirectories follow the same way (`Inside <area>/`), so a question about
   one subsystem of a large repository sees how that subsystem is divided.
