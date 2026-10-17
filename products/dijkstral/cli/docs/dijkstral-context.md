@@ -28,7 +28,10 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   text), is split into words — identifiers at `_` and lower-to-upper changes (`readJSONBody` →
   read, json, body), stemmed — and credited to the innermost graph node starting at or before
   it. Each node scores Σ idf(term) × (1 + ln count) over the question's subject terms (scaffolding
-  and words that describe code in general removed), plus 3 × idf for each of them its own name
+  and words that describe code in general removed; each term also matches its common
+  abbreviations — `config`/`cfg` for configuration, `err`, `dir`, `req`, `buf`, `ctx` and about
+  forty more — and a two-word phrase code spells as one word adds that word: `mmap`, `regex`,
+  `stdin`, `timeout`), plus 3 × idf for each of them its own name
   contains (`_should_embed_body_fields` for "embedded … body"), times the number of distinct terms, damped
   by √(1 + span/40) where its span runs to the next node of its file; it needs two distinct terms
   (or the only one). The top 4, tests last (test files, Rust `mod tests`, `test…` names, and

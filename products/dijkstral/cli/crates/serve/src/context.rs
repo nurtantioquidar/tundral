@@ -847,10 +847,95 @@ fn code_spans(ix: &Index) -> HashMap<String, Vec<(usize, u32)>> {
 /// most of the question's subject words (rarer words weigh more), with their matching lines.
 /// The question's code-search terms: subject words without words that describe code in general.
 fn code_terms(question: &str) -> Vec<String> {
-    subject_stems(question)
+    let mut terms: Vec<String> = subject_stems(question)
         .into_iter()
         .filter(|t| !CODE_SCAFFOLD.iter().any(|c| t == c))
-        .collect()
+        .collect();
+    // Two-word phrases code spells as one word (`memory map` → `mmap`).
+    let ws: Vec<String> = words(question).map(|w| stem(&w)).collect();
+    for pair in ws.windows(2) {
+        for (a, b, short) in PHRASES {
+            if pair[0] == *a && pair[1] == *b && !terms.iter().any(|t| t == short) {
+                terms.push((*short).to_string());
+            }
+        }
+    }
+    terms
+}
+
+/// Abbreviations programmers write for common words (stemmed word → spellings in code).
+const ABBREVIATIONS: &[(&str, &[&str])] = &[
+    ("configuration", &["config", "cfg", "conf"]),
+    ("error", &["err"]),
+    ("initialize", &["init"]),
+    ("initialise", &["init"]),
+    ("authentication", &["auth", "authn"]),
+    ("authorization", &["authz", "auth"]),
+    ("directory", &["dir"]),
+    ("request", &["req"]),
+    ("response", &["resp", "res"]),
+    ("message", &["msg"]),
+    ("argument", &["arg"]),
+    ("parameter", &["param"]),
+    ("temporary", &["tmp", "temp"]),
+    ("buffer", &["buf"]),
+    ("length", &["len"]),
+    ("context", &["ctx"]),
+    ("pointer", &["ptr"]),
+    ("number", &["num"]),
+    ("string", &["str"]),
+    ("value", &["val"]),
+    ("expression", &["expr"]),
+    ("environment", &["env"]),
+    ("specification", &["spec"]),
+    ("reference", &["ref"]),
+    ("information", &["info"]),
+    ("position", &["pos"]),
+    ("attribute", &["attr"]),
+    ("document", &["doc"]),
+    ("library", &["lib"]),
+    ("package", &["pkg"]),
+    ("executable", &["exe", "exec"]),
+    ("previous", &["prev"]),
+    ("index", &["idx"]),
+    ("source", &["src"]),
+    ("destination", &["dst", "dest"]),
+    ("command", &["cmd"]),
+    ("statistic", &["stat"]),
+    ("connection", &["conn"]),
+    ("database", &["db"]),
+    ("transaction", &["tx", "txn"]),
+    ("synchronize", &["sync"]),
+    ("asynchronous", &["async"]),
+    ("allocation", &["alloc"]),
+    ("allocate", &["alloc"]),
+    ("separator", &["sep"]),
+    ("utility", &["util"]),
+    ("manager", &["mgr"]),
+    ("controller", &["ctrl", "controller"]),
+];
+
+/// Two-word phrases code writes as one word.
+const PHRASES: &[(&str, &str, &str)] = &[
+    ("memory", "map", "mmap"),
+    ("regular", "expression", "regex"),
+    ("standard", "input", "stdin"),
+    ("standard", "output", "stdout"),
+    ("standard", "error", "stderr"),
+    ("file", "descriptor", "fd"),
+    ("garbage", "collection", "gc"),
+    ("time", "out", "timeout"),
+];
+
+/// A term's spellings: itself and its abbreviations.
+fn spellings(term: &str) -> Vec<String> {
+    let mut out = vec![term.to_string()];
+    for (word, short) in ABBREVIATIONS {
+        if stem(word) == term {
+            out.extend(short.iter().map(|s| s.to_string()));
+        }
+    }
+    out
 }
 
 /// One pass over the code for a set of terms: per node, how often each term occurs and its
@@ -869,11 +954,13 @@ impl Scan {
     fn new(ix: &Index, root: &Path, terms: Vec<String>) -> Scan {
         use rayon::prelude::*;
         let terms: Vec<String> = terms.into_iter().take(64).collect();
+        let alts: Vec<Vec<String>> = terms.iter().map(|t| spellings(t)).collect();
         let spans = code_spans(ix);
         let mut files: Vec<&String> = spans.keys().collect();
         files.sort();
-        let finders: Vec<memchr::memmem::Finder> = terms
+        let finders: Vec<memchr::memmem::Finder> = alts
             .iter()
+            .flatten()
             .map(|t| memchr::memmem::Finder::new(t.as_bytes()).into_owned())
             .collect();
         type FileHits = (usize, Vec<usize>, Vec<(u32, usize, u64)>);
@@ -902,8 +989,8 @@ impl Scan {
                     }
                     let ws = ident_words(line);
                     let mut mask = 0u64;
-                    for (t, term) in terms.iter().enumerate() {
-                        if ws.iter().any(|w| w == term) {
+                    for (t, spelled) in alts.iter().enumerate() {
+                        if ws.iter().any(|w| spelled.contains(w)) {
                             mask |= 1 << t;
                             df[t] += 1;
                         }
@@ -998,7 +1085,10 @@ impl Scan {
                 // contains counts again, three times over.
                 let name = ident_words(ix.label(node));
                 let named: f64 = (0..self.terms.len())
-                    .filter(|&t| mask & (1 << t) != 0 && name.iter().any(|w| *w == self.terms[t]))
+                    .filter(|&t| {
+                        let spelled = spellings(&self.terms[t]);
+                        mask & (1 << t) != 0 && name.iter().any(|w| spelled.contains(w))
+                    })
                     .map(|t| 3.0 * idf[t])
                     .sum();
                 let score =
@@ -1472,6 +1562,11 @@ mod tests {
         assert!(!is_comment("    if self.binary.is_explicit() {"));
         assert!(is_config("pyproject.toml") && !is_config("src/main.rs"));
         assert_eq!(stem("explicitly"), "explicit");
+        assert_eq!(
+            spellings("configuration"),
+            ["configuration", "config", "cfg", "conf"]
+        );
+        assert!(code_terms("Where is the memory map chosen?").contains(&"mmap".to_string()));
         assert_eq!(stem("embedded"), "embed");
         assert_eq!(stem("running"), "run");
         assert_eq!(stem("called"), "call");
