@@ -725,3 +725,70 @@ two release builds on this machine: the stage 5 tip (`1537eda`) against the stag
   exec floor (mean about 3.7), back at or below stage 5. What remains over `/usr/bin/true` is
   the cost macOS charges any non-Apple binary at launch: a Rust program that does nothing
   measured the same as `dijkstral --version` and `hook-guard` (p50 about 10 ms against 8 ms).
+
+### Stage 7: agent outcome — 2026-10-17
+
+`agent/run.py` (setup above): Codex answers each question in three arms — no graph, Graphify
+0.9.86, dijkstral — on read-only scratch copies, each graph arm with its own installed
+`AGENTS.md` section and MCP server. Answers are scored by key facts on identifier boundaries
+(key-fact set), by the suites' own F1 rules (LOCOMO, LongMemEval), and by a blind
+`gpt-6.1-sol` judge (medium) that sees one answer at a time without its arm. Semantic graphs
+(LOCOMO, LongMemEval) were built with `gpt-6.1-sol` (medium) for both tools. One run per
+question; differences of a few points are within run-to-run noise.
+
+Answering model. With `gpt-6.1-sol` the key-fact set is at ceiling for every arm (no graph 100%
+pass, judge 0.96; Graphify 100%, 0.97; dijkstral 97%, 0.96), so the arms were compared with
+`gpt-6-luna` (medium), which explores less: on nine callers/impact/flow questions without a graph
+it passed 7 (`gpt-5.6-terra` low 8, `gpt-5.6-luna` low 9, `gpt-6-luna` low 4).
+
+Key facts (60 questions: fastapi, ripgrep, Kubernetes), `gpt-6-luna`:
+
+| arm | pass | fact recall | judge | judge correct | median tokens | fresh tokens, total |
+|---|---:|---:|---:|---:|---:|---:|
+| no graph | 70% | 0.72 | 0.76 | 60% | 47,323 | 0.73M |
+| Graphify | 68% | 0.71 | 0.73 | 52% | 62,010 | 0.79M |
+| dijkstral, stage 6 instructions | 72% | 0.76 | 0.80 | 62% | 90,108 | 1.04M |
+| dijkstral + question-to-command guidance (`35a20b6`) | 77% | 0.77 | 0.85 | 72% | 86,737 | 0.92M |
+| dijkstral + `explain --incoming` (`76b60a4`) | **83%** | **0.80** | 0.82 | 68% | 85,047 | 0.79M |
+
+Fresh tokens are input not served from cache plus output. The no-graph and Graphify arms were
+not re-run between dijkstral versions (same model, prompt and questions). What changed: Codex
+sessions showed `dijkstral query` answering "who calls X" with a truncated neighbourhood (449
+nodes on fastapi), after which the agent re-queried and fell back to `rg`; the installed text now
+routes callers to `explain --incoming`, impact to `affected` (which also accepts `path::symbol`
+now, `4e106c9`) and broad topics to `query`. Impact questions went from 67% to 83% pass. dijkstral
+still spends the most tokens per session, mostly cached input from its extra graph calls.
+
+Memory suites, `gpt-6-luna` (prompt v2):
+
+| suite | arm | judge | judge correct | suite score | median tokens | fresh tokens, total |
+|---|---|---:|---:|---:|---:|---:|
+| LOCOMO (120) | no graph | 0.47 | 38% | 0.18 | 43,229 | 1.21M |
+| LOCOMO (120) | Graphify | 0.53 | 43% | 0.21 | 44,561 | 1.22M |
+| LOCOMO (120) | dijkstral | **0.56** | **48%** | 0.20 | 53,221 | 1.07M |
+| LongMemEval-S (60) | no graph | **0.80** | **80%** | 0.26 | 36,992 | 0.50M |
+| LongMemEval-S (60) | Graphify | 0.73 | 73% | 0.21 | 37,221 | 0.50M |
+| LongMemEval-S (60) | dijkstral | 0.73 | 73% | 0.24 | 50,192 | 0.60M |
+
+The first memory run (prompt v1, "answer from these notes") is discarded as a comparison:
+`gpt-6-luna` often claimed it could not read the files and asked for them to be pasted (LOCOMO
+18 / 33 / 27 of 120 sessions for no graph / Graphify / dijkstral), so its scores measured refusal
+rates. Prompt v2 names the shell tools for every arm; refusals fell to 9 / 5 / 6 (LOCOMO) and
+0 / 4 / 0 (LongMemEval). On LongMemEval's single ~105k-token chat histories plain `rg` over the
+sessions remains the best tool; both graphs tie below it.
+
+Graph builds for the semantic suites (one extraction request per ~60k-token chunk):
+
+| suite | tool | requests | tokens in / out | build time, total |
+|---|---|---:|---:|---:|
+| LOCOMO (10 histories) | Graphify | 10 | 0.38M / 0.10M | 1,632 s |
+| LOCOMO (10 histories) | dijkstral | 10 | 0.39M / 0.17M | 2,718 s |
+| LongMemEval-S (60 histories) | Graphify | 120 | 8.33M / 1.40M | 11,823 s |
+| LongMemEval-S (60 histories) | dijkstral | 120 | 8.36M / 1.89M | 15,299 s |
+
+dijkstral's extraction writes about a third more output (79–134 nodes per LOCOMO history against
+Graphify's 40–88), which is why its semantic builds take longer; build time is model time.
+Raw summaries: `results/agent-1792166614.json` (gpt-6.1-sol key facts),
+`agent-1792168482.json`, `agent-1792169053.json`, `agent-1792181073.json` (gpt-6-luna key facts),
+`agent-1792182437.json` (LOCOMO), `agent-1792183077.json` (LongMemEval); session events stay in
+the bench home.
