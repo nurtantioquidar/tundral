@@ -39,6 +39,9 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   documentation code and benchmarks: `examples/`, `docs_src/`, `samples/`, `bench…/`), become
   anchors, each with its three best matching lines not already shown; anchors after the second show
   only the first 2 lines of their definition.
+- **Rule (named and unnamed).** A question that names symbols may still be about code it does not
+  name ("which steps run when `X` changes"): its two best code-text matches not already anchored
+  follow the named symbols, ranked as above.
 - **Rule.** Otherwise the anchors are `query`'s seeds for the question's terms
   (`graphify-query.md` §3.6). When every one is a document node (a fact, concept or document), up
   to 8 are kept, those whose label shares a subject word with the question: the question's terms,

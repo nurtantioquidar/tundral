@@ -230,6 +230,13 @@ fn context_answers_with_source_lines() {
         "{text}"
     );
     assert!(text.contains("  calls: helper(), re\n"), "{text}");
+    // A named symbol, then the best code-text match for the rest of the question.
+    let (_, text) = run("Who calls `slugify` and where are users saved to the repo?");
+    assert!(text.starts_with("## slugify()  pkg/util.py:14\n"), "{text}");
+    assert!(
+        text.contains("\n## UserService › .register()  pkg/service.py:26\n"),
+        "{text}"
+    );
     assert_eq!(
         run("zzzz qqqq"),
         (Some(4), "No node matches: zzzz qqqq\n".into())

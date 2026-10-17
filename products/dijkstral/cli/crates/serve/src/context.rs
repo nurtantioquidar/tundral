@@ -772,6 +772,8 @@ const CODE_SCAFFOLD: &[&str] = &[
     "trait",
 ];
 const TEXT_ANCHORS: usize = 4;
+/// Code-text matches added after the symbols a question names.
+const AFTER_NAMED: usize = 2;
 
 /// Per node: how often each question term occurs, and its matching lines with the terms each
 /// carries (a bit per term).
@@ -1472,7 +1474,27 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
     let (mut anchors, weak) = named_anchors_split(ix, question);
     let named = !anchors.is_empty();
     let mut chain_text = String::new();
-    if anchors.is_empty() && (0..ix.node_count() as u32).any(|i| is_code(ix, i)) {
+    let has_code = (0..ix.node_count() as u32).any(|i| is_code(ix, i));
+    // A question that names symbols may still be about code it does not name ("which steps are
+    // affected if X changes"): the two best code-text matches follow the named ones.
+    if !anchors.is_empty() && has_code {
+        let terms = code_terms(question);
+        if !terms.is_empty() {
+            let scan = Scan::new(ix, root, terms.clone());
+            let mut added = 0;
+            for (node, lines) in scan.rank(ix, &mut src, &terms) {
+                if added == AFTER_NAMED {
+                    break;
+                }
+                if !anchors.contains(&node) {
+                    anchors.push(node);
+                    hits.insert(node, lines);
+                    added += 1;
+                }
+            }
+        }
+    }
+    if anchors.is_empty() && has_code {
         // A flow question: find each end, then the call chain between them.
         let whole = code_terms(question);
         let ends = flow_ends(question).map(|(a, b)| (code_terms(&a), code_terms(&b)));

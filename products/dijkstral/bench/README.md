@@ -1043,3 +1043,21 @@ scored offline with `agent/context_eval.py` (tuning fastapi + ripgrep / held-out
 
 Counting comments took most of what embeddings added; the rest is mostly extra anchors, which
 the code text alone also supplies. Not shipped; `dijkstral` is unchanged.
+
+### Stage 7 follow-up: code-text matches after named symbols — 2026-10-17
+
+A question that names symbols may still be about code it does not name ("which steps run when
+`X` changes"), so `context` now adds its two best code-text matches after the named symbols
+(`AFTER_NAMED`). Offline coverage 0.72 → 0.74 (tuning 0.77 → 0.79, held out 0.61 → 0.64); median
+output 2514 → 2994 characters.
+
+Key facts, `gpt-6-luna` (medium), three runs:
+
+| arm | pass | judge | judge correct | median tokens | fresh tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|
+| no graph | 60% ± 9 | 0.70 ± 0.06 | 48% ± 11 | 40,876 | 0.58M ± 0.14 | 20.1k |
+| dijkstral `d1e37cf` | 84% ± 3 | 0.88 ± 0.02 | 76% ± 4 | 50,855 | 0.58M ± 0.03 | 12.6k |
+| dijkstral + 2 matches after named | **85% ± 2** | **0.88 ± 0.01** | **78% ± 3** | 53,405 | 0.60M ± 0.06 | 12.7k |
+
+Accuracy edges up and fresh tokens move within the spread (+4% per run, level per correct
+answer). Kept: accuracy first at equal cost per correct answer.
