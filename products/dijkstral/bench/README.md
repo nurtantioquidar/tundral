@@ -792,3 +792,33 @@ Raw summaries: `results/agent-1792166614.json` (gpt-6.1-sol key facts),
 `agent-1792168482.json`, `agent-1792169053.json`, `agent-1792181073.json` (gpt-6-luna key facts),
 `agent-1792182437.json` (LOCOMO), `agent-1792183077.json` (LongMemEval); session events stay in
 the bench home.
+
+### Stage 7 follow-up: `dijkstral context` and repeated runs — 2026-10-17
+
+Token cost per session is set by round trips (each command re-sends the conversation), not by
+output size: every arm returned about 22k characters of tool output per key-fact session, but
+dijkstral sessions ran 4.8 commands against 2.5 (no graph). `dijkstral context "<question>"`
+(`cli/docs/dijkstral-context.md`) returns a question's evidence in one call — named symbols (or,
+for a question naming none, the functions whose code text matches it) with definition lines,
+callers with call-site lines and callees; for documents, the matching facts with their source
+lines and a search for every occurrence — and the installed assistant text now starts every
+question with it. Offline, the share of each key-fact question's facts present in `context`'s
+own output rose from 0.43 to 0.53 while tuning on fastapi and ripgrep (Kubernetes, held out:
+0.39 → 0.42).
+
+Key facts, `gpt-6-luna` (medium), three runs per arm (mean ± standard deviation):
+
+| arm | pass | judge | judge correct | median tokens | fresh tokens per run | fresh tokens per correct answer |
+|---|---:|---:|---:|---:|---:|---:|
+| no graph | 60% ± 9 | 0.70 ± 0.06 | 48% ± 11 | 40,876 | 0.58M ± 0.14 | 20.0k |
+| Graphify | 74% ± 5 | 0.76 ± 0.03 | 56% ± 4 | 60,209 | 0.70M ± 0.09 | 21.1k |
+| dijkstral | **83% ± 3** | **0.85 ± 0.03** | **69% ± 5** | 56,235 | 0.63M ± 0.02 | **15.0k** |
+
+dijkstral's accuracy lead is well outside the run-to-run spread, and it is cheaper than Graphify
+per session. Against no graph it spends about 9% more fresh tokens per run but a quarter less per
+correct answer: without a graph `gpt-6-luna` often answers without opening a file, which is cheap
+and often wrong (its cost and accuracy vary most between runs).
+
+Memory suites with `context` (single run, `gpt-6-luna`, graphs from extraction prompt v2):
+LOCOMO judge 0.59 (51% correct) against no graph 0.47 and Graphify 0.53; LongMemEval-S 0.85 (85%)
+against 0.80 and 0.73.
