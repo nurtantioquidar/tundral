@@ -1311,6 +1311,23 @@ Fixture results: `main → total_area`, `main → round_kind` (INFERRED); `build
 (denylist), `Circle::new`, `Round::new`, `r.area()` dropped (qualified/method cross-file),
 `label`/`render` inside `println!` invisible, `shapes::model::classify(..)` dropped.
 
+**dijkstral (Q23 not reproduced).** Calls Graphify leaves unresolved, or resolves only by name,
+go through the module tree that also resolves `use` paths (crates named by their manifests:
+`[lib] name`, `package =` renames, `workspace = true`, `pub extern crate … as` and `pub use`
+facades; see `crate::resolve::rust`), as EXTRACTED edges with score 1.0: path-qualified calls
+(`grep::cli::resolve_binary(..)`, `crate::flags::parse::lookup(..)`, `Type::new(..)` for a
+struct or enum declared in another file or named by a `type` alias, `Enum::Variant(..)` as a
+constructor reference; inline modules count as part of their file), bare
+calls through `use … as` aliases and imported denylisted names, and `self.a.b.m(..)` through the
+fields' declared types (`should_preprocess` → `Override::matched` in ripgrep). A bare name
+imported from outside the repository no longer falls back to a same-named repository function.
+Edges start only from a caller whose node the build keeps for its id (not a `#[cfg]` twin, a
+same-named method of another impl or a fn sharing a struct's id). Trait-qualified calls
+(`Trait::m(x)`), method calls on locals and parameters, and calls inside macro arguments stay
+unresolved. Fixture: `build → Circle::new`, `main → build`, `main → Circle::new` (also through
+`Round::new`), `main → classify`, `main → run_all`, `util::render → fmt::render` (alias
+`render_shape`).
+
 ### 11.6 Cargo.toml (in `--code-only`)
 
 `Cargo.toml` counts as a code file (the extractor prints "yielded no symbols" for it yet emits a
@@ -1875,6 +1892,7 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 | Q20 | Kotlin: declarations found inside `init` blocks, secondary constructors, misparsed headers and anonymous objects outside functions become top-level functions of the file; Scala does the same for `def`s in expression blocks of a class body. | §21.1, §22.1 |
 | Q21 | Kotlin: references to a qualified type use its **first** segment (`Interceptor.Chain` → `Interceptor`, `java.io.File` → `java`). | §21.2 |
 | Q22 | Scala: imports link to the first path segment (`import shop.model.User` → `shop`). | §22.2 |
+| Q23 | Rust cross-file calls bind bare names only: path-qualified calls (`a::b::f()`, `Type::f()` across files), `use … as` aliases and `self.field.m()` are never resolved, imported denylisted names (`build`) are dropped, and an imported external name still binds to a same-named repository function. | §11.5 |
 
 ### 15.2 Open questions
 

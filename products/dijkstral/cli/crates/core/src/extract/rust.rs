@@ -4,7 +4,9 @@
 //! references and impl owners resolve against them even when declared further down), then one walk
 //! emits nodes and structural edges in source order and records call sites. Calls are resolved at
 //! the end of the file, once every function, method, variant and macro is known; bare calls left
-//! unresolved go to the cross-file pass (`crate::resolve::rust`) through [`RustFacts`].
+//! unresolved go to the cross-file pass (`crate::resolve::rust`) through [`RustFacts`], and so do
+//! every path-qualified call, every `self.field.m()` call and every struct field's declared type
+//! (module and field-type resolution, Q23).
 //!
 //! Deliberate departures from Graphify 0.9.86 (quirks in §15 not reproduced):
 //!
@@ -51,6 +53,89 @@ pub struct RustFacts {
     pub items: Vec<(String, bool)>,
     /// `extern crate name [as alias];`: (crate name, bound name).
     pub extern_crates: Vec<(String, String)>,
+    /// Path-qualified calls (`a::b::f(..)`, `Type::f(..)`), in call order, for module
+    /// resolution; one per (caller, path) at its first site.
+    pub path_calls: Vec<PathCall>,
+    /// `self.a.b.m(..)` calls inside an impl, in call order, for field-type resolution.
+    pub field_calls: Vec<FieldCall>,
+    /// Struct fields whose declared type is a path, in source order.
+    pub fields: Vec<RsField>,
+    /// The type path of each impl owner node the file creates (one per owner, first impl).
+    pub impls: Vec<RsImpl>,
+    /// Names of the traits the file declares (inline modules included).
+    pub traits: Vec<String>,
+    /// Names of the inline `mod name { … }` blocks (flattened into the file).
+    pub inline_mods: Vec<String>,
+    /// `type Name = a::B<..>;` aliases of a path type.
+    pub aliases: Vec<RsAlias>,
+}
+
+/// `type name = ty;` where `ty` is a path (generic arguments dropped).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RsAlias {
+    pub name: String,
+    /// Enclosing inline `mod` blocks.
+    pub depth: u32,
+    pub ty: Vec<String>,
+}
+
+/// `impl [Trait for] a::B<..>` whose owner node is not a type the file declares.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RsImpl {
+    /// Local id of the owner node.
+    pub owner: String,
+    /// The implemented type's path segments, generic arguments dropped.
+    pub ty: Vec<String>,
+    /// Enclosing inline `mod` blocks at the impl.
+    pub depth: u32,
+}
+
+/// A path-qualified call site.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct PathCall {
+    /// Local id of the calling function or method.
+    pub caller: String,
+    /// Qualifier segments as written (`""` first for a leading `::`); a lone `Self` is replaced
+    /// by the impl's type name.
+    pub qual: Vec<String>,
+    pub name: String,
+    /// Enclosing inline `mod` blocks at the call site.
+    pub depth: u32,
+    pub line: u32,
+    /// Local id of the node in-file resolution chose, if any.
+    pub in_file: Option<String>,
+}
+
+/// `self.<fields>.name(..)` inside an impl.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct FieldCall {
+    pub caller: String,
+    /// The impl's type name (`SearchWorker` for `impl<W> SearchWorker<W>`).
+    pub self_ty: String,
+    /// Enclosing inline `mod` blocks at the impl.
+    pub depth: u32,
+    /// The field chain after `self` (`["config", "globs"]`; tuple fields as `"0"`).
+    pub fields: Vec<String>,
+    pub name: String,
+    pub line: u32,
+    /// Local id of the node in-file resolution chose, if any.
+    pub in_file: Option<String>,
+}
+
+/// A struct field declared with a path type: `name: a::B<..>`, also through `&`, `&mut`,
+/// `Box<..>`, `Arc<..>` and `Rc<..>` (`wrapped`). Generic parameters are left out.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RsField {
+    /// The struct's name.
+    pub owner: String,
+    /// Enclosing inline `mod` blocks at the struct.
+    pub depth: u32,
+    /// Field name; tuple fields are `"0"`, `"1"`…
+    pub name: String,
+    /// The type's path segments, generic arguments dropped.
+    pub ty: Vec<String>,
+    /// The type sits inside `Box`, `Arc` or `Rc`, whose own trait methods come first.
+    pub wrapped: bool,
 }
 
 /// One leaf of a `use` tree.
@@ -66,6 +151,8 @@ pub struct RsUse {
     pub depth: u32,
     /// Inside a function body (Graphify emits no edge for it).
     pub in_fn: bool,
+    /// Local id of that function: the binding is visible only in its body.
+    pub func: Option<String>,
     pub line: u32,
 }
 
@@ -93,6 +180,11 @@ pub struct PendingCall {
     pub caller: String,
     pub name: String,
     pub line: u32,
+    /// On the cross-file denylist (§11.5): resolved only through an import of the name.
+    pub common: bool,
+    /// The caller's definition is the node the build keeps for its id: only then does an edge
+    /// that Graphify would not infer start from it.
+    pub kept: bool,
 }
 
 /// Type names never referenced (§11.4); also the std-trait denylist for `implements` and
@@ -197,10 +289,24 @@ enum Callee<'a> {
     Macro(&'a str),
 }
 
+/// Call sites left for the cross-file pass.
+struct Pending {
+    calls: Vec<PendingCall>,
+    self_calls: Vec<SelfCall>,
+    path_calls: Vec<PathCall>,
+    field_calls: Vec<FieldCall>,
+}
+
 struct Site<'a> {
     caller: usize,
     callee: Callee<'a>,
     line: u32,
+    /// Qualifier segments of a path callee (`a::b` of `a::b::f`), else empty.
+    qual: Vec<&'a str>,
+    /// Field chain of a `self.a.b.m()` receiver, else empty.
+    fields: Vec<&'a str>,
+    /// Enclosing inline `mod` blocks.
+    depth: u32,
 }
 
 pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
@@ -254,6 +360,16 @@ struct Walker<'c, 'a> {
     extern_crates: Vec<(String, String)>,
     /// Recording the `use` declarations of a function body.
     in_body: bool,
+    /// The function whose body's `use` declarations are being recorded.
+    body_fn: Option<String>,
+    /// Per caller index: its definition is the node the build keeps for its id (not a later
+    /// `#[cfg]` twin, a same-named method of another impl, or a fn sharing a struct's id).
+    caller_kept: Vec<bool>,
+    fields: Vec<RsField>,
+    impls: Vec<RsImpl>,
+    traits: Vec<String>,
+    inline_mods: Vec<String>,
+    aliases: Vec<RsAlias>,
 }
 
 fn push_distinct(v: &mut Vec<String>, id: &str) {
@@ -302,6 +418,13 @@ impl<'c, 'a> Walker<'c, 'a> {
             item_seen: HashMap::new(),
             extern_crates: Vec::new(),
             in_body: false,
+            body_fn: None,
+            caller_kept: Vec::new(),
+            fields: Vec::new(),
+            impls: Vec::new(),
+            traits: Vec::new(),
+            inline_mods: Vec::new(),
+            aliases: Vec::new(),
         }
     }
 
@@ -326,6 +449,9 @@ impl<'c, 'a> Walker<'c, 'a> {
                     let id = Ctx::child_id(&self.file, name);
                     if item.kind() == "enum_item" {
                         self.enums.insert(name);
+                    }
+                    if item.kind() == "trait_item" && !self.traits.iter().any(|t| t == name) {
+                        self.traits.push(name.to_string());
                     }
                     self.declared.entry(name).or_insert_with(|| id.clone());
                     *self.decl_count.entry(id).or_default() += 1;
@@ -545,6 +671,9 @@ impl<'c, 'a> Walker<'c, 'a> {
                     let name = self.field_text(item, "name");
                     match (item.child_by_field_name("body"), name) {
                         (Some(body), Some(name)) => {
+                            if !self.inline_mods.iter().any(|m| m == name) {
+                                self.inline_mods.push(name.to_string());
+                            }
                             self.mod_path.push(name);
                             self.items(body);
                             self.mod_path.pop();
@@ -564,6 +693,7 @@ impl<'c, 'a> Walker<'c, 'a> {
                 "impl_item" => self.impl_item(item),
                 "function_item" | "function_signature_item" => self.free_fn(item),
                 "const_item" | "static_item" => self.value_item(item),
+                "type_item" => self.type_alias(item),
                 "macro_definition" => self.macro_def(item),
                 "foreign_mod_item" => {
                     if let Some(body) = item.child_by_field_name("body") {
@@ -595,8 +725,83 @@ impl<'c, 'a> Walker<'c, 'a> {
         let mark = self.push_generics(n.child_by_field_name("type_parameters"));
         if let Some(body) = n.child_by_field_name("body") {
             self.field_list_refs(&id, body);
+            self.record_fields(name, body);
         }
         self.generics.truncate(mark);
+    }
+
+    /// The fields of struct `owner` whose type is a path (module resolution of `self.f.m()`).
+    fn record_fields(&mut self, owner: &str, body: TsNode) {
+        let mut found: Vec<(String, TsNode)> = Vec::new();
+        match body.kind() {
+            "field_declaration_list" => {
+                for f in named_children(body) {
+                    if let (Some(name), Some(ty)) =
+                        (self.field_text(f, "name"), f.child_by_field_name("type"))
+                    {
+                        found.push((name.to_string(), ty));
+                    }
+                }
+            }
+            "ordered_field_declaration_list" => {
+                let mut cursor = body.walk();
+                let types: Vec<TsNode> = body.children_by_field_name("type", &mut cursor).collect();
+                for (i, t) in types.into_iter().enumerate() {
+                    found.push((i.to_string(), t));
+                }
+            }
+            _ => {}
+        }
+        for (name, ty) in found {
+            let mut segs = Vec::new();
+            let Some(wrapped) = self.field_type_path(ty, false, &mut segs) else {
+                continue;
+            };
+            if segs.first().is_some_and(|s| self.generics.contains(s)) {
+                continue;
+            }
+            self.fields.push(RsField {
+                owner: owner.to_string(),
+                depth: self.mod_path.len() as u32,
+                name,
+                ty: segs.iter().map(|s| s.to_string()).collect(),
+                wrapped,
+            });
+        }
+    }
+
+    /// The path a field type names once `&`, `&mut`, `Box`, `Arc` and `Rc` are peeled, generic
+    /// arguments dropped; `Some(wrapped)` when it is a plain path.
+    fn field_type_path(&self, ty: TsNode, wrapped: bool, out: &mut Vec<&'a str>) -> Option<bool> {
+        match ty.kind() {
+            "reference_type" => self.field_type_path(ty.child_by_field_name("type")?, wrapped, out),
+            "type_identifier" => {
+                out.push(self.text(ty));
+                Some(wrapped)
+            }
+            "scoped_type_identifier" => {
+                if let Some(p) = ty.child_by_field_name("path") {
+                    if !self.path_segments(p, out) {
+                        return None;
+                    }
+                }
+                out.push(self.field_text(ty, "name")?);
+                Some(wrapped)
+            }
+            "generic_type" => {
+                let base = ty.child_by_field_name("type")?;
+                let args: Vec<TsNode> =
+                    named_children(ty.child_by_field_name("type_arguments")?).collect();
+                if base.kind() == "type_identifier"
+                    && matches!(self.text(base), "Box" | "Arc" | "Rc")
+                    && args.len() == 1
+                {
+                    return self.field_type_path(args[0], true, out);
+                }
+                self.field_type_path(base, wrapped, out)
+            }
+            _ => None,
+        }
     }
 
     /// Field type references from `source` for a struct body or an enum variant body.
@@ -692,6 +897,16 @@ impl<'c, 'a> Walker<'c, 'a> {
                 }
             }
             self.def(&owner, text.to_string(), line, extra);
+            let mut segs = Vec::new();
+            if ty.kind() != "reference_type"
+                && self.field_type_path(ty, false, &mut segs) == Some(false)
+            {
+                self.impls.push(RsImpl {
+                    owner: owner.clone(),
+                    ty: segs.iter().map(|s| s.to_string()).collect(),
+                    depth: self.mod_path.len() as u32,
+                });
+            }
         }
         let mark = self.push_generics(params);
         if let Some(t) = trait_node {
@@ -779,7 +994,8 @@ impl<'c, 'a> Walker<'c, 'a> {
                     };
                     let id = Ctx::child_id(owner, name);
                     let line = Ctx::line(item);
-                    if self.def(&id, format!(".{name}()"), line, vec![]) {
+                    let kept = self.def(&id, format!(".{name}()"), line, vec![]);
+                    if kept {
                         self.methods.insert(name, id.clone());
                     }
                     self.edge(owner, &id, "method", line, None);
@@ -800,7 +1016,7 @@ impl<'c, 'a> Walker<'c, 'a> {
                                 .entry((owner.to_string(), name))
                                 .or_insert_with(|| id.clone());
                         }
-                        self.calls_in(&id, imp.cloned(), block);
+                        self.calls_in(&id, imp.cloned(), block, kept);
                     }
                 }
                 "const_item" => {
@@ -825,7 +1041,8 @@ impl<'c, 'a> Walker<'c, 'a> {
         let id = Ctx::child_id(&self.file, name);
         let line = Ctx::line(n);
         // Only a function whose node the build keeps is a call target.
-        if self.def(&id, format!("{name}()"), line, vec![]) {
+        let kept = self.def(&id, format!("{name}()"), line, vec![]);
+        if kept {
             self.free_fns.insert(name, id.clone());
         }
         let file = self.file.clone();
@@ -834,8 +1051,28 @@ impl<'c, 'a> Walker<'c, 'a> {
         self.signature_refs(&id, n, line);
         self.generics.truncate(mark);
         if let Some(block) = n.child_by_field_name("body") {
-            self.calls_in(&id, None, block);
+            self.calls_in(&id, None, block, kept);
         }
+    }
+
+    /// `type Name = a::B;` for module resolution (`Name::new()` is `a::B::new()`).
+    fn type_alias(&mut self, n: TsNode) {
+        let (Some(name), Some(ty)) = (self.field_text(n, "name"), n.child_by_field_name("type"))
+        else {
+            return;
+        };
+        let mark = self.push_generics(n.child_by_field_name("type_parameters"));
+        let mut segs = Vec::new();
+        if self.field_type_path(ty, false, &mut segs) == Some(false)
+            && !segs.first().is_some_and(|s| self.generics.contains(s))
+        {
+            self.aliases.push(RsAlias {
+                name: name.to_string(),
+                depth: self.mod_path.len() as u32,
+                ty: segs.iter().map(|s| s.to_string()).collect(),
+            });
+        }
+        self.generics.truncate(mark);
     }
 
     fn value_item(&mut self, n: TsNode) {
@@ -1005,6 +1242,7 @@ impl<'c, 'a> Walker<'c, 'a> {
             glob,
             depth: self.mod_path.len() as u32,
             in_fn: self.in_body,
+            func: self.in_body.then(|| self.body_fn.clone()).flatten(),
             line: Ctx::line(n),
         });
     }
@@ -1079,8 +1317,9 @@ impl<'c, 'a> Walker<'c, 'a> {
 
     /// Record the call sites of one function body (nested items are skipped; closures and async
     /// blocks belong to the enclosing function; macro arguments are opaque).
-    fn calls_in(&mut self, caller: &str, scope: Option<ImplScope<'a>>, body: TsNode) {
+    fn calls_in(&mut self, caller: &str, scope: Option<ImplScope<'a>>, body: TsNode, kept: bool) {
         let caller_idx = self.callers.len();
+        self.caller_kept.push(kept);
         let self_ty = scope.as_ref().map(|s| s.self_ty).filter(|t| !t.is_empty());
         self.callers.push((caller.to_string(), scope));
         let mut stack = vec![body];
@@ -1090,8 +1329,10 @@ impl<'c, 'a> Walker<'c, 'a> {
                 // file (module resolution).
                 "use_declaration" => {
                     self.in_body = true;
+                    self.body_fn = Some(caller.to_string());
                     self.record_uses(n);
                     self.in_body = false;
+                    self.body_fn = None;
                     continue;
                 }
                 "function_item" | "impl_item" | "trait_item" | "mod_item" | "macro_definition"
@@ -1103,6 +1344,9 @@ impl<'c, 'a> Walker<'c, 'a> {
                                 caller: caller_idx,
                                 callee: Callee::Macro(self.text(m)),
                                 line: Ctx::line(n),
+                                qual: Vec::new(),
+                                fields: Vec::new(),
+                                depth: self.mod_path.len() as u32,
                             });
                         }
                     }
@@ -1111,10 +1355,20 @@ impl<'c, 'a> Walker<'c, 'a> {
                 "call_expression" => {
                     if let Some(f) = n.child_by_field_name("function") {
                         if let Some(callee) = self.callee(f, self_ty) {
+                            let mut qual = Vec::new();
+                            if f.kind() == "scoped_identifier" && self.path_segments(f, &mut qual) {
+                                qual.pop();
+                            } else {
+                                qual.clear();
+                            }
+                            let fields = self.receiver_fields(f);
                             self.sites.push(Site {
                                 caller: caller_idx,
                                 callee,
                                 line: Ctx::line(n),
+                                qual,
+                                fields,
+                                depth: self.mod_path.len() as u32,
                             });
                         }
                     }
@@ -1128,6 +1382,35 @@ impl<'c, 'a> Walker<'c, 'a> {
                 }
             }
         }
+    }
+
+    /// `[a, b]` for a `self.a.b.m` callee; empty for any other receiver.
+    fn receiver_fields(&self, f: TsNode) -> Vec<&'a str> {
+        let mut out = Vec::new();
+        if f.kind() != "field_expression" {
+            return out;
+        }
+        let mut cur = f.child_by_field_name("value");
+        while let Some(n) = cur {
+            match n.kind() {
+                "self" => {
+                    out.reverse();
+                    return out;
+                }
+                "field_expression" => {
+                    let Some(field) = n.child_by_field_name("field") else {
+                        break;
+                    };
+                    if !matches!(field.kind(), "field_identifier" | "integer_literal") {
+                        break;
+                    }
+                    out.push(self.text(field));
+                    cur = n.child_by_field_name("value");
+                }
+                _ => break,
+            }
+        }
+        Vec::new()
     }
 
     fn callee(&self, f: TsNode, self_ty: Option<&'a str>) -> Option<Callee<'a>> {
@@ -1166,7 +1449,7 @@ impl<'c, 'a> Walker<'c, 'a> {
 
     /// Resolve the recorded call sites against this file (§11.5), then hand the rest to the
     /// cross-file pass.
-    fn resolve_calls(&mut self) -> (Vec<PendingCall>, Vec<SelfCall>) {
+    fn resolve_calls(&mut self) -> Pending {
         // In-file constructor targets: every non-function node by label, last wins.
         let mut ctor: HashMap<String, String> = HashMap::new();
         for n in &self.cx.facts.nodes {
@@ -1186,8 +1469,11 @@ impl<'c, 'a> Walker<'c, 'a> {
         };
         let mut pending = Vec::new();
         let mut self_calls = Vec::new();
+        let mut path_calls = Vec::new();
+        let mut field_calls = Vec::new();
         // One edge per (caller id, callee), at the first call: `#[cfg]` twins share a caller id.
         let mut seen: HashSet<(String, String)> = HashSet::new();
+        let mut seen_paths: HashSet<(usize, &[&str], &[&str], &str)> = HashSet::new();
         let sites = std::mem::take(&mut self.sites);
         for site in &sites {
             let (caller, owner) = &self.callers[site.caller];
@@ -1206,11 +1492,13 @@ impl<'c, 'a> Walker<'c, 'a> {
                     } else if let Some(id) = ctor.get(name).filter(|_| !ctor_denied(name)) {
                         (Some(id.clone()), "references")
                     } else {
-                        if bare && !cross_file_denied(name) {
+                        if bare && !call_denied(name) {
                             pending.push(PendingCall {
                                 caller: caller.clone(),
                                 name: name.to_string(),
                                 line: site.line,
+                                common: cross_file_denied(name),
+                                kept: self.caller_kept[site.caller],
                             });
                         }
                         (None, "")
@@ -1259,6 +1547,47 @@ impl<'c, 'a> Walker<'c, 'a> {
                 }
                 Callee::Macro(name) => (self.macros.get(name).cloned(), "calls"),
             };
+            let self_ty = owner.as_ref().map_or("", |s| s.self_ty);
+            let name = match site.callee {
+                Callee::Bare(n) | Callee::Module(n) | Callee::Typed(_, n) => n,
+                Callee::Method(n, _) | Callee::Macro(n) => n,
+            };
+            let kept = self.caller_kept[site.caller];
+            if kept
+                && !site.qual.is_empty()
+                && seen_paths.insert((site.caller, &site.qual, &[], name))
+            {
+                let qual: Vec<String> = if site.qual == ["Self"] {
+                    vec![self_ty.to_string()]
+                } else {
+                    site.qual.iter().map(|s| s.to_string()).collect()
+                };
+                if qual.iter().skip(1).all(|s| !s.is_empty()) && qual != [""] {
+                    path_calls.push(PathCall {
+                        caller: caller.clone(),
+                        qual,
+                        name: name.to_string(),
+                        depth: site.depth,
+                        line: site.line,
+                        in_file: target.clone(),
+                    });
+                }
+            }
+            if kept
+                && !site.fields.is_empty()
+                && !self_ty.is_empty()
+                && seen_paths.insert((site.caller, &[], &site.fields, name))
+            {
+                field_calls.push(FieldCall {
+                    caller: caller.clone(),
+                    self_ty: self_ty.to_string(),
+                    depth: site.depth,
+                    fields: site.fields.iter().map(|s| s.to_string()).collect(),
+                    name: name.to_string(),
+                    line: site.line,
+                    in_file: target.clone(),
+                });
+            }
             let Some(target) = target else { continue };
             if target == *caller || !seen.insert((caller.clone(), target.clone())) {
                 continue;
@@ -1271,11 +1600,21 @@ impl<'c, 'a> Walker<'c, 'a> {
             let caller = caller.clone();
             self.edge(&caller, &target, relation, site.line, Some(context));
         }
-        (pending, self_calls)
+        Pending {
+            calls: pending,
+            self_calls,
+            path_calls,
+            field_calls,
+        }
     }
 
     fn finish(mut self) {
-        let (calls, self_calls) = self.resolve_calls();
+        let Pending {
+            calls,
+            self_calls,
+            path_calls,
+            field_calls,
+        } = self.resolve_calls();
         // `_rust_declaration_count` lands on whichever node holds the declared id first.
         for (id, count) in std::mem::take(&mut self.decl_count) {
             if let Some(&i) = self.first_node.get(&id) {
@@ -1299,6 +1638,13 @@ impl<'c, 'a> Walker<'c, 'a> {
             mods: std::mem::take(&mut self.mods),
             items: std::mem::take(&mut self.items),
             extern_crates: std::mem::take(&mut self.extern_crates),
+            path_calls,
+            field_calls,
+            fields: std::mem::take(&mut self.fields),
+            impls: std::mem::take(&mut self.impls),
+            traits: std::mem::take(&mut self.traits),
+            inline_mods: std::mem::take(&mut self.inline_mods),
+            aliases: std::mem::take(&mut self.aliases),
         });
     }
 }

@@ -535,6 +535,9 @@ pub enum Communities {
     /// The graph differs by `ALLOWED` entries, which reshuffle Leiden's size-ranked ids even when
     /// the partition barely moves; gate on normalised mutual information instead.
     MinNmi(f64),
+    /// Like `MinNmi`, measured after removing our `ALLOWED` links (extra edges dijkstral resolves
+    /// deliberately) and re-clustering, for fixtures where those edges move a small partition.
+    MinNmiWithoutAllowedLinks(f64),
 }
 
 /// The full golden check for one fixture: node/link parity, community agreement (see
@@ -553,6 +556,27 @@ pub fn assert_fixture(name: &str, allowed: &[&str], communities: Communities, ex
             "{name}: community NMI {:.3} below {min}",
             agreement.nmi
         ),
+        Communities::MinNmiWithoutAllowedLinks(min) => {
+            let mut stripped = built.ours.clone();
+            stripped["links"].as_array_mut().unwrap().retain(|e| {
+                let key = format!(
+                    "{} -{}-> {}",
+                    e["source"].as_str().unwrap_or(""),
+                    e["relation"].as_str().unwrap_or(""),
+                    e["target"].as_str().unwrap_or("")
+                );
+                !allowed.contains(&key.as_str())
+            });
+            let out = cluster_only(&stripped, name).unwrap();
+            let reclustered: Value = serde_json::from_str(&out.graph_json).unwrap();
+            let agreement = community_agreement(&reclustered, &built.golden);
+            eprintln!("{name}: without ALLOWED links, NMI {:.3}", agreement.nmi);
+            assert!(
+                agreement.nmi >= min,
+                "{name}: community NMI {:.3} below {min} without the ALLOWED links",
+                agreement.nmi
+            );
+        }
     }
     if agreement.exact() == 1.0 {
         // Same communities and node set: the arrays must come out in Graphify's order too.

@@ -12,6 +12,7 @@ use std::path::Path;
 
 use dijkstral_core::inputs::postgres::Snapshot;
 use dijkstral_core::inputs::Inputs;
+use dijkstral_core::pipeline::cluster_only;
 use dijkstral_core::{build_inputs, BuildOptions};
 use serde_json::Value;
 
@@ -20,6 +21,9 @@ const ALLOWED: &[&str] = &[
     // Quirk P9: Graphify misses the second join of a parenthesised join chain
     // (`FROM ((orders o JOIN order_items i …) JOIN products p …)`); the view does read products.
     "postgresql_127_0_0_1_shop_public_order_totals -reads_from-> postgresql_127_0_0_1_shop_public_products",
+    // Q23 not reproduced (graphify-format.md §11.5): `beta::beta()` resolves through the
+    // `beta = { workspace = true }` dependency to the workspace crate's function.
+    "crates_alpha_src_lib_alpha -calls-> crates_beta_src_lib_beta",
 ];
 
 fn inputs_dir() -> std::path::PathBuf {
@@ -75,7 +79,21 @@ fn assert_parity(name: &str, ours: &Value, golden: &Value) {
             && p.link_field_diffs.is_empty(),
         "{name}:\n{summary}"
     );
-    let agreement = common::community_agreement(ours, golden);
+    // A deliberate extra link moves Leiden's partition: without the `ALLOWED` links, clustering
+    // must reproduce Graphify's communities exactly.
+    let key = |e: &Value| format!("{} -{}-> {}", e["source"], e["relation"], e["target"]);
+    let key = |e: &Value| key(e).replace('"', "");
+    let mut stripped = ours.clone();
+    let links = stripped["links"].as_array_mut().unwrap();
+    let before = links.len();
+    links.retain(|e| !allowed.contains(key(e).as_str()));
+    let ours = if links.len() == before {
+        ours.clone()
+    } else {
+        let out = cluster_only(&stripped, name).unwrap();
+        serde_json::from_str(&out.graph_json).unwrap()
+    };
+    let agreement = common::community_agreement(&ours, golden);
     assert_eq!(agreement.exact(), 1.0, "{name}: community ids differ");
 }
 
