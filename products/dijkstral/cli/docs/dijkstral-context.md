@@ -48,6 +48,16 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   its four most connected symbols outside tests; areas whose path or top symbols carry the
   question's subject words come first, then larger ones; at most 12.
 
+- **Rule (flow).** A flow question that names no symbol — text after `from` up to ` to `,
+  ` until `, ` into ` or ` through to `, or around `end up (as|in)`, `get(s) to`, `reach(es)`,
+  `become(s)`, `turn(ed) into` — is split into its two ends; each end's best code-text match
+  becomes an anchor, and the answer adds the shortest call chain from the start's top two
+  matches to the end's: breadth first over `calls`, `indirect_call`, `uses`, `references`,
+  `instantiates`, `contains` and `method` links in their stored direction, never through a file
+  node, at most 6 hops, each step with its relation and the line of the link.
+- **Rule.** Bare CamelCase names (above) never stop the code-text and flow searches; they are
+  added after what those found.
+
 ## 2. One anchor
 
 ```text

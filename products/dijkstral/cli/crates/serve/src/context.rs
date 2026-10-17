@@ -273,35 +273,36 @@ fn resolve_name(ix: &Index, name: &str) -> Vec<u32> {
     Vec::new()
 }
 
-/// The nodes the question names (code-like words resolved as `explain` does).
-pub fn named_anchors(ix: &Index, question: &str) -> Vec<u32> {
+/// Named anchors as `(explicit, bare CamelCase)`: an explicit name (backticked, with `_`, `.`,
+/// `::` or `()`, or beside a kind word) is what the question is about; a bare CamelCase word that
+/// spells a label exactly (and is no hub) may only be context, so it does not stop the search.
+fn named_anchors_split(ix: &Index, question: &str) -> (Vec<u32>, Vec<u32>) {
     let explicit_marks =
         |n: &str| n.contains('_') || n.contains('.') || n.contains("::") || n.ends_with("()");
     let mut backticked: Vec<String> = named_symbols(&backticks_only(question));
     backticked.extend(kind_names(question));
     let hub = query::hub_threshold(ix);
-    let mut out: Vec<u32> = Vec::new();
+    let (mut strong, mut weak): (Vec<u32>, Vec<u32>) = (Vec::new(), Vec::new());
     for name in named_symbols(question) {
         let explicit = explicit_marks(&name) || backticked.contains(&name);
         for i in resolve_name(ix, &name) {
             if is_file_node(ix, i) && !name.contains('/') && !name.contains(".py") {
                 continue;
             }
-            // A bare CamelCase word (`FastAPI`, `Sink`) is a symbol only when a label spells it
-            // exactly and it is not a hub every part of the code touches.
-            if !explicit {
-                let label = ix.label(i).trim_start_matches('.').trim_end_matches("()");
-                if label != name || f64::from(ix.degree(i)) >= hub {
-                    continue;
+            if explicit {
+                if !strong.contains(&i) {
+                    strong.push(i);
                 }
+                continue;
             }
-            if !out.contains(&i) {
-                out.push(i);
+            let label = ix.label(i).trim_start_matches('.').trim_end_matches("()");
+            if label == name && f64::from(ix.degree(i)) < hub && !weak.contains(&i) {
+                weak.push(i);
             }
         }
     }
-    out.truncate(MAX_ANCHORS);
-    out
+    strong.truncate(MAX_ANCHORS);
+    (strong, weak)
 }
 
 /// Only the backticked spans of a question, so their names count as explicit.
@@ -954,6 +955,116 @@ fn code_search(ix: &Index, src: &mut Sources, question: &str) -> Vec<(u32, Vec<(
         .collect()
 }
 
+/// The two ends of a flow question ("trace a file from the walker to the printer", "how does the
+/// annotation end up as a schema"): the text naming where it starts and where it ends.
+fn flow_ends(question: &str) -> Option<(String, String)> {
+    let q = question.to_lowercase();
+    let cut = |at: &str| {
+        q.find(at)
+            .map(|k| (q[..k].to_string(), q[k + at.len()..].to_string()))
+    };
+    if let Some(f) = q.find(" from ") {
+        let rest = &q[f + 6..];
+        for to in [" to ", " until ", " into ", " through to "] {
+            if let Some(t) = rest.find(to) {
+                return Some((rest[..t].to_string(), rest[t + to.len()..].to_string()));
+            }
+        }
+    }
+    for at in [
+        " end up as ",
+        " end up in ",
+        " ends up ",
+        " end up ",
+        " get to ",
+        " gets to ",
+        " reach ",
+        " reaches ",
+        " become ",
+        " becomes ",
+        " turned into ",
+        " turn into ",
+    ] {
+        if let Some(ends) = cut(at) {
+            return Some(ends);
+        }
+    }
+    None
+}
+
+/// Relations a call chain may follow, caller to callee.
+const CHAIN_RELATIONS: &[&str] = &[
+    "calls",
+    "indirect_call",
+    "uses",
+    "references",
+    "instantiates",
+    "contains",
+    "method",
+];
+const MAX_CHAIN: usize = 6;
+
+/// The shortest call chain from any of `from` to any of `to` (breadth first over
+/// [`CHAIN_RELATIONS`] in their stored direction, at most [`MAX_CHAIN`] hops), with the link
+/// taken at each step.
+fn call_chain(ix: &Index, from: &[u32], to: &[u32]) -> Option<Vec<(u32, Option<u32>)>> {
+    let goal: HashSet<u32> = to.iter().copied().collect();
+    let mut prev: HashMap<u32, (u32, u32)> = HashMap::new();
+    let mut seen: HashSet<u32> = from.iter().copied().collect();
+    let mut frontier: Vec<u32> = from.to_vec();
+    for _ in 0..MAX_CHAIN {
+        let mut next = Vec::new();
+        for &v in &frontier {
+            for e in ix.incident(v) {
+                let (a, b) = ix.endpoints(e);
+                if a != v || b == v || !CHAIN_RELATIONS.contains(&ix.relation(e)) {
+                    continue;
+                }
+                if is_file_node(ix, b) || !seen.insert(b) {
+                    continue;
+                }
+                prev.insert(b, (v, e));
+                if goal.contains(&b) {
+                    let mut chain = vec![(b, Some(e))];
+                    let mut cur = v;
+                    while let Some(&(p, pe)) = prev.get(&cur) {
+                        chain.push((cur, Some(pe)));
+                        cur = p;
+                    }
+                    chain.push((cur, None));
+                    chain.reverse();
+                    return Some(chain);
+                }
+                next.push(b);
+            }
+        }
+        if next.is_empty() {
+            break;
+        }
+        frontier = next;
+    }
+    None
+}
+
+fn render_chain(ix: &Index, chain: &[(u32, Option<u32>)]) -> String {
+    let mut s = String::from("Call chain from where it starts to where it ends:\n");
+    for (k, &(n, via)) in chain.iter().enumerate() {
+        let rel = via
+            .map(|e| format!("[{}] ", ix.relation(e)))
+            .unwrap_or_default();
+        let at = via
+            .and_then(|e| {
+                let edge = ix.edge(e);
+                let line = line_no(edge.source_location.unwrap_or(""))?;
+                Some(format!(" (at {}:{line})", edge.source_file.unwrap_or("")))
+            })
+            .unwrap_or_default();
+        let arrow = if k == 0 { "  " } else { "  → " };
+        let _ = writeln!(s, "{arrow}{rel}{}  {}{at}", display(ix, n), place(ix, n));
+    }
+    s
+}
+
 /// Words that ask how the code is organised rather than about one piece of it.
 const STRUCTURE_WORDS: &[&str] = &[
     "organis",
@@ -1048,12 +1159,40 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
     // Named symbols first; for a code question that names none, the functions whose text
     // matches it; otherwise `query`'s seeds (documents keep their facts).
     let mut hits: HashMap<u32, Vec<(usize, String)>> = HashMap::new();
-    let mut anchors: Vec<u32> = named_anchors(ix, question);
+    let (mut anchors, weak) = named_anchors_split(ix, question);
     let named = !anchors.is_empty();
+    let mut chain_text = String::new();
     if anchors.is_empty() && (0..ix.node_count() as u32).any(|i| is_code(ix, i)) {
+        // A flow question: find each end, then the call chain between them.
+        if let Some((start, end)) = flow_ends(question) {
+            let a: Vec<(u32, Vec<(usize, String)>)> = code_search(ix, &mut src, &start);
+            let b: Vec<(u32, Vec<(usize, String)>)> = code_search(ix, &mut src, &end);
+            let froms: Vec<u32> = a.iter().take(2).map(|x| x.0).collect();
+            let tos: Vec<u32> = b.iter().take(2).map(|x| x.0).collect();
+            if let Some(chain) = call_chain(ix, &froms, &tos) {
+                chain_text = render_chain(ix, &chain);
+            }
+            for (node, lines) in a.into_iter().take(1).chain(b.into_iter().take(1)) {
+                if !anchors.contains(&node) {
+                    anchors.push(node);
+                    hits.insert(node, lines);
+                }
+            }
+        }
         for (node, lines) in code_search(ix, &mut src, question) {
-            anchors.push(node);
-            hits.insert(node, lines);
+            if anchors.len() >= TEXT_ANCHORS {
+                break;
+            }
+            if !anchors.contains(&node) {
+                anchors.push(node);
+                hits.insert(node, lines);
+            }
+        }
+    }
+    // Bare CamelCase names the question mentions come after what the search found.
+    for i in weak {
+        if anchors.len() < MAX_ANCHORS + 1 && !anchors.contains(&i) {
+            anchors.push(i);
         }
     }
     if anchors.is_empty() {
@@ -1075,6 +1214,10 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
             continue;
         }
         out.push_str(&sec);
+        out.push('\n');
+    }
+    if !chain_text.is_empty() {
+        out.push_str(&chain_text);
         out.push('\n');
     }
     // A question that names a symbol is about that symbol, whatever words frame it.
@@ -1244,6 +1387,25 @@ mod tests {
             map.contains("  crates/printer/ (1 symbols): StandardSink\n"),
             "{map}"
         );
+    }
+
+    #[test]
+    fn flow_questions_have_two_ends() {
+        assert_eq!(
+            flow_ends("Trace a file from the walker that yields it to the printer that writes it."),
+            Some((
+                "the walker that yields it".into(),
+                "the printer that writes it.".into()
+            ))
+        );
+        assert_eq!(
+            flow_ends("How does a return annotation end up as a schema in the document?"),
+            Some((
+                "how does a return annotation".into(),
+                "a schema in the document?".into()
+            ))
+        );
+        assert_eq!(flow_ends("Who calls solve_dependencies?"), None);
     }
 
     #[test]
