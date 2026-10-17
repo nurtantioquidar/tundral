@@ -2,7 +2,7 @@
 
 use toml::{Table, Value};
 
-use super::{DataFacts, Package};
+use super::{CargoDep, CargoManifest, DataFacts, Package};
 use crate::extract::{origin, slug, Ctx};
 use crate::facts::{Attr, LangFacts, Loc, Node, NodeKind};
 
@@ -14,18 +14,25 @@ pub fn extract(cx: &mut Ctx) {
         return;
     };
     let cargo = cx.rel.rsplit('/').next() == Some("Cargo.toml");
+    let manifest = cargo.then(|| cargo_manifest(&table));
     let found = if cargo {
         cargo_package(&table)
     } else {
         python_package(&table)
     };
-    let Some((name, version, deps)) = found else {
+    let key = found
+        .as_ref()
+        .map(|(name, _, _)| slug(name))
+        .unwrap_or_default();
+    let (Some((name, version, deps)), false) = (found, key.is_empty()) else {
+        if manifest.is_some() {
+            cx.facts.lang = LangFacts::Data(DataFacts {
+                cargo: manifest,
+                ..Default::default()
+            });
+        }
         return;
     };
-    let key = slug(name);
-    if key.is_empty() {
-        return;
-    }
     let id = format!("pkg_{key}");
     let mut attrs = vec![
         ("type".to_string(), Attr::Str("package".into())),
@@ -57,8 +64,47 @@ pub fn extract(cx: &mut Ctx) {
                 .filter(|d| !d.is_empty())
                 .collect(),
         }),
+        cargo: manifest,
         ..Default::default()
     });
+}
+
+/// Crate names for Rust module resolution: the package, its `[lib]` target and every dependency
+/// entry with its rename, path or workspace inheritance.
+fn cargo_manifest(t: &Table) -> CargoManifest {
+    let entries = |v: Option<&Value>| -> Vec<CargoDep> {
+        let Some(table) = v.and_then(Value::as_table) else {
+            return Vec::new();
+        };
+        table
+            .iter()
+            .map(|(key, spec)| {
+                let field = |f: &str| spec.get(f).and_then(Value::as_str).map(str::to_string);
+                CargoDep {
+                    key: key.clone(),
+                    package: field("package"),
+                    path: field("path"),
+                    workspace: spec.get("workspace").and_then(Value::as_bool) == Some(true),
+                }
+            })
+            .collect()
+    };
+    let tables = ["dependencies", "dev-dependencies", "build-dependencies"];
+    let mut deps: Vec<CargoDep> = tables.iter().flat_map(|k| entries(t.get(*k))).collect();
+    if let Some(targets) = t.get("target").and_then(Value::as_table) {
+        for target in targets.values() {
+            for k in tables {
+                deps.extend(entries(target.get(k)));
+            }
+        }
+    }
+    CargoManifest {
+        package: str_at(t, &["package", "name"]).map(str::to_string),
+        lib_name: str_at(t, &["lib", "name"]).map(str::to_string),
+        lib_path: str_at(t, &["lib", "path"]).map(str::to_string),
+        deps,
+        workspace_deps: entries(get(t, &["workspace", "dependencies"])),
+    }
 }
 
 type Found<'a> = (&'a str, Option<&'a str>, Vec<&'a str>);
@@ -166,6 +212,70 @@ f-crate = "1"
         let mut deps = pkg.unwrap().deps;
         deps.sort();
         assert_eq!(deps, ["b_crate", "d_crate", "e_crate", "renamed"]);
+    }
+
+    fn manifest(rel: &str, src: &str) -> Option<CargoManifest> {
+        match extract_file(Lang::Toml, rel, src.as_bytes()).lang {
+            LangFacts::Data(d) => d.cargo,
+            _ => None,
+        }
+    }
+
+    #[test]
+    fn cargo_manifest_names_crates() {
+        let m = manifest(
+            "a/Cargo.toml",
+            r#"
+[package]
+name = "a-crate"
+
+[lib]
+name = "alib"
+path = "lib/a.rs"
+
+[dependencies]
+fac = { package = "acme-facade", path = "../facade" }
+b-crate.workspace = true
+serde = "1"
+
+[target.'cfg(unix)'.dev-dependencies]
+c = { path = "../c" }
+"#,
+        )
+        .unwrap();
+        assert_eq!(m.package.as_deref(), Some("a-crate"));
+        assert_eq!(m.lib_name.as_deref(), Some("alib"));
+        assert_eq!(m.lib_path.as_deref(), Some("lib/a.rs"));
+        let deps: Vec<_> = m
+            .deps
+            .iter()
+            .map(|d| {
+                (
+                    d.key.as_str(),
+                    d.package.as_deref(),
+                    d.path.as_deref(),
+                    d.workspace,
+                )
+            })
+            .collect();
+        assert_eq!(
+            deps,
+            [
+                ("b-crate", None, None, true),
+                ("fac", Some("acme-facade"), Some("../facade"), false),
+                ("serde", None, None, false),
+                ("c", None, Some("../c"), false),
+            ]
+        );
+        // A workspace-only root has no package node, but its dependency table names crates.
+        let root = manifest(
+            "Cargo.toml",
+            "[workspace]\nmembers = []\n[workspace.dependencies]\nb-crate = { path = \"b\" }\n",
+        )
+        .unwrap();
+        assert_eq!(root.package, None);
+        assert_eq!(root.workspace_deps[0].path.as_deref(), Some("b"));
+        assert!(manifest("pyproject.toml", "[project]\nname = \"p\"\n").is_none());
     }
 
     #[test]

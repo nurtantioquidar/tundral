@@ -35,6 +35,36 @@ pub struct DataFacts {
     /// path relative to this script's directory (a leading variable stands for that directory).
     /// One per (caller, path) at its first site.
     pub scripts: Vec<Call>,
+    /// `Cargo.toml`: what Rust module resolution needs to name crates (`crate::resolve::rust`).
+    pub cargo: Option<CargoManifest>,
+}
+
+/// The crate names a `Cargo.toml` defines and binds.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+pub struct CargoManifest {
+    /// `[package] name`; `None` for a workspace-only root.
+    pub package: Option<String>,
+    /// `[lib] name`.
+    pub lib_name: Option<String>,
+    /// `[lib] path`, relative to the manifest's directory.
+    pub lib_path: Option<String>,
+    /// Every dependency table of the package (normal, dev, build, per target), in order.
+    pub deps: Vec<CargoDep>,
+    /// `[workspace.dependencies]`.
+    pub workspace_deps: Vec<CargoDep>,
+}
+
+/// One dependency entry: `key = { package = …, path = …, workspace = true }`.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CargoDep {
+    /// The table key: the name the crate is bound to (with `-`, as written).
+    pub key: String,
+    /// `package = "…"`, when the key renames the dependency.
+    pub package: Option<String>,
+    /// `path = "…"`, relative to the manifest's directory.
+    pub path: Option<String>,
+    /// `workspace = true`: the entry is inherited from the workspace root.
+    pub workspace: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

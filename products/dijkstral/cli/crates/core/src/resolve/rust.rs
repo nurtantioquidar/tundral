@@ -26,6 +26,28 @@
 //!   definition it names, or not at all when the import leads outside the repository
 //!   (`use termcolor::Color` never becomes another crate's `Color`). Only names no import
 //!   explains fall back to the unique-label rule (step 2).
+//!
+//! Calls (Q23 not reproduced), each an EXTRACTED edge with score 1.0, only from a caller whose
+//! definition is the node the build keeps for its id, and only where in-file resolution chose
+//! another target or none:
+//!
+//! - A bare call to a name the file imports (`use … as` aliases, globs, the calling function's
+//!   own `use` first) goes where the import leads, denylisted names included (`use crate::build;
+//!   build()`); an import from outside the repository leaves the name unresolved. Step 3's
+//!   INFERRED edge stays as it is when the import confirms it.
+//! - `a::b::f(..)` resolves `a::b` through the module tree, crates included (`grep::cli::
+//!   resolve_binary` through the `grep` facade's `pub extern crate grep_cli as cli`), then `f` in
+//!   the value namespace of that module: a function (`calls`) or tuple struct (`references`,
+//!   constructor).
+//! - `T::f(..)` resolves `T` to a declared struct or enum (through `type T = …;` aliases of a
+//!   path), then takes the unique method `f` over
+//!   every impl of it in the repository (an impl's owner node stands for the type its path
+//!   resolves to), else its variant `f` (constructor). A trait (`Trait::f(x)`) dispatches on the
+//!   type of `x` and resolves nothing.
+//! - `self.a.b.m(..)` follows the declared types of the fields (`struct S { a: crate::A }`,
+//!   through `&`, `Box`, `Arc` and `Rc`, generic parameters never) from the impl's type to the
+//!   unique method `m` of the last one, unless a wrapper answers `m` itself (`clone`, `fmt`…).
+//!   Receivers other than `self` field chains need local type inference and are left alone.
 
 mod modules;
 
@@ -33,6 +55,7 @@ use std::collections::{HashMap, HashSet};
 
 use self::modules::{Modules, Res};
 use super::{Index, Resolution, View};
+use crate::extract::rust::{FieldCall, PathCall, RsAlias, RsField, RsUse};
 use crate::extract::{external_node, origin};
 use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc, NodeKind};
 use crate::lang::Family;
@@ -206,7 +229,7 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             }
             // A glob over an enum (`use self::Kind::*`) names the enum like a plain leaf.
             let target = match modules.resolve_use(fi, u) {
-                Some(Res::Item(t)) => defs[t].get(last.as_str()).copied(),
+                Some(Res::Item(t, name)) => defs[t].get(name).copied(),
                 _ => None,
             };
             leaf_targets
@@ -313,7 +336,8 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         }
     }
 
-    for v in &rust {
+    let types = Types::new(files, index, &modules);
+    for (fi, v) in rust.iter().enumerate() {
         let LangFacts::Rust(facts) = &v.facts.lang else {
             continue;
         };
@@ -348,33 +372,98 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             });
         }
         for call in &facts.calls {
-            let Some(t) = call_targets.closest(&call.name, &v.file.rel) else {
-                continue;
+            // A name the file imports means what the import names (nothing when it leads outside
+            // the repository); only names no import explains fall back to the closest definition.
+            let fallback = || {
+                (!call.common)
+                    .then(|| call_targets.closest(&call.name, &v.file.rel))
+                    .flatten()
+            };
+            let uses = modules.uses_in(fi, &call.caller);
+            let (target, is_call, inferred) = match imported(&modules, fi, &call.name, &uses, true)
+            {
+                Some(Some((t, item))) => match types.callable(t, item) {
+                    Some((id, is_call)) => match fallback() {
+                        // The edge Graphify infers, confirmed: keep its shape.
+                        Some(t) if t.id == id => (id, t.is_call, true),
+                        _ if call.kept => (id, is_call, false),
+                        _ => continue,
+                    },
+                    None => continue,
+                },
+                Some(None) => continue,
+                None => match fallback() {
+                    Some(t) => (t.id, t.is_call, true),
+                    None => continue,
+                },
             };
             let caller = v.id(&call.caller);
-            if caller == t.id || !done.insert((caller, t.id)) {
+            if caller == target || !done.insert((caller, target)) {
                 continue;
             }
-            let (relation, context) = if t.is_call {
-                ("calls", "call")
-            } else {
-                ("references", "constructor")
-            };
-            out.edges.push(Edge {
-                source: caller.to_string(),
-                target: t.id.to_string(),
-                relation: relation.into(),
-                confidence: Confidence::Inferred,
-                score: Some(INFERRED_SCORE),
-                context: Some(context.into()),
-                source_file: v.file.rel.clone(),
-                loc: Loc::Line(call.line),
-                weight: Some(1.0),
-                attrs: vec![origin()],
-            });
+            out.edges
+                .push(call_edge(v, caller, target, is_call, inferred, call.line));
+        }
+        // Path-qualified calls through the module tree, and `self.field.m()` through the fields'
+        // declared types (dijkstral-native): only where in-file resolution chose another target
+        // or none.
+        let path_targets = facts.path_calls.iter().filter_map(|c| {
+            let (t, is_call) = types.path_call(&modules, fi, c)?;
+            Some((c.caller.as_str(), c.in_file.as_deref(), t, is_call, c.line))
+        });
+        let field_targets = facts.field_calls.iter().filter_map(|c| {
+            let t = types.field_call(&modules, fi, c)?;
+            Some((c.caller.as_str(), c.in_file.as_deref(), t, true, c.line))
+        });
+        let mut resolved: Vec<_> = path_targets.chain(field_targets).collect();
+        resolved.sort_by_key(|r| r.4);
+        for (caller, in_file, target, is_call, line) in resolved {
+            let caller = v.id(caller);
+            if in_file.is_some_and(|t| v.id(t) == target)
+                || caller == target
+                || !done.insert((caller, target))
+            {
+                continue;
+            }
+            out.edges
+                .push(call_edge(v, caller, target, is_call, false, line));
         }
     }
     out
+}
+
+/// A cross-file `calls` (or `references` constructor) edge: INFERRED 0.85 for the bare-name
+/// fallback, EXTRACTED 1.0 when the module tree or a declared type decided it.
+fn call_edge(
+    v: &View,
+    caller: &str,
+    target: &str,
+    is_call: bool,
+    inferred: bool,
+    line: u32,
+) -> Edge {
+    let (relation, context) = if is_call {
+        ("calls", "call")
+    } else {
+        ("references", "constructor")
+    };
+    let (confidence, score) = if inferred {
+        (Confidence::Inferred, INFERRED_SCORE)
+    } else {
+        (Confidence::Extracted, 1.0)
+    };
+    Edge {
+        source: caller.to_string(),
+        target: target.to_string(),
+        relation: relation.into(),
+        confidence,
+        score: Some(score),
+        context: Some(context.into()),
+        source_file: v.file.rel.clone(),
+        loc: Loc::Line(line),
+        weight: Some(1.0),
+        attrs: vec![origin()],
+    }
 }
 
 /// The definition a name used in Rust file `f` refers to through the file's own imports: an
@@ -387,15 +476,29 @@ fn imported_name<'d>(
     name: &str,
     defs: &[HashMap<&str, &'d str>],
 ) -> Option<Option<&'d str>> {
-    let uses = modules.uses(f);
-    let explicit = uses
-        .iter()
-        .filter(|u| !u.glob && u.bound.as_deref() == Some(name))
-        .min_by_key(|u| u.depth);
+    let uses: Vec<&RsUse> = modules.uses(f).iter().collect();
+    Some(imported(modules, f, name, &uses, false)?.and_then(|(t, n)| defs[t].get(n).copied()))
+}
+
+/// The item a name used in Rust file `f` names through the imports `uses` (with `in_body`, the
+/// calling function's own `use`s come first): (defining file, its name there). `Some(None)` when
+/// the import leads outside the repository or to a module; `None` when no import explains the
+/// name.
+fn imported<'v>(
+    modules: &Modules<'v, '_>,
+    f: usize,
+    name: &str,
+    uses: &[&'v RsUse],
+    in_body: bool,
+) -> Option<Option<(usize, &'v str)>> {
+    let binds = |u: &&&RsUse| !u.glob && u.bound.as_deref() == Some(name);
+    let own = in_body
+        .then(|| uses.iter().find(|u| u.in_fn && binds(u)))
+        .flatten();
+    let explicit = own.or_else(|| uses.iter().filter(binds).min_by_key(|u| u.depth));
     if let Some(u) = explicit {
-        let original = u.path.last().map_or(name, String::as_str);
         return match modules.resolve_use(f, u)? {
-            Res::Item(t) => Some(defs[t].get(original).copied()),
+            Res::Item(t, n) => Some(Some((t, n))),
             Res::File(_) | Res::External => Some(None),
         };
     }
@@ -405,13 +508,324 @@ fn imported_name<'d>(
                 continue;
             }
             match modules.lookup(g, name, false) {
-                Some(Res::Item(t)) => return Some(defs[t].get(name).copied()),
+                Some(Res::Item(t, n)) => return Some(Some((t, n))),
                 Some(Res::File(_) | Res::External) => return Some(None),
                 None => {}
             }
         }
     }
     None
+}
+
+/// Methods a field's wrapper (`Box`, `Arc`, `Rc`) or its std trait impls answer before the
+/// wrapped type's own (`self.inner.clone()` clones the `Arc`).
+const WRAPPER_METHODS: &[&str] = &[
+    "as_mut",
+    "as_ptr",
+    "as_ref",
+    "borrow",
+    "borrow_mut",
+    "call",
+    "clone",
+    "clone_from",
+    "cmp",
+    "deref",
+    "deref_mut",
+    "downcast",
+    "drop",
+    "eq",
+    "flush",
+    "fmt",
+    "ge",
+    "get_mut",
+    "gt",
+    "hash",
+    "into",
+    "le",
+    "lt",
+    "ne",
+    "next",
+    "partial_cmp",
+    "poll",
+    "read",
+    "to_owned",
+    "to_string",
+    "write",
+];
+
+/// Declared types, their methods, variants and fields, in the repository's node space, for
+/// path-qualified and field-typed calls (dijkstral-native).
+struct Types<'v> {
+    /// Per Rust file (module order): free functions by name (`name()` nodes).
+    fns: Vec<HashMap<&'v str, &'v str>>,
+    /// Per Rust file: declared struct/enum/trait nodes by name.
+    types: Vec<HashMap<&'v str, &'v str>>,
+    /// (type id, method name) → distinct method ids, over every impl of the type.
+    methods: HashMap<(&'v str, &'v str), Vec<&'v str>>,
+    /// (enum id, variant label) → variant id.
+    variants: HashMap<(&'v str, &'v str), &'v str>,
+    /// (struct id, field name) → (declaring file, field), every declaration.
+    fields: HashMap<(&'v str, &'v str), Vec<(usize, &'v RsField)>>,
+    /// Trait ids: `Trait::m(x)` dispatches on `x`, whose type is unknown here.
+    traits: HashSet<&'v str>,
+    /// (file, alias name) → `type` alias of a path.
+    aliases: HashMap<(usize, &'v str), &'v RsAlias>,
+}
+
+impl<'v> Types<'v> {
+    fn new(files: &'v [View], index: &Index, modules: &Modules<'v, '_>) -> Self {
+        let n = modules.views.len();
+        let mut fns: Vec<HashMap<&str, &str>> = vec![HashMap::new(); n];
+        let mut types: Vec<HashMap<&str, &str>> = vec![HashMap::new(); n];
+        for (fi, v) in modules.views.iter().enumerate() {
+            for node in v.facts.nodes.iter().filter(|n| n.kind == NodeKind::Def) {
+                // Only the node the build keeps for an id is a target.
+                if !index
+                    .get(files, &node.id)
+                    .is_some_and(|k| std::ptr::eq(k, node))
+                {
+                    continue;
+                }
+                let label = node.label.as_str();
+                if node.attr("_rust_declaration_count").is_some() {
+                    types[fi].entry(label).or_insert(node.id.as_str());
+                } else if let Some(name) = label.strip_suffix("()") {
+                    if !name.starts_with('.') {
+                        fns[fi].entry(name).or_insert(node.id.as_str());
+                    }
+                }
+            }
+        }
+        // The type an impl owner node stands for: itself when declared, else its impl's path.
+        let mut owners: HashMap<&str, &str> = HashMap::new();
+        for (fi, v) in modules.views.iter().enumerate() {
+            let LangFacts::Rust(facts) = &v.facts.lang else {
+                continue;
+            };
+            for imp in &facts.impls {
+                if let Some(Res::Item(t, name)) = modules.resolve_qualifier(fi, imp.depth, &imp.ty)
+                {
+                    if let Some(&ty) = types[t].get(name) {
+                        owners.entry(v.id(&imp.owner)).or_insert(ty);
+                    }
+                }
+            }
+        }
+        let mut methods: HashMap<(&str, &str), Vec<&str>> = HashMap::new();
+        let mut variants: HashMap<(&str, &str), &str> = HashMap::new();
+        for v in &modules.views {
+            for e in &v.facts.edges {
+                let (Some(owner), Some(member)) =
+                    (index.get(files, &e.source), index.get(files, &e.target))
+                else {
+                    continue;
+                };
+                match e.relation.as_str() {
+                    "method" => {
+                        let Some(name) = member
+                            .label
+                            .strip_prefix('.')
+                            .and_then(|l| l.strip_suffix("()"))
+                        else {
+                            continue;
+                        };
+                        let ty = if owner.attr("_rust_declaration_count").is_some() {
+                            owner.id.as_str()
+                        } else {
+                            match owners.get(owner.id.as_str()) {
+                                Some(t) => t,
+                                None => continue,
+                            }
+                        };
+                        let ids = methods.entry((ty, name)).or_default();
+                        if !ids.contains(&member.id.as_str()) {
+                            ids.push(&member.id);
+                        }
+                    }
+                    "case_of" => {
+                        variants
+                            .entry((owner.id.as_str(), member.label.as_str()))
+                            .or_insert(&member.id);
+                    }
+                    _ => {}
+                }
+            }
+        }
+        let mut fields: HashMap<(&str, &str), Vec<(usize, &RsField)>> = HashMap::new();
+        let mut traits = HashSet::new();
+        let mut aliases = HashMap::new();
+        for (fi, v) in modules.views.iter().enumerate() {
+            let LangFacts::Rust(facts) = &v.facts.lang else {
+                continue;
+            };
+            traits.extend(
+                facts
+                    .traits
+                    .iter()
+                    .filter_map(|t| types[fi].get(t.as_str())),
+            );
+            for a in &facts.aliases {
+                aliases.entry((fi, a.name.as_str())).or_insert(a);
+            }
+            for f in &facts.fields {
+                if let Some(&owner) = types[fi].get(f.owner.as_str()) {
+                    fields
+                        .entry((owner, f.name.as_str()))
+                        .or_default()
+                        .push((fi, f));
+                }
+            }
+        }
+        Types {
+            fns,
+            types,
+            methods,
+            variants,
+            fields,
+            traits,
+            aliases,
+        }
+    }
+
+    /// The declared type a resolved path names, through `type` aliases (a few hops deep).
+    fn type_of(&self, modules: &Modules<'v, '_>, r: Option<Res<'_>>) -> Option<&'v str> {
+        let (mut t, name) = match r? {
+            Res::Item(t, name) => (t, name),
+            _ => return None,
+        };
+        if let Some(&id) = self.types[t].get(name) {
+            return Some(id);
+        }
+        let mut alias = *self.aliases.get(&(t, name))?;
+        for _ in 0..4 {
+            match modules.resolve_qualifier(t, alias.depth, &alias.ty)? {
+                Res::Item(t2, n2) => {
+                    if let Some(&id) = self.types[t2].get(n2) {
+                        return Some(id);
+                    }
+                    t = t2;
+                    alias = self.aliases.get(&(t2, n2))?;
+                }
+                _ => return None,
+            }
+        }
+        None
+    }
+
+    fn method(&self, ty: &'v str, name: &str) -> Option<&'v str> {
+        match self.methods.get(&(ty, name)).map(Vec::as_slice) {
+            Some([m]) => Some(m),
+            _ => None,
+        }
+    }
+
+    /// What `name(..)` reaches as an item `item` of file `t`: a function (`calls`) or a tuple
+    /// struct (`references`, constructor).
+    fn callable(&self, t: usize, item: &str) -> Option<(&'v str, bool)> {
+        if let Some(&id) = self.fns[t].get(item) {
+            return Some((id, true));
+        }
+        self.types[t].get(item).map(|&id| (id, false))
+    }
+
+    /// The target of `qual::name(..)` written in file `f`: a function of the module `qual`
+    /// names, a method or variant of the type it names.
+    fn path_call(
+        &self,
+        modules: &Modules<'v, '_>,
+        f: usize,
+        c: &'v PathCall,
+    ) -> Option<(&'v str, bool)> {
+        // A first segment bound by a `use` in the calling function's body, else by one in the
+        // inline module around the call (`mod tests { use … }`; sibling modules must agree).
+        let first = c.qual.first().map(String::as_str);
+        let binds = |u: &&RsUse| !u.glob && u.bound.as_deref() == first;
+        let uses = modules.uses(f);
+        let mut local = uses
+            .iter()
+            .filter(binds)
+            .find(|u| u.func.as_deref() == Some(c.caller.as_str()));
+        if local.is_none() && c.depth > 0 {
+            let mut inner = uses
+                .iter()
+                .filter(binds)
+                .filter(|u| !u.in_fn && u.depth == c.depth);
+            local = inner.next();
+            if local.is_some_and(|u| inner.any(|o| o.path != u.path)) {
+                return None;
+            }
+        }
+        match local {
+            Some(u) => {
+                let path: Vec<String> = u.path.iter().chain(&c.qual[1..]).cloned().collect();
+                self.below(
+                    modules,
+                    modules.resolve_qualifier(f, u.depth, &path)?,
+                    &c.name,
+                )
+            }
+            None => self.below(
+                modules,
+                modules.resolve_qualifier(f, c.depth, &c.qual)?,
+                &c.name,
+            ),
+        }
+    }
+
+    /// `name` below what a qualifier resolved to: a function or tuple struct of a module, a
+    /// method or variant of a type.
+    fn below(
+        &self,
+        modules: &Modules<'v, '_>,
+        qual: Res<'_>,
+        name: &str,
+    ) -> Option<(&'v str, bool)> {
+        match qual {
+            Res::File(m) => match modules.lookup_value(m, name)? {
+                Res::Item(t, item) => self.callable(t, item),
+                _ => None,
+            },
+            r @ Res::Item(..) => {
+                let ty = self.type_of(modules, Some(r))?;
+                if self.traits.contains(ty) {
+                    return None;
+                }
+                if let Some(m) = self.method(ty, name) {
+                    return Some((m, true));
+                }
+                self.variants.get(&(ty, name)).map(|&id| (id, false))
+            }
+            Res::External => None,
+        }
+    }
+
+    /// The method `self.<fields>.name(..)` calls, following each field's declared type.
+    fn field_call(&self, modules: &Modules<'v, '_>, f: usize, c: &'v FieldCall) -> Option<&'v str> {
+        let mut ty = self.type_of(
+            modules,
+            modules.resolve_qualifier(f, c.depth, std::slice::from_ref(&c.self_ty)),
+        )?;
+        let mut wrapped = false;
+        for field in &c.fields {
+            let decls = self.fields.get(&(ty, field.as_str()))?;
+            let (g, first) = decls[0];
+            if decls[1..]
+                .iter()
+                .any(|(_, d)| d.ty != first.ty || d.wrapped != first.wrapped)
+            {
+                return None;
+            }
+            ty = self.type_of(
+                modules,
+                modules.resolve_qualifier(g, first.depth, &first.ty),
+            )?;
+            wrapped = first.wrapped;
+        }
+        if wrapped && WRAPPER_METHODS.contains(&c.name.as_str()) {
+            return None;
+        }
+        self.method(ty, &c.name)
+    }
 }
 
 #[cfg(test)]
@@ -517,5 +931,72 @@ mod tests {
         assert!(has(
             "src_a_atlas_rank -calls-> src_b_atlas_files [EXTRACTED]"
         ));
+    }
+
+    #[test]
+    fn scoped_imports_field_types_and_kept_callers() {
+        let (_, edges) = build(&[
+            ("Cargo.toml", "[package]\nname = \"p\"\n"),
+            ("src/lib.rs", "mod a;\nmod b;\nmod c;\n"),
+            (
+                "src/b.rs",
+                "pub struct Comma;\nimpl Comma { pub fn new() -> Comma { Comma } }\n\
+                 pub struct Colon;\nimpl Colon { pub fn new() -> Colon { Colon } }\n\
+                 pub struct Inner;\nimpl Inner {\n    pub fn run(&self) {}\n    \
+                 pub fn clone(&self) -> Inner { Inner }\n}\npub fn helper() {}\n\
+                 pub mod ansi {\n    pub fn render() {}\n}\npub type Sep2 = Comma;\n",
+            ),
+            (
+                "src/c.rs",
+                // An inline module is flattened into its file; a `type` alias names its type.
+                "use crate::b::ansi;\npub fn paint() { ansi::render(); crate::b::Sep2::new(); }\n",
+            ),
+            (
+                "src/a.rs",
+                // A `use` in a function body binds only there.
+                "fn comma() { use crate::b::Comma as Sep; Sep::new(); }\n\
+                 fn colon() { use crate::b::Colon as Sep; Sep::new(); }\n\
+                 pub struct Holder(Box<crate::b::Inner>);\n\
+                 impl Holder {\n    fn go(&self) { self.0.run(); self.0.clone(); }\n}\n\
+                 // `fn welcome` shares the struct's id: its calls would start from the struct.\n\
+                 pub struct Welcome;\nfn welcome() { crate::b::helper(); }\n\
+                 #[cfg(test)]\nmod tests {\n    use crate::b::Comma;\n    use ext::helper;\n    \
+                 fn t() { Comma::new(); helper(); }\n}\n",
+            ),
+        ]);
+        let has = |e: &str| edges.iter().any(|x| x == e);
+        assert!(
+            has("src_a_comma -calls-> src_b_comma_new [EXTRACTED]"),
+            "{edges:#?}"
+        );
+        assert!(
+            has("src_a_colon -calls-> src_b_colon_new [EXTRACTED]"),
+            "{edges:#?}"
+        );
+        assert!(
+            has("src_a_t -calls-> src_b_comma_new [EXTRACTED]"),
+            "{edges:#?}"
+        );
+        assert!(
+            has("src_a_holder_go -calls-> src_b_inner_run [EXTRACTED]"),
+            "{edges:#?}"
+        );
+        assert!(
+            has("src_c_paint -calls-> src_b_render [EXTRACTED]"),
+            "{edges:#?}"
+        );
+        assert!(
+            has("src_c_paint -calls-> src_b_comma_new [EXTRACTED]"),
+            "{edges:#?}"
+        );
+        for unwanted in [
+            // `Box<Inner>::clone` clones the box.
+            "src_a_holder_go -calls-> src_b_inner_clone",
+            // `helper` comes from outside the repository: no fallback to a same-named fn.
+            "src_a_t -calls-> src_b_helper",
+            "src_a_welcome -calls->",
+        ] {
+            assert!(!edges.iter().any(|x| x.starts_with(unwanted)), "{edges:#?}");
+        }
     }
 }

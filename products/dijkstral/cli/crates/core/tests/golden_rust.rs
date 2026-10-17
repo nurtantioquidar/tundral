@@ -41,12 +41,28 @@ const ALLOWED: &[&str] = &[
     "src_util_mod -imports_from-> src_util_fmt",
     "tests_it -imports_from-> src_model",
     "tests_it -imports_from-> src_util_mod",
+    // Q23 not reproduced: calls resolve through the module tree. Path-qualified calls
+    // (`model::Circle::new`, `shapes::model::classify`, `shapes::util::run_all`), a `use … as`
+    // alias (`render_shape` → `util::fmt::render`) and an imported denylisted name (`build`).
+    "src_lib_build -calls-> src_model_circle_new",
+    "src_main_main -calls-> src_lib_build",
+    "src_main_main -calls-> src_model_circle_new",
+    "src_main_main -calls-> src_model_classify",
+    "src_main_main -calls-> src_util_mod_run_all",
+    "src_util_mod_render -calls-> src_util_fmt_render",
 ];
 
 #[test]
 fn rust_fixture_matches_graphify() {
-    // Community ids move with the ALLOWED differences (graphify-format.md §17.7).
-    common::assert_fixture("rust", ALLOWED, common::Communities::MinNmi(0.80), false);
+    // Community ids move with the ALLOWED differences (graphify-format.md §17.7). On this 77-node
+    // fixture the six Q23 call edges alone move Leiden's partition (NMI 0.72 with them), so the
+    // agreement is measured without the ALLOWED links.
+    common::assert_fixture(
+        "rust",
+        ALLOWED,
+        common::Communities::MinNmiWithoutAllowedLinks(0.80),
+        false,
+    );
 }
 
 /// Build a probe repository and return its links as `source -relation-> target`.
@@ -160,4 +176,97 @@ fn imported_types_resolve_through_their_import() {
             .any(|x| x.starts_with("src_printer") && x.contains("src_defs")),
         "{l:#?}"
     );
+}
+
+/// A workspace whose crates call each other through a facade crate (`pub extern crate … as`,
+/// `pub use … as`), a renamed dependency (`package = …`), a `workspace = true` dependency, a
+/// `[lib] name`, `use … as` aliases and struct field types (graphify-format.md Q23, §11.5).
+#[test]
+fn calls_resolve_through_crates_aliases_and_field_types() {
+    let l = links(&[
+        (
+            "Cargo.toml",
+            "[workspace]\nmembers = [\"app\", \"facade\", \"cli\", \"text\", \"regex\"]\n\n\
+             [workspace.dependencies]\nacme-text = { path = \"text\" }\n",
+        ),
+        // A library whose crate name is not its package name.
+        (
+            "text/Cargo.toml",
+            "[package]\nname = \"acme-text\"\n\n[lib]\nname = \"text_lib\"\n",
+        ),
+        ("text/src/lib.rs", "pub mod glob;\n"),
+        (
+            "text/src/glob.rs",
+            "pub struct Override;\n\
+             impl Override {\n    pub fn empty() -> Override { Override }\n    \
+             pub fn matched(&self) -> bool { true }\n}\n\
+             pub struct Glob;\nimpl Glob { pub fn new() -> Glob { Glob } }\n\
+             pub trait Matcher { fn find(&self); }\n",
+        ),
+        ("cli/Cargo.toml", "[package]\nname = \"acme-cli\"\n"),
+        (
+            "cli/src/lib.rs",
+            "mod decompress;\nmod hostname;\npub use crate::decompress::resolve_binary;\n\
+             pub use hostname::hostname;\n",
+        ),
+        ("cli/src/decompress.rs", "pub fn resolve_binary() {}\n"),
+        ("cli/src/hostname.rs", "pub fn hostname() {}\n"),
+        // The facade re-exports both crates under short names.
+        (
+            "facade/Cargo.toml",
+            "[package]\nname = \"acme-facade\"\n\n[dependencies]\n\
+             acme-cli = { path = \"../cli\" }\nacme-text.workspace = true\n",
+        ),
+        (
+            "facade/src/lib.rs",
+            "pub extern crate acme_cli as cli;\npub use text_lib as text;\n",
+        ),
+        // A workspace package that shares its name with the registry crate `app` uses.
+        ("regex/Cargo.toml", "[package]\nname = \"regex\"\n"),
+        (
+            "regex/src/lib.rs",
+            "pub struct Regex;\nimpl Regex { pub fn new() -> Regex { Regex } }\n",
+        ),
+        (
+            "app/Cargo.toml",
+            "[package]\nname = \"app\"\n\n[dependencies]\n\
+             fac = { package = \"acme-facade\", path = \"../facade\" }\nregex = \"1\"\n",
+        ),
+        ("app/src/main.rs", "mod search;\nfn main() {}\n"),
+        (
+            "app/src/search.rs",
+            "use fac::cli::resolve_binary as rb;\nuse fac::text::glob::{Glob as G, Matcher};\n\n\
+             pub struct Config {\n    globs: fac::text::glob::Override,\n}\n\
+             pub struct Worker {\n    config: Config,\n}\n\n\
+             impl Worker {\n    fn start() -> Config {\n        \
+             fac::cli::resolve_binary();\n        fac::cli::hostname();\n        rb();\n        \
+             G::new();\n        regex::Regex::new();\n        \
+             Config { globs: fac::text::glob::Override::empty() }\n    }\n    \
+             fn should(&self, m: &dyn Matcher) -> bool {\n        Matcher::find(m);\n        \
+             self.config.globs.matched()\n    }\n}\n",
+        ),
+    ]);
+    let edge = |from: &str, to: &str| format!("app_src_search_worker_{from} -calls-> {to}");
+    for want in [
+        // Through the renamed dependency, the facade's `extern crate … as` and `pub use`.
+        edge("start", "cli_src_decompress_resolve_binary"),
+        // `hostname` is both a module and the function re-exported beside it.
+        edge("start", "cli_src_hostname_hostname"),
+        // A `[lib] name` reached through `workspace = true`, and a `use … as` alias.
+        edge("start", "text_src_glob_glob_new"),
+        edge("start", "text_src_glob_override_empty"),
+        // `self.config` is a `Config`, whose `globs` is an `Override`.
+        edge("should", "text_src_glob_override_matched"),
+    ] {
+        assert!(l.contains(&want), "missing {want}: {l:#?}");
+    }
+    // `regex` is the registry crate, not the workspace package of that name; a trait-qualified
+    // call dispatches on its argument's type, which is not known here.
+    for unwanted in ["regex_src_lib_regex_new", "text_src_glob_matcher_find"] {
+        assert!(
+            !l.iter()
+                .any(|x| x.starts_with("app_") && x.ends_with(&format!("-calls-> {unwanted}"))),
+            "unexpected call to {unwanted}: {l:#?}"
+        );
+    }
 }
