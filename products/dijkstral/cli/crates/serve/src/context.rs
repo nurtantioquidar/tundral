@@ -377,15 +377,25 @@ fn stem(w: &str) -> String {
     } else if let Some(b) = w.strip_suffix("ies").filter(|_| n > 4) {
         format!("{b}y")
     } else if let Some(b) = w.strip_suffix("ing").filter(|_| n > 5) {
-        b.to_string()
+        undouble(b)
     } else if let Some(b) = w.strip_suffix("ed").filter(|_| n > 4) {
-        b.to_string()
+        undouble(b)
     } else if let Some(b) = w.strip_suffix("es").filter(|_| n > 4 && w.ends_with("ses")) {
         b.to_string()
     } else if let Some(b) = w.strip_suffix('s').filter(|_| n > 3 && !w.ends_with("ss")) {
         b.to_string()
     } else {
         w.to_string()
+    }
+}
+
+/// `embedd` → `embed`, `runn` → `run` (a doubled final consonant left by `-ed`/`-ing`), but not
+/// `pass` or `call`.
+fn undouble(b: &str) -> String {
+    let c: Vec<char> = b.chars().collect();
+    match c.as_slice() {
+        [.., x, y] if x == y && !"aeioulsz".contains(*x) => c[..c.len() - 1].iter().collect(),
+        _ => b.to_string(),
     }
 }
 
@@ -911,7 +921,16 @@ fn code_search(ix: &Index, src: &mut Sources, question: &str) -> Vec<(u32, Vec<(
                 .filter(|(&c, _)| c > 0)
                 .map(|(&c, w)| w * (1.0 + (c as f64).ln()))
                 .sum();
-            let score = weight * distinct as f64 / (1.0 + span_len(node) / 40.0).sqrt();
+            // The node's own name is the strongest evidence: each question word it contains
+            // counts again, three times over.
+            let name = ident_words(ix.label(node));
+            let named: f64 = terms
+                .iter()
+                .zip(&idf)
+                .filter(|(t, _)| name.iter().any(|w| w == *t))
+                .map(|(_, w)| 3.0 * w)
+                .sum();
+            let score = (weight + named) * distinct as f64 / (1.0 + span_len(node) / 40.0).sqrt();
             Some((score, is_test_node(ix, node), node))
         })
         .collect();
@@ -1088,6 +1107,10 @@ mod tests {
         assert!(!is_comment("    if self.binary.is_explicit() {"));
         assert!(is_config("pyproject.toml") && !is_config("src/main.rs"));
         assert_eq!(stem("explicitly"), "explicit");
+        assert_eq!(stem("embedded"), "embed");
+        assert_eq!(stem("running"), "run");
+        assert_eq!(stem("called"), "call");
+        assert_eq!(stem("passed"), "pass");
     }
 
     #[test]
