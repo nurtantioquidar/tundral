@@ -1024,3 +1024,22 @@ Key facts, `gpt-6-luna` (medium), three runs:
 Fresh tokens per run now equal no graph's mean (0.575M each) with a seventh of its spread, and
 the blind judge rates the answers as good or better; the key-fact pass rate dipped 4 points
 (about 1.5 standard deviations).
+### Meaning-based retrieval for `context` (research prototype) — 2026-10-17
+
+Embeddings fused with `context`'s code-text search, in a separate `dijkstral-embed` prototype
+(branch `feature/dijkstral-context-embeddings-prototype`, not merged; design, every variant and
+costs in `cli/docs/dijkstral-context-semantic.md`),
+scored offline with `agent/context_eval.py` (tuning fastapi + ripgrep / held-out Kubernetes):
+
+| | tuning | held-out | median chars |
+|---|---|---|---|
+| lexical, `bef355c` | 0.75 | 0.49 | 2464 |
+| `bef355c` + `potion-code-16M-v2`, mix 0.4 | 0.73 | 0.59 | 2377 |
+| lexical, `d1e37cf` (comments count) | 0.77 | 0.61 | 2514 |
+| `d1e37cf` + `potion-code-16M-v2`, mix 0.4 | 0.77 | 0.64 | 2261 |
+| `d1e37cf` + the same, 3 matches after named symbols | 0.81 | 0.65 | 2861 |
+| `d1e37cf` + 2 code-text matches after named symbols (no embeddings) | 0.79 | 0.64 | 2994 |
+| `d1e37cf` + `bge-small-en-v1.5`, mix 0.4, 3 after named | 0.81 | 0.61 | 2860 |
+
+Counting comments took most of what embeddings added; the rest is mostly extra anchors, which
+the code text alone also supplies. Not shipped; `dijkstral` is unchanged.

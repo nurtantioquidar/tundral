@@ -123,4 +123,6 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
 paths) and `crates/cli/tests/query_goldens.rs` `context_answers_with_source_lines` on the Python
 fixture. Its effect on agents is measured by `bench/agent/` (`bench/README.md`, stage 7); the
 share of a question's key facts its output already contains is the offline measure used while
-tuning it, on fastapi and ripgrep, with Kubernetes held out.
+tuning it, on fastapi and ripgrep, with Kubernetes held out (`bench/agent/context_eval.py`).
+Meaning-based retrieval was measured as a separate prototype and not adopted
+(`dijkstral-context-semantic.md`; code on branch `feature/dijkstral-context-embeddings-prototype`).
