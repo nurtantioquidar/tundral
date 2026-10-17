@@ -9,7 +9,7 @@ use super::Mode;
 
 /// Bumped whenever a prompt or the framing changes in a way that can change replies. Part of the
 /// cache scope (§9), so a new version re-asks the model.
-pub const PROMPT_VERSION: &str = "dijkstral-semantic-1";
+pub const PROMPT_VERSION: &str = "dijkstral-semantic-2";
 
 /// The output limit of an extraction request (§4.3).
 pub const MAX_OUTPUT_TOKENS: u32 = 16384;
@@ -27,7 +27,8 @@ Each node:
 path without extension, every non-alphanumeric character replaced by \"_\" (docs/guide.md -> \
 \"docs_guide\"). A thing inside a file uses that prefix plus its own snake_case name \
 (\"docs_guide_retry_policy\").
-- \"label\": a short human-readable name (under 80 characters).
+- \"label\": a short human-readable name (under 80 characters). When the text dates an event \
+or fact, put the date in the label (\"Moved to Berlin, March 2023\").
 - \"file_type\": one of \"document\", \"paper\", \"image\", \"concept\", \"rationale\", \"code\". \
 Use the file's own kind for its file node, \"concept\" for ideas, components and terms, \
 \"rationale\" for a decision and its reason, \"code\" only for a code symbol the text names.
@@ -35,23 +36,25 @@ Use the file's own kind for its file node, \"concept\" for ideas, components and
 - \"source_location\": the heading, section, sheet or page it came from, or null.
 - \"source_url\", \"captured_at\", \"author\", \"contributor\": when the file states them \
 (front matter, a byline), else null.
-- \"rationale\": for a decision, why it was made and under which conditions to revisit it; \
+- \"rationale\": for a decision, one sentence on why it was made and when to revisit it; \
 else null.
 
 Each edge:
 - \"source\", \"target\": node ids from this reply. To point at code the documents name, use \
 the code file's path without extension, non-alphanumerics as \"_\", then \"_\" and the symbol in \
 lowercase (src/app/util.py, slugify -> \"src_app_util_slugify\").
-- \"relation\": a snake_case verb phrase such as \"references\", \"describes\", \"cites\", \
+- \"relation\": one of \"references\", \"describes\", \"mentions\", \"part_of\", \"cites\", \
 \"implements\", \"configures\", \"calls\", \"depends_on\", \"conceptually_related_to\", \
-\"shares_data_with\", \"rationale_for\".
+\"shares_data_with\", \"rationale_for\". Use another snake_case verb only when none of these \
+fits; never a phrase specific to one fact (say \"describes\", not \"records_savings_account\").
 - \"confidence\": \"EXTRACTED\" when the text states it, \"INFERRED\" for a reasonable \
 inference, \"AMBIGUOUS\" when unsure and worth a human look.
 - \"confidence_score\": a number from 0 to 1.
 - \"source_file\", \"source_location\": where the evidence is.
 - \"weight\": 1.0 unless the link is clearly weaker.
 
-Each hyperedge groups three or more nodes that act together (a flow, a pipeline, a protocol):
+Each hyperedge groups three or more nodes that act together in a flow, pipeline or protocol the \
+text itself describes; most files have none, few have more than two:
 {\"id\", \"label\", \"nodes\": [node ids], \"relation\", \"confidence\", \"confidence_score\", \
 \"source_file\"}.
 
