@@ -270,3 +270,94 @@ fn calls_resolve_through_crates_aliases_and_field_types() {
         );
     }
 }
+
+/// `recv.m()` through the receiver's declared or inferred type (graphify-format.md Q23,
+/// §11.5): constructors, struct literals, `let x: T`, parameters, builder chains through declared
+/// return types, `?`, `unwrap()`, `Some(x)`, `.await`, `Arc::new`, `T::default()` and fields.
+/// Trait objects, generic parameters, shadowed names and closure parameters resolve nothing.
+#[test]
+fn method_calls_resolve_through_local_types() {
+    let l = links(&[
+        ("Cargo.toml", "[package]\nname = \"p\"\n"),
+        ("src/lib.rs", "pub mod model;\npub mod app;\n"),
+        (
+            "src/model.rs",
+            "pub struct Engine { pub cfg: Config }\n\
+             #[derive(Default)]\npub struct Config;\n\
+             pub struct Builder;\n\
+             pub trait Shape { fn area(&self) -> u32; }\n\
+             pub struct Square;\n\
+             impl Shape for Square { fn area(&self) -> u32 { 4 } }\n\
+             impl Engine {\n    pub fn new() -> Engine { Engine { cfg: Config } }\n    \
+             pub fn open() -> std::io::Result<Engine> { Ok(Engine::new()) }\n    \
+             pub fn find() -> Option<Self> { None }\n    \
+             pub async fn connect() -> Engine { Engine::new() }\n    \
+             pub fn start(&self) {}\n    pub fn stop(&self) {}\n    pub fn drain(&self) {}\n    \
+             pub fn spin(&self) {}\n    pub fn tick(&self) {}\n    pub fn halt(&self) {}\n    \
+             pub fn pause(&self) {}\n    pub fn rest(&self) {}\n}\n\
+             impl Config {\n    pub fn check(&self) {}\n    pub fn load(&self) {}\n}\n\
+             impl Builder {\n    pub fn new() -> Self { Builder }\n    \
+             pub fn color(&mut self, _on: bool) -> &mut Builder { self }\n    \
+             pub fn build(&self) -> Engine { Engine::new() }\n}\n",
+        ),
+        (
+            "src/app.rs",
+            "use crate::model::{Builder, Config, Engine, Shape, Square};\nuse std::sync::Arc;\n\n\
+             pub fn literal() { let e = Engine { cfg: Config }; e.start(); e.cfg.check(); }\n\
+             pub fn typed() { let e: Engine = make(); e.stop(); }\n\
+             pub fn param(e: &Engine, c: Config) { e.drain(); c.load(); }\n\
+             pub fn chain() { Builder::new().color(true).color(false).build().spin(); }\n\
+             pub fn fallible() -> std::io::Result<()> { let e = Engine::open()?; e.tick(); Ok(()) }\n\
+             pub fn optional() { Engine::find().unwrap().halt(); \
+             if let Some(e) = Engine::find() { e.pause(); } }\n\
+             pub async fn later() { let e = Engine::connect().await; e.rest(); }\n\
+             pub fn shared() { let e = Arc::new(Engine::new()); e.start(); e.clone(); }\n\
+             pub fn defaulted() { let c = Config::default(); c.check(); }\n\
+             fn make() -> Engine { Engine::new() }\n\
+             pub fn dynamic(s: &dyn Shape, t: Box<dyn Shape>) { s.area(); t.area(); }\n\
+             pub fn generic<S: Shape>(s: S) { s.area(); }\n\
+             pub fn concrete(s: Square) { s.area(); }\n\
+             pub fn shadowed() { let e = Engine::new(); let e = 5u8; e.stop(); }\n\
+             pub fn closure() { let e = Engine::new(); let f = |e: u8| e.halt(); f(1); }\n\
+             pub fn inner() { let e = Engine::new(); { let e = 1u8; e.drain(); } e.spin(); }\n\
+             pub fn local_fn() { fn make() -> u8 { 1 } let e = make(); e.tick(); }\n",
+        ),
+    ]);
+    let edge = |from: &str, to: &str| format!("src_app_{from} -calls-> src_model_{to}");
+    for want in [
+        edge("literal", "engine_start"),
+        edge("literal", "config_check"),
+        edge("typed", "engine_stop"),
+        edge("param", "engine_drain"),
+        edge("param", "config_load"),
+        edge("chain", "builder_color"),
+        edge("chain", "builder_build"),
+        edge("chain", "engine_spin"),
+        edge("fallible", "engine_tick"),
+        edge("optional", "engine_halt"),
+        edge("optional", "engine_pause"),
+        edge("later", "engine_rest"),
+        edge("shared", "engine_start"),
+        edge("defaulted", "config_check"),
+        // A concrete type's trait impl is its method.
+        edge("concrete", "square_area"),
+        // The inner block's `e` is a `u8`; the outer one is still an `Engine` after it.
+        edge("inner", "engine_spin"),
+    ] {
+        assert!(l.contains(&want), "missing {want}: {l:#?}");
+    }
+    for unwanted in [
+        // Trait objects and generic parameters dispatch at run time or per instantiation.
+        edge("dynamic", "square_area"),
+        edge("generic", "square_area"),
+        // Shadowed by a `u8`, a closure parameter, an inner block's binding and a nested fn.
+        edge("shadowed", "engine_stop"),
+        edge("closure", "engine_halt"),
+        edge("inner", "engine_drain"),
+        edge("local_fn", "engine_tick"),
+        // `Arc::clone`, not a method of `Engine`.
+        edge("shared", "engine_clone"),
+    ] {
+        assert!(!l.contains(&unwanted), "unexpected {unwanted}: {l:#?}");
+    }
+}

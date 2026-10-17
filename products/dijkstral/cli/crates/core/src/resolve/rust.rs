@@ -47,7 +47,10 @@
 //! - `self.a.b.m(..)` follows the declared types of the fields (`struct S { a: crate::A }`,
 //!   through `&`, `Box`, `Arc` and `Rc`, generic parameters never) from the impl's type to the
 //!   unique method `m` of the last one, unless a wrapper answers `m` itself (`clone`, `fmt`…).
-//!   Receivers other than `self` field chains need local type inference and are left alone.
+//! - Any other `recv.m(..)` whose receiver has a symbolic type (`crate::extract::rust::RsTy`, from
+//!   local type inference) evaluates it against the declared return and field types: the unique
+//!   method `m` of the struct or enum it names. Traits, generic parameters and anything a
+//!   declaration does not fix evaluate to nothing.
 
 mod modules;
 
@@ -55,7 +58,9 @@ use std::collections::{HashMap, HashSet};
 
 use self::modules::{Modules, Res};
 use super::{Index, Resolution, View};
-use crate::extract::rust::{FieldCall, PathCall, RsAlias, RsField, RsUse};
+use crate::extract::rust::{
+    FieldCall, PathCall, RsAlias, RsField, RsPathTy, RsReturn, RsTy, RsUse,
+};
 use crate::extract::{external_node, origin};
 use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc, NodeKind};
 use crate::lang::Family;
@@ -415,7 +420,22 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             let t = types.field_call(&modules, fi, c)?;
             Some((c.caller.as_str(), c.in_file.as_deref(), t, true, c.line))
         });
-        let mut resolved: Vec<_> = path_targets.chain(field_targets).collect();
+        // `recv.m(..)` through the receiver's inferred type (local type inference).
+        let mut memo = vec![None; facts.tys.len()];
+        let method_targets = facts.method_calls.iter().filter_map(|c| {
+            let cx = EvalCx {
+                f: fi,
+                caller: &c.caller,
+                depth: c.depth,
+                tys: &facts.tys,
+            };
+            let t = types.method_call(&modules, &cx, &mut memo, c.recv, &c.name)?;
+            Some((c.caller.as_str(), c.in_file.as_deref(), t, true, c.line))
+        });
+        let mut resolved: Vec<_> = path_targets
+            .chain(field_targets)
+            .chain(method_targets)
+            .collect();
         resolved.sort_by_key(|r| r.4);
         for (caller, in_file, target, is_call, line) in resolved {
             let caller = v.id(caller);
@@ -570,7 +590,47 @@ struct Types<'v> {
     traits: HashSet<&'v str>,
     /// (file, alias name) → `type` alias of a path.
     aliases: HashMap<(usize, &'v str), &'v RsAlias>,
+    /// Variant id → its enum's id: a variant constructs a value of the enum.
+    variant_enums: HashMap<&'v str, &'v str>,
+    /// Declared struct and enum ids: a tuple struct constructs a value of itself.
+    type_ids: HashSet<&'v str>,
+    /// Function or method id → its declared return types (declaring file), one per definition.
+    returns: HashMap<&'v str, Vec<(usize, &'v RsReturn)>>,
 }
+
+/// A written type's parts, borrowed from an [`RsPathTy`] or an [`RsField`].
+#[derive(Clone, Copy)]
+struct RsPathTyRef<'v> {
+    path: &'v [String],
+    wrapped: bool,
+    inner: Option<&'v RsPathTy>,
+}
+
+/// What an expression's symbolic type ([`RsTy`]) evaluates to.
+#[derive(Clone)]
+enum Val<'v> {
+    /// A declared struct or enum, possibly inside `Box`, `Arc` or `Rc`.
+    Ty(&'v str, bool),
+    /// `Option<T>` / `Result<T, E>`: `T` as written in file `.0`, inline modules `.1`, function
+    /// `.2`.
+    Container(usize, u32, Option<&'v str>, &'v RsPathTy),
+    /// What an `async fn` returns before `.await`.
+    Future(Box<Val<'v>>),
+}
+
+/// Where a file's symbolic types are evaluated: the calling function and its inline modules.
+struct EvalCx<'v> {
+    f: usize,
+    caller: &'v str,
+    depth: u32,
+    tys: &'v [RsTy],
+}
+
+/// Associated functions whose std trait returns `Self` (`T::default()`, `T::from(x)`).
+const SELF_CTORS: &[&str] = &["default", "from"];
+
+/// `Option` / `Result` methods that yield the `T` inside.
+const UNWRAPS: &[&str] = &["expect", "unwrap", "unwrap_or_default", "unwrap_unchecked"];
 
 impl<'v> Types<'v> {
     fn new(files: &'v [View], index: &Index, modules: &Modules<'v, '_>) -> Self {
@@ -613,6 +673,7 @@ impl<'v> Types<'v> {
         }
         let mut methods: HashMap<(&str, &str), Vec<&str>> = HashMap::new();
         let mut variants: HashMap<(&str, &str), &str> = HashMap::new();
+        let mut variant_enums: HashMap<&str, &str> = HashMap::new();
         for v in &modules.views {
             for e in &v.facts.edges {
                 let (Some(owner), Some(member)) =
@@ -646,6 +707,9 @@ impl<'v> Types<'v> {
                         variants
                             .entry((owner.id.as_str(), member.label.as_str()))
                             .or_insert(&member.id);
+                        variant_enums
+                            .entry(member.id.as_str())
+                            .or_insert(owner.id.as_str());
                     }
                     _ => {}
                 }
@@ -654,6 +718,7 @@ impl<'v> Types<'v> {
         let mut fields: HashMap<(&str, &str), Vec<(usize, &RsField)>> = HashMap::new();
         let mut traits = HashSet::new();
         let mut aliases = HashMap::new();
+        let mut returns: HashMap<&str, Vec<(usize, &RsReturn)>> = HashMap::new();
         for (fi, v) in modules.views.iter().enumerate() {
             let LangFacts::Rust(facts) = &v.facts.lang else {
                 continue;
@@ -667,6 +732,9 @@ impl<'v> Types<'v> {
             for a in &facts.aliases {
                 aliases.entry((fi, a.name.as_str())).or_insert(a);
             }
+            for r in &facts.returns {
+                returns.entry(v.id(&r.id)).or_default().push((fi, r));
+            }
             for f in &facts.fields {
                 if let Some(&owner) = types[fi].get(f.owner.as_str()) {
                     fields
@@ -676,6 +744,7 @@ impl<'v> Types<'v> {
                 }
             }
         }
+        let type_ids = types.iter().flat_map(|m| m.values().copied()).collect();
         Types {
             fns,
             types,
@@ -684,6 +753,9 @@ impl<'v> Types<'v> {
             fields,
             traits,
             aliases,
+            variant_enums,
+            type_ids,
+            returns,
         }
     }
 
@@ -736,20 +808,37 @@ impl<'v> Types<'v> {
         f: usize,
         c: &'v PathCall,
     ) -> Option<(&'v str, bool)> {
-        // A first segment bound by a `use` in the calling function's body, else by one in the
-        // inline module around the call (`mod tests { use … }`; sibling modules must agree).
-        let first = c.qual.first().map(String::as_str);
+        self.with_qualified(modules, f, c.depth, Some(&c.caller), &c.qual, |r| {
+            self.below(modules, r?, &c.name)
+        })
+    }
+
+    /// Hands `k` what a path written in file `f` (inside the inline modules `depth`, in
+    /// function `func`) resolves to. Its first segment may be bound by a `use` in the
+    /// function's body, else by one in the inline module around it (sibling modules must
+    /// agree), else the file's module scope decides.
+    fn with_qualified<R>(
+        &self,
+        modules: &Modules<'v, '_>,
+        f: usize,
+        depth: u32,
+        func: Option<&str>,
+        segs: &[String],
+        k: impl FnOnce(Option<Res<'_>>) -> Option<R>,
+    ) -> Option<R> {
+        let first = segs.first().map(String::as_str);
         let binds = |u: &&RsUse| !u.glob && u.bound.as_deref() == first;
         let uses = modules.uses(f);
-        let mut local = uses
-            .iter()
-            .filter(binds)
-            .find(|u| u.func.as_deref() == Some(c.caller.as_str()));
-        if local.is_none() && c.depth > 0 {
+        let mut local = func.and_then(|func| {
+            uses.iter()
+                .filter(binds)
+                .find(|u| u.func.as_deref() == Some(func))
+        });
+        if local.is_none() && depth > 0 {
             let mut inner = uses
                 .iter()
                 .filter(binds)
-                .filter(|u| !u.in_fn && u.depth == c.depth);
+                .filter(|u| !u.in_fn && u.depth == depth);
             local = inner.next();
             if local.is_some_and(|u| inner.any(|o| o.path != u.path)) {
                 return None;
@@ -757,18 +846,10 @@ impl<'v> Types<'v> {
         }
         match local {
             Some(u) => {
-                let path: Vec<String> = u.path.iter().chain(&c.qual[1..]).cloned().collect();
-                self.below(
-                    modules,
-                    modules.resolve_qualifier(f, u.depth, &path)?,
-                    &c.name,
-                )
+                let path: Vec<String> = u.path.iter().chain(&segs[1..]).cloned().collect();
+                k(modules.resolve_qualifier(f, u.depth, &path))
             }
-            None => self.below(
-                modules,
-                modules.resolve_qualifier(f, c.depth, &c.qual)?,
-                &c.name,
-            ),
+            None => k(modules.resolve_qualifier(f, depth, segs)),
         }
     }
 
@@ -825,6 +906,241 @@ impl<'v> Types<'v> {
             return None;
         }
         self.method(ty, &c.name)
+    }
+
+    /// The method `recv.name(..)` calls, for a receiver whose type local inference fixed.
+    fn method_call(
+        &self,
+        modules: &Modules<'v, '_>,
+        cx: &EvalCx<'v>,
+        memo: &mut [Option<Option<Val<'v>>>],
+        recv: u32,
+        name: &str,
+    ) -> Option<&'v str> {
+        let Val::Ty(ty, wrapped) = self.eval(modules, cx, memo, recv)? else {
+            return None;
+        };
+        if wrapped && WRAPPER_METHODS.contains(&name) {
+            return None;
+        }
+        self.method(ty, name)
+    }
+
+    fn eval(
+        &self,
+        modules: &Modules<'v, '_>,
+        cx: &EvalCx<'v>,
+        memo: &mut [Option<Option<Val<'v>>>],
+        i: u32,
+    ) -> Option<Val<'v>> {
+        if let Some(v) = memo.get(i as usize)? {
+            return v.clone();
+        }
+        // Entries only point at earlier ones; the guard is for malformed input.
+        memo[i as usize] = Some(None);
+        let v = self.eval_uncached(modules, cx, memo, i);
+        memo[i as usize] = Some(v.clone());
+        v
+    }
+
+    fn eval_uncached(
+        &self,
+        modules: &Modules<'v, '_>,
+        cx: &EvalCx<'v>,
+        memo: &mut [Option<Option<Val<'v>>>],
+        i: u32,
+    ) -> Option<Val<'v>> {
+        match cx.tys.get(i as usize)? {
+            RsTy::Written(t) => self.written(modules, cx.f, cx.depth, Some(cx.caller), t),
+            RsTy::BareRet(name) => {
+                let (id, is_call) = self.bare_target(modules, cx.f, cx.caller, name)?;
+                self.produced(modules, id, is_call)
+            }
+            RsTy::PathRet { qual, name } => {
+                let found =
+                    self.with_qualified(modules, cx.f, cx.depth, Some(cx.caller), qual, |r| {
+                        self.below(modules, r?, name)
+                    });
+                match found {
+                    Some((id, is_call)) => self.produced(modules, id, is_call),
+                    // `T::default()`, `T::from(x)` through std traits the type does not
+                    // implement by hand.
+                    None if SELF_CTORS.contains(&name.as_str()) => {
+                        let ty = self.with_qualified(
+                            modules,
+                            cx.f,
+                            cx.depth,
+                            Some(cx.caller),
+                            qual,
+                            |r| self.type_of(modules, r),
+                        )?;
+                        let own = self.methods.contains_key(&(ty, name.as_str()));
+                        (!own && !self.traits.contains(ty)).then_some(Val::Ty(ty, false))
+                    }
+                    None => None,
+                }
+            }
+            RsTy::MethodRet { recv, name } => match self.eval(modules, cx, memo, *recv)? {
+                Val::Container(f, depth, func, inner) if UNWRAPS.contains(&name.as_str()) => {
+                    self.written(modules, f, depth, func, inner)
+                }
+                Val::Ty(ty, wrapped) => {
+                    let name = name.as_str();
+                    // `clone()` of a value or of its `Box`/`Arc`/`Rc` is the same type.
+                    let same = matches!(name, "clone" | "to_owned")
+                        && !self.methods.contains_key(&(ty, name));
+                    if same {
+                        return Some(Val::Ty(ty, wrapped));
+                    }
+                    if wrapped && WRAPPER_METHODS.contains(&name) {
+                        return None;
+                    }
+                    self.returned(modules, self.method(ty, name)?)
+                }
+                _ => None,
+            },
+            RsTy::Field { recv, name } => {
+                let Val::Ty(ty, _) = self.eval(modules, cx, memo, *recv)? else {
+                    return None;
+                };
+                let decls = self.fields.get(&(ty, name.as_str()))?;
+                let (g, first) = decls[0];
+                if decls[1..].iter().any(|(_, d)| {
+                    d.ty != first.ty || d.wrapped != first.wrapped || d.inner != first.inner
+                }) {
+                    return None;
+                }
+                let t = RsPathTyRef {
+                    path: &first.ty,
+                    wrapped: first.wrapped,
+                    inner: first.inner.as_deref(),
+                };
+                self.written_parts(modules, g, first.depth, None, t)
+            }
+            RsTy::Unwrap(r) => match self.eval(modules, cx, memo, *r)? {
+                Val::Container(f, depth, func, inner) => {
+                    self.written(modules, f, depth, func, inner)
+                }
+                _ => None,
+            },
+            RsTy::Await(r) => match self.eval(modules, cx, memo, *r)? {
+                Val::Future(v) => Some(*v),
+                _ => None,
+            },
+            RsTy::Wrap(r) => match self.eval(modules, cx, memo, *r)? {
+                Val::Ty(ty, _) => Some(Val::Ty(ty, true)),
+                _ => None,
+            },
+        }
+    }
+
+    /// What a type written in file `f` names: a declared struct or enum (never a trait), or an
+    /// `Option` / `Result` from outside the repository (or a `type` alias of one) whose `T` is
+    /// written.
+    fn written(
+        &self,
+        modules: &Modules<'v, '_>,
+        f: usize,
+        depth: u32,
+        func: Option<&'v str>,
+        t: &'v RsPathTy,
+    ) -> Option<Val<'v>> {
+        let parts = RsPathTyRef {
+            path: &t.path,
+            wrapped: t.wrapped,
+            inner: t.inner.as_deref(),
+        };
+        self.written_parts(modules, f, depth, func, parts)
+    }
+
+    fn written_parts(
+        &self,
+        modules: &Modules<'v, '_>,
+        f: usize,
+        depth: u32,
+        func: Option<&'v str>,
+        t: RsPathTyRef<'v>,
+    ) -> Option<Val<'v>> {
+        enum Found<'v> {
+            Ty(&'v str),
+            Container,
+        }
+        let container = matches!(t.path.last().map(String::as_str), Some("Option" | "Result"));
+        let found = self.with_qualified(modules, f, depth, func, t.path, |r| {
+            if let Some(ty) = self.type_of(modules, r) {
+                return Some(Found::Ty(ty));
+            }
+            let std = match r {
+                None | Some(Res::External) => true,
+                // `type Result<T> = std::result::Result<T, Error>;`
+                Some(Res::Item(g, name)) => self.aliases.get(&(g, name)).is_some_and(|a| {
+                    matches!(a.ty.last().map(String::as_str), Some("Option" | "Result"))
+                }),
+                Some(Res::File(_)) => false,
+            };
+            (container && std).then_some(Found::Container)
+        })?;
+        match found {
+            Found::Ty(ty) => (!self.traits.contains(ty)).then_some(Val::Ty(ty, t.wrapped)),
+            Found::Container => Some(Val::Container(f, depth, func, t.inner?)),
+        }
+    }
+
+    /// The value a call to `id` produces: a function's declared return type, or the type a
+    /// tuple struct or variant constructs.
+    fn produced(&self, modules: &Modules<'v, '_>, id: &'v str, is_call: bool) -> Option<Val<'v>> {
+        if is_call {
+            return self.returned(modules, id);
+        }
+        if let Some(&e) = self.variant_enums.get(id) {
+            return Some(Val::Ty(e, false));
+        }
+        self.type_ids.contains(id).then_some(Val::Ty(id, false))
+    }
+
+    /// The declared return type of function or method `id` (every definition must agree).
+    fn returned(&self, modules: &Modules<'v, '_>, id: &'v str) -> Option<Val<'v>> {
+        let rets = self.returns.get(id)?;
+        let (g, r) = rets[0];
+        if rets[1..]
+            .iter()
+            .any(|(_, o)| o.ty != r.ty || o.is_async != r.is_async)
+        {
+            return None;
+        }
+        let v = self.written(modules, g, r.depth, None, &r.ty)?;
+        Some(if r.is_async {
+            Val::Future(Box::new(v))
+        } else {
+            v
+        })
+    }
+
+    /// What a bare `name(..)` in function `caller` of file `f` calls: an import in the body, a
+    /// function or tuple struct of the file, else an import of the file.
+    fn bare_target(
+        &self,
+        modules: &Modules<'v, '_>,
+        f: usize,
+        caller: &str,
+        name: &str,
+    ) -> Option<(&'v str, bool)> {
+        let uses = modules.uses_in(f, caller);
+        let own = uses
+            .iter()
+            .any(|u| u.in_fn && !u.glob && u.bound.as_deref() == Some(name));
+        if !own {
+            if let Some(&id) = self.fns[f].get(name) {
+                return Some((id, true));
+            }
+            if let Some(&id) = self.types[f].get(name) {
+                return Some((id, false));
+            }
+        }
+        match imported(modules, f, name, &uses, true)? {
+            Some((t, item)) => self.callable(t, item),
+            None => None,
+        }
     }
 }
 

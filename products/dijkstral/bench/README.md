@@ -894,3 +894,62 @@ Sessions in which `context`'s first answer already held the key facts cost a med
 (below no graph's 41k) against 71k when it was partial, so coverage is what lowers cost per
 session; per run dijkstral still spends about 8% more fresh tokens than no graph, which spends
 least because it often answers without opening a file.
+
+### Method calls through local type inference — 2026-10-17
+
+`recv.m()` now resolves through the receiver's type wherever a declaration fixes it
+(`cli/docs/graphify-format.md` §11.5 Q23 for Rust, §12.2 Q24 for Go): locals bound from
+constructors, struct literals, typed `let`/`var`, parameters, declared return types (builder
+chains, `x, err := NewT()`), fields, `?`/`unwrap()`/`Some(x)`, `.await`, Go type switches and
+assertions, package-level variables and embedded (promoted) methods, within block scopes that
+respect shadowing. Trait objects, interfaces, generic parameters, closures and iterator items
+resolve nothing. Accuracy against the SCIP oracle (`accuracy/`, oracles unchanged since
+2026-10-13), dijkstral `8006022` → this change, `extract --code-only`, precision / recall in %:
+
+| repo | family | Graphify 0.9.86 | dijkstral before | dijkstral after |
+|---|---|---|---|---|
+| ripgrep | calls | 80.2 / 40.0 | 84.9 / 55.1 | **89.0 / 81.5** |
+| monet (all languages) | calls | 95.5 / 61.6 | 97.0 / 75.0 | **97.2 / 81.1** |
+| monet (Rust callers only) | calls | — | 97.5 / 71.2 | **97.7 / 79.2** |
+| kubernetes | calls | 88.1 / 51.2 | 88.3 / 51.7 | **92.8 / 88.6** |
+| all three | references, inherits, imports | | unchanged | unchanged |
+
+Confirmed call pairs gained: ripgrep 1,277, monet 189, kubernetes 6,884; no confirmed pair was
+lost. New judged false positives: ripgrep 13, all from `HiArgs::matcher_pcre2`'s builder chain
+under `#[cfg(feature = "pcre2")]`, which rust-analyzer indexed with the feature off (the class of
+the previous change's single false positive); monet 0; kubernetes 3, `Backoff{..}.Timer()` and
+`.DelayFunc()` in `wait/loop_test.go`, correct by the code but absent from scip-go's index at
+those sites. Missed call pairs by receiver (classified from the call-site text), before → after:
+
+| class | ripgrep | monet (Rust) | kubernetes |
+|---|---|---|---|
+| builder and call chains `a.b().c()` | 815 → 126 | 47 → 11 | 3,066 → 123 |
+| locals from constructors, literals, calls (`let x = T::new()`, `x := NewT()`, `T{..}`) | 484 → 183 | 166 → 98 | 2,905 → 840 |
+| parameters, method receivers, `var x T`, their fields | 281 → 49 | 56 → 9 | 1,892 → 579 |
+| patterns, `for`/`range`, closure parameters | 148 → 123 | 60 → 26 | 432 → 336 |
+| trait objects, generic parameters (not attempted) | 10 → 10 | 16 → 12 | — |
+| `self.m()`, `self.f.m()` (trait defaults and the rest) | 116 → 90 | 10 → 10 | — |
+| other receivers (unbound names, indexing) | 68 → 64 | 19 → 19 | 356 → 161 |
+| not method syntax (calls inside macros, paths) | 249 → 249 | 305 → 305 | 369 → 97 |
+| total | 2,171 → 894 | 679 → 490 | 9,020 → 2,136 |
+
+Most of what remains in ripgrep sits inside `assert!`/`format!` arguments; 1,426 of the 2,136 left
+in kubernetes are calls through interface-typed values, whose static target is the interface
+method declaration (left alone). Go also gains `pkg.F[T](..)` and `pkg.F(..)` where a method of the
+package shares `F`'s name (both dropped by Graphify).
+
+Graph parity with Graphify (`parity.py`): ripgrep `.rs` calls precision 76.7% → 54.4% (1,298 more
+deliberate extra calls), recall 99.9% unchanged; kubernetes `.go` calls precision 99.0% → 72.5%
+(72,377 more, calls 198,958 → 271,319 of 1.47M links), recall 99.7% unchanged, with 17 of
+Graphify's links now reversed (a same-file G5 edge A→B and the inferred B→A collapse to one link,
+§8.2). The Go fixture gains five Q24 links (`golden_go.rs` ALLOWED); its communities are compared
+without them (NMI 1.000) and its report goldens by section. Builds stay byte-identical across
+`--threads 1, 3, 12` on ripgrep, monet and kubernetes.
+
+Build time, Apple M5 shared with other jobs (load average 3–13), interleaved runs into a scratch
+`--out`: ripgrep (11 runs) cold median 0.151 s → 0.158 s, warm 0.054 s → 0.054 s; monet (11 runs)
+cold 0.165 s → 0.170 s, warm 0.056 s → 0.057 s; kubernetes (9 runs, default threads) cold
+13.65 s → 14.31 s (+4.9%; +3.4% in an earlier session of 9 runs, 14.27 s → 14.76 s), CPU
+61.7 s → 64.6 s. Per phase (3 runs) the extract phase grows 0.2–0.6 s, resolve 0.15–0.25 s
+(inference runs beside the per-file Go pass) and cache-write about 0.05 s; with `--threads 1` the
+wall time is unchanged within noise (29.9–31.4 s both). The facts cache grows 423 MB → 471 MB.

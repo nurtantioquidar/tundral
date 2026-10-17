@@ -4,7 +4,8 @@
 //! (`dir_receiver_m`), interface methods, type-parameter and unresolved-type stubs, `contains`,
 //! `method`, `embeds` and `references` edges, and the calls that resolve inside the file. Everything
 //! that needs other files (imports, qualified types, cross-file calls) is recorded in [`GoFacts`]
-//! for `crate::resolve::go`.
+//! for `crate::resolve::go`, together with the declarations and symbolic receiver types of local
+//! type inference ([`infer`], Q24).
 //!
 //! Graphify behaviours reproduced for id parity (spec §12.4, quirk Q10), because Graphify's ids
 //! depend on them:
@@ -27,6 +28,8 @@ use tree_sitter::{Node as TsNode, Tree};
 
 use super::{slug, Ctx};
 use crate::facts::NodeKind;
+
+mod infer;
 
 /// Placeholder for the directory slug of files at the scan root. Graphify uses the scan root's own
 /// directory name, which is not part of a file's cache key, so the resolver substitutes it.
@@ -75,6 +78,92 @@ pub struct GoFacts {
     /// Unqualified type names not declared in the file: (local stub id, name).
     pub bare_stubs: Vec<(String, String)>,
     pub calls: Vec<GoCall>,
+    /// Methods: (receiver type name without type arguments, method name, index of the node
+    /// holding its id).
+    pub methods: Vec<(String, String, u32)>,
+    /// Interface types the file declares: a call through one dispatches at run time.
+    pub interfaces: Vec<String>,
+    /// The file's struct types with every field.
+    pub structs: Vec<GoStruct>,
+    /// Package-level variables: (name, index of their type in [`GoFacts::tys`]).
+    pub vars: Vec<(String, u32)>,
+    /// Declared results of the file's functions and methods.
+    pub returns: Vec<GoReturn>,
+    /// Symbolic types of method-call receivers (local type inference, [`infer`]).
+    pub tys: Vec<GoTy>,
+    /// `recv.M(..)` calls whose receiver has a symbolic type, in call order.
+    pub method_calls: Vec<GoMethodCall>,
+}
+
+/// A struct type and its fields (embedded fields under their type's name).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GoStruct {
+    pub name: String,
+    pub fields: Vec<GoField>,
+}
+
+/// A named type as written: `T` or `pkg.T` (pointers and type arguments peeled).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GoWritten {
+    /// The import qualifier of `pkg.T`.
+    pub qual: Option<String>,
+    pub name: String,
+}
+
+/// A struct field, with its type when that is a named type.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GoField {
+    pub name: String,
+    pub ty: Option<GoWritten>,
+    /// Embedded: its methods and fields are promoted.
+    pub embedded: bool,
+}
+
+/// The declared results of a function or method (`None` where a result is not a named type).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GoReturn {
+    /// Index of the node holding the function's or method's id.
+    pub node: u32,
+    pub results: Vec<Option<GoWritten>>,
+}
+
+/// What a call names.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum GoCallee {
+    /// `F(..)`: a function of the package, or a conversion `T(x)`.
+    Bare(String),
+    /// `pkg.F(..)` through an import qualifier (or a conversion `pkg.T(x)`).
+    Qual(String, String),
+    /// `recv.M(..)` on a typed receiver.
+    Method(u32, String),
+}
+
+/// The symbolic type of an expression in a function body, evaluated by the cross-file pass.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum GoTy {
+    /// A type written in the body or the signature, resolved in the file.
+    Written(GoWritten),
+    /// Result `index` of a call.
+    Call { callee: GoCallee, index: u32 },
+    /// The declared type of the field `recv.name`.
+    Field { recv: u32, name: String },
+    /// A package-level variable of the file's package, by name.
+    PkgVar(String),
+    /// `pkg.Var` through an import qualifier.
+    QualVar(String, String),
+}
+
+/// `recv.M(..)` with a typed receiver.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GoMethodCall {
+    /// The calling function or method: index of its node.
+    pub caller: u32,
+    /// Index of the receiver's type in [`GoFacts::tys`].
+    pub recv: u32,
+    pub name: String,
+    pub line: u32,
+    /// Index of the node the in-file name rule chose (G5), if any.
+    pub in_file: Option<u32>,
 }
 
 /// Predeclared types: unqualified references to them produce nothing.
@@ -141,6 +230,8 @@ struct Go<'c, 'a> {
     bare_seen: HashSet<String>,
     /// Calls in walk order, bound after the walk (the binding table needs every node).
     calls: Vec<RawCall>,
+    tys: Vec<GoTy>,
+    method_calls_raw: Vec<infer::RawGoCall>,
 }
 
 /// A call site: `F()` / `x.F()` (`path: None`) or `pkg.F()` through an import.
@@ -177,6 +268,8 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         qual_seen: HashSet::new(),
         bare_seen: HashSet::new(),
         calls: Vec::new(),
+        tys: Vec::new(),
+        method_calls_raw: Vec::new(),
         cx,
     };
     if let Some(tree) = tree {
@@ -396,6 +489,7 @@ impl<'a> Go<'_, 'a> {
                 }
                 "function_declaration" => self.function(decl),
                 "method_declaration" => self.method(decl),
+                "var_declaration" => self.package_vars(decl),
                 _ => {}
             }
         }
@@ -483,6 +577,7 @@ impl<'a> Go<'_, 'a> {
         let mut refs = Vec::new();
         match body.kind() {
             "struct_type" => {
+                let mut fields = Vec::new();
                 let Some(list) = named_children(body)
                     .into_iter()
                     .find(|n| n.kind() == "field_declaration_list")
@@ -497,14 +592,39 @@ impl<'a> Go<'_, 'a> {
                         continue;
                     };
                     let fline = Ctx::line(field);
+                    let w = self.written_ty(ty, &scope);
+                    let mut c = field.walk();
+                    let names: Vec<String> = field
+                        .children_by_field_name("name", &mut c)
+                        .map(|n| self.text(n).to_string())
+                        .collect();
+                    // An embedded field is named by its type.
+                    let embedded = names.is_empty();
+                    let names = if embedded {
+                        vec![w.as_ref().map_or_else(String::new, |w| w.name.clone())]
+                    } else {
+                        names
+                    };
+                    for fname in names {
+                        fields.push(GoField {
+                            name: fname,
+                            ty: w.clone(),
+                            embedded,
+                        });
+                    }
                     if field.child_by_field_name("name").is_none() {
                         self.embed(ty, fline, &scope, &mut refs);
                     } else {
                         self.type_refs(ty, Some("field"), fline, &scope, &mut refs);
                     }
                 }
+                self.facts.structs.push(GoStruct {
+                    name: name.to_string(),
+                    fields,
+                });
             }
             "interface_type" => {
+                self.facts.interfaces.push(name.to_string());
                 let mut methods = Vec::new();
                 for elem in named_children(body) {
                     match elem.kind() {
@@ -762,7 +882,8 @@ impl<'a> Go<'_, 'a> {
         let name = self.text(name);
         let id = self.final_id(name, &Ctx::child_id(&self.cx.file_id, name));
         let line = Ctx::line(decl);
-        self.put(id.clone(), format!("{name}()"), line, Slot::Func);
+        let kept = self.put(id.clone(), format!("{name}()"), line, Slot::Func);
+        let node = self.slots[&id].0 as u32;
         let file_id = self.cx.file_id.clone();
         self.cx.add_edge(&file_id, &id, "contains", line, None);
         let mut scope = Vec::new();
@@ -771,8 +892,9 @@ impl<'a> Go<'_, 'a> {
         }
         let refs = self.signature(decl, &scope, line);
         self.flush(&id, refs);
+        self.record_results(node, decl, &scope);
         if let Some(body) = decl.child_by_field_name("body") {
-            self.calls(&id, body);
+            self.walk_body(&id, kept.then_some(node), decl, body, &scope, None);
         }
     }
 
@@ -793,28 +915,25 @@ impl<'a> Go<'_, 'a> {
                 .entry(recv.clone())
                 .or_insert_with(|| owner.clone());
         }
-        self.put(id.clone(), format!(".{name}()"), line, Slot::Method);
+        let kept = self.put(id.clone(), format!(".{name}()"), line, Slot::Method);
+        let node = self.slots[&id].0 as u32;
         self.cx.add_edge(&owner, &id, "method", line, None);
         let refs = self.signature(decl, &scope, line);
         self.flush(&id, refs);
+        let base = recv.split('[').next().unwrap_or(&recv).to_string();
+        self.facts.methods.push((base, name.to_string(), node));
+        self.record_results(node, decl, &scope);
         if let Some(body) = decl.child_by_field_name("body") {
-            self.calls(&id, body);
+            self.walk_body(&id, kept.then_some(node), decl, body, &scope, Some(&recv));
         }
     }
 
-    /// Calls in a function body (closures included), in source order.
-    fn calls(&mut self, caller: &str, body: TsNode) {
-        let mut stack = vec![body];
-        let mut cursor = body.walk();
-        while let Some(node) = stack.pop() {
-            if node.kind() == "call_expression" {
-                if let Some(f) = node.child_by_field_name("function") {
-                    self.call(caller, f, Ctx::line(node));
-                }
-            }
-            let start = stack.len();
-            stack.extend(node.named_children(&mut cursor));
-            stack[start..].reverse();
+    /// The declared results of the function or method at node `node`, when any is a named
+    /// type.
+    fn record_results(&mut self, node: u32, decl: TsNode, scope: &[String]) {
+        let results = self.results(decl, scope);
+        if results.iter().any(Option::is_some) {
+            self.facts.returns.push(GoReturn { node, results });
         }
     }
 
@@ -833,6 +952,17 @@ impl<'a> Go<'_, 'a> {
                     .flatten();
                 (self.text(field), path, false)
             }
+            // `pkg.F[T](..)`: an explicitly instantiated generic function of an imported
+            // package (dijkstral-native; Graphify drops the call).
+            "index_expression" | "type_instantiation_expression" => {
+                let Some((q, name)) = self.instantiated(function) else {
+                    return;
+                };
+                let Some(path) = q.and_then(|q| self.qualifiers.get(q).cloned()) else {
+                    return;
+                };
+                (name, Some(path), false)
+            }
             _ => return,
         };
         self.calls.push(RawCall {
@@ -844,17 +974,45 @@ impl<'a> Go<'_, 'a> {
         });
     }
 
+    /// The generic function an explicit instantiation names: `F[T]` / `pkg.F[T]` as
+    /// (qualifier, name). An index into anything else (`fns[i]`) is not one when the operand is
+    /// a local value, which callers check.
+    fn instantiated(&self, n: TsNode) -> Option<(Option<&'a str>, &'a str)> {
+        let target = match n.kind() {
+            "index_expression" => n.child_by_field_name("operand")?,
+            "type_instantiation_expression" => n.child_by_field_name("type")?,
+            _ => return None,
+        };
+        match target.kind() {
+            "identifier" | "type_identifier" => Some((None, self.text(target))),
+            "selector_expression" => {
+                let q = target.child_by_field_name("operand")?;
+                (q.kind() == "identifier").then_some(())?;
+                Some((
+                    Some(self.text(q)),
+                    self.text(target.child_by_field_name("field")?),
+                ))
+            }
+            "qualified_type" => Some((
+                Some(self.text(target.child_by_field_name("package")?)),
+                self.text(target.child_by_field_name("name")?),
+            )),
+            _ => None,
+        }
+    }
+
     /// Bind the file's calls once every node exists. `pkg.F()` goes to the cross-file pass; any
     /// other name binds to the last node of the file carrying it (functions, methods, types,
     /// receiver nodes and type stubs alike; G5), and a bare name that is not in the file goes to
     /// the cross-file pass. One edge per (caller, callee), first site kept.
     fn bind_calls(&mut self) {
-        let mut table: HashMap<&str, &str> = HashMap::new();
-        for n in &self.cx.facts.nodes {
+        // Name → (id, node index) of the last node carrying it.
+        let mut table: HashMap<&str, (&str, usize)> = HashMap::new();
+        for (i, n) in self.cx.facts.nodes.iter().enumerate() {
             if n.kind == NodeKind::File || n.kind == NodeKind::External {
                 continue;
             }
-            table.insert(call_name(&n.label), n.id.as_str());
+            table.insert(call_name(&n.label), (n.id.as_str(), i));
         }
         let mut local: Vec<(String, String, u32)> = Vec::new();
         let mut seen: HashSet<(&str, &str)> = HashSet::new();
@@ -864,7 +1022,7 @@ impl<'a> Go<'_, 'a> {
                 continue;
             }
             if c.path.is_none() {
-                if let Some(&target) = table.get(c.name.as_str()) {
+                if let Some(&(target, _)) = table.get(c.name.as_str()) {
                     if target != c.caller && seen.insert((c.caller.as_str(), target)) {
                         local.push((c.caller.clone(), target.to_string(), c.line));
                     }
@@ -883,6 +1041,11 @@ impl<'a> Go<'_, 'a> {
                 });
             }
         }
+        let raw = std::mem::take(&mut self.method_calls_raw);
+        let tys = std::mem::take(&mut self.tys);
+        let (tys, method_calls) = infer::finish_inference(raw, tys, &mut self.facts.vars, &table);
+        self.facts.tys = tys;
+        self.facts.method_calls = method_calls;
         for (caller, callee, line) in local {
             self.cx
                 .add_edge(&caller, &callee, "calls", line, Some("call"));
