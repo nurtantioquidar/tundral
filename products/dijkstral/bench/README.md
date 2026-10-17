@@ -822,3 +822,51 @@ and often wrong (its cost and accuracy vary most between runs).
 Memory suites with `context` (single run, `gpt-6-luna`, graphs from extraction prompt v2):
 LOCOMO judge 0.59 (51% correct) against no graph 0.47 and Graphify 0.53; LongMemEval-S 0.85 (85%)
 against 0.80 and 0.73.
+
+### Rust calls through crates, aliases and field types — 2026-10-17
+
+Rust calls now resolve through the module tree (`cli/docs/graphify-format.md` §11.5, Q23):
+path-qualified calls across workspace crates (`grep::cli::resolve_binary` through the `grep`
+facade's `pub extern crate grep_cli as cli`), crate names from the manifests (`[lib] name`,
+`package =` renames, `workspace = true`), `use … as` aliases, `type` aliases, function-body and
+inline-module `use`s, `Type::f` for types declared in other files, and `self.a.b.m()` through
+the fields' declared types (`should_preprocess` → `Override::matched`). Accuracy against the SCIP
+oracle (`accuracy/`, rust-analyzer 2026-09-28, oracles unchanged since 2026-10-13), dijkstral
+`66018d0` → `2e44122`, `extract --code-only`, precision / recall in %:
+
+| repo | family | Graphify 0.9.86 | dijkstral before | dijkstral after |
+|---|---|---|---|---|
+| ripgrep | calls | 80.2 / 40.0 | 80.3 / 40.1 | **84.9 / 55.1** |
+| ripgrep | references | 94.0 / 58.4 | 96.6 / 62.5 | **96.7 / 64.6** |
+| ripgrep | inherits, imports | 99.1 / 93.4, 76.8 / 61.3 | 100.0 / 93.4, 99.5 / 98.5 | unchanged |
+| monet (all languages) | calls | 95.5 / 61.6 | 96.3 / 61.7 | **97.0 / 75.0** |
+| monet (Rust callers only) | calls | — | 96.7 / 53.5 | **97.5 / 71.2** |
+| monet | references | 91.0 / 64.2 | 98.2 / 67.2 | **98.2 / 69.9** |
+| monet | inherits, imports | 91.7 / 84.6, 97.9 / 90.4 | 92.9 / 100.0, 100.0 / 100.0 | unchanged |
+
+ripgrep gains 723 confirmed call pairs and 44 constructor references, monet 416 and 32. The
+only new judged false positive is ripgrep's `grep::pcre2::RegexMatcherBuilder::new()` under
+`#[cfg(feature = "pcre2")]`, which rust-analyzer indexed with the feature off; two of Graphify's
+wrong INFERRED calls are gone (a bare name now goes where the file's import leads). Missed Rust
+call pairs by call-site syntax, before → after:
+
+| class | ripgrep | monet |
+|---|---|---|
+| `recv.m()` on a local or parameter (needs local type inference) | 1,882 → 1,850 | 392 → 368 |
+| `Type::f()`, type in another file | 469 → 7 | 168 → 0 |
+| `self.field.m()` | 204 → 25 | 69 → 4 |
+| `a::b::f()` / `crate::…` / `super::…` | 38 → 4 | 204 → 51 |
+| bare `f()` across files, `use … as` aliases | 16 → 0 | 77 → 71 |
+| bare same-file `f()` inside macro arguments | 137 → 137 | 180 → 180 |
+| `m!()` and calls inside macros | 94 → 94 | — |
+| `self.m()` (trait default methods), `Self::f()` in traits | 49 → 49 | 2 → 2 |
+
+Most of what remains under the path and bare rows sits inside `vec![…]`, `assert!(…)` or
+`format!(…)` arguments, which neither tool parses (§11.5).
+
+Graph parity with Graphify on ripgrep `.rs` (`parity.py --ext .rs`): calls precision 99.6% →
+76.7% (726 deliberate extra calls), recall 100.0% → 99.9% (the two wrong INFERRED calls). Builds
+stay byte-identical across `--threads 1, 3, 12` on ripgrep and monet. Build time, Apple M5, 15
+interleaved `extract --code-only` runs into a scratch `--out` (`run.py` writes into the corpus
+checkout): ripgrep cold median 0.143 s → 0.148 s, warm 0.053 s → 0.053 s; monet (7 runs) cold
+0.204 s → 0.221 s, warm 0.059 s → 0.057 s.
