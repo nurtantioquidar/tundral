@@ -953,3 +953,30 @@ cold 0.165 s → 0.170 s, warm 0.056 s → 0.057 s; kubernetes (9 runs, default 
 61.7 s → 64.6 s. Per phase (3 runs) the extract phase grows 0.2–0.6 s, resolve 0.15–0.25 s
 (inference runs beside the per-file Go pass) and cache-write about 0.05 s; with `--threads 1` the
 wall time is unchanged within noise (29.9–31.4 s both). The facts cache grows 423 MB → 471 MB.
+
+### Stage 7 follow-up: flows, faster code search and local type inference — 2026-10-17
+
+`context` additions (`a9153b2`, `c5b8675`, `37ada26`): flow questions ("how does X get from A to
+B", "… end up as …") are split into their two ends and answered with the shortest call chain
+between them; bare CamelCase names no longer pre-empt the code search; the code is scanned once
+per question, in parallel, prefiltered by substring (Kubernetes: 4.1 s → about 0.4 s per call);
+structure questions zoom into the best-matching area's subdirectories; and common abbreviations
+match (`config`/`cfg`, `err`, `dir`, `memory map` → `mmap`, …). Offline coverage 0.62 → 0.65
+(held out 0.45 → 0.47). One candidate — crediting text outside every definition to its file —
+lowered held-out flow coverage and was dropped.
+
+Key facts, `gpt-6-luna` (medium), three runs per arm, with the type inference above (`db2c7c4`,
+`23b6c8e`, `c1b0d7e`) and these `context` changes:
+
+| arm | pass | judge | judge correct | median tokens | fresh tokens per run | fresh tokens per correct answer |
+|---|---:|---:|---:|---:|---:|---:|
+| no graph | 60% ± 9 | 0.70 ± 0.06 | 48% ± 11 | 40,876 | 0.58M ± 0.14 | 20.1k |
+| Graphify | 74% ± 5 | 0.76 ± 0.03 | 56% ± 4 | 60,209 | 0.70M ± 0.09 | 21.3k |
+| dijkstral (`8006022`) | 89% ± 1 | 0.87 ± 0.01 | 76% ± 4 | 53,696 | 0.62M ± 0.03 | 13.7k |
+| dijkstral (`1e0e2c4`) | **90% ± 2** | **0.86 ± 0.02** | 72% ± 3 | 54,158 | **0.59M ± 0.04** | **13.7k** |
+
+Accuracy and quality are level with the previous dijkstral (within the spread) and well ahead of
+both other arms. Fresh tokens per run are now within no graph's own run-to-run spread (0.59M ±
+0.04 against 0.58M ± 0.14); per correct answer dijkstral costs about a third less than either.
+The median session stays higher than no graph's because `gpt-6-luna` without a graph often
+answers in one turn without opening a file — and is wrong about half the time.
