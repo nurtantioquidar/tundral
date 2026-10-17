@@ -954,6 +954,90 @@ fn code_search(ix: &Index, src: &mut Sources, question: &str) -> Vec<(u32, Vec<(
         .collect()
 }
 
+/// Words that ask how the code is organised rather than about one piece of it.
+const STRUCTURE_WORDS: &[&str] = &[
+    "organis",
+    "organiz",
+    "divid",
+    "split",
+    "structur",
+    "architectur",
+    "responsib",
+    "layer",
+    "layout",
+    "overview",
+    "crate",
+    "package",
+    "module",
+    "component",
+    "subsystem",
+];
+const AREAS: usize = 12;
+
+fn asks_structure(question: &str) -> bool {
+    words(question).any(|w| STRUCTURE_WORDS.iter().any(|s| w.starts_with(s)))
+}
+
+/// A map of the code: its areas (a top-level directory, or its subdirectories when it holds
+/// several, such as `crates/*` or `pkg/*`), areas whose path or symbols carry the question's words
+/// first, each with its most connected symbols outside tests.
+fn overview(ix: &Index, question: &str) -> String {
+    let mut top: HashMap<&str, HashSet<&str>> = HashMap::new();
+    let mut nodes_in: HashMap<String, Vec<u32>> = HashMap::new();
+    let code: Vec<u32> = (0..ix.node_count() as u32)
+        .filter(|&i| is_code(ix, i) && !is_file_node(ix, i) && !is_test_node(ix, i))
+        .filter(|&i| !is_config(ix.source_file(i)))
+        .collect();
+    for &i in &code {
+        let parts: Vec<&str> = ix.source_file(i).split('/').collect();
+        if parts.len() >= 3 {
+            top.entry(parts[0]).or_default().insert(parts[1]);
+        }
+    }
+    for &i in &code {
+        let parts: Vec<&str> = ix.source_file(i).split('/').collect();
+        let area = match parts.as_slice() {
+            [a, b, _, ..] if top.get(a).is_some_and(|s| s.len() >= 3) => format!("{a}/{b}"),
+            [a, _, ..] => (*a).to_string(),
+            _ => continue,
+        };
+        nodes_in.entry(area).or_default().push(i);
+    }
+    if nodes_in.len() < 2 {
+        return String::new();
+    }
+    let subject = subject_stems(question);
+    let mut areas: Vec<(usize, usize, String, Vec<u32>)> = nodes_in
+        .into_iter()
+        .map(|(area, mut ns)| {
+            ns.sort_by_key(|&i| (std::cmp::Reverse(ix.degree(i)), i));
+            let mut words_here: HashSet<String> = ident_words(&area).into_iter().collect();
+            for &i in ns.iter().take(30) {
+                words_here.extend(ident_words(ix.label(i)));
+            }
+            let hits = subject.iter().filter(|t| words_here.contains(*t)).count();
+            (hits, ns.len(), area, ns)
+        })
+        .collect();
+    areas.sort_by(|a, b| b.0.cmp(&a.0).then(b.1.cmp(&a.1)).then(a.2.cmp(&b.2)));
+    let total = areas.len();
+    let mut s = format!("Code areas ({total}), those matching the question first:\n");
+    for (_, n, area, ns) in areas.iter().take(AREAS) {
+        let mut seen = HashSet::new();
+        let names: Vec<&str> = ns
+            .iter()
+            .map(|&i| ix.label(i))
+            .filter(|l| seen.insert(*l))
+            .take(4)
+            .collect();
+        let _ = writeln!(s, "  {area}/ ({n} symbols): {}", names.join(", "));
+    }
+    if total > AREAS {
+        let _ = writeln!(s, "  … {} more areas", total - AREAS);
+    }
+    s
+}
+
 /// The `context` answer for `question` within about `budget` tokens; `None` when nothing in the
 /// graph matches it.
 pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<String> {
@@ -965,6 +1049,7 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
     // matches it; otherwise `query`'s seeds (documents keep their facts).
     let mut hits: HashMap<u32, Vec<(usize, String)>> = HashMap::new();
     let mut anchors: Vec<u32> = named_anchors(ix, question);
+    let named = !anchors.is_empty();
     if anchors.is_empty() && (0..ix.node_count() as u32).any(|i| is_code(ix, i)) {
         for (node, lines) in code_search(ix, &mut src, question) {
             anchors.push(node);
@@ -991,6 +1076,14 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
         }
         out.push_str(&sec);
         out.push('\n');
+    }
+    // A question that names a symbol is about that symbol, whatever words frame it.
+    if !named && asks_structure(question) && anchors.iter().any(|&i| is_code(ix, i)) {
+        let map = overview(ix, question);
+        if out.len() + map.len() <= limit + 1200 {
+            out.push_str(&map);
+            out.push('\n');
+        }
     }
     if anchors.iter().any(|&i| !is_code(ix, i)) {
         let docs: Vec<String> = (0..ix.node_count() as u32)
@@ -1111,6 +1204,46 @@ mod tests {
         assert_eq!(stem("running"), "run");
         assert_eq!(stem("called"), "call");
         assert_eq!(stem("passed"), "pass");
+    }
+
+    #[test]
+    fn structure_questions_get_a_map_of_code_areas() {
+        let node = |id: &str, label: &str, file: &str| {
+            serde_json::json!({"id": id, "label": label, "file_type": "code",
+                "source_file": file, "source_location": "L1"})
+        };
+        let doc = serde_json::json!({
+            "directed": false, "multigraph": false, "graph": {},
+            "nodes": [
+                node("a", "walk()", "crates/ignore/src/walk.rs"),
+                node("b", "Searcher", "crates/searcher/src/lib.rs"),
+                node("c", "StandardSink", "crates/printer/src/standard.rs"),
+                node("d", "main()", "crates/core/main.rs"),
+            ],
+            "links": []
+        });
+        let ix = Index::from_graph_json(doc.to_string().as_bytes()).unwrap();
+        assert!(asks_structure(
+            "How is the work divided among its library crates?"
+        ));
+        assert!(!asks_structure("Who calls walk?"));
+        let map = overview(
+            &ix,
+            "Which crate walks directories and applies ignore rules?",
+        );
+        assert!(
+            map.starts_with("Code areas (4), those matching the question first:\n"),
+            "{map}"
+        );
+        assert_eq!(
+            map.lines().nth(1),
+            Some("  crates/ignore/ (1 symbols): walk()"),
+            "{map}"
+        );
+        assert!(
+            map.contains("  crates/printer/ (1 symbols): StandardSink\n"),
+            "{map}"
+        );
     }
 
     #[test]

@@ -40,6 +40,14 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   to 8 are kept, those whose label shares a subject word with the question: the question's terms,
   stemmed, without scaffolding words (`many`, `few`, `last`, `months`, `years`, …).
 
+- **Rule (structure).** When the question names no symbol and asks how the code is organised
+  (a word starting with `organis`, `organiz`, `divid`, `split`, `structur`, `architectur`,
+  `responsib`, `layer`, `layout`, `overview`, `crate`, `package`, `module`, `component` or
+  `subsystem`), the answer adds a map of the code's areas: each top-level directory, or each of
+  its subdirectories when it holds three or more (`crates/*`, `pkg/*`), with its symbol count and
+  its four most connected symbols outside tests; areas whose path or top symbols carry the
+  question's subject words come first, then larger ones; at most 12.
+
 ## 2. One anchor
 
 ```text
