@@ -30,8 +30,10 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   it. Each node scores Σ idf(term) × (1 + ln count) over the question's subject terms (scaffolding
   and words that describe code in general removed), times the number of distinct terms, damped
   by √(1 + span/40) where its span runs to the next node of its file; it needs two distinct terms
-  (or the only one). The top 3, tests last (test files, Rust `mod tests`, `test…` names), become
-  anchors, each with its three best matching lines.
+  (or the only one). The top 4, tests last (test files, Rust `mod tests`, `test…` names, and
+  examples, documentation code and benchmarks: `examples/`, `docs_src/`, `samples/`, `bench…/`),
+  become anchors, each with its three best matching lines not already shown; anchors after the
+  second show only the first 2 lines of their definition.
 - **Rule.** Otherwise the anchors are `query`'s seeds for the question's terms
   (`graphify-query.md` §3.6). When every one is a document node (a fact, concept or document), up
   to 8 are kept, those whose label shares a subject word with the question: the question's terms,
@@ -56,8 +58,9 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   `get_request_handler() › app()`); file nodes are never shown as enclosing.
 - **Rule.** Callers and users are the incoming links with relation `calls`, `indirect_call`,
   `uses`, `references`, `inherits`, `extends`, `implements`, `mixes_in`, `embeds` or
-  `instantiates`; callers outside tests come first, then by file and line; at most 12, with a
-  pointer to `explain --incoming --all` for the rest. Importers (`imports`, `imports_from`,
+  `instantiates`. Callers outside tests, examples and benchmarks are listed by file and line, at
+  most 12, with a pointer to `explain --incoming --all` for the rest; the others are one line:
+  their count and two names. Importers (`imports`, `imports_from`,
   `re_exports`, `dynamic_import`) are listed by file, at most 8. Callees are the outgoing
   `calls`, `indirect_call` and `uses` links, by label, at most 10.
 - **Rule.** Source lines are read from `--root`, by default the directory holding the graph's

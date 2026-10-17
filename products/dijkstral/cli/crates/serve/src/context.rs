@@ -127,10 +127,17 @@ fn is_test_node(ix: &Index, i: u32) -> bool {
         || ix.label(i).trim_start_matches('.').starts_with("test")
 }
 
+/// Tests, and code that is not the product itself (examples, documentation code, benchmarks):
+/// listed after the code a question is about.
 fn is_test_path(p: &str) -> bool {
     let p = p.to_ascii_lowercase();
     p.split('/').any(|seg| {
-        seg == "test" || seg == "tests" || seg.starts_with("test_") || seg.ends_with("_test.go")
+        seg == "test"
+            || seg == "tests"
+            || seg.starts_with("test_")
+            || seg.ends_with("_test.go")
+            || matches!(seg, "examples" | "example" | "docs_src" | "samples")
+            || seg.starts_with("bench")
     }) || p.contains("_test.")
         || p.contains(".test.")
         || p.contains(".spec.")
@@ -257,7 +264,10 @@ fn resolve_name(ix: &Index, name: &str) -> Vec<u32> {
         .rsplit(['.', ':'])
         .next()
         .unwrap_or(name);
-    if last != name && last.len() >= 3 {
+    // `components.schemas` is a path in a document, not a symbol: retry the last segment only
+    // when it reads as an identifier.
+    let ident = last.contains('_') || last.chars().skip(1).any(char::is_uppercase);
+    if last != name && last.len() >= 3 && ident {
         return pick(resolve::resolve(ix, last));
     }
     Vec::new()
@@ -274,6 +284,9 @@ pub fn named_anchors(ix: &Index, question: &str) -> Vec<u32> {
     for name in named_symbols(question) {
         let explicit = explicit_marks(&name) || backticked.contains(&name);
         for i in resolve_name(ix, &name) {
+            if is_file_node(ix, i) && !name.contains('/') && !name.contains(".py") {
+                continue;
+            }
             // A bare CamelCase word (`FastAPI`, `Sink`) is a symbol only when a label spells it
             // exactly and it is not a hub every part of the code touches.
             if !explicit {
@@ -523,21 +536,32 @@ fn label_lines(src: &mut Sources, file: &str, label: &str) -> Vec<(usize, String
 }
 
 /// One anchor's section.
-fn section(ix: &Index, src: &mut Sources, i: u32, hits: &[(usize, String)]) -> String {
+fn section(
+    ix: &Index,
+    src: &mut Sources,
+    i: u32,
+    hits: &[(usize, String)],
+    def_lines: usize,
+) -> String {
     let mut s = String::new();
     let _ = writeln!(s, "## {}  {}", display(ix, i), place(ix, i));
     let node = ix.node(i);
     if is_code(ix, i) && !is_file_node(ix, i) {
         if let Some(start) = line_no(node.source_location) {
             if let Some(lines) = src.lines(node.source_file) {
-                for (k, l) in lines.iter().enumerate().skip(start - 1).take(DEF_LINES) {
+                for (k, l) in lines.iter().enumerate().skip(start - 1).take(def_lines) {
                     let _ = writeln!(s, "  {:>5}| {l}", k + 1);
                 }
             }
         }
-        if !hits.is_empty() {
+        let shown = line_no(node.source_location).map(|l| l..l + def_lines);
+        let extra: Vec<&(usize, String)> = hits
+            .iter()
+            .filter(|(n, _)| !shown.as_ref().is_some_and(|r| r.contains(n)))
+            .collect();
+        if !extra.is_empty() {
             let _ = writeln!(s, "  matching lines:");
-            for (n, text) in hits {
+            for (n, text) in extra {
                 let _ = writeln!(s, "  {n:>5}| {text}");
             }
         }
@@ -589,7 +613,12 @@ fn section(ix: &Index, src: &mut Sources, i: u32, hits: &[(usize, String)]) -> S
                 String::new()
             }
         );
-        for &(c, e) in callers.iter().take(MAX_CALLERS) {
+        let core: Vec<(u32, u32)> = callers
+            .iter()
+            .copied()
+            .filter(|&(c, _)| !is_test_path(ix.source_file(c)))
+            .collect();
+        for &(c, e) in core.iter().take(MAX_CALLERS) {
             let edge = ix.edge(e);
             let file = edge
                 .source_file
@@ -603,11 +632,24 @@ fn section(ix: &Index, src: &mut Sources, i: u32, hits: &[(usize, String)]) -> S
                 .unwrap_or_default();
             let _ = writeln!(s, "    {} [{}] {at}{code}", display(ix, c), ix.relation(e));
         }
-        if callers.len() > MAX_CALLERS {
+        if core.len() > MAX_CALLERS {
             let _ = writeln!(
                 s,
                 "    … {} more: `dijkstral explain <symbol> --incoming --all`",
-                callers.len() - MAX_CALLERS
+                core.len() - MAX_CALLERS
+            );
+        }
+        if tests > 0 {
+            let names: Vec<&str> = callers
+                .iter()
+                .filter(|&&(c, _)| is_test_path(ix.source_file(c)))
+                .take(2)
+                .map(|&(c, _)| ix.label(c))
+                .collect();
+            let _ = writeln!(
+                s,
+                "    + {tests} in tests, examples or benchmarks (e.g. {})",
+                names.join(", ")
             );
         }
     }
@@ -705,7 +747,7 @@ const CODE_SCAFFOLD: &[&str] = &[
     "struct",
     "trait",
 ];
-const TEXT_ANCHORS: usize = 3;
+const TEXT_ANCHORS: usize = 4;
 
 /// Per node: how often each question term occurs, and its matching lines with their counts of
 /// distinct terms.
@@ -919,9 +961,11 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
     let limit = budget.max(200) * 4;
     let mut out = String::new();
     let mut cut = 0;
-    for &i in &anchors {
+    for (rank, &i) in anchors.iter().enumerate() {
         let none = Vec::new();
-        let sec = section(ix, &mut src, i, hits.get(&i).unwrap_or(&none));
+        // The first two anchors show their definition; later ones only its first lines.
+        let def = if rank < 2 { DEF_LINES } else { 2 };
+        let sec = section(ix, &mut src, i, hits.get(&i).unwrap_or(&none), def);
         if !out.is_empty() && out.len() + sec.len() > limit {
             cut += 1;
             continue;
