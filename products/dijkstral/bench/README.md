@@ -870,3 +870,27 @@ stay byte-identical across `--threads 1, 3, 12` on ripgrep and monet. Build time
 interleaved `extract --code-only` runs into a scratch `--out` (`run.py` writes into the corpus
 checkout): ripgrep cold median 0.143 s → 0.148 s, warm 0.053 s → 0.053 s; monet (7 runs) cold
 0.204 s → 0.221 s, warm 0.059 s → 0.057 s.
+
+### Stage 7 follow-up: context coverage and Rust cross-crate calls — 2026-10-17
+
+`context` was tuned on fastapi and ripgrep with Kubernetes held out, scored offline by the share
+of each key-fact question's facts its own output contains: test, example and benchmark callers
+summarised in one line, four code-text anchors with shorter later previews, a function's own name
+weighted (`_should_embed_body_fields` for "embedded … body"), doubled consonants undone in stems,
+and a map of code areas for questions about structure that name no symbol (`e4df121`, `1812f8c`,
+`bd6a40f`). With the Rust call resolution above (`2e44122`), offline coverage rose from 0.43 to
+0.62 (tuning 0.45 → 0.71, held out 0.39 → 0.45; callers questions 0.68 → 0.89).
+
+Key facts, `gpt-6-luna` (medium), three runs per arm (no graph and Graphify as above):
+
+| arm | pass | judge | judge correct | median tokens | fresh tokens per run | fresh tokens per correct answer |
+|---|---:|---:|---:|---:|---:|---:|
+| no graph | 60% ± 9 | 0.70 ± 0.06 | 48% ± 11 | 40,876 | 0.58M ± 0.14 | 20.1k |
+| Graphify | 74% ± 5 | 0.76 ± 0.03 | 56% ± 4 | 60,209 | 0.70M ± 0.09 | 21.3k |
+| dijkstral, previous | 83% ± 3 | 0.85 ± 0.03 | 69% ± 5 | 56,235 | 0.63M ± 0.02 | 15.0k |
+| dijkstral, now | **89% ± 1** | **0.87 ± 0.01** | **76% ± 4** | 53,696 | 0.62M ± 0.03 | **13.7k** |
+
+Sessions in which `context`'s first answer already held the key facts cost a median 37k tokens
+(below no graph's 41k) against 71k when it was partial, so coverage is what lowers cost per
+session; per run dijkstral still spends about 8% more fresh tokens than no graph, which spends
+least because it often answers without opening a file.
