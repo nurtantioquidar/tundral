@@ -201,3 +201,37 @@ fn explain_takes_several_names() {
     );
     assert_eq!(run(&["nosuchthing", "otherthing"]).0, Some(4));
 }
+
+/// `dijkstral context` (`docs/dijkstral-context.md`): the definition lines, callers with their
+/// call-site lines and callees of what a question names, read from the source tree.
+#[test]
+fn context_answers_with_source_lines() {
+    let run = |q: &str| {
+        let out = std::process::Command::new(env!("CARGO_BIN_EXE_dijkstral"))
+            .args(["context", q, "--graph"])
+            .arg(fixtures().join("python.graphify.json"))
+            .arg("--root")
+            .arg(fixtures().join("python"))
+            .output()
+            .unwrap();
+        (out.status.code(), String::from_utf8(out.stdout).unwrap())
+    };
+    let (code, text) = run("Who calls slugify and what does it call?");
+    assert_eq!(code, Some(0));
+    assert!(text.starts_with("## slugify()  pkg/util.py:14\n"), "{text}");
+    assert!(
+        text.contains("     14| def slugify(text: str) -> str:\n"),
+        "{text}"
+    );
+    assert!(
+        text.contains(
+            "    UserService › .register() [calls] pkg/service.py:29  | self.repo.add(slugify(name), user)\n"
+        ),
+        "{text}"
+    );
+    assert!(text.contains("  calls: helper(), re\n"), "{text}");
+    assert_eq!(
+        run("zzzz qqqq"),
+        (Some(4), "No node matches: zzzz qqqq\n".into())
+    );
+}

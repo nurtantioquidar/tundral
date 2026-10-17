@@ -39,7 +39,10 @@ A Cargo workspace. Crates are added when their stage begins, never ahead of an i
   Graphify's file read only; a provider stores the name of its key's environment variable, never
   a key.
 - `crates/serve`: the query engine behind `query`, `path`, `explain`, `affected`, `god-nodes` and
-  `benchmark`: structured answers plus Graphify-format renderers, shared by the CLI
+  `benchmark`, and dijkstral's own `context` (`context.rs`, `docs/dijkstral-context.md`: one
+  answer with definition lines, callers with call-site lines and callees, read from the graph and
+  the source tree, which the installed assistant text starts every question with): structured
+  answers plus Graphify-format renderers, shared by the CLI
   (`crates/cli/src/query_cmds.rs`) and the stdio MCP server (`mcp.rs`, with the graph summaries
   of `insights.rs`; `crates/cli/src/mcp_cmd.rs`). Beside the graph, also in `crates/serve`: the
   work-memory loop (`memory.rs`, the saved-result files of `save-result`; `reflect.rs`, lessons

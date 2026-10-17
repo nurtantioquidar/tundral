@@ -15,7 +15,9 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use clap::{Args, Subcommand};
-use dijkstral_serve::{affected, benchmark, explain, god_nodes, path, query, resolve, Index};
+use dijkstral_serve::{
+    affected, benchmark, context, explain, god_nodes, path, query, resolve, Index,
+};
 
 const DEFAULT_INDEX: &str = "dijkstral-out/graph.dij";
 const GRAPHIFY_DEFAULT: &str = "graphify-out/graph.json";
@@ -29,6 +31,10 @@ pub enum QueryCommand {
     Path(PathArgs),
     /// A node and its connections (exit 3 ambiguous name, 4 unknown name).
     Explain(ExplainArgs),
+    /// The evidence for a question in one answer: the symbols it names (or the best matches)
+    /// with their definition lines, callers with call-site lines, and callees; for documents,
+    /// the matching lines and the other files that mention it (exit 4 when nothing matches).
+    Context(ContextArgs),
     /// Nodes that depend on a node, by reverse traversal of dependency relations.
     Affected(AffectedArgs),
     /// The most connected symbols.
@@ -90,6 +96,21 @@ pub struct ExplainArgs {
     /// Only the links out of the node: what it calls and uses.
     #[arg(long)]
     outgoing: bool,
+    #[command(flatten)]
+    graph: GraphArg,
+}
+
+#[derive(Args, Debug)]
+pub struct ContextArgs {
+    /// The question.
+    question: Option<String>,
+    /// Output budget in estimated tokens.
+    #[arg(long, default_value_t = context::DEFAULT_BUDGET)]
+    budget: usize,
+    /// Repository the graph describes (default: the parent of its dijkstral-out/ or
+    /// graphify-out/, else the current directory); source lines are read from here.
+    #[arg(long)]
+    root: Option<PathBuf>,
     #[command(flatten)]
     graph: GraphArg,
 }
@@ -162,6 +183,10 @@ fn display_path(p: &Path) -> String {
 
 /// Open the selected graph, or report the error Graphify would (exit 1).
 fn open(graph: Option<&Path>) -> Result<(Index, String), ExitCode> {
+    open_with_path(graph).map(|(ix, shown, _)| (ix, shown))
+}
+
+fn open_with_path(graph: Option<&Path>) -> Result<(Index, String, PathBuf), ExitCode> {
     let path = match graph {
         Some(p) => p.to_path_buf(),
         None if Path::new(DEFAULT_INDEX).is_file() => PathBuf::from(DEFAULT_INDEX),
@@ -179,7 +204,7 @@ fn open(graph: Option<&Path>) -> Result<(Index, String), ExitCode> {
         return Err(fail("error: graph file must be a .json or .dij file"));
     }
     match dijkstral_serve::load(&path) {
-        Ok((ix, _)) => Ok((ix, display_path(&path))),
+        Ok((ix, _)) => Ok((ix, display_path(&path), path)),
         Err(e) => Err(fail(&format!("error: {e:#}"))),
     }
 }
@@ -195,6 +220,7 @@ pub fn run(cmd: QueryCommand) -> ExitCode {
         QueryCommand::Query(a) => run_query(a),
         QueryCommand::Path(a) => run_path(a),
         QueryCommand::Explain(a) => run_explain(a),
+        QueryCommand::Context(a) => run_context(a),
         QueryCommand::Affected(a) => run_affected(a),
         QueryCommand::GodNodes(a) => run_god_nodes(a),
         QueryCommand::Benchmark(a) => run_benchmark(a),
@@ -293,6 +319,23 @@ fn run_explain(a: ExplainArgs) -> Result<ExitCode, ExitCode> {
         });
     }
     Ok(emit(&parts.join("\n\n"), false, code.unwrap_or(0)))
+}
+
+fn run_context(a: ContextArgs) -> Result<ExitCode, ExitCode> {
+    let Some(question) = a.question.filter(|q| !q.trim().is_empty()) else {
+        return Err(fail(
+            "Usage: dijkstral context \"<question>\" [--budget N] [--graph path]",
+        ));
+    };
+    let (ix, _, path) = open_with_path(a.graph.graph.as_deref())?;
+    let cwd = std::env::current_dir().unwrap_or_default();
+    let root = a
+        .root
+        .unwrap_or_else(|| context::root_of(&absolute(&path), &cwd));
+    Ok(match context::render(&ix, &root, &question, a.budget) {
+        Some(text) => emit(&text, false, 0),
+        None => emit(&format!("No node matches: {question}"), false, 4),
+    })
 }
 
 fn run_affected(a: AffectedArgs) -> Result<ExitCode, ExitCode> {

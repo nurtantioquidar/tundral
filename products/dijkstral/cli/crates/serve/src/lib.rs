@@ -11,6 +11,7 @@
 pub mod affected;
 pub mod benchmark;
 pub mod clock;
+pub mod context;
 pub mod diagnose;
 pub mod explain;
 pub mod god_nodes;
