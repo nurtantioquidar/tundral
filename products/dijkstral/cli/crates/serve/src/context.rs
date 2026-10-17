@@ -775,7 +775,13 @@ const TEXT_ANCHORS: usize = 4;
 
 /// Per node: how often each question term occurs, and its matching lines with the terms each
 /// carries (a bit per term).
-type NodeHits = (Vec<u32>, Vec<(usize, u64)>);
+/// Per node: how often each term occurs in its code and in its comments, and its matching code
+/// lines with the terms each carries (a bit per term).
+struct NodeHits {
+    code: Vec<u32>,
+    doc: Vec<u32>,
+    lines: Vec<(usize, u64)>,
+}
 const HIT_LINES: usize = 3;
 
 /// Words of a source line: identifiers split at `_` and lower-to-upper case changes
@@ -822,6 +828,14 @@ fn is_config(path: &str) -> bool {
 
 /// Comment lines (`#`, `//`, `/*`, ` * `, docstring quotes) and prose inside string literals
 /// (help text: six or more words and no code punctuation) repeat every word of a question.
+/// A real comment line (`#`, `//`, `/*`, ` * `, docstring quotes): the code describing itself.
+fn is_true_comment(line: &str) -> bool {
+    let t = line.trim_start();
+    ["#", "//", "/*", "*", "\"\"\"", "\'\'\'", "--", ";"]
+        .iter()
+        .any(|p| t.starts_with(p))
+}
+
 fn is_comment(line: &str) -> bool {
     let t = line.trim_start();
     if ["#", "//", "/*", "*", "\"\"\"", "\'\'\'", "--", ";"]
@@ -976,12 +990,12 @@ impl Scan {
             .flatten()
             .map(|t| memchr::memmem::Finder::new(t.as_bytes()).into_owned())
             .collect();
-        type FileHits = (usize, Vec<usize>, Vec<(u32, usize, u64)>);
+        type FileHits = (usize, Vec<usize>, Vec<(u32, usize, u64, bool)>);
         let results: Vec<FileHits> = files
             .par_iter()
             .map(|f| {
                 let mut df = vec![0usize; terms.len()];
-                let mut hits: Vec<(u32, usize, u64)> = Vec::new();
+                let mut hits: Vec<(u32, usize, u64, bool)> = Vec::new();
                 let path = root.join(f.as_str());
                 let ok = std::fs::metadata(&path)
                     .is_ok_and(|m| m.is_file() && m.len() <= MAX_FILE_BYTES);
@@ -991,13 +1005,24 @@ impl Scan {
                 let text = String::from_utf8_lossy(&bytes);
                 let starts = &spans[f.as_str()];
                 let mut n_lines = 0;
+                let mut in_docstring = false;
                 for (k, line) in text.lines().enumerate() {
                     n_lines += 1;
+                    let quotes = line.matches("\"\"\"").count() + line.matches("\'\'\'").count();
+                    let was_in = in_docstring;
+                    if quotes % 2 == 1 {
+                        in_docstring = !in_docstring;
+                    }
+                    let in_docstring = was_in || quotes > 0;
                     let lower = line.to_ascii_lowercase();
                     if !finders.iter().any(|fd| fd.find(lower.as_bytes()).is_some()) {
                         continue;
                     }
-                    if is_comment(line) {
+                    // Comments and docstrings describe the code in the question's own words:
+                    // they count as the enclosing node's description (not as matching lines).
+                    // Prose in string literals (help text) does not.
+                    let doc = in_docstring || is_true_comment(line);
+                    if !doc && is_comment(line) {
                         continue;
                     }
                     let ws = ident_words(line);
@@ -1014,7 +1039,7 @@ impl Scan {
                     let n = k + 1;
                     let pos = starts.partition_point(|&(l, _)| l <= n);
                     if let Some(p) = pos.checked_sub(1) {
-                        hits.push((starts[p].1, n, mask));
+                        hits.push((starts[p].1, n, mask, doc));
                     }
                 }
                 (n_lines, df, hits)
@@ -1028,16 +1053,21 @@ impl Scan {
             for (t, c) in d.into_iter().enumerate() {
                 df[t] += c;
             }
-            for (node, line, mask) in hits {
-                let e = per
-                    .entry(node)
-                    .or_insert_with(|| (vec![0; terms.len()], Vec::new()));
-                for (t, c) in e.0.iter_mut().enumerate() {
+            for (node, line, mask, doc) in hits {
+                let e = per.entry(node).or_insert_with(|| NodeHits {
+                    code: vec![0; terms.len()],
+                    doc: vec![0; terms.len()],
+                    lines: Vec::new(),
+                });
+                let counts = if doc { &mut e.doc } else { &mut e.code };
+                for (t, c) in counts.iter_mut().enumerate() {
                     if mask & (1 << t) != 0 {
                         *c += 1;
                     }
                 }
-                e.1.push((line, mask));
+                if !doc {
+                    e.lines.push((line, mask));
+                }
             }
         }
         Scan {
@@ -1083,12 +1113,23 @@ impl Scan {
         };
         // A node's own evidence: its matching words (rarer weigh more) and the question words its
         // name carries (three times over: the name is the strongest evidence).
-        let strength = |node: u32, counts: &[u32]| -> (f64, usize) {
-            let on = |t: usize| mask & (1 << t) != 0 && counts[t] > 0;
+        let strength = |node: u32, h: &NodeHits| -> (f64, usize) {
+            let on = |t: usize| mask & (1 << t) != 0 && (h.code[t] > 0 || h.doc[t] > 0);
             let distinct = (0..self.terms.len()).filter(|&t| on(t)).count();
+            let term = |t: usize, c: u32| idf[t] * (1.0 + (c.max(1) as f64).ln());
             let weight: f64 = (0..self.terms.len())
-                .filter(|&t| on(t))
-                .map(|t| idf[t] * (1.0 + (counts[t] as f64).ln()))
+                .filter(|&t| mask & (1 << t) != 0)
+                .map(|t| {
+                    // A term in the comments counts as much as one in the code: comments are the
+                    // code described in the question's own words.
+                    let code = if h.code[t] > 0 {
+                        term(t, h.code[t])
+                    } else {
+                        0.0
+                    };
+                    let doc = if h.doc[t] > 0 { term(t, h.doc[t]) } else { 0.0 };
+                    code + doc
+                })
                 .sum();
             let name = ident_words(ix.label(node));
             let named: f64 = (0..self.terms.len())
@@ -1103,7 +1144,7 @@ impl Scan {
         let own: HashMap<u32, (f64, usize)> = self
             .per
             .iter()
-            .map(|(&node, (counts, _))| (node, strength(node, counts)))
+            .map(|(&node, h)| (node, strength(node, h)))
             .collect();
         let mut ranked: Vec<(f64, bool, u32)> = own
             .iter()
@@ -1134,7 +1175,7 @@ impl Scan {
             .take(TEXT_ANCHORS)
             .map(|(_, _, node)| {
                 let mut hits: Vec<(usize, u32)> = self.per[&node]
-                    .1
+                    .lines
                     .iter()
                     .map(|&(n, m)| (n, (m & mask).count_ones()))
                     .filter(|&(_, c)| c > 0)
@@ -1622,6 +1663,12 @@ mod tests {
         ));
         assert!(!is_comment("    if self.binary.is_explicit() {"));
         assert!(is_config("pyproject.toml") && !is_config("src/main.rs"));
+        assert!(is_true_comment(
+            "    /// Memory-map the file when it is large enough."
+        ));
+        assert!(!is_true_comment(
+            "    This flag controls whether binary files are searched."
+        ));
         assert_eq!(stem("explicitly"), "explicit");
         assert_eq!(
             spellings("configuration"),

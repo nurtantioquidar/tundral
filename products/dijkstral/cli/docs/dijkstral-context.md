@@ -70,6 +70,12 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   its lower case contains one of the terms (a stem is a substring of every word it matches).
   About 0.4 s on Kubernetes with a warm page cache.
 
+- **Rule (descriptions).** Comment lines (`#`, `//`, `/*`, `*`, …) and the lines of Python
+  docstrings (between `"""` or `'''`) are the code described in plain words: their terms
+  count for the enclosing node exactly as its code's terms do (they bridge "memory map" and
+  `mmap`), but they are not shown as matching lines. Prose inside string literals (help text)
+  still counts for nothing.
+
 ## 2. One anchor
 
 ```text
