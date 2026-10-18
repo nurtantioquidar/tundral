@@ -1061,3 +1061,21 @@ Key facts, `gpt-6-luna` (medium), three runs:
 
 Accuracy edges up and fresh tokens move within the spread (+4% per run, level per correct
 answer). Kept: accuracy first at equal cost per correct answer.
+
+### Classifier reranking for `context` (research prototype) — 2026-10-18
+
+The best 12 code-text candidates reordered by a hosted classifier (TypeSafe Jev, one yes/no
+question per candidate), through an external reranker hook on branch
+`feature/dijkstral-context-rerank-prototype` (not merged; design, every order, costs and
+findings in `cli/docs/dijkstral-context-rerank.md`). Offline key-fact coverage against the
+shipped lexical order (`782cbbb`):
+
+| | lexical | Jev |
+|---|---:|---:|
+| benchmark questions, tuning / held out | 0.79 / 0.64 | 0.82 / 0.68 |
+| complete answers (of 60) | 41 | 46 |
+| agents' own `context` queries from the v12 runs, tuning / held out (121 / 86) | 0.705 / 0.529 | 0.734 / 0.560 |
+
+About $0.0005 and 1.5–2 s per question. Not run as an agent benchmark: Codex's read-only sandbox
+blocks the network the reranker needs (as it would for Codex users), and a 3-point coverage gain
+needs more runs than three to show. Not shipped; a candidate for the hosted product.

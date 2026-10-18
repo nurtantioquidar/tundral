@@ -129,3 +129,5 @@ share of a question's key facts its output already contains is the offline measu
 tuning it, on fastapi and ripgrep, with Kubernetes held out (`bench/agent/context_eval.py`).
 Meaning-based retrieval was measured as a separate prototype and not adopted
 (`dijkstral-context-semantic.md`; code on branch `feature/dijkstral-context-embeddings-prototype`).
+Reranking candidates with a hosted classifier (TypeSafe Jev) was measured the same way and not
+adopted (`dijkstral-context-rerank.md`; code on branch `feature/dijkstral-context-rerank-prototype`).
