@@ -60,6 +60,10 @@ pub struct Options {
     pub cwd: PathBuf,
     /// Log requests and load times to stderr.
     pub verbose: bool,
+    /// Serve one tenant's graph over the network (hosted Dijkstral): every call uses the startup
+    /// graph (`project_path` is neither offered nor honoured), the PR tools (which run `gh` with
+    /// the server's credentials) are not offered, and `context` is.
+    pub hosted: bool,
 }
 
 /// Where a call's graph comes from.
@@ -668,6 +672,9 @@ impl Server {
     }
 
     fn target(&self, args: &Args) -> Target {
+        if self.opts.hosted {
+            return self.default.clone();
+        }
         match args.get("project_path").and_then(Value::as_str) {
             Some(p) if !p.is_empty() => Target::Project(self.opts.cwd.join(p)),
             _ => self.default.clone(),
@@ -721,8 +728,21 @@ impl Server {
     }
 
     fn call_tool(&mut self, name: &str, args: &Args) -> Reply {
+        if self.opts.hosted && PR_TOOLS.contains(&name) {
+            return fail(format!("Unknown tool: {name}"));
+        }
         if PR_TOOLS.contains(&name) {
             return self.pr_tool(name, args);
+        }
+        if self.opts.hosted && name == "context" {
+            let target = self.target(args);
+            return match self.graph(&target) {
+                Ok(e) => match tool_context(e, args) {
+                    Ok(r) => r,
+                    Err(ArgError(err)) => fail(format!("Error executing {name}: {err}")),
+                },
+                Err(e) => fail(format!("Error executing {name}: {e}")),
+            };
         }
         let run: fn(&Entry, &Args) -> Result<Reply, ArgError> = match name {
             "query_graph" => tool_query_graph,
@@ -807,7 +827,9 @@ impl Server {
             }
             "ping" => Ok(json!({})),
             _ if !self.initialized => Err(invalid_params()),
-            "tools/list" => Ok(json!({ "tools": tools() })),
+            "tools/list" => Ok(json!({
+                "tools": if self.opts.hosted { hosted_tools() } else { tools() }
+            })),
             "tools/call" => match params.get("name").and_then(Value::as_str) {
                 None => Err(invalid_params()),
                 Some(name) => {
@@ -939,6 +961,51 @@ fn project_path_schema() -> Value {
         "type": "string",
         "description": "Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with."
     })
+}
+
+/// `context` for hosted servers: the evidence for a question in one answer
+/// (`docs/dijkstral-context.md`), source lines read beside the graph's output directory.
+fn tool_context(e: &Entry, args: &Args) -> Result<Reply, ArgError> {
+    let question = required_str(args, "question")?;
+    let budget = match args.get("budget") {
+        None | Some(Value::Null) => crate::context::DEFAULT_BUDGET,
+        Some(v) => py_int(v).map_err(ArgError)?.max(0) as usize,
+    };
+    let root = e.dir.parent().unwrap_or(&e.dir);
+    Ok(
+        match crate::context::render(&e.ix, root, question, budget) {
+            Some(text) => ok(text),
+            None => fail(format!("No node matches: {question}")),
+        },
+    )
+}
+
+/// The hosted tool list: `context` first, then [`tools`] without the PR tools and without
+/// `project_path` (one server serves one graph).
+pub fn hosted_tools() -> Vec<Value> {
+    let mut out = vec![json!({
+        "description": "Start here. The evidence for a question about this codebase in one answer: the symbols it names or the code whose text and comments match it, each with definition lines, callers with call-site lines and callees; call chains for flow questions; a map of the code's areas for structure questions.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "question": {"type": "string", "description": "The question, in plain words; name symbols when you know them."},
+                "budget": {"type": "integer", "description": "Approximate answer size in tokens (default 1500)."}
+            },
+            "required": ["question"]
+        },
+        "name": "context"
+    })];
+    for mut t in tools() {
+        let name = t["name"].as_str().unwrap_or("").to_string();
+        if PR_TOOLS.contains(&name.as_str()) {
+            continue;
+        }
+        if let Some(props) = t["inputSchema"]["properties"].as_object_mut() {
+            props.remove("project_path");
+        }
+        out.push(t);
+    }
+    out
 }
 
 /// The tool list: Graphify's names, order and input schemas (§10.3), dijkstral's descriptions.
@@ -1113,6 +1180,7 @@ mod tests {
             graph: Some(PathBuf::from("/nonexistent/graph.json")),
             cwd: PathBuf::from("/"),
             verbose: false,
+            hosted: false,
         });
         let before = s
             .handle(&json!({"jsonrpc":"2.0","id":1,"method":"tools/list"}))
@@ -1149,5 +1217,78 @@ mod tests {
             .unwrap();
         assert_eq!(unknown["error"]["code"], -32601);
         assert_eq!(unknown["error"]["data"], "prompts/list");
+    }
+
+    /// Hosted mode serves one graph: `context` first, no PR tools, `project_path` ignored.
+    #[test]
+    fn hosted_mode_confines_to_one_graph() {
+        let fixtures = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures");
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path().join("checkout");
+        copy_dir(&fixtures.join("python"), &root);
+        fs::create_dir_all(root.join("dijkstral-out")).unwrap();
+        fs::copy(
+            fixtures.join("python.graphify.json"),
+            root.join("dijkstral-out/graph.json"),
+        )
+        .unwrap();
+        let mut s = Server::new(Options {
+            graph: Some(root.join("dijkstral-out/graph.json")),
+            cwd: PathBuf::from("/"),
+            verbose: false,
+            hosted: true,
+        });
+        let mut call = |id: u64, name: &str, args: Value| {
+            s.handle(&json!({"jsonrpc":"2.0","id":0,"method":"initialize","params":{}}));
+            s.handle(&json!({"jsonrpc":"2.0","id":id,"method":"tools/call","params":{"name":name,"arguments":args}}))
+                .unwrap()["result"]
+                .clone()
+        };
+        let text = |r: &Value| r["content"][0]["text"].as_str().unwrap().to_string();
+
+        let r = call(
+            1,
+            "context",
+            json!({"question": "Who calls slugify and what does it call?"}),
+        );
+        assert_eq!(r["isError"], false, "{r}");
+        assert!(
+            text(&r).starts_with("## slugify()  pkg/util.py:14\n"),
+            "{r}"
+        );
+        assert!(
+            text(&r).contains("     14| def slugify(text: str) -> str:"),
+            "{r}"
+        );
+
+        // Another tenant's directory is never reachable: project_path falls back to this graph.
+        let r = call(2, "graph_stats", json!({"project_path": "/nonexistent"}));
+        assert_eq!(r["isError"], false, "{r}");
+        let r = call(3, "list_prs", json!({}));
+        assert_eq!(r["isError"], true);
+        assert_eq!(text(&r), "Unknown tool: list_prs");
+
+        let list = s
+            .handle(&json!({"jsonrpc":"2.0","id":4,"method":"tools/list"}))
+            .unwrap();
+        let tools = list["result"]["tools"].as_array().unwrap();
+        assert_eq!(tools[0]["name"], "context");
+        assert!(tools
+            .iter()
+            .all(|t| !PR_TOOLS.contains(&t["name"].as_str().unwrap())));
+        assert!(!list.to_string().contains("project_path"));
+    }
+
+    fn copy_dir(from: &Path, to: &Path) {
+        fs::create_dir_all(to).unwrap();
+        for e in fs::read_dir(from).unwrap() {
+            let e = e.unwrap();
+            let dest = to.join(e.file_name());
+            if e.file_type().unwrap().is_dir() {
+                copy_dir(&e.path(), &dest);
+            } else {
+                fs::copy(e.path(), dest).unwrap();
+            }
+        }
     }
 }

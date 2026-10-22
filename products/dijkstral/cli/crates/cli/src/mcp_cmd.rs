@@ -35,6 +35,7 @@ pub fn run(a: McpArgs) -> ExitCode {
         graph: a.graph.or(a.graph_path),
         cwd,
         verbose: a.verbose,
+        hosted: false,
     };
     let stdin = io::stdin().lock();
     let stdout = io::stdout().lock();

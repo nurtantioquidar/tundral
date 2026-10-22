@@ -40,7 +40,10 @@ data):
   - **Graph store**: per repository, the latest `graph.dij` and the shallow checkout `context`
     reads source lines from.
   - **Hosted MCP**: Streamable HTTP at `/mcp/<owner>/<repo>`, the local server's tools over the
-    stored graph.
+    stored graph through `dijkstral-serve`'s MCP server in hosted mode (`mcp::Options::hosted`):
+    every call uses that repository's graph (`project_path` is neither offered nor honoured, so
+    no tenant reaches another's directory), the PR tools are not offered (they run `gh` with the
+    server's credentials), and `context` is offered first.
   - **Private API** for the web app (`/internal/*`, never routed publicly).
   - **SQLite**: accounts, GitHub installations, repositories, builds, MCP tokens. The service is
     its only writer.
