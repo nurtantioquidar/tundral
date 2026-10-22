@@ -20,7 +20,7 @@ pub struct Source {
 
 enum Kind {
     Local(std::path::PathBuf),
-    GitHub(Tokens),
+    GitHub(Box<Tokens>),
 }
 
 impl Source {
@@ -28,7 +28,7 @@ impl Source {
         Ok(Source {
             kind: match config {
                 SourceConfig::Local(base) => Kind::Local(base),
-                SourceConfig::GitHub(app) => Kind::GitHub(Tokens::new(app)?),
+                SourceConfig::GitHub(app) => Kind::GitHub(Box::new(Tokens::new(app)?)),
             },
         })
     }
