@@ -9,6 +9,10 @@ A hosted Dijkstral at `dijkstral.monet.sh`: connect a GitHub repository once, an
 rebuilt on every push and served to any assistant over a hosted MCP endpoint. No local build, no
 local index, the same `context`, `query`, `explain`, `path` and `affected` answers.
 
+`dijkstral.monet.sh` is permanent: MCP URLs are pasted into assistants' configurations and a
+redirect does not reliably carry an MCP request, so if Dijkstral later gets a domain of its own,
+both hosts keep serving the same service.
+
 Released free. There is no billing until Midtrans is ready; limits exist only to keep one VPS
 healthy and to stop abuse (§6), not as plan tiers.
 
@@ -165,6 +169,15 @@ owner's.
 
 - **Private repositories at launch**: recommended only after at-rest encryption of
   `repos/` (§7); public repositories first.
-- **Remote and name**: the Monet repository is to be rebranded; the remote's name and owner
-  decide the image registry path and the GitHub App's name.
+- **Own domain**: `dijkstral.dev` and `.com` were unregistered on 2026-10-21; adding one later
+  adds a host, never replaces `dijkstral.monet.sh`.
 - **MCP OAuth**: tokens first; OAuth (the MCP authorization spec) when a client needs it.
+
+## 10. Models and money
+
+Dijkstral never sells model tokens or holds balances. A feature that uses a model calls Inver's
+public OpenAI-compatible API, Inver's ledger being the only one (root `AGENTS.md`): either with
+Dijkstral's own service key, billed to Dijkstral wholesale and offered to customers as a plan
+allowance that Dijkstral counts (counts, not money), or with a customer's own scoped Inver key
+(or another provider's key), stored encrypted and used only for that customer. Payments for
+credits stay in Inver; Dijkstral billing sells plans only.
