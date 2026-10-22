@@ -1,0 +1,32 @@
+[package]
+name = "dijkstral-service"
+description = "Hosted Dijkstral: GitHub webhooks, graph builds on push, and per-repository MCP over HTTP"
+version = "0.1.0"
+edition = "2021"
+license = "UNLICENSED"
+publish = false
+
+# Its own workspace: the service's HTTP and database dependencies stay out of the CLI's lockfile,
+# whose `dijkstral` binary must link only the system libraries.
+[workspace]
+
+[dependencies]
+anyhow = "1.0.104"
+axum = "0.8.9"
+dijkstral-core = { path = "../cli/crates/core" }
+dijkstral-serve = { path = "../cli/crates/serve" }
+getrandom = "0.4.3"
+hex = "0.4.3"
+hmac = "0.13.0"
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sha2 = "0.11.1"
+tokio = { version = "1.54.1", features = ["rt-multi-thread", "macros", "process", "sync", "time", "signal", "net", "fs"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+[dev-dependencies]
+http-body-util = "0.1.5"
+tempfile = "3.27.0"
+tower = { version = "0.5.3", features = ["util"] }

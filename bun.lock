@@ -49,6 +49,10 @@
       "name": "@monet/dijkstral-cli",
       "version": "0.1.0",
     },
+    "products/dijkstral/service": {
+      "name": "@monet/dijkstral-service",
+      "version": "0.1.0",
+    },
     "products/inver/gateway": {
       "name": "@monet/inver-gateway",
       "version": "0.1.0",
@@ -153,6 +157,8 @@
     "@monet/contracts": ["@monet/contracts@workspace:packages/contracts"],
 
     "@monet/dijkstral-cli": ["@monet/dijkstral-cli@workspace:products/dijkstral/cli"],
+
+    "@monet/dijkstral-service": ["@monet/dijkstral-service@workspace:products/dijkstral/service"],
 
     "@monet/hub": ["@monet/hub@workspace:apps/hub"],
 

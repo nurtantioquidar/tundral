@@ -62,7 +62,8 @@ monet/
 │   │   └── cli/                # cocoon: local agent credential firewall (Rust)
 │   ├── dijkstral/
 │   │   ├── cli/                # dijkstral: code knowledge graph for AI agents (Rust)
-│   │   └── bench/              # head-to-head benchmark against Graphify
+│   │   ├── bench/              # head-to-head benchmark against Graphify
+│   │   └── service/            # hosted Dijkstral: webhooks, builds on push, MCP over HTTP (Rust)
 │   └── nimble/
 │       └── router/             # nimble: intelligent model router, OpenAI-compatible (Bun)
 ├── packages/
@@ -166,6 +167,7 @@ bun run dev:butterfly -- --help
 bun run dev:cicada -- --help
 bun run dev:cocoon -- --help
 bun run dev:dijkstral -- --help
+bun run dev:dijkstral-service    # hosted Dijkstral   :8095
 ```
 
 Root commands orchestrate module commands; module `AGENTS.md` files define any additional required

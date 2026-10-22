@@ -36,6 +36,7 @@ jobs:
             products/cicada/cli
             products/cocoon/cli
             products/dijkstral/cli
+            products/dijkstral/service
 
       - run: bun install --frozen-lockfile
 
