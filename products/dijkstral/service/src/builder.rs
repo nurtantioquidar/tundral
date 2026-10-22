@@ -125,7 +125,9 @@ async fn build_repo(
         let branch = match r.default_branch.clone() {
             Some(b) => b,
             None => {
-                let b = source.default_branch(&r.full_name).await?;
+                let b = source
+                    .default_branch(r.installation_id, &r.full_name)
+                    .await?;
                 db.set_default_branch(repo, &b)?;
                 b
             }
@@ -134,7 +136,9 @@ async fn build_repo(
             std::fs::remove_dir_all(&work)?;
         }
         std::fs::create_dir_all(&dir)?;
-        let commit = source.checkout(&r.full_name, &branch, &work).await?;
+        let commit = source
+            .checkout(r.installation_id, &r.full_name, &branch, &work)
+            .await?;
         if r.built_commit.as_deref() == Some(commit.as_str()) && dir.join("current").exists() {
             return Ok::<_, anyhow::Error>((commit, None));
         }

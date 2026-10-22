@@ -7,32 +7,81 @@ use std::time::Duration;
 use anyhow::{bail, Context, Result};
 use tokio::process::Command;
 
-use crate::config::SourceConfig;
+use base64::Engine;
 
-/// Where a repository is fetched from. The URL may carry a credential, so it never appears in
-/// errors or logs: failures name the repository instead.
+use crate::config::SourceConfig;
+use crate::github::Tokens;
+
+/// Where a repository is fetched from. Credentials reach `git` only through its environment
+/// (`GIT_CONFIG_*`), never its arguments, and failures name the repository, never the URL.
 pub struct Source {
-    config: SourceConfig,
+    kind: Kind,
+}
+
+enum Kind {
+    Local(std::path::PathBuf),
+    GitHub(Tokens),
 }
 
 impl Source {
-    pub fn new(config: SourceConfig) -> Source {
-        Source { config }
+    pub fn new(config: SourceConfig) -> Result<Source> {
+        Ok(Source {
+            kind: match config {
+                SourceConfig::Local(base) => Kind::Local(base),
+                SourceConfig::GitHub(app) => Kind::GitHub(Tokens::new(app)?),
+            },
+        })
     }
 
-    fn url(&self, full_name: &str) -> Result<String> {
-        match &self.config {
-            SourceConfig::Local(base) => {
-                let p = base.join(format!("{full_name}.git"));
-                Ok(format!("file://{}", p.display()))
+    fn url(&self, full_name: &str) -> String {
+        match &self.kind {
+            Kind::Local(base) => {
+                format!("file://{}", base.join(format!("{full_name}.git")).display())
             }
+            Kind::GitHub(t) => format!("{}/{full_name}.git", t.app().web),
+        }
+    }
+
+    /// The environment that authenticates `git` for `installation`: an `Authorization` header
+    /// for the GitHub host only, from a fresh installation token.
+    pub async fn auth_env(&self, installation: i64) -> Result<Vec<(String, String)>> {
+        let Kind::GitHub(t) = &self.kind else {
+            return Ok(Vec::new());
+        };
+        let token = t.installation(installation).await?;
+        let basic =
+            base64::engine::general_purpose::STANDARD.encode(format!("x-access-token:{token}"));
+        Ok(vec![
+            ("GIT_CONFIG_COUNT".into(), "1".into()),
+            (
+                "GIT_CONFIG_KEY_0".into(),
+                format!("http.{}/.extraheader", t.app().web),
+            ),
+            (
+                "GIT_CONFIG_VALUE_0".into(),
+                format!("AUTHORIZATION: basic {basic}"),
+            ),
+        ])
+    }
+
+    /// Drops what is cached for an uninstalled installation.
+    pub async fn forget(&self, installation: i64) {
+        if let Kind::GitHub(t) = &self.kind {
+            t.forget(installation).await;
         }
     }
 
     /// The default branch a repository's `HEAD` points to.
-    pub async fn default_branch(&self, full_name: &str) -> Result<String> {
-        let url = self.url(full_name)?;
-        let out = git(None, &["ls-remote", "--symref", &url, "HEAD"], full_name).await?;
+    pub async fn default_branch(&self, installation: i64, full_name: &str) -> Result<String> {
+        let env = self.auth_env(installation).await?;
+        let url = self.url(full_name);
+        let out = git(
+            None,
+            &["ls-remote", "--symref", &url, "HEAD"],
+            &env,
+            full_name,
+        )
+        .await?;
         out.lines()
             .find_map(|l| {
                 l.strip_prefix("ref: refs/heads/")
@@ -44,10 +93,18 @@ impl Source {
 
     /// Fetches the tip of `branch` into a fresh `dir` (depth 1, no tags, no submodules, no hooks)
     /// and checks it out; returns its commit.
-    pub async fn checkout(&self, full_name: &str, branch: &str, dir: &Path) -> Result<String> {
-        let url = self.url(full_name)?;
+    pub async fn checkout(
+        &self,
+        installation: i64,
+        full_name: &str,
+        branch: &str,
+        dir: &Path,
+    ) -> Result<String> {
+        let env = self.auth_env(installation).await?;
+        let url = self.url(full_name);
         let d = dir.to_str().context("checkout path is not UTF-8")?;
-        git(None, &["init", "-q", d], full_name).await?;
+        git(None, &["init", "-q", d], &[], full_name).await?;
+        let branch_ref = format!("refs/heads/{branch}");
         git(
             Some(dir),
             &[
@@ -58,18 +115,20 @@ impl Source {
                 "--no-tags",
                 "--no-recurse-submodules",
                 &url,
-                &format!("refs/heads/{branch}"),
+                &branch_ref,
             ],
+            &env,
             full_name,
         )
         .await?;
         git(
             Some(dir),
             &["checkout", "-q", "--force", "FETCH_HEAD"],
+            &[],
             full_name,
         )
         .await?;
-        Ok(git(Some(dir), &["rev-parse", "HEAD"], full_name)
+        Ok(git(Some(dir), &["rev-parse", "HEAD"], &[], full_name)
             .await?
             .trim()
             .to_string())
@@ -80,7 +139,12 @@ const GIT_TIMEOUT: Duration = Duration::from_secs(120);
 
 /// Runs `git` with the user's and the system's configuration shut out, hooks off, no prompts and
 /// LFS content left unfetched. Errors name `what`, never the command line.
-async fn git(dir: Option<&Path>, args: &[&str], what: &str) -> Result<String> {
+async fn git(
+    dir: Option<&Path>,
+    args: &[&str],
+    env: &[(String, String)],
+    what: &str,
+) -> Result<String> {
     let mut cmd = Command::new("git");
     if let Some(d) = dir {
         cmd.current_dir(d);
@@ -98,6 +162,7 @@ async fn git(dir: Option<&Path>, args: &[&str], what: &str) -> Result<String> {
         .env("GIT_CONFIG_GLOBAL", "/dev/null")
         .env("GIT_TERMINAL_PROMPT", "0")
         .env("GIT_LFS_SKIP_SMUDGE", "1")
+        .envs(env.iter().map(|(k, v)| (k, v)))
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())

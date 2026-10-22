@@ -11,6 +11,8 @@ use anyhow::{bail, Context, Result};
 pub enum SourceConfig {
     /// `<base>/<owner>/<repo>.git`: local bare repositories, for tests and local runs.
     Local(PathBuf),
+    /// GitHub, through the GitHub App's installation tokens.
+    GitHub(crate::github::GitHubApp),
 }
 
 /// Limits that keep one host healthy while the service is free (`DIJKSTRAL_HOSTED_DESIGN.md` §6).
@@ -60,8 +62,9 @@ fn var(name: &str) -> Result<String> {
 
 impl Config {
     /// `DIJKSTRAL_SERVICE_DATA`, `DIJKSTRAL_SERVICE_LISTEN` (default `127.0.0.1:8095`),
-    /// `DIJKSTRAL_SERVICE_WEBHOOK_SECRET`, `DIJKSTRAL_SERVICE_INTERNAL_TOKEN` and
-    /// `DIJKSTRAL_SERVICE_LOCAL_SOURCE` (the only source until the GitHub App source lands).
+    /// `DIJKSTRAL_SERVICE_WEBHOOK_SECRET`, `DIJKSTRAL_SERVICE_INTERNAL_TOKEN`, and the source:
+    /// `DIJKSTRAL_SERVICE_GITHUB_APP_ID` with `DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_FILE` (a PEM
+    /// file), or `DIJKSTRAL_SERVICE_LOCAL_SOURCE` (a directory of bare repositories).
     pub fn from_env() -> Result<Config> {
         let webhook_secret = var("DIJKSTRAL_SERVICE_WEBHOOK_SECRET")?.into_bytes();
         let internal_token = var("DIJKSTRAL_SERVICE_INTERNAL_TOKEN")?;
@@ -76,7 +79,19 @@ impl Config {
                 .context("DIJKSTRAL_SERVICE_LISTEN")?,
             webhook_secret,
             internal_token,
-            source: SourceConfig::Local(var("DIJKSTRAL_SERVICE_LOCAL_SOURCE")?.into()),
+            source: match std::env::var("DIJKSTRAL_SERVICE_GITHUB_APP_ID") {
+                Ok(app_id) => {
+                    let key = var("DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_FILE")?;
+                    SourceConfig::GitHub(crate::github::GitHubApp {
+                        app_id,
+                        private_key_pem: std::fs::read(&key)
+                            .with_context(|| format!("reading the GitHub App key {key}"))?,
+                        api: "https://api.github.com".into(),
+                        web: "https://github.com".into(),
+                    })
+                }
+                Err(_) => SourceConfig::Local(var("DIJKSTRAL_SERVICE_LOCAL_SOURCE")?.into()),
+            },
             exe: std::env::current_exe()?,
             build_threads: 2,
             limits: Limits::default(),

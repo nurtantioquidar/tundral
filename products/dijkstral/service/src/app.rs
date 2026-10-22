@@ -44,7 +44,7 @@ pub fn app(config: Config) -> anyhow::Result<(Router, Arc<AppState>)> {
     std::fs::create_dir_all(config.data.join("repos"))?;
     let config = Arc::new(config);
     let db = Arc::new(Db::open(&config.data.join("db/service.sqlite"))?);
-    let source = Arc::new(Source::new(config.source.clone()));
+    let source = Arc::new(Source::new(config.source.clone())?);
     let servers: Arc<Mutex<HashMap<i64, Arc<Mutex<mcp::Server>>>>> = Arc::default();
     let dropped = servers.clone();
     let builder = Builder::start(

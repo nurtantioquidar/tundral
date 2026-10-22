@@ -6,4 +6,5 @@ pub mod builder;
 pub mod config;
 pub mod db;
 pub mod git;
+pub mod github;
 pub mod webhook;
