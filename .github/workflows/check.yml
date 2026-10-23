@@ -17,7 +17,16 @@ jobs:
   check:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    # Three Rust workspaces' test binaries outgrow the runner's disk with debug info (the linker
+    # dies with a bus error): build without it, and without incremental state, which CI never reuses.
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
     steps:
+      - name: Free runner disk
+        run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup && df -h /
+
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
