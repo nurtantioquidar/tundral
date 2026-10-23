@@ -15,7 +15,8 @@ use std::time::Duration;
 
 use dijkstral_core::discover::{discover_all, SKIP_DIRS};
 use dijkstral_core::pipeline::OUT_DIR;
-use notify::{RecursiveMode, Watcher};
+use notify::event::{AccessKind, AccessMode, MetadataKind, ModifyKind};
+use notify::{EventKind, RecursiveMode, Watcher};
 
 const TAG: &str = "[dijkstral watch]";
 /// Files whose edits change what the corpus is.
@@ -65,6 +66,7 @@ fn watch(exe: &Path, path: &Path, secs: f64) -> anyhow::Result<()> {
     }
     let mut watcher = notify::recommended_watcher(move |res: notify::Result<notify::Event>| {
         let _ = tx.send(match res {
+            Ok(ev) if !changes_content(&ev.kind) => return,
             Ok(ev) => Msg::Changed(ev.paths),
             Err(e) => Msg::Failed(e.to_string()),
         });
@@ -128,6 +130,21 @@ fn watch(exe: &Path, path: &Path, secs: f64) -> anyhow::Result<()> {
     drop(watcher);
     println!("{TAG} stopped");
     Ok(())
+}
+
+/// Whether an event can change what a build reads. Linux (inotify) also reports files being
+/// opened, read and closed, so without this each `update`'s own reads of the corpus would start
+/// the next one.
+fn changes_content(kind: &EventKind) -> bool {
+    !matches!(
+        kind,
+        EventKind::Access(
+            AccessKind::Any
+                | AccessKind::Read
+                | AccessKind::Open(_)
+                | AccessKind::Close(AccessMode::Read | AccessMode::Execute | AccessMode::Any)
+        ) | EventKind::Modify(ModifyKind::Metadata(MetadataKind::AccessTime))
+    )
 }
 
 /// Paths under the root, outside the output directory and the always-skipped directories.
@@ -215,5 +232,32 @@ fn update(exe: &Path, root: &Path) {
         Ok(s) if s.success() => {}
         Ok(s) => eprintln!("{TAG} update failed ({s}); still watching"),
         Err(e) => eprintln!("{TAG} could not run update: {e}; still watching"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use notify::event::{CreateKind, RemoveKind};
+
+    #[test]
+    fn reads_are_not_changes() {
+        for k in [
+            EventKind::Access(AccessKind::Open(AccessMode::Any)),
+            EventKind::Access(AccessKind::Read),
+            EventKind::Access(AccessKind::Close(AccessMode::Read)),
+            EventKind::Modify(ModifyKind::Metadata(MetadataKind::AccessTime)),
+        ] {
+            assert!(!changes_content(&k), "{k:?}");
+        }
+        for k in [
+            EventKind::Access(AccessKind::Close(AccessMode::Write)),
+            EventKind::Create(CreateKind::File),
+            EventKind::Modify(ModifyKind::Any),
+            EventKind::Remove(RemoveKind::File),
+            EventKind::Any,
+        ] {
+            assert!(changes_content(&k), "{k:?}");
+        }
     }
 }
