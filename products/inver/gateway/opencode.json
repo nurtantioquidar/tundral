@@ -3,7 +3,7 @@
     "monet": {
       "options": {
         "baseURL": "https://all-api.ccode.dev/v1",
-        "apiKey": "sk-5498e12f347b836a7118af763ae420d312fa91a161b1eb7ab7ec05796391724d"
+        "apiKey": "{env:CCODE_API_KEY}"
       },
       "models": {
         "gpt-5.5": {
