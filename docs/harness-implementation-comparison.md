@@ -2,7 +2,7 @@
 
 **Decision: hx was adopted and the product was renamed Butterfly.** The former
 `products/harness-experimental` tree now lives at `products/butterfly`
-(workspace `@monet/butterfly-cli`, binary `butterfly`, sessions under
+(workspace `@tundral/butterfly-cli`, binary `butterfly`, sessions under
 `~/.local/state/butterfly/`). The Codex-built implementation was removed from
 the working tree without ever being committed; a full source archive is kept at
 `~/monet-backups/codex-harness-20260831-2026.tar.gz`. Its best idea — the typed

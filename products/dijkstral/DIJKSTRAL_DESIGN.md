@@ -129,9 +129,9 @@ alongside Claude Code and Codex in `cli/docs/graphify-query.md` §12, and added 
 
 `uninstall --purge` (also delete the output directory) belongs with this work.
 
-## Relationship to other Monet products
+## Relationship to other Tundral products
 
 Dijkstral is an independent local product. It does not import Butterfly, whose `atlas` crate is
 prior art for tree-sitter extraction and repository ranking; a later integration would be a
 versioned CLI or MCP contract, never a source import. Headless semantic extraction can target any
-OpenAI-compatible endpoint, including Inver or Nimble, like any other client.
+OpenAI-compatible endpoint, including Inver, like any other client.

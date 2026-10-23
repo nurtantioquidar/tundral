@@ -7,7 +7,7 @@ import { ADMIN_LINKS, AdminSignOut, UnavailableNotice } from "@/features/upstrea
 import { GatewayError, gatewayAdmin } from "@/server/gateway-client";
 import { hasAdminSession } from "@/server/admin-session";
 
-export const metadata: Metadata = { title: "Add provider — Monet operator console" };
+export const metadata: Metadata = { title: "Add provider — Inver operator console" };
 
 /* Registration is a journey, not a single form: the provider created here cannot serve customer
  * traffic until it also has a credential, declared models, and a published route. This page states
@@ -15,7 +15,7 @@ export const metadata: Metadata = { title: "Add provider — Monet operator cons
  * live. */
 const NEXT_STEPS = [
   { name: "Store an API key", detail: "write-only, encrypted at rest — Codex providers sign in on the gateway host instead" },
-  { name: "Declare its models", detail: "map Monet’s canonical model IDs to the provider’s own model IDs" },
+  { name: "Declare its models", detail: "map Inver’s canonical model IDs to the provider’s own model IDs" },
   { name: "Publish a route", detail: "order providers per customer-facing model in Routing" },
 ];
 

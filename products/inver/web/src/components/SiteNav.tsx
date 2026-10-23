@@ -7,7 +7,7 @@ export function SiteNav() {
   return (
     <nav className="navpill" aria-label="Primary">
       <Link className="navpill__brand" href="/">
-        Monet<span className="navpill__tick">.</span>
+        Inver<span className="navpill__tick">.</span>
       </Link>
       <div className="navpill__links">
         <a className="navpill__link" href="/#pricing">

@@ -9,7 +9,7 @@ import { gatewayAdmin } from "@/server/gateway-client";
 import { hasAdminSession } from "@/server/admin-session";
 import { day, tokens, usd } from "@/lib/format";
 
-export const metadata: Metadata = { title: "Operator console — Monet" };
+export const metadata: Metadata = { title: "Operator console — Inver" };
 
 export default async function AdminDashboard() {
   if (!(await hasAdminSession())) redirect("/admin/signin");

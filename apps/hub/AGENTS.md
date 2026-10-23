@@ -1,9 +1,9 @@
-# Monet Hub Agent Guide
+# Tundral Hub Agent Guide
 
 ## Project purpose
 
-This module serves `monet.sh`: the index of the Monet product line. Its entire job is to say what
-Monet is and route a visitor to the right product subdomain.
+This module serves `tundral.ai`: the index of the Tundral product line. Its entire job is to say what
+Tundral is and route a visitor to the right product subdomain.
 
 Follow the repository-root `AGENTS.md` first.
 
@@ -40,13 +40,13 @@ product detail duplicated here will eventually contradict the product that owns 
   meaning.
 - `src/app/globals.css` holds layout; `src/app/tokens.css` holds every colour, size, and font.
 - `DESIGN.md` is the hub's design law and `design-notes.md` records what the owner rejected. Read
-  both before changing how the hub looks. The hub owns its tokens instead of `@monet/ui` so
-  monet.sh reads as a studio; never import the shared token layer here.
+  both before changing how the hub looks. The hub owns its tokens instead of `@tundral/ui` so
+  tundral.ai reads as a studio; never import the shared token layer here.
 
 ## Environment
 
 `NEXT_PUBLIC_INVER_URL` is optional and not a secret. When set, Inver's card links to it (for
-example a local dev port). Leave it unset in production until `inver.monet.sh` is served: a product
+example a local dev port). Leave it unset in production until `inver.tundral.ai` is served: a product
 without a URL renders as an unlinked card, so the index never links to a host that does not resolve.
 
 ## Commands
@@ -60,14 +60,14 @@ bun run build      # static export to out/
 ## Deployment
 
 The hub builds with `output: "export"` and is served from the Cloudflare Pages project `monet-hub`,
-which owns the `monet.sh` and `www.monet.sh` custom domains. There is no Node process in production,
+which owns the `tundral.ai` and `www.tundral.ai` custom domains. There is no Node process in production,
 so `next start` does not apply. Deploy the built directory:
 
 ```bash
 bunx wrangler pages deploy out --project-name monet-hub --branch main
 ```
 
-Wrangler reads `CLOUDFLARE_API_TOKEN` (Pages edit on the Monet account) and `CLOUDFLARE_ACCOUNT_ID`
+Wrangler reads `CLOUDFLARE_API_TOKEN` (Pages edit on the Tundral account) and `CLOUDFLARE_ACCOUNT_ID`
 from the environment; never commit either.
 
 ## Required verification

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { AdminSignInForm } from "@/features/admin/AdminForms";
 import { hasAdminSession } from "@/server/admin-session";
 
-export const metadata: Metadata = { title: "Operator sign in — Monet" };
+export const metadata: Metadata = { title: "Operator sign in — Inver" };
 
 export default async function AdminSignInPage() {
   if (await hasAdminSession()) redirect("/admin");
@@ -14,7 +14,7 @@ export default async function AdminSignInPage() {
       <header className="nav">
         <div className="container nav__inner">
           <Link className="nav__brand" href="/">
-            Monet<span className="nav__brand-tick">.</span>
+            Inver<span className="nav__brand-tick">.</span>
           </Link>
           <span className="meta">Operator</span>
         </div>

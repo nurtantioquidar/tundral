@@ -2,7 +2,9 @@ import "server-only";
 import { cookies } from "next/headers";
 import { constantTimeEqual, sessionCookieOptions, signSession } from "./session-signing";
 
-const ADMIN_COOKIE = "monet_admin";
+const ADMIN_COOKIE = "inver_admin";
+/* The cookie of the pre-Tundral name, cleared at sign-out. */
+const LEGACY_ADMIN_COOKIE = "monet_admin";
 const ADMIN_SESSION_MS = 12 * 60 * 60 * 1000;
 
 export function verifyAdminPassword(candidate: string): boolean {
@@ -29,5 +31,7 @@ export async function hasAdminSession(): Promise<boolean> {
 }
 
 export async function clearAdminSession(): Promise<void> {
-  (await cookies()).delete(ADMIN_COOKIE);
+  const store = await cookies();
+  store.delete(ADMIN_COOKIE);
+  store.delete(LEGACY_ADMIN_COOKIE);
 }

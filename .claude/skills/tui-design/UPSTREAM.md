@@ -32,7 +32,7 @@ git clone --depth 1 https://github.com/pageton/tui-design-skill /tmp/tui-design-
 
 1. Added Claude Code skill frontmatter (`name`, `description`, `version`) to `SKILL.md`; upstream
    ships it without frontmatter, so it is not discoverable as a skill unmodified.
-2. Added the **Monet Constraints** section to `SKILL.md` — Butterfly's inline ratatui TUI, the
+2. Added the **Tundral Constraints** section to `SKILL.md` — Butterfly's inline ratatui TUI, the
    ambiguous-width measurement rule, and the cached-prefix and engine/UI boundaries, plus the
    required verification command. (Until 2026-09-17 this section said Butterfly was *not* a
    Ratatui app and forbade adopting it; the migration landed that day, so the constraint now
@@ -42,5 +42,5 @@ git clone --depth 1 https://github.com/pageton/tui-design-skill /tmp/tui-design-
 ## Re-syncing
 
 Diff upstream against this copy, apply upstream changes to the vendored files, then re-apply the
-three local modifications above and bump the commit recorded here. Keep the Monet Constraints
+three local modifications above and bump the commit recorded here. Keep the Tundral Constraints
 section at the top of `SKILL.md`; it is the part that must survive every sync.

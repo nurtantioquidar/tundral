@@ -28,7 +28,7 @@ mode, `mcp::Options::hosted`).
 
 The service owns hosted Dijkstral's accounts, GitHub installations, repositories, builds and MCP
 tokens, and is the only writer of its database. The web app owns browser sessions and calls
-`/internal/*`; browsers never do. It never imports another Monet product. Model features, when
+`/internal/*`; browsers never do. It never imports another Tundral product. Model features, when
 added, call Inver's public API (`../DIJKSTRAL_HOSTED_DESIGN.md` §10).
 
 ## Invariants
@@ -58,7 +58,7 @@ cargo fmt --check && cargo clippy --locked --all-targets -- -D warnings
 cargo test --locked
 ```
 
-From the repository root: `bun run --filter @monet/dijkstral-service check`.
+From the repository root: `bun run --filter @tundral/dijkstral-service check`.
 
 ## Verification
 

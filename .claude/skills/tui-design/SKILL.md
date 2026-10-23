@@ -35,9 +35,9 @@ DO NOT TRIGGER when:
 
 ---
 
-## Monet Constraints (override everything below)
+## Tundral Constraints (override everything below)
 
-This pack is vendored into the Monet monorepo (see `UPSTREAM.md` for the source and commit).
+This pack is vendored into the Tundral monorepo (see `UPSTREAM.md` for the source and commit).
 Everything in this skill is advice; the repository's own instructions are law. When they conflict,
 `CLAUDE.md`/`AGENTS.md` at the repo root and the closest module `AGENTS.md` win, silently and
 always.
@@ -72,7 +72,7 @@ always.
   CLI crate.
 - **No new dependencies without asking.** Propose the crate and the reason; let the user decide.
 - **Verify, don't assert.** After any Butterfly TUI change run
-  `bun run --filter @monet/butterfly-cli check` (fmt, clippy `-D warnings`, `cargo test
+  `bun run --filter @tundral/butterfly-cli check` (fmt, clippy `-D warnings`, `cargo test
   --workspace --locked`), and exercise the REPL with `bun run dev:butterfly` when the change is
   visual. State what was validated and what could not be.
 - **Skip the framework question inside an existing product.** Butterfly is Rust + crossterm;

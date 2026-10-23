@@ -1,4 +1,4 @@
-import type { UsageSummary } from "@monet/contracts/customer";
+import type { UsageSummary } from "@tundral/contracts/customer";
 import { compactTokens } from "@/lib/format";
 
 const WIDTH = 720;

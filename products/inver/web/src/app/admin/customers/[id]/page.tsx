@@ -14,7 +14,7 @@ import { GatewayError, gatewayAdmin } from "@/server/gateway-client";
 import { hasAdminSession } from "@/server/admin-session";
 import { day, timestamp, tokens, usd } from "@/lib/format";
 
-export const metadata: Metadata = { title: "Customer — Monet operator console" };
+export const metadata: Metadata = { title: "Customer — Inver operator console" };
 
 export default async function CustomerDetail({ params }: { params: Promise<{ id: string }> }) {
   if (!(await hasAdminSession())) redirect("/admin/signin");

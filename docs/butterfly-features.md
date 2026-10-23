@@ -5,7 +5,8 @@ deliberately rejected. Update this file in the same change that lands or removes
 statuses honest. Positioning: a fast, model-agnostic, cache-first coding agent CLI with
 deterministic verification (binary `butterfly`, crates `butterfly-core` / `butterfly` /
 `butterfly-atlas`). DeepSeek is the reference direct model; GLM and Luna are built in; Nimble
-(`products/nimble`) is an optional routed provider. The 2026-09-03 audit that set this direction is
+(its own repository since 2026-10-23; `products/nimble` paths below are historical) is an optional
+routed provider. The 2026-09-03 audit that set this direction is
 `products/butterfly/BUTTERFLY_ARCHITECTURE_REVIEW.md`.
 
 ## Shipped
@@ -132,7 +133,7 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
   nothing to verify; make the change itself before running any check"), and `render_evidence`
   drops the re-run/do-not-repeat tail when there was no failing check to re-run. Deterministic,
   free, and needs no network. Cross-module: `previous_failure` is a free-form string in
-  `@monet/contracts`, so no schema change, but `workspace_unchanged` was added to Nimble's default
+  `@tundral/contracts`, so no schema change, but `workspace_unchanged` was added to Nimble's default
   `escalation_failures` to preserve the escalation these attempts already had under the old name.
   `crates/core/src/verify.rs`, `crates/core/src/failure.rs`, `products/nimble/router/src/config.ts`
 - **Loop-detected stops are named** (2026-09-19) — the four remaining `uncertain_result` sites in
@@ -1254,7 +1255,7 @@ deterministic verification (binary `butterfly`, crates `butterfly-core` / `butte
 4. **Telemetry alarm** — flag an unexpected cache-miss request (no compaction/elision preceded it)
    as a byte-stability regression.
 5. **Distribution** — versioned releases with prebuilt binaries; prerequisite for any public face.
-6. **butterfly.monet.sh** — landing page (download, benchmarks, docs) at `products/butterfly/web`
+6. **butterfly.tundral.ai** — landing page (download, benchmarks, docs) at `products/butterfly/web`
    + `deploy/` route; after distribution exists.
 7. **Long-horizon bench tier** — multi-hour refactors, where model quality dominates.
 8. **Billing reconciliation** — check tier-priced `/usage` totals against a real DeepSeek invoice.

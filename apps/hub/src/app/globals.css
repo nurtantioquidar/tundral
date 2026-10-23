@@ -1,4 +1,4 @@
-/* monet.sh layout. Every colour, size, and font comes from tokens.css; the rules behind them live in
+/* tundral.ai layout. Every colour, size, and font comes from tokens.css; the rules behind them live in
  * ../../DESIGN.md. The pixel pond is the page's one bold element; text stays calm and centred. */
 
 @import "./tokens.css";

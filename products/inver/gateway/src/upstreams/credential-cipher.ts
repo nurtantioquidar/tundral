@@ -13,6 +13,7 @@ function decodeKey(value: string): Buffer {
 }
 
 function context(providerId: string): Buffer {
+  // Frozen: stored ciphertexts are bound to this context, so it keeps the pre-Tundral name.
   return Buffer.from(`monet:upstream-provider:${providerId}:${FORMAT_VERSION}`, "utf8");
 }
 

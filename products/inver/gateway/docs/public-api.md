@@ -1,4 +1,4 @@
-# Monet inference API
+# Inver inference API
 
 ## Base URL and authentication
 
@@ -40,7 +40,7 @@ the API.
 
 ```bash
 curl https://<gateway-domain>/v1/chat/completions \
-  -H "Authorization: Bearer $MONET_API_KEY" \
+  -H "Authorization: Bearer $INVER_API_KEY" \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: stable-request-id" \
   -d '{
@@ -55,7 +55,7 @@ curl https://<gateway-domain>/v1/chat/completions \
 
 ```bash
 curl https://<gateway-domain>/v1/responses \
-  -H "Authorization: Bearer $MONET_API_KEY" \
+  -H "Authorization: Bearer $INVER_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-5.6-luna",
@@ -67,7 +67,7 @@ curl https://<gateway-domain>/v1/responses \
 
 `stream: true` emits server-sent events. The gateway continues upstream execution and settlement if
 the client disconnects. Customer-defined function tools are selected by the model and returned to
-the caller; Monet never executes customer tools.
+the caller; Inver never executes customer tools.
 
 Codex-backed routes support one selected customer tool per HTTP turn. Do not send
 `parallel_tool_calls: true`.
@@ -124,6 +124,6 @@ Respect `Retry-After` on `429`. Do not automatically retry `400`, `401`, or `402
 
 ## Compatibility boundary
 
-Monet preserves standard upstream response fields and adds `gateway_usage` to successful generation
+Inver preserves standard upstream response fields and adds `gateway_usage` to successful generation
 responses. Treat additional fields as additive. Pin behavior to the public model ID and returned
 rate-card version, not to an assumed underlying provider.

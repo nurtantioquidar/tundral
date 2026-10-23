@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { adminSignOut } from "@/app/admin/actions";
-import type { PricedModel } from "@monet/contracts";
-import type { UpstreamRuntime } from "@monet/contracts/upstreams";
+import type { PricedModel } from "@tundral/contracts";
+import type { UpstreamRuntime } from "@tundral/contracts/upstreams";
 
 /* Console navigation for the operator surfaces. Routing and providers are separate destinations
  * because they scale differently: the model list is bounded by the rate card, the provider list is

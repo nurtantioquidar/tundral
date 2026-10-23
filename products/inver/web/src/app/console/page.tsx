@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { CustomerKeySettings, CustomerNewKeyForm } from "@/features/api-keys/CustomerKeyForms";
-import type { UsageEvent } from "@monet/contracts/customer";
+import type { UsageEvent } from "@tundral/contracts/customer";
 import { GatewayError, gatewayCustomer } from "@/server/gateway-client";
 import { clearCustomerSession, readCustomerSession } from "@/server/customer-session";
 import { day, timestamp, tokens, usd } from "@/lib/format";
 import { signOutCustomer } from "@/app/signin/actions";
 
-export const metadata: Metadata = { title: "Console — Monet" };
+export const metadata: Metadata = { title: "Console — Inver" };
 
 interface ModelRollup {
   model: string;

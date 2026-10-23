@@ -1,5 +1,5 @@
 {
-  "name": "@monet/dijkstral-cli",
+  "name": "@tundral/dijkstral-cli",
   "private": true,
   "version": "0.1.0",
   "scripts": {

@@ -1,7 +1,7 @@
 /* Hallmark · macrostructure: Narrative Workflow · theme: Coral · tone: utilitarian · anchor hue: 30 warm coral
  * nav: N5 floating pill (public) + bordered bar (console) · footer: Ft5 statement — see tokens.css for the full stamp */
 
-@import "@monet/ui/tokens.css";
+@import "@tundral/ui/tokens.css";
 
 /* ---------- Base ---------- */
 
@@ -1611,7 +1611,7 @@ pre {
 }
 
 /* Provider model picker — the models a provider reports from /v1/models, one row each, on the
- * compact 32px record-row scale. Foreign models (ones Monet does not sell) stay muted until an
+ * compact 32px record-row scale. Foreign models (ones Inver does not sell) stay muted until an
  * explicit "sold as" mapping arms their checkbox. */
 .pick {
   margin: 0;

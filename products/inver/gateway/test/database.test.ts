@@ -410,7 +410,7 @@ describe("usage summary", () => {
 
 describe("provider schema migration", () => {
   test("normalizes legacy embedded credentials and initializes matching routes", () => {
-    const directory = mkdtempSync(join(tmpdir(), "monet-provider-migration-"));
+    const directory = mkdtempSync(join(tmpdir(), "inver-provider-migration-"));
     const path = join(directory, "gateway.db");
     try {
       const legacy = new Database(path, { create: true });

@@ -8,7 +8,7 @@ import { GatewayError, gatewayAdmin } from "@/server/gateway-client";
 import { readAllCapabilities } from "@/server/upstream-reads";
 import { hasAdminSession } from "@/server/admin-session";
 
-export const metadata: Metadata = { title: "Providers — Monet operator console" };
+export const metadata: Metadata = { title: "Providers — Inver operator console" };
 
 export default async function ProvidersPage() {
   if (!(await hasAdminSession())) redirect("/admin/signin");

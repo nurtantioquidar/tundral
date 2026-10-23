@@ -138,7 +138,7 @@ command may write to GitHub.
 This module owns local graph construction, its on-disk index and outputs under `dijkstral-out/`,
 its user-wide state under `$DIJKSTRAL_HOME` (default `~/.dijkstral`: the global graph and
 `clone`'s repositories), the query and MCP surfaces, and assistant integration files it installs.
-It must not import another Monet product (Butterfly's `atlas` included) or Graphify code, prompts
+It must not import another Tundral product (Butterfly's `atlas` included) or Graphify code, prompts
 or skill text; only Graphify's documented formats and observable behaviour are reproduced.
 
 ## Invariants
@@ -169,7 +169,7 @@ From the repository root:
 
 ```bash
 bun run dev:dijkstral -- --help
-bun run --filter @monet/dijkstral-cli check
+bun run --filter @tundral/dijkstral-cli check
 ```
 
 ## Verification

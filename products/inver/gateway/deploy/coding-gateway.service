@@ -5,10 +5,10 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=monet
-Group=monet
-WorkingDirectory=/opt/monet/products/inver/gateway
-EnvironmentFile=/etc/monet-inference-gateway.env
+User=tundral
+Group=tundral
+WorkingDirectory=/opt/tundral/products/inver/gateway
+EnvironmentFile=/etc/tundral-inference-gateway.env
 ExecStart=/usr/local/bin/bun src/server.ts
 Restart=always
 RestartSec=3
@@ -26,7 +26,7 @@ RestrictSUIDSGID=true
 LockPersonality=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 SystemCallArchitectures=native
-ReadWritePaths=/var/lib/monet/inference-gateway
+ReadWritePaths=/var/lib/tundral/inference-gateway
 UMask=0077
 
 [Install]

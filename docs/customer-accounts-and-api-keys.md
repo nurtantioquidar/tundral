@@ -2,7 +2,7 @@
 
 ## Current pilot boundary
 
-Monet separates browser identity from inference credentials:
+Tundral separates browser identity from inference credentials:
 
 - customers register and sign in to `products/inver/web` with an email address and password;
 - the web backend keeps a signed, `httpOnly` customer session containing the gateway customer ID;

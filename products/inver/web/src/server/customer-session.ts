@@ -1,10 +1,11 @@
 import "server-only";
-import type { CustomerAccount } from "@monet/contracts/customer";
+import type { CustomerAccount } from "@tundral/contracts/customer";
 import { cookies } from "next/headers";
 import { constantTimeEqual, sessionCookieOptions, signSession } from "./session-signing";
 
-const CUSTOMER_COOKIE = "monet_customer";
-const LEGACY_CUSTOMER_COOKIE = "monet_key";
+const CUSTOMER_COOKIE = "inver_customer";
+/* Cookies of the pre-Tundral names, cleared at sign-out. */
+const LEGACY_CUSTOMER_COOKIES = ["monet_customer", "monet_key"];
 const CUSTOMER_SESSION_MS = 30 * 24 * 60 * 60 * 1000;
 
 export type CustomerSession = CustomerAccount;
@@ -53,5 +54,5 @@ export async function readCustomerSession(): Promise<CustomerSession | null> {
 export async function clearCustomerSession(): Promise<void> {
   const store = await cookies();
   store.delete(CUSTOMER_COOKIE);
-  store.delete(LEGACY_CUSTOMER_COOKIE);
+  for (const name of LEGACY_CUSTOMER_COOKIES) store.delete(name);
 }

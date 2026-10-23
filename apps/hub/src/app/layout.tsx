@@ -11,9 +11,9 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Monet",
+  title: "Tundral",
   description:
-    "Monet is a small studio named for the painter. It builds instruments for working with AI: Butterfly, Cocoon, Nimble, Inver, and Cicada. Next, the art made with them.",
+    "Tundral is a small studio. It builds instruments for working with AI: Butterfly, Inver and Dijkstral. Next, the art made with them.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

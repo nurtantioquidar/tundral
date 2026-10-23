@@ -7,7 +7,7 @@ OpenAI-compatible request; a response without the extension is a plain OpenAI-co
 response. Either side must work when the other ignores all of this.
 
 Canonical types: Rust in `butterfly-core::provider::nimble`, TypeScript validators in
-`@monet/contracts` (`packages/contracts/src/nimble.ts`), consumed by `products/nimble/router`.
+Nimble's own repository (`router/src/contract.ts`), where the router lives since 2026-10-23.
 
 ## Transport
 

@@ -8,7 +8,7 @@ import {
   type CustomerActionState,
 } from "@/app/console/actions";
 import { CopyButton } from "@/components/CopyButton";
-import type { ApiKeyRow } from "@monet/contracts/customer";
+import type { ApiKeyRow } from "@tundral/contracts/customer";
 
 function StatusLine({ state }: { state: CustomerActionState }) {
   return (

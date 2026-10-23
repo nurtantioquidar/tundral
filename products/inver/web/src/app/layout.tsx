@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Monet — prepaid inference gateway",
+  title: "Inver — prepaid inference gateway",
   description:
     "OpenAI-compatible model access on prepaid balance. Every request reserves, settles, and posts to an immutable ledger in integer micro-dollars.",
 };

@@ -1,28 +1,26 @@
-# Monet Agent Guide
+# Tundral Agent Guide
 
 ## Repository purpose
 
-Monet is a monorepo for a line of small, metered products. It contains independently deployable
+Tundral is a monorepo for a line of small, metered products. It contains independently deployable
 applications and the small set of packages that genuinely need to be shared between them. Each
 product owns its own runtime, accounts and data when present, and release schedule. Web products
-are reached on their own subdomains; a developer product may first ship as a local CLI. `monet.sh`
-is only the index that routes a visitor to a product's public surface.
+are reached on their own subdomains of `tundral.ai`; a developer product may first ship as a local
+CLI. `tundral.ai` itself is only the index that routes a visitor to a product's public surface.
 
-The active products are Inver (a prepaid OpenAI-compatible inference gateway, `inver.monet.sh`),
+The active products are Inver (a prepaid OpenAI-compatible inference gateway, `inver.tundral.ai`),
 Butterfly (a model-agnostic, cache-first coding agent with deterministic verification, shipped as a
-local Rust CLI; DeepSeek is its reference direct model), Nimble (an intelligent model router exposed
-as one OpenAI-compatible endpoint, shipped as a local Bun service), Cicada (a fast local Rust CLI
-that checks balances across model API providers without requiring separate browser consoles), Cocoon
-(a local Rust credential firewall that lets AI agents use provider APIs without receiving durable
-upstream secrets), and Dijkstral (a local Rust CLI that turns a repository into a queryable code
-knowledge graph for AI agents, benchmarked head-to-head against Graphify; see
-`products/dijkstral/DIJKSTRAL_DESIGN.md`). Butterfly and Nimble are independent products that are
-deliberately co-designed: each works alone with any model or client, and together they form the
-reference configuration through the optional, versioned contract in
-`docs/butterfly-nimble-contract.md`. Neither may import the other. See
-`docs/harness-implementation-comparison.md` for how Butterfly was selected,
-`products/butterfly/BUTTERFLY_ARCHITECTURE_REVIEW.md` for the audit that made it model-agnostic, and
-`products/nimble/NIMBLE_DESIGN.md` for the router's design.
+local Rust CLI; DeepSeek is its reference direct model), and Dijkstral (a code knowledge graph for
+AI agents: a local Rust CLI benchmarked head-to-head against Graphify, and a hosted service at
+`dijkstral.tundral.ai`; see `products/dijkstral/DIJKSTRAL_DESIGN.md` and
+`DIJKSTRAL_HOSTED_DESIGN.md`). See `docs/harness-implementation-comparison.md` for how Butterfly was
+selected and `products/butterfly/BUTTERFLY_ARCHITECTURE_REVIEW.md` for the audit that made it
+model-agnostic.
+
+Nimble (model router), Cicada (provider balance checker) and Cocoon (agent credential firewall)
+were developed here and now live in their own repositories; they are not Tundral products.
+Butterfly keeps its optional client for Nimble's `nimble/v1` routing contract
+(`docs/butterfly-nimble-contract.md`), as it keeps any other provider dialect.
 
 Build new capabilities as features of an existing product, not as arbitrary packages. A capability
 becomes a new product only when it has its own audience and brand; it becomes a separate deployable
@@ -46,29 +44,23 @@ ownership, or scaling profile.
 ## Repository layout
 
 ```text
-monet/
+tundral/
 ├── apps/
-│   └── hub/                    # monet.sh — product-line index; owns no accounts or data
+│   └── hub/                    # tundral.ai — product-line index; owns no accounts or data
 ├── products/
 │   ├── inver/
 │   │   ├── gateway/            # Customer model API, pilot ledger, and upstream routing
-│   │   └── web/                # inver.monet.sh — landing, customer console, operator BFF
+│   │   └── web/                # inver.tundral.ai — landing, customer console, operator BFF
 │   ├── butterfly/
 │   │   ├── cli/                # butterfly: model-agnostic cache-first coding agent (Rust)
 │   │   └── bench/              # fixture bench + Terminal-Bench (Harbor) adapter and matrix
-│   ├── cicada/
-│   │   └── cli/                # cicada: concurrent model API balance checker (Rust)
-│   ├── cocoon/
-│   │   └── cli/                # cocoon: local agent credential firewall (Rust)
-│   ├── dijkstral/
-│   │   ├── cli/                # dijkstral: code knowledge graph for AI agents (Rust)
-│   │   ├── bench/              # head-to-head benchmark against Graphify
-│   │   └── service/            # hosted Dijkstral: webhooks, builds on push, MCP over HTTP (Rust)
-│   └── nimble/
-│       └── router/             # nimble: intelligent model router, OpenAI-compatible (Bun)
+│   └── dijkstral/
+│       ├── cli/                # dijkstral: code knowledge graph for AI agents (Rust)
+│       ├── bench/              # head-to-head benchmark against Graphify
+│       └── service/            # dijkstral.tundral.ai backend: webhooks, builds, MCP (Rust)
 ├── packages/
 │   ├── contracts/              # Versioned JSON transport contracts shared across deployables
-│   └── ui/                     # Monet design-token layer shared by the hub and Inver frontends
+│   └── ui/                     # Tundral design-token layer shared by the hub and Inver frontends
 ├── deploy/                     # Edge routing for every host
 └── docs/                       # Cross-product architecture and operating decisions
 ```
@@ -133,7 +125,7 @@ when at least two frontends genuinely render it.
 
 - Applications may depend on packages; packages must not depend on applications.
 - Applications must not import source files from sibling applications.
-- Cross-application JSON types and runtime boundary validators belong in `@monet/contracts`; database
+- Cross-application JSON types and runtime boundary validators belong in `@tundral/contracts`; database
   rows, domain services, sessions, and UI components do not.
 - Shared packages must expose intentional public entry points and remain runtime-agnostic unless
   their name and instructions explicitly say otherwise.
@@ -159,15 +151,12 @@ Run from the repository root:
 ```bash
 bun run check
 bun run test
-bun run dev:hub            # monet.sh          :3000
-bun run dev:inver          # inver.monet.sh    :3001
-bun run dev:inver-gateway  # Inver public API  :8080
-bun run dev:nimble         # Nimble router     :8092
+bun run dev:hub               # tundral.ai             :3000
+bun run dev:inver             # inver.tundral.ai       :3001
+bun run dev:inver-gateway     # Inver public API       :8080
+bun run dev:dijkstral-service # dijkstral.tundral.ai   :8095
 bun run dev:butterfly -- --help
-bun run dev:cicada -- --help
-bun run dev:cocoon -- --help
 bun run dev:dijkstral -- --help
-bun run dev:dijkstral-service    # hosted Dijkstral   :8095
 ```
 
 Root commands orchestrate module commands; module `AGENTS.md` files define any additional required

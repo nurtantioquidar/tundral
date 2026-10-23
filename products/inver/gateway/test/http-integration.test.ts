@@ -7,7 +7,7 @@ const ADMIN_KEY = "integration-admin-secret";
 const WEB_KEY = "integration-web-bff-secret";
 const integrationEnabled = process.env.RUN_HTTP_INTEGRATION === "true";
 const workspace = resolve(import.meta.dir, "..");
-const temporaryDirectory = mkdtempSync(resolve(tmpdir(), "monet-http-integration-"));
+const temporaryDirectory = mkdtempSync(resolve(tmpdir(), "inver-http-integration-"));
 
 let upstream: ReturnType<typeof Bun.serve>;
 let gateway: ReturnType<typeof Bun.spawn>;

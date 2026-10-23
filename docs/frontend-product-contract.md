@@ -1,4 +1,4 @@
-# Monet frontend product contract
+# Tundral frontend product contract
 
 ## Purpose
 
@@ -20,12 +20,12 @@ gateway responses as the brief.
 
 ## Product model
 
-Monet has four concepts that must remain visually and verbally distinct:
+Tundral has four concepts that must remain visually and verbally distinct:
 
 1. **Account** — the customer's browser identity, shared prepaid balance, and account-wide limits.
 2. **API key** — a revocable workload credential with an optional lifetime spending cap.
 3. **Usage** — settled requests attributed to a model and API key.
-4. **Upstream route** — an operator-owned mapping from a public Monet model to one or more provider
+4. **Upstream route** — an operator-owned mapping from a public Tundral model to one or more provider
    capabilities.
 
 An API-key spending cap is not a separate balance. It is a guardrail over the shared account
@@ -203,7 +203,7 @@ The UI must expose these stages in order:
 4. **Capability** — canonical model, provider model ID, and supported API paths. When an HTTP
    provider has a stored credential, prefer offering the provider's own reported model list
    (`GET /internal/upstreams/:id/available-models`) over hand-typed IDs, with manual entry as the
-   fallback; a discovered model Monet does not sell needs an explicit mapping before it can be
+   fallback; a discovered model Tundral does not sell needs an explicit mapping before it can be
    declared.
 5. **Route publication** — select semantically compatible capabilities, then set priority and
    weight for each public model.
@@ -225,7 +225,7 @@ Rules:
 
 ## BFF data contract
 
-The UI consumes these semantic shapes from `@monet/contracts` through
+The UI consumes these semantic shapes from `@tundral/contracts` through
 `src/server/gateway-client.ts`.
 
 ### Customer

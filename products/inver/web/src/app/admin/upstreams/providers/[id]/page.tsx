@@ -23,7 +23,7 @@ import { readRateCard } from "@/server/upstream-reads";
 import { hasAdminSession } from "@/server/admin-session";
 import { day } from "@/lib/format";
 
-export const metadata: Metadata = { title: "Provider — Monet operator console" };
+export const metadata: Metadata = { title: "Provider — Inver operator console" };
 
 const routeHref = (publicModelId: string) =>
   `/admin/upstreams?model=${encodeURIComponent(publicModelId)}#model-${encodeURIComponent(publicModelId)}`;
@@ -127,8 +127,8 @@ export default async function ProviderDetailPage({
         capabilities.length > 0
           ? `${capabilities.length} model${capabilities.length === 1 ? "" : "s"} declared.`
           : isCodex || credentials.length === 0
-            ? "Declare which of the provider’s models Monet should serve."
-            : "Load the provider’s own model list below and tick the ones Monet should serve.",
+            ? "Declare which of the provider’s models Inver should serve."
+            : "Load the provider’s own model list below and tick the ones Inver should serve.",
       ...(capabilities.length === 0 ? { action: { href: "#models", label: "Add a model" } } : {}),
     },
     {

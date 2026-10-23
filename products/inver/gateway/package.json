@@ -1,5 +1,5 @@
 {
-  "name": "@monet/inver-gateway",
+  "name": "@tundral/inver-gateway",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
     "typescript": "^5.7.0"
   },
   "dependencies": {
-    "@monet/contracts": "workspace:*",
+    "@tundral/contracts": "workspace:*",
     "effect": "^3.22.1"
   }
 }

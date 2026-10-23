@@ -33,8 +33,6 @@ jobs:
         with:
           workspaces: |
             products/butterfly/cli
-            products/cicada/cli
-            products/cocoon/cli
             products/dijkstral/cli
             products/dijkstral/service
 

@@ -1,8 +1,8 @@
-# Monet Inference Gateway Agent Guide
+# Inver Inference Gateway Agent Guide
 
 ## Project purpose
 
-This module is Monet's prepaid, OpenAI-compatible coding-model gateway. It authenticates customers,
+This module is Inver's prepaid, OpenAI-compatible coding-model gateway. It authenticates customers,
 meters upstream token usage, settles charges against USD-denominated balances, and records verified
 USDC deposits. The models sold are `gpt-5.6-luna`, `gpt-5.6`, `gpt-5.5`, and `gpt-5.4`.
 
@@ -38,7 +38,7 @@ This application owns:
 This application does not own:
 
 - browser UI, browser sessions, product navigation, or feature discovery;
-- general Monet identity, organizations, marketing, or customer support workflows;
+- general Tundral identity, organizations, marketing, or customer support workflows;
 - payment-provider checkout or unverified blockchain observation;
 - execution of customer-declared coding tools;
 - unrelated future feature runtimes.
@@ -68,7 +68,7 @@ transactional migration under `src/database/migrations/`.
 `src/database/gateway-database.ts` remains a compatibility facade while repositories are extracted.
 New database-heavy capabilities should receive a narrow repository rather than making that facade
 larger. Never expose repository or SQLite row types through HTTP; cross-app JSON belongs in
-`@monet/contracts`.
+`@tundral/contracts`.
 
 ## Product boundaries
 
@@ -105,7 +105,7 @@ Rates are USD per one million tokens:
 | `gpt-5.5` | $5.00 | $5.00 | $0.50 | $30.00 |
 | `gpt-5.4` | $2.50 | $2.50 | $0.25 | $15.00 |
 
-`gpt-5.6` is OpenAI's alias for `gpt-5.6-sol`; Monet sells the alias ID because providers report
+`gpt-5.6` is OpenAI's alias for `gpt-5.6-sol`; Inver sells the alias ID because providers report
 it from `/v1/models`. The card is flat: OpenAI's long-context surcharge (above 272K input tokens,
 2x input / 1.5x output upstream) is not passed through.
 
@@ -287,7 +287,7 @@ guess model limits. Until verified, omit uncertain limits rather than publishing
 - Configuration is defined once as `gatewayConfig` (an `Effect.Config`) in `src/config.ts`. Add new
   settings there, not by reading `process.env` at a call site. Secrets use `Config.redacted` and are
   unwrapped only at the `loadGatewayConfig` boundary.
-- Effect must not leak into `@monet/contracts`. That package is consumed by the Next.js web app and
+- Effect must not leak into `@tundral/contracts`. That package is consumed by the Next.js web app and
   stays framework-neutral.
 - Persistence: `bun:sqlite` with foreign keys and WAL enabled.
 - Prefer small modules with explicit interfaces over adding logic directly to `server.ts` or

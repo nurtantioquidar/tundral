@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { RegisterForm } from "@/components/SignInForm";
 import { readCustomerSession } from "@/server/customer-session";
 
-export const metadata: Metadata = { title: "Create account — Monet" };
+export const metadata: Metadata = { title: "Create account — Inver" };
 
 export default async function RegisterPage() {
   if (await readCustomerSession()) redirect("/console");
@@ -14,7 +14,7 @@ export default async function RegisterPage() {
       <header className="nav">
         <div className="container nav__inner">
           <Link className="nav__brand" href="/">
-            Monet<span className="nav__brand-tick">.</span>
+            Inver<span className="nav__brand-tick">.</span>
           </Link>
         </div>
       </header>

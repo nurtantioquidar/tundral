@@ -8,7 +8,7 @@ Purpose: decide what Butterfly already is before touching it, name every DeepSee
 assumption, and lay out the path to a model-agnostic harness that still runs DeepSeek as well as it
 does today, benchmarks on Terminal-Bench, and co-designs with Nimble without depending on it.
 
-Decision recorded here: **Nimble is a separate product at `products/nimble/`**, not a workspace
+Decision recorded here (2026-09; Nimble moved to its own repository on 2026-10-23): **Nimble is a separate product at `products/nimble/`**, not a workspace
 inside Butterfly. The repository rule is that a capability becomes a product when it has its own
 audience and brand; Nimble is a router for any client, so it qualifies. Butterfly must never link
 against Nimble, and Nimble must never import Butterfly.
@@ -408,7 +408,7 @@ Butterfly ↔ Nimble is an optional, versioned extension of the OpenAI-compatibl
   Butterfly request, and Butterfly against a non-Nimble endpoint sends no extension.
 
 The contract text lives at `docs/butterfly-nimble-contract.md` (versioned `v1`), with Rust types
-in `butterfly-core::provider::nimble` and TypeScript validators in `@monet/contracts`.
+in `butterfly-core::provider::nimble` and TypeScript validators in `@tundral/contracts`.
 
 ## 12. Terminal-Bench integration plan
 

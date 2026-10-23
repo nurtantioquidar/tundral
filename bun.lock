@@ -6,10 +6,10 @@
       "name": "monet",
     },
     "apps/hub": {
-      "name": "@monet/hub",
+      "name": "@tundral/hub",
       "version": "0.1.0",
       "dependencies": {
-        "@monet/ui": "workspace:*",
+        "@tundral/ui": "workspace:*",
         "next": "^15.3.4",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
@@ -22,7 +22,7 @@
       },
     },
     "packages/contracts": {
-      "name": "@monet/contracts",
+      "name": "@tundral/contracts",
       "version": "0.1.0",
       "devDependencies": {
         "@types/bun": "latest",
@@ -30,34 +30,26 @@
       },
     },
     "packages/ui": {
-      "name": "@monet/ui",
+      "name": "@tundral/ui",
       "version": "0.1.0",
     },
     "products/butterfly/cli": {
-      "name": "@monet/butterfly-cli",
-      "version": "0.1.0",
-    },
-    "products/cicada/cli": {
-      "name": "@monet/cicada-cli",
-      "version": "0.1.0",
-    },
-    "products/cocoon/cli": {
-      "name": "@monet/cocoon-cli",
+      "name": "@tundral/butterfly-cli",
       "version": "0.1.0",
     },
     "products/dijkstral/cli": {
-      "name": "@monet/dijkstral-cli",
+      "name": "@tundral/dijkstral-cli",
       "version": "0.1.0",
     },
     "products/dijkstral/service": {
-      "name": "@monet/dijkstral-service",
+      "name": "@tundral/dijkstral-service",
       "version": "0.1.0",
     },
     "products/inver/gateway": {
-      "name": "@monet/inver-gateway",
+      "name": "@tundral/inver-gateway",
       "version": "0.1.0",
       "dependencies": {
-        "@monet/contracts": "workspace:*",
+        "@tundral/contracts": "workspace:*",
         "effect": "^3.22.1",
       },
       "devDependencies": {
@@ -66,11 +58,11 @@
       },
     },
     "products/inver/web": {
-      "name": "@monet/inver-web",
+      "name": "@tundral/inver-web",
       "version": "0.1.0",
       "dependencies": {
-        "@monet/contracts": "workspace:*",
-        "@monet/ui": "workspace:*",
+        "@tundral/contracts": "workspace:*",
+        "@tundral/ui": "workspace:*",
         "next": "^15.3.4",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
@@ -80,17 +72,6 @@
         "@types/react": "^19",
         "@types/react-dom": "^19",
         "server-only": "^0.0.1",
-        "typescript": "^5.7.0",
-      },
-    },
-    "products/nimble/router": {
-      "name": "@monet/nimble-router",
-      "version": "0.1.0",
-      "dependencies": {
-        "@monet/contracts": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
         "typescript": "^5.7.0",
       },
     },
@@ -148,28 +129,6 @@
 
     "@img/sharp-win32-x64": ["@img/sharp-win32-x64@0.34.5", "", { "os": "win32", "cpu": "x64" }, "sha512-+29YMsqY2/9eFEiW93eqWnuLcWcufowXewwSNIT6UwZdUUCrM3oFjMWH/Z6/TMmb4hlFenmfAVbpWeup2jryCw=="],
 
-    "@monet/butterfly-cli": ["@monet/butterfly-cli@workspace:products/butterfly/cli"],
-
-    "@monet/cicada-cli": ["@monet/cicada-cli@workspace:products/cicada/cli"],
-
-    "@monet/cocoon-cli": ["@monet/cocoon-cli@workspace:products/cocoon/cli"],
-
-    "@monet/contracts": ["@monet/contracts@workspace:packages/contracts"],
-
-    "@monet/dijkstral-cli": ["@monet/dijkstral-cli@workspace:products/dijkstral/cli"],
-
-    "@monet/dijkstral-service": ["@monet/dijkstral-service@workspace:products/dijkstral/service"],
-
-    "@monet/hub": ["@monet/hub@workspace:apps/hub"],
-
-    "@monet/inver-gateway": ["@monet/inver-gateway@workspace:products/inver/gateway"],
-
-    "@monet/inver-web": ["@monet/inver-web@workspace:products/inver/web"],
-
-    "@monet/nimble-router": ["@monet/nimble-router@workspace:products/nimble/router"],
-
-    "@monet/ui": ["@monet/ui@workspace:packages/ui"],
-
     "@next/env": ["@next/env@15.5.21", "", {}, "sha512-hjJI/GfrjWHgNguRIBzItjRRu0m3Nrz17GhxsjuHfjIvg9hyg3239REd2dpI+bpMTFuVrVprHzEQ19m++cDtbw=="],
 
     "@next/swc-darwin-arm64": ["@next/swc-darwin-arm64@15.5.21", "", { "os": "darwin", "cpu": "arm64" }, "sha512-ZfjqPEdi6TRC/fWx7UDbwb1fbVgyh2uD5tVTRKIDZDlYM+UNuE/LafDG2fwuAoZilADpABh46OY/F5qf9JjqLQ=="],
@@ -192,7 +151,23 @@
 
     "@swc/helpers": ["@swc/helpers@0.5.15", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g=="],
 
-    "@types/bun": ["@types/bun@1.4.0", "", { "dependencies": { "bun-types": "1.4.0" } }, "sha512-K+lZULY23vRgK/CfTjFIV+tyifaNdSMlPh9j+6mQ/cLfpOznLyAuzgV/JQysyECpkBQLVMSyvjlr2fBUSA9wFQ=="],
+    "@tundral/butterfly-cli": ["@tundral/butterfly-cli@workspace:products/butterfly/cli"],
+
+    "@tundral/contracts": ["@tundral/contracts@workspace:packages/contracts"],
+
+    "@tundral/dijkstral-cli": ["@tundral/dijkstral-cli@workspace:products/dijkstral/cli"],
+
+    "@tundral/dijkstral-service": ["@tundral/dijkstral-service@workspace:products/dijkstral/service"],
+
+    "@tundral/hub": ["@tundral/hub@workspace:apps/hub"],
+
+    "@tundral/inver-gateway": ["@tundral/inver-gateway@workspace:products/inver/gateway"],
+
+    "@tundral/inver-web": ["@tundral/inver-web@workspace:products/inver/web"],
+
+    "@tundral/ui": ["@tundral/ui@workspace:packages/ui"],
+
+    "@types/bun": ["@types/bun@1.4.4", "", { "dependencies": { "bun-types": "1.4.4" } }, "sha512-9wkRDXUXK124pEnAutE6n/l18j+i9GC5IAHK8TmX/2nlySETmky0OU6yL5U8pW1AoKh++AN9auDCr647BfurjQ=="],
 
     "@types/node": ["@types/node@22.20.1", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q=="],
 
@@ -200,7 +175,7 @@
 
     "@types/react-dom": ["@types/react-dom@19.2.3", "", { "peerDependencies": { "@types/react": "^19.2.0" } }, "sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ=="],
 
-    "bun-types": ["bun-types@1.4.0", "", { "dependencies": { "@types/node": "*" } }, "sha512-iIKw23BspnQQYd3prITOBxeUsxBHnwzX6YJfGMuNOZzeNcMmVqzIIVGRm1l69ogaPQmb4wB6BN8mA5bE9YuC5Q=="],
+    "bun-types": ["bun-types@1.4.4", "", { "dependencies": { "@types/node": "*", "undici-types": "*" } }, "sha512-yjrJh5oGX7mMPKGd19YXyIjmEuj4G4zNC30bs7PM9Az7NQ3ndF3j6hbeRdvJTRQEhJ/FYQwW0a2moweEi2hMxQ=="],
 
     "caniuse-lite": ["caniuse-lite@1.0.30001806", "", {}, "sha512-72Cuvd95zbSYPKq6Fhg8eDJRlzgWDf7/mtoZv6Qe/DYNCEBdNxoA3+rZAU2ZhGCpZlns3EssFavaZomckT5Uuw=="],
 
@@ -246,16 +221,8 @@
 
     "undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
-    "@monet/inver-gateway/@types/bun": ["@types/bun@1.3.14", "", { "dependencies": { "bun-types": "1.3.14" } }, "sha512-h1hFqFVcvAvD9j9K7ZW7vd82aSA+rTdznZa+5bwvCwqSB1jmmfLcbIWhOLx1/+boy/xmjgCs/OMUL8hRJSmnPw=="],
-
     "bun-types/@types/node": ["@types/node@26.1.1", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-nxAkRSVkN1Y0JC1W8ky/fTfkGsMmcrRsbx+3XoZE+rMOX71kLYTV7fLXpqud1GpbpP5TuffXFqfX7fH2GgZREw=="],
 
-    "@monet/inver-gateway/@types/bun/bun-types": ["bun-types@1.3.14", "", { "dependencies": { "@types/node": "*" } }, "sha512-4N0ig0fEomHt5R0KCFWjovxow98rIoRwKolrYdCcknNwMekCXRnWEUvgu5soYV8QXtVsrUD8B95MBOZGPvr6KQ=="],
-
-    "bun-types/@types/node/undici-types": ["undici-types@8.3.0", "", {}, "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="],
-
-    "@monet/inver-gateway/@types/bun/bun-types/@types/node": ["@types/node@26.1.1", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-nxAkRSVkN1Y0JC1W8ky/fTfkGsMmcrRsbx+3XoZE+rMOX71kLYTV7fLXpqud1GpbpP5TuffXFqfX7fH2GgZREw=="],
-
-    "@monet/inver-gateway/@types/bun/bun-types/@types/node/undici-types": ["undici-types@8.3.0", "", {}, "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="],
+    "bun-types/undici-types": ["undici-types@8.3.0", "", {}, "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="],
   }
 }

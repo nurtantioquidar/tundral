@@ -10,9 +10,9 @@ describe("operational metrics", () => {
       inflightRequests: 2,
       configurationSource: "database",
     });
-    expect(output).toContain("monet_gateway_database_ready 1");
-    expect(output).toContain("monet_gateway_upstream_configured 0");
-    expect(output).toContain("monet_gateway_inflight_requests 2");
+    expect(output).toContain("inver_gateway_database_ready 1");
+    expect(output).toContain("inver_gateway_upstream_configured 0");
+    expect(output).toContain("inver_gateway_inflight_requests 2");
     expect(output).toContain('source="database"');
     expect(output).not.toContain("customer");
   });

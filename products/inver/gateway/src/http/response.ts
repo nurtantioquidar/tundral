@@ -1,4 +1,4 @@
-import type { GatewayErrorEnvelope } from "@monet/contracts/validation";
+import type { GatewayErrorEnvelope } from "@tundral/contracts/validation";
 import { timingSafeEqual } from "node:crypto";
 
 export function apiError(message: string, status: number, type = "invalid_request_error") {

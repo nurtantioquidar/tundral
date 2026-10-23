@@ -1,15 +1,15 @@
-# Monet edge routing — the single source of truth for which host reaches which process.
+# Tundral edge routing — the single source of truth for which host reaches which process.
 #
-# monet.sh (the hub) is a static export served by Cloudflare Pages, not by this file; see
+# tundral.ai (the hub) is a static export served by Cloudflare Pages, not by this file; see
 # apps/hub/AGENTS.md. Hosts and local dev ports:
-#   inver.monet.sh      -> inver web    127.0.0.1:3001
+#   inver.tundral.ai      -> inver web    127.0.0.1:3001
 #   {$GATEWAY_DOMAIN}   -> inver gateway 127.0.0.1:8080   (public OpenAI-compatible API)
 #
 # The gateway block is the only one that terminates a public API. Its /internal/* and /metrics
 # guard is a non-negotiable invariant: those routes are operator-only and must never be publicly
 # routable. Do not add a web host that proxies to :8080.
 
-(monet_common) {
+(tundral_common) {
 	encode zstd gzip
 
 	header {
@@ -20,13 +20,13 @@
 	}
 }
 
-{$INVER_WEB_DOMAIN:inver.monet.sh} {
-	import monet_common
+{$INVER_WEB_DOMAIN:inver.tundral.ai} {
+	import tundral_common
 	reverse_proxy 127.0.0.1:3001
 }
 
 {$GATEWAY_DOMAIN} {
-	import monet_common
+	import tundral_common
 
 	# Operator surface. Public traffic must never reach these paths.
 	@private path /internal/* /metrics

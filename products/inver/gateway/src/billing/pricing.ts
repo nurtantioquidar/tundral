@@ -29,7 +29,7 @@ export const MODEL_RATES: Readonly<Record<string, ModelRate>> = {
     cacheReadMicrosPerMillion: usd(0.1),
     outputMicrosPerMillion: usd(6),
   },
-  /* OpenAI sells the flagship as gpt-5.6-sol and routes the bare gpt-5.6 alias to it. Monet sells
+  /* OpenAI sells the flagship as gpt-5.6-sol and routes the bare gpt-5.6 alias to it. Inver sells
    * the alias ID because that is what providers report from /v1/models and what harnesses request. */
   "gpt-5.6": {
     id: "gpt-5.6",

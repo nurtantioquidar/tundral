@@ -348,7 +348,7 @@ export async function discoverProviderModels(_previous: ActionState, formData: F
 }
 
 /* The picker submits one checkbox per discovered model (`model:<id>`), plus an optional
- * `map:<id>` naming the Monet model it serves when the provider uses its own name for it. */
+ * `map:<id>` naming the Inver model it serves when the provider uses its own name for it. */
 export async function addDiscoveredModels(_previous: ActionState, formData: FormData): Promise<ActionState> {
   await requireAdmin();
   const providerId = String(formData.get("provider_id") ?? "");

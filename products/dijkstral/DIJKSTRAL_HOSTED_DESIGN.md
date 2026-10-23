@@ -5,11 +5,11 @@ is unchanged by it and stays the free, offline product.
 
 ## 1. Goal and scope
 
-A hosted Dijkstral at `dijkstral.monet.sh`: connect a GitHub repository once, and its graph is
+A hosted Dijkstral at `dijkstral.tundral.ai`: connect a GitHub repository once, and its graph is
 rebuilt on every push and served to any assistant over a hosted MCP endpoint. No local build, no
 local index, the same `context`, `query`, `explain`, `path` and `affected` answers.
 
-`dijkstral.monet.sh` is permanent: MCP URLs are pasted into assistants' configurations and a
+`dijkstral.tundral.ai` is permanent: MCP URLs are pasted into assistants' configurations and a
 redirect does not reliably carry an MCP request, so if Dijkstral later gets a domain of its own,
 both hosts keep serving the same service.
 
@@ -51,7 +51,7 @@ data):
   list with build state and node counts, MCP token creation (shown once), copy-paste setup for
   Claude Code and Codex. It owns the signed browser session and persists nothing else; it calls
   the service's private API.
-- JSON shared between web and service is versioned in `@monet/contracts` (`dijkstral/v1`), with
+- JSON shared between web and service is versioned in `@tundral/contracts` (`dijkstral/v1`), with
   the Rust side checked against the same fixtures.
 
 Dijkstral accounts are its own: no shared session with Inver or the hub.
@@ -90,13 +90,13 @@ is the internet-facing host meant for untrusted input. Dijkstral becomes an app 
   `/var/lib/secrets/dijkstral/env` (GitHub App id and private key, webhook secret, session key),
   generated or pasted on charon and saved with `save-secrets.sh`.
 - **Public ingress through a Cloudflare Tunnel** (`cloudflared`, outbound only) for
-  `dijkstral.monet.sh`, rather than opening TCP 80/443 for Caddy: charon keeps its "only UDP
+  `dijkstral.tundral.ai`, rather than opening TCP 80/443 for Caddy: charon keeps its "only UDP
   41641 open" model and the zone is already on Cloudflare. The tunnel routes only the web app and
   the public service paths (`/mcp/*`, `/github/webhook`); `/internal/*` is never routed.
   `deploy/` records the routing as it does for Caddy.
 - **Backups**: restic backs up `/srv/dijkstral/db` only. `repos/` (customer code and graphs) is
   excluded: it is rebuildable from GitHub, and customer code never leaves charon.
-- Images are built by CI from the Monet repository's remote and pulled by pinned tag or digest.
+- Images are built by CI from the Tundral repository's remote and pulled by pinned tag or digest.
 
 Capacity on one 2 vCPU host: the code build takes 0.2 s for ripgrep, 0.6 s for fastapi and
 17 s for Kubernetes (256k nodes), so builds are cheap; disk is the constraint (Kubernetes'
@@ -164,7 +164,7 @@ owner's.
    (Opossum on this Mac).
 3. `web`: sign in, repositories, tokens, setup instructions.
 4. GitHub App registered on the owner's account (a personal account can own one); charon app
-   module, tunnel, DNS record `dijkstral.monet.sh`, secrets.
+   module, tunnel, DNS record `dijkstral.tundral.ai`, secrets.
 5. Launch with public repositories; private repositories once §7's encryption item is done.
 6. Phase 2 PR review.
 
@@ -173,7 +173,7 @@ owner's.
 - **Private repositories at launch**: recommended only after at-rest encryption of
   `repos/` (§7); public repositories first.
 - **Own domain**: `dijkstral.dev` and `.com` were unregistered on 2026-10-21; adding one later
-  adds a host, never replaces `dijkstral.monet.sh`.
+  adds a host, never replaces `dijkstral.tundral.ai`.
 - **MCP OAuth**: tokens first; OAuth (the MCP authorization spec) when a client needs it.
 
 ## 10. Models and money

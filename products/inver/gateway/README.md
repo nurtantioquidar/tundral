@@ -1,4 +1,4 @@
-# Monet Inference Gateway
+# Inver Inference Gateway
 
 Prepaid, OpenAI-compatible GPT gateway pilot with per-token billing. Early access uses promotional
 credits or operator-verified offline payments; automated USDC and QRIS settlement are deferred.

@@ -1,11 +1,11 @@
 import Link from "next/link";
-import type { PricedModel } from "@monet/contracts";
+import type { PricedModel } from "@tundral/contracts";
 import { CopyButton } from "@/components/CopyButton";
 import { SiteNav } from "@/components/SiteNav";
 import { rateUsd } from "@/lib/format";
 import { GatewayError, gatewayCustomer } from "@/server/gateway-client";
 
-const BASE_URL_EXAMPLE = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.monet.example/v1";
+const BASE_URL_EXAMPLE = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.inver.example/v1";
 
 /* The landing page reads the live rate card so public pricing can never drift from what the console
  * and the ledger charge. Pricing is not essential to this page, so every failure mode degrades to an
@@ -44,7 +44,7 @@ export default async function LandingPage() {
             <div>
               <h1 className="hero__title">Model access with one clear balance.</h1>
               <p className="hero__lede">
-                Monet is an OpenAI-compatible endpoint on top of a prepaid balance. Point any coding harness at it,
+                Inver is an OpenAI-compatible endpoint on top of a prepaid balance. Point any coding harness at it,
                 give each workload its own key, and read the settled cost of every request in your console.
               </p>
               <div className="hero__actions">
@@ -76,7 +76,7 @@ export default async function LandingPage() {
               <p className="stage__num">1.0</p>
               <h2 className="stage__title">Create your account.</h2>
               <p className="stage__lede">
-                Register with an email and a password. Monet issues your first API key in the same step and shows the
+                Register with an email and a password. Inver issues your first API key in the same step and shows the
                 secret <strong>once</strong> — copy it before you leave the page. You can create more keys, rename
                 them, or revoke them from the console at any time.
               </p>
@@ -193,7 +193,7 @@ export default async function LandingPage() {
       <footer className="foot-stmt container">
         <p className="foot-stmt__line">One balance. Every key accounted for.</p>
         <div className="foot-stmt__meta">
-          <span className="foot-stmt__brand">Monet</span>
+          <span className="foot-stmt__brand">Inver</span>
           {/* The operator console is deliberately unlinked from public surfaces; operators reach
             * /admin directly. Advertising the admin entry point invites password probing. */}
           <div className="foot-stmt__links">

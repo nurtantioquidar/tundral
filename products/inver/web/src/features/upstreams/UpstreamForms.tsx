@@ -24,7 +24,7 @@ import type {
   UpstreamModelCapability,
   UpstreamProvider,
   UpstreamTransport,
-} from "@monet/contracts/upstreams";
+} from "@tundral/contracts/upstreams";
 
 function StatusLine({ state }: { state: ActionState }) {
   return (
@@ -398,7 +398,7 @@ const PATH_LABEL: Record<UpstreamApiPath, string> = {
 };
 
 /* The primary way to declare models: ask the provider what it serves, then tick. A model whose ID
- * matches one Monet sells is one click; a provider-renamed model needs an explicit "serves" mapping
+ * matches one Inver sells is one click; a provider-renamed model needs an explicit "serves" mapping
  * before its checkbox arms, so an unmappable capability can never be created by accident. */
 export function ModelPicker({
   provider,
@@ -406,7 +406,7 @@ export function ModelPicker({
   declaredUpstreamIds,
 }: {
   provider: UpstreamProvider;
-  /** Model IDs Monet sells, from the rate card. */
+  /** Model IDs Inver sells, from the rate card. */
   sellableModels: string[];
   /** upstream_model_ids already declared on this provider. */
   declaredUpstreamIds: string[];
@@ -526,7 +526,7 @@ export function ModelPicker({
             Add {selected.size > 0 ? `${selected.size} ` : ""}selected
           </button>
           <p className="field__help">
-            Models Monet doesn&rsquo;t sell need a &ldquo;sold as&rdquo; mapping before they can be
+            Models Inver doesn&rsquo;t sell need a &ldquo;sold as&rdquo; mapping before they can be
             ticked. Both API paths are enabled.
           </p>
         </div>
@@ -550,7 +550,7 @@ export function AddCapabilityForm({ provider }: { provider: UpstreamProvider }) 
         <div className="field">
           <label className="field__label" htmlFor={`c-canon-${provider.id}`}>Canonical model</label>
           <input id={`c-canon-${provider.id}`} name="canonical_model_id" className="input" placeholder="gpt-5.6-luna" required disabled={pending} />
-          <p className="field__help">Monet&rsquo;s name for the model family.</p>
+          <p className="field__help">Inver&rsquo;s name for the model family.</p>
         </div>
         <div className="field">
           <label className="field__label" htmlFor={`c-up-${provider.id}`}>Provider&rsquo;s model ID</label>

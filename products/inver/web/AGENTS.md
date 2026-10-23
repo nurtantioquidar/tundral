@@ -2,11 +2,11 @@
 
 ## Project purpose
 
-This module serves `inver.monet.sh`: Inver's public landing page, its customer console, and its
+This module serves `inver.tundral.ai`: Inver's public landing page, its customer console, and its
 operator (admin) console. It is a backend-for-frontend — the browser never calls the gateway
 directly; Next.js server code does, with server-held credentials.
 
-This is Inver's surface, not Monet's. The product-line index at `monet.sh` (`apps/hub`) links here
+This is Inver's surface, not Tundral's. The product-line index at `tundral.ai` (`apps/hub`) links here
 and owns nothing else; do not move Inver's landing content, pricing, or sign-in there.
 
 Follow the repository-root `AGENTS.md` first. Keep this application independently deployable and do
@@ -51,7 +51,7 @@ Never duplicate balances or usage into a second store. Render what the gateway r
 - `src/server/admin-session.ts` and `src/server/customer-session.ts` keep the two identity contexts
   separate; shared signing mechanics stay in `src/server/session-signing.ts`.
 - `src/lib/` is limited to small application-local, runtime-neutral helpers such as formatting.
-- Shared gateway JSON shapes come from `@monet/contracts`, never from copied interfaces or sibling
+- Shared gateway JSON shapes come from `@tundral/contracts`, never from copied interfaces or sibling
   application source.
 
 Keep client components feature-local unless at least two features genuinely reuse them. A route
@@ -86,11 +86,11 @@ production must provide the scoped value.
 
 ## Design system
 
-Design tokens live in `@monet/ui` and are shared with the `monet.sh` hub; this app's theme,
+Design tokens live in `@tundral/ui` and are shared with the `tundral.ai` hub; this app's theme,
 component styling, and page composition are not contractual. A frontend redesign may replace the
 styling if it remains coherent across public, customer, and operator surfaces.
 
-Changing a token changes `monet.sh` too. Restyle this app in its own `src/app/globals.css`; reach
+Changing a token changes `tundral.ai` too. Restyle this app in its own `src/app/globals.css`; reach
 into `packages/ui` only for a deliberate brand-wide change, and then verify every consumer. See
 `packages/ui/AGENTS.md`.
 

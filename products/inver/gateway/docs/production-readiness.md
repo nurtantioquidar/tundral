@@ -53,9 +53,9 @@ Before enabling customers:
 
 Scrape `GET /metrics` on loopback with `Authorization: Bearer $METRICS_API_KEY`. Alert when:
 
-- `monet_gateway_database_ready` is `0`;
-- `monet_gateway_upstream_configured` is `0`;
-- `monet_gateway_generation_enabled` unexpectedly becomes `0`;
+- `inver_gateway_database_ready` is `0`;
+- `inver_gateway_upstream_configured` is `0`;
+- `inver_gateway_generation_enabled` unexpectedly becomes `0`;
 - readiness fails for more than two health intervals;
 - process restarts or disk usage increase unexpectedly.
 

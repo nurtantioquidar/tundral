@@ -1,7 +1,11 @@
-# monet.sh design
+# tundral.ai design
+
+> The studio was renamed from Monet to Tundral on 2026-10-23. The concept below (Monet's pond at
+> Giverny) predates the rename and stays until the hub is redesigned for Tundral; Dijkstral has no
+> card or icon yet.
 
 The hub's design law. Every colour, size, and font in `apps/hub` traces back to this file; change it
-first, then the code. Product surfaces (Inver) keep `@monet/ui` and are not governed by this file.
+first, then the code. Product surfaces (Inver) keep `@tundral/ui` and are not governed by this file.
 Read `design-notes.md` for what was tried and rejected.
 
 ## Brief

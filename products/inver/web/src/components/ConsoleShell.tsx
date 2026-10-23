@@ -17,7 +17,7 @@ export function ConsoleShell({
       <header className="nav">
         <div className="container nav__inner">
           <Link className="nav__brand" href="/">
-            Monet<span className="nav__brand-tick">.</span>
+            Inver<span className="nav__brand-tick">.</span>
           </Link>
           <span className="meta">{area}</span>
           {links ? (

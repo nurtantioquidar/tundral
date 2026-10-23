@@ -4,12 +4,12 @@ import { redirect } from "next/navigation";
 import { ConsoleShell } from "@/components/ConsoleShell";
 import { RouteEditor, type RouteCandidate } from "@/features/upstreams/UpstreamForms";
 import { ADMIN_LINKS, AdminSignOut, RuntimeStrip, UnavailableNotice, canonicalModelId } from "@/features/upstreams/shared";
-import type { ModelRoute } from "@monet/contracts/upstreams";
+import type { ModelRoute } from "@tundral/contracts/upstreams";
 import { GatewayError, gatewayAdmin } from "@/server/gateway-client";
 import { readAllCapabilities, readRateCard } from "@/server/upstream-reads";
 import { hasAdminSession } from "@/server/admin-session";
 
-export const metadata: Metadata = { title: "Model routing — Monet operator console" };
+export const metadata: Metadata = { title: "Model routing — Inver operator console" };
 
 export default async function RoutingPage({
   searchParams,

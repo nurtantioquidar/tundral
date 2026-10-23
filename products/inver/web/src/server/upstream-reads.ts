@@ -1,6 +1,6 @@
 import "server-only";
-import type { PricingResponse } from "@monet/contracts";
-import type { UpstreamModelCapability } from "@monet/contracts/upstreams";
+import type { PricingResponse } from "@tundral/contracts";
+import type { UpstreamModelCapability } from "@tundral/contracts/upstreams";
 import { GatewayError, gatewayAdmin } from "./gateway-client";
 
 export interface RateCardRead {

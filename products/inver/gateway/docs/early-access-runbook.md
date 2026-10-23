@@ -8,11 +8,11 @@ the service from the host or through an authenticated tunnel.
 
 The systemd unit expects:
 
-- the Monet repository at `/opt/monet`;
-- service state and the SQLite database under `/var/lib/monet/inference-gateway`;
-- environment configuration at `/etc/monet-inference-gateway.env`;
+- the Tundral repository at `/opt/tundral`;
+- service state and the SQLite database under `/var/lib/tundral/inference-gateway`;
+- environment configuration at `/etc/tundral-inference-gateway.env`;
 - Bun and Codex installed at the paths declared in the environment file;
-- the `monet` service user authenticated with Codex when using `UPSTREAM_MODE=codex-cli`.
+- the `tundral` service user authenticated with Codex when using `UPSTREAM_MODE=codex-cli`.
 
 Set `GATEWAY_DOMAIN` for Caddy and verify `https://$GATEWAY_DOMAIN/ready` before onboarding anyone.
 Use distinct `ADMIN_API_KEY`, `WEB_BFF_API_KEY`, and `METRICS_API_KEY` values and set
@@ -31,7 +31,7 @@ in the repository.
 
 Each key has its own `max_concurrency`. Set `MAX_GLOBAL_CONCURRENT_REQUESTS` no higher than the
 usable aggregate provider capacity unless deliberate queue-free rejection is acceptable. Use
-`models` when a vendor does not serve every upstream model in the Monet rate card.
+`models` when a vendor does not serve every upstream model in the Inver rate card.
 
 Before production use, exercise each key directly against its configured endpoint, then test the
 gateway with one key temporarily returning a rate limit. The request should succeed through another

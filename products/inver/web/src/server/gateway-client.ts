@@ -28,8 +28,8 @@ import type {
   PublishModelRouteRequest,
   UsageEvent,
   UsageSummary,
-} from "@monet/contracts";
-import { parseGatewayError } from "@monet/contracts/validation";
+} from "@tundral/contracts";
+import { parseGatewayError } from "@tundral/contracts/validation";
 
 const gatewayUrl = () => (process.env.GATEWAY_URL || "http://127.0.0.1:8080").replace(/\/$/, "");
 

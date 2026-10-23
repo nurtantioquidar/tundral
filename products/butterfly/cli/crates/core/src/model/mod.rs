@@ -479,7 +479,7 @@ pub mod builtin {
                 api_key_env: "META_API_KEY".into(),
                 api_key_optional: false,
             },
-            // Monet's own Inver gateway resells OpenAI models behind a private
+            // Tundral's own Inver gateway resells OpenAI models behind a private
             // URL; no built-in model points at it, `[[models]]` can.
             ProviderDescriptor {
                 id: "inver".into(),

@@ -1,8 +1,8 @@
-# Monet UI Agent Guide
+# Tundral UI Agent Guide
 
 ## Purpose
 
-`@monet/ui` is the Monet design-token layer. It exists because two frontends — `apps/hub` and
+`@tundral/ui` is the Tundral design-token layer. It exists because two frontends — `apps/hub` and
 `products/inver/web` — must not each carry their own copy of the brand.
 
 Follow the repository-root `AGENTS.md` first. `CLAUDE.md` must remain a relative symlink to this
@@ -42,7 +42,7 @@ revisiting this file.
 Frontends import the layer at the top of their own global stylesheet:
 
 ```css
-@import "@monet/ui/tokens.css";
+@import "@tundral/ui/tokens.css";
 ```
 
 Consumers must not copy token values into their own CSS, and must not hardcode raw colour, spacing,

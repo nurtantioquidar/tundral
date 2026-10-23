@@ -1,5 +1,5 @@
 {
-  "name": "@monet/dijkstral-service",
+  "name": "@tundral/dijkstral-service",
   "private": true,
   "version": "0.1.0",
   "scripts": {

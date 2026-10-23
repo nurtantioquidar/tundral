@@ -165,38 +165,10 @@ export const ICONS = {
       poly([[59, 33], [64, 33], [79, 10], [74, 10]]),
     ],
   },
-  /* Cocoon — the credential firewall. Coral: the key, kept inside. */
-  cocoon: {
-    layers: [{ tone: "sage", shapes: [ellipse(60, 60, 30, 48, -18)] }],
-    accent: [ellipse(60, 60, 11, 11)],
-    bands: true,
-  },
-  /* Nimble — the router. Coral: the route it chose. */
-  nimble: {
-    layers: [
-      {
-        tone: "blue",
-        shapes: [
-          rect(6, 52, 54, 16),
-          rect(56, 53, 58, 14),
-          poly([[56, 54], [70, 58], [86, 80], [114, 88], [114, 104], [80, 96], [64, 74], [54, 68]]),
-        ],
-      },
-    ],
-    accent: [poly([[54, 52], [64, 46], [80, 24], [114, 16], [114, 32], [86, 40], [70, 62], [56, 66]])],
-  },
   /* Inver — the gateway, drawn as Monet's footbridge arch. Coral: the request passing under it. */
   inver: {
     layers: [{ tone: "green", shapes: [arch, rect(4, 104, 112, 10)] }],
     accent: [rect(38, 82, 44, 14)],
-  },
-  /* Cicada — the token ledger. Coral: the balance still left on the wing. */
-  cicada: {
-    layers: [
-      { tone: "sand", shapes: [ellipse(38, 74, 13, 40, 24), ellipse(82, 74, 13, 40, -24), ellipse(60, 62, 11, 32)] },
-    ],
-    accent: [poly([[84, 86], [100, 80], [104, 92], [88, 98]])],
-    dark: [ellipse(60, 26, 20, 11), rect(57, 40, 6, 50)],
   },
 } satisfies Record<string, ArtSpec>;
 

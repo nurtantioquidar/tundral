@@ -35,7 +35,7 @@ scores recall. Covers what the tiny-window live test cannot: summarizer
 narrative quality at ~100k-token scale and cache recovery after compaction.
 
 ```bash
-DEEPSEEK_API_KEY=... bun longrun.ts [repo-root]   # default root: the monet repo
+DEEPSEEK_API_KEY=... bun longrun.ts [repo-root]   # default root: this repository
 ```
 
 Both scripts write JSON reports to `results/` (gitignored).

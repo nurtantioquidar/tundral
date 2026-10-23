@@ -6,7 +6,7 @@ The inference gateway owns provider configuration, encrypted upstream credential
 capabilities, and routing. The operator flow is:
 
 ```text
-Owner browser -> Monet web backend -> private gateway API -> gateway SQLite -> runtime snapshot
+Owner browser -> Inver web backend -> private gateway API -> gateway SQLite -> runtime snapshot
 ```
 
 The browser never calls `/internal/*` and never receives the gateway admin token or an upstream
@@ -26,7 +26,7 @@ Configuration is separated into four resources:
    many keys; each key has its own weight and concurrency limit.
 3. A **model capability** maps a canonical model to the provider's model ID and supported API
    paths.
-4. A **model route** is the published, revisioned priority list for one Monet public model.
+4. A **model route** is the published, revisioned priority list for one Inver public model.
 
 For example, public `gpt-5.6-luna` has canonical model `gpt-5.6-luna`. A route may use any
 enabled capability whose canonical model is

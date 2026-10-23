@@ -21,8 +21,8 @@ provider descriptors (capabilities, pricing, limits), provider request semantics
 verification and failure classification, telemetry, and local session persistence under
 `~/.local/state/butterfly/sessions/`. It calls providers directly with user-supplied keys (one
 environment variable per provider, e.g. `DEEPSEEK_API_KEY`, `ZAI_API_KEY`, `OPENAI_API_KEY`,
-`NIMBLE_API_KEY`); it never imports source from another Monet application. Nimble is optional: a
-session never needs it, and `products/nimble` never links Butterfly.
+`NIMBLE_API_KEY`); it never imports source from another Tundral application. Nimble is optional: a
+session never needs it, and Nimble (its own repository since 2026-10-23) never links Butterfly.
 
 One more optional, off-by-default outbound dependency exists: **triage** (`crates/core/src/triage`)
 asks TypeSafe's System One model (Jev) to name a verification failure the rule-based classifier
@@ -191,7 +191,7 @@ approval prompt gates or how a keypress maps to consent (invariants 4-5).
 ```bash
 cargo test --workspace --locked                       # offline test suite
 cargo fmt --check && cargo clippy --workspace --locked --all-targets -- -D warnings
-bun run --filter @monet/butterfly-cli check             # all of the above
+bun run --filter @tundral/butterfly-cli check             # all of the above
 bun run dev:butterfly                                 # REPL via the repo root
 butterfly models                                      # registry: built-ins + config
 BUTTERFLY_LIVE_TEST=1 DEEPSEEK_API_KEY=... cargo test -p butterfly-core --test live_deepseek  # paid smoke test
@@ -290,6 +290,6 @@ rejected features. Update it in the same change that lands or removes a feature.
 
 ## Verification
 
-Run `bun run --filter @monet/butterfly-cli check` (or the cargo commands above) after every change.
+Run `bun run --filter @tundral/butterfly-cli check` (or the cargo commands above) after every change.
 Cache-critical changes must keep the byte-prefix property test
 (`requests_grow_append_only_between_provider_calls`) and the compaction invariant tests green.
