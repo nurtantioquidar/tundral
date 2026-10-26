@@ -40,6 +40,9 @@ ownership, or scaling profile.
 - `.claude/skills/` holds vendored or repo-local agent skills, checked in so every contributor
   gets the same guidance. A skill is advice; `AGENTS.md` is law. Each vendored skill records its
   source, exclusions, and local modifications in its own `UPSTREAM.md`.
+- `.claude/memory/` holds the agents' project memory and the latest session handoff, checked in so
+  work continues on any machine (`.claude/memory/README.md` says how to load it). It is context,
+  not law; never put secrets or employer-confidential material there.
 
 ## Repository layout
 

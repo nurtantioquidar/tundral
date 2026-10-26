@@ -1,0 +1,28 @@
+- [Handoff 2026-10-26](handoff-2026-10-26.md) — READ FIRST: repo/remote/branches, Tundral decisions, hosted Dijkstral state, open work, gotchas
+- [Tundral rebrand](tundral-rebrand.md) — 2026-10-23 Monet→Tundral (tundral.ai); focus Butterfly/Inver/Dijkstral; Nimble/Cicada/Cocoon moved to own repos
+- [Monet product line structure](monet-product-line-structure.md) — (pre-rename) products on separate subdomains; hub on Cloudflare Pages; standalone products keep own repos
+- [Monet frontend direction](monet-frontend-direction.md) — Next.js per product; Inver terminal-dark; hub is pixel art with its own DESIGN.md; no Hallmark
+- [Effect migration](monet-effect-migration.md) — Inver gateway mid-migration to Effect TS; staged bottom-up, stage 1 done
+- [Show trade-offs before side effects](show-tradeoffs-before-side-effects.md) — user chooses; never apply side-effectful changes (esp. hx prompt-prefix bytes) unasked
+- [Butterfly product](butterfly-product.md) — model-agnostic coding agent with verification/recovery; prefix bytes frozen; never reintroduce hx/harness names
+- [Nimble product](nimble-product.md) — moved out 2026-10-23 to ~/…/nurtantioquidar/nimble; was products/nimble/router model router, one virtual model `nimble`, contract nimble/v1; never couple to Butterfly
+- [Terminal-Bench via Harbor](terminal-bench-harbor-facts.md) — dataset terminal-bench/terminal-bench@4.0.0 (66 tasks); adapter in products/butterfly/bench/harbor; no paid run yet
+- [Provider keys in 1Password](provider-keys-1password.md) — op read op://Personal/api_key_{deepseek,zai,openai}__monet.harness/password; never print
+- [Butterfly/Nimble direction](butterfly-nimble-direction.md) — 2026-09-08: sell Butterfly as the harness; Nimble not sellable alone, routing → Inver feature candidate; Muse Spark dropped
+- [Codex harness study](../../docs/codex-harness-study.md) — 2026-09-12 ranked Codex→Butterfly deltas; no gate in Codex; Responses-only
+- Private task suite — kept only in the local memory folder (employer code; never committed here)
+- [OpenCode harness study](../../docs/opencode-harness-study.md) — 2026-09-12: no gate, 9-step fuzzy edit ladder, invalid-tool repair, doom-loop guard; GLM/DeepSeek in catalog
+- [pi / oh-my-pi harness study](../../docs/pi-harness-study.md) — 2026-09-12: z.ai silent context overflow; closest-match echo; bounded stop nudges; no gate in either
+- [DeepSeek Harness study](../../docs/deepseek-harness-study.md) — 2026-09-13: no gate; cache-aligned compaction (summary request replays prefix byte-for-byte); "KV Cache effect" doc gate; exact-only edit
+- [Butterfly release state](butterfly-release-state.md) — 2026-09-16 release to 5 engineers at e393a96; defaults and reference numbers to compare against
+- [Butterfly ratatui TUI](butterfly-ratatui-tui.md) — ratatui since 2026-09-17; shell-like content band since 2026-09-21, never redraw history; alt-screen + prefix bytes need sign-off
+- [Terminal ambiguous width](terminal-ambiguous-width.md) — Ghostty renders ambiguous glyphs 2 cols wide; pyte harnesses count 1 and hide layout bugs
+- [Terminal uses full width](terminal-uses-full-width.md) — 2026-09-17: user rejected a 96-col prose cap; never cap the measure, the reader sized the window
+- [herdr isolated test session](herdr-isolated-test-session.md) — python pty wrapper + HERDR_SESSION env; raw \e[Z for Shift+Tab; never `herdr --session --help`
+- [Codex is the TUI reference](codex-is-the-tui-reference.md) — compare side by side in herdr; propose in chat first; check scrollback against the raw reply
+- [ESP32 nav companion idea](esp32-nav-companion-idea.md) — 2026-09-21 flagged DIY ojol navigator; really a BLE companion display, phone supplies the fix
+- [monet.sh domain](monet-domain.md) — DNS/zone ids, tio@ forwarding, Pages project monet-hub, CF token, Startups application submitted 2026-10-08; repo remote is github.com/nurtantioquidar/tundral (private) since 2026-10-23
+- [Dijkstral product](dijkstral-product.md) — Rust Graphify clone; stages 0–7 done; context research (embeddings, Jev rerank) documented not merged 2026-10-18; Codex sandbox blocks networked CLI features
+- [Prefer Codex over paid keys](prefer-codex-over-paid-keys.md) — LLM calls in bench/tests go through codex exec (ChatGPT login), not DeepSeek/OpenAI keys
+- [TypeSafe Jev classifier](typesafe-jev-classifier.md) — hosted yes/no/choice classifier; key in 1Password api_key_typesafeai; authorised, opt-in only
+- [Install tools via Nix config](install-tools-via-nix-config.md) — add tools to ~/.config/nix (home.nix), not nix run/brew; user activates with darwin-rebuild

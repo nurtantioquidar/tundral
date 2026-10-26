@@ -18,3 +18,4 @@ target/
 !.claude/
 .claude/*
 !.claude/skills/
+!.claude/memory/
