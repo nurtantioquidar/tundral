@@ -4,7 +4,7 @@ What `graphifyy` 0.9.86 writes for `graph.html`, the Markdown wiki and GraphML (
 §1–§8), and for Cypher and the Neo4j/FalkorDB push, the Obsidian vault, SVG, the Mermaid call-flow
 page and the D3 tree (stage 4b, §9–§15), and how dijkstral's `crates/export` reproduces it.
 Derived 2026-10-14/15 only by running Graphify on the clustered fixture goldens
-(`tests/fixtures/<lang>.clustered.graphify.json`), on the frozen corpus references
+(`tests/fixtures/graphs-0.9.86/<lang>.clustered.graphify.json`), on the frozen corpus references
 (`~/.cache/dijkstral-bench/reference/<repo>.graph.json`) and on hand-written probe graphs
 (hostile labels, colliding names, mixed attribute types), then reading the outputs (for `--push`,
 the protocol traffic). Graphify's source and its page templates were not read; dijkstral's pages

@@ -47,7 +47,7 @@ Where a constant was fitted from many observations rather than read off one outp
 ## 1. Harness, goldens and conventions
 
 - Goldens live in `tests/fixtures/query/` (§14). They were produced from a scratch directory that
-  holds copies of `tests/fixtures/<fixture>.clustered.graphify.json`, with
+  holds copies of `tests/fixtures/graphs-0.9.86/<fixture>.clustered.graphify.json`, with
   `--graph <fixture>.clustered.graphify.json` given relative to that directory, and with
   `PYTHONHASHSEED=0`.
 - **Rule.** `PYTHONHASHSEED` matters for exactly one thing: the order of `EDGE` lines in BFS `query`
@@ -1140,7 +1140,7 @@ hold the handshake and the lists; description prose is redacted to `<redacted: N
 Observed by piping Claude Code `PreToolUse` JSON into `graphify hook-guard <mode> [--strict]` (the
 command that `graphify claude install` wires, §12.1) and `graphify hook-check` (wired by `graphify
 codex install`, §12.2). Probe project: the python fixture sources with
-`tests/fixtures/python.clustered.graphify.json` copied to `graphify-out/graph.json` (and, where noted,
+`tests/fixtures/graphs-0.9.86/python.clustered.graphify.json` copied to `graphify-out/graph.json` (and, where noted,
 `python.graphify_report.md` as `graphify-out/GRAPH_REPORT.md`). Neither subcommand appears in
 `graphify --help`.
 
@@ -1513,7 +1513,7 @@ argv.
 | `mcp/<fixture>.<kind>.<n>.json` | MCP transcripts (§10.11) |
 
 - **Rule (how the CLI goldens were made).** Each `argv` was run as `graphify <argv…>` from a
-  directory holding copies of `tests/fixtures/<fixture>.clustered.graphify.json`, so the graph path
+  directory holding copies of `tests/fixtures/graphs-0.9.86/<fixture>.clustered.graphify.json`, so the graph path
   in `argv` and in `Graph:` headers is the bare file name. Environment:
   `GRAPHIFY_QUERY_LOG_DISABLE=1 PYTHONHASHSEED=0`. Regenerating twice gave identical bytes.
 - **Rule (comparing).** `stdout` must match byte for byte, `stderr` exactly, and the exit code.

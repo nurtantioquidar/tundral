@@ -205,7 +205,8 @@ fn mcp_goldens() {
     for fixture in ["python", "rust"] {
         let ts = transcripts(fixture);
         assert!(!ts.is_empty());
-        let bytes = fs::read(root.join(format!("{fixture}.clustered.graphify.json"))).unwrap();
+        let bytes = fs::read(root.join(format!("graphs-0.9.86/{fixture}.clustered.graphify.json")))
+            .unwrap();
         let json_dir = scratch.path().join(fixture).join("json");
         fs::create_dir_all(json_dir.join("graphify-out")).unwrap();
         fs::write(json_dir.join("graphify-out/graph.json"), &bytes).unwrap();

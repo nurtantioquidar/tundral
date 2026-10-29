@@ -143,7 +143,11 @@ fn exports_are_deterministic_across_threads_and_runs() {
 fn push_fails_cleanly() {
     let tmp = tempfile::tempdir().unwrap();
     let graph = tmp.path().join("graph.json");
-    fs::copy(fixture("python.clustered.graphify.json"), &graph).unwrap();
+    fs::copy(
+        fixture("graphs-0.9.86/python.clustered.graphify.json"),
+        &graph,
+    )
+    .unwrap();
     let g = graph.to_str().unwrap();
 
     let out = run(&[
@@ -183,7 +187,7 @@ fn cypher_file_messages_match_graphify() {
     let dir = tmp.path().join("sub");
     fs::create_dir_all(&dir).unwrap();
     fs::copy(
-        fixture("go.clustered.graphify.json"),
+        fixture("graphs-0.9.86/go.clustered.graphify.json"),
         dir.join("graph.json"),
     )
     .unwrap();

@@ -54,7 +54,7 @@ fn query_goldens() {
         let dij_name = format!("{fixture}.dij");
         let json_path = scratch.path().join(&json_name);
         if !json_path.exists() {
-            let bytes = fs::read(root.join(&json_name)).unwrap();
+            let bytes = fs::read(root.join("graphs-0.9.86").join(&json_name)).unwrap();
             fs::write(&json_path, &bytes).unwrap();
             let encoded = dijkstral_core::index::encode_graph_json(&bytes).unwrap();
             fs::write(scratch.path().join(&dij_name), encoded).unwrap();
@@ -123,7 +123,7 @@ fn query_goldens() {
 /// `explain` suggests for an ambiguous one; the bare ambiguous name keeps Graphify's message.
 #[test]
 fn affected_accepts_path_qualified_names() {
-    let graph = fixtures().join("python.graphify.json");
+    let graph = fixtures().join("graphs-0.9.86/python.graphify.json");
     let run = |name: &str| {
         let out = std::process::Command::new(env!("CARGO_BIN_EXE_dijkstral"))
             .args(["affected", name, "--graph"])
@@ -149,7 +149,7 @@ fn affected_accepts_path_qualified_names() {
 /// the node and `--outgoing` the links out of it; without them the output is Graphify's.
 #[test]
 fn explain_filters_one_direction() {
-    let graph = fixtures().join("python.graphify.json");
+    let graph = fixtures().join("graphs-0.9.86/python.graphify.json");
     let run = |extra: &[&str]| {
         let out = std::process::Command::new(env!("CARGO_BIN_EXE_dijkstral"))
             .args(["explain", "pkg/service.py::UserService"])
@@ -176,7 +176,7 @@ fn explain_filters_one_direction() {
 /// as the single-name call prints it, unknown names reported in place.
 #[test]
 fn explain_takes_several_names() {
-    let graph = fixtures().join("python.graphify.json");
+    let graph = fixtures().join("graphs-0.9.86/python.graphify.json");
     let run = |names: &[&str]| {
         let out = std::process::Command::new(env!("CARGO_BIN_EXE_dijkstral"))
             .arg("explain")
@@ -209,7 +209,7 @@ fn context_answers_with_source_lines() {
     let run = |q: &str| {
         let out = std::process::Command::new(env!("CARGO_BIN_EXE_dijkstral"))
             .args(["context", q, "--graph"])
-            .arg(fixtures().join("python.graphify.json"))
+            .arg(fixtures().join("graphs-0.9.86/python.graphify.json"))
             .arg("--root")
             .arg(fixtures().join("python"))
             .output()

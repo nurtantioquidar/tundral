@@ -26,7 +26,8 @@ fn fixtures() -> PathBuf {
 }
 
 fn graph(lang: &str) -> NxGraph {
-    NxGraph::read(&fixtures().join(format!("{lang}.clustered.graphify.json"))).unwrap()
+    NxGraph::read(&fixtures().join(format!("graphs-0.9.86/{lang}.clustered.graphify.json")))
+        .unwrap()
 }
 
 fn page(g: &NxGraph, opts: &TreeOptions) -> String {

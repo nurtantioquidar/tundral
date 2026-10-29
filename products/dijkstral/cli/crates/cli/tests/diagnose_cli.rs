@@ -70,7 +70,11 @@ fn diagnose_matches_graphify() {
     for fx in ["python", "rust", "typescript", "go"] {
         for kind in ["graphify", "clustered.graphify"] {
             let name = format!("{fx}.{kind}.json");
-            fs::copy(fixtures().join(&name), dir.join(&name)).unwrap();
+            fs::copy(
+                fixtures().join("graphs-0.9.86").join(&name),
+                dir.join(&name),
+            )
+            .unwrap();
         }
     }
     for entry in fs::read_dir(fixtures().join("memory/diagnose/inputs")).unwrap() {
@@ -136,7 +140,7 @@ fn diagnose_matches_graphify() {
 fn without_extract_path_there_is_no_scan() {
     let tmp = tempfile::tempdir().unwrap();
     fs::copy(
-        fixtures().join("python.graphify.json"),
+        fixtures().join("graphs-0.9.86/python.graphify.json"),
         tmp.path().join("g.json"),
     )
     .unwrap();

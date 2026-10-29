@@ -92,7 +92,7 @@ fn setup() -> Env {
     );
     fs::create_dir(repo.join("graphify-out")).unwrap();
     fs::copy(
-        fixtures().join("python.clustered.graphify.json"),
+        fixtures().join("graphs-0.9.86/python.clustered.graphify.json"),
         repo.join("graphify-out/graph.json"),
     )
     .unwrap();

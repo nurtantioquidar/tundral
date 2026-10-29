@@ -489,8 +489,8 @@
    "case": "graph_topics",
    "memory": "memory/reflect/graph_topics/memory",
    "inputs": {
-    "graph.json": "python.clustered.graphify.json",
-    ".graphify_analysis.json": "python.graphify_analysis.json",
+    "graph.json": "graphs-0.9.86/python.clustered.graphify.json",
+    ".graphify_analysis.json": "graphs-0.9.86/python.graphify_analysis.json",
     ".graphify_labels.json": "memory/reflect/graph_topics/.graphify_labels.json"
    },
    "argv": [
@@ -511,7 +511,7 @@
    "case": "graph_only",
    "memory": "memory/reflect/graph_topics/memory",
    "inputs": {
-    "g/graph.json": "python.clustered.graphify.json"
+    "g/graph.json": "graphs-0.9.86/python.clustered.graphify.json"
    },
    "argv": [
     "reflect",
@@ -531,8 +531,8 @@
    "case": "explicit_analysis",
    "memory": "memory/reflect/graph_topics/memory",
    "inputs": {
-    "g/graph.json": "python.clustered.graphify.json",
-    "an.json": "python.graphify_analysis.json"
+    "g/graph.json": "graphs-0.9.86/python.clustered.graphify.json",
+    "an.json": "graphs-0.9.86/python.graphify_analysis.json"
    },
    "argv": [
     "reflect",
@@ -554,7 +554,7 @@
    "case": "crafted_communities",
    "memory": "memory/reflect/crafted_communities/memory",
    "inputs": {
-    "g/graph.json": "python.clustered.graphify.json",
+    "g/graph.json": "graphs-0.9.86/python.clustered.graphify.json",
     "an.json": "memory/reflect/crafted_communities/an.json",
     "lab.json": "memory/reflect/crafted_communities/lab.json"
    },

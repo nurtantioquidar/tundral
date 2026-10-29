@@ -27,7 +27,7 @@ fn fixtures() -> PathBuf {
 }
 
 fn graph(lang: &str) -> NxGraph {
-    let path = fixtures().join(format!("{lang}.clustered.graphify.json"));
+    let path = fixtures().join(format!("graphs-0.9.86/{lang}.clustered.graphify.json"));
     NxGraph::from_json(serde_json::from_slice(&fs::read(path).unwrap()).unwrap()).unwrap()
 }
 

@@ -5,8 +5,8 @@
   {
    "name": "merge_py_go",
    "files": {
-    "pyrepo/graphify-out/graph.json": "python.clustered.graphify.json",
-    "gorepo/graphify-out/graph.json": "go.clustered.graphify.json"
+    "pyrepo/graphify-out/graph.json": "graphs-0.9.86/python.clustered.graphify.json",
+    "gorepo/graphify-out/graph.json": "graphs-0.9.86/go.clustered.graphify.json"
    },
    "steps": [
     {
@@ -27,9 +27,9 @@
   {
    "name": "merge_py_go_rs",
    "files": {
-    "pyrepo/graphify-out/graph.json": "python.clustered.graphify.json",
-    "gorepo/graphify-out/graph.json": "go.clustered.graphify.json",
-    "rsrepo/graphify-out/graph.json": "rust.clustered.graphify.json"
+    "pyrepo/graphify-out/graph.json": "graphs-0.9.86/python.clustered.graphify.json",
+    "gorepo/graphify-out/graph.json": "graphs-0.9.86/go.clustered.graphify.json",
+    "rsrepo/graphify-out/graph.json": "graphs-0.9.86/rust.clustered.graphify.json"
    },
    "steps": [
     {
@@ -51,7 +51,7 @@
   {
    "name": "merge_py_twice",
    "files": {
-    "pyrepo/graphify-out/graph.json": "python.clustered.graphify.json"
+    "pyrepo/graphify-out/graph.json": "graphs-0.9.86/python.clustered.graphify.json"
    },
    "steps": [
     {
@@ -1162,8 +1162,8 @@
   {
    "name": "global_py_go",
    "files": {
-    "pyrepo/graphify-out/graph.json": "python.clustered.graphify.json",
-    "gorepo/graphify-out/graph.json": "go.clustered.graphify.json"
+    "pyrepo/graphify-out/graph.json": "graphs-0.9.86/python.clustered.graphify.json",
+    "gorepo/graphify-out/graph.json": "graphs-0.9.86/go.clustered.graphify.json"
    },
    "steps": [
     {

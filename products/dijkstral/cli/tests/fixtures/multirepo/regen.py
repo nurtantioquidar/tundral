@@ -193,8 +193,8 @@ INPUTS = {
     "cafe": G([{"id": "a", "label": "é", "source_file": "a.py"}], []),
 }
 
-FIXTURE_GRAPHS = {"python": "python.clustered.graphify.json", "go": "go.clustered.graphify.json",
-                  "rust": "rust.clustered.graphify.json"}
+FIXTURE_GRAPHS = {"python": "graphs-0.9.86/python.clustered.graphify.json", "go": "graphs-0.9.86/go.clustered.graphify.json",
+                  "rust": "graphs-0.9.86/rust.clustered.graphify.json"}
 
 
 def src(name):

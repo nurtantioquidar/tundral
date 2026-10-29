@@ -28,7 +28,7 @@ fn fixtures() -> PathBuf {
 }
 
 fn graph(lang: &str) -> NxGraph {
-    let path = fixtures().join(format!("{lang}.clustered.graphify.json"));
+    let path = fixtures().join(format!("graphs-0.9.86/{lang}.clustered.graphify.json"));
     NxGraph::from_json(serde_json::from_slice(&fs::read(path).unwrap()).unwrap()).unwrap()
 }
 
@@ -332,7 +332,7 @@ fn reruns_keep_user_files_and_prune_stale_notes() {
     }
     fs::write(dir.join(MANIFEST_FILE), manifest.to_string()).unwrap();
     let mut doc: Value = serde_json::from_slice(
-        &fs::read(fixtures().join("python.clustered.graphify.json")).unwrap(),
+        &fs::read(fixtures().join("graphs-0.9.86/python.clustered.graphify.json")).unwrap(),
     )
     .unwrap();
     doc["nodes"]

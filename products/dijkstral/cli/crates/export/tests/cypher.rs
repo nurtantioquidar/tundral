@@ -62,7 +62,7 @@ fn check(graph: &Path, golden: &Path) {
 fn cypher_matches_graphify_on_fixtures() {
     for lang in LANGS {
         check(
-            &fixtures().join(format!("{lang}.clustered.graphify.json")),
+            &fixtures().join(format!("graphs-0.9.86/{lang}.clustered.graphify.json")),
             &fixtures().join("exports").join(lang).join("cypher.txt"),
         );
     }
@@ -239,7 +239,7 @@ fn push_records_keep_hostile_strings_as_data() {
 
 #[test]
 fn push_plan_groups_are_deterministic() {
-    let g = load(&fixtures().join("python.clustered.graphify.json"));
+    let g = load(&fixtures().join("graphs-0.9.86/python.clustered.graphify.json"));
     let a = push_plan(&g);
     let b = push_plan(&g);
     let shape = |p: &cypher::PushPlan| {

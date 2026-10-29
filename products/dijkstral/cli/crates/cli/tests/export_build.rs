@@ -96,7 +96,11 @@ fn no_viz_skips_graph_html() {
 fn export_works_on_graphify_graphs() {
     let tmp = tempfile::tempdir().unwrap();
     let graph = tmp.path().join("graph.json");
-    fs::copy(fixture("java.clustered.graphify.json"), &graph).unwrap();
+    fs::copy(
+        fixture("graphs-0.9.86/java.clustered.graphify.json"),
+        &graph,
+    )
+    .unwrap();
     let g = graph.to_str().unwrap();
     dijkstral(&["export", "graphml", "--graph", g]);
     assert_eq!(
