@@ -126,6 +126,8 @@ struct Sc<'c, 'a, 't> {
     stubs: HashMap<String, String>,
     refs_seen: HashSet<(String, String, &'static str, u32)>,
     bodies: Vec<(String, TsNode<'t>)>,
+    /// Type parameters of the enclosing classes and `def`: never referenced.
+    tparams: Vec<String>,
     facts: ScalaFacts,
 }
 
@@ -141,6 +143,7 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         stubs: HashMap::new(),
         refs_seen: HashSet::new(),
         bodies: Vec::new(),
+        tparams: Vec::new(),
         facts: ScalaFacts {
             file_id,
             ..ScalaFacts::default()
@@ -243,6 +246,7 @@ impl<'c, 'a, 't> Sc<'c, 'a, 't> {
         if id != self.merged {
             self.callables.insert(name, id.clone());
         }
+        let depth = self.push_tparams(decl);
         if let Some(ext) = decl.child_by_field_name("extend") {
             self.supertypes(&id, ext);
         }
@@ -262,6 +266,31 @@ impl<'c, 'a, 't> Sc<'c, 'a, 't> {
         if let Some(body) = decl.child_by_field_name("body") {
             self.body(body, file_id, &id);
         }
+        self.tparams.truncate(depth);
+    }
+
+    /// Pushes a class's or `def`'s type parameter names; returns the depth to truncate back to.
+    fn push_tparams(&mut self, decl: TsNode) -> usize {
+        let depth = self.tparams.len();
+        for tps in named_children(decl)
+            .into_iter()
+            .filter(|n| n.kind() == "type_parameters")
+        {
+            let mut c = tps.walk();
+            let mut names: Vec<TsNode> = tps.children_by_field_name("name", &mut c).collect();
+            for v in named_children(tps).into_iter().filter(|n| {
+                matches!(
+                    n.kind(),
+                    "covariant_type_parameter" | "contravariant_type_parameter"
+                )
+            }) {
+                names.extend(v.child_by_field_name("name"));
+            }
+            for n in names {
+                self.tparams.push(self.text(n).to_string());
+            }
+        }
+        depth
     }
 
     fn supertypes(&mut self, id: &str, ext: TsNode) {
@@ -419,6 +448,7 @@ impl<'c, 'a, 't> Sc<'c, 'a, 't> {
         if id != self.merged {
             self.callables.insert(name, id.clone());
         }
+        let depth = self.push_tparams(decl);
         // Context bounds (`[T: Ordering]`) are `type_bound` references.
         for tps in named_children(decl)
             .into_iter()
@@ -452,6 +482,7 @@ impl<'c, 'a, 't> Sc<'c, 'a, 't> {
         if let Some(body) = decl.child_by_field_name("body") {
             self.bodies.push((id, body));
         }
+        self.tparams.truncate(depth);
     }
 
     // ---- type references ----------------------------------------------------------------------
@@ -487,7 +518,9 @@ impl<'c, 'a, 't> Sc<'c, 'a, 't> {
         match t.kind() {
             "type_identifier" => {
                 let name = self.text(t).to_string();
-                self.reference(source, &name, ctx, line);
+                if !self.tparams.contains(&name) {
+                    self.reference(source, &name, ctx, line);
+                }
             }
             "generic_type" => {
                 if let Some(base) = t.child_by_field_name("type") {

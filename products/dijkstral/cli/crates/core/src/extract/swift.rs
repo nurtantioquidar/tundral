@@ -20,7 +20,8 @@
 //! - References name the first identifier of a type (`Outer.Inner` → `Outer`) and type
 //!   attributes (`@Sendable`); type arguments are `generic_arg`. A parameter written with
 //!   attributes names only those. A return type written as a plain named type also carries
-//!   `metadata.swift_plain_return`.
+//!   `metadata.swift_plain_return`. `Self` and the type parameters of the enclosing type
+//!   declarations and function are never referenced, nor recorded as a variable's type.
 //! - Members are found by their kept node's label (same-id definitions merge, first label wins).
 //!   In-file calls: a bare call binds to a member of the caller's type or its superclasses in
 //!   the file, a type of the file (its initializer), or the file's last top-level function of
@@ -444,6 +445,9 @@ struct Walker<'c, 'a> {
     table: Vec<(&'a str, &'a str)>,
     local_table: Vec<(&'a str, &'a str)>,
     factory: Vec<(&'a str, &'a str, &'a str)>,
+    /// Type parameters of the enclosing type declarations and function: never referenced,
+    /// never a variable's type.
+    tparams: Vec<&'a str>,
 }
 
 pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
@@ -467,6 +471,7 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         table: Vec::new(),
         local_table: Vec::new(),
         factory: Vec::new(),
+        tparams: Vec::new(),
     };
     let file_id = w.cx.file_id.clone();
     w.walk_body(root, &file_id, None);
@@ -557,7 +562,28 @@ impl<'a> Walker<'_, 'a> {
     }
 
     fn set_table(&mut self, var: &'a str, ty: &'a str) {
-        put(&mut self.table, var, ty);
+        if !self.tparams.contains(&ty) {
+            put(&mut self.table, var, ty);
+        }
+    }
+
+    /// Pushes a declaration's type parameter names; returns the depth to truncate back to.
+    fn push_tparams(&mut self, node: TsNode) -> usize {
+        let depth = self.tparams.len();
+        for p in named_children(node)
+            .into_iter()
+            .filter(|c| c.kind() == "type_parameters")
+            .flat_map(named_children)
+            .filter(|c| c.kind() == "type_parameter")
+        {
+            if let Some(n) = named_children(p)
+                .into_iter()
+                .find(|c| c.kind() == "type_identifier")
+            {
+                self.tparams.push(self.cx.text(n));
+            }
+        }
+        depth
     }
 
     fn set_local(&mut self, var: &'a str, ty: &'a str) {
@@ -634,6 +660,7 @@ impl<'a> Walker<'_, 'a> {
         } else if !self.facts.decls.contains(&id) {
             self.facts.decls.push(id.clone());
         }
+        let depth = self.push_tparams(node);
         // Supertypes.
         let supers: Vec<TsNode> = named_children(node)
             .into_iter()
@@ -683,7 +710,7 @@ impl<'a> Walker<'_, 'a> {
             type_refs(self.cx, *s, false, &mut refs);
             let mut seen = HashSet::new();
             for (arg, generic) in refs {
-                if !generic {
+                if !generic || self.tparams.contains(&arg) {
                     continue;
                 }
                 let t = self.type_target(arg, false);
@@ -697,6 +724,7 @@ impl<'a> Walker<'_, 'a> {
             self.members.entry(id.clone()).or_default();
             self.walk_body(body, &id, Some(&id));
         }
+        self.tparams.truncate(depth);
     }
 
     /// The name a definition is found by: its kept node's label without `.` and `()`, so
@@ -753,6 +781,7 @@ impl<'a> Walker<'_, 'a> {
                 self.last_def.insert(kept, (id.clone(), true));
             }
         }
+        let depth = self.push_tparams(node);
         // Parameter and return types: an attributed type (`@Sendable (…) -> Void`) names only
         // its attributes.
         let mut seen: HashSet<(String, &'static str)> = HashSet::new();
@@ -778,15 +807,15 @@ impl<'a> Walker<'_, 'a> {
             self.refs(&id, &ret[..1], "return_type", line, &mut seen, plain);
         }
         // Subscript bodies are not scanned for calls.
-        if node.kind() == "subscript_declaration" {
-            return;
+        if node.kind() != "subscript_declaration" {
+            let body = named_children(node)
+                .into_iter()
+                .find(|c| matches!(c.kind(), "function_body" | "computed_property"));
+            if let Some(b) = body {
+                self.scan(b, &id, owner, false);
+            }
         }
-        let body = named_children(node)
-            .into_iter()
-            .find(|c| matches!(c.kind(), "function_body" | "computed_property"));
-        if let Some(b) = body {
-            self.scan(b, &id, owner, false);
-        }
+        self.tparams.truncate(depth);
     }
 
     /// Emit `references` edges from `source` for every type the nodes mention. `seen` dedupes
@@ -805,6 +834,9 @@ impl<'a> Walker<'_, 'a> {
             type_refs(self.cx, *n, false, &mut out);
         }
         for (i, (name, generic)) in out.into_iter().enumerate() {
+            if self.tparams.contains(&name) || name == "Self" {
+                continue;
+            }
             let ctx = if generic { "generic_arg" } else { context };
             let target = self.type_target(name, false);
             if target == source || !seen.insert((target.clone(), ctx)) {

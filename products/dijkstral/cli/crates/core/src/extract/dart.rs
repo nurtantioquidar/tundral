@@ -13,11 +13,14 @@
 //!    (`extends State<BookList>`; `implements X<Y>` references nothing).
 //! 2. `configures` from the declaration after a run of annotation lines to `@name`.
 //! 3. `typedef X = T;`: `defines X` and `references` (context `typedef`) from `X` to `T`'s last
-//!    segment, unless `T` is a function type.
-//! 4. `extension X on T`: `defines X` and `extends` to `T`'s leading word, at the `on` line.
+//!    segment, unless `T` is a function type; nothing when the file already defines `X`'s id.
+//! 4. `extension X on T`: `defines X` and `extends` to `T`'s leading word, at the `on` line;
+//!    `extension on T`: one node per file labelled `Extension on T` of the first (its id holds
+//!    the file's absolute path, quirk DA3).
 //! 5. "Variables": `TYPE NAME` followed by `=`, `;` or the end of a line (fields, top-level and
 //!    function-level locals, getters `T get x =>`, `library x;`, `return x == …`, `as x;`):
-//!    `defines NAME` and `references` (context `variable_type`) to the normalised type.
+//!    `defines NAME` and `references` (context `variable_type`) to the normalised type
+//!    (`typedef X =` defines `X` only when the file has no `X` yet, and references nothing).
 //! 6. "Methods": `TYPE [x.]name(` with a lowercase name, and `factory C.name(`: `defines`.
 //! 7. `import`/`export` URIs (and `if (…) 'uri'` alternatives, context `conditional_uri`).
 //! 8. `references` (context `type_lookup`) for every generic call `f<T>(` in the file.
@@ -38,6 +41,11 @@ use crate::facts::{Attr, Edge, LangFacts, Loc, Node, NodeKind};
 
 /// Prefix of part-file definition ids until the resolver makes them absolute.
 pub const PART: &str = "@dartpart:";
+
+/// Local name of an anonymous extension (`extension on T`) until the resolver replaces it with
+/// the slug of the file's canonical absolute path without its extension, then
+/// `_anonymous_extension` (quirk DA3).
+pub const ANON: &str = "@dartanon:";
 
 /// Facts the cross-file pass (`crate::resolve::dart`) needs from one file.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -82,6 +90,8 @@ static EXT_TYPE_RE: LazyLock<Regex> =
 static EXT_RE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"(?m)^[ \t]*extension\s+(\w+)(?:\s*<[^{]*?>)?\s+on\s+(\w+)").unwrap()
 });
+static ANON_EXT_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?m)^[ \t]*extension\s+on\s+(\w+)").unwrap());
 static IMPORT_RE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r#"(?m)^[ \t]*(import|export)\s+['"]([^'"]+)['"]([^;]*);"#).unwrap()
 });
@@ -187,7 +197,7 @@ fn var_type(raw: &str) -> Option<String> {
     }
     let base = t.split_once('<').map_or(t, |(b, _)| b.trim());
     let ty = last_segment(base);
-    (!ty.is_empty() && !matches!(ty, "as" | "show")).then(|| ty.to_string())
+    (!ty.is_empty() && !matches!(ty, "as" | "show" | "typedef")).then(|| ty.to_string())
 }
 
 /// `(keyword, list)` clauses of a class header (`extends A with B, C implements D`).
@@ -224,7 +234,8 @@ struct Walker<'a, 'b> {
     /// Definitions in emission order, for `contains` from a part file.
     defined: Vec<(String, u32)>,
     seen: std::collections::HashSet<String>,
-    edges_seen: std::collections::HashSet<(String, String, String)>,
+    /// (source, target, relation) → index of the edge in the file's edges.
+    edges_seen: std::collections::HashMap<(String, String, String), usize>,
     types: Vec<(String, String)>,
 }
 
@@ -239,14 +250,24 @@ impl Walker<'_, '_> {
         context: Option<&str>,
     ) {
         let key = (source.to_string(), target.to_string(), relation.to_string());
-        if !self.edges_seen.insert(key) {
+        if self.edges_seen.contains_key(&key) {
             return;
         }
+        self.edges_seen.insert(key, self.cx.facts.edges.len());
         let mut e: Edge = self
             .cx
             .edge(source, target, relation, Loc::Line(line), context);
         e.score = Some(1.0);
         self.cx.facts.edges.push(e);
+    }
+
+    /// An edge as [`Self::edge`], except that a repeat moves the kept edge to its line.
+    fn edge_last(&mut self, source: &str, target: &str, relation: &str, line: u32) {
+        let key = (source.to_string(), target.to_string(), relation.to_string());
+        match self.edges_seen.get(&key) {
+            Some(&i) => self.cx.facts.edges[i].loc = Loc::Line(line),
+            None => self.edge(source, target, relation, line, None),
+        }
     }
 
     /// A definition; an id the file already defines keeps its first edge (quirk DA2).
@@ -323,7 +344,7 @@ pub fn extract(cx: &mut Ctx) {
         definer,
         defined: Vec::new(),
         seen: std::collections::HashSet::new(),
-        edges_seen: std::collections::HashSet::new(),
+        edges_seen: std::collections::HashMap::new(),
         types: Vec::new(),
     };
     declarations(&mut w, &t);
@@ -483,7 +504,6 @@ fn annotations(w: &mut Walker, t: &Text) {
                 continue;
             }
             let id = format!("annotation_{}", slug(&a));
-            w.types.push((id.clone(), a.clone()));
             if let Some(target) = w.shared(id, format!("@{a}"), "concept") {
                 w.edge(&source, &target, "configures", k as u32 + 1, None);
             }
@@ -499,7 +519,10 @@ fn typedefs(w: &mut Walker, t: &Text) {
             continue;
         }
         let value = c.get(2).unwrap().as_str();
-        if FUNCTION_RE.is_match(value) {
+        // A typedef whose id the file already defines (`class __X` then `typedef X = __X;`)
+        // gives nothing at all.
+        if FUNCTION_RE.is_match(value) || w.seen.contains(&Ctx::child_id(&w.prefix, name.as_str()))
+        {
             continue;
         }
         let id = w.define(name.as_str(), line);
@@ -515,10 +538,34 @@ fn extensions(w: &mut Walker, t: &Text) {
     let mut found: Vec<(usize, regex::Captures)> = EXT_RE
         .captures_iter(t.text)
         .chain(EXT_TYPE_RE.captures_iter(t.text))
+        .chain(ANON_EXT_RE.captures_iter(t.text))
         .map(|c| (c.get(0).unwrap().start(), c))
         .collect();
     found.sort_by_key(|f| f.0);
     for (_, c) in found {
+        // `extension on T`: one node per file, `Extension on T` of the first, whose `defines`
+        // moves to the last; each one `extends` its own `T`.
+        if c.get(2).is_none() && ANON_EXT_RE.is_match(c.get(0).unwrap().as_str()) {
+            let on = c.get(1).unwrap();
+            let line = t.line(on.start());
+            if !t.shallow(line) {
+                continue;
+            }
+            let id = format!("{}_{ANON}", w.prefix);
+            if w.seen.insert(id.clone()) {
+                w.cx.add_def(
+                    id.clone(),
+                    format!("Extension on {}", on.as_str()),
+                    line,
+                    Vec::new(),
+                );
+                w.defined.push((id.clone(), line));
+            }
+            let definer = w.definer.clone();
+            w.edge_last(&definer, &id, "defines", line);
+            w.relate(&id, on.as_str(), "extends", line);
+            continue;
+        }
         let Some(on) = c.get(2) else {
             let name = c.get(1).unwrap();
             let line = t.line(name.start());
@@ -541,6 +588,12 @@ fn variables(w: &mut Walker, t: &Text) {
         let name = c.get(2).unwrap();
         let line = t.line(name.start());
         if !t.shallow(line) {
+            continue;
+        }
+        // `typedef X = …` read as a variable defines `X` only when the file has no `X` yet.
+        if c.get(1).unwrap().as_str().trim() == "typedef"
+            && w.seen.contains(&Ctx::child_id(&w.prefix, name.as_str()))
+        {
             continue;
         }
         w.define(name.as_str(), line);
@@ -628,6 +681,7 @@ mod tests {
             Some("static const int")
         );
         assert_eq!(var_type("final").as_deref(), None);
+        assert_eq!(var_type("typedef").as_deref(), None);
         assert_eq!(var_type("final Address").as_deref(), Some("Address"));
     }
 

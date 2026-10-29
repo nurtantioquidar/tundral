@@ -1558,7 +1558,7 @@ abbreviate the common prefix `src_main_java_com_shop_` as `…`.
 |---|---|---|---|
 | file | `fileid` | basename (`User.java`) | — |
 | any type declaration — class, abstract class, interface, enum, record, `@interface`, and **nested/inner/static-nested types at any depth** | `fileid_slug(Name)` — flat, the outer type is not part of the id: `…model_user_user`, `…model_user_address` (record nested in `User`), `…model_user_badge`, `…model_model_status` (enum nested in `Model`), `…service_userservice_repository` (2nd top-level type in file) | `Name` | `_callable: true`, `_callable_class: true` |
-| method, constructor, interface/abstract method (with or without body), annotation element | `<type id>_slug(name)`: `…model_user_user_getname`; constructor `…model_user_user_user` | `.name()`; constructor `.User()` | `_callable: true`; optional `metadata.unresolved_calls` |
+| method, constructor, interface/abstract method (with or without body), annotation element | `<type id>_slug(name)`: `…model_user_user_getname`; constructor `…model_user_user_user` | `.name()`; constructor `.User()` | `_callable: true`; optional `_java_ret`, `metadata.unresolved_calls` |
 | enum constant | `<enum id>_slug(CONST)`: `…model_model_status_active` | `ACTIVE` | none (no `_callable`) |
 | anonymous class `new Runnable() {…}` | `<enclosing method id>_object_slug(Type)_l<line>`: `…service_userservice_userservice_notify_object_runnable_l38` | `Runnable` | `_callable`, `_callable_class`; its methods `…_l38_run` label `.run()` |
 | imported FQ type that is referenced (field/param/annotation) but not local | `slug(FQN)`: `org_junit_jupiter_api_test`, `java_lang_annotation_retention`, `org_lib_thing` | the FQN `org.junit.jupiter.api.Test` | `file_type: code`, `source_file: ""`, `source_location: ""`, `_origin: ast`, no `external` |
@@ -1574,12 +1574,40 @@ type parameters (`K`, `T` produce no stub, unlike Go/Python), and **no rationale
 overloads attach to it (`…userservice_register -references-> …user_address` `parameter_type` at
 L25 comes from the 2nd overload).
 
+`_java_ret` (0.9.97): the simple name of a method's declared return type — `a.B` → `B`,
+`Box<B>` → `Box`, `Map.Entry<String, B>` → `Entry`, an unresolved `Missing` too — on
+`…userservice_register` (`User`), `…user_user_of` (`User`), `…model_model_status` (`Status`).
+Absent for constructors, `void`, primitives, arrays (`B[]`, `Box<A>[]`), type parameters of the
+class or method (`T`, `<U> U`, `<T extends A> T`) and the builtin type names below. Overloads
+merged into one id keep it only when every overload names the same type (`A same(int)` +
+`A same(String)` → `A`; `A`/`B`, `String`/`A` or `A`/`void` → none). Annotation elements
+(`@interface Ann { Kind kind(); }`) are not nodes. Probe `jvm-j1`–`j5`.
+
+Builtin type names (one list decides references, stubs and `_java_ret`; probed name by name,
+179 names, the module's `COMMON_JDK_TYPES`): the boxed primitives and `Object`, `String`,
+`Number`, `Void`, `Record`, `Enum`, `Class`, `Package`, `Math`, `System`, `Runtime`, `Process`,
+`ProcessBuilder`, `Thread`, `ThreadLocal`, `Throwable`, `Exception`, `Error` and the common
+`java.lang` exceptions; the `java.util` collections, `Arrays`, `Collections`, `Objects`,
+`Optional*`, `UUID`, `Date`, `Calendar`, `Locale`, `Random`, `Scanner`, `StringJoiner`,
+`StringTokenizer`; `java.util.function` (`Function`, `BiFunction`, `Consumer`, `Predicate`,
+`Supplier`, …); `Stream`, `IntStream`, `LongStream`, `DoubleStream`, `Collector(s)`; the
+common `java.util.concurrent` types; `File`, `Files`, `Path(s)`, readers, writers and streams
+of `java.io`; `java.time` (`Instant`, `Duration`, `LocalDate(Time)`, `ZonedDateTime`, …);
+`BigDecimal`, `BigInteger`. Still referenced and stubbed: `Pattern`, `Connection`,
+`ReentrantLock`, `ConcurrentLinkedQueue`, `Charset`, `URI`, `URL`, `Lock`, `Condition`,
+`Phaser`, `ForkJoinPool`, `TimeoutException`, `ExecutionException`, `Flushable`, reflection
+types (`Field`, `Method`, `Constructor`, `ClassLoader`), `Logger`.
+
 `metadata.unresolved_calls` (raw: after `source_location`, before `_callable`): a list of
-`{"callee", "receiver_type", "lang": "java", "line": "L<n>"}` in source order, one per
-`Type.method(...)` call whose receiver is a capitalised identifier that is not a local class:
-`Objects.requireNonNull` and `Instant.now` on `…model_model_model_model`, `Collections.sort` on
-`…userservice_names`, `Math.max` in probe. Not recorded: `System.out.println` (field receiver),
-lowercase receivers, ambiguous local types (`Formatter.shout`, see below).
+`{"callee", "receiver_type", "lang": "java", "line": "L<n>", "file": <source_file>}` (`file`
+new in 0.9.97) in source order, one per `Type.method(...)` call whose receiver is a
+capitalised identifier that is not a class of the repository: `Objects.requireNonNull` and
+`Instant.now` on `…model_model_model_model`, `Collections.sort` on `…userservice_names`,
+`Math.max` in probe. A class-like node of another language counts as a class: a Kotlin class,
+object or anonymous object (`object : KtAnon()`), a Scala class (probe `jvm-x1`; on okhttp,
+receivers typed `Response`, `OkHttpClient`, `HttpUrl` are Kotlin classes, 256 entries).
+Not recorded: `System.out.println` (field receiver), lowercase receivers, ambiguous local types
+(`Formatter.shout`, see below).
 
 ### 13.2 Edges
 
@@ -2607,13 +2635,17 @@ only the final extension (`build.gradle.kts` → `build_gradle`). Validated on o
 | top-level function, extension function (`fun User.displayName()`) | `file_slug(name)` | `name()` | `_callable` |
 | method (class, object, companion, interface with or without body, enum entry) | `owner_slug(name)`; overloads merge (first line) | `.name()` | `_callable` |
 | enum entry | `enum_slug(NAME)`; its body's methods `entry_m` | `NAME` | none |
+| `typealias Name = …` (0.9.97), in the file or a class body | `file_slug(Name)`, `contains` from the file or class; generic aliases keep the bare name (`Boxed<T>` → `Boxed`) | `Name` | `_callable`, `_callable_class` |
 | anonymous object in a function body | `<function>_object_slug(Type)_l<line>` (first supertype, last segment) | `Type` | `_callable`, `_callable_class` |
 | type referenced but not declared earlier in the file | per-file stub `slug(Name)` | `Name` | §4.4 |
 | unresolved import | external `slug(last segment)` | | §4.4 |
 
-- Not emitted: properties (top-level or member), type aliases, constructors (primary or
-  secondary), `init` blocks, accessors, local functions and classes, script statements of `.kts`
-  files, and rationale (KDoc, `// NOTE:` comments).
+- Not emitted: properties (top-level or member), constructors (primary or secondary), `init`
+  blocks, accessors, local functions and classes, script statements of `.kts` files, and
+  rationale (KDoc, `// NOTE:` comments). A type alias references nothing; references to it bind
+  to its node like to a class (`fun early(x: Later)` before `typealias Later = Thing` →
+  `-> a_a_later`), and so do imports of it (`import a.Id` → `a_a_id`). 0.9.86 emitted no alias
+  node (the fixture's `typealias UserId = String`, probe `jvm-k6`).
 - **Rule (walk).** Declarations are found through any non-declaration node, except function
   bodies: functions inside a misparsed region (a class whose header failed to parse, an
   `annotated_expression` swallowing a class) become top-level functions. Inside a class body,
@@ -2649,7 +2681,10 @@ All in-file edges: EXTRACTED, no score, weight 1.0, `source_file` of the source 
   (`Interceptor.Chain` → `Interceptor`, `java.io.File` → `java`; quirk Q21); supertypes and
   annotations use the last (`b.Base<T>` → `Base`). Nullable types count; function types
   (`(Foo) -> Bar`, `Foo.() -> Unit`), star projections, bounds and `where` clauses produce
-  nothing. Type parameters are stubs (`T` → `t`, per file).
+  nothing. The type parameters of the enclosing classes and function produce nothing (0.9.97;
+  0.9.86 made them stubs `T` → `t`): `class Q<T : Thing>(val t: T)`, `fun <U : T> m(u: U):
+  List<U>`, `Repository<T>` as a supertype argument. An undeclared `T` (`fun stray(): T?`)
+  is still a stub.
 - **Denied types.** About 100 common Kotlin and JDK names never produce a reference or stub
   (`String`, `Int`, `List`, `MutableMap`, `Exception`, `IOException`, `Instant`, `File`,
   `TimeUnit`, `Runnable`, `Random`, `Executor`…; the list is in `extract/kotlin.rs`). The list
@@ -2711,12 +2746,35 @@ edge (`f(x: Foo) { Foo() }` keeps only the reference):
    not apply (`Adapters.any(…)` binds).
 3. Calls on any other receiver (`x.m()`, `this.m()`, `super.m()`) never bind across files.
 
+**`metadata.unresolved_calls`** (0.9.97): on the caller (function, method, the class for its
+property initializers, the file for top-level ones), in source order, one
+`{"callee", "receiver_type", "lang": "kotlin", "line", "file"}` per (callee, receiver) for each
+`Type.m(…)` with a capitalised identifier receiver that bound nothing in the file (a file
+callable named `m` binds `Other.lookup()` whatever the receiver) and whose `Type` is neither
+the label of a class-like node of a Kotlin file — classes, objects, enums, interfaces, type
+aliases and anonymous objects (`object : Thread() {}` makes `Thread.sleep()` resolved), even
+when ambiguous or lacking `m` (`Helper.missing()`) — nor a denied receiver. Java classes do not
+count (`JavaThing.missing()` is recorded). Denied receivers (probed name by name, partial):
+`Array BigInt Blob Bool Boolean Bundle Character Color Data Date Decimal Double Error EvalError
+File Float Font FormData Headers Int Int32 Int64 Intl JSON Locale Map Math Number Object Promise
+Proxy RangeError Reflect RegExp Request Response Set String Symbol SyntaxError TypeError URL
+URLSearchParams UUID WeakMap WeakSet`, `AbortController AnyObject Calendar DateFormatter
+DispatchGroup DispatchQueue FileManager Int8 Int16 JSONDecoder JSONEncoder NSError NSLock
+NSString NotificationCenter NumberFormatter OperationQueue ReferenceError Sendable TextDecoder
+TextEncoder TimeZone UInt UInt8 UInt16 UInt32 UInt64 URIError URLComponents URLRequest
+URLSession UserDefaults View` (not `Uuid`, which the call denylist has). The callee name is not
+filtered (`Objects.hash`, `Integer.parseInt` are recorded). Not recorded: `a.B.m()` and longer
+receivers, lowercase or typed receivers (`x.go()` with `val x: Thing`), calls in `init` blocks.
+Probes `jvm-k1`–`k5`, `jvm-k3` (Java receivers, aliases, ambiguous classes).
+
 ### 21.5 Parity
 
-Fixture: 100% of nodes and links, communities and array order exact, report goldens exact.
-Corpus okhttp (`.kt`/`.kts`, frozen reference): file and def nodes 100%/100%; all nodes 99.9%
-recall / 100.0% precision; links 99.8%/99.8% (`calls` 99.7/99.8, `imports` 99.8/99.8,
-`references` 99.9/99.7, all other relations ≥ 99.6). Remaining: in-file call targets where
+Fixture: 100% of nodes and links, communities and array order exact, report goldens exact
+(0.9.97 goldens). Corpus okhttp (`.kt`/`.kts`, frozen reference): file and def nodes 100%/100%;
+all nodes 99.9% recall / 100.0% precision; links 99.8%/99.8% (`calls` 99.7/99.8, `imports`
+99.8/99.8, `references` 99.9/99.7, all other relations ≥ 99.6). Against 0.9.97 (2026-10-29,
+`.kt .java .kts`): nodes 99.90/99.58, links 98.60/98.98, every `unresolved_calls` entry equal
+(620 Kotlin, 75 Java). Remaining: in-file call targets where
 Graphify prefers a cross-file import over a same-file anonymous object of the same name, a few
 proximity ties, and Java-side effects (Graphify's Java pass sees Kotlin nodes, dijkstral's does
 not; §16 externals as collision emitters).
@@ -2737,7 +2795,7 @@ Fixture `tests/fixtures/scala/` (packages `shop.{model,service,util}`, Scala 3 t
 | `def` (abstract or not, `def this(…)` too) in a class/trait/object/enum | `owner_slug(name)`; overloads merge | `.name()` | `_callable` |
 | top-level `def`, `def` in a package object or `extension` | `file_slug(name)` | `name()` | `_callable` |
 | enum case | `enum_slug(Case)` | `Case` | none |
-| any type name not declared in the file | per-file stub `slug(Name)` — **no denylist**: `String`, `Int`, `Unit`, `List`, `Option` are stubs | `Name` | §4.4 |
+| any type name not declared in the file | per-file stub `slug(Name)` — **no denylist**: `String`, `Int`, `Unit`, `List`, `Option` are stubs; never a type parameter of the enclosing classes or `def` (0.9.97: `trait Repo[K, V]`, `class Box[+T]`, `def map[U]` reference no `k`, `v`, `t`, `u`; 0.9.86 stubbed them; an undeclared `T` still is one) | `Name` | §4.4 |
 | import | external `slug(first path segment)` | | §22.2 |
 
 Not emitted: `val`/`var`, type aliases, anonymous classes (`new Runnable { … }`), local `def`s,
@@ -2819,7 +2877,11 @@ exactly on Alamofire (134 files), and they are the oracle for the rules below. I
 Not emitted: stored properties, protocol property requirements, typealiases, associated types,
 operators (`static func ==`), nested functions, closures, global variables and top-level
 statements, types declared inside function bodies, and **no rationale nodes** (`///` doc comments
-and `// NOTE:`/`// WHY:` are ignored). Generic parameters are ordinary undeclared types (`T` stub).
+and `// NOTE:`/`// WHY:` are ignored). The generic parameters of the enclosing type declarations
+and function (`struct Box<T>`, `func map<U>`, `Pair<Key: Hashable, Value>`) are never referenced
+and make no stub (0.9.97; 0.9.86 treated them as undeclared types, `T` → `t`); scope is
+lexical: `func c(_ y: Gadget)` beside `struct W<Gadget>` still references `gadget`, and an
+undeclared `T` is still a stub. Associated types are not type parameters (probe `jvm-w2`).
 
 - **Rule: same-id definitions merge, first node wins, later ones only add missing fields.** An
   overloaded `init` keeps the first line; a case `convertToSnakeCase` merged with a later
@@ -2858,7 +2920,8 @@ Structural edges carry no `context` key.
   types too, `@escaping`/`@autoclosure` parameter modifiers are not. A parameter written with
   attributes (`h: @escaping @Sendable (Int) -> Void`) names **only** the attributes: Graphify reads
   the grammar's `type` field, which holds just the `type_modifiers`. Self-references are skipped
-  (`indirect case nested(EI)`). References dedupe per declaration by (target, context).
+  (`indirect case nested(EI)`). References dedupe per declaration by (target, context). `Self`
+  references nothing (0.9.97; `func me() -> Self` made a stub `self` in 0.9.86).
 - **Rule: `metadata.swift_plain_return`.** On the first `return_type` reference when the return
   type is written as a plain named type (`-> User`, `-> Result<A, B>`, `-> Outer.Kind`,
   `-> Self`, `-> Base!`), not for `T?`, `[T]`, tuples, functions or `some P`. The cross-file pass
@@ -2897,7 +2960,10 @@ protocol requirements included) and typed properties, last write wins; over loca
 by `Type(...)` or `Type.member` (capitalised identifier), first write wins. The value is the
 first type name of the annotation in the 18.2 sense. `let x = Type.m(...)` records
 `factory[x] = (Type, m)` when `x` has no entry yet. Locals with only a type annotation, closure
-parameters, `for`/`if let`/`guard let` bindings and top-level statements are not recorded.
+parameters, `for`/`if let`/`guard let` bindings and top-level statements are not recorded, and
+neither is a parameter or property typed by a type parameter in scope (0.9.97): with `func b(_
+x: Thing)` then `func a<X>(_ x: X)`, `x` stays `Thing` (0.9.86 overwrote it with `X`), and
+`items: [T]` in `struct Box<T>` records nothing, so `items.append(…)` is not unresolved.
 
 ### 23.4 Cross-file pass
 
@@ -2917,14 +2983,17 @@ parameters, `for`/`if let`/`guard let` bindings and top-level statements are not
    the type has no such member, `references` to the type INFERRED 0.85 (context `call`). Without
    a table entry, a capitalised receiver is the type itself (`User.make()`) and the same edges are
    EXTRACTED 1.0. A type that no class-like node has is recorded once per (caller, callee, type) in
-   the caller's `metadata.unresolved_calls` (`lang: "swift"`), except builtin-like types (the
-   list above, `Int`, `Set`, `Sendable`, `Locale`). Ambiguous or extension-only types elsewhere
-   give nothing.
+   the caller's `metadata.unresolved_calls` (`{"callee", "receiver_type", "lang": "swift",
+   "line", "file"}`; `file` new in 0.9.97), except builtin-like types (the list above, `Int`,
+   `Set`, `Sendable`, `Locale`). Ambiguous or extension-only types elsewhere give nothing.
 5. A cross-file edge is skipped when the caller already links to the target (any relation), which
    is why an INFERRED edge can shadow a later EXTRACTED one.
-6. **`dispatches_to`**: a protocol with exactly one conforming type (`implements`) links each
-   requirement to that type's member of the same name, INFERRED 0.85, context `call`, at the
-   conforming type's node (`source_file`, `source_location`).
+6. **`dispatches_to`**: a protocol links each requirement to every conforming type's
+   (`implements`) member of the same name, context `call`, at the conforming type's node
+   (`source_file`, `source_location`), INFERRED with a score by the protocol's number of
+   conforming types — 0.85 for one, 0.75 for two, 0.65 for three or more, whether or not each
+   one implements the requirement (probes `jvm-w5`, `jvm-w6` up to 12). 0.9.86 linked only a
+   protocol with exactly one conforming type (Alamofire: 15 edges then, 60 in 0.9.97).
 
 ### 23.5 Build-stage observations
 
@@ -2958,7 +3027,8 @@ parameters, `for`/`if let`/`guard let` bindings and top-level statements are not
 Nodes: def 2635/2635 both ways, stubs 648 shared (+1/−3); links: calls, case_of, dispatches_to,
 imports, inherits and method 100%/100%, references 99.4%/99.4%, implements 97.8% recall,
 contains 99.2% precision. Per-file facts (nodes, edges in order, raw calls, tables) match
-Graphify's cache for all 134 files.
+Graphify's cache for all 134 files. Against 0.9.97 (2026-10-29): nodes 99.91/99.97, links
+99.79/99.79 (`dispatches_to` 60/60; the rest is the §23.5 `…_swift_codingkey` rename).
 
 ### 23.8 Open
 
@@ -4640,7 +4710,9 @@ Fixture: 100% of nodes and links, communities and array order exact, report gold
 Corpus: Graphify's own fixtures (`sample.groovy`, `sample_spock.groovy`, `--ext .groovy,.gradle`)
 100%/100% nodes and links; probes 100% except a Java-side stub (`class Ext2 extends Ext` gives
 Graphify a Java stub `ext` that a Groovy import then targets; dijkstral's Java pass has no such
-stub).
+stub). Graphify 0.9.97 changed nothing here: the fixture's goldens are identical, and a probe
+with generic classes, typed fields and `Type.m()` calls (`jvm-g1`) gives the same graph under
+both versions.
 
 ---
 
@@ -4671,17 +4743,28 @@ comments included). Edges come out pass by pass, in this order:
    `file_type: concept`); `@override` is skipped. Annotations above fields configure nothing.
 3. **Typedefs**: `typedef X = T;` → `defines X` and `references` (context `typedef`) from `X` to
    `T`'s last dotted segment (`ffi.Pointer<…>` → `Pointer`); function typedefs (`Function`) are
-   not matched.
+   not matched. A typedef whose id the file already defines gives nothing at all (0.9.97):
+   `final class __CE_GeneralNames …` then `typedef CE_GeneralNames = __CE_GeneralNames;` adds
+   neither a `defines` nor the self-reference `…_ce_generalnames -> …_ce_generalnames` that
+   0.9.86 emitted; `class Foo {}` then `typedef FOO = Other;` references no `other`.
 4. **Extensions**: `extension X on T` → `defines X` and `extends` from `X` to `T`'s first word
    (`objc.ObjCBlock<…>` → `objc`), at the line of `T`; `extension type X` → `defines X`.
+   `extension on T` (no name, 0.9.97) → one node per file, id `fileid + "_" + slug(canonical
+   absolute path of the file without its extension + "_anonymous_extension")` (quirk DA3: like
+   DA1 it depends on the checkout's location), label `Extension on T` of the first, at the
+   first one's line, with `defines` at the **last** one's line and `extends` from each to its
+   own `T` (`extension on List<int>` and `extension on Map<…>` → `list`, `map`). Its members
+   are found by the later passes as usual (`int get total` → `defines total`).
 5. **Variables**: `TYPE NAME` followed by `=`, `;` or the end of a line, `TYPE` any run of word
    characters, `<>?,[].` and whitespace (line breaks included): fields, locals of top-level
    functions, getters (`T get x =>`), `library x;`, `return x == y` (type `return`), `as x;`.
    `defines NAME` and `references` (context `variable_type`) from the file to the type: leading
    `late final`/`late`/`final`/`const`/`var` dropped, the part before `<`, then the last dotted
    segment (`late final ffi.Pointer<K>` → `Pointer`, `String? get`, `static const int`,
-   `external int` kept as written); `int double bool String num dynamic void Object`, `as` and
-   `show` reference nothing.
+   `external int` kept as written); `int double bool String num dynamic void Object`, `as`,
+   `show` and (0.9.97) `typedef` reference nothing. `typedef X = …` matched here (function
+   typedefs included: `typedef Validator = bool Function(User user);` defines `Validator`)
+   defines `X` only when the file has no `X` yet (0.9.97).
 6. **Methods**: `[modifiers] TYPE [x.]name(` with a lowercase `name` that is not a keyword
    (`get`, `set`, `if`, `Function`…), and `factory C.name(`; `defines`. Constructors, generic
    methods `f<T>(`, `void Name(` and names after a `$` are not matched.
@@ -4694,7 +4777,12 @@ comments included). Edges come out pass by pass, in this order:
 
 All edges are EXTRACTED with `confidence_score: 1.0`. A repeated (source, target, relation) in a
 file keeps its first occurrence (quirk DA2; which line Graphify keeps for duplicates is not
-fully pinned: two of three fixture cases keep the first, one keeps the last).
+fully pinned). The first is right in most cases: keeping the last instead moves 1,600+ dart-http
+link locations away from Graphify's (28 differ with the first). Graphify keeps the last for two
+getters of one type (`String get id`, then `String get label` → `string_get` at the second's
+line), for a name a later pass defines again (`class Foo` L1, `int foo = 1` L5 → `defines` at
+L5) and for anonymous extensions (rule 4); within one pass a definition keeps its first line
+(`class WebSocket$Factory` and `class WebSocket` → the first).
 
 ### 27.2 Nodes
 
@@ -4715,13 +4803,18 @@ fully pinned: two of three fixture cases keep the first, one keeps the last).
 ### 27.3 Cross-file pass
 
 A shared type node binds to the only Dart definition labelled with its name (`?` ignored), of any
-kind (`objc` binds to the `as objc;` "variable"; `@ffi` annotations bind to it the same way);
-otherwise it stays. The binding is global per node id.
+kind (`objc` binds to the `as objc;` "variable"); otherwise it stays. The binding is global per
+node id. The label is the kept one: `CE_GeneralNames`, defined only by a typedef that merged into
+`class __CE_GeneralNames` (label `__CE_GeneralNames`), stays a shared node. Annotation nodes
+(`@ffi`) never bind (0.9.97; 0.9.86 bound `@ffi` to the `ffi` variable, 14 dart-http links).
 
 ### 27.4 Parity and open questions
 
-Fixture: 100% of nodes and links, communities exact, report goldens exact; three field
-differences remain (two reference locations, quirk DA2; one `context`, below). Corpus dart-http
+Fixture: 100% of nodes and links, communities exact, report goldens exact; one field
+difference remains (a reference location, quirk DA2; the second one was the 0.9.86 `typedef`
+reference). Against 0.9.97 (2026-10-29, `--ext .dart`): nodes 99.87/99.75, links 99.57/99.18
+(`configures` 20/21, `references` 95.9/94.4), 28 link locations (DA2) and 5 contexts differ.
+Earlier figures (0.9.86): Corpus dart-http
 (`--ext .dart`, frozen reference): def nodes 99.9% recall / 99.7% precision, links 99.7% / 99.2%
 (`defines` 99.9/99.7, `imports`, `exports`, `includes`, `contains`, `extends`, `mixes_in` 100%,
 `inherits` 100/98.9, `implements` 100/91.5, `references` 97.2/95.2), NMI 0.964.

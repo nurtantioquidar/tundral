@@ -11,15 +11,17 @@
 //!   in the file, the nearest callable of that name binds INFERRED 0.85 (path proximity; a tie
 //!   binds nothing). Then `Type.m()` binds EXTRACTED 1.0 when `Type` names one Kotlin class
 //!   with a method `m` (companion members included). Member calls on other receivers never
-//!   bind across files. No call edge is added where the caller already has an edge to the
-//!   target (`f(x: Foo) { Foo() }` keeps only the reference).
+//!   bind across files. A `Type.m()` whose `Type` names no class-like node of a Kotlin file and
+//!   is not a denied receiver is recorded in the caller's `metadata.unresolved_calls`. No call
+//!   edge is added where the caller already has an edge to the target (`f(x: Foo) { Foo() }`
+//!   keeps only the reference).
 
 use std::collections::{HashMap, HashSet};
 
 use super::{Index, Resolution, View};
-use crate::extract::kotlin::{KCallKind, KotlinFacts, VIRTUAL};
+use crate::extract::kotlin::{is_denied_receiver, KCallKind, KotlinFacts, VIRTUAL};
 use crate::extract::{external_node, origin, slug};
-use crate::facts::{Confidence, Edge, LangFacts, Loc, NodeKind};
+use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc, NodeKind};
 use crate::lang::Lang;
 
 /// Redirect target for an import edge the build drops (it then dangles).
@@ -230,6 +232,14 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         .filter_map(|(k, v)| (v.len() == 1).then(|| (k, v[0].clone())))
         .collect();
     let sh = shared(files);
+    // Labels of every class-like node of a Kotlin file (anonymous objects and type aliases
+    // included): a `Type.m()` naming one is not unresolved.
+    let class_labels: HashSet<&str> = kotlin
+        .iter()
+        .flat_map(|(v, _)| v.facts.nodes.iter())
+        .filter(|n| n.kind == NodeKind::Def && n.attr("_callable_class").is_some())
+        .map(|n| n.label.as_str())
+        .collect();
     // Kotlin classes by simple name, and their methods.
     let mut classes: HashMap<&str, Vec<String>> = HashMap::new();
     // (class, name) → its method; `None` when overloaded (`Cookie.parse(…)` binds nothing).
@@ -306,7 +316,11 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         cur.to_string()
     };
 
-    // Calls: bare calls in every file, then `Type.m()`.
+    // Calls: bare calls in every file, then `Type.m()`. A `Type.m()` whose `Type` names no
+    // class-like node of a Kotlin file is recorded in the caller's `metadata.unresolved_calls`,
+    // once per (callee, type), in source order.
+    let mut unresolved: Vec<(String, Vec<String>)> = Vec::new();
+    let mut recorded: HashSet<(String, String, String)> = HashSet::new();
     let mut pairs: HashSet<(String, String)> = HashSet::new();
     for (v, _) in &kotlin {
         for e in &v.facts.edges {
@@ -351,7 +365,26 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                             .get(&(cs[0].clone(), c.name.as_str()))
                             .and_then(|m| m.clone())
                             .map(|t| (t, Confidence::Extracted, 1.0)),
-                        _ => None,
+                        Some(_) => None,
+                        None => {
+                            if !is_denied_receiver(recv)
+                                && !class_labels.contains(recv.as_str())
+                                && recorded.insert((caller.clone(), c.name.clone(), recv.clone()))
+                            {
+                                let entry = format!(
+                                    "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"kotlin\",\"line\":\"L{}\",\"file\":{}}}",
+                                    json_str(&c.name),
+                                    json_str(recv),
+                                    c.line,
+                                    json_str(rel)
+                                );
+                                match unresolved.iter_mut().find(|(id, _)| *id == caller) {
+                                    Some((_, list)) => list.push(entry),
+                                    None => unresolved.push((caller.clone(), vec![entry])),
+                                }
+                            }
+                            None
+                        }
                     },
                     _ => None,
                 };
@@ -366,6 +399,14 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             }
         }
     }
+    for (id, entries) in unresolved {
+        let json = format!("{{\"unresolved_calls\":[{}]}}", entries.join(","));
+        res.attrs.push((id, "metadata".into(), Attr::Json(json)));
+    }
     res.redirects.extend(redirect);
     res
+}
+
+fn json_str(s: &str) -> String {
+    serde_json::to_string(s).unwrap_or_else(|_| "\"\"".into())
 }

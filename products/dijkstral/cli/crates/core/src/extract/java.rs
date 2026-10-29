@@ -7,7 +7,9 @@
 //!
 //! A type name that is neither declared in the file nor imported by name becomes a per-file stub
 //! (`slug(Name)`, like `@Override`'s `override`) that the cross-file pass binds to a local class
-//! when it finds one. Common JDK types (`String`, `List`, `Instant`…) produce nothing.
+//! when it finds one. Common JDK types (`String`, `List`, `Instant`…) produce nothing. A method
+//! carries `_java_ret`, its declared return type's simple name, when every overload merged into
+//! its id names the same non-builtin type.
 //!
 //! Targets that need other files are written as private virtual ids that `crate::resolve::java`
 //! redirects (they never reach the output):
@@ -127,70 +129,189 @@ pub(crate) fn is_common_jdk_type(name: &str) -> bool {
     COMMON_JDK_TYPES.binary_search(&name).is_ok()
 }
 
-/// Sorted. Observed on the fixture and a 74-file Flink/Beam codebase; Graphify still stubs
-/// e.g. `ConcurrentLinkedQueue`, `ReentrantLock`, `Pattern`, `Connection`.
+/// Sorted. Probed name by name on Graphify 0.9.97 (§13.1: the same list decides references,
+/// stubs and `_java_ret`); Graphify still stubs e.g. `ConcurrentLinkedQueue`, `ReentrantLock`,
+/// `Pattern`, `Connection`, `URI`, `Charset`, `Lock`, `TimeoutException`.
 const COMMON_JDK_TYPES: &[&str] = &[
+    "Appendable",
+    "ArithmeticException",
+    "ArrayDeque",
+    "ArrayIndexOutOfBoundsException",
     "ArrayList",
+    "Arrays",
+    "AssertionError",
     "AtomicBoolean",
     "AtomicInteger",
     "AtomicLong",
     "AtomicReference",
+    "AutoCloseable",
+    "BiConsumer",
+    "BiFunction",
+    "BiPredicate",
     "BigDecimal",
+    "BigInteger",
+    "BinaryOperator",
+    "BitSet",
     "BlockingQueue",
     "Boolean",
+    "BufferedReader",
+    "BufferedWriter",
     "Byte",
+    "ByteArrayInputStream",
+    "ByteArrayOutputStream",
+    "Calendar",
+    "Callable",
+    "CharSequence",
     "Character",
     "Class",
+    "ClassCastException",
     "Clock",
+    "CloneNotSupportedException",
+    "Cloneable",
+    "Closeable",
     "Collection",
+    "Collections",
     "Collector",
+    "Collectors",
+    "Comparable",
     "Comparator",
     "CompletableFuture",
+    "CompletionStage",
     "ConcurrentHashMap",
+    "ConcurrentMap",
+    "ConcurrentModificationException",
+    "Consumer",
+    "CopyOnWriteArrayList",
     "CountDownLatch",
+    "CyclicBarrier",
+    "Date",
+    "DateTimeFormatter",
+    "DayOfWeek",
+    "Deque",
     "Double",
+    "DoubleStream",
     "Duration",
+    "Enum",
+    "EnumMap",
+    "EnumSet",
+    "Error",
     "Exception",
+    "Executor",
     "ExecutorService",
+    "Executors",
+    "File",
+    "FileNotFoundException",
+    "FileReader",
+    "FileWriter",
+    "Files",
     "Float",
     "Function",
     "Future",
     "HashMap",
     "HashSet",
+    "Hashtable",
+    "IOException",
     "IllegalArgumentException",
     "IllegalStateException",
+    "IndexOutOfBoundsException",
+    "InputStream",
+    "InputStreamReader",
     "Instant",
+    "IntFunction",
+    "IntStream",
     "Integer",
+    "InterruptedException",
     "Iterable",
     "Iterator",
     "LinkedHashMap",
+    "LinkedHashSet",
     "LinkedList",
     "List",
+    "ListIterator",
+    "LocalDate",
+    "LocalDateTime",
     "LocalTime",
+    "Locale",
     "Long",
+    "LongStream",
     "Map",
+    "Math",
+    "Month",
     "NavigableMap",
+    "NavigableSet",
+    "NoSuchElementException",
+    "NullPointerException",
     "Number",
+    "NumberFormatException",
     "Object",
+    "Objects",
+    "OffsetDateTime",
     "Optional",
+    "OptionalDouble",
+    "OptionalInt",
+    "OptionalLong",
+    "OutOfMemoryError",
+    "OutputStream",
+    "OutputStreamWriter",
+    "Package",
     "Path",
+    "Paths",
+    "Period",
+    "Predicate",
+    "PrintStream",
+    "PrintWriter",
     "PriorityQueue",
+    "Process",
+    "ProcessBuilder",
+    "Properties",
     "Queue",
+    "Random",
+    "Readable",
+    "Reader",
+    "Record",
     "Runnable",
+    "Runtime",
     "RuntimeException",
+    "Scanner",
     "ScheduledExecutorService",
+    "SecurityException",
+    "Semaphore",
     "Serializable",
     "Set",
     "Short",
+    "SortedMap",
+    "SortedSet",
+    "Spliterator",
+    "Stack",
+    "StackOverflowError",
     "Stream",
     "String",
+    "StringBuffer",
     "StringBuilder",
+    "StringJoiner",
+    "StringTokenizer",
     "Supplier",
+    "System",
     "Thread",
+    "ThreadLocal",
     "Throwable",
     "TimeUnit",
+    "ToDoubleFunction",
+    "ToIntFunction",
+    "ToLongFunction",
+    "TreeMap",
+    "TreeSet",
+    "UUID",
+    "UnaryOperator",
+    "UncheckedIOException",
+    "UnsupportedOperationException",
+    "Vector",
     "Void",
+    "Writer",
+    "Year",
     "ZoneId",
+    "ZoneOffset",
+    "ZonedDateTime",
 ];
 
 /// A pending call site, bound after the walk.
@@ -230,6 +351,9 @@ struct Java<'c, 'a> {
     /// Single-type imports: simple name → FQN.
     imported: HashMap<String, String>,
     seen_nodes: HashSet<String>,
+    /// Method id → the `_java_ret` its declarations agree on (`None` once any overload's return
+    /// type differs or names no qualifying type).
+    rets: HashMap<String, Option<String>>,
     stub_seen: HashSet<String>,
     typed: Vec<String>,
     typed_seen: HashSet<String>,
@@ -254,6 +378,7 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         bodies: HashMap::new(),
         imported: HashMap::new(),
         seen_nodes: HashSet::from([file_id.clone()]),
+        rets: HashMap::new(),
         stub_seen: HashSet::new(),
         typed: Vec::new(),
         typed_seen: HashSet::new(),
@@ -274,8 +399,15 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         cx,
         mut facts,
         typed,
+        rets,
         ..
     } = j;
+    for node in &mut cx.facts.nodes {
+        if let Some(Some(ret)) = rets.get(&node.id) {
+            node.attrs
+                .push(("_java_ret".into(), crate::facts::Attr::Str(ret.clone())));
+        }
+    }
     facts.typed = typed;
     cx.facts.lang = crate::facts::LangFacts::Java(facts);
 }
@@ -623,6 +755,21 @@ impl<'a> Java<'_, 'a> {
         if let Some(tp) = decl.child_by_field_name("type_parameters") {
             self.type_params(tp, scope);
         }
+        // `_java_ret` (§13.1): kept only while every overload merged into this id names the
+        // same type.
+        let ret = decl
+            .child_by_field_name("type")
+            .and_then(|t| self.return_name(t, scope));
+        match self.rets.get_mut(&id) {
+            None => {
+                self.rets.insert(id.clone(), ret);
+            }
+            Some(agreed) => {
+                if *agreed != ret {
+                    *agreed = None;
+                }
+            }
+        }
         let mut locals: HashMap<String, String> = HashMap::new();
         if let Some(params) = decl.child_by_field_name("parameters") {
             for p in named_children(params) {
@@ -687,6 +834,20 @@ impl<'a> Java<'_, 'a> {
             "generic_type" => self.base_name(named_children(node).into_iter().next()?),
             _ => None,
         }
+    }
+
+    /// A method's `_java_ret`: the simple name of its declared return type (`a.B` → `B`,
+    /// `Box<B>` → `Box`), except arrays, primitives, `void`, type parameters in scope and the
+    /// builtin types of [`COMMON_JDK_TYPES`].
+    fn return_name(&self, t: TsNode, scope: &[String]) -> Option<String> {
+        if !matches!(
+            t.kind(),
+            "type_identifier" | "scoped_type_identifier" | "generic_type"
+        ) {
+            return None;
+        }
+        let name = self.base_name(t)?;
+        (!is_common_jdk_type(&name) && !scope.contains(&name)).then_some(name)
     }
 
     /// The declared type of a variable, as a simple name, when it can name a receiver

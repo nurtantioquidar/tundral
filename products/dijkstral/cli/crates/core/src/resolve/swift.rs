@@ -18,8 +18,9 @@
 //!   receiver type no type of the repository has is recorded once per (caller, callee, type) in
 //!   the caller's `metadata.unresolved_calls`, builtin-like types excepted. A caller already
 //!   linked to the target gets no new edge.
-//! - `dispatches_to`: a protocol with exactly one conforming type links each requirement to that
-//!   type's member of the same name (INFERRED 0.85, context `call`, at the type's declaration).
+//! - `dispatches_to`: a protocol links each requirement to every conforming type's member of the
+//!   same name (context `call`, at the conforming type's declaration), INFERRED 0.85 with one
+//!   conforming type, 0.75 with two, 0.65 with more.
 
 use std::collections::{HashMap, HashSet};
 
@@ -375,10 +376,11 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                         None
                     } else {
                         let entry = format!(
-                            "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"swift\",\"line\":\"L{}\"}}",
+                            "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"swift\",\"line\":\"L{}\",\"file\":{}}}",
                             json_str(&c.callee),
                             json_str(&ty),
-                            c.line
+                            c.line,
+                            json_str(rel)
                         );
                         match unresolved.iter_mut().find(|(id, _)| *id == caller) {
                             Some((_, list)) => list.push(entry),
@@ -404,8 +406,9 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         res.attrs.push((id, "metadata".into(), Attr::Json(json)));
     }
 
-    // A protocol with exactly one conforming type dispatches each requirement to that type's
-    // member of the same name, at the type's declaration.
+    // A protocol dispatches each requirement to every conforming type's member of the same
+    // name, at that type's declaration: INFERRED 0.85 with one conforming type, 0.75 with two,
+    // 0.65 with more.
     let mut conformers: Vec<(&String, Vec<&String>)> = Vec::new();
     for (ty, proto, _, _) in &implements {
         match conformers.iter_mut().find(|(p, _)| *p == proto) {
@@ -417,44 +420,47 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             None => conformers.push((proto, vec![ty])),
         }
     }
-    let mut impls: Vec<(String, Vec<String>)> = Vec::new();
-    for (proto, types) in &conformers {
-        let ([ty], Some(reqs)) = (types.as_slice(), members.get(*proto)) else {
-            continue;
-        };
-        for (name, req) in reqs {
-            let Some(imp) = member_of(ty, name) else {
-                continue;
-            };
-            if imp != *req && !impls.iter().any(|(r, _)| r == req) {
-                impls.push((req.clone(), vec![imp]));
-            }
-        }
-    }
     let owner_of: HashMap<&str, &String> = members
         .iter()
         .flat_map(|(o, l)| l.iter().map(move |(_, id)| (id.as_str(), o)))
         .collect();
-    for (req, list) in impls {
-        let [imp] = list.as_slice() else {
+    let mut dispatched: HashSet<(String, String)> = HashSet::new();
+    for (proto, types) in &conformers {
+        let Some(reqs) = members.get(*proto) else {
             continue;
         };
-        let Some(owner) = owner_of.get(imp.as_str()) else {
-            continue;
+        let score = match types.len() {
+            1 => 0.85,
+            2 => 0.75,
+            _ => 0.65,
         };
-        let (Some(rel), Some(line)) = (file_of.get(owner.as_str()), line_of.get(owner.as_str()))
-        else {
-            continue;
-        };
-        res.edges.push(edge(
-            req,
-            imp.clone(),
-            "dispatches_to",
-            rel,
-            *line,
-            Confidence::Inferred,
-            0.85,
-        ));
+        for (name, req) in reqs {
+            for ty in types {
+                let Some(imp) = member_of(ty, name) else {
+                    continue;
+                };
+                if imp == *req || !dispatched.insert((req.clone(), imp.clone())) {
+                    continue;
+                }
+                let Some(owner) = owner_of.get(imp.as_str()) else {
+                    continue;
+                };
+                let (Some(rel), Some(line)) =
+                    (file_of.get(owner.as_str()), line_of.get(owner.as_str()))
+                else {
+                    continue;
+                };
+                res.edges.push(edge(
+                    req.clone(),
+                    imp,
+                    "dispatches_to",
+                    rel,
+                    *line,
+                    Confidence::Inferred,
+                    score,
+                ));
+            }
+        }
     }
     res
 }
