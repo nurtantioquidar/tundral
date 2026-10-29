@@ -18,6 +18,7 @@ import tempfile
 import threading
 import unittest
 from pathlib import Path
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 FIX = HERE / "fixtures"
@@ -467,6 +468,21 @@ class Harness(unittest.TestCase):
         self.assertFalse(
             run.session_env(self.ctx, "none", False)["PATH"].startswith(str(self.tmp))
         )
+
+    def test_other_graphify_version_gets_its_own_paths(self):
+        def tool_dir_name(arm: str, semantic: bool) -> str:
+            d = self.ctx.tool_dir(arm, semantic)
+            assert d is not None
+            return d.name
+
+        self.assertEqual(tool_dir_name("graphify", False), "graphify")
+        with mock.patch.object(run, "GRAPHIFY_VERSION", "0.9.97"):
+            self.assertEqual(self.ctx.slot("graphify"), "graphify-0.9.97")
+            self.assertEqual(tool_dir_name("graphify", False), "graphify-0.9.97")
+            self.assertEqual(
+                tool_dir_name("graphify", True), "graphify-0.9.97-semantic"
+            )
+            self.assertEqual(tool_dir_name("dijkstral", False), "dijkstral")
 
     def test_base_path_drops_tool_dirs(self):
         d = self.tmp / "toolbin"

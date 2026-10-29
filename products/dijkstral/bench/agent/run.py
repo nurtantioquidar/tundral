@@ -218,9 +218,10 @@ class Ctx:
         return self.home / "agent"
 
     def slot(self, arm: str) -> str:
-        """The arm's name in stored paths (workspace, manifest, homes, build state, sessions): a
-        graphify arm on another Graphify than the pin is `graphify-<version>`, so its graph and
-        answers never mix with the pin's; the pin keeps `graphify`, so earlier results stay valid."""
+        """The arm's name in stored paths (workspace, manifest, homes, build state, sessions, tool
+        dir): a graphify arm on another Graphify than the pin is `graphify-<version>`, so its graph,
+        executables and answers never mix with the pin's; the pin keeps `graphify`, so earlier
+        results stay valid."""
         if arm == "graphify" and GRAPHIFY_VERSION != GRAPHIFY_PIN:
             return f"graphify-{GRAPHIFY_VERSION}"
         return arm
@@ -243,10 +244,11 @@ class Ctx:
         """A directory holding only the arm's own executables, put first on the session PATH."""
         if arm == "none":
             return None
+        name = self.slot(arm)
         return (
             self.agent
             / "bin"
-            / (f"{arm}-semantic" if arm == "graphify" and semantic else arm)
+            / (f"{name}-semantic" if arm == "graphify" and semantic else name)
         )
 
     def log(self, msg: str) -> None:
