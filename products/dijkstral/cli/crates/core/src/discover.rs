@@ -82,11 +82,12 @@ pub struct Discovery {
     pub documents: Vec<String>,
 }
 
-/// Extensions `update` indexes as documents, papers, images or media (probed one by one).
+/// Extensions `update` indexes as documents, papers, images or media (probed one by one). YAML has
+/// been code since Graphify 0.9.97 (§46).
 const INDEXED_NON_CODE: &[&str] = &[
-    "md", "mdx", "rst", "txt", "html", "yaml", "yml", "pdf", "png", "svg", "jpg", "jpeg", "gif",
-    "webp", "mp4", "mov", "webm", "m4v", "mkv", "avi", "mp3", "wav", "ogg", "m4a", "docx", "xlsx",
-    "gdoc", "gsheet", "gslides",
+    "md", "mdx", "rst", "txt", "html", "pdf", "png", "svg", "jpg", "jpeg", "gif", "webp", "mp4",
+    "mov", "webm", "m4v", "mkv", "avi", "mp3", "wav", "ogg", "m4a", "docx", "xlsx", "gdoc",
+    "gsheet", "gslides",
 ];
 
 /// Files Graphify skips without counting: lockfiles and likely secrets (probed).
@@ -94,6 +95,7 @@ fn dropped_silently(name: &str) -> bool {
     matches!(
         name,
         "package-lock.json"
+            | "pnpm-lock.yaml"
             | "Cargo.lock"
             | "yarn.lock"
             | "composer.lock"
@@ -183,6 +185,7 @@ fn walk(
     gitignore: bool,
     (found, unclassified, documents): Sinks,
 ) {
+    let base = root.to_path_buf();
     WalkBuilder::new(start)
         .hidden(false)
         .git_ignore(gitignore)
@@ -192,12 +195,15 @@ fn walk(
         .parents(false)
         .add_custom_ignore_filename(".graphifyignore")
         .add_custom_ignore_filename(".dijkstralignore")
-        .filter_entry(|e| {
+        .filter_entry(move |e| {
             let name = e.file_name().to_string_lossy();
             if e.file_type().is_some_and(|t| t.is_dir()) {
-                !SKIP_DIRS.contains(&name.as_ref()) && !name.ends_with(".egg-info")
+                !SKIP_DIRS.contains(&name.as_ref())
+                    && !name.ends_with(".egg-info")
+                    && !SECRET_DIRS.iter().any(|d| name.eq_ignore_ascii_case(d))
             } else {
-                !is_sensitive(&name)
+                let dirs = e.path().strip_prefix(&base).ok().and_then(Path::parent);
+                !is_sensitive(&name) && !looks_secret(e.path(), &name, dirs)
             }
         })
         .threads(threads)
@@ -232,9 +238,80 @@ fn walk(
         });
 }
 
-/// Files that may hold secrets are never read (§14.5): `.env`, `.env.*`, `*.pem`.
+/// Files that may hold secrets are never read (§14.5): `.env`, `.env.*`, `*.pem`, `*.der` and a
+/// few credential files by name.
 pub fn is_sensitive(name: &str) -> bool {
-    name == ".env" || name.starts_with(".env.") || name.ends_with(".pem")
+    name == ".env"
+        || name.starts_with(".env.")
+        || name.ends_with(".pem")
+        || name.ends_with(".der")
+        || name.starts_with("secring")
+        || matches!(
+            name,
+            ".envrc" | ".htpasswd" | ".pgpass" | ".pypirc" | "id_ed25519" | "id_rsa.pub"
+        )
+}
+
+/// Directories whose whole subtree is never read, at any depth, case-insensitively (§14.5).
+const SECRET_DIRS: &[&str] = &[".ssh", ".aws", ".gnupg", ".gcloud"];
+
+/// Directories under which files other than source code are never read (§14.5).
+const SECRET_DATA_DIRS: &[&str] = &["secrets", "credentials", ".secrets"];
+
+/// Words that mark a file other than source code as a likely secret (§14.5).
+const SECRET_WORDS: &[&str] = &[
+    "secret",
+    "secrets",
+    "token",
+    "tokens",
+    "credential",
+    "credentials",
+    "password",
+    "passwords",
+    "passwd",
+    "serviceaccount",
+    "service-account",
+    "service_account",
+    "private_key",
+];
+
+/// Graphify's name filter for files that are not source code: JSON, YAML, documents and
+/// unclassified files under a `secrets`/`credentials` directory, or whose stem (the name without
+/// its last extension), case-insensitively, ends with a secret word after `-`, `_` or `.`, or has
+/// at most two such parts and starts with one (`secret.yaml`, `x-token.json`,
+/// `core.v1.Secret.yaml`, `token-config.yaml`; not `my-token-config.yaml`). Markdown and
+/// reStructuredText are dropped only when the stem is the bare word (not `tokens`). Source files
+/// (`secrets.py`, `credentials/m.go`) are read.
+fn looks_secret(path: &Path, name: &str, dirs: Option<&Path>) -> bool {
+    if Lang::classify(path).is_some_and(|l| !matches!(l, Lang::Json | Lang::Yaml)) {
+        return false;
+    }
+    if dirs.is_some_and(|d| {
+        d.components().any(|c| {
+            let c = c.as_os_str().to_string_lossy();
+            SECRET_DATA_DIRS.iter().any(|s| c.eq_ignore_ascii_case(s))
+        })
+    }) {
+        return true;
+    }
+    let (stem, ext) = match name.rfind('.') {
+        Some(i) if i > 0 => (&name[..i], name[i + 1..].to_ascii_lowercase()),
+        _ => (name, String::new()),
+    };
+    let stem = stem.to_ascii_lowercase();
+    if matches!(ext.as_str(), "md" | "rst") {
+        return stem != "tokens" && SECRET_WORDS.contains(&stem.as_str());
+    }
+    let sep = ['-', '_', '.'];
+    let short = stem.trim_start_matches('.').split(sep).count() <= 2;
+    SECRET_WORDS.iter().any(|w| {
+        stem == *w
+            || stem.strip_suffix(w).is_some_and(|rest| rest.ends_with(sep))
+            || (short
+                && stem
+                    .strip_prefix(w)
+                    .is_some_and(|rest| rest.starts_with(sep)))
+    })
 }
 
 fn relative(root: &Path, path: &Path) -> Option<String> {
@@ -324,6 +401,52 @@ mod tests {
         );
         fs::write(root.join(".graphifyignore"), "keep/\n!gen/\n").unwrap();
         assert_eq!(rels(true), ["gen/g.py", "top.py"]);
+    }
+
+    /// §14.5: secret-looking names and directories drop data, documents and unclassified files,
+    /// never source code; credential stores drop everything.
+    #[test]
+    fn drops_files_that_look_like_secrets() {
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path();
+        for p in [
+            "k8s/secret.yaml",
+            "k8s/core.v1.Secret.yaml",
+            "k8s/token-config.yaml",
+            "k8s/my-token-config.yaml",
+            "k8s/tokenizer.yaml",
+            "k8s/x-service-account.yml",
+            "k8s/Password.json",
+            "secrets/db.yaml",
+            "secrets/mod.py",
+            "secrets.py",
+            ".ssh/keys.py",
+            "notes/secret.md",
+            "notes/token-economics.md",
+            "notes/tokens.md",
+            "pnpm-lock.yaml",
+            "app.yaml",
+        ] {
+            let path = root.join(p);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, "a: {}\n").unwrap();
+        }
+        let found = discover_all(root, 2);
+        let rels: Vec<_> = found.files.into_iter().map(|f| f.rel).collect();
+        assert_eq!(
+            rels,
+            [
+                "app.yaml",
+                "k8s/my-token-config.yaml",
+                "k8s/tokenizer.yaml",
+                "secrets.py",
+                "secrets/mod.py"
+            ]
+        );
+        assert_eq!(
+            found.documents,
+            ["notes/token-economics.md", "notes/tokens.md"]
+        );
     }
 
     #[test]

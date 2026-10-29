@@ -231,9 +231,12 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         |id: &str| -> Option<String> { emitters.get(id).map(|v| v.id(id).to_string()) };
     // Otherwise a definition labelled exactly like it (a class, field or enumerator `x`, a
     // function `x()`; not a method) takes it when it is the only one: `<ostream>` → class
-    // `ostream`, `"fmt/printf.h"` → function `printf()`.
+    // `ostream`, `"fmt/printf.h"` → function `printf()`. JSON and YAML keys never do.
     let mut def_labels: HashMap<&str, Vec<&str>> = HashMap::new();
-    for v in files {
+    for v in files
+        .iter()
+        .filter(|v| !matches!(v.file.lang, Lang::Json | Lang::Yaml))
+    {
         for n in v.facts.nodes.iter().filter(|n| n.kind == NodeKind::Def) {
             if n.label.starts_with('.') {
                 continue;

@@ -53,6 +53,9 @@ sha1_smol = "1"
 serde_json = { version = "1", features = ["preserve_order"] }
 tempfile = "3"
 toml = "0.8"
+# YAML (`.yaml`/`.yml`, §46): an event parser with line marks; the composer and the checks
+# that mirror PyYAML's safe loader are dijkstral's own.
+yaml-rust2 = { version = "0.13", default-features = false }
 tree-sitter = "0.25"
 tree-sitter-bash = "0.25"
 tree-sitter-c-sharp = "0.23"

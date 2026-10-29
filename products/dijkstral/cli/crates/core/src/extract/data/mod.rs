@@ -1,5 +1,5 @@
-//! JSON manifests, `Cargo.toml`/`pyproject.toml` and shell scripts (`docs/graphify-format.md` §14,
-//! §11.6).
+//! JSON manifests, `Cargo.toml`/`pyproject.toml`, YAML and shell scripts
+//! (`docs/graphify-format.md` §14, §46, §11.6).
 //!
 //! JSON and shell are parsed with tree-sitter (its error recovery decides what Graphify keeps from
 //! a damaged file), TOML with a strict TOML 1.0 parser (an invalid file yields nothing). Everything
@@ -9,6 +9,7 @@
 mod json;
 mod shell;
 mod toml;
+mod yaml;
 
 use std::cell::RefCell;
 
@@ -98,6 +99,7 @@ pub fn extract(cx: &mut Ctx) {
     match cx.lang {
         Lang::Json => json::extract(cx),
         Lang::Toml => toml::extract(cx),
+        Lang::Yaml => yaml::extract(cx),
         Lang::Shell => shell::extract(cx),
         _ => {}
     }

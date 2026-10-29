@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop
+  labels:
+    app: shop
+spec:
+  replicas: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop
+spec:
+  ports:
+    - port: 80
+---
+note: a flat document is not a node
+---
+- a list document is not either
+---
+kind: ConfigMap
+data:
+  mode: fast
+---
+metadata:
+  name: no-kind
+spec:
+  x: 1
