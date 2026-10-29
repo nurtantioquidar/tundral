@@ -278,15 +278,116 @@ pub fn external_node(id: String) -> Node {
     }
 }
 
-/// Rationale label: whitespace collapsed; over 80 chars cut at the last space before 80 plus `…`.
+/// Rationale label: Python's `textwrap.shorten(text, 80, placeholder="…")`. Whitespace is
+/// collapsed; a longer text keeps the most leading chunks that fit with the `…`, where chunks
+/// break at spaces and after the hyphen of a hyphenated word (`cross-…`, `tree-…`).
 pub fn rationale_label(text: &str) -> String {
+    const WIDTH: usize = 80;
     let collapsed = text.split_whitespace().collect::<Vec<_>>().join(" ");
-    if collapsed.chars().count() <= 80 {
+    let chars: Vec<char> = collapsed.chars().collect();
+    if chars.len() <= WIDTH {
         return collapsed;
     }
-    let head: String = collapsed.chars().take(80).collect();
-    let cut = head.rsplit_once(' ').map_or(head.as_str(), |(a, _)| a);
-    format!("{cut}…")
+    let mut chunks: Vec<Vec<char>> = wrap_chunks(&chars).into_iter().rev().collect();
+    let mut line: Vec<Vec<char>> = Vec::new();
+    let mut len = 0;
+    while let Some(c) = chunks.last() {
+        if len + c.len() > WIDTH {
+            break;
+        }
+        len += c.len();
+        line.push(chunks.pop().expect("checked"));
+    }
+    // `_handle_long_word`: a chunk longer than the whole width is split to fill the line.
+    if let Some(c) = chunks.last().filter(|c| c.len() > WIDTH).cloned() {
+        let space = WIDTH - len;
+        let mut end = space;
+        if let Some(h) = c[..space.min(c.len())].iter().rposition(|&x| x == '-') {
+            if h > 0 && c[..h].iter().any(|&x| x != '-') {
+                end = h + 1;
+            }
+        }
+        len += end;
+        line.push(c[..end].to_vec());
+    }
+    if line
+        .last()
+        .is_some_and(|c| c.iter().all(|x| x.is_whitespace()))
+    {
+        len -= line.pop().map_or(0, |c| c.len());
+    }
+    while let Some(last) = line.last() {
+        if !last.iter().all(|x| x.is_whitespace()) && len < WIDTH {
+            let mut out: String = line.iter().flatten().collect();
+            out.push('…');
+            return out;
+        }
+        len -= last.len();
+        line.pop();
+    }
+    "…".to_string()
+}
+
+/// `textwrap.TextWrapper.wordsep_re` chunks (break on hyphens): runs of spaces, em-dashes
+/// between words, and words split after a hyphen that has two letters (or `x-y-`) before it and
+/// a letter (optionally hyphen-separated from another) after it.
+fn wrap_chunks(t: &[char]) -> Vec<Vec<char>> {
+    let letter = |c: char| (c.is_alphanumeric() && !c.is_numeric()) || c == '_';
+    let word = |c: char| c.is_alphanumeric() || c == '_';
+    let punct = |c: char| word(c) || "!\"'&.,?".contains(c);
+    let at = |i: usize| t.get(i).copied();
+    let dashes_then_word = |k: usize| {
+        let mut j = k;
+        while at(j) == Some('-') {
+            j += 1;
+        }
+        j - k >= 2 && at(j).is_some_and(word)
+    };
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i < t.len() {
+        if t[i].is_whitespace() {
+            let mut j = i;
+            while j < t.len() && t[j].is_whitespace() {
+                j += 1;
+            }
+            out.push(t[i..j].to_vec());
+            i = j;
+            continue;
+        }
+        if i > 0 && punct(t[i - 1]) && dashes_then_word(i) {
+            let mut j = i;
+            while at(j) == Some('-') {
+                j += 1;
+            }
+            out.push(t[i..j].to_vec());
+            i = j;
+            continue;
+        }
+        let mut k = i + 1;
+        let end = loop {
+            if k >= t.len() || t[k].is_whitespace() {
+                break k;
+            }
+            if t[k] == '-' {
+                let before = (k >= 2 && letter(t[k - 1]) && letter(t[k - 2]))
+                    || (k >= 3 && letter(t[k - 3]) && t[k - 2] == '-' && letter(t[k - 1]));
+                let after = at(k + 1).is_some_and(letter)
+                    && (at(k + 2).is_some_and(letter)
+                        || (at(k + 2) == Some('-') && at(k + 3).is_some_and(letter)));
+                if before && after {
+                    break k + 1;
+                }
+            }
+            if punct(t[k - 1]) && dashes_then_word(k) {
+                break k;
+            }
+            k += 1;
+        };
+        out.push(t[i..end].to_vec());
+        i = end;
+    }
+    out
 }
 
 #[cfg(test)]
@@ -300,5 +401,18 @@ mod tests {
         let label = rationale_label(&long);
         assert!(label.ends_with('…'));
         assert_eq!(label.chars().count(), 80);
+        // Hyphenated words break after the hyphen (graphify corpus, `tests/test_js_*.py`).
+        let doc = "Yield identifier value-nodes of a JS/TS object/array literal that are \
+                   function-valued entries.";
+        assert_eq!(
+            rationale_label(doc),
+            "Yield identifier value-nodes of a JS/TS object/array literal that are function-…"
+        );
+        let doc = "A fuzzy-only run must still report the fuzzy count (#1857). Two long, \
+                   high-similarity names.";
+        assert_eq!(
+            rationale_label(doc),
+            "A fuzzy-only run must still report the fuzzy count (#1857). Two long, high-…"
+        );
     }
 }

@@ -245,6 +245,18 @@ pub struct ScriptData {
     pub decorators: Vec<Decorator>,
     /// `import("…")` specifiers found anywhere in the source text (JSDoc types included).
     pub dynamic: Vec<String>,
+    /// Member calls on typed receivers, as Graphify types them, for `metadata.unresolved_calls`
+    /// (kept or not by the cross-file pass, which knows every type name).
+    pub unresolved: Vec<UnresolvedCall>,
+}
+
+/// `x.callee()` in `caller` where Graphify types `x` as `ty` (§10.4).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UnresolvedCall {
+    pub caller: String,
+    pub callee: String,
+    pub ty: String,
+    pub line: u32,
 }
 
 pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
@@ -256,6 +268,7 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         classes: Vec::new(),
         events: Vec::new(),
         file_typed: Vec::new(),
+        graphify_vars: Vec::new(),
     };
     if let Some(tree) = tree {
         let st = St {
@@ -265,7 +278,9 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
             exported: false,
             lazy: None,
             in_value: false,
+            foreign_this: false,
         };
+        w.scan_graphify_vars(tree.root_node());
         // Caller 0 is the file: calls in module-level callbacks (`describe(() => …)`).
         w.new_caller(w.cx.file_id.clone(), None, None, false);
         w.children(tree.root_node(), st, 0);
@@ -303,6 +318,14 @@ struct Caller {
     shadow: Vec<String>,
     /// Locals bound to `this` (`const me = this`).
     this_alias: Vec<String>,
+    /// A class constructor: its `this.x = …` assignments rank above other methods' (§10.1).
+    ctor: bool,
+    /// A static method: its `this.x = …` assignments type static fields.
+    static_method: bool,
+    /// Own parameters with a receiver type (`p: Node`, `q?: Repo`, `r: Node | null`).
+    params: Vec<(String, String)>,
+    /// A function-valued class field (`handler = () => …`): its `this.x = …` types nothing.
+    field_fn: bool,
 }
 
 struct Class {
@@ -310,8 +333,18 @@ struct Class {
     /// The `extends` name when it is a plain identifier.
     base: Option<String>,
     methods: Vec<(String, String)>,
-    /// Field name → declared or constructed type name (`portal: Portal`, `svc = new Svc()`).
+    /// Field name → type name for `this.f.m()` (`_ts_fields`), final once the body is walked.
     fields: Vec<(String, String)>,
+    /// Declared field types in source order (fields, parameter properties, accessors), with
+    /// `static`.
+    declared: Vec<(String, String, bool)>,
+    /// `this.x = new X()` / `this.x = typedParam` in methods: (field, type, in the
+    /// constructor, in a static method).
+    assigned: Vec<(String, String, bool, bool)>,
+    /// Members whose differently written names produce one id: raw name → final id (§10.1).
+    renames: std::collections::HashMap<String, String>,
+    /// `#n` and `n` both members: both nodes carry `_ts_public_twin`.
+    public_twins: std::collections::HashSet<String>,
 }
 
 /// Walk state; `Copy` so recursion stays cheap.
@@ -331,6 +364,8 @@ struct St {
     /// Inside a module-level value's literal initializer (`const X = { m() {} }`), which
     /// Graphify does not descend into: object-literal methods there are not functions.
     in_value: bool,
+    /// Inside a non-arrow function expression of the caller: `this` is not the caller's.
+    foreign_this: bool,
 }
 
 impl St {
@@ -342,6 +377,7 @@ impl St {
             exported: false,
             lazy: None,
             in_value: caller.is_none() && self.in_value,
+            foreign_this: false,
         }
     }
 
@@ -381,6 +417,7 @@ impl St {
             exported: false,
             lazy: None,
             in_value: false,
+            foreign_this: false,
         }
     }
 }
@@ -421,6 +458,11 @@ struct Walker<'a, 'b> {
     events: Vec<Event>,
     /// `name: Type` annotations and module-level `new` initializers anywhere in the file.
     file_typed: Vec<(String, String)>,
+    /// Graphify's receiver types: one file-wide name → type map, the last binding winning, from
+    /// every parameter annotated with a plain type name (functions, callbacks, overloads, method
+    /// signatures, function types; not rest or destructured ones) and every `x = new X()`
+    /// declarator, at any depth (see [`Walker::scan_graphify_vars`]).
+    graphify_vars: Vec<(String, String)>,
 }
 
 fn line(node: TsNode) -> u32 {
@@ -538,6 +580,10 @@ impl<'a> Walker<'a, '_> {
             value: false,
             shadow: Vec::new(),
             this_alias: Vec::new(),
+            ctor: false,
+            static_method: false,
+            params: Vec::new(),
+            field_fn: false,
         });
         self.callers.len() - 1
     }
@@ -638,6 +684,7 @@ impl<'a> Walker<'a, '_> {
                 let name = self.text(pat).to_string();
                 if let Some(c) = caller {
                     self.callers[c].typed.push((name.clone(), ty.clone()));
+                    self.callers[c].params.push((name.clone(), ty.clone()));
                 }
                 self.file_typed.push((name, ty));
             }
@@ -765,7 +812,9 @@ impl<'a> Walker<'a, '_> {
                     self.callers[c].shadow.push(name);
                 }
                 if let Some(body) = node.child_by_field_name("body") {
-                    self.walk(body, st.inner(caller), depth + 1);
+                    let mut inner = st.inner(caller);
+                    inner.foreign_this = st.foreign_this || node.kind() != "arrow_function";
+                    self.walk(body, inner, depth + 1);
                 }
             }
             // An object-literal method passed to module-level code (`expect.extend({ m() {} })`)
@@ -1140,6 +1189,10 @@ impl<'a> Walker<'a, '_> {
             base: None,
             methods: Vec::new(),
             fields: Vec::new(),
+            declared: Vec::new(),
+            assigned: Vec::new(),
+            renames: Default::default(),
+            public_twins: Default::default(),
         });
         for d in outer_decorators {
             self.decorator(&id, *d);
@@ -1152,8 +1205,10 @@ impl<'a> Walker<'a, '_> {
             }
         }
         if let Some(body) = node.child_by_field_name("body") {
+            self.member_renames(class, body);
             self.class_body(body, class, depth);
         }
+        self.settle_fields(class);
         Some(id)
     }
 
@@ -1210,6 +1265,10 @@ impl<'a> Walker<'a, '_> {
             base: None,
             methods: Vec::new(),
             fields: Vec::new(),
+            declared: Vec::new(),
+            assigned: Vec::new(),
+            renames: Default::default(),
+            public_twins: Default::default(),
         });
         for m in named_children(body) {
             let (name, func) = match m.kind() {
@@ -1256,7 +1315,7 @@ impl<'a> Walker<'a, '_> {
                 .and_then(|t| self.receiver_type(t));
             if let (true, Some(pat), Some(ty)) = (is_property, pat, ty) {
                 let name = self.text(pat).to_string();
-                self.classes[class].fields.push((name, ty));
+                self.classes[class].declared.push((name, ty, false));
             }
         }
     }
@@ -1288,7 +1347,10 @@ impl<'a> Walker<'a, '_> {
                     if raw == "constructor" {
                         self.parameter_properties(m, class);
                     }
+                    self.accessor_type(m, raw, class);
                     let caller = self.new_caller(id, None, Some(class), false);
+                    self.callers[caller].ctor = raw == "constructor";
+                    self.callers[caller].static_method = has_token(m, "static");
                     self.function_body(m, caller, St::opaque(), depth);
                 }
                 "public_field_definition" | "field_definition" => {
@@ -1301,20 +1363,34 @@ impl<'a> Walker<'a, '_> {
                         (Some(name), Some(v)) if is_function_value(v) => {
                             let raw = self.text(name);
                             let id = self.method_node(class, raw, keyword_line(m));
-                            // Arrow-function fields reference only their declared field type.
+                            // Arrow-function fields reference only their declared field type,
+                            // which also types the field (`handler: EventListener = () => …`).
                             if let Some(t) = m.child_by_field_name("type") {
                                 let source = self.classes[class].id.clone();
                                 self.type_refs(&source, t, TypeContext::Field, line(m));
+                                if let Some(ty) =
+                                    t.named_child(0).and_then(|t| self.receiver_type(t))
+                                {
+                                    let is_static = has_token(m, "static");
+                                    self.classes[class].declared.push((
+                                        raw.to_string(),
+                                        ty,
+                                        is_static,
+                                    ));
+                                }
                             }
                             let caller = self.new_caller(id, None, Some(class), false);
+                            self.callers[caller].field_fn = true;
                             self.function_body(v, caller, St::opaque(), depth);
                         }
                         _ => {
-                            let declared = m
-                                .child_by_field_name("type")
+                            let annotation = m.child_by_field_name("type");
+                            let declared = annotation
                                 .and_then(|t| t.named_child(0))
                                 .and_then(|t| self.receiver_type(t));
+                            // An annotation decides alone (`s: Set<X> = new Set()` types nothing).
                             let constructed = value
+                                .filter(|_| annotation.is_none())
                                 .filter(|v| v.kind() == "new_expression")
                                 .and_then(|v| v.child_by_field_name("constructor"))
                                 .filter(|c| c.kind() == "identifier")
@@ -1322,7 +1398,8 @@ impl<'a> Walker<'a, '_> {
                             if let (Some(n), Some(t)) = (name, declared.or(constructed)) {
                                 let field = self.text(n).to_string();
                                 self.file_typed.push((field.clone(), t.clone()));
-                                self.classes[class].fields.push((field, t));
+                                let is_static = has_token(m, "static");
+                                self.classes[class].declared.push((field, t, is_static));
                             }
                             if let Some(t) = m.child_by_field_name("type") {
                                 let source = self.classes[class].id.clone();
@@ -1343,6 +1420,65 @@ impl<'a> Walker<'a, '_> {
         }
     }
 
+    /// Class and interface members whose differently written names produce one id (§10.1): when
+    /// exactly one of them is public (not `_`- or `#`-prefixed) it keeps the id, every other one
+    /// takes `_<sha1(raw name)[:6]>`; identical names still merge. `#n` beside `n` marks both
+    /// `_ts_public_twin`.
+    fn member_renames(&mut self, class: usize, body: TsNode) {
+        let class_id = self.classes[class].id.clone();
+        let mut groups: Vec<(String, Vec<String>)> = Vec::new();
+        for m in named_children(body) {
+            let name = match m.kind() {
+                "method_definition" | "abstract_method_signature" | "method_signature" => {
+                    m.child_by_field_name("name")
+                }
+                "public_field_definition" | "field_definition" => m
+                    .child_by_field_name("value")
+                    .filter(|v| is_function_value(*v))
+                    .and_then(|_| {
+                        m.child_by_field_name("name")
+                            .or_else(|| m.child_by_field_name("property"))
+                    }),
+                _ => None,
+            };
+            let Some(n) = name else { continue };
+            let raw = self.text(n).to_string();
+            let id = Ctx::child_id(&class_id, &raw);
+            match groups.iter_mut().find(|(g, _)| *g == id) {
+                Some((_, names)) if !names.contains(&raw) => names.push(raw),
+                Some(_) => {}
+                None => groups.push((id, vec![raw])),
+            }
+        }
+        for (id, names) in groups {
+            if names.len() < 2 {
+                continue;
+            }
+            let public: Vec<&String> = names
+                .iter()
+                .filter(|n| !n.starts_with('_') && !n.starts_with('#'))
+                .collect();
+            let keep = (public.len() == 1).then(|| public[0].clone());
+            for n in &names {
+                if let Some(plain) = n.strip_prefix('#') {
+                    if names.iter().any(|o| o == plain) {
+                        self.classes[class].public_twins.insert(n.clone());
+                        self.classes[class].public_twins.insert(plain.to_string());
+                    }
+                }
+            }
+            for n in names {
+                let final_id = if keep.as_ref() == Some(&n) {
+                    id.clone()
+                } else {
+                    let digest = sha1_smol::Sha1::from(n.as_bytes()).digest().to_string();
+                    format!("{id}_{}", &digest[..6])
+                };
+                self.classes[class].renames.insert(n, final_id);
+            }
+        }
+    }
+
     fn method_node(&mut self, class: usize, raw: &str, ln: u32) -> String {
         self.method_node_with(class, raw, ln, vec![flag("_callable")])
     }
@@ -1355,7 +1491,15 @@ impl<'a> Walker<'a, '_> {
         flags: Vec<(String, crate::facts::Attr)>,
     ) -> String {
         let class_id = self.classes[class].id.clone();
-        let id = Ctx::child_id(&class_id, raw);
+        let id = self.classes[class]
+            .renames
+            .get(raw)
+            .cloned()
+            .unwrap_or_else(|| Ctx::child_id(&class_id, raw));
+        let mut flags = flags;
+        if self.classes[class].public_twins.contains(raw) {
+            flags.push(flag("_ts_public_twin"));
+        }
         self.cx.add_def(id.clone(), format!(".{raw}()"), ln, flags);
         self.cx.add_edge(&class_id, &id, "method", ln, None);
         if !self.classes[class].methods.iter().any(|(n, _)| n == raw) {
@@ -1436,6 +1580,10 @@ impl<'a> Walker<'a, '_> {
             base: None,
             methods: Vec::new(),
             fields: Vec::new(),
+            declared: Vec::new(),
+            assigned: Vec::new(),
+            renames: Default::default(),
+            public_twins: Default::default(),
         });
         for c in named_children(node) {
             if c.kind() == "extends_type_clause" {
@@ -1455,6 +1603,7 @@ impl<'a> Walker<'a, '_> {
             return;
         };
         self.scan_annotation(body);
+        self.member_renames(class, body);
         for m in named_children(body) {
             match m.kind() {
                 "method_signature" => {
@@ -1584,7 +1733,15 @@ impl<'a> Walker<'a, '_> {
                     names,
                 });
                 let is_call = value.is_some_and(|v| v.kind() == "call_expression");
-                if direct && (is_call || st.exported) {
+                // A relative `require("./m")` binding is no node; a package's is (§10.1).
+                let relative = value
+                    .and_then(|v| v.child_by_field_name("arguments"))
+                    .and_then(|a| a.named_child(0))
+                    .is_some_and(|a| {
+                        a.kind() == "string"
+                            && self.string_value(a).is_some_and(|s| s.starts_with('.'))
+                    });
+                if direct && (is_call || st.exported) && !relative {
                     self.value_node(name_node, ln);
                 }
                 continue;
@@ -1785,6 +1942,9 @@ impl<'a> Walker<'a, '_> {
     fn this_assignment(&mut self, node: TsNode, st: St, depth: u32) {
         let left = node.child_by_field_name("left");
         let right = node.child_by_field_name("right");
+        if let (Some(l), Some(r), Some(c), false) = (left, right, st.caller, st.foreign_this) {
+            self.field_assignment(c, l, r);
+        }
         let class = st.caller.and_then(|c| self.enclosing_class(c));
         if let (Some(left), Some(right), Some(class)) = (left, right, class) {
             let is_this = left.kind() == "member_expression"
@@ -1805,6 +1965,134 @@ impl<'a> Walker<'a, '_> {
             }
         }
         self.children(node, st, depth);
+    }
+
+    /// `this.x = new X()` or `this.x = p` (`p` a typed parameter) in a method's own body types
+    /// field `x` (§10.1 `_ts_fields`); other right-hand sides say nothing.
+    fn field_assignment(&mut self, caller: usize, left: TsNode, right: TsNode) {
+        let Some(class) = self.callers[caller]
+            .class
+            .filter(|_| !self.callers[caller].field_fn)
+        else {
+            return;
+        };
+        if left.kind() != "member_expression"
+            || left
+                .child_by_field_name("object")
+                .is_none_or(|o| o.kind() != "this")
+        {
+            return;
+        }
+        let Some(prop) = left.child_by_field_name("property").filter(|p| {
+            matches!(
+                p.kind(),
+                "property_identifier" | "private_property_identifier"
+            )
+        }) else {
+            return;
+        };
+        let ty = match right.kind() {
+            "new_expression" => right
+                .child_by_field_name("constructor")
+                .filter(|c| c.kind() == "identifier")
+                .map(|c| self.text(c).to_string()),
+            "identifier" => {
+                let name = self.text(right);
+                self.callers[caller]
+                    .params
+                    .iter()
+                    .find(|(p, _)| p == name)
+                    .map(|(_, t)| t.clone())
+            }
+            _ => None,
+        };
+        if let Some(ty) = ty {
+            let c = &self.callers[caller];
+            let entry = (self.text(prop).to_string(), ty, c.ctor, c.static_method);
+            self.classes[class].assigned.push(entry);
+        }
+    }
+
+    /// `get x(): T` and `set x(v: T)` declare field `x` of type `T`.
+    fn accessor_type(&mut self, m: TsNode, raw: &str, class: usize) {
+        let ty = if has_token(m, "get") {
+            m.child_by_field_name("return_type")
+        } else if has_token(m, "set") {
+            m.child_by_field_name("parameters")
+                .and_then(|ps| named_children(ps).into_iter().next())
+                .and_then(|p| p.child_by_field_name("type"))
+        } else {
+            return;
+        };
+        if let Some(t) = ty
+            .and_then(|t| t.named_child(0))
+            .and_then(|t| self.receiver_type(t))
+        {
+            let is_static = has_token(m, "static");
+            self.classes[class]
+                .declared
+                .push((raw.to_string(), t, is_static));
+        }
+    }
+
+    /// Settle a class's field types once its body is walked: declarations first, then
+    /// constructor assignments, then other methods' (a tier whose assignments disagree types
+    /// nothing); static fields from static declarations and static methods. Writes
+    /// `_ts_fields`/`_ts_static_fields` (sorted) on the class node.
+    fn settle_fields(&mut self, class: usize) {
+        let c = &self.classes[class];
+        let tiers = |is_static: bool| -> std::collections::BTreeMap<String, String> {
+            let mut out = std::collections::BTreeMap::new();
+            for (f, t, st) in &c.declared {
+                if *st == is_static {
+                    out.entry(f.clone()).or_insert_with(|| t.clone());
+                }
+            }
+            let ranks: &[Option<bool>] = if is_static {
+                &[None]
+            } else {
+                &[Some(true), Some(false)]
+            };
+            for rank in ranks {
+                let mut seen: std::collections::BTreeMap<&str, Option<&str>> =
+                    std::collections::BTreeMap::new();
+                for (f, t, ctor, st) in &c.assigned {
+                    if *st != is_static || rank.is_some_and(|r| r != *ctor) {
+                        continue;
+                    }
+                    let slot = seen.entry(f.as_str()).or_insert(Some(t.as_str()));
+                    if slot.is_some_and(|prev| prev != t) {
+                        *slot = None;
+                    }
+                }
+                for (f, t) in seen {
+                    if let (Some(t), false) = (t, out.contains_key(f)) {
+                        out.insert(f.to_string(), t.to_string());
+                    }
+                }
+            }
+            out
+        };
+        let instance = tiers(false);
+        let statics = tiers(true);
+        let id = c.id.clone();
+        self.classes[class].fields = instance
+            .iter()
+            .map(|(f, t)| (f.clone(), t.clone()))
+            .collect();
+        let mut attrs = Vec::new();
+        for (key, map) in [("_ts_fields", &instance), ("_ts_static_fields", &statics)] {
+            if !map.is_empty() {
+                let json = serde_json::to_string(map).unwrap_or_default();
+                attrs.push((key.to_string(), crate::facts::Attr::Json(json)));
+            }
+        }
+        if attrs.is_empty() || id.is_empty() {
+            return;
+        }
+        if let Some(n) = self.cx.facts.nodes.iter_mut().find(|n| n.id == id) {
+            n.attrs.extend(attrs);
+        }
     }
 
     fn module_exports(&mut self, right: TsNode, st: St, depth: u32) {
@@ -1896,6 +2184,16 @@ impl<'a> Walker<'a, '_> {
                                 method: self.text(prop).to_string(),
                                 line: line(node),
                             });
+                        }
+                    } else if let (Some(FILE), Some(obj), Some(prop)) =
+                        (st.caller_or_file(), obj, prop)
+                    {
+                        // Member calls in module-level callbacks resolve nothing, but Graphify
+                        // still records unresolved ones on the file node.
+                        if obj.kind() == "identifier" {
+                            let recv = Recv::Ident(self.text(obj).to_string());
+                            let method = self.text(prop).to_string();
+                            self.unresolved_candidate(FILE, &recv, &method, line(node));
                         }
                     }
                     if let Some(obj) = obj {
@@ -2104,10 +2402,15 @@ impl<'a> Walker<'a, '_> {
                     method,
                     line,
                 } => {
-                    let target = match &recv {
-                        Recv::This => self
-                            .enclosing_class(caller)
-                            .and_then(|k| self.class_method_at(k, &method)),
+                    self.unresolved_candidate(caller, &recv, &method, line);
+                    // A typed receiver's method is an INFERRED 0.85 call, never to the caller
+                    // itself; `this.m()` and `Class.m()` are EXTRACTED.
+                    let (target, typed) = match &recv {
+                        Recv::This => (
+                            self.enclosing_class(caller)
+                                .and_then(|k| self.class_method_at(k, &method)),
+                            false,
+                        ),
                         Recv::ThisField(field) => {
                             let ty = self
                                 .enclosing_class(caller)
@@ -2120,18 +2423,20 @@ impl<'a> Walker<'a, '_> {
                                 })
                                 .or_else(|| self.file_type(field));
                             let Some(t) = ty else { continue };
-                            self.typed_target(caller, t, method, line)
+                            (self.typed_target(caller, t, method, line), true)
                         }
-                        Recv::Ident(n) if self.is_this_alias(caller, n) => self
-                            .enclosing_class(caller)
-                            .and_then(|k| self.class_method_at(k, &method)),
+                        Recv::Ident(n) if self.is_this_alias(caller, n) => (
+                            self.enclosing_class(caller)
+                                .and_then(|k| self.class_method_at(k, &method)),
+                            false,
+                        ),
                         Recv::Ident(n) => {
                             if let Some(t) = self.typed(caller, n) {
-                                self.typed_target(caller, t, method, line)
+                                (self.typed_target(caller, t, method, line), true)
                             } else if let Some(k) = self.local_class(n) {
-                                self.class_method(&k, &method)
+                                (self.class_method(&k, &method), false)
                             } else if let Some(t) = self.file_type(n) {
-                                self.typed_target(caller, t, method, line)
+                                (self.typed_target(caller, t, method, line), true)
                             } else {
                                 self.facts.pending.push(Pending::Member {
                                     caller: self.callers[caller].id.clone(),
@@ -2143,8 +2448,14 @@ impl<'a> Walker<'a, '_> {
                             }
                         }
                     };
-                    if let Some(t) = target {
-                        self.call_edge(caller, &t, line, &mut seen);
+                    match target {
+                        Some(t) if typed => {
+                            if t != self.callers[caller].id {
+                                self.inferred_call_edge(caller, &t, line, &mut seen);
+                            }
+                        }
+                        Some(t) => self.call_edge(caller, &t, line, &mut seen),
+                        None => {}
                     }
                 }
                 Event::Ref {
@@ -2206,6 +2517,100 @@ impl<'a> Walker<'a, '_> {
         let src = self.callers[caller].id.clone();
         if seen.insert((src.clone(), target.to_string())) {
             self.cx.add_edge(&src, target, "calls", line, Some("call"));
+        }
+    }
+
+    /// Collect [`Walker::graphify_vars`] in source order.
+    fn scan_graphify_vars(&mut self, root: TsNode) {
+        let mut stack = vec![root];
+        while let Some(n) = stack.pop() {
+            match n.kind() {
+                "required_parameter" | "optional_parameter" => {
+                    let pat = n
+                        .child_by_field_name("pattern")
+                        .filter(|p| p.kind() == "identifier");
+                    let ty = n
+                        .child_by_field_name("type")
+                        .and_then(|t| t.named_child(0))
+                        .filter(|t| t.kind() == "type_identifier");
+                    if let (Some(p), Some(t)) = (pat, ty) {
+                        let pair = (self.text(p).to_string(), self.text(t).to_string());
+                        self.graphify_vars.push(pair);
+                    }
+                }
+                "variable_declarator" => {
+                    let name = n
+                        .child_by_field_name("name")
+                        .filter(|p| p.kind() == "identifier");
+                    let ctor = n
+                        .child_by_field_name("value")
+                        .filter(|v| v.kind() == "new_expression")
+                        .and_then(|v| v.child_by_field_name("constructor"))
+                        .filter(|c| c.kind() == "identifier");
+                    if let (Some(name), Some(c)) = (name, ctor) {
+                        let pair = (self.text(name).to_string(), self.text(c).to_string());
+                        self.graphify_vars.push(pair);
+                    }
+                }
+                _ => {}
+            }
+            let kids = named_children(n);
+            stack.extend(kids.into_iter().rev());
+        }
+    }
+
+    /// Record `x.m()` with the type Graphify gives `x` (its file-wide map, or the class's field
+    /// types for `this.f`) for `metadata.unresolved_calls`.
+    fn unresolved_candidate(&mut self, caller: usize, recv: &Recv, method: &str, line: u32) {
+        let ty = match recv {
+            Recv::This => None,
+            // `this.f` outside any class (ES5 constructor functions) uses the file-wide map.
+            Recv::ThisField(field) => match self.enclosing_class(caller) {
+                Some(k) => self.classes[k]
+                    .fields
+                    .iter()
+                    .find(|(f, _)| f == field)
+                    .map(|(_, t)| t.clone()),
+                None => self
+                    .graphify_vars
+                    .iter()
+                    .rev()
+                    .find(|(v, _)| v == field)
+                    .map(|(_, t)| t.clone()),
+            },
+            Recv::Ident(n) if self.is_this_alias(caller, n) => None,
+            Recv::Ident(n) => self
+                .graphify_vars
+                .iter()
+                .rev()
+                .find(|(v, _)| v == n)
+                .map(|(_, t)| t.clone()),
+        };
+        if let Some(ty) = ty {
+            self.facts.unresolved.push(UnresolvedCall {
+                caller: self.callers[caller].id.clone(),
+                callee: method.to_string(),
+                ty,
+                line,
+            });
+        }
+    }
+
+    fn inferred_call_edge(
+        &mut self,
+        caller: usize,
+        target: &str,
+        line: u32,
+        seen: &mut std::collections::HashSet<(String, String)>,
+    ) {
+        let src = self.callers[caller].id.clone();
+        if seen.insert((src.clone(), target.to_string())) {
+            let mut e = self
+                .cx
+                .edge(&src, target, "calls", Loc::Line(line), Some("call"));
+            e.confidence = Confidence::Inferred;
+            e.score = Some(0.85);
+            self.cx.facts.edges.push(e);
         }
     }
 
@@ -2390,7 +2795,7 @@ mod tests {
                 "c_a",
                 "c_g",
                 "c_helper",
-                "c_p_q_r",
+                // A relative `require` binding is no node (0.9.97).
                 "c_fn",
                 "c_fn_method",
                 "c_obj"

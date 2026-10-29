@@ -33,6 +33,8 @@ pub struct PyDef {
     pub kind: DefKind,
     /// Enclosing definition (index into `PyFacts::defs`); `None` at module level.
     pub parent: Option<u32>,
+    /// A `_py_property` method: reading it is a `references` edge (`property_read`).
+    pub property: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -156,6 +158,8 @@ pub struct PyFacts {
     pub imports: Vec<PyImport>,
     pub refs: Vec<TypeRef>,
     pub calls: Vec<PyCall>,
+    /// Attribute reads `self.p` / `x.p` (kinds `SelfMethod` and `Typed`) that may name a property.
+    pub reads: Vec<PyCall>,
     pub indirect: Vec<PyIndirect>,
     pub mentions: Vec<PyMention>,
     pub attr_types: Vec<PyAttrType>,
@@ -180,6 +184,7 @@ static EXCLUDED_TYPES: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
         "frozenset",
         "bytearray",
         "Ellipsis",
+        "Self",
         "Optional",
         "Union",
         "List",
@@ -284,6 +289,7 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         in_function: false,
         uses_scope: None,
         plain_scope: true,
+        in_lambda: false,
     };
     w.visit_children(root, &file_id, frame, 0);
     w.finish();
@@ -328,10 +334,14 @@ fn module_from_names(cx: &Ctx, root: TsNode) -> HashSet<String> {
     out
 }
 
-/// An undecorated `def`/`class` statement directly in the module or a class body (not inside
-/// `if`/`try` blocks).
+/// A `def`/`class` statement (decorated or not) directly in the module or a class body (not
+/// inside `if`/`try` blocks).
 fn plain_position(node: TsNode) -> bool {
-    match node.parent() {
+    let mut parent = node.parent();
+    if parent.is_some_and(|p| p.kind() == "decorated_definition") {
+        parent = parent.and_then(|p| p.parent());
+    }
+    match parent {
         Some(p) if p.kind() == "module" => true,
         Some(p) if p.kind() == "block" => {
             p.parent().is_some_and(|c| c.kind() == "class_definition")
@@ -340,34 +350,76 @@ fn plain_position(node: TsNode) -> bool {
     }
 }
 
-/// Ids of the plain functions and methods (undecorated, written directly in the module or in
-/// the body of a plain class), with every name that produces each id. Only these clashes are
-/// disambiguated (`Walker::disambiguate`).
+/// The definition a module or class-body statement holds, seen through its decorators.
+fn definition(stmt: TsNode) -> Option<TsNode> {
+    match stmt.kind() {
+        "function_definition" | "class_definition" => Some(stmt),
+        "decorated_definition" => stmt.child_by_field_name("definition"),
+        _ => None,
+    }
+}
+
+/// Ids of the definitions whose differently written names are told apart (decorated or not):
+/// the module's functions and classes, and the methods written directly in a module-level class
+/// (§9.6), with every name that produces each id. Only these clashes are disambiguated
+/// (`disambiguated`); nested classes and their methods merge.
 fn plain_def_names(cx: &Ctx, root: TsNode) -> HashMap<String, Vec<String>> {
     let mut out: HashMap<String, Vec<String>> = HashMap::new();
-    let mut stack = vec![(root, cx.file_id.clone())];
-    while let Some((body, prefix)) = stack.pop() {
+    let mut classes = Vec::new();
+    let mut cur = root.walk();
+    for def in root.named_children(&mut cur).filter_map(definition) {
+        let Some(name) = def
+            .child_by_field_name("name")
+            .map(|n| cx.text(n).to_string())
+        else {
+            continue;
+        };
+        let id = Ctx::child_id(&cx.file_id, &name);
+        if def.kind() == "class_definition" {
+            classes.push((def, id.clone(), name.clone()));
+        }
+        out.entry(id).or_default().push(name);
+    }
+    let mut methods: Vec<(String, String)> = Vec::new();
+    for (class, id, name) in classes {
+        let prefix = disambiguated(id, &name, &out);
+        let Some(body) = class.child_by_field_name("body") else {
+            continue;
+        };
         let mut cur = body.walk();
-        for child in body.named_children(&mut cur) {
-            let Some(name) = child
-                .child_by_field_name("name")
-                .map(|n| cx.text(n).to_string())
-            else {
+        for def in body.named_children(&mut cur).filter_map(definition) {
+            if def.kind() != "function_definition" {
                 continue;
-            };
-            let id = Ctx::child_id(&prefix, &name);
-            match child.kind() {
-                "function_definition" => out.entry(id).or_default().push(name),
-                "class_definition" => {
-                    if let Some(b) = child.child_by_field_name("body") {
-                        stack.push((b, id));
-                    }
-                }
-                _ => {}
+            }
+            if let Some(n) = def.child_by_field_name("name") {
+                let n = cx.text(n).to_string();
+                methods.push((Ctx::child_id(&prefix, &n), n));
             }
         }
     }
+    for (id, name) in methods {
+        out.entry(id).or_default().push(name);
+    }
     out
+}
+
+/// A plain definition's id: when differently written names produce one id, each keeps apart with
+/// `_<sha1(name)[:6]>` unless it is already in id form and has no same-letters, different-case
+/// twin; identical names merge.
+fn disambiguated(id: String, name: &str, names: &HashMap<String, Vec<String>>) -> String {
+    let Some(all) = names.get(&id) else {
+        return id;
+    };
+    if all.iter().all(|n| n == name) {
+        return id;
+    }
+    let lower = name.to_lowercase();
+    let case_twin = all.iter().any(|n| n != name && n.to_lowercase() == lower);
+    if crate::extract::slug(name) == name && !case_twin {
+        return id;
+    }
+    let digest = sha1_smol::Sha1::from(name.as_bytes()).digest().to_string();
+    format!("{id}_{}", &digest[..6])
 }
 
 /// Where a node sits: who calls, which class `self` is, what new definitions attach to.
@@ -386,6 +438,8 @@ struct Frame {
     uses_scope: Option<u32>,
     /// The module, or the body of a plain class (see `plain_def_names`).
     plain_scope: bool,
+    /// Inside a lambda: attribute reads are not recorded.
+    in_lambda: bool,
 }
 
 /// Names bound in one function scope.
@@ -483,6 +537,17 @@ impl<'a> Walker<'_, 'a> {
                 self.call(node, f);
                 self.visit_children(node, parent_id, f, depth);
             }
+            "attribute" => {
+                self.attribute_read(node, f);
+                self.visit_children(node, parent_id, f, depth);
+            }
+            "lambda" => {
+                let inner = Frame {
+                    in_lambda: true,
+                    ..f
+                };
+                self.visit_children(node, parent_id, inner, depth);
+            }
             "return_statement" => {
                 if let Some(v) = node.named_child(0) {
                     self.indirect_value(v, "return", f);
@@ -552,28 +617,17 @@ impl<'a> Walker<'_, 'a> {
 
     // ---- definitions ------------------------------------------------------------------------
 
-    /// Plain functions and methods whose differently written names produce one id keep apart
-    /// with `_<sha1(name)[:6]>`: a name that is not already in id form (`_get_x`, `Get_Y`), and
-    /// a name with a same-letters, different-case twin (`get_y` beside `Get_Y`). Every other id
-    /// clash (classes, nested or decorated functions, redefinitions) merges, the first
-    /// definition winning (§4.5, Q5).
+    /// Plain definitions (module-level functions and classes, methods of module-level classes,
+    /// decorated or not) whose differently written names produce one id keep apart with
+    /// `_<sha1(name)[:6]>`: a name that is not already in id form (`_get_x`, `Get_Y`, `P`), and a
+    /// name with a same-letters, different-case twin (`p` beside `P`). Every other id clash
+    /// (nested definitions, redefinitions) merges, the first definition winning (§4.5, Q5).
     fn disambiguate(&self, id: String, name: &str, plain: bool) -> String {
-        if !plain {
-            return id;
+        if plain {
+            disambiguated(id, name, &self.plain_names)
+        } else {
+            id
         }
-        let Some(names) = self.plain_names.get(&id) else {
-            return id;
-        };
-        if names.iter().all(|n| n == name) {
-            return id;
-        }
-        let lower = name.to_lowercase();
-        let case_twin = names.iter().any(|n| n != name && n.to_lowercase() == lower);
-        if crate::extract::slug(name) == name && !case_twin {
-            return id;
-        }
-        let digest = sha1_smol::Sha1::from(name.as_bytes()).digest().to_string();
-        format!("{id}_{}", &digest[..6])
     }
 
     fn push_def(&mut self, id: String, name: &str, kind: DefKind, parent: Option<u32>) -> u32 {
@@ -582,6 +636,7 @@ impl<'a> Walker<'_, 'a> {
             name: name.to_string(),
             kind,
             parent,
+            property: false,
         });
         (self.facts.defs.len() - 1) as u32
     }
@@ -611,10 +666,23 @@ impl<'a> Walker<'_, 'a> {
         } else {
             format!("{name}()")
         };
-        let plain = decorators.is_empty() && f.plain_scope && plain_position(node);
+        let plain = f.plain_scope && plain_position(node);
         let id = self.disambiguate(id, &name, plain);
-        self.cx
-            .add_def(id.clone(), label, line, vec![flag("_callable")]);
+        let mut attrs = vec![flag("_callable")];
+        if let Some(ty) = node
+            .child_by_field_name("return_type")
+            .and_then(|r| self.return_type_name(r, 0))
+        {
+            attrs.push(("_py_return_type".into(), Attr::Str(ty)));
+        }
+        let property = decorators.iter().any(|d| self.is_property(*d));
+        if property {
+            attrs.push(flag("_py_property"));
+        }
+        if is_test_file(self.cx.rel) && decorators.iter().any(|d| self.is_fixture(*d)) {
+            attrs.push(("_py_fixture".into(), Attr::Str(self.fixture_type(node))));
+        }
+        self.cx.add_def(id.clone(), label, line, attrs);
         let relation = if is_method { "method" } else { "contains" };
         self.cx.add_edge(parent_id, &id, relation, line, None);
         let kind = if is_method {
@@ -623,6 +691,7 @@ impl<'a> Walker<'_, 'a> {
             DefKind::Function
         };
         let idx = self.push_def(id.clone(), &name, kind, f.parent_def);
+        self.facts.defs[idx as usize].property = property;
 
         let uses_scope = f.uses_scope.or(Some(idx));
         // Decorators are evaluated in the enclosing scope; so are defaults and annotations, but
@@ -664,6 +733,7 @@ impl<'a> Walker<'_, 'a> {
             in_function: true,
             uses_scope,
             plain_scope: false,
+            in_lambda: false,
         };
         if let Some(body) = node.child_by_field_name("body") {
             self.docstring(body, Some(idx));
@@ -774,7 +844,9 @@ impl<'a> Walker<'_, 'a> {
         }
         let name = self.text(name_node).to_string();
         let line = Ctx::line(node);
-        let id = Ctx::child_id(parent_id, &name);
+        // Only module-level classes join the name clashes, and only their bodies' methods do.
+        let module_level = f.plain_scope && !f.parent_is_class && plain_position(node);
+        let id = self.disambiguate(Ctx::child_id(parent_id, &name), &name, module_level);
         let mut opaque = false;
         let mut base_names: Vec<(String, u32)> = Vec::new();
         if let Some(b) = bases {
@@ -796,7 +868,6 @@ impl<'a> Walker<'_, 'a> {
         }
         attrs.push(flag("_callable"));
         attrs.push(flag("_callable_class"));
-        let plain = decorators.is_empty() && f.plain_scope && plain_position(node);
         self.cx.add_def(id.clone(), name.clone(), line, attrs);
         self.cx.add_edge(parent_id, &id, "contains", line, None);
         let idx = self.push_def(id.clone(), &name, DefKind::Class, f.parent_def);
@@ -827,7 +898,8 @@ impl<'a> Walker<'_, 'a> {
                 parent_is_class: true,
                 in_function: false,
                 uses_scope,
-                plain_scope: plain,
+                plain_scope: module_level,
+                in_lambda: false,
             };
             self.visit_children(body, &id, inner, 0);
         }
@@ -845,7 +917,11 @@ impl<'a> Walker<'_, 'a> {
                 let text = self.text(t);
                 if is_dotted(text) {
                     let (qual, name) = split_dotted(text);
-                    if !EXCLUDED_DECORATORS.contains(name) {
+                    // `@x.getter`, `@x.setter`, `@x.deleter`: property accessors, not references
+                    // (a bare `@setter` still is one).
+                    let accessor =
+                        qual.is_some() && matches!(name, "getter" | "setter" | "deleter");
+                    if !EXCLUDED_DECORATORS.contains(name) && !accessor {
                         self.facts.refs.push(TypeRef {
                             source: def,
                             kind: RefKind::Decorator,
@@ -1129,6 +1205,47 @@ impl<'a> Walker<'_, 'a> {
         });
     }
 
+    /// `self.p` or `x.p` (`x` typed) read, not called or assigned: a property read candidate
+    /// (§9.3 `property_read`). `cls.p`, `self.a.p` and reads inside lambdas are not recorded.
+    fn attribute_read(&mut self, node: TsNode, f: Frame) {
+        let (Some(caller), false) = (f.caller, f.in_lambda) else {
+            return;
+        };
+        if let Some(p) = node.parent() {
+            let is = |field: &str| {
+                p.child_by_field_name(field)
+                    .is_some_and(|c| c.id() == node.id())
+            };
+            if (p.kind() == "call" && is("function")) || (p.kind() == "assignment" && is("left")) {
+                return;
+            }
+        }
+        let (Some(obj), Some(attr)) = (
+            node.child_by_field_name("object"),
+            node.child_by_field_name("attribute"),
+        ) else {
+            return;
+        };
+        if obj.kind() != "identifier" {
+            return;
+        }
+        let recv = self.text(obj);
+        let kind = if recv == "self" {
+            f.self_class.map(CallKind::SelfMethod)
+        } else {
+            self.local_type(recv)
+                .map(|t| CallKind::Typed(t.to_string()))
+        };
+        if let Some(kind) = kind {
+            self.facts.reads.push(PyCall {
+                caller,
+                kind,
+                name: self.text(attr).to_string(),
+                line: Ctx::line(node),
+            });
+        }
+    }
+
     fn call(&mut self, node: TsNode, f: Frame) {
         let Some(caller) = f.caller else {
             return;
@@ -1268,6 +1385,276 @@ impl<'a> Walker<'_, 'a> {
                 name,
                 line: Ctx::line(node),
             });
+        }
+    }
+
+    // ---- node fields (§9.1) -------------------------------------------------------------------
+
+    /// `_py_return_type`: the class a return annotation names. `Optional[X]` (any qualifier) and
+    /// `X | None` unwrap to `X`, a string holding a dotted name counts as that name, and a dotted
+    /// name gives its last component, which must start with an upper-case letter (`int`, `list`,
+    /// `node_t` and `_Priv` give nothing). Other subscripts and unions give nothing.
+    fn return_type_name(&self, node: TsNode, depth: u32) -> Option<String> {
+        if depth > 32 {
+            return None;
+        }
+        match node.kind() {
+            "type" => self.return_type_name(node.named_child(0)?, depth + 1),
+            "identifier" | "attribute" => class_name(self.text(node)),
+            "string" => class_name(string_content(self.text(node))?),
+            "generic_type" => {
+                let mut cur = node.walk();
+                let kids: Vec<TsNode> = node.named_children(&mut cur).collect();
+                let [head, param] = kids[..] else {
+                    return None;
+                };
+                if param.kind() != "type_parameter"
+                    || split_dotted(self.text(head)).1 != "Optional"
+                    || param.named_child_count() != 1
+                {
+                    return None;
+                }
+                self.return_type_name(param.named_child(0)?, depth + 1)
+            }
+            "subscript" => {
+                let value = node.child_by_field_name("value")?;
+                let mut cur = node.walk();
+                let subs: Vec<TsNode> =
+                    node.children_by_field_name("subscript", &mut cur).collect();
+                if !matches!(value.kind(), "identifier" | "attribute")
+                    || split_dotted(self.text(value)).1 != "Optional"
+                    || subs.len() != 1
+                {
+                    return None;
+                }
+                self.return_type_name(subs[0], depth + 1)
+            }
+            "binary_operator" | "union_type" => {
+                if node.kind() == "binary_operator"
+                    && node
+                        .child_by_field_name("operator")
+                        .is_none_or(|o| self.text(o) != "|")
+                {
+                    return None;
+                }
+                let mut cur = node.walk();
+                let kids: Vec<TsNode> = node.named_children(&mut cur).collect();
+                match kids[..] {
+                    [a, b] if is_none(b) && !is_none(a) => self.return_type_name(a, depth + 1),
+                    [a, b] if is_none(a) && !is_none(b) => self.return_type_name(b, depth + 1),
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
+    }
+
+    /// `_py_property`: `@property`, `@cached_property`, `@functools.cached_property` or
+    /// `@<x>.getter` (not called; `@x.setter` and `@builtins.property` do not count).
+    fn is_property(&self, d: TsNode) -> bool {
+        let Some(expr) = d.named_child(0) else {
+            return false;
+        };
+        let text = self.text(expr);
+        match expr.kind() {
+            "identifier" => matches!(text, "property" | "cached_property"),
+            "attribute" => {
+                is_dotted(text)
+                    && (text == "functools.cached_property" || split_dotted(text).1 == "getter")
+            }
+            _ => false,
+        }
+    }
+
+    /// `@pytest.fixture`, `@fixture` or `@pytest_asyncio.fixture`, called or not.
+    fn is_fixture(&self, d: TsNode) -> bool {
+        let Some(mut expr) = d.named_child(0) else {
+            return false;
+        };
+        if expr.kind() == "call" {
+            match expr.child_by_field_name("function") {
+                Some(f) => expr = f,
+                None => return false,
+            }
+        }
+        matches!(
+            self.text(expr),
+            "pytest.fixture" | "fixture" | "pytest_asyncio.fixture"
+        )
+    }
+
+    /// `_py_fixture`: the class a pytest fixture provides, or `"?"`. A return annotation decides
+    /// alone (a plain or dotted capitalised name, or the first argument of `Iterator[…]`,
+    /// `Generator[…]` and their async forms; else `"?"`). Without one, every `return x` and
+    /// `yield x` of the function's own body (nested definitions excluded; bare `return`/`yield`
+    /// ignored) must give the same class: a call of a capitalised name (`Node()`,
+    /// `nx.DiGraph()`), or a local variable whose every assignment does (`n = Node()`,
+    /// `n: Node = make()`, `n: Node`); loop targets and other bindings give none.
+    fn fixture_type(&self, func: TsNode) -> String {
+        if let Some(ret) = func.child_by_field_name("return_type") {
+            let mut inner = if ret.kind() == "type" {
+                ret.named_child(0)
+            } else {
+                Some(ret)
+            };
+            // A yield fixture's `Iterator[X]` / `Generator[X, …]` provides `X`.
+            if let Some(i) = inner.filter(|i| matches!(i.kind(), "generic_type" | "subscript")) {
+                let head = i.named_child(0).map(|h| split_dotted(self.text(h)).1);
+                let first = match i.kind() {
+                    "generic_type" => i
+                        .named_child(1)
+                        .filter(|p| p.kind() == "type_parameter")
+                        .and_then(|p| p.named_child(0)),
+                    _ => i.child_by_field_name("subscript"),
+                };
+                inner = first
+                    .filter(|_| {
+                        head.is_some_and(|h| {
+                            matches!(
+                                h,
+                                "Iterator" | "Generator" | "AsyncIterator" | "AsyncGenerator"
+                            )
+                        })
+                    })
+                    .map(|f| {
+                        if f.kind() == "type" {
+                            f.named_child(0).unwrap_or(f)
+                        } else {
+                            f
+                        }
+                    });
+            }
+            return inner
+                .filter(|i| matches!(i.kind(), "identifier" | "attribute"))
+                .and_then(|i| class_name(self.text(i)))
+                .unwrap_or_else(|| "?".into());
+        }
+        let mut scan = FixtureScan::default();
+        if let Some(body) = func.child_by_field_name("body") {
+            self.fixture_scan(body, &mut scan, 0);
+        }
+        let mut found: Option<String> = None;
+        for v in &scan.values {
+            let ty = match v {
+                FixtureValue::Class(c) => Some(c.clone()),
+                FixtureValue::Var(name) => scan.var_type(name),
+                FixtureValue::Other => None,
+            };
+            match (ty, &found) {
+                (None, _) => return "?".into(),
+                (Some(t), Some(f)) if &t != f => return "?".into(),
+                (Some(t), _) => found = Some(t),
+            }
+        }
+        found.unwrap_or_else(|| "?".into())
+    }
+
+    fn fixture_scan(&self, node: TsNode, scan: &mut FixtureScan, depth: u32) {
+        if depth > MAX_DEPTH {
+            return;
+        }
+        match node.kind() {
+            "function_definition" | "class_definition" | "decorated_definition" | "lambda" => {
+                return
+            }
+            "return_statement" => {
+                if let Some(v) = node.named_child(0) {
+                    scan.values.push(self.fixture_value(v));
+                }
+            }
+            "yield" => {
+                let from = (0..node.child_count())
+                    .filter_map(|i| node.child(i))
+                    .any(|c| c.kind() == "from");
+                if from {
+                    scan.values.push(FixtureValue::Other);
+                } else if let Some(v) = node.named_child(0) {
+                    scan.values.push(self.fixture_value(v));
+                }
+            }
+            "assignment" => {
+                let left = node.child_by_field_name("left");
+                let right = node.child_by_field_name("right");
+                let ty = node.child_by_field_name("type");
+                match left {
+                    Some(l) if l.kind() == "identifier" => {
+                        let t = match (ty, right) {
+                            (Some(t), _) => t
+                                .named_child(0)
+                                .filter(|i| matches!(i.kind(), "identifier" | "attribute"))
+                                .and_then(|i| class_name(self.text(i))),
+                            (None, Some(r)) => self.call_class(r),
+                            (None, None) => None,
+                        };
+                        scan.assign(self.text(l), t);
+                    }
+                    Some(l) => self.unknown_bindings(l, scan),
+                    None => {}
+                }
+            }
+            "augmented_assignment" => {
+                if let Some(l) = node.child_by_field_name("left") {
+                    self.unknown_bindings(l, scan);
+                }
+            }
+            "for_statement" => {
+                if let Some(l) = node.child_by_field_name("left") {
+                    self.unknown_bindings(l, scan);
+                }
+            }
+            // `with Cls(...) as c` binds `c` like `c = Cls(...)`.
+            "as_pattern" => {
+                let target = node.child_by_field_name("alias").and_then(|a| {
+                    a.named_child(0)
+                        .filter(|_| a.kind() == "as_pattern_target")
+                        .or(Some(a))
+                });
+                if let Some(t) = target.filter(|t| t.kind() == "identifier") {
+                    let ty = node.named_child(0).and_then(|v| self.call_class(v));
+                    scan.assign(self.text(t), ty);
+                }
+            }
+            _ => {}
+        }
+        let mut cur = node.walk();
+        for c in node.named_children(&mut cur) {
+            self.fixture_scan(c, scan, depth + 1);
+        }
+    }
+
+    fn fixture_value(&self, v: TsNode) -> FixtureValue {
+        match v.kind() {
+            "identifier" => FixtureValue::Var(self.text(v).to_string()),
+            _ => self
+                .call_class(v)
+                .map_or(FixtureValue::Other, FixtureValue::Class),
+        }
+    }
+
+    /// `Cls(...)` / `mod.Cls(...)` with a capitalised last name → `Cls`.
+    fn call_class(&self, v: TsNode) -> Option<String> {
+        if v.kind() != "call" {
+            return None;
+        }
+        let f = v.child_by_field_name("function")?;
+        matches!(f.kind(), "identifier" | "attribute")
+            .then(|| class_name(self.text(f)))
+            .flatten()
+    }
+
+    fn unknown_bindings(&self, target: TsNode, scan: &mut FixtureScan) {
+        if target.kind() == "identifier" {
+            scan.assign(self.text(target), None);
+            return;
+        }
+        if matches!(
+            target.kind(),
+            "pattern_list" | "tuple_pattern" | "list_pattern"
+        ) {
+            let mut cur = target.walk();
+            for c in target.named_children(&mut cur) {
+                self.unknown_bindings(c, scan);
+            }
         }
     }
 
@@ -1454,6 +1841,60 @@ fn string_annotation_names(s: &str) -> Vec<(&str, bool)> {
         i += 1;
     }
     out
+}
+
+/// What a fixture's `return`/`yield` gives (see `fixture_type`).
+enum FixtureValue {
+    Class(String),
+    Var(String),
+    Other,
+}
+
+#[derive(Default)]
+struct FixtureScan {
+    values: Vec<FixtureValue>,
+    /// Every binding of each local name, with the class it gives when known.
+    assigns: HashMap<String, Vec<Option<String>>>,
+}
+
+impl FixtureScan {
+    fn assign(&mut self, name: &str, ty: Option<String>) {
+        self.assigns.entry(name.to_string()).or_default().push(ty);
+    }
+
+    /// The class every binding of `name` gives, if they agree.
+    fn var_type(&self, name: &str) -> Option<String> {
+        let all = self.assigns.get(name)?;
+        let first = all.first()?.clone()?;
+        all.iter()
+            .all(|t| t.as_deref() == Some(first.as_str()))
+            .then_some(first)
+    }
+}
+
+/// A test module for pytest fixtures: `test_*.py`, `*_test.py` or `conftest.py`.
+fn is_test_file(rel: &str) -> bool {
+    let base = rel.rsplit('/').next().unwrap_or(rel);
+    (base.starts_with("test_") && base.ends_with(".py"))
+        || base.ends_with("_test.py")
+        || base == "conftest.py"
+}
+
+/// The last component of a dotted name when it starts with an upper-case letter.
+fn class_name(text: &str) -> Option<String> {
+    if !is_dotted(text) {
+        return None;
+    }
+    let last = split_dotted(text).1;
+    last.chars()
+        .next()
+        .is_some_and(char::is_uppercase)
+        .then(|| last.to_string())
+}
+
+/// `None` in a type position, bare or wrapped in a `type` node.
+fn is_none(node: TsNode) -> bool {
+    node.kind() == "none" || (node.kind() == "type" && node.named_child(0).is_some_and(is_none))
 }
 
 /// `a.b.C` → (`Some("a.b")`, `"C"`); `C` → (`None`, `"C"`).

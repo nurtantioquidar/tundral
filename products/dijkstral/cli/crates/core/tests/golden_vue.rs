@@ -8,12 +8,7 @@ use serde_json::Value;
 
 /// Documented, deliberate differences (quirks not reproduced; see docs/graphify-format.md §15).
 /// Each entry is a line as printed by the parity summary.
-const ALLOWED: &[&str] = &[
-    // Q8: `createApp(App).use(store).mount(selector)` inside `mount()` binds `.mount()` to the
-    // last same-file function named `mount`, a self-loop. Dijkstral binds member calls by
-    // receiver type only.
-    "src_main_mount -calls-> src_main_mount",
-];
+const ALLOWED: &[&str] = &[];
 
 #[test]
 fn vue_fixture_matches_graphify() {

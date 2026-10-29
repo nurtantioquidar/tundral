@@ -7,19 +7,17 @@ mod probe;
 /// Documented, deliberate differences (quirks not reproduced; see docs/graphify-format.md §15).
 /// Each entry is a line as printed by the parity summary.
 const ALLOWED: &[&str] = &[
-    // SV2 (the Q9 family): every import of a Svelte or Astro file whose specifier does not
-    // resolve to a local file also gets a phantom code node named after its last segment, with an
-    // `imports_from` link without context or line, beside the `ref_lib` external. Dijkstral keeps
-    // the external only.
-    "badge_svelte",
-    "cart_svelte",
-    "src_routes_page_svelte_src_routes_page -imports_from-> badge_svelte",
-    "src_routes_page_svelte_src_routes_page -imports_from-> cart_svelte",
+    // SV2 (the Q9 family): imports of a Svelte or Astro file whose specifier does not resolve to
+    // a local file also get a phantom code node per package (`$lib/Cart.svelte` and
+    // `$lib/Badge.svelte` → `lib`, `type: "module"`), with an `imports_from` link without context
+    // or line, beside the `ref_lib` external. Dijkstral keeps the external only.
+    "lib",
+    "src_routes_page_svelte_src_routes_page -imports_from-> lib",
 ];
 
 #[test]
 fn svelte_fixture_matches_graphify() {
-    // The two phantom nodes move community ids; the partition is otherwise the same.
+    // The phantom node moves community ids; the partition is otherwise the same.
     common::assert_fixture("svelte", ALLOWED, common::Communities::MinNmi(0.95), false);
 }
 
