@@ -1,0 +1,726 @@
+[
+ {
+  "id": "excalidraw-k01",
+  "kind": "flow",
+  "question": "When a user drags a shape to a new position and then presses Ctrl+Z, how was the drag recorded as an undoable step, and how does the undo put the shape back?",
+  "reference": "After the update `App.componentDidUpdate` calls `Store.commit`; when an increment was scheduled (`shouldCaptureIncrement`, CaptureUpdateAction.IMMEDIATELY) `captureIncrement` in packages/excalidraw/store.ts diffs the previous and next snapshots into an `ElementsChange` and `AppStateChange` (change.ts) and emits them on `onStoreIncrementEmitter`; App subscribes and calls `History.record`, which pushes the inverse `HistoryEntry` (history.ts). Ctrl+Z matches the `keyTest` of the action built by `createUndoAction` (actions/actionHistory.tsx), whose `perform` calls `History.undo` -> `HistoryEntry.applyTo` and returns the restored elements with CaptureUpdateAction.NEVER.",
+  "facts": [
+   {
+    "fact": "captureIncrement",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/store.ts"
+    ]
+   },
+   {
+    "fact": "onStoreIncrementEmitter",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/store.ts",
+     "packages/excalidraw/components/App.tsx"
+    ]
+   },
+   {
+    "fact": "HistoryEntry",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/history.ts"
+    ]
+   },
+   {
+    "fact": "createUndoAction",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/actions/actionHistory.tsx",
+     "packages/excalidraw/components/App.tsx"
+    ]
+   },
+   {
+    "fact": "ElementsChange",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/change.ts",
+     "packages/excalidraw/store.ts",
+     "packages/excalidraw/history.ts"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "2870-2880",
+    "note": "componentDidUpdate -> this.store.commit(elementsMap, this.state)"
+   },
+   {
+    "file": "packages/excalidraw/store.ts",
+    "lines": "131-219",
+    "note": "Store: shouldCaptureIncrement schedules IMMEDIATELY; commit -> captureIncrement diffs snapshots into ElementsChange/AppStateChange and emits"
+   },
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "2473-2475",
+    "note": "onStoreIncrementEmitter -> history.record"
+   },
+   {
+    "file": "packages/excalidraw/history.ts",
+    "lines": "16-160",
+    "note": "History.record pushes entry.inverse(); undo/perform pops and applies"
+   },
+   {
+    "file": "packages/excalidraw/history.ts",
+    "lines": "162-210",
+    "note": "HistoryEntry.applyTo applies elementsChange and appStateChange"
+   },
+   {
+    "file": "packages/excalidraw/actions/actionHistory.tsx",
+    "lines": "16-80",
+    "note": "executeHistoryAction; createUndoAction keyTest Ctrl/Cmd+Z, perform -> history.undo"
+   },
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "764-770",
+    "note": "undo/redo actions registered with history and store"
+   },
+   {
+    "file": "packages/excalidraw/change.ts",
+    "lines": "807-900",
+    "note": "ElementsChange and ElementsChange.calculate"
+   }
+  ]
+ },
+ {
+  "id": "excalidraw-k02",
+  "kind": "flow",
+  "question": "In the excalidraw.com app, when two people are in the same live collaboration room, trace how a shape that one of them moves gets onto the other person's screen, including how the receiving side decides between its own copy and the incoming one.",
+  "reference": "The app's `onChange` (excalidraw-app/App.tsx) calls `collabAPI.syncElements`; `Collab.broadcastElements` calls `Portal.broadcastScene`, which sends only elements whose version grew, and `_broadcastSocketData` encrypts the JSON with `encryptData` (packages/excalidraw/data/encryption.ts) before emitting it on the socket. On the other side the client-broadcast handler in Collab.tsx decrypts it with `decryptPayload`, merges it through `_reconcileElements` -> `reconcileElements` (packages/excalidraw/data/reconcile.ts: `shouldDiscardRemoteElement` keeps a local element being edited or with a higher version, ties broken by versionNonce, then fractional-index ordering), and `handleRemoteSceneUpdate` applies the result with `updateScene` and CaptureUpdateAction.NEVER.",
+  "facts": [
+   {
+    "fact": "syncElements",
+    "aliases": [],
+    "in": [
+     "excalidraw-app/collab/Collab.tsx",
+     "excalidraw-app/App.tsx"
+    ]
+   },
+   {
+    "fact": "broadcastScene",
+    "aliases": [],
+    "in": [
+     "excalidraw-app/collab/Portal.tsx",
+     "excalidraw-app/collab/Collab.tsx"
+    ]
+   },
+   {
+    "fact": "encryptData",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/data/encryption.ts",
+     "excalidraw-app/collab/Portal.tsx"
+    ]
+   },
+   {
+    "fact": "reconcileElements",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/data/reconcile.ts",
+     "excalidraw-app/collab/Collab.tsx"
+    ]
+   },
+   {
+    "fact": "handleRemoteSceneUpdate",
+    "aliases": [],
+    "in": [
+     "excalidraw-app/collab/Collab.tsx"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "excalidraw-app/App.tsx",
+    "lines": "614-621",
+    "note": "onChange -> collabAPI.syncElements when collaborating"
+   },
+   {
+    "file": "excalidraw-app/collab/Collab.tsx",
+    "lines": "911-925",
+    "note": "broadcastElements -> portal.broadcastScene(UPDATE); syncElements also queues the Firebase save"
+   },
+   {
+    "file": "excalidraw-app/collab/Portal.tsx",
+    "lines": "84-101",
+    "note": "_broadcastSocketData: JSON -> encryptData(roomKey) -> socket.emit"
+   },
+   {
+    "file": "excalidraw-app/collab/Portal.tsx",
+    "lines": "141-182",
+    "note": "broadcastScene sends elements whose version is newer than last broadcast"
+   },
+   {
+    "file": "excalidraw-app/collab/Collab.tsx",
+    "lines": "435-455",
+    "note": "decryptPayload"
+   },
+   {
+    "file": "excalidraw-app/collab/Collab.tsx",
+    "lines": "551-588",
+    "note": "client-broadcast handler: decrypt, INIT/UPDATE -> _reconcileElements -> handleRemoteSceneUpdate"
+   },
+   {
+    "file": "excalidraw-app/collab/Collab.tsx",
+    "lines": "733-780",
+    "note": "_reconcileElements -> reconcileElements; handleRemoteSceneUpdate -> updateScene(NEVER)"
+   },
+   {
+    "file": "packages/excalidraw/data/reconcile.ts",
+    "lines": "19-118",
+    "note": "shouldDiscardRemoteElement (editing, version, versionNonce) and reconcileElements"
+   }
+  ]
+ },
+ {
+  "id": "excalidraw-k03",
+  "kind": "flow",
+  "question": "Trace how a rectangle in the scene gets painted with its sketchy, hand-drawn look on the main drawing canvas, and what is cached so that this work is not redone on every frame.",
+  "reference": "`StaticCanvas` calls `renderStaticScene` (renderer/staticScene.ts), which calls `renderElement` (renderer/renderElement.ts) for each visible element; `renderElement` first calls `ShapeCache.generateElementShape` (scene/ShapeCache.ts), which on a cache miss runs `_generateElementShape` (scene/Shape.ts) to build the roughjs drawable with `RoughGenerator` and `generateRoughOptions`, cached per element object in a WeakMap; it then draws the element into its own offscreen canvas (`generateElementWithCanvas`/`generateElementCanvas` -> `drawElementOnCanvas` -> `rc.draw`), cached in `elementWithCanvasCache` and regenerated on zoom, theme or bound-text changes, and blits it with `drawElementFromCanvas`.",
+  "facts": [
+   {
+    "fact": "renderStaticScene",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/renderer/staticScene.ts",
+     "packages/excalidraw/components/canvases/StaticCanvas.tsx"
+    ]
+   },
+   {
+    "fact": "renderElement",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/renderer/renderElement.ts",
+     "packages/excalidraw/renderer/staticScene.ts"
+    ]
+   },
+   {
+    "fact": "generateElementShape",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/scene/ShapeCache.ts",
+     "packages/excalidraw/renderer/renderElement.ts"
+    ]
+   },
+   {
+    "fact": "_generateElementShape",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/scene/Shape.ts",
+     "packages/excalidraw/scene/ShapeCache.ts"
+    ]
+   },
+   {
+    "fact": "elementWithCanvasCache",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/renderer/renderElement.ts",
+     "packages/excalidraw/scene/ShapeCache.ts"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "packages/excalidraw/components/canvases/StaticCanvas.tsx",
+    "lines": "40-80",
+    "note": "StaticCanvas calls renderStaticScene"
+   },
+   {
+    "file": "packages/excalidraw/renderer/staticScene.ts",
+    "lines": "208-480",
+    "note": "_renderStaticScene calls renderElement for visible elements; throttled wrapper"
+   },
+   {
+    "file": "packages/excalidraw/renderer/renderElement.ts",
+    "lines": "698-1000",
+    "note": "renderElement: ShapeCache.generateElementShape, then generateElementWithCanvas + drawElementFromCanvas (or drawElementOnCanvas when exporting)"
+   },
+   {
+    "file": "packages/excalidraw/renderer/renderElement.ts",
+    "lines": "204-262",
+    "note": "generateElementCanvas draws into an offscreen canvas via drawElementOnCanvas"
+   },
+   {
+    "file": "packages/excalidraw/renderer/renderElement.ts",
+    "lines": "383-420",
+    "note": "drawElementOnCanvas: rc.draw(ShapeCache.get(element))"
+   },
+   {
+    "file": "packages/excalidraw/renderer/renderElement.ts",
+    "lines": "525-582",
+    "note": "elementWithCanvasCache and generateElementWithCanvas invalidation (zoom, theme, bound text)"
+   },
+   {
+    "file": "packages/excalidraw/scene/ShapeCache.ts",
+    "lines": "13-86",
+    "note": "ShapeCache WeakMap; generateElementShape -> _generateElementShape with RoughGenerator"
+   },
+   {
+    "file": "packages/excalidraw/scene/Shape.ts",
+    "lines": "306-360",
+    "note": "_generateElementShape: rectangle via generator.rectangle/path with generateRoughOptions"
+   }
+  ]
+ },
+ {
+  "id": "excalidraw-k04",
+  "kind": "flow",
+  "question": "When a drawing that contains text is exported as SVG, trace how the fonts get embedded into the SVG file and how the embedded font data is cut down to only the characters the drawing uses.",
+  "reference": "`exportToSvg` (packages/excalidraw/scene/export.ts) calls `Fonts.generateFontFaceDeclarations`, which collects the characters per font family and, through `fontFacesStylesGenerator`, calls `ExcalidrawFontFace.toCSS` for each registered face; `getContent` fetches the woff2 and calls `subsetWoff2GlyphsByCodepoints` (subset/subset-main.ts), which posts the font to a `WorkerPool` worker (subset-worker.chunk.ts) or falls back to the main thread; both use `subsetToBinary` (subset-shared.chunk.ts: woff2 decompress, HarfBuzz subset, woff2 compress), and the base64 data URL ends up in an @font-face rule inside the SVG's style element.",
+  "facts": [
+   {
+    "fact": "generateFontFaceDeclarations",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/fonts/Fonts.ts",
+     "packages/excalidraw/scene/export.ts"
+    ]
+   },
+   {
+    "fact": "toCSS",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/fonts/ExcalidrawFontFace.ts",
+     "packages/excalidraw/fonts/Fonts.ts"
+    ]
+   },
+   {
+    "fact": "subsetWoff2GlyphsByCodepoints",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/subset/subset-main.ts",
+     "packages/excalidraw/fonts/ExcalidrawFontFace.ts"
+    ]
+   },
+   {
+    "fact": "subsetToBinary",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/subset/subset-shared.chunk.ts",
+     "packages/excalidraw/subset/subset-worker.chunk.ts"
+    ]
+   },
+   {
+    "fact": "WorkerPool",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/workers.ts",
+     "packages/excalidraw/subset/subset-main.ts"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "packages/excalidraw/scene/export.ts",
+    "lines": "409-426",
+    "note": "exportToSvg inlines Fonts.generateFontFaceDeclarations into a style element"
+   },
+   {
+    "file": "packages/excalidraw/fonts/Fonts.ts",
+    "lines": "163-200",
+    "note": "generateFontFaceDeclarations: chars per family, fontFacesStylesGenerator through a PromisePool"
+   },
+   {
+    "file": "packages/excalidraw/fonts/Fonts.ts",
+    "lines": "263-314",
+    "note": "fontFacesStylesGenerator -> fontFace.toCSS(characters)"
+   },
+   {
+    "file": "packages/excalidraw/fonts/ExcalidrawFontFace.ts",
+    "lines": "32-88",
+    "note": "toCSS -> getContent -> fetchFont + subsetWoff2GlyphsByCodepoints"
+   },
+   {
+    "file": "packages/excalidraw/subset/subset-main.ts",
+    "lines": "1-129",
+    "note": "worker pool or main-thread fallback (subsetToBase64)"
+   },
+   {
+    "file": "packages/excalidraw/subset/subset-shared.chunk.ts",
+    "lines": "16-58",
+    "note": "subsetToBase64 / subsetToBinary: woff2 decompress, harfbuzz subset, woff2 compress"
+   },
+   {
+    "file": "packages/excalidraw/subset/subset-worker.chunk.ts",
+    "lines": "20-42",
+    "note": "worker onmessage -> subsetToBinary"
+   },
+   {
+    "file": "packages/excalidraw/workers.ts",
+    "lines": "22-90",
+    "note": "WorkerPool"
+   }
+  ]
+ },
+ {
+  "id": "excalidraw-k05",
+  "kind": "architecture",
+  "question": "How are the editor's commands (copy, delete, change stroke colour, undo, toggle grid, and so on) organised so that the same command can be fired from a keyboard shortcut, from a button in the properties panel, or from code, and where does a command's result get applied to the editor's state?",
+  "reference": "Each command is an `Action` object (actions/types.ts: `perform`, optional `keyTest`, `PanelComponent`, `predicate`) declared in an actions/action*.ts(x) module through `register` (actions/register.ts), which collects them; App creates an `ActionManager` (actions/manager.tsx), calls `registerAll(actions)` plus the undo/redo actions, and the manager dispatches by `handleKeyDown` (matching `keyTest`), by `renderAction` (rendering the `PanelComponent`, used by components/Actions.tsx) and by `executeAction` from code. Every `perform` returns an `ActionResult` passed to App's `syncActionResult`, which replaces scene elements, merges appState, adds files and schedules history capture according to captureUpdate.",
+  "facts": [
+   {
+    "fact": "packages/excalidraw/actions/register.ts",
+    "aliases": [
+     "register.ts"
+    ],
+    "in": []
+   },
+   {
+    "fact": "ActionManager",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/actions/manager.tsx",
+     "packages/excalidraw/components/App.tsx"
+    ]
+   },
+   {
+    "fact": "keyTest",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/actions/types.ts",
+     "packages/excalidraw/actions/manager.tsx"
+    ]
+   },
+   {
+    "fact": "renderAction",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/actions/manager.tsx",
+     "packages/excalidraw/components/Actions.tsx"
+    ]
+   },
+   {
+    "fact": "syncActionResult",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/components/App.tsx"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "packages/excalidraw/actions/register.ts",
+    "lines": "1-10",
+    "note": "register appends to the actions list"
+   },
+   {
+    "file": "packages/excalidraw/actions/actionClipboard.tsx",
+    "lines": "19-50",
+    "note": "actionCopy = register({...})"
+   },
+   {
+    "file": "packages/excalidraw/actions/types.ts",
+    "lines": "152-207",
+    "note": "Action interface: perform, keyTest, PanelComponent, predicate"
+   },
+   {
+    "file": "packages/excalidraw/actions/manager.tsx",
+    "lines": "45-194",
+    "note": "ActionManager: registerAll, handleKeyDown, executeAction, renderAction, updater"
+   },
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "701-706",
+    "note": "new ActionManager(this.syncActionResult, ...)"
+   },
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "764-770",
+    "note": "registerAll(actions) plus undo/redo actions"
+   },
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "2136-2225",
+    "note": "syncActionResult applies elements, files, appState, captureUpdate"
+   },
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "4293-4297",
+    "note": "onKeyDown -> actionManager.handleKeyDown"
+   },
+   {
+    "file": "packages/excalidraw/components/Actions.tsx",
+    "lines": "140-160",
+    "note": "properties panel uses renderAction"
+   }
+  ]
+ },
+ {
+  "id": "excalidraw-k06",
+  "kind": "architecture",
+  "question": "The editor draws onto several stacked canvases. How is drawing split between them (the finished drawing, the shape currently being drawn, and selection handles, snapping guides and collaborators' cursors), which components and functions render each one, and what decides which shapes are handed to them on each render?",
+  "reference": "In `App.render` (components/App.tsx) `Renderer.getRenderableElements` (scene/Renderer.ts, memoized on the scene nonce, zoom and scroll) computes the elements map and the visible elements, excluding the element being drawn and the text being edited; these go to three components in components/canvases: `StaticCanvas` (renderStaticScene: grid and finished elements), `NewElementCanvas` (renderNewElementScene: the element being created) and `InteractiveCanvas` (`renderInteractiveScene` in renderer/interactiveScene.ts: selection borders, transform handles, binding highlights, snaps and remote cursors).",
+  "facts": [
+   {
+    "fact": "StaticCanvas",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/components/canvases/StaticCanvas.tsx",
+     "packages/excalidraw/components/App.tsx"
+    ]
+   },
+   {
+    "fact": "InteractiveCanvas",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/components/canvases/InteractiveCanvas.tsx",
+     "packages/excalidraw/components/App.tsx"
+    ]
+   },
+   {
+    "fact": "NewElementCanvas",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/components/canvases/NewElementCanvas.tsx",
+     "packages/excalidraw/components/App.tsx"
+    ]
+   },
+   {
+    "fact": "renderInteractiveScene",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/renderer/interactiveScene.ts",
+     "packages/excalidraw/components/canvases/InteractiveCanvas.tsx"
+    ]
+   },
+   {
+    "fact": "getRenderableElements",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/scene/Renderer.ts",
+     "packages/excalidraw/components/App.tsx"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "1502-1521",
+    "note": "render: renderer.getRenderableElements -> elementsMap, visibleElements"
+   },
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "1725-1795",
+    "note": "StaticCanvas, NewElementCanvas, InteractiveCanvas receive elementsMap/visibleElements"
+   },
+   {
+    "file": "packages/excalidraw/scene/Renderer.ts",
+    "lines": "16-167",
+    "note": "getRenderableElements: skip new/editing/pending elements, viewport filter, memoized"
+   },
+   {
+    "file": "packages/excalidraw/components/canvases/StaticCanvas.tsx",
+    "lines": "40-80",
+    "note": "renderStaticScene"
+   },
+   {
+    "file": "packages/excalidraw/components/canvases/NewElementCanvas.tsx",
+    "lines": "1-56",
+    "note": "renderNewElementScene"
+   },
+   {
+    "file": "packages/excalidraw/components/canvases/InteractiveCanvas.tsx",
+    "lines": "110-145",
+    "note": "renderInteractiveScene"
+   },
+   {
+    "file": "packages/excalidraw/renderer/interactiveScene.ts",
+    "lines": "761-1230",
+    "note": "_renderInteractiveScene: selection, transform handles, snaps, renderRemoteCursors"
+   },
+   {
+    "file": "packages/excalidraw/renderer/renderNewElementScene.ts",
+    "lines": "1-66",
+    "note": "renders appState.newElement with renderElement"
+   }
+  ]
+ },
+ {
+  "id": "excalidraw-k07",
+  "kind": "architecture",
+  "question": "In the excalidraw.com app (not the embeddable editor package), how is keeping a drawing in the browser between visits organised: where are the shapes and editor settings saved and read back, where do pasted images go, when is saving suspended, and how does one open tab notice that another tab changed the drawing?",
+  "reference": "excalidraw-app/data/LocalData.ts: `LocalData.save` (called from the app's onChange) debounces `saveDataStateToLocalStorage`, which writes elements and appState to localStorage, and saves image files through `LocalData.fileStorage`, a `LocalFileManager` extending `FileManager` (data/FileManager.ts) backed by an IndexedDB store via idb-keyval; saving is skipped while the tab is hidden or locked by `pauseSave` (collaboration). `importFromLocalStorage` (data/localStorage.ts) reads the state back on load, and data/tabSync.ts stamps a version with `updateBrowserStateVersion` so another tab's `syncData` in App.tsx reloads when `isBrowserStorageStateNewer`.",
+  "facts": [
+   {
+    "fact": "LocalData",
+    "aliases": [],
+    "in": [
+     "excalidraw-app/data/LocalData.ts",
+     "excalidraw-app/App.tsx"
+    ]
+   },
+   {
+    "fact": "saveDataStateToLocalStorage",
+    "aliases": [],
+    "in": [
+     "excalidraw-app/data/LocalData.ts"
+    ]
+   },
+   {
+    "fact": "FileManager",
+    "aliases": [],
+    "in": [
+     "excalidraw-app/data/FileManager.ts",
+     "excalidraw-app/data/LocalData.ts"
+    ]
+   },
+   {
+    "fact": "importFromLocalStorage",
+    "aliases": [],
+    "in": [
+     "excalidraw-app/data/localStorage.ts",
+     "excalidraw-app/App.tsx"
+    ]
+   },
+   {
+    "fact": "isBrowserStorageStateNewer",
+    "aliases": [],
+    "in": [
+     "excalidraw-app/data/tabSync.ts",
+     "excalidraw-app/App.tsx"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "excalidraw-app/data/LocalData.ts",
+    "lines": "1-208",
+    "note": "LocalFileManager (IndexedDB files store), saveDataStateToLocalStorage, LocalData.save/pauseSave/isSavePaused, fileStorage"
+   },
+   {
+    "file": "excalidraw-app/data/localStorage.ts",
+    "lines": "36-73",
+    "note": "importFromLocalStorage"
+   },
+   {
+    "file": "excalidraw-app/data/tabSync.ts",
+    "lines": "1-39",
+    "note": "isBrowserStorageStateNewer / updateBrowserStateVersion"
+   },
+   {
+    "file": "excalidraw-app/data/FileManager.ts",
+    "lines": "21-60",
+    "note": "FileManager with getFiles/saveFiles callbacks"
+   },
+   {
+    "file": "excalidraw-app/App.tsx",
+    "lines": "501-575",
+    "note": "syncData on focus/visibility: reload when browser storage is newer; flushSave"
+   },
+   {
+    "file": "excalidraw-app/App.tsx",
+    "lines": "614-650",
+    "note": "onChange -> LocalData.save"
+   },
+   {
+    "file": "excalidraw-app/collab/Collab.tsx",
+    "lines": "490-495",
+    "note": "LocalData.pauseSave(collaboration) when a session starts"
+   }
+  ]
+ },
+ {
+  "id": "excalidraw-k08",
+  "kind": "architecture",
+  "question": "Shapes can carry text labels. How is text support divided across modules: what lets the user type text directly on the canvas, what measures text, what breaks it into lines, and what keeps a label sized and positioned inside its shape?",
+  "reference": "packages/excalidraw/element: `textWysiwyg` (textWysiwyg.tsx, started from App's `handleTextWysiwyg`) overlays an editable textarea and reports onChange/onSubmit; `measureText` (textMeasurements.ts) computes width and height; `wrapText` (textWrapping.ts) breaks text into lines for a maximum width; `redrawTextBoundingBox` (textElement.ts) wraps and measures a bound label, grows its container if needed and places it with `computeBoundTextPosition` according to the text and vertical alignment.",
+  "facts": [
+   {
+    "fact": "textWysiwyg",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/element/textWysiwyg.tsx",
+     "packages/excalidraw/components/App.tsx"
+    ]
+   },
+   {
+    "fact": "measureText",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/element/textMeasurements.ts",
+     "packages/excalidraw/element/textElement.ts"
+    ]
+   },
+   {
+    "fact": "wrapText",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/element/textWrapping.ts",
+     "packages/excalidraw/element/textElement.ts",
+     "packages/excalidraw/element/textWysiwyg.tsx"
+    ]
+   },
+   {
+    "fact": "redrawTextBoundingBox",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/element/textElement.ts",
+     "packages/excalidraw/element/textWysiwyg.tsx"
+    ]
+   },
+   {
+    "fact": "computeBoundTextPosition",
+    "aliases": [],
+    "in": [
+     "packages/excalidraw/element/textElement.ts",
+     "packages/excalidraw/element/textWysiwyg.tsx"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "packages/excalidraw/components/App.tsx",
+    "lines": "4842-4900",
+    "note": "handleTextWysiwyg calls textWysiwyg with onChange/onSubmit"
+   },
+   {
+    "file": "packages/excalidraw/element/textWysiwyg.tsx",
+    "lines": "75-100",
+    "note": "textWysiwyg signature"
+   },
+   {
+    "file": "packages/excalidraw/element/textWysiwyg.tsx",
+    "lines": "340-370",
+    "note": "wrapText for bound text while typing; oninput -> onChange"
+   },
+   {
+    "file": "packages/excalidraw/element/textWysiwyg.tsx",
+    "lines": "555-580",
+    "note": "submit: redrawTextBoundingBox then onSubmit"
+   },
+   {
+    "file": "packages/excalidraw/element/textElement.ts",
+    "lines": "33-110",
+    "note": "redrawTextBoundingBox: wrapText, measureText, grow container, computeBoundTextPosition"
+   },
+   {
+    "file": "packages/excalidraw/element/textElement.ts",
+    "lines": "233-270",
+    "note": "computeBoundTextPosition by verticalAlign/textAlign"
+   },
+   {
+    "file": "packages/excalidraw/element/textMeasurements.ts",
+    "lines": "9-24",
+    "note": "measureText"
+   },
+   {
+    "file": "packages/excalidraw/element/textWrapping.ts",
+    "lines": "372-420",
+    "note": "wrapText"
+   }
+  ]
+ }
+]

@@ -6,12 +6,16 @@ scores the output with `score.score_facts`, and prints per-kind recall/pass, tun
 ripgrep) against held-out (kubernetes), and held-out per-kind aggregates. Kubernetes is never
 shown per question: tune on the first two repos only.
 
-    python3 context_eval.py <binary> [--low] [--arg=ARG]...
+    python3 context_eval.py <binary> [--low] [--blind] [--arg=ARG]...
 
 `--arg` adds an argument after the question; `{repo}` in it becomes the repository name, so an
 index per repository can be passed (`--arg=--index --arg=/tmp/dj-embed/{repo}/potion-code` for
 `dijkstral-embed`, `cli/docs/dijkstral-context-semantic.md`). `--low` lists the tuning questions
 below half recall. Also prints the median wall time of a call per repository.
+
+`--blind` also scores the blind set (okhttp, excalidraw: flow and architecture questions written
+after the tuning, by an author who saw neither tool's output). It is printed apart, as aggregates
+only, and never enters the lines above it; never tune on it.
 """
 
 from __future__ import annotations
@@ -34,6 +38,7 @@ MANIFESTS = Path(os.path.expanduser("~/.cache/dijkstral-bench/agent/manifests"))
 REPOS = ("fastapi", "ripgrep", "kubernetes")
 TUNING = ("fastapi", "ripgrep")
 HELD_OUT = ("kubernetes",)
+BLIND = ("okhttp", "excalidraw")
 
 
 def main() -> None:
@@ -41,10 +46,11 @@ def main() -> None:
     ap.add_argument("binary")
     ap.add_argument("--arg", action="append", default=[])
     ap.add_argument("--low", action="store_true")
+    ap.add_argument("--blind", action="store_true")
     a = ap.parse_args()
     rows = []
     times: dict[str, list[float]] = {}
-    for repo in REPOS:
+    for repo in REPOS + (BLIND if a.blind else ()):
         manifest = json.loads((MANIFESTS / f"{repo}.dijkstral.json").read_text())
         ws = manifest["workspace"]
         extra = [x.replace("{repo}", repo) for x in a.arg]
@@ -58,6 +64,8 @@ def main() -> None:
             times.setdefault(repo, []).append(time.perf_counter() - t0)
             r = score.score_facts(t["facts"], out, t.get("min_facts"))
             rows.append((t["id"], t["kind"], r["recall"], r["pass"], len(out)))
+    blind = [r for r in rows if r[0].split("-")[0] in BLIND]
+    rows = [r for r in rows if r[0].split("-")[0] not in BLIND]
     by: dict[str, list] = {}
     for i, k, rec, p, n in rows:
         by.setdefault(k, []).append((rec, p, n))
@@ -93,6 +101,22 @@ def main() -> None:
             f"held-out {k:13} recall {st.mean(x[0] for x in v):.2f} pass"
             f" {sum(x[1] for x in v)}/{len(v)} chars median {int(st.median(x[2] for x in v))}"
         )
+
+    # Blind: aggregates only, never per question.
+    if blind:
+        print(
+            f"{'blind':13} recall {st.mean(r[2] for r in blind):.2f} pass"
+            f" {sum(r[3] for r in blind)}/{len(blind)} chars median"
+            f" {int(st.median(r[4] for r in blind))}"
+        )
+        bk: dict[str, list] = {}
+        for i, k, rec, p, n in blind:
+            bk.setdefault(k, []).append((rec, p, n))
+        for k, v in sorted(bk.items()):
+            print(
+                f"blind {k:16} recall {st.mean(x[0] for x in v):.2f} pass"
+                f" {sum(x[1] for x in v)}/{len(v)} chars median {int(st.median(x[2] for x in v))}"
+            )
 
 
 if __name__ == "__main__":

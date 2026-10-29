@@ -1,8 +1,9 @@
 # Key-fact question sets
 
 Stage-7 agent-outcome benchmark, `keyfacts` suite: 20 questions each for fastapi (Python),
-ripgrep (Rust) and kubernetes (Go), at the commits pinned in `../../corpus.toml`. An agent answers
-each question with no code graph, with Graphify's graph and with Dijkstral's; an answer is scored
+ripgrep (Rust) and kubernetes (Go), plus a held-out set of 8 each for okhttp and excalidraw
+(below), at the commits pinned in `../../corpus.toml`. An agent answers each question with no
+code graph, with Graphify's graph and with Dijkstral's; an answer is scored
 by the key facts it names (plus a blind judge). This directory holds only the questions, their
 ground truth and its provenance; the harness lives elsewhere in `bench/agent/`.
 
@@ -42,7 +43,8 @@ credited by `get_openapi_path` and `Preempt` is not credited by `DefaultPreempti
 
 ## How the sets were made
 
-Spread per repository: 5 locate, 5 callers, 4 impact, 3 architecture, 3 flow.
+Spread per repository for fastapi, ripgrep and kubernetes: 5 locate, 5 callers, 4 impact, 3
+architecture, 3 flow.
 
 - **Questions** are what a developer new to the repository would ask, in plain language. None
   uses graph vocabulary (node, edge, community, god node, graph) or names either tool; `check.py`
@@ -66,6 +68,18 @@ Spread per repository: 5 locate, 5 callers, 4 impact, 3 architecture, 3 flow.
   `graphify-out/`, `dijkstral-out/`, `$DIJKSTRAL_BENCH_HOME/reference/` and
   `$DIJKSTRAL_BENCH_HOME/accuracy/dijkstral/` were not opened while writing the questions, so the
   set cannot be tuned to either tool. No model was called.
+
+### Held-out set: okhttp and excalidraw
+
+Added on 2026-10-29: 8 questions each for okhttp (Kotlin/Java) and excalidraw (TypeScript), 4
+flow and 4 architecture per repository, at the commits pinned in `../../corpus.toml`. They are a
+held-out evaluation set, written from the source code only by an author who did not see either
+tool's output or code. No SCIP index was used (the sources carry no `scip` lookups): every fact
+comes from reading the source at the pinned commit, and provenance lists the line ranges read.
+One fact was changed in review, before any tool ran on the set: `register` (excalidraw-k05), a
+common English word an answer could name by accident, became its file
+`packages/excalidraw/actions/register.ts`. The set was committed before it was first scored;
+`../context_eval.py --blind` reports it as aggregates only, and no tuning uses it.
 
 ### Scope notes
 
@@ -108,3 +122,5 @@ Counts at the time of writing:
 | fastapi | 5 | 5 | 4 | 3 | 3 | 20 |
 | ripgrep | 5 | 5 | 4 | 3 | 3 | 20 |
 | kubernetes | 5 | 5 | 4 | 3 | 3 | 20 |
+| okhttp | 0 | 0 | 0 | 4 | 4 | 8 |
+| excalidraw | 0 | 0 | 0 | 4 | 4 | 8 |

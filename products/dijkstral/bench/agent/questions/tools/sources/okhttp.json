@@ -1,0 +1,658 @@
+[
+ {
+  "id": "okhttp-k01",
+  "kind": "flow",
+  "question": "When application code calls enqueue() with a callback, how does the request end up running on a background thread, what makes it wait when too many requests to the same host are already in flight, and how does the result get back to the callback?",
+  "reference": "`RealCall.enqueue` wraps the callback in an `AsyncCall` and passes it to the `Dispatcher` (okhttp3/Dispatcher.kt), whose `promoteAndExecute` moves ready calls to running only while under `maxRequests` and `maxRequestsPerHost` and starts each with `AsyncCall.executeOn` on the executor; `AsyncCall.run` calls `getResponseWithInterceptorChain` and then `onResponse` or `onFailure`, and `Dispatcher.finished` runs `promoteAndExecute` again to start waiting calls.",
+  "facts": [
+   {
+    "fact": "Dispatcher",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Dispatcher.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/OkHttpClient.kt"
+    ]
+   },
+   {
+    "fact": "promoteAndExecute",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Dispatcher.kt"
+    ]
+   },
+   {
+    "fact": "AsyncCall",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Dispatcher.kt"
+    ]
+   },
+   {
+    "fact": "executeOn",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Dispatcher.kt"
+    ]
+   },
+   {
+    "fact": "getResponseWithInterceptorChain",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt",
+    "lines": "195-200",
+    "note": "enqueue wraps the Callback in AsyncCall and calls client.dispatcher.enqueue"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Dispatcher.kt",
+    "lines": "130-132",
+    "note": "Dispatcher.enqueue -> promoteAndExecute(enqueuedCall)"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Dispatcher.kt",
+    "lines": "170-267",
+    "note": "promoteAndExecute: readyAsyncCalls -> runningAsyncCalls under maxRequests/maxRequestsPerHost (callsPerHost), then executeOn(executorService)"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Dispatcher.kt",
+    "lines": "273-281",
+    "note": "finished -> promoteAndExecute(finishedAsyncCall)"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt",
+    "lines": "531-609",
+    "note": "AsyncCall.executeOn and run: getResponseWithInterceptorChain, then onResponse/onFailure, dispatcher.finished"
+   }
+  ]
+ },
+ {
+  "id": "okhttp-k02",
+  "kind": "flow",
+  "question": "On an HTTP/2 connection, trace how a response's HEADERS frame read off the socket becomes the status code and headers of the Response that the calling thread receives.",
+  "reference": "`Http2Connection.start` runs a `ReaderRunnable` on a task queue that loops on `Http2Reader.nextFrame`; for a HEADERS frame `readHeaders`/`readHeaderBlock` decode the block with the HPACK reader and call `ReaderRunnable.headers`, which finds the `Http2Stream` and calls `receiveHeaders` to queue them. On the call's thread `CallServerInterceptor` -> `Exchange.readResponseHeaders` -> `Http2ExchangeCodec.readResponseHeaders` blocks in `Http2Stream.takeHeaders` and turns the block into a Response.Builder with `readHttp2HeadersList` (the :status pseudo-header becomes the status line).",
+  "facts": [
+   {
+    "fact": "nextFrame",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Reader.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Connection.kt"
+    ]
+   },
+   {
+    "fact": "ReaderRunnable",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Connection.kt"
+    ]
+   },
+   {
+    "fact": "receiveHeaders",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Stream.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Connection.kt"
+    ]
+   },
+   {
+    "fact": "takeHeaders",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Stream.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2ExchangeCodec.kt"
+    ]
+   },
+   {
+    "fact": "readHttp2HeadersList",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2ExchangeCodec.kt"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Connection.kt",
+    "lines": "502-514",
+    "note": "start() executes readerRunnable on a TaskRunner queue"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Connection.kt",
+    "lines": "619-640",
+    "note": "ReaderRunnable.invoke loops on reader.nextFrame"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Reader.kt",
+    "lines": "89-180",
+    "note": "nextFrame dispatches TYPE_HEADERS to readHeaders; readHeaderBlock decodes via hpackReader; handler.headers"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Connection.kt",
+    "lines": "667-714",
+    "note": "ReaderRunnable.headers -> existing stream.receiveHeaders"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Stream.kt",
+    "lines": "147-167",
+    "note": "takeHeaders waits until headersQueue is non-empty"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Stream.kt",
+    "lines": "298-325",
+    "note": "receiveHeaders appends to headersQueue and notifyAll"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/Exchange.kt",
+    "lines": "114-125",
+    "note": "Exchange.readResponseHeaders -> codec.readResponseHeaders"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2ExchangeCodec.kt",
+    "lines": "103-112",
+    "note": "readResponseHeaders -> stream.takeHeaders -> readHttp2HeadersList"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2ExchangeCodec.kt",
+    "lines": "191-215",
+    "note": "readHttp2HeadersList builds the Response.Builder from :status and the remaining headers"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http/CallServerInterceptor.kt",
+    "lines": "95-115",
+    "note": "CallServerInterceptor calls exchange.readResponseHeaders"
+   }
+  ]
+ },
+ {
+  "id": "okhttp-k03",
+  "kind": "flow",
+  "question": "Trace a web socket from the moment the client asks to open one until a text message sent by the server is handed to the application's listener.",
+  "reference": "`OkHttpClient.newWebSocket` creates a `RealWebSocket` whose `connect` enqueues an HTTP/1.1-only `RealCall` carrying the Upgrade headers; `CallServerInterceptor` sees the 101 and attaches `Exchange.upgradeToSocket()` to the response. In the callback `checkUpgradeSuccess` validates the 101 and Sec-WebSocket-Accept, `initReaderAndWriter` builds a `WebSocketReader` (internal/ws/WebSocketReader.kt) and writer, and `loopReader` repeatedly calls `processNextFrame`, whose `readMessageFrame` (inflating compressed messages) calls `onReadMessage`, which `RealWebSocket` forwards to `WebSocketListener.onMessage`.",
+  "facts": [
+   {
+    "fact": "checkUpgradeSuccess",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/RealWebSocket.kt"
+    ]
+   },
+   {
+    "fact": "upgradeToSocket",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/Exchange.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http/CallServerInterceptor.kt"
+    ]
+   },
+   {
+    "fact": "loopReader",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/RealWebSocket.kt"
+    ]
+   },
+   {
+    "fact": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/WebSocketReader.kt",
+    "aliases": [
+     "WebSocketReader.kt"
+    ],
+    "in": []
+   },
+   {
+    "fact": "onReadMessage",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/WebSocketReader.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/RealWebSocket.kt"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/OkHttpClient.kt",
+    "lines": "358-377",
+    "note": "newWebSocket creates RealWebSocket and calls connect"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/RealWebSocket.kt",
+    "lines": "147-215",
+    "note": "connect: Upgrade request on an HTTP/1.1-only RealCall, enqueue; onResponse -> checkUpgradeSuccess, initReaderAndWriter, loopReader"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http/CallServerInterceptor.kt",
+    "lines": "134-151",
+    "note": "101 upgrade response gets exchange.upgradeToSocket()"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/Exchange.kt",
+    "lines": "154-176",
+    "note": "upgradeToSocket exposes the connection's socket"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/RealWebSocket.kt",
+    "lines": "232-325",
+    "note": "checkUpgradeSuccess, initReaderAndWriter (WebSocketReader/WebSocketWriter), loopReader"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/WebSocketReader.kt",
+    "lines": "100-116",
+    "note": "processNextFrame: control frame or message frame"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/WebSocketReader.kt",
+    "lines": "246-266",
+    "note": "readMessageFrame inflates and calls frameCallback.onReadMessage"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/ws/RealWebSocket.kt",
+    "lines": "392-400",
+    "note": "onReadMessage -> listener.onMessage"
+   }
+  ]
+ },
+ {
+  "id": "okhttp-k04",
+  "kind": "flow",
+  "question": "The response cache holds a stale entry for a URL, and that entry has an ETag. Trace how OkHttp revalidates it with the server, and what it returns and stores when the server answers 304 Not Modified.",
+  "reference": "`CacheInterceptor.intercept` loads the candidate with `Cache.get` and asks `CacheStrategy.Factory.compute`; `computeCandidate` finds it no longer fresh and builds a conditional request with If-None-Match set to the ETag, returning both a network request and the cached response. After `chain.proceed`, a 304 makes the interceptor merge the headers (`combine`) onto the cached response and call `Cache.update` (okhttp3/Cache.kt), which rewrites the entry's metadata through a `DiskLruCache` editor obtained from the cached snapshot; the cached body is returned.",
+  "facts": [
+   {
+    "fact": "CacheInterceptor",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/cache/CacheInterceptor.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt"
+    ]
+   },
+   {
+    "fact": "computeCandidate",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/cache/CacheStrategy.kt"
+    ]
+   },
+   {
+    "fact": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Cache.kt",
+    "aliases": [
+     "Cache.kt"
+    ],
+    "in": []
+   },
+   {
+    "fact": "DiskLruCache",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/cache/DiskLruCache.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Cache.kt"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/cache/CacheInterceptor.kt",
+    "lines": "43-160",
+    "note": "intercept: cache.get, CacheStrategy.Factory.compute, proceed, 304 -> combine headers, cache.update"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/cache/CacheStrategy.kt",
+    "lines": "131-228",
+    "note": "compute/computeCandidate: stale entry -> conditional request with If-None-Match (etag) plus cacheResponse"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Cache.kt",
+    "lines": "193-216",
+    "note": "get: DiskLruCache snapshot -> Entry -> Response"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/Cache.kt",
+    "lines": "258-273",
+    "note": "update: Entry(network).writeTo(snapshot.edit())"
+   }
+  ]
+ },
+ {
+  "id": "okhttp-k05",
+  "kind": "architecture",
+  "question": "When a request needs a connection, how is the decision organised between reusing the connection the call already holds, taking one from the pool, and dialling a new one, and how are several connection attempts raced against each other?",
+  "reference": "`RealCall.enterNetworkInterceptorExchange` creates a `RealRoutePlanner` (the `RoutePlanner` interface) and an `ExchangeFinder`: `SequentialExchangeFinder`, or `FastFallbackExchangeFinder` when fast fallback is on, which launches each plan's `connectTcp` as a TaskRunner task 250 ms apart and keeps the first to succeed. `RealRoutePlanner.plan` returns a `ReusePlan` for the call's own connection or a pooled one (`RealConnectionPool.callAcquirePooledConnection`), then a deferred plan, then a `ConnectPlan` for the next route from `RouteSelector`; failed planning becomes a `FailedPlan`.",
+  "facts": [
+   {
+    "fact": "RealRoutePlanner",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealRoutePlanner.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt"
+    ]
+   },
+   {
+    "fact": "ReusePlan",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/ReusePlan.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealRoutePlanner.kt"
+    ]
+   },
+   {
+    "fact": "ConnectPlan",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/ConnectPlan.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealRoutePlanner.kt"
+    ]
+   },
+   {
+    "fact": "FastFallbackExchangeFinder",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/FastFallbackExchangeFinder.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt"
+    ]
+   },
+   {
+    "fact": "callAcquirePooledConnection",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnectionPool.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealRoutePlanner.kt"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt",
+    "lines": "258-317",
+    "note": "enterNetworkInterceptorExchange builds RealRoutePlanner and a Sequential/FastFallback ExchangeFinder; initExchange calls find()"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RoutePlanner.kt",
+    "lines": "23-118",
+    "note": "RoutePlanner strategy (call connection, pool, deferred plans, new routes), Plan and ConnectResult"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealRoutePlanner.kt",
+    "lines": "64-262",
+    "note": "plan(): planReuseCallConnection, planReusePooledConnection (callAcquirePooledConnection), deferred, planConnect via RouteSelector, ConnectPlan"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/SequentialExchangeFinder.kt",
+    "lines": "20-66",
+    "note": "one plan at a time"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/FastFallbackExchangeFinder.kt",
+    "lines": "34-183",
+    "note": "races connectTcp on TaskRunner tasks 250 ms apart, cancels losers into deferred plans"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/ReusePlan.kt",
+    "lines": "22-36",
+    "note": "ReusePlan wraps an already connected RealConnection"
+   }
+  ]
+ },
+ {
+  "id": "okhttp-k06",
+  "kind": "architecture",
+  "question": "OkHttp speaks both HTTP/1.1 and HTTP/2. How is the protocol-specific encoding and decoding kept apart from the code that drives a request and its response, which classes implement each protocol, and where is it decided which one a request uses?",
+  "reference": "`Exchange` (internal/connection/Exchange.kt) drives one request/response pair and delegates the wire work to the `ExchangeCodec` interface (internal/http/ExchangeCodec.kt), implemented by `Http1ExchangeCodec` and `Http2ExchangeCodec`. `RealCall.initExchange` asks the connection for `newCodec`, and `RealConnection.newCodec` returns the HTTP/2 codec when `start()` created an `Http2Connection` (ALPN in `ConnectPlan` negotiated h2, or H2_PRIOR_KNOWLEDGE), otherwise the HTTP/1 codec.",
+  "facts": [
+   {
+    "fact": "ExchangeCodec",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http/ExchangeCodec.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/Exchange.kt"
+    ]
+   },
+   {
+    "fact": "Exchange",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/Exchange.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt"
+    ]
+   },
+   {
+    "fact": "Http1ExchangeCodec",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http1/Http1ExchangeCodec.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnection.kt"
+    ]
+   },
+   {
+    "fact": "Http2ExchangeCodec",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2ExchangeCodec.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnection.kt"
+    ]
+   },
+   {
+    "fact": "newCodec",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnection.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http/ExchangeCodec.kt",
+    "lines": "29-110",
+    "note": "ExchangeCodec interface and its Carrier"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/Exchange.kt",
+    "lines": "40-70",
+    "note": "Exchange(call, finder, codec) delegates to codec"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealCall.kt",
+    "lines": "299-317",
+    "note": "initExchange: find() -> connection.newCodec -> Exchange"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnection.kt",
+    "lines": "154-176",
+    "note": "start(): HTTP_2 or H2_PRIOR_KNOWLEDGE -> startHttp2 creates Http2Connection"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnection.kt",
+    "lines": "270-285",
+    "note": "newCodec: Http2ExchangeCodec if http2Connection else Http1ExchangeCodec"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/ConnectPlan.kt",
+    "lines": "405-420",
+    "note": "protocol from the ALPN-selected protocol after the TLS handshake"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http1/Http1ExchangeCodec.kt",
+    "lines": "63-68",
+    "note": "Http1ExchangeCodec : ExchangeCodec"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2ExchangeCodec.kt",
+    "lines": "50-55",
+    "note": "Http2ExchangeCodec : ExchangeCodec"
+   }
+  ]
+ },
+ {
+  "id": "okhttp-k07",
+  "kind": "architecture",
+  "question": "OkHttp runs on desktop JVMs and on Android, with the JDK's built-in TLS or with third-party security providers. How is the code that differs between these environments (ALPN, trust managers, TLS extensions, logging) organised, and how is the right implementation chosen when the library starts?",
+  "reference": "`Platform` (internal/platform/Platform.kt) is an open base class reached through `Platform.get()`, initialised by `findPlatform`, which delegates to `PlatformRegistry`: an `expect` object in commonJvmAndroid with an `actual` per source set. The jvmMain registry prefers the first installed security provider (`ConscryptPlatform`, `BouncyCastlePlatform`, `OpenJSSEPlatform`), then `Jdk9Platform`, `Jdk8WithJettyBootPlatform` or plain `Platform`; the androidMain registry picks `Android10Platform` or `AndroidPlatform`, which hand per-socket work to `SocketAdapter` implementations.",
+  "facts": [
+   {
+    "fact": "PlatformRegistry",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/platform/Platform.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/platform/PlatformRegistry.kt",
+     "okhttp/src/jvmMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt",
+     "okhttp/src/androidMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt"
+    ]
+   },
+   {
+    "fact": "findPlatform",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/platform/Platform.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/platform/PlatformRegistry.kt",
+     "okhttp/src/jvmMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt",
+     "okhttp/src/androidMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt"
+    ]
+   },
+   {
+    "fact": "Jdk9Platform",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/platform/Jdk9Platform.kt",
+     "okhttp/src/jvmMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt"
+    ]
+   },
+   {
+    "fact": "ConscryptPlatform",
+    "aliases": [],
+    "in": [
+     "okhttp/src/jvmMain/kotlin/okhttp3/internal/platform/ConscryptPlatform.kt",
+     "okhttp/src/jvmMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt"
+    ]
+   },
+   {
+    "fact": "Android10Platform",
+    "aliases": [],
+    "in": [
+     "okhttp/src/androidMain/kotlin/okhttp3/internal/platform/Android10Platform.kt",
+     "okhttp/src/androidMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/platform/Platform.kt",
+    "lines": "53-95",
+    "note": "Platform: open base class for platform-specific TLS and socket features"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/platform/Platform.kt",
+    "lines": "228-253",
+    "note": "companion: get(), findPlatform() = PlatformRegistry.findPlatform()"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/platform/PlatformRegistry.kt",
+    "lines": "16-22",
+    "note": "expect object PlatformRegistry"
+   },
+   {
+    "file": "okhttp/src/jvmMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt",
+    "lines": "16-83",
+    "note": "JVM actual: preferred provider (Conscrypt, BC, OpenJSSE), then Jdk9Platform, Jdk8WithJettyBootPlatform, Platform()"
+   },
+   {
+    "file": "okhttp/src/androidMain/kotlin/okhttp3/internal/platform/PlatformRegistry.kt",
+    "lines": "16-49",
+    "note": "Android actual: Android10Platform or AndroidPlatform"
+   },
+   {
+    "file": "okhttp/src/androidMain/kotlin/okhttp3/internal/platform/Android10Platform.kt",
+    "lines": "47-62",
+    "note": "Android10Platform delegates to SocketAdapter implementations"
+   }
+  ]
+ },
+ {
+  "id": "okhttp-k08",
+  "kind": "architecture",
+  "question": "Besides executing calls, OkHttp does background work of its own: closing idle pooled connections, reading HTTP/2 frames, trimming the disk cache, sending web socket pings. How is that background work organised: what is the unit of work, what keeps related work in order, and what owns the threads?",
+  "reference": "A unit of work is a `Task` (internal/concurrent/Task.kt) whose `runOnce` returns the delay until its next run or -1; tasks are scheduled on a `TaskQueue`, which never runs two of its tasks at once; queues are created by and share the threads of a `TaskRunner` (the client's taskRunner, by default `TaskRunner.INSTANCE`), which obtains threads through its `Backend`, in production `RealBackend` with a ThreadPoolExecutor. `RealConnectionPool` (cleanupQueue), `DiskLruCache`, `Http2Connection` (reader and writer queues) and `RealWebSocket` (pings, writer) each take queues from `newQueue`.",
+  "facts": [
+   {
+    "fact": "TaskRunner",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/concurrent/TaskRunner.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/OkHttpClient.kt"
+    ]
+   },
+   {
+    "fact": "TaskQueue",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/concurrent/TaskQueue.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnectionPool.kt"
+    ]
+   },
+   {
+    "fact": "runOnce",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/concurrent/Task.kt",
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnectionPool.kt"
+    ]
+   },
+   {
+    "fact": "RealBackend",
+    "aliases": [],
+    "in": [
+     "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/concurrent/TaskRunner.kt"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/concurrent/Task.kt",
+    "lines": "18-70",
+    "note": "Task: runOnce returns next delay or -1; bound to one TaskQueue"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/concurrent/TaskQueue.kt",
+    "lines": "22-119",
+    "note": "TaskQueue: sequential tasks; schedule/execute"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/concurrent/TaskRunner.kt",
+    "lines": "29-105",
+    "note": "TaskRunner: worker threads shared among queues, runnable loops awaitTaskToRun/runOnce"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/concurrent/TaskRunner.kt",
+    "lines": "250-362",
+    "note": "newQueue, Backend interface, RealBackend ThreadPoolExecutor, INSTANCE"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/connection/RealConnectionPool.kt",
+    "lines": "47-51",
+    "note": "cleanupQueue = taskRunner.newQueue(); cleanupTask.runOnce closes idle connections"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/OkHttpClient.kt",
+    "lines": "270-270",
+    "note": "taskRunner defaults to TaskRunner.INSTANCE"
+   },
+   {
+    "file": "okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http2/Http2Connection.kt",
+    "lines": "86-92",
+    "note": "writer, push and settings queues"
+   }
+  ]
+ }
+]

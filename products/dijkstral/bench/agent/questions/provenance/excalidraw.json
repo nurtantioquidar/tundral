@@ -1,0 +1,708 @@
+{
+ "repo": "excalidraw",
+ "commit": "a2ec2889babf7d2295469c6d90ebe77fae57df84",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [],
+ "indexers": [],
+ "oracle_commit": null,
+ "questions": {
+  "excalidraw-k01": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "captureIncrement",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/store.ts"
+     ]
+    },
+    {
+     "fact": "onStoreIncrementEmitter",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/store.ts",
+      "packages/excalidraw/components/App.tsx"
+     ]
+    },
+    {
+     "fact": "HistoryEntry",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/history.ts"
+     ]
+    },
+    {
+     "fact": "createUndoAction",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/actions/actionHistory.tsx",
+      "packages/excalidraw/components/App.tsx"
+     ]
+    },
+    {
+     "fact": "ElementsChange",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/change.ts",
+      "packages/excalidraw/store.ts",
+      "packages/excalidraw/history.ts"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "2870-2880",
+     "note": "componentDidUpdate -> this.store.commit(elementsMap, this.state)"
+    },
+    {
+     "file": "packages/excalidraw/store.ts",
+     "lines": "131-219",
+     "note": "Store: shouldCaptureIncrement schedules IMMEDIATELY; commit -> captureIncrement diffs snapshots into ElementsChange/AppStateChange and emits"
+    },
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "2473-2475",
+     "note": "onStoreIncrementEmitter -> history.record"
+    },
+    {
+     "file": "packages/excalidraw/history.ts",
+     "lines": "16-160",
+     "note": "History.record pushes entry.inverse(); undo/perform pops and applies"
+    },
+    {
+     "file": "packages/excalidraw/history.ts",
+     "lines": "162-210",
+     "note": "HistoryEntry.applyTo applies elementsChange and appStateChange"
+    },
+    {
+     "file": "packages/excalidraw/actions/actionHistory.tsx",
+     "lines": "16-80",
+     "note": "executeHistoryAction; createUndoAction keyTest Ctrl/Cmd+Z, perform -> history.undo"
+    },
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "764-770",
+     "note": "undo/redo actions registered with history and store"
+    },
+    {
+     "file": "packages/excalidraw/change.ts",
+     "lines": "807-900",
+     "note": "ElementsChange and ElementsChange.calculate"
+    }
+   ]
+  },
+  "excalidraw-k02": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "syncElements",
+     "type": "symbol",
+     "in": [
+      "excalidraw-app/collab/Collab.tsx",
+      "excalidraw-app/App.tsx"
+     ]
+    },
+    {
+     "fact": "broadcastScene",
+     "type": "symbol",
+     "in": [
+      "excalidraw-app/collab/Portal.tsx",
+      "excalidraw-app/collab/Collab.tsx"
+     ]
+    },
+    {
+     "fact": "encryptData",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/data/encryption.ts",
+      "excalidraw-app/collab/Portal.tsx"
+     ]
+    },
+    {
+     "fact": "reconcileElements",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/data/reconcile.ts",
+      "excalidraw-app/collab/Collab.tsx"
+     ]
+    },
+    {
+     "fact": "handleRemoteSceneUpdate",
+     "type": "symbol",
+     "in": [
+      "excalidraw-app/collab/Collab.tsx"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "excalidraw-app/App.tsx",
+     "lines": "614-621",
+     "note": "onChange -> collabAPI.syncElements when collaborating"
+    },
+    {
+     "file": "excalidraw-app/collab/Collab.tsx",
+     "lines": "911-925",
+     "note": "broadcastElements -> portal.broadcastScene(UPDATE); syncElements also queues the Firebase save"
+    },
+    {
+     "file": "excalidraw-app/collab/Portal.tsx",
+     "lines": "84-101",
+     "note": "_broadcastSocketData: JSON -> encryptData(roomKey) -> socket.emit"
+    },
+    {
+     "file": "excalidraw-app/collab/Portal.tsx",
+     "lines": "141-182",
+     "note": "broadcastScene sends elements whose version is newer than last broadcast"
+    },
+    {
+     "file": "excalidraw-app/collab/Collab.tsx",
+     "lines": "435-455",
+     "note": "decryptPayload"
+    },
+    {
+     "file": "excalidraw-app/collab/Collab.tsx",
+     "lines": "551-588",
+     "note": "client-broadcast handler: decrypt, INIT/UPDATE -> _reconcileElements -> handleRemoteSceneUpdate"
+    },
+    {
+     "file": "excalidraw-app/collab/Collab.tsx",
+     "lines": "733-780",
+     "note": "_reconcileElements -> reconcileElements; handleRemoteSceneUpdate -> updateScene(NEVER)"
+    },
+    {
+     "file": "packages/excalidraw/data/reconcile.ts",
+     "lines": "19-118",
+     "note": "shouldDiscardRemoteElement (editing, version, versionNonce) and reconcileElements"
+    }
+   ]
+  },
+  "excalidraw-k03": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "renderStaticScene",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/renderer/staticScene.ts",
+      "packages/excalidraw/components/canvases/StaticCanvas.tsx"
+     ]
+    },
+    {
+     "fact": "renderElement",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/renderer/renderElement.ts",
+      "packages/excalidraw/renderer/staticScene.ts"
+     ]
+    },
+    {
+     "fact": "generateElementShape",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/scene/ShapeCache.ts",
+      "packages/excalidraw/renderer/renderElement.ts"
+     ]
+    },
+    {
+     "fact": "_generateElementShape",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/scene/Shape.ts",
+      "packages/excalidraw/scene/ShapeCache.ts"
+     ]
+    },
+    {
+     "fact": "elementWithCanvasCache",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/renderer/renderElement.ts",
+      "packages/excalidraw/scene/ShapeCache.ts"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "packages/excalidraw/components/canvases/StaticCanvas.tsx",
+     "lines": "40-80",
+     "note": "StaticCanvas calls renderStaticScene"
+    },
+    {
+     "file": "packages/excalidraw/renderer/staticScene.ts",
+     "lines": "208-480",
+     "note": "_renderStaticScene calls renderElement for visible elements; throttled wrapper"
+    },
+    {
+     "file": "packages/excalidraw/renderer/renderElement.ts",
+     "lines": "698-1000",
+     "note": "renderElement: ShapeCache.generateElementShape, then generateElementWithCanvas + drawElementFromCanvas (or drawElementOnCanvas when exporting)"
+    },
+    {
+     "file": "packages/excalidraw/renderer/renderElement.ts",
+     "lines": "204-262",
+     "note": "generateElementCanvas draws into an offscreen canvas via drawElementOnCanvas"
+    },
+    {
+     "file": "packages/excalidraw/renderer/renderElement.ts",
+     "lines": "383-420",
+     "note": "drawElementOnCanvas: rc.draw(ShapeCache.get(element))"
+    },
+    {
+     "file": "packages/excalidraw/renderer/renderElement.ts",
+     "lines": "525-582",
+     "note": "elementWithCanvasCache and generateElementWithCanvas invalidation (zoom, theme, bound text)"
+    },
+    {
+     "file": "packages/excalidraw/scene/ShapeCache.ts",
+     "lines": "13-86",
+     "note": "ShapeCache WeakMap; generateElementShape -> _generateElementShape with RoughGenerator"
+    },
+    {
+     "file": "packages/excalidraw/scene/Shape.ts",
+     "lines": "306-360",
+     "note": "_generateElementShape: rectangle via generator.rectangle/path with generateRoughOptions"
+    }
+   ]
+  },
+  "excalidraw-k04": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "generateFontFaceDeclarations",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/fonts/Fonts.ts",
+      "packages/excalidraw/scene/export.ts"
+     ]
+    },
+    {
+     "fact": "toCSS",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/fonts/ExcalidrawFontFace.ts",
+      "packages/excalidraw/fonts/Fonts.ts"
+     ]
+    },
+    {
+     "fact": "subsetWoff2GlyphsByCodepoints",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/subset/subset-main.ts",
+      "packages/excalidraw/fonts/ExcalidrawFontFace.ts"
+     ]
+    },
+    {
+     "fact": "subsetToBinary",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/subset/subset-shared.chunk.ts",
+      "packages/excalidraw/subset/subset-worker.chunk.ts"
+     ]
+    },
+    {
+     "fact": "WorkerPool",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/workers.ts",
+      "packages/excalidraw/subset/subset-main.ts"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "packages/excalidraw/scene/export.ts",
+     "lines": "409-426",
+     "note": "exportToSvg inlines Fonts.generateFontFaceDeclarations into a style element"
+    },
+    {
+     "file": "packages/excalidraw/fonts/Fonts.ts",
+     "lines": "163-200",
+     "note": "generateFontFaceDeclarations: chars per family, fontFacesStylesGenerator through a PromisePool"
+    },
+    {
+     "file": "packages/excalidraw/fonts/Fonts.ts",
+     "lines": "263-314",
+     "note": "fontFacesStylesGenerator -> fontFace.toCSS(characters)"
+    },
+    {
+     "file": "packages/excalidraw/fonts/ExcalidrawFontFace.ts",
+     "lines": "32-88",
+     "note": "toCSS -> getContent -> fetchFont + subsetWoff2GlyphsByCodepoints"
+    },
+    {
+     "file": "packages/excalidraw/subset/subset-main.ts",
+     "lines": "1-129",
+     "note": "worker pool or main-thread fallback (subsetToBase64)"
+    },
+    {
+     "file": "packages/excalidraw/subset/subset-shared.chunk.ts",
+     "lines": "16-58",
+     "note": "subsetToBase64 / subsetToBinary: woff2 decompress, harfbuzz subset, woff2 compress"
+    },
+    {
+     "file": "packages/excalidraw/subset/subset-worker.chunk.ts",
+     "lines": "20-42",
+     "note": "worker onmessage -> subsetToBinary"
+    },
+    {
+     "file": "packages/excalidraw/workers.ts",
+     "lines": "22-90",
+     "note": "WorkerPool"
+    }
+   ]
+  },
+  "excalidraw-k05": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "packages/excalidraw/actions/register.ts",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "ActionManager",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/actions/manager.tsx",
+      "packages/excalidraw/components/App.tsx"
+     ]
+    },
+    {
+     "fact": "keyTest",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/actions/types.ts",
+      "packages/excalidraw/actions/manager.tsx"
+     ]
+    },
+    {
+     "fact": "renderAction",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/actions/manager.tsx",
+      "packages/excalidraw/components/Actions.tsx"
+     ]
+    },
+    {
+     "fact": "syncActionResult",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/components/App.tsx"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "packages/excalidraw/actions/register.ts",
+     "lines": "1-10",
+     "note": "register appends to the actions list"
+    },
+    {
+     "file": "packages/excalidraw/actions/actionClipboard.tsx",
+     "lines": "19-50",
+     "note": "actionCopy = register({...})"
+    },
+    {
+     "file": "packages/excalidraw/actions/types.ts",
+     "lines": "152-207",
+     "note": "Action interface: perform, keyTest, PanelComponent, predicate"
+    },
+    {
+     "file": "packages/excalidraw/actions/manager.tsx",
+     "lines": "45-194",
+     "note": "ActionManager: registerAll, handleKeyDown, executeAction, renderAction, updater"
+    },
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "701-706",
+     "note": "new ActionManager(this.syncActionResult, ...)"
+    },
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "764-770",
+     "note": "registerAll(actions) plus undo/redo actions"
+    },
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "2136-2225",
+     "note": "syncActionResult applies elements, files, appState, captureUpdate"
+    },
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "4293-4297",
+     "note": "onKeyDown -> actionManager.handleKeyDown"
+    },
+    {
+     "file": "packages/excalidraw/components/Actions.tsx",
+     "lines": "140-160",
+     "note": "properties panel uses renderAction"
+    }
+   ]
+  },
+  "excalidraw-k06": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "StaticCanvas",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/components/canvases/StaticCanvas.tsx",
+      "packages/excalidraw/components/App.tsx"
+     ]
+    },
+    {
+     "fact": "InteractiveCanvas",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/components/canvases/InteractiveCanvas.tsx",
+      "packages/excalidraw/components/App.tsx"
+     ]
+    },
+    {
+     "fact": "NewElementCanvas",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/components/canvases/NewElementCanvas.tsx",
+      "packages/excalidraw/components/App.tsx"
+     ]
+    },
+    {
+     "fact": "renderInteractiveScene",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/renderer/interactiveScene.ts",
+      "packages/excalidraw/components/canvases/InteractiveCanvas.tsx"
+     ]
+    },
+    {
+     "fact": "getRenderableElements",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/scene/Renderer.ts",
+      "packages/excalidraw/components/App.tsx"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "1502-1521",
+     "note": "render: renderer.getRenderableElements -> elementsMap, visibleElements"
+    },
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "1725-1795",
+     "note": "StaticCanvas, NewElementCanvas, InteractiveCanvas receive elementsMap/visibleElements"
+    },
+    {
+     "file": "packages/excalidraw/scene/Renderer.ts",
+     "lines": "16-167",
+     "note": "getRenderableElements: skip new/editing/pending elements, viewport filter, memoized"
+    },
+    {
+     "file": "packages/excalidraw/components/canvases/StaticCanvas.tsx",
+     "lines": "40-80",
+     "note": "renderStaticScene"
+    },
+    {
+     "file": "packages/excalidraw/components/canvases/NewElementCanvas.tsx",
+     "lines": "1-56",
+     "note": "renderNewElementScene"
+    },
+    {
+     "file": "packages/excalidraw/components/canvases/InteractiveCanvas.tsx",
+     "lines": "110-145",
+     "note": "renderInteractiveScene"
+    },
+    {
+     "file": "packages/excalidraw/renderer/interactiveScene.ts",
+     "lines": "761-1230",
+     "note": "_renderInteractiveScene: selection, transform handles, snaps, renderRemoteCursors"
+    },
+    {
+     "file": "packages/excalidraw/renderer/renderNewElementScene.ts",
+     "lines": "1-66",
+     "note": "renders appState.newElement with renderElement"
+    }
+   ]
+  },
+  "excalidraw-k07": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "LocalData",
+     "type": "symbol",
+     "in": [
+      "excalidraw-app/data/LocalData.ts",
+      "excalidraw-app/App.tsx"
+     ]
+    },
+    {
+     "fact": "saveDataStateToLocalStorage",
+     "type": "symbol",
+     "in": [
+      "excalidraw-app/data/LocalData.ts"
+     ]
+    },
+    {
+     "fact": "FileManager",
+     "type": "symbol",
+     "in": [
+      "excalidraw-app/data/FileManager.ts",
+      "excalidraw-app/data/LocalData.ts"
+     ]
+    },
+    {
+     "fact": "importFromLocalStorage",
+     "type": "symbol",
+     "in": [
+      "excalidraw-app/data/localStorage.ts",
+      "excalidraw-app/App.tsx"
+     ]
+    },
+    {
+     "fact": "isBrowserStorageStateNewer",
+     "type": "symbol",
+     "in": [
+      "excalidraw-app/data/tabSync.ts",
+      "excalidraw-app/App.tsx"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "excalidraw-app/data/LocalData.ts",
+     "lines": "1-208",
+     "note": "LocalFileManager (IndexedDB files store), saveDataStateToLocalStorage, LocalData.save/pauseSave/isSavePaused, fileStorage"
+    },
+    {
+     "file": "excalidraw-app/data/localStorage.ts",
+     "lines": "36-73",
+     "note": "importFromLocalStorage"
+    },
+    {
+     "file": "excalidraw-app/data/tabSync.ts",
+     "lines": "1-39",
+     "note": "isBrowserStorageStateNewer / updateBrowserStateVersion"
+    },
+    {
+     "file": "excalidraw-app/data/FileManager.ts",
+     "lines": "21-60",
+     "note": "FileManager with getFiles/saveFiles callbacks"
+    },
+    {
+     "file": "excalidraw-app/App.tsx",
+     "lines": "501-575",
+     "note": "syncData on focus/visibility: reload when browser storage is newer; flushSave"
+    },
+    {
+     "file": "excalidraw-app/App.tsx",
+     "lines": "614-650",
+     "note": "onChange -> LocalData.save"
+    },
+    {
+     "file": "excalidraw-app/collab/Collab.tsx",
+     "lines": "490-495",
+     "note": "LocalData.pauseSave(collaboration) when a session starts"
+    }
+   ]
+  },
+  "excalidraw-k08": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "textWysiwyg",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/element/textWysiwyg.tsx",
+      "packages/excalidraw/components/App.tsx"
+     ]
+    },
+    {
+     "fact": "measureText",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/element/textMeasurements.ts",
+      "packages/excalidraw/element/textElement.ts"
+     ]
+    },
+    {
+     "fact": "wrapText",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/element/textWrapping.ts",
+      "packages/excalidraw/element/textElement.ts",
+      "packages/excalidraw/element/textWysiwyg.tsx"
+     ]
+    },
+    {
+     "fact": "redrawTextBoundingBox",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/element/textElement.ts",
+      "packages/excalidraw/element/textWysiwyg.tsx"
+     ]
+    },
+    {
+     "fact": "computeBoundTextPosition",
+     "type": "symbol",
+     "in": [
+      "packages/excalidraw/element/textElement.ts",
+      "packages/excalidraw/element/textWysiwyg.tsx"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "packages/excalidraw/components/App.tsx",
+     "lines": "4842-4900",
+     "note": "handleTextWysiwyg calls textWysiwyg with onChange/onSubmit"
+    },
+    {
+     "file": "packages/excalidraw/element/textWysiwyg.tsx",
+     "lines": "75-100",
+     "note": "textWysiwyg signature"
+    },
+    {
+     "file": "packages/excalidraw/element/textWysiwyg.tsx",
+     "lines": "340-370",
+     "note": "wrapText for bound text while typing; oninput -> onChange"
+    },
+    {
+     "file": "packages/excalidraw/element/textWysiwyg.tsx",
+     "lines": "555-580",
+     "note": "submit: redrawTextBoundingBox then onSubmit"
+    },
+    {
+     "file": "packages/excalidraw/element/textElement.ts",
+     "lines": "33-110",
+     "note": "redrawTextBoundingBox: wrapText, measureText, grow container, computeBoundTextPosition"
+    },
+    {
+     "file": "packages/excalidraw/element/textElement.ts",
+     "lines": "233-270",
+     "note": "computeBoundTextPosition by verticalAlign/textAlign"
+    },
+    {
+     "file": "packages/excalidraw/element/textMeasurements.ts",
+     "lines": "9-24",
+     "note": "measureText"
+    },
+    {
+     "file": "packages/excalidraw/element/textWrapping.ts",
+     "lines": "372-420",
+     "note": "wrapText"
+    }
+   ]
+  }
+ }
+}

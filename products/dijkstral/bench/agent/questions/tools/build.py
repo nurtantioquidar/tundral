@@ -36,8 +36,10 @@ def commits() -> dict[str, str]:
 
 def build(repo: str, commit: str) -> None:
     src = json.loads((HERE / "sources" / f"{repo}.json").read_text())
-    occ = scip_refs.occurrences(repo)
-    oracle = scip_refs.oracle(repo)
+    # Read-only sets (locate, architecture, flow facts) need no SCIP index.
+    scip = any(q.get("scip") for q in src)
+    occ = scip_refs.occurrences(repo) if scip else {}
+    oracle = scip_refs.oracle(repo) if scip else {}
     lines = []
     prov_q = {}
     for q in src:
