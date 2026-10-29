@@ -19,16 +19,16 @@ The benchmark install (`../setup.sh`) has no `openai`, `pdf`, `office` or `watch
 separate venv so the timing baseline stays untouched:
 
 ```bash
-uv venv --python 3.13 ~/.cache/dijkstral-bench/tools/graphify-0.9.86-semantic
-uv pip install --python ~/.cache/dijkstral-bench/tools/graphify-0.9.86-semantic/bin/python \
-  "graphifyy[leiden,mcp,openai,pdf,office]==0.9.86" watchdog
+uv venv --python 3.13 ~/.cache/dijkstral-bench/tools/graphify-0.9.97-semantic
+uv pip install --python ~/.cache/dijkstral-bench/tools/graphify-0.9.97-semantic/bin/python \
+  "graphifyy[leiden,mcp,openai,pdf,office]==0.9.97" watchdog
 ```
 
 Always run Graphify with a scrubbed environment so it cannot find a real provider key (it picks a
 backend from whichever key is set):
 
 ```bash
-G=~/.cache/dijkstral-bench/tools/graphify-0.9.86-semantic/bin/graphify
+G=~/.cache/dijkstral-bench/tools/graphify-0.9.97-semantic/bin/graphify
 env -i HOME=/tmp/graphify-home PATH=/usr/bin:/bin LANG=en_US.UTF-8 GRAPHIFY_QUERY_LOG_DISABLE=1 \
   OPENAI_BASE_URL=http://127.0.0.1:8765/v1 OPENAI_API_KEY=dummy OPENAI_MODEL=codex-shim \
   "$G" extract /tmp/scratch/mixed --backend openai

@@ -3,7 +3,7 @@
 This document specifies Graphify's git integration — `graphify hook install|uninstall|status`, the
 `graph.json` merge driver `graphify merge-driver <base> <current> <other>` and its wiring — and
 `graphify watch <path>`, then what dijkstral does instead where it deliberately differs. The
-reference is PyPI `graphifyy` 0.9.86, the release of `graphify-format.md`. Everything was derived
+reference is PyPI `graphifyy` 0.9.86 (`graphify-format.md` has since moved to 0.9.97). Everything was derived
 by running the installed `graphify` binary in scratch directories and scratch `git init`
 repositories with `GRAPHIFY_QUERY_LOG_DISABLE=1`; Graphify's source, skill files and hook scripts
 were not read. `graphify hook install` was **never run** (the probing environment does not allow

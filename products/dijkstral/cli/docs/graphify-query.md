@@ -2,8 +2,9 @@
 
 This document specifies what Graphify's query surface does: the CLI commands `query`, `path`,
 `explain`, `affected`, `god-nodes` and `benchmark`, the `graphify-mcp` server, the assistant hook
-guard, and the files the assistant installers write. The reference is PyPI `graphifyy` 0.9.86, the
-same release as `graphify-format.md`. Everything here was derived by running the installed
+guard, and the files the assistant installers write. The reference is PyPI `graphifyy` 0.9.86
+(`graphify-format.md` moved to 0.9.97; the goldens here read the frozen 0.9.86 fixture graphs in
+`tests/fixtures/graphs-0.9.86/`). Everything here was derived by running the installed
 `graphify` and `graphify-mcp` binaries against the fixture goldens, the frozen corpus references in
 `~/.cache/dijkstral-bench/reference/`, and small synthetic graphs written for one question each.
 Graphify's source, skill files, hook scripts and prompts were not read. Installer probes ran in

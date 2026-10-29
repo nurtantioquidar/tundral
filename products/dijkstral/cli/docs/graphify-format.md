@@ -3,8 +3,10 @@
 This document specifies what `graphify extract <dir> --code-only` writes to `graph.json` for Python,
 TypeScript/TSX, JavaScript/JSX, Rust, Go, Java, Kotlin and Scala, plus what JSON, TOML and shell files
 contribute.
-The reference is PyPI `graphifyy` 0.9.86. It was derived only by running that binary on inputs and
-reading the outputs: the fixtures under `tests/fixtures/`, small probe repositories, and scratch
+The reference is PyPI `graphifyy` 0.9.97 (with its `sql` extra). The spec was first written against
+0.9.86 and moved to 0.9.97 on 2026-10-29: the fixture goldens were regenerated, and every changed
+rule was found by running both releases on the same probes; where the text names 0.9.86 it records
+what changed. It was derived only by running those binaries on inputs and reading the outputs: the fixtures under `tests/fixtures/`, small probe repositories, and scratch
 copies of the benchmark corpus (`~/.cache/dijkstral-bench/corpus/<repo>/graphify-out/graph.json`).
 Graphify's source was not consulted. Every rule here is an observation. Where a rule was inferred
 from a pattern rather than read directly from an example, the text says so.
@@ -467,14 +469,17 @@ in that order. This matched 86,373 of 86,373 corpus nodes. Plain `lower()` fails
 | `source_file` | relative `/` path; `""` on stubs and externals; the specifier on TS/JS phantoms | always |
 | `source_location` | `"L<n>"` (1-based line, never a range or column); `""` on stubs; **absent** on externals and phantoms; `null` on 0-byte files | see left |
 | `_origin` | `"ast"` | every node except externals |
-| `_callable` | `true` | Python functions, methods and classes; TS/JS functions, methods, classes, interfaces, type aliases and enums; Java types and methods. **Never on Go, Rust, shell or JSON.** |
-| `_callable_class` | `true` | the class-like subset of the above (Python classes; TS/JS classes, interfaces, type aliases, enums; Java types) |
+| `_callable` | `true` | functions, methods and class-like declarations in most languages (each language section lists its constructs); Go and Objective-C since 0.9.97. **Never on Rust, shell, JSON or YAML.** |
+| `_callable_class` | `true` | the class-like subset of the above (classes, interfaces, type aliases, enums, Go types and receiver nodes…) |
+| `_py_return_type`, `_py_property`, `_py_fixture` | string / `true` / string | Python defs (0.9.97, §9) |
+| `_ts_fields`, `_ts_static_fields`, `_ts_public_twin` | object / object / `true` | TS/JS classes and `#private` twins (0.9.97, §10) |
+| `_java_ret` | string | Java methods with a named return type (0.9.97, §13) |
 | `external`, `type: "external"` | `true` / `"external"` | external import nodes |
 | `type: "package"`, `ecosystem`, `version` | `cargo`/`python`/`go` | TOML and `go.mod` package nodes |
-| `metadata` | object | Python `{"python_opaque_bases": true}`; Java `{"unresolved_calls": [...]}`; shell `{"language":"bash","kind":…}`. Never on Rust, Go or TS/JS nodes. |
+| `metadata` | object | Python `{"python_opaque_bases": true}`; `unresolved_calls` (each entry with `file` since 0.9.97) in Java, Kotlin, Go, TS/JS, PHP, C#, C++, Swift and Objective-C; C# method `arity`/`signature`; shell `{"language":"bash","kind":…}`; per-language sections give the rest. Never on Rust nodes. |
 | `_rust_declaration_count` | int | every Rust struct/enum/trait node (count of same-name declarations in the file, e.g. two `#[cfg]` variants → 2) |
 | `_rust_impl_key` | `"Name/n"` | Rust owner nodes created by plain-generic inherent impls (`impl<T> Pair<T>` → `Pair/1`) |
-| `confidence` | `"EXTRACTED"` | TS/JS dynamic-import phantoms only (quirk) |
+| `confidence` | `"EXTRACTED"` / `"INFERRED"` | TS/JS dynamic-import phantoms (quirk); every Verilog node is `INFERRED` (0.9.97, §36) |
 | `node_kind`, `frontmatter` | | markdown nodes from `update` only, never in code-only builds |
 | `community`, `norm_label`, `community_name` | | clustered only (§2.5) |
 

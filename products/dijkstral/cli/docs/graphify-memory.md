@@ -3,7 +3,7 @@
 This document specifies four Graphify commands that sit beside the graph rather than build it:
 `save-result` and `reflect` (the work-memory loop), `prs` (a pull-request dashboard, plus the
 three PR tools of `graphify-mcp`) and `diagnose multigraph` (an edge-collapse report). The
-reference is PyPI `graphifyy` 0.9.86, as in `graphify-format.md` and `graphify-query.md`.
+reference is PyPI `graphifyy` 0.9.86, as in `graphify-query.md` (`graphify-format.md` is on 0.9.97).
 Everything here was derived by running the installed `graphify` and `graphify-mcp` binaries in
 scratch directories (`HOME` pointed at a scratch directory, `GRAPHIFY_QUERY_LOG_DISABLE=1`) on the
 fixture graphs and on small inputs written for one question each. GitHub was reached only through
