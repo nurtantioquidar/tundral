@@ -7,34 +7,34 @@
  },
  "nodes": [
   {
-   "id": "catalog",
-   "label": "catalog",
+   "id": "db_maintenance",
+   "label": "maintenance.sql",
    "_origin": "ast",
    "community": 0,
    "file_type": "code",
-   "norm_label": "catalog",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "catalog_suppliers",
-   "label": "catalog.suppliers",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "catalog.suppliers",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "db_migrations_001_init",
-   "label": "001_init.sql",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "001_init.sql",
-   "source_file": "db/migrations/001_init.sql",
+   "norm_label": "maintenance.sql",
+   "source_file": "db/maintenance.sql",
    "source_location": null
+  },
+  {
+   "id": "db_maintenance_nightly_maintenance",
+   "label": "nightly_maintenance()",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "nightly_maintenance()",
+   "source_file": "db/maintenance.sql",
+   "source_location": "L2"
+  },
+  {
+   "id": "db_maintenance_sql_customers",
+   "label": "customers",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "customers",
+   "source_file": "",
+   "source_location": ""
   },
   {
    "id": "db_migrations_001_init_customers",
@@ -47,60 +47,10 @@
    "source_location": "L2"
   },
   {
-   "id": "db_migrations_001_init_order_items",
-   "label": "order_items",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "order_items",
-   "source_file": "db/migrations/001_init.sql",
-   "source_location": "L20"
-  },
-  {
-   "id": "db_migrations_001_init_order_items_order_idx",
-   "label": "order_items_order_idx",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "order_items_order_idx",
-   "source_file": "db/migrations/001_init.sql",
-   "source_location": "L29"
-  },
-  {
-   "id": "db_migrations_001_init_products",
-   "label": "products",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "products",
-   "source_file": "db/migrations/001_init.sql",
-   "source_location": "L8"
-  },
-  {
-   "id": "db_migrations_001_init_products_sku_idx",
-   "label": "products_sku_idx",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "products_sku_idx",
-   "source_file": "db/migrations/001_init.sql",
-   "source_location": "L30"
-  },
-  {
-   "id": "legacy_items",
-   "label": "legacy_items",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "legacy_items",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
    "id": "db_migrations_001_init_orders",
    "label": "orders",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "orders",
    "source_file": "db/migrations/001_init.sql",
@@ -110,7 +60,7 @@
    "id": "db_migrations_002_views",
    "label": "002_views.sql",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "002_views.sql",
    "source_file": "db/migrations/002_views.sql",
@@ -120,7 +70,7 @@
    "id": "db_migrations_002_views_all_people",
    "label": "all_people",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "all_people",
    "source_file": "db/migrations/002_views.sql",
@@ -130,7 +80,7 @@
    "id": "db_migrations_002_views_big_customers",
    "label": "big_customers",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "big_customers",
    "source_file": "db/migrations/002_views.sql",
@@ -140,27 +90,17 @@
    "id": "db_migrations_002_views_order_totals",
    "label": "order_totals",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "order_totals",
    "source_file": "db/migrations/002_views.sql",
    "source_location": "L1"
   },
   {
-   "id": "db_migrations_002_views_sql_customers",
-   "label": "customers",
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "customers",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
    "id": "db_procedures_refresh_totals",
    "label": "refresh_totals()",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "refresh_totals()",
    "source_file": "db/procedures.sql",
@@ -170,157 +110,17 @@
    "id": "staff",
    "label": "staff",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "staff",
    "source_file": "",
    "source_location": ""
   },
   {
-   "id": "db_migrations_003_functions",
-   "label": "003_functions.sql",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "003_functions.sql",
-   "source_file": "db/migrations/003_functions.sql",
-   "source_location": null
-  },
-  {
-   "id": "db_migrations_003_functions_invoices_close",
-   "label": "invoices_close",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "invoices_close",
-   "source_file": "db/migrations/003_functions.sql",
-   "source_location": "L18"
-  },
-  {
-   "id": "db_migrations_003_functions_order_items_touch",
-   "label": "order_items_touch",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "order_items_touch",
-   "source_file": "db/migrations/003_functions.sql",
-   "source_location": "L14"
-  },
-  {
-   "id": "db_migrations_003_functions_order_total",
-   "label": "order_total()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "order_total()",
-   "source_file": "db/migrations/003_functions.sql",
-   "source_location": "L1"
-  },
-  {
-   "id": "db_migrations_003_functions_touch_order",
-   "label": "touch_order()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "touch_order()",
-   "source_file": "db/migrations/003_functions.sql",
-   "source_location": "L6"
-  },
-  {
-   "id": "db_schema",
-   "label": "schema.sql",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "schema.sql",
-   "source_file": "db/schema.sql",
-   "source_location": null
-  },
-  {
-   "id": "db_schema_billing_invoices",
-   "label": "billing.invoices",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "billing.invoices",
-   "source_file": "db/schema.sql",
-   "source_location": "L7"
-  },
-  {
-   "id": "db_schema_invoices_order_idx",
-   "label": "invoices_order_idx",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "invoices_order_idx",
-   "source_file": "db/schema.sql",
-   "source_location": "L29"
-  },
-  {
-   "id": "db_schema_public_orders_archive",
-   "label": "public.orders_archive",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "public.orders_archive",
-   "source_file": "db/schema.sql",
-   "source_location": "L13"
-  },
-  {
-   "id": "public_orders",
-   "label": "public.orders",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "public.orders",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "db_mysql_legacy",
-   "label": "legacy.sql",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "legacy.sql",
-   "source_file": "db/mysql/legacy.sql",
-   "source_location": null
-  },
-  {
-   "id": "db_mysql_legacy_customers",
-   "label": "`customers`",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "`customers`",
-   "source_file": "db/mysql/legacy.sql",
-   "source_location": "L1"
-  },
-  {
-   "id": "db_mysql_legacy_team_sizes",
-   "label": "`team_sizes`",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "`team_sizes`",
-   "source_file": "db/mysql/legacy.sql",
-   "source_location": "L14"
-  },
-  {
-   "id": "db_mysql_legacy_teams",
-   "label": "`teams`",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "`teams`",
-   "source_file": "db/mysql/legacy.sql",
-   "source_location": "L9"
-  },
-  {
    "id": "db_procedures",
    "label": "procedures.sql",
    "_origin": "ast",
-   "community": 5,
+   "community": 1,
    "file_type": "code",
    "norm_label": "procedures.sql",
    "source_file": "db/procedures.sql",
@@ -330,7 +130,7 @@
    "id": "db_procedures_archive_orders",
    "label": "archive_orders()",
    "_origin": "ast",
-   "community": 5,
+   "community": 1,
    "file_type": "code",
    "norm_label": "archive_orders()",
    "source_file": "db/procedures.sql",
@@ -340,19 +140,329 @@
    "id": "db_procedures_billing_close_invoice",
    "label": "billing.close_invoice()",
    "_origin": "ast",
-   "community": 5,
+   "community": 1,
    "file_type": "code",
    "norm_label": "billing.close_invoice()",
    "source_file": "db/procedures.sql",
    "source_location": "L9"
   },
   {
+   "id": "db_schema",
+   "label": "schema.sql",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "schema.sql",
+   "source_file": "db/schema.sql",
+   "source_location": null
+  },
+  {
+   "id": "db_schema_billing_invoices",
+   "label": "billing.invoices",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "billing.invoices",
+   "source_file": "db/schema.sql",
+   "source_location": "L7"
+  },
+  {
+   "id": "db_schema_invoices_order_idx",
+   "label": "invoices_order_idx",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "invoices_order_idx",
+   "source_file": "db/schema.sql",
+   "source_location": "L29"
+  },
+  {
+   "id": "db_schema_public_orders_archive",
+   "label": "public.orders_archive",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "public.orders_archive",
+   "source_file": "db/schema.sql",
+   "source_location": "L13"
+  },
+  {
    "id": "orders_archive",
    "label": "orders_archive",
    "_origin": "ast",
-   "community": 5,
+   "community": 1,
    "file_type": "code",
    "norm_label": "orders_archive",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "public_orders",
+   "label": "public.orders",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "public.orders",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "catalog",
+   "label": "catalog",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "catalog",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "catalog_suppliers",
+   "label": "catalog.suppliers",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "catalog.suppliers",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "db_migrations_001_init",
+   "label": "001_init.sql",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "001_init.sql",
+   "source_file": "db/migrations/001_init.sql",
+   "source_location": null
+  },
+  {
+   "id": "db_migrations_001_init_order_items",
+   "label": "order_items",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "order_items",
+   "source_file": "db/migrations/001_init.sql",
+   "source_location": "L20"
+  },
+  {
+   "id": "db_migrations_001_init_order_items_order_idx",
+   "label": "order_items_order_idx",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "order_items_order_idx",
+   "source_file": "db/migrations/001_init.sql",
+   "source_location": "L29"
+  },
+  {
+   "id": "db_migrations_001_init_products",
+   "label": "products",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "products",
+   "source_file": "db/migrations/001_init.sql",
+   "source_location": "L8"
+  },
+  {
+   "id": "db_migrations_001_init_products_sku_idx",
+   "label": "products_sku_idx",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "products_sku_idx",
+   "source_file": "db/migrations/001_init.sql",
+   "source_location": "L30"
+  },
+  {
+   "id": "legacy_items",
+   "label": "legacy_items",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "legacy_items",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "db_plpgsql",
+   "label": "plpgsql.sql",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "plpgsql.sql",
+   "source_file": "db/plpgsql.sql",
+   "source_location": null
+  },
+  {
+   "id": "db_plpgsql_close_year",
+   "label": "close_year()",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "close_year()",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L20"
+  },
+  {
+   "id": "db_plpgsql_public_ledger",
+   "label": "\"public\".\"ledger\"",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "\"public\".\"ledger\"",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L2"
+  },
+  {
+   "id": "db_plpgsql_public_post_order",
+   "label": "\"public\".\"post_order\"()",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "\"public\".\"post_order\"()",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L10"
+  },
+  {
+   "id": "db_plpgsql_purge_archive",
+   "label": "purge_archive()",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "purge_archive()",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L27"
+  },
+  {
+   "id": "db_plpgsql_reconcile",
+   "label": "reconcile()",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "reconcile()",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L35"
+  },
+  {
+   "id": "ledger_archive",
+   "label": "ledger_archive",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "ledger_archive",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "note_prefixes",
+   "label": "note_prefixes",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "note_prefixes",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "db_migrations_003_functions",
+   "label": "003_functions.sql",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "003_functions.sql",
+   "source_file": "db/migrations/003_functions.sql",
+   "source_location": null
+  },
+  {
+   "id": "db_migrations_003_functions_invoices_close",
+   "label": "invoices_close",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "invoices_close",
+   "source_file": "db/migrations/003_functions.sql",
+   "source_location": "L18"
+  },
+  {
+   "id": "db_migrations_003_functions_order_items_touch",
+   "label": "order_items_touch",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "order_items_touch",
+   "source_file": "db/migrations/003_functions.sql",
+   "source_location": "L14"
+  },
+  {
+   "id": "db_migrations_003_functions_order_total",
+   "label": "order_total()",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "order_total()",
+   "source_file": "db/migrations/003_functions.sql",
+   "source_location": "L1"
+  },
+  {
+   "id": "db_migrations_003_functions_touch_order",
+   "label": "touch_order()",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "touch_order()",
+   "source_file": "db/migrations/003_functions.sql",
+   "source_location": "L6"
+  },
+  {
+   "id": "db_mysql_legacy",
+   "label": "legacy.sql",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "legacy.sql",
+   "source_file": "db/mysql/legacy.sql",
+   "source_location": null
+  },
+  {
+   "id": "db_mysql_legacy_customers",
+   "label": "`customers`",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "`customers`",
+   "source_file": "db/mysql/legacy.sql",
+   "source_location": "L1"
+  },
+  {
+   "id": "db_mysql_legacy_team_sizes",
+   "label": "`team_sizes`",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "`team_sizes`",
+   "source_file": "db/mysql/legacy.sql",
+   "source_location": "L14"
+  },
+  {
+   "id": "db_mysql_legacy_teams",
+   "label": "`teams`",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "`teams`",
+   "source_file": "db/mysql/legacy.sql",
+   "source_location": "L9"
+  },
+  {
+   "id": "audit_events",
+   "label": "audit_events",
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "norm_label": "audit_events",
    "source_file": "",
    "source_location": ""
   },
@@ -360,7 +470,7 @@
    "id": "db_empty",
    "label": "empty.sql",
    "_origin": "ast",
-   "community": 6,
+   "community": 7,
    "file_type": "code",
    "norm_label": "empty.sql",
    "source_file": "db/empty.sql",
@@ -370,7 +480,7 @@
    "id": "db_seed",
    "label": "seed.sql",
    "_origin": "ast",
-   "community": 7,
+   "community": 8,
    "file_type": "code",
    "norm_label": "seed.sql",
    "source_file": "db/seed.sql",
@@ -378,6 +488,17 @@
   }
  ],
  "links": [
+  {
+   "source": "db_maintenance",
+   "target": "db_maintenance_nightly_maintenance",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/maintenance.sql",
+   "source_location": "L2",
+   "weight": 1.0
+  },
   {
    "source": "db_migrations_001_init",
    "target": "db_migrations_001_init_orders",
@@ -555,6 +676,61 @@
    "weight": 1.0
   },
   {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_public_post_order",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L10",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_public_ledger",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_close_year",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L20",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_purge_archive",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L27",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_reconcile",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L35",
+   "weight": 1.0
+  },
+  {
    "source": "db_procedures",
    "target": "db_procedures_archive_orders",
    "relation": "contains",
@@ -665,8 +841,30 @@
    "weight": 1.0
   },
   {
+   "source": "db_maintenance_nightly_maintenance",
+   "target": "db_maintenance_sql_customers",
+   "relation": "reads_from",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/maintenance.sql",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "db_maintenance_nightly_maintenance",
+   "target": "db_migrations_001_init_orders",
+   "relation": "reads_from",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/maintenance.sql",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
    "source": "db_migrations_002_views_all_people",
-   "target": "db_migrations_002_views_sql_customers",
+   "target": "db_maintenance_sql_customers",
    "relation": "reads_from",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -699,7 +897,7 @@
   },
   {
    "source": "db_migrations_002_views_big_customers",
-   "target": "db_migrations_002_views_sql_customers",
+   "target": "db_maintenance_sql_customers",
    "relation": "reads_from",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -783,6 +981,50 @@
    "confidence_score": 1.0,
    "source_file": "db/mysql/legacy.sql",
    "source_location": "L14",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql_close_year",
+   "target": "db_plpgsql_public_ledger",
+   "relation": "reads_from",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L25",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql_purge_archive",
+   "target": "db_plpgsql_public_ledger",
+   "relation": "reads_from",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L30",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql_purge_archive",
+   "target": "note_prefixes",
+   "relation": "reads_from",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L31",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql_reconcile",
+   "target": "db_plpgsql_public_ledger",
+   "relation": "reads_from",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L38",
    "weight": 1.0
   },
   {
@@ -896,6 +1138,17 @@
    "weight": 1.0
   },
   {
+   "source": "db_plpgsql_public_ledger",
+   "target": "db_migrations_001_init_orders",
+   "relation": "references",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
    "source": "db_schema_billing_invoices",
    "target": "public_orders",
    "relation": "references",
@@ -908,7 +1161,7 @@
   },
   {
    "source": "db_schema_public_orders_archive",
-   "target": "db_migrations_002_views_sql_customers",
+   "target": "db_maintenance_sql_customers",
    "relation": "references",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -937,6 +1190,17 @@
    "confidence_score": 1.0,
    "source_file": "db/migrations/003_functions.sql",
    "source_location": "L14",
+   "weight": 1.0
+  },
+  {
+   "source": "db_plpgsql_purge_archive",
+   "target": "ledger_archive",
+   "relation": "writes_to",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L28",
    "weight": 1.0
   },
   {
@@ -974,7 +1238,7 @@
   },
   {
    "source": "db_procedures_refresh_totals",
-   "target": "db_migrations_002_views_sql_customers",
+   "target": "db_maintenance_sql_customers",
    "relation": "writes_to",
    "_origin": "ast",
    "confidence": "EXTRACTED",

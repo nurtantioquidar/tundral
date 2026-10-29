@@ -9,6 +9,30 @@
    "_origin": "ast"
   },
   {
+   "id": "db_maintenance",
+   "label": "maintenance.sql",
+   "file_type": "code",
+   "source_file": "db/maintenance.sql",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "db_maintenance_nightly_maintenance",
+   "label": "nightly_maintenance()",
+   "file_type": "code",
+   "source_file": "db/maintenance.sql",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "db_maintenance_sql_customers",
+   "label": "customers",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
    "id": "db_migrations_001_init",
    "label": "001_init.sql",
    "file_type": "code",
@@ -113,14 +137,6 @@
    "_origin": "ast"
   },
   {
-   "id": "db_migrations_002_views_sql_customers",
-   "label": "customers",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "db_migrations_002_views_all_people",
    "label": "all_people",
    "file_type": "code",
@@ -206,6 +222,78 @@
    "file_type": "code",
    "source_file": "db/mysql/legacy.sql",
    "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "db_plpgsql",
+   "label": "plpgsql.sql",
+   "file_type": "code",
+   "source_file": "db/plpgsql.sql",
+   "source_location": null,
+   "_origin": "ast"
+  },
+  {
+   "id": "db_plpgsql_public_ledger",
+   "label": "\"public\".\"ledger\"",
+   "file_type": "code",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "audit_events",
+   "label": "audit_events",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "db_plpgsql_public_post_order",
+   "label": "\"public\".\"post_order\"()",
+   "file_type": "code",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "db_plpgsql_close_year",
+   "label": "close_year()",
+   "file_type": "code",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "db_plpgsql_reconcile",
+   "label": "reconcile()",
+   "file_type": "code",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L35",
+   "_origin": "ast"
+  },
+  {
+   "id": "db_plpgsql_purge_archive",
+   "label": "purge_archive()",
+   "file_type": "code",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "ledger_archive",
+   "label": "ledger_archive",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "note_prefixes",
+   "label": "note_prefixes",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
    "_origin": "ast"
   },
   {
@@ -298,6 +386,36 @@
   }
  ],
  "edges": [
+  {
+   "source": "db_maintenance",
+   "target": "db_maintenance_nightly_maintenance",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "db/maintenance.sql",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_maintenance_nightly_maintenance",
+   "target": "db_migrations_001_init_orders",
+   "relation": "reads_from",
+   "confidence": "EXTRACTED",
+   "source_file": "db/maintenance.sql",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_maintenance_nightly_maintenance",
+   "target": "db_maintenance_sql_customers",
+   "relation": "reads_from",
+   "confidence": "EXTRACTED",
+   "source_file": "db/maintenance.sql",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
   {
    "source": "db_migrations_001_init",
    "target": "db_migrations_001_init_customers",
@@ -500,7 +618,7 @@
   },
   {
    "source": "db_migrations_002_views_big_customers",
-   "target": "db_migrations_002_views_sql_customers",
+   "target": "db_maintenance_sql_customers",
    "relation": "reads_from",
    "confidence": "EXTRACTED",
    "source_file": "db/migrations/002_views.sql",
@@ -530,7 +648,7 @@
   },
   {
    "source": "db_migrations_002_views_all_people",
-   "target": "db_migrations_002_views_sql_customers",
+   "target": "db_maintenance_sql_customers",
    "relation": "reads_from",
    "confidence": "EXTRACTED",
    "source_file": "db/migrations/002_views.sql",
@@ -699,6 +817,126 @@
    "_origin": "ast"
   },
   {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_public_ledger",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql_public_ledger",
+   "target": "db_migrations_001_init_orders",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_public_post_order",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_close_year",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql_close_year",
+   "target": "db_plpgsql_public_ledger",
+   "relation": "reads_from",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_reconcile",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql_reconcile",
+   "target": "db_plpgsql_public_ledger",
+   "relation": "reads_from",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L38",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql",
+   "target": "db_plpgsql_purge_archive",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql_purge_archive",
+   "target": "ledger_archive",
+   "relation": "writes_to",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql_purge_archive",
+   "target": "db_plpgsql_public_ledger",
+   "relation": "reads_from",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L30",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql_purge_archive",
+   "target": "note_prefixes",
+   "relation": "reads_from",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "db_plpgsql_purge_archive",
+   "target": "ledger_archive",
+   "relation": "reads_from",
+   "confidence": "EXTRACTED",
+   "source_file": "db/plpgsql.sql",
+   "source_location": "L32",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
    "source": "db_procedures",
    "target": "db_procedures_archive_orders",
    "relation": "contains",
@@ -790,7 +1028,7 @@
   },
   {
    "source": "db_procedures_refresh_totals",
-   "target": "db_migrations_002_views_sql_customers",
+   "target": "db_maintenance_sql_customers",
    "relation": "writes_to",
    "confidence": "EXTRACTED",
    "source_file": "db/procedures.sql",
@@ -840,7 +1078,7 @@
   },
   {
    "source": "db_schema_public_orders_archive",
-   "target": "db_migrations_002_views_sql_customers",
+   "target": "db_maintenance_sql_customers",
    "relation": "references",
    "confidence": "EXTRACTED",
    "source_file": "db/schema.sql",

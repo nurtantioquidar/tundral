@@ -1,74 +1,88 @@
 {
   "communities": {
     "0": [
+      "db_maintenance",
+      "db_maintenance_nightly_maintenance",
+      "db_maintenance_sql_customers",
+      "db_migrations_001_init_customers",
+      "db_migrations_001_init_orders",
+      "db_migrations_002_views",
+      "db_migrations_002_views_all_people",
+      "db_migrations_002_views_big_customers",
+      "db_migrations_002_views_order_totals",
+      "db_procedures_refresh_totals",
+      "staff"
+    ],
+    "1": [
+      "db_procedures",
+      "db_procedures_archive_orders",
+      "db_procedures_billing_close_invoice",
+      "db_schema",
+      "db_schema_billing_invoices",
+      "db_schema_invoices_order_idx",
+      "db_schema_public_orders_archive",
+      "orders_archive",
+      "public_orders"
+    ],
+    "2": [
       "catalog",
       "catalog_suppliers",
       "db_migrations_001_init",
-      "db_migrations_001_init_customers",
       "db_migrations_001_init_order_items",
       "db_migrations_001_init_order_items_order_idx",
       "db_migrations_001_init_products",
       "db_migrations_001_init_products_sku_idx",
       "legacy_items"
     ],
-    "1": [
-      "db_migrations_001_init_orders",
-      "db_migrations_002_views",
-      "db_migrations_002_views_all_people",
-      "db_migrations_002_views_big_customers",
-      "db_migrations_002_views_order_totals",
-      "db_migrations_002_views_sql_customers",
-      "db_procedures_refresh_totals",
-      "staff"
+    "3": [
+      "db_plpgsql",
+      "db_plpgsql_close_year",
+      "db_plpgsql_public_ledger",
+      "db_plpgsql_public_post_order",
+      "db_plpgsql_purge_archive",
+      "db_plpgsql_reconcile",
+      "ledger_archive",
+      "note_prefixes"
     ],
-    "2": [
+    "4": [
       "db_migrations_003_functions",
       "db_migrations_003_functions_invoices_close",
       "db_migrations_003_functions_order_items_touch",
       "db_migrations_003_functions_order_total",
       "db_migrations_003_functions_touch_order"
     ],
-    "3": [
-      "db_schema",
-      "db_schema_billing_invoices",
-      "db_schema_invoices_order_idx",
-      "db_schema_public_orders_archive",
-      "public_orders"
-    ],
-    "4": [
+    "5": [
       "db_mysql_legacy",
       "db_mysql_legacy_customers",
       "db_mysql_legacy_team_sizes",
       "db_mysql_legacy_teams"
     ],
-    "5": [
-      "db_procedures",
-      "db_procedures_archive_orders",
-      "db_procedures_billing_close_invoice",
-      "orders_archive"
-    ],
     "6": [
-      "db_empty"
+      "audit_events"
     ],
     "7": [
+      "db_empty"
+    ],
+    "8": [
       "db_seed"
     ]
   },
   "cohesion": {
-    "0": 0.3055555555555556,
-    "1": 0.39285714285714285,
-    "2": 0.5,
-    "3": 0.5,
-    "4": 1.0,
-    "5": 0.5,
+    "0": 0.2727272727272727,
+    "1": 0.25,
+    "2": 0.35714285714285715,
+    "3": 0.35714285714285715,
+    "4": 0.5,
+    "5": 1.0,
     "6": 1.0,
-    "7": 1.0
+    "7": 1.0,
+    "8": 1.0
   },
   "gods": [
     {
       "id": "db_migrations_001_init_orders",
       "label": "orders",
-      "degree": 8
+      "degree": 10
     },
     {
       "id": "db_migrations_001_init_order_items",
@@ -83,6 +97,11 @@
     {
       "id": "db_migrations_002_views_order_totals",
       "label": "order_totals",
+      "degree": 5
+    },
+    {
+      "id": "db_plpgsql_public_ledger",
+      "label": "\"public\".\"ledger\"",
       "degree": 5
     },
     {
@@ -101,19 +120,14 @@
       "degree": 4
     },
     {
-      "id": "db_procedures_refresh_totals",
-      "label": "refresh_totals()",
+      "id": "db_plpgsql_purge_archive",
+      "label": "purge_archive()",
       "degree": 4
     },
     {
-      "id": "db_migrations_002_views_all_people",
-      "label": "all_people",
-      "degree": 3
-    },
-    {
-      "id": "db_migrations_003_functions_touch_order",
-      "label": "touch_order()",
-      "degree": 3
+      "id": "db_procedures_refresh_totals",
+      "label": "refresh_totals()",
+      "degree": 4
     }
   ],
   "surprises": [
@@ -140,17 +154,6 @@
       "why": "bridges separate communities; peripheral node `invoices_close` unexpectedly reaches hub `billing.invoices`"
     },
     {
-      "source": "billing.close_invoice()",
-      "target": "billing.invoices",
-      "source_files": [
-        "db/procedures.sql",
-        "db/schema.sql"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "writes_to",
-      "why": "bridges separate communities; peripheral node `billing.close_invoice()` unexpectedly reaches hub `billing.invoices`"
-    },
-    {
       "source": "touch_order()",
       "target": "orders",
       "source_files": [
@@ -159,6 +162,17 @@
       ],
       "confidence": "EXTRACTED",
       "relation": "reads_from",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "\"public\".\"ledger\"",
+      "target": "orders",
+      "source_files": [
+        "db/plpgsql.sql",
+        "db/migrations/001_init.sql"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
       "why": "bridges separate communities"
     },
     {

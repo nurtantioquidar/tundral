@@ -10,8 +10,12 @@
 //!   functions (`create_function`, label `name()`), triggers and named indexes, each
 //!   `file_slug(label)` with `contains` from the file. A name defined twice in a file keeps its
 //!   first node, which collects the edges of both definitions. Their edges:
-//!   - `references` from a table to every object after `REFERENCES`, at the table's line; an
-//!     `ALTER TABLE` adds `references` from the table it names, at the `ALTER`'s line;
+//!   - `references` from a table to the object after each `REFERENCES` of a column definition or
+//!     table constraint, at the table's line; an `ALTER TABLE` adds `references` from the table it
+//!     names for each `ADD CONSTRAINT … REFERENCES`, at the `ALTER`'s line. A `REFERENCES` the
+//!     grammar could not place (no column list: it sits in an error node) or of an
+//!     `ADD COLUMN` gives nothing;
+//!   - an `ALTER TABLE` names its table even without one: an undefined table gets its stub;
 //!   - `reads_from` from a view or function to every relation in a `FROM` or `JOIN`, subqueries
 //!     and CTE bodies included and CTE names excluded, at the relation's line;
 //!   - `indexes` from an index and `triggers` from a trigger to its table, and `executes` from a
@@ -21,13 +25,17 @@
 //!   `REFERENCES <word>` up to the next line starting with `CREATE` or `ALTER` adds `references`
 //!   to that word, at the table's line. So `REFERENCES s.t` also references `s`, and words in
 //!   comments and strings count;
-//! - procedures, which the grammar cannot parse, from the text with comments and one-line strings
-//!   blanked (S2): a line starting with `CREATE [OR REPLACE] PROCEDURE name` gives `name()` at its
-//!   line. Its body runs to the next line starting with `CREATE` or `ALTER`; in it, `writes_to`
-//!   each `INSERT INTO`, `UPDATE`, `DELETE [FROM]` and `MERGE INTO` target and `reads_from` each
-//!   `FROM`/`JOIN` target (not a `DELETE`'s, a CTE's or a function's), in text order at the
-//!   keyword's line. A second procedure of the same name is skipped, body included; a target
-//!   whose slug is empty (`DELETE $$`) is dropped, as Graphify's build drops it.
+//! - only when the parse has an error anywhere, routines from the text with comments and one-line
+//!   strings blanked (S2): this is how procedures, which the grammar cannot parse, and functions
+//!   whose body it loses are read. Each `CREATE [OR REPLACE] FUNCTION|PROCEDURE name`, anywhere in
+//!   a line (a dollar-quoted string's too), gives `name()` at its line unless that id is already
+//!   defined, by the tree or an earlier routine; a skipped routine's body is skipped too. The body
+//!   runs to the next line starting with `CREATE` or `ALTER`; in it, `writes_to` each
+//!   `INSERT INTO`, `UPDATE`, `DELETE [FROM]` and `MERGE INTO` target and `reads_from` each
+//!   `FROM`/`JOIN` target (not a `DELETE`'s, a CTE's, a function's, an `IS DISTINCT FROM`'s or
+//!   one inside `EXTRACT(`, `SUBSTRING(`, `TRIM(` or `OVERLAY(` up to the first `)`), in text
+//!   order at the keyword's line, each relation and name once (the first). A target whose slug
+//!   is empty (`DELETE $$`) is dropped, as Graphify's build drops it.
 //!
 //! Names match case-insensitively, without quotes or backticks, schema included (`s.t` is not
 //! `t`). A name defined in the file resolves to that definition wherever it is; any other name
@@ -61,9 +69,9 @@ static TEXT_STOP: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?im)^(?:CREATE|ALTER)\b").unwrap());
 static TEXT_REFERENCES: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?i)REFERENCES\s+(\w+)").unwrap());
-/// S2: a procedure header at the start of a line, its body's end, and the body's tables.
-static PROCEDURE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?im)^[ \t]*CREATE\s+(?:OR\s+REPLACE\s+)?PROCEDURE\s+([^\s(]+)").unwrap()
+/// S2: a routine header anywhere in a line, its body's end, and the body's tables.
+static ROUTINE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)\bCREATE\s+(?:OR\s+REPLACE\s+)?(?:FUNCTION|PROCEDURE)\s+([^\s(]+)").unwrap()
 });
 static BODY_STOP: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?im)^[ \t]*(?:CREATE|ALTER)\b").unwrap());
@@ -78,6 +86,11 @@ static READS: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r#"(?i)\b(?:FROM|JOIN)\s+(\[?[\w$."]+\]?)"#).unwrap());
 static CTE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?i)(\w+)\s*(?:\([^)]*\))?\s+AS\s*\(").unwrap());
+/// Text where a `FROM` reads nothing: `EXTRACT(YEAR FROM d)` up to the first `)`, so
+/// `SUBSTRING(f(x) FROM t)` still reads `t`, and `IS DISTINCT FROM`.
+static NOT_A_READ: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)\b(?:EXTRACT|SUBSTRING|TRIM|OVERLAY)\s*\([^)]*\)|\bDISTINCT\s+FROM\b").unwrap()
+});
 /// Words after a keyword that name no table (`UPDATE ONLY t` writes nothing).
 const STOPWORDS: &[&str] = &["ONLY", "LATERAL", "SET", "DUAL"];
 static COMMENTS_AND_STRINGS: LazyLock<Regex> =
@@ -104,6 +117,8 @@ enum Item {
         key: String,
         line: u32,
     },
+    /// A name used without an edge, which still gets its stub.
+    Use(End),
     Edge {
         source: End,
         relation: &'static str,
@@ -136,9 +151,35 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
     };
     w.walk(root);
     w.text_references();
-    w.procedures();
+    if root.has_error() {
+        w.routines();
+    }
     let W { cx, items, .. } = w;
     emit(cx, items);
+}
+
+/// The id `e` names: a definition of this file, or its stub, created at first use.
+fn resolve_end(
+    cx: &mut Ctx,
+    local: &HashMap<String, String>,
+    nodes: &mut HashSet<String>,
+    stubs: &mut Vec<(String, String)>,
+    e: End,
+) -> String {
+    match e {
+        End::Local(id) => id,
+        End::Name { key, label } => match local.get(&key) {
+            Some(id) => id.clone(),
+            None => {
+                let id = Ctx::child_id("", &label);
+                if nodes.insert(id.clone()) {
+                    cx.add_stub(id.clone(), label);
+                    stubs.push((id.clone(), key));
+                }
+                id
+            }
+        },
+    }
 }
 
 /// Turns the items into nodes and edges, resolving names against the file's definitions.
@@ -169,27 +210,17 @@ fn emit(cx: &mut Ctx, items: Vec<Item>) {
                     cx.add_edge(&file, &id, "contains", line, None);
                 }
             }
+            Item::Use(name) => {
+                resolve_end(cx, &local, &mut nodes, &mut stubs, name);
+            }
             Item::Edge {
                 source,
                 relation,
                 target,
                 line,
             } => {
-                let mut end = |e: End| match e {
-                    End::Local(id) => id,
-                    End::Name { key, label } => match local.get(&key) {
-                        Some(id) => id.clone(),
-                        None => {
-                            let id = Ctx::child_id("", &label);
-                            if nodes.insert(id.clone()) {
-                                cx.add_stub(id.clone(), label);
-                                stubs.push((id.clone(), key));
-                            }
-                            id
-                        }
-                    },
-                };
-                let (s, t) = (end(source), end(target));
+                let s = resolve_end(cx, &local, &mut nodes, &mut stubs, source);
+                let t = resolve_end(cx, &local, &mut nodes, &mut stubs, target);
                 cx.add_edge(&s, &t, relation, line, None);
             }
         }
@@ -302,11 +333,21 @@ impl W<'_, '_> {
         }
     }
 
-    /// The objects named after `REFERENCES` anywhere under `node`.
-    fn referenced(&self, node: TsNode) -> Vec<End> {
+    /// The objects named after each `REFERENCES` under `node` whose ancestors up to `node` are
+    /// one of `places` (nearest first).
+    fn referenced(&self, node: TsNode, places: &[&[&str]]) -> Vec<End> {
         preorder(node)
             .into_iter()
             .filter(|n| n.kind() == "keyword_references")
+            .filter(|n| {
+                let mut kinds = Vec::new();
+                let mut p = n.parent();
+                while let Some(a) = p.filter(|a| *a != node) {
+                    kinds.push(a.kind());
+                    p = a.parent();
+                }
+                places.contains(&kinds.as_slice())
+            })
             .filter_map(|n| {
                 let mut s = n.next_named_sibling()?;
                 while s.kind() == "comment" {
@@ -350,7 +391,11 @@ impl W<'_, '_> {
         };
         let line = Ctx::line(node);
         let id = self.def(self.text(name), line);
-        for target in self.referenced(node) {
+        let places: &[&[&str]] = &[
+            &["column_definition", "column_definitions"],
+            &["constraint", "constraints", "column_definitions"],
+        ];
+        for target in self.referenced(node, places) {
             self.edge(End::Local(id.clone()), "references", target, line);
         }
     }
@@ -360,7 +405,8 @@ impl W<'_, '_> {
             return;
         };
         let line = Ctx::line(node);
-        for target in self.referenced(node) {
+        self.items.push(Item::Use(self.name(name)));
+        for target in self.referenced(node, &[&["constraint", "add_constraint"]]) {
             self.edge(self.name(name), "references", target, line);
         }
     }
@@ -459,10 +505,17 @@ impl W<'_, '_> {
     }
 
     /// S2, over the source with comments and one-line strings blanked.
-    fn procedures(&mut self) {
+    fn routines(&mut self) {
         let clean = blank(&String::from_utf8_lossy(self.cx.src));
-        let mut done: HashSet<String> = HashSet::new();
-        for header in PROCEDURE.captures_iter(&clean) {
+        let mut done: HashSet<String> = self
+            .items
+            .iter()
+            .filter_map(|i| match i {
+                Item::Def { id, .. } => Some(id.clone()),
+                _ => None,
+            })
+            .collect();
+        for header in ROUTINE.captures_iter(&clean) {
             let whole = header.get(0).unwrap();
             let name = &header[1];
             let line = line_at(&clean, whole.start());
@@ -476,6 +529,10 @@ impl W<'_, '_> {
                 .map_or(clean.len(), |m| m.start());
             let body = &clean[whole.end()..end];
             let ctes: HashSet<String> = CTE.captures_iter(body).map(|c| key(&c[1])).collect();
+            let not_reads: Vec<(usize, usize)> = NOT_A_READ
+                .find_iter(body)
+                .map(|m| (m.start(), m.end()))
+                .collect();
             let mut events: Vec<(usize, &'static str, &str)> = Vec::new();
             let mut deletes: HashSet<usize> = HashSet::new();
             for w in WRITES.captures_iter(body) {
@@ -491,6 +548,9 @@ impl W<'_, '_> {
                 let (keyword, target) = (r.get(0).unwrap(), r.get(1).unwrap());
                 let word = target.as_str();
                 if deletes.contains(&keyword.start())
+                    || not_reads
+                        .iter()
+                        .any(|&(s, e)| (s..e).contains(&keyword.start()))
                     || body[target.end()..].starts_with('(')
                     || ctes.contains(&key(word))
                     || STOPWORDS.contains(&word.to_uppercase().as_str())
@@ -500,12 +560,13 @@ impl W<'_, '_> {
                 events.push((keyword.start(), "reads_from", word));
             }
             events.sort_by_key(|e| e.0);
+            let mut seen: HashSet<(&str, String)> = HashSet::new();
             for (at, relation, word) in events {
                 let label = word
                     .trim_start_matches('[')
                     .trim_end_matches(']')
                     .to_string();
-                if Ctx::child_id("", &label).is_empty() {
+                if Ctx::child_id("", &label).is_empty() || !seen.insert((relation, key(&label))) {
                     continue;
                 }
                 let target = End::Name {

@@ -105,7 +105,7 @@ Status labels used below:
 | `groovy/` | `build.gradle`, `settings.gradle`, `src/main/groovy/com/shop/{App,model/{Base,User},service/UserService,util/Format}.groovy`, `src/main/java/com/shop/{util/Logger,model/Auditable}.java`, `src/test/groovy/com/shop/UserServiceSpec.groovy` | `groovy.graphify.json` | `groovy.clustered.graphify.json` |
 | `dart/` | `lib/shop.dart`, `lib/src/{shop_part,service}.dart`, `lib/src/models/{base,user}.dart`, `lib/src/util/format.dart`, `test/service_test.dart` | `dart.graphify.json` | `dart.clustered.graphify.json` |
 | `lua/` | `lib/shop/{init,util,service}.lua`, `lib/shop/models/{base,user}.lua`, `spec/service_spec.lua`, `bin/shop` (lua shebang), `plugins/server.luau` | `lua.graphify.json` | `lua.clustered.graphify.json` |
-| `sql/` | `db/migrations/{001_init,002_views,003_functions}.sql`, `db/procedures.sql`, `db/schema.sql` (pg_dump style), `db/mysql/legacy.sql`, `db/seed.sql` (DML only), `db/empty.sql` (0 bytes) (§45; Graphify **0.9.97** with tree-sitter-sql) | `sql.graphify.json` | `sql.clustered.graphify.json` |
+| `sql/` | `db/migrations/{001_init,002_views,003_functions}.sql`, `db/procedures.sql`, `db/plpgsql.sql` and `db/maintenance.sql` (routines the grammar loses), `db/schema.sql` (pg_dump style), `db/mysql/legacy.sql`, `db/seed.sql` (DML only), `db/empty.sql` (0 bytes) (§45; Graphify **0.9.97** with tree-sitter-sql) | `sql.graphify.json` | `sql.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -4816,8 +4816,8 @@ Fixture `tests/fixtures/sql/` (§1); goldens `sql.*` from **Graphify 0.9.97** wi
 0.3.11 installed (its `postgres` extra; from 0.9.97 also `[sql]`), the only goldens not made with
 0.9.86. Implementation: `crates/core/src/extract/sql.rs` and `crates/core/src/resolve/sql.rs`, on
 the same grammar (derekstride/tree-sitter-sql 0.3.11, published to crates.io as
-`tree-sitter-sequel`). Derived from 192 single-purpose probes, compared as clustered node and link
-sets.
+`tree-sitter-sequel`). Derived from 293 single-purpose probes, compared as clustered node and link
+sets, and checked against the `.sql` files of Graphify's own repository (§45.6).
 
 ### 45.1 Which install
 
@@ -4842,28 +4842,36 @@ the grammar differs from 0.9.97 only by lacking `writes_to`.
   | `create_trigger` | the name |
   | `create_index` with a name (`CREATE INDEX ON t` gives nothing) | the name |
 
-- Procedures come after every tree node (S2).
+- An `ALTER TABLE` names its table even when it adds no edge: a table not defined in the file
+  gets its stub (§45.4) at that point of the walk (`ALTER TABLE z ADD COLUMN y int` alone gives
+  node `z`).
+- Routines read from the text (procedures, and functions the grammar loses) come after every tree
+  node (S2).
 - Schemas, types, sequences, materialized views, grants, comments and DML give nothing.
 - A name defined twice in a file keeps the first node (§4.5), which collects both definitions'
   edges.
 
 ### 45.3 Edges
 
-All EXTRACTED, weight 1.0, in tree order, then S1, then procedures.
+All EXTRACTED, weight 1.0, in tree order, then S1, then routines.
 
 | Relation | From → to | Line |
 |---|---|---|
-| `references` | table → each object after `REFERENCES` (column or table constraint) | the table's |
-| `references` | the table an `ALTER TABLE [ONLY|IF EXISTS]` names (resolved like any name) → each `REFERENCES` object | the `ALTER`'s |
+| `references` | table → the object after each `REFERENCES` of a column definition or table constraint | the table's |
+| `references` | the table an `ALTER TABLE [ONLY|IF EXISTS]` names (resolved like any name) → the object after each `ADD CONSTRAINT … REFERENCES` | the `ALTER`'s |
 | `reads_from` | view or function → each relation in a `FROM` or `JOIN` (subqueries, CTE bodies, `UNION` arms); CTE names excluded even when a table has that name | the relation's |
 | `indexes` | index → its table | the statement's |
 | `triggers` | trigger → its `ON` table | the statement's |
 | `executes` | trigger → `EXECUTE FUNCTION|PROCEDURE f()` when a **function** with that key was defined **earlier in the same file**; otherwise nothing | the statement's |
-| `writes_to` | procedure → each written table (S2; 0.9.97) | the keyword's |
-| `reads_from` | procedure → each read table (S2) | the keyword's |
+| `writes_to` | routine read from the text → each written table (S2; 0.9.97) | the keyword's |
+| `reads_from` | routine read from the text → each read table (S2) | the keyword's |
 
-Not emitted: reads of `CREATE TABLE … AS SELECT`, a function's writes, top-level DML. Repeated
-edges are all emitted; the build keeps the last (a view reading `u` twice keeps the later line).
+Not emitted: reads of `CREATE TABLE … AS SELECT`, the writes of a function the tree parsed,
+top-level DML, and a `REFERENCES` anywhere else: one without a column list
+(`REFERENCES "s"."t"`, which the grammar leaves in an `ERROR` node inside the table) or in an
+`ALTER TABLE … ADD COLUMN`. Only S1 can still add those, for unquoted words. Repeated tree edges
+are all emitted; the build keeps the last (a view reading `u` twice keeps the later line). S2
+emits each relation and name once per routine (the first).
 
 **Quirk S1 (references from the raw text).** Each `CREATE\s+TABLE\s+(\w+)\s*\(` in the source
 (case-insensitive, anywhere in a line; never `IF NOT EXISTS`, `TEMP`, quoted or schema-qualified
@@ -4873,24 +4881,38 @@ names) owns the text up to the next line that begins, at column 0, with `CREATE`
 also references a stub `catalog`, and words in comments and strings count (`-- … REFERENCES
 legacy_items`).
 
-**Quirk S2 (procedures from the text).** The grammar cannot parse `CREATE PROCEDURE`. Graphify reads
-procedures from the source with comments and one-line `'…'` strings blanked (a string spanning
-lines stays):
+**Quirk S2 (routines from the text).** The grammar cannot parse `CREATE PROCEDURE`, and loses a
+`CREATE FUNCTION` whose PL/pgSQL body it cannot recover from (`PERFORM … JOIN …`, `NULL;`): the
+statement becomes loose tokens in an `ERROR` node, with no `create_function` and no relations.
+**Only when the parse has an error anywhere** (the root's `has_error`, a `MISSING` node included),
+Graphify reads routines from the source with comments and one-line `'…'` strings blanked (a string
+spanning lines stays):
 
-- A line starting (after spaces) with `CREATE [OR REPLACE] PROCEDURE name` (`name` is
-  `[^\s(]+` as written: `"s"."P"`, `billing.close_invoice`) gives `name()` at that line. A second
-  procedure with the same id is skipped, body included.
+- Each `\bCREATE\s+(OR\s+REPLACE\s+)?(FUNCTION|PROCEDURE)\s+name`, case-insensitive and
+  **anywhere in a line** (`$$; CREATE PROCEDURE p()`, and inside a dollar-quoted string), with
+  `name` `[^\s(]+` as written (`"s"."P"`, `billing.close_invoice`), gives `name()` at the line of
+  `CREATE`, in text order, procedures and functions alike. It is skipped, body included, when that
+  id is already defined: by the tree (a function the grammar parsed keeps its tree reads and gets
+  no writes) or by an earlier routine. So a file that parses cleanly gives no routine from a
+  string, and one with an error anywhere does.
 - The body runs to the next line starting (after spaces) with `CREATE` or `ALTER`, so top-level
-  DML after the closing `$$` belongs to it and a `CREATE VIEW` later on the same line does not end
-  it.
+  DML after the closing `$$` belongs to it, and a `CREATE` later on the same line ends neither the
+  body nor the routine before it (whose body then holds the next routine's too).
 - In the body, in text order: `writes_to` for `(INSERT\s+INTO|UPDATE|DELETE(\s+FROM)?|MERGE\s+INTO)\s+name`
   and `reads_from` for `(FROM|JOIN)\s+name`, where `name` is `[\w$."]+`, optionally in `[…]`
   (dropped from the label; backticks never match). A read is skipped when its `FROM` belongs to a
   `DELETE FROM`, when the name is a CTE (`x AS (`, `x(cols) AS (`) or is followed by `(` (a
-  function). Either is skipped for `ONLY`, `LATERAL`, `SET` and `DUAL`: `UPDATE ONLY t` writes
-  nothing, and only the first table of `FROM t1, t2` is read.
+  function), and when its keyword lies in `\b(EXTRACT|SUBSTRING|TRIM|OVERLAY)\s*\(` up to the
+  first `)` or in `\bDISTINCT\s+FROM` (**quirk S4**): `EXTRACT(YEAR FROM d)` and `a IS DISTINCT
+  FROM b` read nothing, while `SUBSTRING(f(x) FROM t)` reads `t` and `foo(a FROM b)` reads `b`.
+  Either is skipped for `ONLY`, `LATERAL`, `SET` and `DUAL`: `UPDATE ONLY t` writes nothing, and
+  only the first table of `FROM t1, t2` is read.
+- Each relation and name (by key, §45.4) is emitted once per routine, at its first keyword: a
+  procedure reading `t` on two lines keeps the first line, and writing `t` twice keeps the first
+  write (a read of `t` is still separate).
 - A name whose slug is empty (`MERGE … THEN DELETE $$` writes to `$$`) gives a raw node with id
   `""`, which the build drops; dijkstral never emits it.
+- A trigger's `executes` never targets a routine read from the text: they come after the walk.
 
 ### 45.4 Names and resolution
 
@@ -4915,8 +4937,7 @@ lines stays):
 
 ### 45.6 Parity
 
-Fixture: 100% of nodes and links, communities exact, report goldens exact. Probes: 191 of 192
-match. Not reproduced:
-
-- **S4.** In a procedure body Graphify does not read `d` in `EXTRACT(YEAR FROM d)`; dijkstral does.
-  Why is **Open**.
+Fixture: 100% of nodes and links, communities exact, report goldens exact. Probes: 293 of 293
+match. The seven `.sql` files of Graphify's repository at the bench pin (v0.9.86, `corpus.toml`),
+run through both tools as data: 68 of 68 node and link records match. Every quirk above is
+reproduced.
