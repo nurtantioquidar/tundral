@@ -14,7 +14,8 @@
 //!   `type X` in it share the id `x_x`: one node, in the file node's position, with the type's
 //!   label and line, and a `contains` self-loop (G2).
 //! - A method whose receiver type is not declared earlier in the same file creates a receiver node
-//!   (label = receiver type text, e.g. `Store[T]`) at the method's line (G3).
+//!   (label = the type's name without type arguments) at the method's line (G3); the build keeps
+//!   one node per type id of a package (`crate::resolve`, §12.1).
 //! - Every qualified type reference `q.T` emits a per-file stub `q_t`; when that id collides with a
 //!   real type `dir_t` elsewhere, the §4.5 collision rename re-keys the real type
 //!   (`store_store_go_store_model`, G1). The resolver then replaces the stub.
@@ -26,7 +27,7 @@ use std::collections::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
 use tree_sitter::{Node as TsNode, Tree};
 
-use super::{slug, Ctx};
+use super::{flag, origin, slug, Ctx};
 use crate::facts::NodeKind;
 
 mod infer;
@@ -91,8 +92,32 @@ pub struct GoFacts {
     pub returns: Vec<GoReturn>,
     /// Symbolic types of method-call receivers (local type inference, [`infer`]).
     pub tys: Vec<GoTy>,
+    /// Package-scoped definition nodes this file holds (types, aliases and receiver nodes, by
+    /// local id) and whether the file declares the type: the build keeps one node per id in a
+    /// package directory (`crate::resolve`).
+    pub pkg_nodes: Vec<(String, bool)>,
+    /// Types the file declares whose id a qualified stub of the file already holds.
+    pub stub_decls: Vec<String>,
     /// `recv.M(..)` calls whose receiver has a symbolic type, in call order.
     pub method_calls: Vec<GoMethodCall>,
+    /// `x.M(..)` calls the file binds to nothing, whose receiver `x` a declaration types by name
+    /// (Graphify's typed receiver calls, see [`GoTypedCall`]).
+    pub typed_calls: Vec<GoTypedCall>,
+}
+
+/// `x.M(..)` where `x` is a variable typed `T` / `*T` by a declaration: the function's own
+/// (parameters, receiver, named results, `var x T`, `x := T{..}` / `&T{..}` / `new(T)`), else the
+/// file's first such declaration of that name in any function. The cross-file pass binds it to
+/// `M` of the unique Go type labelled `T`, or records it in the caller's
+/// `metadata.unresolved_calls` when no type has that label (§12.2).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GoTypedCall {
+    /// Local id of the calling function or method.
+    pub caller: String,
+    /// The receiver's type name as written, without `*`.
+    pub ty: String,
+    pub name: String,
+    pub line: u32,
 }
 
 /// A struct type and its fields (embedded fields under their type's name).
@@ -223,6 +248,13 @@ struct Go<'c, 'a> {
     types: HashMap<String, String>,
     /// Final id of each (name, base id) function or method.
     ids: HashMap<(String, String), String>,
+    /// Final id of each type the file declares (aliases included), by name.
+    type_ids: HashMap<String, String>,
+    /// Variable → type name declarations per function id, and the file's first per name.
+    local_types: HashMap<String, HashMap<String, String>>,
+    file_types: HashMap<String, String>,
+    /// Receiver variable of each method, by method id.
+    receivers: HashMap<String, String>,
     /// Import qualifier → path (alias, or the path's last segment).
     qualifiers: HashMap<String, String>,
     facts: GoFacts,
@@ -241,6 +273,11 @@ struct RawCall {
     name: String,
     bare: bool,
     line: u32,
+    /// The operand of `x.M(..)` when it is a plain identifier and not an import qualifier, or
+    /// the field `f` of `r.f.M(..)` on a method's receiver `r`.
+    recv: Option<String>,
+    /// `recv` is a receiver's field: only the file's declarations type it.
+    field: bool,
 }
 
 /// One pending edge of a declaration.
@@ -260,6 +297,10 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         slots: HashMap::from([(file_id.clone(), (0, Slot::File))]),
         types: HashMap::new(),
         ids: HashMap::new(),
+        type_ids: HashMap::new(),
+        local_types: HashMap::new(),
+        file_types: HashMap::new(),
+        receivers: HashMap::new(),
         qualifiers: HashMap::new(),
         facts: GoFacts {
             file_id,
@@ -275,6 +316,7 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
     if let Some(tree) = tree {
         let root = tree.root_node();
         go.declare(root);
+        go.collect_bindings(root);
         go.emit(root);
     }
     go.bind_calls();
@@ -345,7 +387,8 @@ impl<'a> Go<'_, 'a> {
         Ctx::child_id(&self.dir, name)
     }
 
-    /// Receiver type text without `*` and the receiver's type parameter names.
+    /// Receiver type name without `*` and type arguments (`*Store[T]` → `Store`), and the
+    /// receiver's type parameter names.
     fn receiver(&self, method: TsNode<'_>) -> Option<(String, Vec<String>)> {
         let list = method.child_by_field_name("receiver")?;
         let param = named_children(list)
@@ -360,14 +403,50 @@ impl<'a> Go<'_, 'a> {
             if let Some(args) = ty.child_by_field_name("type_arguments") {
                 collect_identifiers(args, self.cx.src, &mut params);
             }
+            ty = ty.child_by_field_name("type")?;
         }
         Some((self.text(ty).to_string(), params))
     }
 
-    /// First pass over top-level declarations: the final ids of functions and methods, with
-    /// case variants disambiguated.
+    /// Record a package-scoped node (a type, alias or receiver node holding `id` in this file).
+    fn pkg_node(&mut self, id: &str, declared: bool) {
+        match self.facts.pkg_nodes.iter_mut().find(|(i, _)| i == id) {
+            Some(entry) => entry.1 |= declared,
+            None => self.facts.pkg_nodes.push((id.to_string(), declared)),
+        }
+    }
+
+    /// The id of the type a receiver names: the file's own type of that name, else
+    /// `dir_name`.
+    fn owner_id(&self, recv: &str) -> String {
+        self.type_ids
+            .get(recv)
+            .cloned()
+            .unwrap_or_else(|| Ctx::child_id(&self.dir, recv))
+    }
+
+    /// First pass over top-level declarations: the final ids of types, functions and methods,
+    /// with case variants disambiguated (types first: their ids prefix their methods').
     fn declare(&mut self, root: TsNode) {
-        // (name, base id) of every callable, in source order.
+        let mut types: Vec<(String, String)> = Vec::new();
+        for decl in named_children(root) {
+            if decl.kind() != "type_declaration" {
+                continue;
+            }
+            for spec in named_children(decl) {
+                if !matches!(spec.kind(), "type_spec" | "type_alias") {
+                    continue;
+                }
+                if let Some(name) = spec.child_by_field_name("name") {
+                    let name = self.text(name);
+                    types.push((name.to_string(), self.type_id(name)));
+                }
+            }
+        }
+        for ((name, _), id) in types.iter().zip(variant_ids(&types)) {
+            self.type_ids.entry(name.clone()).or_insert(id);
+        }
+        // (name, base id) of every function and method, in source order.
         let mut order: Vec<(String, String)> = Vec::new();
         for decl in named_children(root) {
             match decl.kind() {
@@ -380,8 +459,7 @@ impl<'a> Go<'_, 'a> {
                             continue;
                         };
                         let name = self.text(name);
-                        let id = self.type_id(name);
-                        order.push((name.to_string(), id.clone()));
+                        let id = self.owner_id(name);
                         if let Some(iface) = spec
                             .child_by_field_name("type")
                             .filter(|t| t.kind() == "interface_type")
@@ -411,26 +489,13 @@ impl<'a> Go<'_, 'a> {
                         continue;
                     };
                     let name = self.text(name);
-                    let owner = Ctx::child_id(&self.dir, &recv);
+                    let owner = self.owner_id(&recv);
                     order.push((name.to_string(), Ctx::child_id(&owner, name)));
                 }
                 _ => {}
             }
         }
-        let mut names_by_id: HashMap<&str, Vec<&str>> = HashMap::new();
-        for (name, base) in &order {
-            let names = names_by_id.entry(base.as_str()).or_default();
-            if !names.contains(&name.as_str()) {
-                names.push(name);
-            }
-        }
-        for (name, base) in &order {
-            let names = &names_by_id[base.as_str()];
-            let id = if names.len() > 1 {
-                variant_id(base, name, names)
-            } else {
-                base.clone()
-            };
+        for ((name, base), id) in order.iter().zip(variant_ids(&order)) {
             self.ids.insert((name.clone(), base.clone()), id);
         }
     }
@@ -444,8 +509,16 @@ impl<'a> Go<'_, 'a> {
     }
 
     /// Insert a node subject to the same-file collision rules. Returns false when an existing
-    /// node kept the id.
-    fn put(&mut self, id: String, label: String, line: u32, slot: Slot) -> bool {
+    /// node kept the id. Types and receiver nodes carry `_callable` and `_callable_class`,
+    /// functions and methods `_callable`, interface methods (`callable: false`) neither.
+    fn put(&mut self, id: String, label: String, line: u32, slot: Slot, callable: bool) -> bool {
+        let attrs = || -> Vec<(String, crate::facts::Attr)> {
+            match slot {
+                Slot::Type | Slot::Receiver => vec![flag("_callable"), flag("_callable_class")],
+                Slot::Func | Slot::Method if callable => vec![flag("_callable")],
+                _ => vec![],
+            }
+        };
         if let Some(&(idx, existing)) = self.slots.get(&id) {
             // A type (or a function named `_`) replaces a same-id file node in place (G2); a
             // function replaces a same-id method. Every other duplicate keeps the first node.
@@ -454,16 +527,19 @@ impl<'a> Go<'_, 'a> {
                 (Slot::File, Slot::Type | Slot::Func) | (Slot::Method, Slot::Func)
             );
             if replace {
+                let mut extra = attrs();
+                extra.push(origin());
                 let node = &mut self.cx.facts.nodes[idx];
                 node.label = label;
                 node.loc = crate::facts::Loc::Line(line);
                 node.kind = NodeKind::Def;
+                node.attrs = extra;
                 self.slots.insert(id, (idx, slot));
             }
             return replace;
         }
         let idx = self.cx.facts.nodes.len();
-        self.cx.add_def(id.clone(), label, line, vec![]);
+        self.cx.add_def(id.clone(), label, line, attrs());
         self.slots.insert(id, (idx, slot));
         true
     }
@@ -476,13 +552,214 @@ impl<'a> Go<'_, 'a> {
         }
     }
 
+    /// The variable → type declarations of every function and method (see [`GoTypedCall`]), in
+    /// source order: receiver, parameters, named results, then the body's `var x T`,
+    /// `x := T{..}` / `&T{..}` / `new(T)`. Package-level `var x T` and struct fields count for the
+    /// file only; a method's `r.f.M(..)` types `f` from the file's declarations alone.
+    fn collect_bindings(&mut self, root: TsNode) {
+        for decl in named_children(root) {
+            let mut found: Vec<(String, String)> = Vec::new();
+            let id = match decl.kind() {
+                "function_declaration" => {
+                    let Some(name) = decl.child_by_field_name("name") else {
+                        continue;
+                    };
+                    let name = self.text(name);
+                    Some(self.final_id(name, &Ctx::child_id(&self.cx.file_id, name)))
+                }
+                "method_declaration" => {
+                    let (Some(name), Some((recv, _))) =
+                        (decl.child_by_field_name("name"), self.receiver(decl))
+                    else {
+                        continue;
+                    };
+                    let name = self.text(name);
+                    let owner = self.owner_id(&recv);
+                    let id = self.final_id(name, &Ctx::child_id(&owner, name));
+                    if let Some(list) = decl.child_by_field_name("receiver") {
+                        for p in named_children(list) {
+                            if let Some(n) = p.child_by_field_name("name") {
+                                let var = self.text(n).to_string();
+                                self.receivers.insert(id.clone(), var.clone());
+                                found.push((var, recv.clone()));
+                            }
+                        }
+                    }
+                    Some(id)
+                }
+                "var_declaration" => {
+                    self.var_bindings(decl, &mut found);
+                    None
+                }
+                "type_declaration" => {
+                    self.field_bindings(decl, &mut found);
+                    None
+                }
+                _ => continue,
+            };
+            if id.is_some() {
+                for field in ["parameters", "result"] {
+                    if let Some(list) = decl.child_by_field_name(field) {
+                        self.param_bindings(list, &mut found);
+                    }
+                }
+                if let Some(body) = decl.child_by_field_name("body") {
+                    self.body_bindings(body, &mut found);
+                }
+            }
+            for (var, ty) in &found {
+                self.file_types
+                    .entry(var.clone())
+                    .or_insert_with(|| ty.clone());
+            }
+            if let Some(id) = id {
+                let local = self.local_types.entry(id).or_default();
+                for (var, ty) in found {
+                    local.entry(var).or_insert(ty);
+                }
+            }
+        }
+    }
+
+    /// The named fields of the declaration's struct types.
+    fn field_bindings(&self, decl: TsNode, out: &mut Vec<(String, String)>) {
+        for spec in named_children(decl) {
+            let Some(list) = spec
+                .child_by_field_name("type")
+                .filter(|t| t.kind() == "struct_type")
+                .and_then(|t| {
+                    named_children(t)
+                        .into_iter()
+                        .find(|n| n.kind() == "field_declaration_list")
+                })
+            else {
+                continue;
+            };
+            for field in named_children(list) {
+                let Some(ty) = field
+                    .child_by_field_name("type")
+                    .and_then(|t| self.plain_type(t))
+                else {
+                    continue;
+                };
+                let mut c = field.walk();
+                for n in field.children_by_field_name("name", &mut c) {
+                    out.push((self.text(n).to_string(), ty.clone()));
+                }
+            }
+        }
+    }
+
+    /// `T` or `*T` with `T` a plain type name.
+    fn plain_type(&self, mut ty: TsNode) -> Option<String> {
+        if ty.kind() == "pointer_type" {
+            ty = ty.named_child(0)?;
+        }
+        (ty.kind() == "type_identifier").then(|| self.text(ty).to_string())
+    }
+
+    fn param_bindings(&self, list: TsNode, out: &mut Vec<(String, String)>) {
+        if list.kind() != "parameter_list" {
+            return;
+        }
+        for p in named_children(list) {
+            if p.kind() != "parameter_declaration" {
+                continue;
+            }
+            let Some(ty) = p
+                .child_by_field_name("type")
+                .and_then(|t| self.plain_type(t))
+            else {
+                continue;
+            };
+            let mut c = p.walk();
+            for n in p.children_by_field_name("name", &mut c) {
+                out.push((self.text(n).to_string(), ty.clone()));
+            }
+        }
+    }
+
+    fn var_bindings(&self, decl: TsNode, out: &mut Vec<(String, String)>) {
+        let mut specs = Vec::new();
+        for c in named_children(decl) {
+            match c.kind() {
+                "var_spec" => specs.push(c),
+                "var_spec_list" => specs.extend(
+                    named_children(c)
+                        .into_iter()
+                        .filter(|n| n.kind() == "var_spec"),
+                ),
+                _ => {}
+            }
+        }
+        for spec in specs {
+            let Some(ty) = spec
+                .child_by_field_name("type")
+                .and_then(|t| self.plain_type(t))
+            else {
+                continue;
+            };
+            let mut c = spec.walk();
+            for n in spec.children_by_field_name("name", &mut c) {
+                out.push((self.text(n).to_string(), ty.clone()));
+            }
+        }
+    }
+
+    fn body_bindings(&self, node: TsNode, out: &mut Vec<(String, String)>) {
+        let mut stack = vec![node];
+        while let Some(n) = stack.pop() {
+            match n.kind() {
+                "var_declaration" => self.var_bindings(n, out),
+                "short_var_declaration" => {
+                    if let (Some(left), Some(right)) = (
+                        n.child_by_field_name("left"),
+                        n.child_by_field_name("right"),
+                    ) {
+                        for (name, value) in named_children(left).iter().zip(named_children(right))
+                        {
+                            if name.kind() == "identifier" {
+                                if let Some(ty) = self.constructed_type(value) {
+                                    out.push((self.text(*name).to_string(), ty));
+                                }
+                            }
+                        }
+                    }
+                }
+                _ => {}
+            }
+            let mut kids = named_children(n);
+            kids.reverse();
+            stack.extend(kids);
+        }
+    }
+
+    /// The type `T{..}`, `&T{..}` or `new(T)` constructs.
+    fn constructed_type(&self, mut value: TsNode) -> Option<String> {
+        if value.kind() == "unary_expression" && value.child(0).is_some_and(|o| o.kind() == "&") {
+            value = value.child_by_field_name("operand")?;
+        }
+        match value.kind() {
+            "composite_literal" => self.plain_type(value.child_by_field_name("type")?),
+            "call_expression" => {
+                let f = value.child_by_field_name("function")?;
+                if f.kind() != "identifier" || self.text(f) != "new" {
+                    return None;
+                }
+                let arg = value.child_by_field_name("arguments")?.named_child(0)?;
+                self.plain_type(arg)
+            }
+            _ => None,
+        }
+    }
+
     fn emit(&mut self, root: TsNode) {
         for decl in named_children(root) {
             match decl.kind() {
                 "import_declaration" => self.imports(decl),
                 "type_declaration" => {
                     for spec in named_children(decl) {
-                        if spec.kind() == "type_spec" {
+                        if matches!(spec.kind(), "type_spec" | "type_alias") {
                             self.type_spec(spec);
                         }
                     }
@@ -543,10 +820,10 @@ impl<'a> Go<'_, 'a> {
             return;
         };
         let name = self.text(name);
-        let id = self.type_id(name);
+        let id = self.owner_id(name);
         let line = Ctx::line(spec);
         let previous = self.slots.get(&id).map(|&(_, s)| s);
-        let placed = self.put(id.clone(), name.to_string(), line, Slot::Type);
+        let placed = self.put(id.clone(), name.to_string(), line, Slot::Type, true);
         // Only types declared so far bind in the file; later ones resolve as stubs.
         self.types.insert(name.to_string(), id.clone());
         match previous {
@@ -555,17 +832,28 @@ impl<'a> Go<'_, 'a> {
             Some(Slot::Stub) => {
                 self.facts.qual_stubs.retain(|q| q.id != id);
                 self.facts.bare_stubs.retain(|(s, _)| *s != id);
+                self.facts.stub_decls.push(id.clone());
+                // The stub keeps its label but carries the type's flags.
+                let idx = self.slots[&id].0;
+                let node = &mut self.cx.facts.nodes[idx];
+                node.attrs.push(flag("_callable"));
+                node.attrs.push(flag("_callable_class"));
             }
             // The type owns its node (or its own receiver node already did). A case variant
             // (`type manager` then `type Manager`) folds into the first and is not findable
             // under its own name.
             _ if placed || previous == Some(Slot::Receiver) => {
                 self.facts.types.push((name.to_string(), id.clone()));
+                self.pkg_node(&id, true);
             }
             _ => {}
         }
         let file_id = self.cx.file_id.clone();
         self.cx.add_edge(&file_id, &id, "contains", line, None);
+        // An alias (`type K = V`, generic ones too) is a node with no edges of its own.
+        if spec.kind() == "type_alias" {
+            return;
+        }
 
         let mut scope = Vec::new();
         if let Some(tp) = spec.child_by_field_name("type_parameters") {
@@ -709,15 +997,15 @@ impl<'a> Go<'_, 'a> {
         match node.kind() {
             "type_identifier" => {
                 let name = self.text(node);
-                // Type parameters are plain stubs too (and bind by label like any other).
-                let param = scope.iter().any(|s| s == name);
-                if !param {
-                    if let Some(id) = self.types.get(name) {
-                        return Some(id.clone());
-                    }
-                    if is_builtin_type(name) {
-                        return None;
-                    }
+                // A type parameter is no type, even where it shadows a declared one.
+                if scope.iter().any(|s| s == name) {
+                    return None;
+                }
+                if let Some(id) = self.types.get(name) {
+                    return Some(id.clone());
+                }
+                if is_builtin_type(name) {
+                    return None;
                 }
                 let id = slug(name);
                 if id.is_empty() {
@@ -869,7 +1157,7 @@ impl<'a> Go<'_, 'a> {
         let name = self.text(name);
         let id = self.final_id(name, &Ctx::child_id(iface, name));
         let line = Ctx::line(elem);
-        self.put(id.clone(), format!(".{name}()"), line, Slot::Method);
+        self.put(id.clone(), format!(".{name}()"), line, Slot::Method, false);
         self.cx.add_edge(iface, &id, "method", line, None);
         let refs = self.signature(elem, scope, line);
         self.flush(&id, refs);
@@ -882,7 +1170,7 @@ impl<'a> Go<'_, 'a> {
         let name = self.text(name);
         let id = self.final_id(name, &Ctx::child_id(&self.cx.file_id, name));
         let line = Ctx::line(decl);
-        let kept = self.put(id.clone(), format!("{name}()"), line, Slot::Func);
+        let kept = self.put(id.clone(), format!("{name}()"), line, Slot::Func, true);
         let node = self.slots[&id].0 as u32;
         let file_id = self.cx.file_id.clone();
         self.cx.add_edge(&file_id, &id, "contains", line, None);
@@ -905,23 +1193,25 @@ impl<'a> Go<'_, 'a> {
             return;
         };
         let name = self.text(name);
-        let owner = Ctx::child_id(&self.dir, &recv);
+        let owner = self.owner_id(&recv);
         let id = self.final_id(name, &Ctx::child_id(&owner, name));
         let line = Ctx::line(decl);
         if !self.slots.contains_key(&owner) {
-            self.put(owner.clone(), recv.clone(), line, Slot::Receiver);
+            self.put(owner.clone(), recv.clone(), line, Slot::Receiver, true);
+            self.pkg_node(&owner, self.type_ids.contains_key(&recv));
             // The receiver node binds later references to its name in this file.
             self.types
                 .entry(recv.clone())
                 .or_insert_with(|| owner.clone());
         }
-        let kept = self.put(id.clone(), format!(".{name}()"), line, Slot::Method);
+        let kept = self.put(id.clone(), format!(".{name}()"), line, Slot::Method, true);
         let node = self.slots[&id].0 as u32;
         self.cx.add_edge(&owner, &id, "method", line, None);
         let refs = self.signature(decl, &scope, line);
         self.flush(&id, refs);
-        let base = recv.split('[').next().unwrap_or(&recv).to_string();
-        self.facts.methods.push((base, name.to_string(), node));
+        self.facts
+            .methods
+            .push((recv.clone(), name.to_string(), node));
         self.record_results(node, decl, &scope);
         if let Some(body) = decl.child_by_field_name("body") {
             self.walk_body(&id, kept.then_some(node), decl, body, &scope, Some(&recv));
@@ -938,6 +1228,7 @@ impl<'a> Go<'_, 'a> {
     }
 
     fn call(&mut self, caller: &str, function: TsNode, line: u32) {
+        let (mut recv, mut on_field) = (None, false);
         let (name, path, bare) = match function.kind() {
             "identifier" => (self.text(function), None, true),
             "selector_expression" => {
@@ -950,6 +1241,18 @@ impl<'a> Go<'_, 'a> {
                 let path = (operand.kind() == "identifier")
                     .then(|| self.qualifiers.get(self.text(operand)).cloned())
                     .flatten();
+                if operand.kind() == "identifier" && path.is_none() {
+                    recv = Some(self.text(operand).to_string());
+                } else if operand.kind() == "selector_expression" {
+                    let base = operand.child_by_field_name("operand");
+                    let own = self.receivers.get(caller).map(String::as_str);
+                    if base.is_some_and(|b| b.kind() == "identifier" && Some(self.text(b)) == own) {
+                        recv = operand
+                            .child_by_field_name("field")
+                            .map(|f| self.text(f).to_string());
+                        on_field = true;
+                    }
+                }
                 (self.text(field), path, false)
             }
             // `pkg.F[T](..)`: an explicitly instantiated generic function of an imported
@@ -971,6 +1274,8 @@ impl<'a> Go<'_, 'a> {
             name: name.to_string(),
             bare,
             line,
+            recv,
+            field: on_field,
         });
     }
 
@@ -1026,9 +1331,27 @@ impl<'a> Go<'_, 'a> {
                     if target != c.caller && seen.insert((c.caller.as_str(), target)) {
                         local.push((c.caller.clone(), target.to_string(), c.line));
                     }
-                    continue;
+                    // `x.M()` inside `M` itself (delegation) binds to nothing here and is typed
+                    // like a call the file does not define.
+                    if c.bare || target != c.caller {
+                        continue;
+                    }
                 }
                 if !c.bare {
+                    let ty = c.recv.as_ref().and_then(|r| {
+                        let local = (!c.field)
+                            .then(|| self.local_types.get(&c.caller).and_then(|m| m.get(r)))
+                            .flatten();
+                        local.or_else(|| self.file_types.get(r))
+                    });
+                    if let Some(ty) = ty.filter(|t| !is_builtin_type(t)) {
+                        self.facts.typed_calls.push(GoTypedCall {
+                            caller: c.caller.clone(),
+                            ty: ty.clone(),
+                            name: c.name.clone(),
+                            line: c.line,
+                        });
+                    }
                     continue;
                 }
             }
@@ -1185,27 +1508,40 @@ const DENIED_CALLS: &[&str] = &[
     "zip",
 ];
 
-/// Distinct names that slug to the same id in one file (`Set`/`set`, `run`/`run_`) are told
-/// apart by `_<sha1(name)[:6]>`, except that an exported name whose only difference from another
-/// is the capital first letter keeps the plain id (`Set` stays `…_set`, `set` becomes
-/// `…_set_65c10d`). Observed on 875 kubernetes groups.
+/// Distinct names that slug to the same id in one file (`Set`/`set`, `STM`/`stm`, `run`/`run_`)
+/// are told apart by `_<sha1(name)[:6]>`, except that the group's only exported name (capital
+/// first letter) keeps the plain id (`Set` stays `…_set`, `set` becomes `…_set_65c10d`). Holds for
+/// all 2,996 names in such groups on kubernetes (Graphify 0.9.97).
 fn variant_id(base: &str, name: &str, names: &[&str]) -> String {
-    let exported_twin = name.chars().next().is_some_and(char::is_uppercase)
-        && names.iter().any(|other| {
-            let mut c = other.chars();
-            *other != name
-                && c.next().is_some_and(char::is_lowercase)
-                && other
-                    .chars()
-                    .next()
-                    .map(|f| f.to_uppercase().collect::<String>() + c.as_str())
-                    == Some(name.to_string())
-        });
-    if exported_twin {
+    let exported = |n: &str| n.chars().next().is_some_and(char::is_uppercase);
+    if exported(name) && names.iter().all(|other| *other == name || !exported(other)) {
         return base.to_string();
     }
     let digest = sha1_smol::Sha1::from(name.as_bytes()).digest().to_string();
     format!("{base}_{}", &digest[..6])
+}
+
+/// The final id of each `(name, base id)`: [`variant_id`] among the distinct names sharing a
+/// base id.
+fn variant_ids(order: &[(String, String)]) -> Vec<String> {
+    let mut names_by_id: HashMap<&str, Vec<&str>> = HashMap::new();
+    for (name, base) in order {
+        let names = names_by_id.entry(base.as_str()).or_default();
+        if !names.contains(&name.as_str()) {
+            names.push(name);
+        }
+    }
+    order
+        .iter()
+        .map(|(name, base)| {
+            let names = &names_by_id[base.as_str()];
+            if names.len() > 1 {
+                variant_id(base, name, names)
+            } else {
+                base.clone()
+            }
+        })
+        .collect()
 }
 
 fn type_param_names(list: TsNode, src: &[u8], out: &mut Vec<String>) {
@@ -1295,12 +1631,43 @@ mod tests {
             .map(|n| (n.id.as_str(), n.label.as_str()))
             .collect();
         assert!(ids.contains(&("q_mixed", "Mixed")));
-        assert!(ids.contains(&("q_s_t", "S[T]")));
-        assert!(ids.contains(&("q_s_t_put", ".Put()")));
-        assert!(ids.contains(&("t", "T")));
+        // A generic receiver names its type without type arguments, and a type parameter is
+        // no type.
+        assert!(ids.contains(&("q_s", "S")));
+        assert!(ids.contains(&("q_s_put", ".Put()")));
+        assert!(!ids.iter().any(|(id, _)| *id == "t"));
         // The receiver node keeps the method's line even though the type is declared later.
         let mixed = f.nodes.iter().find(|n| n.id == "q_mixed").unwrap();
         assert_eq!(mixed.loc, crate::facts::Loc::Line(3));
+        assert!(mixed.attr("_callable_class").is_some());
+        let LangFacts::Go(g) = &f.lang else { panic!() };
+        assert_eq!(
+            g.pkg_nodes,
+            vec![("q_mixed".to_string(), true), ("q_s".to_string(), false)]
+        );
+    }
+
+    #[test]
+    fn aliases_are_types_and_case_variants_get_a_suffix() {
+        let f = facts(
+            "q/a.go",
+            "package q\n\ntype Tree interface{ Find() }\ntype tree struct{}\n\nfunc (t *tree) Find() {}\nfunc (t *tree) find() {}\n\ntype K = string\n",
+        );
+        let ids: Vec<_> = f
+            .nodes
+            .iter()
+            .map(|n| (n.id.as_str(), n.label.as_str()))
+            .collect();
+        assert!(ids.contains(&("q_tree", "Tree")));
+        assert!(ids.contains(&("q_tree_find", ".Find()")));
+        // `tree` is sha1("tree")[:6]-suffixed, and so are its methods' ids.
+        let tree = ids.iter().find(|(_, l)| *l == "tree").unwrap().0;
+        assert!(tree.starts_with("q_tree_") && tree.len() == "q_tree_".len() + 6);
+        assert!(ids.contains(&(format!("{tree}_find").as_str(), ".Find()")));
+        assert!(ids.contains(&("q_k", "K")));
+        let iface_method = f.nodes.iter().find(|n| n.id == "q_tree_find").unwrap();
+        assert!(iface_method.attr("_callable").is_none());
+        assert!(edges(&f).contains(&"q_a contains q_k - L9".to_string()));
     }
 
     #[test]

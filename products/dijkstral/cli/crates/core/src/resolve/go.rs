@@ -4,9 +4,13 @@
 //!   resolves to a directory by the longest module prefix, and it is local only when that directory
 //!   holds Go files. Local imports link the importing file to every file node of the package
 //!   directory (`_test.go` files included, quirk G4); anything else links to `go_pkg_<path>`.
-//! - Type stubs: an unqualified type not declared in its file binds to the unique type of that name
-//!   in the same directory, else stays a stub; a qualified `q.T` binds to the unique type `T` of the
-//!   imported directory, else becomes `go_type_<path>_<T>`.
+//! - Type stubs: an unqualified type not declared in its file binds to the unique definition of that
+//!   label, else stays a stub; a qualified `q.T` binds to the unique type `T` of the imported
+//!   directory, else becomes `go_type_<path>_<T>`. A label another language's definition carries
+//!   (a YAML key) binds neither form (for `q.T`, one in the imported directory).
+//! - Typed receiver calls (Graphify 0.9.97): `x.M()` with `x` typed by a declaration binds to `M`
+//!   of the unique Go type labelled like `x`'s type (INFERRED 0.85), or lands in the caller's
+//!   `metadata.unresolved_calls` when no Go type carries the label.
 //! - Calls: `pkg.F()` binds to the unique callable `F` of the imported directory (EXTRACTED 1.0); a
 //!   bare `F()` not defined in its file binds to the unique `F` among the other files of its
 //!   directory, else to the unique `F` in the repository (INFERRED 0.85).
@@ -25,7 +29,7 @@ use std::path::Path;
 use super::{Index, Resolution, View};
 use crate::extract::go::{GoCallee, GoFacts, GoField, GoReturn, GoTy, GoWritten, ROOT_DIR};
 use crate::extract::{external_node, origin, slug};
-use crate::facts::{Confidence, Edge, LangFacts, Loc, Node, NodeKind};
+use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc, Node, NodeKind};
 use crate::lang::Lang;
 
 /// The directory part of a relative path (`""` at the root).
@@ -110,6 +114,10 @@ fn stub_node(id: String, label: String) -> Node {
         loc: Loc::Empty,
         attrs: vec![origin()],
     }
+}
+
+fn json_str(s: &str) -> String {
+    serde_json::to_string(s).unwrap_or_default()
 }
 
 /// Exactly one distinct candidate.
@@ -261,10 +269,49 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             }
         }
     }
+    // Typed receiver calls: Go types (and receiver nodes) by label, and their methods by name,
+    // read from the `method` edges.
+    let mut class_labels: HashMap<&str, Vec<String>> = HashMap::new();
+    let mut methods_of: HashMap<String, HashMap<String, Vec<String>>> = HashMap::new();
+    for (v, _) in &go {
+        for n in v.facts.nodes.iter().filter(|n| n.kind == NodeKind::Def) {
+            if n.attr("_callable_class").is_some() {
+                push_unique(class_labels.entry(&n.label).or_default(), fix(&n.id));
+            }
+        }
+        for e in v.facts.edges.iter().filter(|e| e.relation == "method") {
+            let Some(m) = index.get(files, &e.target) else {
+                continue;
+            };
+            let slot = methods_of
+                .entry(fix(&e.source))
+                .or_default()
+                .entry(call_name(&m.label).to_string());
+            push_unique(slot.or_default(), fix(&e.target));
+        }
+    }
+    // Definitions of other languages (YAML keys above all) share the label index: a type name
+    // that also labels one binds nowhere by label, and nowhere through an import of a directory
+    // where one carries it (`pkg/kubelet/status/.mockery.yaml` listing `PodStatusProvider`).
+    let mut other_labels: HashSet<&str> = HashSet::new();
+    let mut other_dir_labels: HashSet<(&str, &str)> = HashSet::new();
+    for v in files {
+        if matches!(v.file.lang, Lang::Go | Lang::GoMod) {
+            continue;
+        }
+        let dir = parent(&v.file.rel);
+        for n in v.facts.nodes.iter().filter(|n| n.kind == NodeKind::Def) {
+            other_labels.insert(&n.label);
+            other_dir_labels.insert((dir, &n.label));
+        }
+    }
     let by_label = |key: &str| -> Option<String> {
-        unique(type_labels.get(key))
-            .or_else(|| unique(func_labels.get(key)))
-            .cloned()
+        let typed = if other_labels.contains(key) {
+            None
+        } else {
+            unique(type_labels.get(key))
+        };
+        typed.or_else(|| unique(func_labels.get(key))).cloned()
     };
     let mut local_dirs: HashMap<String, Option<String>> = HashMap::new();
     let mut local_dir = |path: &str| -> Option<String> {
@@ -400,6 +447,7 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                     Some(p) => {
                         let key = format!("{p}{}", q.name).replace('.', "");
                         local_dir(p)
+                            .filter(|d| !other_dir_labels.contains(&(d.as_str(), q.name.as_str())))
                             .and_then(|d| lookup(&types, &d, &q.name))
                             .or_else(|| unique(type_labels.get(key.as_str())).cloned())
                     }
@@ -458,6 +506,63 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                 res.edges.push(edge(caller, target, &spec));
             }
 
+            // Typed receiver calls (§12.2): `M` of the unique Go type labelled `T`; a label no
+            // Go type carries goes to the caller's `metadata.unresolved_calls`.
+            let mut unresolved: Vec<(String, Vec<Unresolved>)> = Vec::new();
+            for c in &g.typed_calls {
+                let caller = fid(v, &c.caller);
+                let Some(types) = class_labels.get(c.ty.as_str()) else {
+                    let at = match unresolved.iter().position(|(id, _)| *id == caller) {
+                        Some(i) => i,
+                        None => {
+                            unresolved.push((caller.clone(), Vec::new()));
+                            unresolved.len() - 1
+                        }
+                    };
+                    let entries = &mut unresolved[at].1;
+                    if !entries.iter().any(|(n, t, _)| *n == c.name && *t == c.ty) {
+                        entries.push((&c.name, &c.ty, c.line));
+                    }
+                    continue;
+                };
+                let Some(target) = unique(Some(types))
+                    .and_then(|t| methods_of.get(t))
+                    .and_then(|m| unique(m.get(&c.name)))
+                else {
+                    continue;
+                };
+                if *target == caller || !called.insert((caller.clone(), target.clone())) {
+                    continue;
+                }
+                let spec = EdgeSpec {
+                    relation: "calls",
+                    rel,
+                    line: c.line,
+                    context: "call",
+                    confidence: Confidence::Inferred,
+                    score: Some(0.85),
+                };
+                res.edges.push(edge(caller, target.clone(), &spec));
+            }
+            for (caller, entries) in unresolved {
+                let calls: Vec<String> = entries
+                    .iter()
+                    .map(|(name, ty, line)| {
+                        format!(
+                            "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"go\",\"line\":\"L{line}\",\"file\":{}}}",
+                            json_str(name),
+                            json_str(ty),
+                            json_str(rel)
+                        )
+                    })
+                    .collect();
+                res.attrs.push((
+                    caller,
+                    "metadata".into(),
+                    Attr::Json(format!("{{\"unresolved_calls\":[{}]}}", calls.join(","))),
+                ));
+            }
+
             called_per_file.push(called);
         }
 
@@ -481,6 +586,9 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
     });
     res
 }
+
+/// An `unresolved_calls` entry: (callee, receiver type, line).
+type Unresolved<'t> = (&'t str, &'t str, u32);
 
 /// Functions by (package directory, name).
 type Funcs<'t> = HashMap<(&'t str, &'t str), Vec<String>>;
