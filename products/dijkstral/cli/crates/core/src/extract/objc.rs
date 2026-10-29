@@ -11,9 +11,12 @@
 //! - `@interface`, `@implementation` and class extensions or categories of a class share one node
 //!   `file_slug(Name)` (first wins; `contains` from the file once). In a file whose stem is
 //!   exactly `Before+After`, categories and extensions use `slug(dir/Before)_slug(Name)` instead
-//!   (Graphify prefixes these with the absolute scan root: quirk OC1, not reproduced).
+//!   (Graphify 0.9.86 prefixed these with the absolute scan root: quirk OC1).
+//! - Classes, categories, extensions and protocols carry `_callable` and `_callable_class`,
+//!   methods `_callable`.
 //! - Protocols are `file_slug(Name)` labelled `<Name>`; typedef'd and named C enums with a body
-//!   are nodes with `case_of` enumerators (`NS_ENUM` is not: the macro defeats the parse).
+//!   are nodes with `case_of` enumerators. `typedef NS_ENUM(T, Name) {...};` (also `NS_OPTIONS`,
+//!   `NS_CLOSED_ENUM`), which the parse loses, is read from the text after the walk.
 //! - Methods are `owner_slug(selector)`, labelled `-sel`/`+sel` where the selector is its keyword
 //!   parts concatenated without colons (trailing macro identifiers included:
 //!   `-fooNS_REQUIRES_SUPER`). Every declaration and definition emits a `method` edge.
@@ -37,7 +40,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 use tree_sitter::{Node as TsNode, Tree};
 
-use super::{slug, Ctx};
+use super::{flag, slug, Ctx};
 use crate::facts::LangFacts;
 use crate::lang::{parse, Lang};
 
@@ -184,6 +187,147 @@ fn blank_macros(src: &[u8]) -> Option<Vec<u8>> {
     out
 }
 
+fn callable_class() -> Vec<(String, crate::facts::Attr)> {
+    vec![flag("_callable"), flag("_callable_class")]
+}
+
+/// A macro enum read from the text: name and line, enumerators with their lines.
+#[derive(Debug, PartialEq)]
+struct MacroEnum {
+    name: String,
+    line: u32,
+    enumerators: Vec<(String, u32)>,
+}
+
+/// Every `typedef NS_ENUM(T, Name) { ... };` (also `NS_OPTIONS`, `NS_CLOSED_ENUM`) of a file whose
+/// enumerators are all a name with an optional `= value`, comments aside.
+fn macro_enums(text: &str) -> Vec<MacroEnum> {
+    let clean = blank_comments(text);
+    let line_at = |at: usize| clean[..at].matches('\n').count() as u32 + 1;
+    let mut out = Vec::new();
+    let mut from = 0;
+    while let Some(m) = macro_enum_head().captures_at(&clean, from) {
+        let whole = m.get(0).map_or(0..0, |w| w.range());
+        from = whole.end;
+        let Some(body) = enum_body(&clean, whole.end) else {
+            continue;
+        };
+        let mut enumerators = Vec::new();
+        let mut valid = true;
+        for (start, piece) in split_top_level(&clean[body.clone()]) {
+            let trimmed = piece.trim_start();
+            if trimmed.trim().is_empty() {
+                continue;
+            }
+            let ident: String = trimmed
+                .chars()
+                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
+                .collect();
+            let rest = trimmed[ident.len()..].trim_start();
+            if ident.is_empty()
+                || ident.starts_with(|c: char| c.is_ascii_digit())
+                || !(rest.is_empty() || rest.starts_with('='))
+            {
+                valid = false;
+                break;
+            }
+            let at = body.start + start + (piece.len() - trimmed.len());
+            enumerators.push((ident, line_at(at)));
+        }
+        if valid {
+            out.push(MacroEnum {
+                name: m.get(1).map_or("", |g| g.as_str()).to_string(),
+                line: line_at(whole.start),
+                enumerators,
+            });
+        }
+    }
+    out
+}
+
+/// `typedef NS_ENUM(T, Name) {`, `NS_OPTIONS`, `NS_CLOSED_ENUM`.
+fn macro_enum_head() -> &'static regex::Regex {
+    static RE: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    RE.get_or_init(|| {
+        regex::Regex::new(
+            r"\btypedef\s+NS_(?:ENUM|OPTIONS|CLOSED_ENUM)\s*\(\s*[^,()]+?\s*,\s*([A-Za-z_]\w*)\s*\)\s*\{",
+        )
+        .expect("valid regex")
+    })
+}
+
+/// The range of an enum body that starts at `from` (after its `{`) and closes with `}` and `;`.
+fn enum_body(text: &str, from: usize) -> Option<std::ops::Range<usize>> {
+    let mut depth = 0usize;
+    for (i, c) in text[from..].char_indices() {
+        match c {
+            '{' | '(' | '[' => depth += 1,
+            ')' | ']' => depth = depth.saturating_sub(1),
+            '}' if depth > 0 => depth -= 1,
+            '}' => {
+                let end = from + i;
+                let after = text[end + 1..].trim_start();
+                return after.starts_with(';').then_some(from..end);
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+/// Comma-separated pieces outside parentheses and brackets, with their offsets.
+fn split_top_level(body: &str) -> Vec<(usize, &str)> {
+    let (mut out, mut depth, mut start) = (Vec::new(), 0usize, 0);
+    for (i, c) in body.char_indices() {
+        match c {
+            '(' | '[' | '{' => depth += 1,
+            ')' | ']' | '}' => depth = depth.saturating_sub(1),
+            ',' if depth == 0 => {
+                out.push((start, &body[start..i]));
+                start = i + 1;
+            }
+            _ => {}
+        }
+    }
+    out.push((start, &body[start..]));
+    out
+}
+
+/// The text with `//` and `/* */` comments replaced by spaces (newlines kept).
+fn blank_comments(text: &str) -> String {
+    let b = text.as_bytes();
+    let mut out = b.to_vec();
+    let mut i = 0;
+    while i < b.len() {
+        match (b[i], b.get(i + 1)) {
+            (b'/', Some(b'/')) => {
+                while i < b.len() && b[i] != b'\n' {
+                    out[i] = b' ';
+                    i += 1;
+                }
+            }
+            (b'/', Some(b'*')) => {
+                let end = text[i + 2..].find("*/").map_or(b.len(), |e| i + 2 + e + 2);
+                for o in &mut out[i..end] {
+                    if *o != b'\n' {
+                        *o = b' ';
+                    }
+                }
+                i = end;
+            }
+            (b'"', _) => {
+                i += 1;
+                while i < b.len() && b[i] != b'"' && b[i] != b'\n' {
+                    i += if b[i] == b'\\' { 2 } else { 1 };
+                }
+                i += 1;
+            }
+            _ => i += 1,
+        }
+    }
+    String::from_utf8(out).unwrap_or_else(|_| text.to_string())
+}
+
 fn find(hay: &[u8], needle: &[u8]) -> Option<usize> {
     hay.windows(needle.len()).position(|w| w == needle)
 }
@@ -297,6 +441,7 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         w.prepass(root);
         w.visit(root, None);
     }
+    w.macro_enums();
     w.bind_events();
     let Objc { cx, facts, .. } = w;
     cx.facts.lang = LangFacts::ObjC(facts);
@@ -429,6 +574,8 @@ impl<'s> Objc<'_, '_, 's> {
         for c in named_children(decl) {
             match c.kind() {
                 "type_identifier" if ty.is_none() => ty = Some(self.text(c)),
+                // `IBOutlet UIImageView *v`: a macro before the type leaves it unknown.
+                "type_identifier" => return None,
                 // `T<P> *x`, `NSArray<X *> *x`: not a receiver type.
                 "generic_specifier" => return None,
                 "struct_declarator" => {
@@ -497,11 +644,17 @@ impl<'s> Objc<'_, '_, 's> {
     // ---- emission ------------------------------------------------------------------------------
 
     /// A definition node, once per id (first wins). Returns whether it was new.
-    fn def(&mut self, id: &str, label: String, line: u32) -> bool {
+    fn def(
+        &mut self,
+        id: &str,
+        label: String,
+        line: u32,
+        attrs: Vec<(String, crate::facts::Attr)>,
+    ) -> bool {
         if !self.emitted.insert(id.to_string()) {
             return false;
         }
-        self.cx.add_def(id.to_string(), label, line, vec![]);
+        self.cx.add_def(id.to_string(), label, line, attrs);
         self.order.push(id.to_string());
         self.facts.defs.push((id.to_string(), line));
         true
@@ -635,7 +788,7 @@ impl<'s> Objc<'_, '_, 's> {
         let name = self.text(name);
         let id = self.class_id(name, is_category(node));
         let line = Ctx::line(node);
-        let new = self.def(&id, name.to_string(), line);
+        let new = self.def(&id, name.to_string(), line, callable_class());
         if !self.class_index.contains_key(&id) {
             self.class_index
                 .insert(id.clone(), self.facts.classes.len());
@@ -739,7 +892,7 @@ impl<'s> Objc<'_, '_, 's> {
         let name = self.text(name);
         let id = self.file_child(name);
         let line = Ctx::line(node);
-        if self.def(&id, format!("<{name}>"), line) {
+        if self.def(&id, format!("<{name}>"), line, callable_class()) {
             let file = self.cx.file_id.clone();
             self.edge(&file, &id, "contains", line, None);
         }
@@ -814,7 +967,12 @@ impl<'s> Objc<'_, '_, 's> {
         };
         let id = Ctx::child_id(&prefix, &selector);
         let line = Ctx::line(n);
-        if self.def(&id, format!("{sign}{selector}"), line) {
+        if self.def(
+            &id,
+            format!("{sign}{selector}"),
+            line,
+            vec![flag("_callable")],
+        ) {
             self.selectors.push((id.clone(), selector, prefix.clone()));
         }
         self.edge(&source, &id, "method", line, None);
@@ -828,7 +986,7 @@ impl<'s> Objc<'_, '_, 's> {
 
     fn enumeration(&mut self, name: &str, body: TsNode, line: u32) {
         let id = self.file_child(name);
-        if self.def(&id, name.to_string(), line) {
+        if self.def(&id, name.to_string(), line, vec![]) {
             let file = self.cx.file_id.clone();
             self.edge(&file, &id, "contains", line, None);
         }
@@ -842,8 +1000,31 @@ impl<'s> Objc<'_, '_, 's> {
             let en = self.text(en);
             let eid = Ctx::child_id(&id, en);
             let eline = Ctx::line(e);
-            self.def(&eid, en.to_string(), eline);
+            self.def(&eid, en.to_string(), eline, vec![]);
             self.edge(&id, &eid, "case_of", eline, None);
+        }
+    }
+
+    /// `typedef NS_ENUM(T, Name) { A, B = 1 };` (also `NS_OPTIONS`, `NS_CLOSED_ENUM`), which the
+    /// parse loses: read from the text after the walk ([`macro_enums`]), so these come after
+    /// every other node of the file (§34.2).
+    fn macro_enums(&mut self) {
+        let text = String::from_utf8_lossy(self.src).into_owned();
+        for e in macro_enums(&text) {
+            self.enumeration_from(&e.name, e.line, &e.enumerators);
+        }
+    }
+
+    fn enumeration_from(&mut self, name: &str, line: u32, enumerators: &[(String, u32)]) {
+        let id = self.file_child(name);
+        if self.def(&id, name.to_string(), line, vec![]) {
+            let file = self.cx.file_id.clone();
+            self.edge(&file, &id, "contains", line, None);
+        }
+        for (en, eline) in enumerators {
+            let eid = Ctx::child_id(&id, en);
+            self.def(&eid, en.clone(), *eline, vec![]);
+            self.edge(&id, &eid, "case_of", *eline, None);
         }
     }
 
@@ -1024,6 +1205,30 @@ impl<'s> Objc<'_, '_, 's> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn macro_enums_need_plain_enumerators_and_a_closing_semicolon() {
+        let src =
+            "typedef NS_ENUM(NSInteger, Mode) {\n  ModeA = 0, // first\n  /* x */ ModeB,\n};\n\
+                   typedef NS_OPTIONS(unsigned long,O){OA=1<<0,OB=MAX(1, 2)};\n\
+                   typedef NS_ENUM(NSInteger, Avail) { AA API_AVAILABLE(ios(13)) = 4 };\n\
+                   typedef NS_ENUM(NSInteger, Attr) { AttrA } API_AVAILABLE(ios(13));\n\
+                   typedef CF_ENUM(int, Cf) { CfA };\n\
+                   typedef NS_CLOSED_ENUM(NSInteger, Empty) {};\n";
+        let got = macro_enums(src);
+        let names: Vec<&str> = got.iter().map(|e| e.name.as_str()).collect();
+        assert_eq!(names, ["Mode", "O", "Empty"]);
+        assert_eq!(got[0].line, 1);
+        assert_eq!(
+            got[0].enumerators,
+            [("ModeA".to_string(), 2), ("ModeB".to_string(), 3)]
+        );
+        assert_eq!(
+            got[1].enumerators,
+            [("OA".to_string(), 5), ("OB".to_string(), 5)]
+        );
+        assert!(got[2].enumerators.is_empty());
+    }
 
     #[test]
     fn header_language_follows_objc_markers() {

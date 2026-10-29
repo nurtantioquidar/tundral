@@ -14,13 +14,19 @@
 //! Graphify behaviours reproduced because its ids and edges depend on them:
 //!
 //! - A `.h` file is C++ when its bytes contain `class `, `namespace `, `template`, `::`,
-//!   `public:`, `private:` or `protected:` anywhere, comments included ([`is_cpp_header`]).
+//!   `public:`, `private:`, `protected:` or `extern "C"` anywhere, comments included
+//!   ([`is_cpp_header`]).
 //! - Every node outside function bodies is walked (preprocessor branches, error-recovery nodes);
 //!   a named class specifier anywhere there is a class, a class body only keeps its fields and
 //!   methods (`#if` inside it, template members: file level).
 //! - Declarations (prototypes, constructor declarations) emit nothing; method declarations in a
 //!   class body emit a method without type references; a declarator behind a reference
 //!   (`T &f()`, `T &field`) emits nothing.
+//! - C++ typedefs and aliases outside class and function bodies are nodes that bind like classes
+//!   without members (not directly inside an error-recovery node, not when they name a type of
+//!   the same name).
+//! - Template parameters in scope, and CUDA (`.cu`) and Metal (`.metal`) qualifiers the grammar
+//!   reads as types, give no type reference.
 //! - Type names bind to the node with the id a file-level definition would have, else a stub.
 //! - In-file calls bind by name to the last node created with that name (functions, methods,
 //!   classes, fields, enumerators), ignoring the receiver; a method prefers its own class.
@@ -97,7 +103,7 @@ pub struct CFacts {
 }
 
 /// `.h` files are C++ when any of these byte strings occurs in them.
-const CPP_MARKERS: [&[u8]; 7] = [
+const CPP_MARKERS: [&[u8]; 8] = [
     b"class ",
     b"namespace ",
     b"template",
@@ -105,6 +111,7 @@ const CPP_MARKERS: [&[u8]; 7] = [
     b"public:",
     b"private:",
     b"protected:",
+    b"extern \"C\"",
 ];
 
 /// Whether a `.h` file is C++ (see the module docs).
@@ -164,6 +171,17 @@ struct C<'c, 'a> {
     dry: bool,
     /// Methods defined in a class body: method id → class id.
     method_class: HashMap<String, String>,
+    /// Ids first emitted by a typedef or alias: a class of the same id adds its flags to them.
+    aliases: HashSet<String>,
+    /// Whether each enclosing scope (the file, a namespace or `extern "C"` body, an error-recovery
+    /// node) is an `ERROR`; typedefs whose nearest scope is one are no nodes.
+    error_scopes: Vec<bool>,
+    /// Class bodies enclosing the walk: their (template) typedefs are members, not nodes.
+    in_class: usize,
+    /// Type parameter names of the enclosing `template <...>` declarations, innermost last.
+    tparams: Vec<Vec<String>>,
+    /// Words of the file's GPU dialect that never name a type ([`qualifiers`]).
+    quals: &'static [&'static str],
 }
 
 pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
@@ -184,6 +202,11 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         },
         dry: cpp,
         method_class: HashMap::new(),
+        tparams: Vec::new(),
+        aliases: HashSet::new(),
+        error_scopes: Vec::new(),
+        in_class: 0,
+        quals: qualifiers(cx.rel),
         cx,
     };
     if let Some(tree) = tree {
@@ -283,7 +306,12 @@ impl<'a> C<'_, 'a> {
         match ty.kind() {
             "type_identifier" => {
                 let name = self.text(ty);
-                self.reference(source, name, context, line);
+                // A template parameter in scope (`template <class Point> Point f(Point)` too) and
+                // a CUDA or Metal qualifier read as a type (`__global__ void k()`) give nothing.
+                if !self.tparams.iter().flatten().any(|p| p == name) && !self.quals.contains(&name)
+                {
+                    self.reference(source, name, context, line);
+                }
             }
             "qualified_identifier" if self.cpp => {
                 if let Some(name) = ty.child_by_field_name("name") {
@@ -333,15 +361,31 @@ impl<'a> C<'_, 'a> {
             "preproc_include" => self.include(n),
             "function_definition" => self.function(n, scope),
             "template_declaration" if self.cpp => {
+                let params = n
+                    .child_by_field_name("parameters")
+                    .map(|l| type_params(l, self.cx.src))
+                    .unwrap_or_default();
+                self.tparams.push(params);
                 for c in named_children(n) {
                     if c.kind() != "template_parameter_list" {
                         self.item(c, &Scope::File);
                     }
                 }
+                self.tparams.pop();
+            }
+            // The declared names come before a class the type names (`typedef struct s *S;`).
+            "type_definition" | "alias_declaration" if self.cpp => {
+                self.alias(n);
+                self.items(n, scope);
             }
             k if self.cpp && is_class_kind(k) => self.class(n, scope),
             "enum_specifier" if self.cpp => self.enumeration(n, scope),
             "friend_declaration" | "comment" => {}
+            _ if n.is_error() || kind == "declaration_list" => {
+                self.error_scopes.push(n.is_error());
+                self.items(n, scope);
+                self.error_scopes.pop();
+            }
             _ => self.items(n, scope),
         }
     }
@@ -370,6 +414,58 @@ impl<'a> C<'_, 'a> {
         });
     }
 
+    /// A C++ `typedef` (each declarator) or `using X = ...` outside class and function bodies, and
+    /// not directly in an error-recovery node (templates and `#if` aside):
+    /// a node `file_slug(X)` labelled `X`, contained by the file, with no other edges. Type names
+    /// and calls bind to it like a class without members (pre-pass included).
+    fn alias(&mut self, n: TsNode) {
+        if self.in_class > 0 || self.error_scopes.last() == Some(&true) {
+            return;
+        }
+        let names: Vec<TsNode> = if n.kind() == "alias_declaration" {
+            n.child_by_field_name("name").into_iter().collect()
+        } else {
+            children_by_field(n, "declarator")
+                .into_iter()
+                .filter_map(declared_type_name)
+                .collect()
+        };
+        // A name for the type of the same name elsewhere (`using qux = ns::qux;`) is none.
+        let target = n
+            .child_by_field_name("type")
+            .map(|t| t.child_by_field_name("type").unwrap_or(t))
+            .and_then(type_last_name)
+            .map(|t| self.text(t));
+        let line = Ctx::line(n);
+        for name in names {
+            let name = self.text(name);
+            if target == Some(name) {
+                continue;
+            }
+            let id = Ctx::child_id(&self.cx.file_id, name);
+            if self.dry {
+                self.classes.entry(name.to_string()).or_insert(id);
+                continue;
+            }
+            if self.emitted.contains(&id) {
+                continue;
+            }
+            self.def(&id, name.to_string(), line, vec![]);
+            self.aliases.insert(id.clone());
+            let file = self.cx.file_id.clone();
+            self.cx.add_edge(&file, &id, "contains", line, None);
+            if !self.class_index.contains_key(&id) {
+                self.class_index
+                    .insert(id.clone(), self.facts.classes.len());
+                self.facts.classes.push(CClass {
+                    id,
+                    label: name.to_string(),
+                    members: Vec::new(),
+                });
+            }
+        }
+    }
+
     // ---- classes ------------------------------------------------------------------------------
 
     fn new_class(&mut self, name: &str, line: u32, scope: &Scope) -> String {
@@ -377,6 +473,14 @@ impl<'a> C<'_, 'a> {
         if self.dry {
             self.classes.entry(name.to_string()).or_insert(id.clone());
             return id;
+        }
+        if self.aliases.remove(&id) {
+            // A typedef of the same id came first: it keeps its label and line, and gains the
+            // class's flags (`typedef struct yy_buffer_state *YY_BUFFER_STATE;`).
+            if let Some(node) = self.cx.facts.nodes.iter_mut().find(|n| n.id == id) {
+                node.attrs
+                    .extend([flag("_callable"), flag("_callable_class")]);
+            }
         }
         self.def(
             &id,
@@ -431,17 +535,21 @@ impl<'a> C<'_, 'a> {
 
     fn class_body(&mut self, body: TsNode, class_id: &str) {
         let scope = Scope::Class(class_id.to_string());
+        self.in_class += 1;
         for c in named_children(body) {
             match c.kind() {
                 "field_declaration" => self.field_declaration(c, class_id),
                 "function_definition" => self.function(c, &scope),
                 "template_declaration" => self.item(c, &Scope::File),
+                // Member typedefs and aliases are not nodes (classes declared in them are).
+                "type_definition" | "alias_declaration" => self.items(c, &Scope::File),
                 // Anything else, preprocessor branches included, is walked like file scope:
                 // `#if` in a class body turns its methods into file-level functions.
                 "friend_declaration" | "access_specifier" | "comment" => {}
                 _ => self.item(c, &Scope::File),
             }
         }
+        self.in_class -= 1;
     }
 
     fn enumeration(&mut self, n: TsNode, scope: &Scope) {
@@ -648,6 +756,7 @@ impl<'a> C<'_, 'a> {
 
     fn misparsed_body(&mut self, body: TsNode, class_id: &str) {
         let scope = Scope::Class(class_id.to_string());
+        self.in_class += 1;
         for c in named_children(body) {
             match c.kind() {
                 "labeled_statement" => self.misparsed_body(c, class_id),
@@ -706,11 +815,14 @@ impl<'a> C<'_, 'a> {
                         }
                     }
                 }
+                // Member typedefs and aliases are not nodes here either.
+                "type_definition" | "alias_declaration" => self.items(c, &Scope::File),
                 // The body often swallows what follows the class (error recovery): classes and
                 // functions in it are file level.
                 _ => self.item(c, &Scope::File),
             }
         }
+        self.in_class -= 1;
     }
 
     // ---- bodies: calls and local variable types ---------------------------------------------
@@ -853,6 +965,9 @@ impl<'a> C<'_, 'a> {
             // binds them (`listener.str()` on a `StringMatchResultListener`).
             let deferred = match c.callee {
                 Callee::Bare(_) if denied => None,
+                // A stub of the file with that name (`Pod()` beside a parameter `Pod p`) keeps a
+                // bare call from binding anywhere.
+                Callee::Bare(name) if self.facts.stubs.iter().any(|(_, l)| *l == name) => None,
                 Callee::Bare(name) => Some((CCallKind::Bare, name, String::new(), None)),
                 Callee::Member(Some(recv), name) if self.cpp => self
                     .vars
@@ -1006,6 +1121,100 @@ fn field_name(mut d: TsNode) -> Option<TsNode> {
     }
 }
 
+/// The type name a `typedef` declarator declares, under pointer, array, function and
+/// parenthesised declarators (`(*Fn)(int)` → `Fn`).
+fn declared_type_name(mut d: TsNode) -> Option<TsNode> {
+    loop {
+        match d.kind() {
+            "type_identifier" => return Some(d),
+            "pointer_declarator"
+            | "array_declarator"
+            | "function_declarator"
+            | "reference_declarator" => d = d.child_by_field_name("declarator")?,
+            "parenthesized_declarator" => d = d.named_child(0)?,
+            _ => return None,
+        }
+    }
+}
+
+/// The last name of a type (`ns::detail::foo<T>` → `foo`).
+fn type_last_name(t: TsNode) -> Option<TsNode> {
+    match t.kind() {
+        "type_identifier" => Some(t),
+        "qualified_identifier" => type_last_name(t.child_by_field_name("name")?),
+        "template_type" => type_last_name(t.child_by_field_name("name")?),
+        _ => None,
+    }
+}
+
+/// The type parameter names of a `template_parameter_list` (`typename T`, `class U = int`,
+/// `typename... Ts`, template template parameters); non-type parameters (`int N`) are not types.
+fn type_params(list: TsNode, src: &[u8]) -> Vec<String> {
+    let mut out = Vec::new();
+    for p in named_children(list) {
+        let name = match p.kind() {
+            "type_parameter_declaration" | "variadic_type_parameter_declaration" => {
+                named_children(p)
+                    .into_iter()
+                    .find(|c| c.kind() == "type_identifier")
+            }
+            "optional_type_parameter_declaration" => p.child_by_field_name("name"),
+            "template_template_parameter_declaration" => {
+                named_children(p).into_iter().find_map(|c| match c.kind() {
+                    "type_parameter_declaration" | "variadic_type_parameter_declaration" => {
+                        named_children(c)
+                            .into_iter()
+                            .find(|x| x.kind() == "type_identifier")
+                    }
+                    "optional_type_parameter_declaration" => c.child_by_field_name("name"),
+                    _ => None,
+                })
+            }
+            _ => None,
+        };
+        if let Some(text) = name.and_then(|n| std::str::from_utf8(&src[n.byte_range()]).ok()) {
+            out.push(text.to_string());
+        }
+    }
+    out
+}
+
+/// Words that `.cu` and `.metal` files use as qualifiers and Graphify never takes for a type
+/// (§25.2): CUDA's function and variable qualifiers, Metal's function qualifiers and address
+/// spaces.
+fn qualifiers(rel: &str) -> &'static [&'static str] {
+    let ext = rel.rsplit_once('.').map_or("", |(_, e)| e);
+    if ext.eq_ignore_ascii_case("cu") {
+        &[
+            "__constant__",
+            "__device__",
+            "__forceinline__",
+            "__global__",
+            "__grid_constant__",
+            "__host__",
+            "__launch_bounds__",
+            "__managed__",
+            "__noinline__",
+            "__shared__",
+        ]
+    } else if ext.eq_ignore_ascii_case("metal") {
+        &[
+            "constant",
+            "device",
+            "fragment",
+            "kernel",
+            "object_data",
+            "ray_data",
+            "thread",
+            "threadgroup",
+            "threadgroup_imageblock",
+            "vertex",
+        ]
+    } else {
+        &[]
+    }
+}
+
 /// The innermost `name` of a qualified identifier (`a::b::C` → `C`).
 fn last_name(mut q: TsNode) -> Option<TsNode> {
     while q.kind() == "qualified_identifier" {
@@ -1083,7 +1292,11 @@ mod tests {
         assert!(is_cpp_header(b"// templates"));
         assert!(!is_cpp_header(b"// class\nstruct S { int w; };"));
         assert!(!is_cpp_header(b"// namespace\n// public :"));
-        assert!(!is_cpp_header(b"extern \"C\" { struct F { int r; }; }"));
+        assert!(is_cpp_header(b"extern \"C\" { struct F { int r; }; }"));
+        assert!(is_cpp_header(b"/* extern \"C\" */"));
+        assert!(!is_cpp_header(
+            b"extern \"C++\" {}\nextern  \"C\" {}\n#ifdef __cplusplus"
+        ));
     }
 
     #[test]

@@ -10,15 +10,18 @@
 //!   redirected to the real target only when kept.
 //! - **Stubs** bind to the only Objective-C class, protocol or enum with their name.
 //! - **Imports.** `#import "p"` names the file at `p` relative to the importing file when it is
-//!   indexed, else `slug(stem of p)`; that id lands on the importing file's own node with that id,
-//!   else the node that has it, else the first file (by path) that emitted it before collision
-//!   renaming (a header's renamed stub, the header of a header/implementation pair), else the
-//!   only file with that stem, else an external node.
+//!   indexed, else the file the suffix search of `resolve::c` finds (with `metadata.raw_include`),
+//!   else `slug(stem of p)`; that id lands on the importing file's own node with that id, else the
+//!   node that has it, else the first file (by path) that emitted it before collision renaming (a
+//!   header's renamed stub, the header of a header/implementation pair), else the only file with
+//!   that stem, else an external node. Within a file, imports of the same key land where its
+//!   first one did.
 //! - **Messages.** A receiver typed as a class (`self`, `super`, a capitalised name: EXTRACTED
 //!   1.0; a declared variable, instance variable or property: INFERRED 0.85) whose name is the
 //!   label of exactly one class (case-insensitive) calls that class's method of the selector, or
 //!   else `references` the class (context `call`). A pair the file already links is skipped, and
-//!   a method never calls itself.
+//!   a method never calls itself. A receiver type no Objective-C class has is recorded in the
+//!   caller's `metadata.unresolved_calls` (a denylist of builtin-like types aside).
 
 use std::collections::{HashMap, HashSet};
 
@@ -28,6 +31,102 @@ use crate::extract::{external_node, origin, slug, Ctx};
 use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc, NodeKind};
 use crate::ids::file_id;
 use crate::lang::{Family, Lang};
+
+/// Receiver types Graphify never records in `unresolved_calls` (JavaScript and Python builtins,
+/// Swift and Foundation value types, a few Foundation classes; observed). Sorted.
+const UNRECORDED_TYPES: &[&str] = &[
+    "AnyObject",
+    "Array",
+    "BigInt",
+    "Bool",
+    "Boolean",
+    "Bundle",
+    "Calendar",
+    "CaseIterable",
+    "Character",
+    "Codable",
+    "Color",
+    "Comparable",
+    "CustomStringConvertible",
+    "Data",
+    "Date",
+    "DateFormatter",
+    "Decimal",
+    "Decodable",
+    "DispatchGroup",
+    "DispatchQueue",
+    "Double",
+    "Encodable",
+    "Equatable",
+    "Error",
+    "EvalError",
+    "FileManager",
+    "Float",
+    "Font",
+    "Hashable",
+    "ISO8601DateFormatter",
+    "Identifiable",
+    "IndexPath",
+    "IndexSet",
+    "Int",
+    "Int16",
+    "Int32",
+    "Int64",
+    "Int8",
+    "Intl",
+    "JSON",
+    "JSONDecoder",
+    "JSONEncoder",
+    "Locale",
+    "Map",
+    "Math",
+    "NSAttributedString",
+    "NSError",
+    "NSLock",
+    "NSObject",
+    "NSString",
+    "NotificationCenter",
+    "Number",
+    "NumberFormatter",
+    "Object",
+    "OperationQueue",
+    "Promise",
+    "Proxy",
+    "RangeError",
+    "RawRepresentable",
+    "ReferenceError",
+    "Reflect",
+    "RegExp",
+    "RunLoop",
+    "Sendable",
+    "Set",
+    "String",
+    "Symbol",
+    "SyntaxError",
+    "TimeZone",
+    "TypeError",
+    "UInt",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+    "UInt8",
+    "URIError",
+    "URL",
+    "URLComponents",
+    "URLRequest",
+    "URLSearchParams",
+    "URLSession",
+    "UUID",
+    "UserDefaults",
+    "View",
+    "WeakMap",
+    "WeakSet",
+    "globalThis",
+];
+
+fn json_str(s: &str) -> String {
+    serde_json::to_string(s).unwrap_or_else(|_| "\"\"".into())
+}
 
 fn objc_facts<'v>(v: &'v View) -> Option<&'v ObjcFacts> {
     match &v.facts.lang {
@@ -333,20 +432,38 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             .or_default()
             .push(v.file.rel.as_str());
     }
-    // (id, whether the path named an indexed file relative to the importing one).
-    let import_target = |v: &View, imp: &crate::extract::objc::ObjcImport| -> (String, bool) {
-        imp.quoted
-            .then(|| join(parent(&v.file.rel), &imp.path))
-            .flatten()
-            .filter(|p| index.file_ids.contains_key(p))
-            .map_or_else(|| (slug(stem(&imp.path)), false), |p| (file_id(&p), true))
-    };
+    // (key, id, whether the path named an indexed file, whether it did so relative to the
+    // importing file). The key is the id before the search of a quoted path that is not relative
+    // (§24.4): within a file, every import of a key lands where its first one did.
+    let by_file_name = super::c::ByName::new(index);
+    let import_target =
+        |v: &View, imp: &crate::extract::objc::ObjcImport| -> (String, String, bool, bool) {
+            let rel = &v.file.rel;
+            if let Some(p) = imp
+                .quoted
+                .then(|| join(parent(rel), &imp.path))
+                .flatten()
+                .filter(|p| index.file_ids.contains_key(p))
+            {
+                let id = file_id(&p);
+                return (id.clone(), id, true, true);
+            }
+            let key = slug(stem(&imp.path));
+            match imp
+                .quoted
+                .then(|| by_file_name.search(rel, &imp.path))
+                .flatten()
+            {
+                Some(p) => (key, file_id(p), true, false),
+                None => (key.clone(), key, false, false),
+            }
+        };
     // An import landing on another language's node (Swift's `import Foundation` module) is
     // dropped: the language of the first file that emitted an id, for the ids imports name.
     let mut wanted: HashSet<String> = HashSet::new();
     for (v, f) in &views {
         for imp in &f.imports {
-            let (local, _) = import_target(v, imp);
+            let (_, local, _, _) = import_target(v, imp);
             if index.contains(&local) {
                 wanted.insert(local);
             }
@@ -373,15 +490,38 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
     for (v, f) in &views {
         let rel = v.file.rel.as_str();
         let source = v.id(&f.file_id).to_string();
+        let mut landed: HashMap<String, Option<String>> = HashMap::new();
         for imp in &f.imports {
-            let (local, relative) = import_target(v, imp);
+            let (key, local, found, relative) = import_target(v, imp);
+            let metadata = (imp.quoted && !relative).then(|| super::c::include_metadata(&imp.path));
+            if let Some(target) = landed.get(&key) {
+                // After a merge an import keeps the first of its pair, like every edge (§34.7).
+                if let Some(target) = target.as_ref().filter(|t| {
+                    !any_merge || first.insert((source.clone(), (*t).clone(), "imports".into()))
+                }) {
+                    let mut e = edge(
+                        source.clone(),
+                        target.clone(),
+                        "imports",
+                        Some("import"),
+                        (rel, imp.line),
+                        (Confidence::Extracted, 1.0),
+                    );
+                    e.attrs
+                        .extend(metadata.map(|m| ("metadata".to_string(), m)));
+                    res.edges.push(e);
+                }
+                continue;
+            }
             let foreign = match emitter.get(&local) {
                 Some(f) => !matches!(f, Family::ObjC | Family::C),
                 None => !index.contains(&local) && swift_modules.contains(&local),
             };
             if foreign {
+                landed.insert(key, None);
                 continue;
             }
+            let relative = found;
             let target = if index.contains(&local) || merged_ids.contains(&local) {
                 local
             } else if let Some(w) = files
@@ -409,14 +549,21 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                 }
                 local
             };
-            res.edges.push(edge(
+            landed.insert(key, Some(target.clone()));
+            if any_merge && !first.insert((source.clone(), target.clone(), "imports".into())) {
+                continue;
+            }
+            let mut e = edge(
                 source.clone(),
                 target,
                 "imports",
                 Some("import"),
                 (rel, imp.line),
                 (Confidence::Extracted, 1.0),
-            ));
+            );
+            e.attrs
+                .extend(metadata.map(|m| ("metadata".to_string(), m)));
+            res.edges.push(e);
         }
     }
 
@@ -443,13 +590,14 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             linked.insert((fin(v, caller), target));
         }
     }
-    // Properties, instance variables and superclass of every class name, over all its
-    // declarations.
+    // Properties, instance variables and superclass of every class, by its final id, over all
+    // its declarations (a header, its implementation and their extensions share the id; a
+    // same-named class of another file does not).
     type Members<'m> = Vec<(&'m str, &'m str)>;
-    let mut hierarchy: HashMap<&str, (Members, Members, Option<&str>)> = HashMap::new();
-    for (_, f) in &views {
+    let mut hierarchy: HashMap<String, (Members, Members, Option<&str>)> = HashMap::new();
+    for (v, f) in &views {
         for c in &f.classes {
-            let entry = hierarchy.entry(c.name.as_str()).or_default();
+            let entry = hierarchy.entry(fin(v, &c.id)).or_default();
             for (p, t) in &c.props {
                 entry.0.push((p.as_str(), t.as_str()));
             }
@@ -461,20 +609,32 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             }
         }
     }
-    // The declared class of a property (`ivar` false) or instance variable on the class or its
-    // nearest superclass that has it.
-    let member_type = |class: &str, name: &str, ivar: bool| -> Option<&str> {
-        let mut cur = class;
+    // The declared class of a property (`ivar` false), or of an instance variable or else a
+    // property (`ivar` true), on the class `class` of file `v` or its nearest superclass (the only
+    // class of that name) that has it.
+    let member_type = |v: &View, f: &ObjcFacts, class: &str, name: &str, ivar: bool| {
+        let mut cur = fin(v, &f.classes.iter().find(|c| c.name == class)?.id);
         for _ in 0..16 {
-            let (props, ivars, sup) = hierarchy.get(cur)?;
-            let list = if ivar { ivars } else { props };
-            if let Some((_, t)) = list.iter().find(|(p, _)| *p == name) {
-                return Some(t);
+            let (props, ivars, sup) = hierarchy.get(&cur)?;
+            let found = if ivar {
+                ivars.iter().chain(props.iter()).find(|(p, _)| *p == name)
+            } else {
+                props.iter().find(|(p, _)| *p == name)
+            };
+            if let Some((_, t)) = found {
+                return Some(*t);
             }
-            cur = (*sup)?;
+            cur = match classes.get(&(*sup)?.to_lowercase()).map(Vec::as_slice) {
+                Some([only]) => only.clone(),
+                _ => return None,
+            };
         }
         None
     };
+    // `metadata.unresolved_calls`: messages to a type no Objective-C class has, per caller in
+    // source order, once per (selector, type), at most 64.
+    let mut unresolved: Vec<(String, Vec<String>)> = Vec::new();
+    let mut recorded: HashSet<(String, String, String)> = HashSet::new();
     for (v, f) in &views {
         let rel = v.file.rel.as_str();
         for send in &f.sends {
@@ -482,17 +642,40 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             let (name, confidence, score) = match &send.recv {
                 ObjcRecv::Class(n) => (n.as_str(), Confidence::Extracted, 1.0),
                 ObjcRecv::Typed(t) => (t.as_str(), Confidence::Inferred, 0.85),
-                ObjcRecv::Prop { class, prop } => match member_type(class, prop, false) {
+                ObjcRecv::Prop { class, prop } => match member_type(v, f, class, prop, false) {
                     Some(t) => (t, Confidence::Inferred, 0.85),
                     None => continue,
                 },
-                ObjcRecv::Ivar { class, name } => match member_type(class, name, true) {
+                ObjcRecv::Ivar { class, name } => match member_type(v, f, class, name, true) {
                     Some(t) => (t, Confidence::Inferred, 0.85),
                     None => continue,
                 },
             };
-            let Some([class]) = classes.get(&name.to_lowercase()).map(Vec::as_slice) else {
-                continue;
+            let class = match classes.get(&name.to_lowercase()).map(Vec::as_slice) {
+                Some([class]) => class,
+                Some(_) => continue,
+                None => {
+                    if UNRECORDED_TYPES.binary_search(&name).is_err()
+                        && recorded.insert((
+                            caller.clone(),
+                            send.selector.clone(),
+                            name.to_string(),
+                        ))
+                    {
+                        let entry = format!(
+                            "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"objc\",\"line\":\"L{}\",\"file\":{}}}",
+                            json_str(&send.selector),
+                            json_str(name),
+                            send.line,
+                            json_str(rel)
+                        );
+                        match unresolved.iter_mut().find(|(id, _)| *id == caller) {
+                            Some((_, list)) => list.push(entry),
+                            None => unresolved.push((caller.clone(), vec![entry])),
+                        }
+                    }
+                    continue;
+                }
             };
             let method = Ctx::child_id(class, &send.selector);
             let (target, relation) = if defs.contains(&method) {
@@ -514,6 +697,11 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                 ));
             }
         }
+    }
+    for (id, mut entries) in unresolved {
+        entries.truncate(64);
+        let json = format!("{{\"unresolved_calls\":[{}]}}", entries.join(","));
+        res.attrs.push((id, "metadata".into(), Attr::Json(json)));
     }
     res
 }
