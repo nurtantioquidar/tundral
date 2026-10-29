@@ -872,22 +872,19 @@ impl<'v> Types<'v> {
 
     /// The declared type a resolved path names, through `type` aliases (a few hops deep).
     fn type_of(&self, modules: &Modules<'v, '_>, r: Option<Res<'_>>) -> Option<&'v str> {
-        let (mut t, name) = match r? {
+        let (mut t, mut name) = match r? {
             Res::Item(t, name) => (t, name),
             _ => return None,
         };
-        if let Some(&id) = self.types[t].get(name) {
-            return Some(id);
-        }
-        let mut alias = *self.aliases.get(&(t, name))?;
-        for _ in 0..4 {
+        // An alias of a path is followed first: since 0.9.97 it has a node of its own.
+        for _ in 0..5 {
+            let Some(alias) = self.aliases.get(&(t, name)) else {
+                return self.types[t].get(name).copied();
+            };
             match modules.resolve_qualifier(t, alias.depth, &alias.ty)? {
                 Res::Item(t2, n2) => {
-                    if let Some(&id) = self.types[t2].get(n2) {
-                        return Some(id);
-                    }
                     t = t2;
-                    alias = self.aliases.get(&(t2, n2))?;
+                    name = n2;
                 }
                 _ => return None,
             }
@@ -1385,7 +1382,7 @@ mod tests {
                  fn colon() { use crate::b::Colon as Sep; Sep::new(); }\n\
                  pub struct Holder(Box<crate::b::Inner>);\n\
                  impl Holder {\n    fn go(&self) { self.0.run(); self.0.clone(); }\n}\n\
-                 // `fn welcome` shares the struct's id: its calls would start from the struct.\n\
+                 // `fn welcome` beside `struct Welcome` has its own `_sha1` id (0.9.97): no struct calls.\n\
                  pub struct Welcome;\nfn welcome() { crate::b::helper(); }\n\
                  #[cfg(test)]\nmod tests {\n    use crate::b::Comma;\n    use ext::helper;\n    \
                  fn t() { Comma::new(); helper(); }\n}\n",
