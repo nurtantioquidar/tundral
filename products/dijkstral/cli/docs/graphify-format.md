@@ -2413,7 +2413,7 @@ is code that yields nothing.
 | Construct | Id | Label | Fields |
 |---|---|---|---|
 | class, interface, trait, enum (any namespace, any depth) | `file_name` | `User` | `_callable`, `_callable_class` |
-| method (abstract and interface methods included) | `type_name` (`__construct` → `construct`) | `.__construct()` | `_callable` |
+| method (abstract and interface methods included) | `type_name` (`__construct` → `construct`) | `.__construct()` | `_callable`; `metadata.unresolved_calls` (§19.4) |
 | function at any depth (in `if (!function_exists())`, nested in a function, in a braced namespace) | `file_name` | `slugify()` | `_callable` |
 | method of an anonymous class | `file_name` (a function) | `am()` | `_callable` |
 | closure / arrow function | `file_closure_<n>`, numbered per file in pre-order | `{closure#n}()` | `_callable` |
@@ -2439,7 +2439,7 @@ not), PHPDoc and `// NOTE:` comments (no rationale nodes at all), anonymous clas
 | `references` | class → type | typed properties and promoted constructor parameters (each member: parameter ref, then field ref) | EXTRACTED | `field` | property line; constructor line for promotion |
 | `imports` | file → class or import stub | `use A\B [as C]`, grouped `use A\{B, C}` | EXTRACTED | `import` | statement line |
 | `imports` | file → external | `use function` / `use const` (never resolved to a function) | EXTRACTED | `import` | statement line |
-| `calls` | caller → callable / class | §19.4 | EXTRACTED (in file), EXTRACTED 1.0 or INFERRED 0.85 | `call` | first call line |
+| `calls` | caller → callable / class (`new X` only) | §19.4 | EXTRACTED (in file), EXTRACTED 1.0 or INFERRED 0.85 | `call` | first call line |
 | `references_constant` | caller → class | `X::CONST`, `X::class` inside a function (§19.4) | EXTRACTED 1.0 | — | first use |
 | `uses_static_prop` | caller → class | `X::$prop` inside a function | EXTRACTED 1.0 | — | first use |
 
@@ -2473,18 +2473,49 @@ not), PHPDoc and `// NOTE:` comments (no rationale nodes at all), anonymous clas
 
 Calls are attributed to the innermost function, method, closure or anonymous-class method;
 top-level code and class bodies have no caller. Deduplicated per (caller, target), first line.
+The 0.9.97 rules below come from twelve probe repositories (static calls, typed receivers,
+closures, ambiguity, unresolved records) and guzzle (5,969/5,969 calls).
 
 | Form | Result |
 |---|---|
-| `f()`, `$x->m()`, `$this->m()` with a definition named `f`/`m` in the file | EXTRACTED to the **last** function or method of that name in the file (any class, quirk like Q8) |
-| `$x?->m()`, `self::m()`, `static::m()`, `parent::m()`, `\Ns\f()` | dropped |
-| `new X` / `X::m()` with class `X` in the file | EXTRACTED to the class (never to the method) |
-| `new X` / `X::m()` where `X`'s last segment is a non-aliased import of a class | EXTRACTED 1.0 to the class |
-| otherwise (also `new A\B`, `new \X`), unless the file writes `X` as a type | INFERRED 0.85 to the nearest class `X` (§19.5) |
-| `X::m()` with a qualified `X`; an aliased `new C` | dropped |
+| `f()`, `$x->m()`, `$this->m()` with a definition named `f`/`m` in the file | EXTRACTED to the **last** function or method of that name in the file (any class, quirk like Q8); `$this->m()` inside `m` keeps its self-loop |
+| `$x->m()` / `$this->p->m()` with no `m` in the file, `$x` / `p` typed by the file (below) | INFERRED 0.85 to the own method `m` of the only class-like named like the type |
+| `$this->m()` with no `m` in the file, untyped receivers, `$x?->m()`, `Status::A->m()`, `foo()->m()` | dropped |
+| `X::m()` (name or qualified name, `\` prefix allowed, last segment; aliases not expanded) | a class of the file named `X` → its own method `m`; else the only class-like named `X` in the repository → its own `m`, EXTRACTED 1.0. Never the class |
+| `self::m()`, `static::m()` in a method | the method's class's own `m`, EXTRACTED |
+| `parent::m()` in a method | the own `m` of the class's written parent (in the file or the only one of that name), EXTRACTED |
+| `self::`/`static::`/`parent::` inside a closure or arrow function | dropped |
+| `X::m()` resolving to the calling method itself (`self::rec()` in `rec`) | dropped |
+| `new X` with class `X` in the file | EXTRACTED to the class |
+| `new X` where `X`'s last segment is a non-aliased import of a class | EXTRACTED 1.0 to the class |
+| `new X` otherwise (also `new A\B`, `new \X`), unless the file writes `X` as a type | INFERRED 0.85 to the nearest class `X` (§19.5) |
+| an aliased `new C` | dropped |
 | bare `f()` not in the file | INFERRED 0.85 to the nearest function or method `f` |
-| a builtin-like name (`Proxy`, `Promise`, `Map`, `len`, `sorted`, … the Q15 list) as `f()`, `new X` or `X::` | dropped |
+| a builtin-like name (`Proxy`, `Promise`, `Map`, `len`, `sorted`, … the Q15 list) as `f()` or `new X` | dropped (`Map::of()` and a `Map $m` receiver bind like any other class) |
 | a cross-file call whose caller already links to the target in the file (type reference, constant use) | dropped |
+
+- **Receiver types (Rule).** One map per file, built over the whole file before any call (a use
+  may precede the declaration, and a type declared in one method types the same variable name
+  in every other function, class and closure of the file): variable or property name → the
+  **first** declaration in source order among typed parameters (promoted ones included),
+  typed properties (`private ?T $p` types both `$p` and `$this->p`) and `$v = new T(...)`. A
+  declared type names a class only as `T`, `?T` or `\A\T` (last segment); unions,
+  intersections and primitive types type nothing; `self` stays the name `self`. A static call's
+  result (`$v = X::make()`) types nothing.
+- **Class lookup.** By short name over every class, interface, trait and enum of the repository,
+  ignoring namespaces and imports (`use App\A\Dup; Dup::dm()` with two `Dup` classes binds
+  nothing). Only the class's **own** methods count: an inherited `m` binds nothing.
+- **Rule (`metadata.unresolved_calls`).** A typed `$x->m()` whose type, or an `X::m()` whose
+  name, matches no class-like of the repository is recorded on the caller (closures included) as
+  `{"callee": m, "receiver_type": …, "lang": "php", "line": "L<n>", "file": <caller's file>}`, in
+  source order, once per (callee, receiver type) and caller. The receiver type is the typed name
+  (last segment: `Ext4` for `\Vendor\Ext4 $c`, `R` for an alias) or the static scope as written
+  (`\Vendor\Ext`, `Psr7\DiagnosticValue`); builtin-like names are recorded too
+  (`Promise::all()`). An ambiguous name, a class without the method and `parent::m()` record
+  nothing. guzzle: 831 callers, 1,600 entries.
+- **Changed from 0.9.86.** `X::m()` linked the class (EXTRACTED, 1.0 through an import, or
+  INFERRED to the nearest class); `self::`/`static::`/`parent::` were dropped; typed receivers
+  and `metadata` did not exist.
 
 `X::CONST`/`X::class`/`X::$p` link only when the file declares `X` or writes it in a signature
 (→ its per-file stub) or a supertype list (→ the shared supertype stub); unqualified names only;
@@ -2506,8 +2537,11 @@ pairwise from `rack-protection/spec/support/x.rb`: `test/` beats `rack-protectio
 - **Open.** `use GuzzleHttp\Server\Server;` inside a braced namespace becomes the external
   `server` when a later namespace block of the file defines a function (guzzle
   `tests/bootstrap.php`); dijkstral keeps the class import.
-- **Parity (2026-10-14, guzzle, `--ext .php`).** Nodes 4151/4152 (the `server` external), links
-  9634/9635 recall and precision; def nodes 100%.
+- **Parity (2026-10-29, guzzle against 0.9.97, `--ext .php`).** Nodes 4151/4152 (the `server`
+  external), links 12,006/12,007 recall and precision, calls 5,969/5,969, no field differences.
+- **Open (pre-existing).** Graphify binds an unqualified type to the class of the current
+  namespace (`Dup` in `App\A` → `App\A\Dup`) when several classes share the name; dijkstral
+  keeps the per-file stub.
 
 ---
 

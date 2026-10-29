@@ -17,9 +17,12 @@
 //! `use function`/`use const` give the external node `slug(last segment)`.
 //!
 //! Calls bind in the file by name (last definition wins over functions and methods, any
-//! receiver: `f()`, `$x->m()`; not `?->`, not `self::`/`static::`/`parent::`), and `new X` /
-//! `X::m()` bind to a class of the file. What does not bind is recorded in [`PhpFacts::calls`].
-//! Builtin-like names (`Proxy`, `len`, …) never bind. `X::CONST` / `X::class` and `X::$prop`
+//! receiver: `f()`, `$x->m()`; not `?->`), and `new X` binds to a class of the file. A member
+//! call whose name the file does not define is typed instead: `$v->m()` / `$this->v->m()`, where
+//! `v` is the first typed parameter or property, or `$v = new T`, of that name anywhere in the
+//! file (§19.4). `X::m()` binds to the own method `m` of `X` (`self`/`static`: the enclosing
+//! class; `parent`: its parent), never to the class. What does not bind is recorded in
+//! [`PhpFacts::calls`]. Builtin-like names (`Proxy`, `len`, …) never bind `f()` or `new X`. `X::CONST` / `X::class` and `X::$prop`
 //! inside a function give `references_constant` and `uses_static_prop` (score 1.0) when the file
 //! declares `X` or writes it in a signature (its per-file stub) or a supertype list (`@ps:X`).
 
@@ -40,14 +43,27 @@ pub struct PClass {
     pub fqn: String,
     /// Local id.
     pub id: String,
+    /// Its own methods (not inherited ones): (name, local id), last of a name wins.
+    pub methods: Vec<(String, String)>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum PCallKind {
     /// `f()` with no definition named `f` in the file.
     Bare(String),
-    /// `new X` / `X::m()` with `X` (as written, leading `\` kept) not a class of the file.
+    /// `new X` with `X` (as written, leading `\` kept) not a class of the file.
     Class(String),
+    /// `X::m()` with `X` (as written) not a class of the file, or `parent::m()` naming the
+    /// class's written parent; `report`: record the call in `metadata.unresolved_calls` when no
+    /// class has that name (never for `parent::`).
+    Static {
+        scope: String,
+        method: String,
+        report: bool,
+    },
+    /// `$v->m()` / `$this->v->m()` with no callable `m` in the file, where the file types `v`
+    /// (last segment of the type).
+    Typed { ty: String, method: String },
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -114,6 +130,15 @@ struct Walker<'c, 'a> {
     closures: u32,
     /// Callers in order of creation, with their sites.
     callers: Vec<(String, Vec<Site>)>,
+    /// Variable and property name (without `$`) → the last segment of its type: the first
+    /// typed parameter or property, or `$v = new T(...)`, anywhere in the file.
+    var_types: HashMap<String, String>,
+    /// Class local id → its own methods, name → local id.
+    class_methods: HashMap<String, HashMap<String, String>>,
+    /// Class local id → its written parent (`extends`).
+    class_parent: HashMap<String, String>,
+    /// Caller index → the class of a method caller (closures and functions have none).
+    caller_class: HashMap<usize, String>,
 }
 
 pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
@@ -136,6 +161,10 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         super_names: Vec::new(),
         closures: 0,
         callers: Vec::new(),
+        var_types: HashMap::new(),
+        class_methods: HashMap::new(),
+        class_parent: HashMap::new(),
+        caller_class: HashMap::new(),
     };
     w.prescan(root);
     let mut known: Vec<String> = w.known.iter().cloned().collect();
@@ -144,6 +173,16 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
     w.namespace.clear();
     let file_id = w.cx.file_id.clone();
     w.walk(root, None, &file_id);
+    for c in &mut w.facts.classes {
+        if let Some(methods) = w.class_methods.get(&c.id) {
+            let mut list: Vec<(String, String)> = methods
+                .iter()
+                .map(|(n, i)| (n.clone(), i.clone()))
+                .collect();
+            list.sort();
+            c.methods = list;
+        }
+    }
     w.emit_sites();
     w.register_stubs();
     let facts = std::mem::take(&mut w.facts);
@@ -200,6 +239,31 @@ fn last_segment(name: &str) -> &str {
     name.rsplit('\\').next().unwrap_or(name)
 }
 
+/// A declared type that names one class: `T`, `?T`, `\A\T` (last segment). Unions,
+/// intersections and primitive types name none.
+fn single_type(node: TsNode, src: &[u8]) -> Option<String> {
+    match node.kind() {
+        "optional_type" => named_children(node)
+            .into_iter()
+            .find_map(|c| single_type(c, src)),
+        "named_type" => named_children(node)
+            .into_iter()
+            .find(|c| matches!(c.kind(), "name" | "qualified_name" | "relative_name"))
+            .and_then(|c| c.utf8_text(src).ok())
+            .map(|t| last_segment(t).to_string()),
+        _ => None,
+    }
+}
+
+/// The name of a `variable_name` node, without `$`.
+fn variable(node: TsNode, src: &[u8]) -> Option<String> {
+    (node.kind() == "variable_name")
+        .then(|| node.named_child(0))
+        .flatten()
+        .and_then(|n| n.utf8_text(src).ok())
+        .map(str::to_string)
+}
+
 impl Walker<'_, '_> {
     fn text(&self, node: TsNode) -> String {
         self.cx.text(node).to_string()
@@ -233,8 +297,62 @@ impl Walker<'_, '_> {
                     if let Some(nm) = n.child_by_field_name("name") {
                         let name = self.text(nm);
                         let id = Ctx::child_id(&file_id, &name);
+                        let base = named_children(n)
+                            .into_iter()
+                            .find(|c| c.kind() == "base_clause")
+                            .and_then(|b| named_children(b).into_iter().next())
+                            .map(|b| self.text(b));
+                        if let (Some(base), "class_declaration") = (base, k) {
+                            self.class_parent.entry(id.clone()).or_insert(base);
+                        }
                         self.known.insert(name.clone());
                         self.classes.insert(name, id);
+                    }
+                }
+                "simple_parameter" | "property_promotion_parameter" => {
+                    let src = self.cx.src;
+                    let ty = n
+                        .child_by_field_name("type")
+                        .and_then(|t| single_type(t, src));
+                    let var = n.child_by_field_name("name").and_then(|v| variable(v, src));
+                    if let (Some(ty), Some(var)) = (ty, var) {
+                        self.var_types.entry(var).or_insert(ty);
+                    }
+                }
+                "property_declaration" => {
+                    let src = self.cx.src;
+                    if let Some(ty) = n
+                        .child_by_field_name("type")
+                        .and_then(|t| single_type(t, src))
+                    {
+                        for el in named_children(n) {
+                            if el.kind() != "property_element" {
+                                continue;
+                            }
+                            if let Some(var) = el
+                                .child_by_field_name("name")
+                                .and_then(|v| variable(v, src))
+                            {
+                                self.var_types.entry(var).or_insert_with(|| ty.clone());
+                            }
+                        }
+                    }
+                }
+                "assignment_expression" => {
+                    let src = self.cx.src;
+                    let var = n.child_by_field_name("left").and_then(|v| variable(v, src));
+                    let ty = n
+                        .child_by_field_name("right")
+                        .filter(|r| r.kind() == "object_creation_expression")
+                        .and_then(|r| {
+                            named_children(r)
+                                .into_iter()
+                                .find(|c| matches!(c.kind(), "name" | "qualified_name"))
+                        })
+                        .and_then(|c| c.utf8_text(src).ok())
+                        .map(|t| last_segment(t).to_string());
+                    if let (Some(var), Some(ty)) = (var, ty) {
+                        self.var_types.entry(var).or_insert(ty);
                     }
                 }
                 "named_type" if !is_signature_type(n) => {}
@@ -273,6 +391,12 @@ impl Walker<'_, '_> {
                         let parent = owner.clone().unwrap_or_else(|| file_id.clone());
                         let id = Ctx::child_id(&parent, &name);
                         if id != parent {
+                            if let Some(class) = &owner {
+                                self.class_methods
+                                    .entry(class.clone())
+                                    .or_default()
+                                    .insert(name.clone(), id.clone());
+                            }
                             self.callables.insert(name, id);
                         }
                     }
@@ -348,8 +472,16 @@ impl Walker<'_, '_> {
                 if let Some(ci) = caller {
                     if let Some(n) = node.child_by_field_name("name") {
                         if n.kind() == "name" {
-                            if let Some(id) = self.callables.get(&self.text(n)).cloned() {
+                            let method = self.text(n);
+                            if let Some(id) = self.callables.get(&method).cloned() {
                                 self.site(ci, SiteKind::Call(id), line(node));
+                            } else if let Some(ty) = node
+                                .child_by_field_name("object")
+                                .and_then(|o| self.receiver(o))
+                                .and_then(|v| self.var_types.get(&v).cloned())
+                            {
+                                let kind = PCallKind::Typed { ty, method };
+                                self.site(ci, SiteKind::Unbound(kind), line(node));
                             }
                         }
                     }
@@ -358,12 +490,7 @@ impl Walker<'_, '_> {
             }
             "scoped_call_expression" => {
                 if let Some(ci) = caller {
-                    if let Some(scope) = node
-                        .child_by_field_name("scope")
-                        .filter(|s| s.kind() == "name")
-                    {
-                        self.class_use(ci, scope, line(node));
-                    }
+                    self.static_call(ci, node);
                 }
                 self.walk(node, caller, owner);
             }
@@ -406,6 +533,90 @@ impl Walker<'_, '_> {
         }
     }
 
+    /// The typed name a member call's object stands for: `$v` (not `$this`) → `v`, `$this->p` → `p`.
+    fn receiver(&self, object: TsNode) -> Option<String> {
+        let src = self.cx.src;
+        match object.kind() {
+            "variable_name" => variable(object, src).filter(|v| v != "this"),
+            "member_access_expression" => {
+                let this = object
+                    .child_by_field_name("object")
+                    .and_then(|o| variable(o, src))
+                    .is_some_and(|v| v == "this");
+                object
+                    .child_by_field_name("name")
+                    .filter(|n| this && n.kind() == "name")
+                    .map(|n| self.text(n))
+            }
+            _ => None,
+        }
+    }
+
+    /// The method `name` a class of the file declares itself.
+    fn own_method(&self, class_id: &str, name: &str) -> Option<String> {
+        self.class_methods.get(class_id)?.get(name).cloned()
+    }
+
+    /// `X::m()`: `self::`/`static::` → the calling method's class's own `m`; `parent::` → the
+    /// parent's own `m` (a class of the file, else the cross-file pass, which never reports it);
+    /// closures have no class for these. A class of the file → its own `m`; any other `X` → the
+    /// cross-file pass. Builtin-like names count; a method never statically calls itself.
+    fn static_call(&mut self, caller: usize, node: TsNode) {
+        let (Some(scope), Some(method)) = (
+            node.child_by_field_name("scope"),
+            node.child_by_field_name("name")
+                .filter(|n| n.kind() == "name"),
+        ) else {
+            return;
+        };
+        let method = self.text(method);
+        let ln = line(node);
+        let class = self.caller_class.get(&caller).cloned();
+        let written = self.text(scope);
+        let (target, unbound) = match (scope.kind(), written.as_str()) {
+            ("relative_scope", "self" | "static") => {
+                (class.and_then(|c| self.own_method(&c, &method)), None)
+            }
+            ("relative_scope", "parent") => {
+                let Some(parent) = class.and_then(|c| self.class_parent.get(&c).cloned()) else {
+                    return;
+                };
+                match self.classes.get(last_segment(&parent)).cloned() {
+                    Some(id) => (self.own_method(&id, &method), None),
+                    None => (
+                        None,
+                        Some(PCallKind::Static {
+                            scope: parent,
+                            method,
+                            report: false,
+                        }),
+                    ),
+                }
+            }
+            ("name" | "qualified_name", _) => {
+                match self.classes.get(last_segment(&written)).cloned() {
+                    Some(id) => (self.own_method(&id, &method), None),
+                    None => (
+                        None,
+                        Some(PCallKind::Static {
+                            scope: written,
+                            method,
+                            report: true,
+                        }),
+                    ),
+                }
+            }
+            _ => return,
+        };
+        if let Some(id) = target {
+            if id != self.callers[caller].0 {
+                self.site(caller, SiteKind::Call(id), ln);
+            }
+        } else if let Some(kind) = unbound {
+            self.site(caller, SiteKind::Unbound(kind), ln);
+        }
+    }
+
     fn site(&mut self, caller: usize, kind: SiteKind, line: u32) {
         self.callers[caller].1.push(Site { kind, line });
     }
@@ -415,7 +626,7 @@ impl Walker<'_, '_> {
         self.callers.len() - 1
     }
 
-    /// `new X` / `X::m()`: a class of the file, else recorded for the cross-file pass.
+    /// `new X`: a class of the file, else recorded for the cross-file pass.
     fn class_use(&mut self, caller: usize, scope: TsNode, line: u32) {
         let text = self.text(scope);
         match scope.kind() {
@@ -627,6 +838,7 @@ impl Walker<'_, '_> {
             name: name.clone(),
             fqn,
             id: id.clone(),
+            methods: Vec::new(),
         });
         self.cx.add_def(
             id.clone(),
@@ -736,6 +948,9 @@ impl Walker<'_, '_> {
         self.cx.add_edge(&parent, &id, relation, ln, None);
         self.signature(node, &id, owner, ln);
         let ci = self.new_caller(&id);
+        if let Some(class) = owner {
+            self.caller_class.insert(ci, class.to_string());
+        }
         if let Some(body) = node.child_by_field_name("body") {
             self.walk(body, Some(ci), &id);
         }
@@ -757,7 +972,12 @@ impl Walker<'_, '_> {
         self.signature(node, &id, None, ln);
         let ci = self.new_caller(&id);
         if let Some(body) = node.child_by_field_name("body") {
-            self.walk(body, Some(ci), &id);
+            // An arrow function's body is an expression, possibly the call itself.
+            if node.kind() == "arrow_function" {
+                self.visit(body, Some(ci), &id);
+            } else {
+                self.walk(body, Some(ci), &id);
+            }
         }
     }
 
