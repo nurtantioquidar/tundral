@@ -7,7 +7,9 @@
 //! - A per-file stub (a type, `X::CONST` or `X::$p` naming no class of its file) binds to the
 //!   only class, interface, trait or enum of that name in the repository.
 //! - A bare call `f()` the file could not bind goes to the function or method of that name
-//!   nearest to the caller's file ([`nearest`]; INFERRED 0.85).
+//!   nearest to the caller's file ([`nearest`]; INFERRED 0.85). A node of any language labelled
+//!   exactly `f` (a JSON or YAML key, a package) competes as a candidate but binds nothing
+//!   ([`label_blockers`]).
 //! - `new X` (any qualification, last segment) binds to class `X`: through a non-aliased import
 //!   of `X` (EXTRACTED 1.0), else, unless the file writes `X` as a type, to the nearest class of
 //!   that name (INFERRED 0.85). Aliased names bind nothing.
@@ -115,6 +117,51 @@ pub(crate) fn nearest(from: &str, cands: &[(String, String)]) -> Option<String> 
     }
     let (_, id) = best?;
     (!tied).then(|| id.to_string())
+}
+
+/// Prefix of candidates that only block a name in [`nearest`] (see [`label_blockers`]).
+pub(crate) const BLOCK: &str = "@block:";
+
+/// For each of `names`, the nodes of any file labelled exactly like it, as candidates
+/// `(BLOCK + id, path)`: Graphify weighs them against the functions and methods of that name
+/// (whose labels end in `()`) and binds nothing when one is nearest.
+pub(crate) fn label_blockers(
+    files: &[View],
+    names: &HashSet<&str>,
+) -> HashMap<String, Vec<(String, String)>> {
+    let mut out: HashMap<String, Vec<(String, String)>> = HashMap::new();
+    if names.is_empty() {
+        return out;
+    }
+    for v in files {
+        for n in &v.facts.nodes {
+            if n.source_file.is_empty() || !names.contains(n.label.as_str()) {
+                continue;
+            }
+            out.entry(n.label.clone())
+                .or_default()
+                .push((format!("{BLOCK}{}", v.id(&n.id)), v.file.rel.clone()));
+        }
+    }
+    out
+}
+
+/// The function or method `name` nearest to `rel`, unless a blocking node is nearer.
+pub(crate) fn nearest_callable(
+    rel: &str,
+    name: &str,
+    callables: &HashMap<&str, Vec<(String, String)>>,
+    blockers: &HashMap<String, Vec<(String, String)>>,
+) -> Option<String> {
+    let own = callables.get(name)?;
+    let target = match blockers.get(name) {
+        Some(b) => {
+            let all: Vec<(String, String)> = own.iter().chain(b).cloned().collect();
+            nearest(rel, &all)
+        }
+        None => nearest(rel, own),
+    }?;
+    (!target.starts_with(BLOCK)).then_some(target)
 }
 
 /// A cross-file edge.
@@ -241,6 +288,15 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
     }
 
     // Calls the files could not bind.
+    let bare: HashSet<&str> = php
+        .iter()
+        .flat_map(|(_, p)| &p.calls)
+        .filter_map(|c| match &c.kind {
+            PCallKind::Bare(name) => Some(name.as_str()),
+            _ => None,
+        })
+        .collect();
+    let blockers = label_blockers(files, &bare);
     let mut unresolved: Vec<(String, Vec<String>)> = Vec::new();
     for (v, p) in &php {
         let rel = v.file.rel.as_str();
@@ -308,9 +364,7 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                         None
                     }
                 },
-                PCallKind::Bare(name) => callables
-                    .get(name.as_str())
-                    .and_then(|cands| nearest(rel, cands))
+                PCallKind::Bare(name) => nearest_callable(rel, name, &callables, &blockers)
                     .map(|t| (t, Confidence::Inferred, 0.85)),
                 PCallKind::Class(written) => {
                     let short = written.rsplit('\\').next().unwrap_or(written);

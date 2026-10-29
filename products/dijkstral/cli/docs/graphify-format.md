@@ -2525,7 +2525,16 @@ closures, ambiguity, unresolved records) and guzzle (5,969/5,969 calls).
 
 A name bound across files (INFERRED) picks the candidate with the greatest key
 (**the candidate is a test file exactly when the caller is**, shared leading directories, same
-directory, same file); an equal best binds nothing. Test files: a `test`, `tests`, `spec`, `specs`
+directory, same file); an equal best binds nothing.
+
+- **Rule (blocking labels).** For a bare call `f()` (PHP) or `f` (Ruby), every node of any
+  language whose label is exactly `f` competes too — a JSON key (`scripts.aa`), a package
+  dependency (`ref_bb`, `bb@1.0`), a Cargo package, and since 0.9.97 a YAML key — while other
+  languages' functions (`cc()` in Python, `dd()` in JavaScript) do not. When such a node is the
+  nearest candidate, or ties with the best function, the call binds nothing: sinatra's
+  `env['…']` in `lib/` lost its link to `rack-protection/spec/support/spec_helpers.rb` because
+  `.github/workflows/test.yml` has two `env` keys (non-test candidates beat a test one, and the
+  two tie). Test files: a `test`, `tests`, `spec`, `specs`
 or `__tests__` directory, or `*_test`, `*_spec`, `test_*`, `*.test.*`, `*.spec.*`. Measured
 pairwise from `rack-protection/spec/support/x.rb`: `test/` beats `rack-protection/lib/rack/`,
 `rack-protection/spec/` beats `test/`, `test/` ties `spec/`.
