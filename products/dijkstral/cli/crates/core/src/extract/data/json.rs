@@ -308,7 +308,13 @@ mod tests {
             [
                 ("tsconfig_extends", "extends", "ref_a_json"),
                 ("tsconfig", "imports", "ref_types_node"),
+                (
+                    "tsconfig_dependencies_types_node",
+                    "declares",
+                    "ref_types_node"
+                ),
                 ("tsconfig", "imports", "ref_nested"),
+                ("tsconfig_devdependencies_nested", "declares", "ref_nested"),
                 ("tsconfig", "extends", "ref_c_json"),
             ]
         );

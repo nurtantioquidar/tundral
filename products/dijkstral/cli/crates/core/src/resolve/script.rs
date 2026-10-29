@@ -782,15 +782,26 @@ impl<'a> Resolver<'a> {
 
     /// `metadata.unresolved_calls` (§10.4): calls on receivers whose type (as Graphify types
     /// them) is no TS/JS module-level name of the repository other than a function's (classes,
-    /// interfaces, type aliases, enums, namespaces and values, compared case-insensitively) and
-    /// not a standard global, once per (callee, type) and caller, in source order.
+    /// interfaces, type aliases, enums, namespaces and values, compared case-insensitively), no
+    /// name destructured from a `require` and not a standard global, once per (callee, type)
+    /// and caller, in source order.
     fn unresolved_calls(&mut self, script: &[usize]) {
-        let known: HashSet<String> = script
+        let mut known: HashSet<String> = script
             .iter()
             .flat_map(|&vi| self.facts[vi].expect("script view").top.iter())
             .filter(|d| d.kind != DefKind::Function)
             .map(|d| d.name.to_lowercase())
             .collect();
+        // Names destructured from a `require` (`const { CLIEngine } = require("eslint")`).
+        for &vi in script {
+            for imp in &self.facts[vi].expect("script view").imports {
+                if imp.kind == ImportKind::Require {
+                    for n in imp.names.iter().filter(|n| n.imported != "*") {
+                        known.insert(n.imported.to_lowercase());
+                    }
+                }
+            }
+        }
         for &vi in script {
             let f = self.facts[vi].expect("script view");
             let rel = self.views[vi].file.rel.as_str();

@@ -744,6 +744,25 @@ Fixture `python/`; ids below are from `python.graphify.json`.
 
 The node's `source_location` is the `def`/`class` line, not the decorator line.
 
+**Fields added in 0.9.97** (probes `web-py1` to `web-py6`, `web-py19`, `web-py20`):
+
+- `_py_return_type` on any function or method whose return annotation names a class: a plain or
+  dotted name (last component), a string holding a dotted name (`"Box"`, `'pkg.sub.Thing'`),
+  `Optional[X]` (any qualifier, nested) or `X | None`, unwrapped to `X`. The name must start with
+  an upper-case letter (`int`, `list`, `node_t`, `_Priv` and `None` give nothing; `Any`, `Self`,
+  `Callable` count); other subscripts and unions give nothing.
+- `_py_property: true` on a def decorated (uncalled) with `property`, `cached_property`,
+  `functools.cached_property` or `<x>.getter` (not `@x.setter`, `@abstractproperty`,
+  `@builtins.property`, `@property()`).
+- `_py_fixture` on a def decorated with `pytest.fixture`, `fixture` or `pytest_asyncio.fixture`
+  (called or not) in a test module (`test_*.py`, `*_test.py`, `conftest.py`): the class it
+  provides, else `"?"`. A return annotation decides alone: a plain or dotted capitalised name,
+  or the first argument of `Iterator[…]`, `Generator[…]` and their async forms. Without one,
+  every `return x` / `yield x` of the def's own body (nested defs and lambdas excluded, bare
+  `return`/`yield` ignored, `yield from` unknown) must agree on a class: `Cls(...)` /
+  `mod.Cls(...)` with a capitalised name, or a local whose every binding does (`n = Cls()`,
+  `n: Cls = …`, `n: Cls`, `with Cls(...) as n`; loop targets and other bindings are unknown).
+
 **Not emitted:**
 
 - module-level variables and constants (`DEFAULT_ROLE`, `T = TypeVar(...)`, `INSTANCE = Model()`);
@@ -782,7 +801,8 @@ edge (`K2(Base[int])` has none).
 | `method` | class → method | every method | EXTRACTED | — | method line |
 | `inherits` | class → base | bare-identifier base: same-file class, imported class (resolved during per-file extraction, no score), or stub (`extbase`, `object`) | EXTRACTED | — | class line |
 | `references` | function/method → type | annotations of params and returns that resolve to a local or imported class, or become stubs. `Optional[Foo]` → `foo` with `generic_arg`; `Repo[U]` → `pkg_models_repo` `parameter_type` + `pkg_models_user` `generic_arg` | EXTRACTED | `parameter_type`, `return_type`, `generic_arg` | def line |
-| `references` | decorated def → decorator | `@traced`, `@deco` (imported), `@ext_deco(arg=1)` → stub, `@pytest.fixture` → stub `fixture`. Builtins (`@property`, `@staticmethod`, `@classmethod`) and `@dataclass` produce nothing. | EXTRACTED | `decorator` | **decorator line** |
+| `references` | decorated def → decorator | `@traced`, `@deco` (imported), `@ext_deco(arg=1)` → stub, `@pytest.fixture` → stub `fixture`. Builtins (`@property`, `@staticmethod`, `@classmethod`) and `@dataclass` produce nothing, nor (0.9.97) the accessor forms `@x.getter`/`@x.setter`/`@x.deleter` (a bare `@setter` still does). | EXTRACTED | `decorator` | **decorator line** |
+| `references` | reader → `_py_property` method (0.9.97) | an attribute read (not a call, not an assignment target; `+=` counts; not inside a lambda): `self.p` through the class and its bases (never the property itself), or `x.p` with `x` typed as for `x.m()` (§9.4) to a property defined directly on that class. Not `cls.p`, `self.a.p`, `Cls.p` (probes `web-py17`, `web-py18`). | EXTRACTED 1.0 (`self`) / INFERRED 0.85 | `property_read` | the **last** read |
 | `imports` | file → external module | `import x`, `import x.y`, `import x.y as z` (target `slug(x.y)`) | EXTRACTED | `import` | statement line |
 | `imports` | file → local module | `import pkg` → `pkg_init`; `import pkg.sub.mod` → `pkg_sub_mod` | EXTRACTED | `import` | statement line |
 | `imports_from` | file → module | `from M import …` where M is local (`pkg_models`), a package (`from . import models` → **`pkg_init`**), or external (`collections`). `from __future__` is ignored. | EXTRACTED | `import` | statement line |
@@ -814,7 +834,7 @@ first call line is kept.
 | `Cls.m()` with `Cls` local or imported | EXTRACTED (1.0 cross-file): `test_parse → pkg_models_user_parse`, `a_caller → a_mine_m` |
 | `x.m()` where `x`'s class is known from a parameter annotation (incl. string annotation `admin: "Admin"`) or `x = Cls()` in the same function | INFERRED 0.85 to `Cls.m` **only if `m` is defined directly on `Cls`**: `service.register` → `pkg_service_userservice_register`; `c.area()` → `lib_shapes_circle_area`. Inherited methods are not walked (`c.uniq_shape_method()` → dropped). |
 | `x.m()` with unknown receiver type, even if `m` is unique in the repo (`obj.unique_m()`); `self.repo.add(...)`; chained `Mine().am()` | dropped |
-| `mod.f()` on a **local** module alias (`models.validate(...)`, `sh.make()`, `lib.shapes.make()`) | dropped |
+| `mod.f()` on a **local** module alias (`models.validate(...)`, `sh.make()`, `import pkg.models as pm; pm.validate()`) | EXTRACTED 1.0, from functions and (0.9.97) methods; a fully dotted `pkg.lib.shapes.make()` is dropped (probe `web-py14`) |
 | `mod.f()` on an **external** module bound by `import x` / `import x.y as z`, inside a **top-level function** | `calls` → the external node, EXTRACTED 1.0 (`pkg_util_slugify → re`, `app_f1 → json`, `→ os_path`) |
 | the same inside a **method**, a dotted receiver (`os.path.join`), or `from os import path as p2; p2.join()` | dropped |
 | a name imported from an external module (`OrderedDict()`, `defaultdict(list)`) | dropped |
@@ -838,6 +858,9 @@ Also:
 - `from . import missing_mod` gives only `imports_from pkg_init`.
 - `try: import ujson as json / except ImportError: import json` gives both.
 
+`Self` (any qualifier) is excluded from `references` like `Optional` (0.9.97; it still gives
+`_py_return_type: "Self"`).
+
 ### 9.6 Duplicate names
 
 - `helper()` exists in `models.py`, `service.py` and `util.py`.
@@ -846,6 +869,17 @@ Also:
   - `util.py`'s own `helper` is used by `slugify`;
   - none of them is ever reached through the unique-name fallback.
 - Two `.save()` methods (`Base`, `User`) are separate nodes. `user.save()` on `U(...)` is dropped.
+
+**Id clashes (0.9.97, probes `web-py9`, `web-py10`, `web-py16`).** Module-level functions and
+classes, and the methods written directly in a module-level class, decorated or not, keep apart
+when their different names produce one id: a name not already in id form (`P`, `Get_Y`, `_m`)
+or with a same-letters, different-case twin takes `_<sha1(name)[:6]>` (`class P` + `def p` →
+`a_p_511993` and `a_p_516b97`; `class Foo` + `class foo` both suffixed). 0.9.86 did this only
+for undecorated functions and methods. Nested classes, their methods and nested functions still
+merge into the first definition, as do identical names. **Quirk (not reproduced):** a suffixed
+class or decorated function loses the edges Graphify keys by the unsuffixed id: its decorator
+`references` (the stub stays), its docstring's `rationale_for` and, for decorated functions,
+in-body `calls`; dijkstral emits them.
 
 ---
 
@@ -865,7 +899,7 @@ handling applies to `.ts` too.
 | Enum member | `enum_id_slug(member)` | `src_models_user_role_member` |
 | Nested function declaration (any depth inside a named function or method) | `parent_id_slug(name)` | `src_models_user_admin_promote_bump` |
 | Function inside a namespace | `file_id_slug(name)`: namespaces are **flattened** | `export namespace Storage { function key }` → `src_models_repo_key` |
-| Destructured `require` / call result | `file_id_slug(pattern text)` | `const { join } = require("path")` → `src_util_join` |
+| `require` of a **package** (or any non-relative or non-literal specifier), destructured or not | `file_id_slug(pattern text)` | `const { join } = require("path")` → `src_util_join`; `const lodash = require("lodash")` → `…_lodash`. A relative `require("./m")` (string starting with `.`) makes **no** node in 0.9.97 (`src_util_legacy` is gone) |
 | `export * as nsA from` | `file_id_slug(alias)` | `lib_re_nsa` |
 | Rationale comment | `file_id_rationale_<line>` | `src_models_user_rationale_21` |
 
@@ -914,13 +948,40 @@ handling applies to `.ts` too.
   namespaces, consts, enum members or files.
 - `source_location` is the declaration keyword's line. A decorated class takes the `class` line
   (`src_models_repo_repo` L10; its decorator is on L9).
-- There is never `metadata` or `node_kind` on TS/JS nodes.
+- **0.9.97:** `_ts_fields` / `_ts_static_fields` on a class (TS and JS; not interfaces) when any
+  instance / static field has a type, as an object sorted by key (probes `web-ts1`, `web-ts5`
+  to `web-ts7`):
+  - declared: a field annotated with a plain type name, or `T | null | undefined` (`a: Node`,
+    `#p: Node`, `m?: Node`, `q: node_t`; not `string`, generics, arrays, `ns.T`, function
+    types), else, without an annotation, `= new X()` with a bare `X`; parameter properties
+    (`private pa: Node`); `get x(): T` and `set x(v: T)`; `accessor a: T`; function-valued
+    fields with an annotation (`handler: EventListener = () => …`). Declarations win.
+  - assigned, for fields without a declared type: `this.x = new X()` or `this.x = p` (`p` a
+    typed parameter of that method) in a method's own body (arrow callbacks count; `function`
+    expressions, nested functions and function-valued fields do not; other right-hand sides
+    say nothing). Constructor assignments rank first, then the other methods'; a tier whose
+    assignments disagree types nothing. `this.x` in a static method types a static field.
+- **0.9.97:** `metadata.unresolved_calls` on a function, method or (for calls in module-level
+  callbacks) the file: `[{callee, receiver_type, lang: "typescript", line, file}]`, once per
+  (callee, type) in source order, for `x.m()` / `this.f.m()` whose receiver type (as typed for
+  this purpose, §10.4) is not a TS/JS module-level name of the repository other than a function
+  (classes, interfaces, type aliases, enums, namespaces, values; case-insensitive), not a name
+  destructured from a `require`, and not a standard global (`Map Set WeakMap WeakSet Array
+  Promise Date RegExp Error TypeError RangeError SyntaxError ReferenceError EvalError URIError
+  Object String Number Boolean Symbol BigInt JSON Math Intl URL URLSearchParams Headers Request
+  Response Proxy Reflect FormData Blob File AbortController AbortSignal TextEncoder TextDecoder`;
+  probes `web-ts8` to `web-ts23`). `lang` is `typescript` for JS too.
 
 **Same-file id collisions (quirk).**
 
 - Matching labels (`function dup` twice; `get x` with `set x`): the first node wins.
 - Differing labels (`function foo` with `class Foo`): the merged node takes the later node's bare
   name and line and loses `_callable`/`_callable_class`. Calls to the shadowed definition disappear.
+- **Rule (0.9.97), class and interface members only:** members whose different names produce one
+  id keep apart. When exactly one of the names is public (not `_`- or `#`-prefixed) it keeps the
+  id; every other member takes `_<sha1(raw name)[:6]>` (`m`/`M` → both suffixed, `_priv`/`priv`
+  → `priv` plain, `#y`/`y`/`_y` → `y` plain, `['comp']`/`comp` → both). `#n` beside `n` marks
+  both nodes `_ts_public_twin: true` (probes `web-ts17` to `web-ts19`).
 
 ### 10.2 Edges
 
@@ -953,8 +1014,8 @@ There is no `uses` and no `AMBIGUOUS` in TS/JS (fixtures, excalidraw, monet, erp
 | `import * as ns from "./m"` | `imports_from` only |
 | `import type {…}` | as named; the whole-statement form sets `type_only` |
 | `import("./m")` | top level: `dynamic_import` only. Inside a function: `imports_from` (`deferred: true`) from the function plus `dynamic_import`. |
-| `const x = require("./m")` | `imports_from` + value node `x` |
-| `const { a, b } = require("./m")` | `imports_from` + `imports` → `m_a`, `m_b` (stubs if missing) + value node `{ a, b }` |
+| `const x = require("./m")` | `imports_from` (no value node for a relative specifier, §10.1) |
+| `const { a, b } = require("./m")` | `imports_from` + `imports` → `m_a`, `m_b` (stubs if missing) |
 | `export * from "./m"` | `imports_from` (`re-export`) + `re_exports` → m (`export`) |
 | `export { a as b } from "./m"` | `imports_from` (`re-export`) + `re_exports` → `m_a` (`re-export`) + `re_exports` → m (`export`) |
 | `export { a }`, `export default X`, `export { default } from` | nothing |
@@ -980,16 +1041,19 @@ There is no `uses` and no `AMBIGUOUS` in TS/JS (fixtures, excalidraw, monet, erp
 - **Symbol stubs:** a named binding not defined in the resolved local module → stub
   `module_id_slug(name)` with an `imports` edge.
 
-**Barrels (quirk):** importing a name that a barrel re-exports first creates the stub
-(`src_models_index_user`). A later pass then adds the real `imports` edge
-(`src_service -imports-> src_models_user_user`) but never removes the stub. When two `export *`
-sources define the same name, the first wins.
+**Barrels:** 0.9.97 no longer leaves the 0.9.86 stub (`src_models_index_user`) beside the real
+`imports` edge (`src_service -imports-> src_models_user_user`). When two `export *` sources define
+the same name, the first wins. A method still cannot see a barrel-imported class (`new User()` in
+`register` is dropped, §10.4).
 
 **Dynamic-import phantoms (quirk):** an `import()` target that is not a local code file becomes a
-`file_type: "code"` node with `confidence: "EXTRACTED"`, no `source_location`, `label` = specifier,
-and `source_file` = specifier.
+`file_type: "code"` node with `confidence: "EXTRACTED"` and no `source_location`.
 
-- The id is `slug(last path segment)` for bare specifiers (`@scope/pkg-types` → `pkg_types`).
+- A bare specifier's phantom is its package (0.9.97): id `slug(package)`, `label` and
+  `source_file` the package name, `type: "module"` (`@scope/pkg-types/x` → `scope_pkg_types`,
+  `lodash/fp` → `lodash`). 0.9.86 used `slug(last path segment)` and the whole specifier
+  (`pkg_types`, `fp`). A relative specifier keeps `slug(resolved path)` and the specifier as
+  label, without `type`.
 - So `ref_lodash` and `lodash` can coexist.
 - These nodes are lost on warm rebuilds (§8.4).
 
@@ -1004,10 +1068,20 @@ first call line.
 
 - `name()`, `new Name()` and JSX `<Name/>` resolve to the same-file function or class. Lowercase
   intrinsic tags are ignored.
-- `this.m()` resolves to the enclosing class's `m`.
-- **Quirk:** `anything.m()` with a non-`this` receiver binds to the **last-defined method named `m` in
-  the same file**. This makes self-loops such as `src_service_userservice_log -calls->` itself, from
-  `console.log` inside `UserService.log`. The call is then consumed and is never typed-resolved.
+- `this.m()` resolves to the enclosing class's `m`; `Class.m()` on a same-file class to its `m`.
+- 0.9.86's quirk binding `anything.m()` to the last-defined same-file method named `m` (the
+  `src_service_userservice_log` self-loop from `console.log`) is gone in 0.9.97, and so is
+  `const me = this; me.m()` (probe `web-js3`; dijkstral keeps binding the alias, a deliberate
+  difference worth ~170 erpnext links).
+- **0.9.97:** a typed receiver in the same file (`k.m()` with `k: K`, `const k = new K()`, or
+  `this.f.m()` with `f` in `_ts_fields`) gives `calls` INFERRED 0.85, never to the caller itself
+  (`k.n()` inside `n` gives nothing; `this.m()` inside `m` is still an EXTRACTED self-loop).
+  Receivers are typed **file-wide by name, the last binding winning**: every parameter annotated
+  with a plain type name (any function, callback, overload, method signature or function type)
+  and every `x = new X()` declarator (probes `web-ts13`, `web-ts14`). Unions, generics, rest and
+  destructured parameters bind nothing; annotated locals (`let j: K = make()`) do not count.
+  Dijkstral types a receiver by its own function's parameters and locals first (a deliberate
+  difference), but records `unresolved_calls` with Graphify's typing.
 
 **Import-scoped pass for top-level functions (EXTRACTED, no score):** `name()` where `name` is an
 imported binding (named, aliased or default) resolves to the imported symbol.
@@ -1021,11 +1095,13 @@ imported binding (named, aliased or default) resolves to the imported symbol.
 - Names in modules the file does not import are never resolved.
 - INFERRED 0.85: `recv.m()` where `recv`'s class is known from a parameter annotation of an imported
   class or from `const s = new Svc()`, and that class itself defines `m`. Inherited methods are not
-  resolved.
+  resolved. In 0.9.97 this includes classes bound by an unaliased destructured `require`
+  (`const { Store } = require("./store")`: `Store.create()` EXTRACTED 1.0, `new Store().add()`
+  INFERRED) and `this.f.m()` typed by `_ts_fields` in JS (`this.store = new CachedStore()`).
 - Dropped:
   - namespace-qualified calls (`ns.helper()`, `Storage.key()`);
   - calls on external modules (no `calls` edge to `ref_*`, unlike Python);
-  - calls through destructured-require aliases;
+  - calls through aliased destructured requires (`{ Store: S2 }`; dijkstral resolves them);
   - `super.m()` and `super()`;
   - unknown names.
 
@@ -1717,9 +1793,10 @@ N package                 label "package.json"   (file node, L1)
 N package_name            label "name"           L2   contains from package
 N package_scripts         label "scripts"        L4
 N package_scripts_build   label "build"          L4   contains from package_scripts
-N package_dependencies_react  label "react"      L5   contains from package_dependencies
+N package_dependencies_react  label "react@^18.3.1"  L5   contains from package_dependencies
 N ref_react               label "react"  file_type "concept"  source_file "package.json" L5
 E package -imports-> ref_react   EXTRACTED ctx "import"  L5
+E package_dependencies_react -declares-> ref_react   EXTRACTED  L5
 ```
 
 - Every object key becomes a node (file_type `code`, `_origin` `ast`, location = line of the key),
@@ -1730,9 +1807,12 @@ E package -imports-> ref_react   EXTRACTED ctx "import"  L5
 - Keys whose slug is empty are dropped (`"@/*"` under `paths`).
 - Edges: `contains` parent→child (no context, EXTRACTED).
 - Dependency keys inside `dependencies|devDependencies|peerDependencies|optionalDependencies`
-  whose value is a **string** additionally create a concept node `ref_<slug(name)>` and an edge
-  `file -imports-> ref_*` (context `import`). `"@types/node"` → `ref_types_node`,
-  `"lodash.merge"` → `ref_lodash_merge`. Non-string values (`{"a": 1}`) → no ref.
+  whose value is a **non-empty string** are labelled `name@version` (`react@^18.3.1`,
+  `local@file:../local`, `ws@workspace:*`; 0.9.86 used the bare name) and additionally create a
+  concept node `ref_<slug(name)>`, an edge `file -imports-> ref_*` (context `import`) and an edge
+  `<key node> -declares-> ref_*` (no context, the key's line; new in 0.9.97). `"@types/node"` →
+  `ref_types_node`, `"lodash.merge"` → `ref_lodash_merge`. Non-string values (`{"a": 1}`, `5`)
+  and `""` keep the bare label and get no ref (probe `web-pkg1`).
   `bundledDependencies` (array) → no refs.
 - `"extends": "<string>"` → concept node `ref_<slug(value)>` (`./base.json` → `ref_base_json`,
   label `./base.json`) and edge `file -extends-> ref` with context `import`.
@@ -1913,7 +1993,7 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 | Q5 | Same-file id collisions merge distinct definitions: Python redefinitions, TS `function foo` vs `class Foo`, Rust flattened inline modules (`inner::helper` vs `deeper::helper`) and variant/method slugs, Go file vs type (file node lost, `contains` self-loop), Java overloads and same-named nested types. | §4.5, §10.1, §11, §12, §13 |
 | Q6 | The clustered build remaps external stubs to a same-stem file (`use std::fmt` → `src/util/fmt.rs`, `path` → another crate's `path.rs`) and drops cross-language import edges. | §8.1, §11 |
 | Q7 | Rust import edges resolve by name coincidence through type-stub ids, not by module path. | §11 |
-| Q8 | TS/JS `anything.m()` binds to the last same-file method named `m`, which creates self-loops (`console.log` inside `.log()`). Go has the same last-definition rule for same-file method names. | §10.4, §12 |
+| Q8 | TS/JS `anything.m()` binds to the last same-file method named `m`, which creates self-loops (`console.log` inside `.log()`); gone for TS/JS in 0.9.97. Go has the same last-definition rule for same-file method names. | §10.4, §12 |
 | Q9 | TS barrel imports leave a dangling stub (`src_models_index_user`) beside the real edge. Dynamic-import phantoms carry `confidence` and no `source_location`, and can coexist with a `ref_*` stub for the same package. | §10.3 |
 | Q10 | Go: cross-package type re-keying (`store_store_go_store_model`); root-level type ids depend on the checkout directory name; generic receivers create phantom `Store[T]` nodes; package imports link to `_test.go` files; external labels equal ids. | §12 |
 | Q11 | Java: a wildcard import resolves to a class named like the package; static imports link to every same-named class; whether an import targets a class depends on its use elsewhere in the repo; `@Override` gets one stub per file. | §13 |
@@ -3476,8 +3556,8 @@ collide unless the names do.
 
 ### 38.5 Golden and quirks
 
-- Golden: nodes 44/44, links 84/84 after the one allowed Q8 link (`.mount()` binding to the
-  `mount()` function in `main.ts`); communities identical.
+- Golden: nodes 44/44, links 84/84 with nothing allowed (0.9.97 dropped the Q8 `.mount()`
+  self-loop of 0.9.86), fields included (`_ts_fields` on `TodoStore`); communities identical.
 - TS behaviours seen through Vue and not reproduced, as for `.ts`: Q8 (`this.other()` inside an
   options-API method binds to the flattened `other()`), and Graphify emits uninitialised
   `export let x` late without a `contains` link (dijkstral links it).
@@ -3511,14 +3591,17 @@ Quirks (not reproduced):
   stray nodes named after neighbouring tokens appear without `contains` (`export let n: number`
   gives a node `number`), and once a default import was linked (`imports` to `Counter`).
 - **SV2** (Q9 family) Every import whose specifier does not resolve to a local file also gets a
-  phantom code node (id `slug(last segment)`, `$lib/Cart.svelte` → `cart_svelte`; a missing
-  relative path → `slug(resolved path without extension)`), labelled with the specifier,
-  `source_file` the specifier or resolved path, `confidence` and no location, plus an
-  `imports_from` link without context, line or weight, beside the normal link to `ref_lib`. Some
-  of these links disappear in the clustered build (`pkg/C.svelte`). Dijkstral keeps the external
-  only.
+  phantom code node plus an `imports_from` link without context, line or weight, beside the
+  normal link to `ref_lib`. In 0.9.97 a bare specifier's phantom is one node per **package**
+  (the first segment, or `@scope/name`): id `slug(package)`, label and `source_file` the package,
+  `confidence` and `type: "module"`, no location (`$lib/Cart.svelte` and `$lib/Badge.svelte` →
+  one `lib` labelled `$lib`; `$app/stores` → `app`; `@scope/pkg-types/sub/Thing.svelte` →
+  `scope_pkg_types`). 0.9.86 named it after the last segment (`cart_svelte`, label the
+  specifier, no `type`). A missing relative path still gives `slug(resolved path without
+  extension)`, labelled with the specifier, without `type` (probe `web-sv1`). Some of these
+  links disappear in the clustered build (`pkg/C.svelte`). Dijkstral keeps the external only.
 
-Golden: nodes 27/27 and links 45/45 after the two phantom nodes and links (SV2); NMI 1.0.
+Golden: nodes 27/27 and links 45/45 after the phantom node and link (SV2); NMI 1.0.
 
 ## 40. Astro (2026-10-15)
 
@@ -3527,7 +3610,8 @@ Fixture `tests/fixtures/astro/` (pages, a layout, components with frontmatter, a
 next `---` line) and every `<script>` block form one TypeScript module; a `---` later in the
 markup is not a fence. Everything else is §39: no import-scoped pass, no default-import links,
 no heritage or type references, no `type_only`, no props without a value, no rationale, and the
-SV2 phantoms for unresolved imports (`@/H.astro` → `h_astro`). INFERRED member calls involving an
+SV2 phantoms for unresolved imports (`@/H.astro` → `h_astro`, `comp-lib/Comp.astro` → `comp_lib`
+in 0.9.97). INFERRED member calls involving an
 Astro file are never kept (§38.3).
 
 Golden: nodes 22/22, links 32/32, identical communities, analysis and report.

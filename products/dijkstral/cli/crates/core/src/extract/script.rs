@@ -324,6 +324,8 @@ struct Caller {
     static_method: bool,
     /// Own parameters with a receiver type (`p: Node`, `q?: Repo`, `r: Node | null`).
     params: Vec<(String, String)>,
+    /// A function-valued class field (`handler = () => …`): its `this.x = …` types nothing.
+    field_fn: bool,
 }
 
 struct Class {
@@ -581,6 +583,7 @@ impl<'a> Walker<'a, '_> {
             ctor: false,
             static_method: false,
             params: Vec::new(),
+            field_fn: false,
         });
         self.callers.len() - 1
     }
@@ -1377,6 +1380,7 @@ impl<'a> Walker<'a, '_> {
                                 }
                             }
                             let caller = self.new_caller(id, None, Some(class), false);
+                            self.callers[caller].field_fn = true;
                             self.function_body(v, caller, St::opaque(), depth);
                         }
                         _ => {
@@ -1966,13 +1970,16 @@ impl<'a> Walker<'a, '_> {
     /// `this.x = new X()` or `this.x = p` (`p` a typed parameter) in a method's own body types
     /// field `x` (§10.1 `_ts_fields`); other right-hand sides say nothing.
     fn field_assignment(&mut self, caller: usize, left: TsNode, right: TsNode) {
-        let Some(class) = self.callers[caller].class else {
+        let Some(class) = self.callers[caller]
+            .class
+            .filter(|_| !self.callers[caller].field_fn)
+        else {
             return;
         };
         if left.kind() != "member_expression"
-            || !left
+            || left
                 .child_by_field_name("object")
-                .is_some_and(|o| o.kind() == "this")
+                .is_none_or(|o| o.kind() != "this")
         {
             return;
         }
@@ -2557,13 +2564,20 @@ impl<'a> Walker<'a, '_> {
     fn unresolved_candidate(&mut self, caller: usize, recv: &Recv, method: &str, line: u32) {
         let ty = match recv {
             Recv::This => None,
-            Recv::ThisField(field) => self.enclosing_class(caller).and_then(|k| {
-                self.classes[k]
+            // `this.f` outside any class (ES5 constructor functions) uses the file-wide map.
+            Recv::ThisField(field) => match self.enclosing_class(caller) {
+                Some(k) => self.classes[k]
                     .fields
                     .iter()
                     .find(|(f, _)| f == field)
-                    .map(|(_, t)| t.clone())
-            }),
+                    .map(|(_, t)| t.clone()),
+                None => self
+                    .graphify_vars
+                    .iter()
+                    .rev()
+                    .find(|(v, _)| v == field)
+                    .map(|(_, t)| t.clone()),
+            },
             Recv::Ident(n) if self.is_this_alias(caller, n) => None,
             Recv::Ident(n) => self
                 .graphify_vars
@@ -2781,7 +2795,7 @@ mod tests {
                 "c_a",
                 "c_g",
                 "c_helper",
-                "c_p_q_r",
+                // A relative `require` binding is no node (0.9.97).
                 "c_fn",
                 "c_fn_method",
                 "c_obj"

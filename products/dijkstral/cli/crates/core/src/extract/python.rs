@@ -1484,18 +1484,46 @@ impl<'a> Walker<'_, 'a> {
     }
 
     /// `_py_fixture`: the class a pytest fixture provides, or `"?"`. A return annotation decides
-    /// alone (a plain or dotted capitalised name, else `"?"`). Without one, every `return x` and
+    /// alone (a plain or dotted capitalised name, or the first argument of `Iterator[…]`,
+    /// `Generator[…]` and their async forms; else `"?"`). Without one, every `return x` and
     /// `yield x` of the function's own body (nested definitions excluded; bare `return`/`yield`
     /// ignored) must give the same class: a call of a capitalised name (`Node()`,
     /// `nx.DiGraph()`), or a local variable whose every assignment does (`n = Node()`,
     /// `n: Node = make()`, `n: Node`); loop targets and other bindings give none.
     fn fixture_type(&self, func: TsNode) -> String {
         if let Some(ret) = func.child_by_field_name("return_type") {
-            let inner = if ret.kind() == "type" {
+            let mut inner = if ret.kind() == "type" {
                 ret.named_child(0)
             } else {
                 Some(ret)
             };
+            // A yield fixture's `Iterator[X]` / `Generator[X, …]` provides `X`.
+            if let Some(i) = inner.filter(|i| matches!(i.kind(), "generic_type" | "subscript")) {
+                let head = i.named_child(0).map(|h| split_dotted(self.text(h)).1);
+                let first = match i.kind() {
+                    "generic_type" => i
+                        .named_child(1)
+                        .filter(|p| p.kind() == "type_parameter")
+                        .and_then(|p| p.named_child(0)),
+                    _ => i.child_by_field_name("subscript"),
+                };
+                inner = first
+                    .filter(|_| {
+                        head.is_some_and(|h| {
+                            matches!(
+                                h,
+                                "Iterator" | "Generator" | "AsyncIterator" | "AsyncGenerator"
+                            )
+                        })
+                    })
+                    .map(|f| {
+                        if f.kind() == "type" {
+                            f.named_child(0).unwrap_or(f)
+                        } else {
+                            f
+                        }
+                    });
+            }
             return inner
                 .filter(|i| matches!(i.kind(), "identifier" | "attribute"))
                 .and_then(|i| class_name(self.text(i)))
