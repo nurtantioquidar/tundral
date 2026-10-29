@@ -1346,3 +1346,33 @@ Not comparable with the earlier tables except through pass and fact recall: the 
 dijkstral alike (0.58M → 0.78M, 0.60M → 0.80M), which points at Codex 0.165.0 rather than at
 either graph. Raw summaries: `results/agent-1793260984.json`, `agent-1793262342.json`,
 `agent-1793263650.json`; session events in `$DIJKSTRAL_BENCH_HOME/agent/sessions-0997-r{1,2,3}/`.
+
+### Stage 7 follow-up: flow steps from callers — 2026-10-29
+
+At Graphify 0.9.97 parity Graphify passed more flow questions than dijkstral (96% against 81%,
+above). In dijkstral's misses the facts sat in the body of a function `context` showed only as a
+caller of an anchor (fastapi's `get_openapi`, ripgrep's `search_parallel`): the other steps are
+one call below a caller. For a question with two flow ends (`cli/docs/dijkstral-context.md` §1),
+the first two callers of each anchor outside tests now also list what else they call, in call
+order (`c0e1b89`, §2). Offline key-fact coverage (`agent/context_eval.py`): flow 0.58 → 0.69
+(held out 0.40 → 0.53), all questions 0.74 → 0.76, none lost; flow output median 3,156 → 3,907
+characters. Listing each anchor's callees' callees instead reached 0.62 on flow, both together
+lost an architecture question, and more callers (3–8) or longer lists (16) added nothing. Tuned on
+fastapi and ripgrep; Kubernetes stayed held out, though one of its flow answers (`k18`) had been
+read while looking at the agent run above.
+
+`context`'s output changes for 11 of the 60 questions (8 flow, 1 impact, 1 callers, 1
+architecture: those whose wording has two flow ends); the other 49 get the same output, so only
+the 11 were rerun, dijkstral arm, three runs, same model, judge and Codex as above:
+
+| dijkstral | pass | judge correct | fact recall | median tokens | total tokens per run | tool calls |
+|---|---:|---:|---:|---:|---:|---:|
+| `f844c0a` (runs above) | 79% ± 5 | 82% ± 9 | 0.83 ± 0.03 | 72,414 | 0.92M | 4.5 |
+| `c0e1b89` | **85% ± 5** | **85% ± 5** | 0.81 ± 0.03 | 75,005 | **0.87M** | **4.1** |
+
+The pod-scheduling trace dijkstral missed in every run (`kubernetes-k18`) passed 2 of 3,
+ripgrep's walker-to-printer trace 3 of 3 (was 2), its `--pre` trace 2 of 3 (was 3). The gains are
+within the spread of 33 sessions; total tokens fell 6%. Fresh tokens are not compared: these short
+runs hit the prompt cache less (64–76% of input, against 77–81% in the full runs), so their fresh
+tokens per run (248k against 192k) measure cache conditions, not the change. Kept. Raw:
+`results/agent-1793266452.json`, `agent-1793266554.json`, `agent-1793266649.json`.
