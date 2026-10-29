@@ -2,6 +2,7 @@ use std::path::Path;
 
 use anyhow::{bail, Result};
 use dijkstral_service::{app, builder, config::Config};
+use tokio::signal::unix::{signal, SignalKind};
 
 fn main() -> Result<()> {
     let args: Vec<String> = std::env::args().collect();
@@ -30,9 +31,14 @@ fn serve() -> Result<()> {
         let (router, _state) = app::app(config)?;
         let listener = tokio::net::TcpListener::bind(listen).await?;
         tracing::info!(%listen, "dijkstral-service listening");
+        // Ctrl-C, or SIGTERM from a supervisor (`docker stop`, systemd).
+        let mut term = signal(SignalKind::terminate())?;
         axum::serve(listener, router)
-            .with_graceful_shutdown(async {
-                let _ = tokio::signal::ctrl_c().await;
+            .with_graceful_shutdown(async move {
+                tokio::select! {
+                    _ = tokio::signal::ctrl_c() => {}
+                    _ = term.recv() => {}
+                }
             })
             .await?;
         Ok(())
