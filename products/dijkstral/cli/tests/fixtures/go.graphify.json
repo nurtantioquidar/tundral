@@ -14,6 +14,7 @@
    "file_type": "code",
    "source_file": "cmd/app/main.go",
    "source_location": "L11",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -40,6 +41,8 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L15",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -48,6 +51,8 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L22",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -64,6 +69,8 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L27",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -72,6 +79,7 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L33",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -80,6 +88,7 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L37",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -88,6 +97,7 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L45",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -96,6 +106,7 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L49",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -104,6 +115,7 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L59",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -112,6 +124,7 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L63",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -120,6 +133,7 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L69",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -128,6 +142,7 @@
    "file_type": "code",
    "source_file": "service/service.go",
    "source_location": "L74",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -144,6 +159,7 @@
    "file_type": "code",
    "source_file": "service/service_test.go",
    "source_location": "L5",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -160,6 +176,7 @@
    "file_type": "code",
    "source_file": "store/helpers.go",
    "source_location": "L9",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -168,6 +185,7 @@
    "file_type": "code",
    "source_file": "store/helpers.go",
    "source_location": "L14",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -176,6 +194,7 @@
    "file_type": "code",
    "source_file": "store/helpers.go",
    "source_location": "L18",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -184,6 +203,8 @@
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L39",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -192,6 +213,18 @@
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L12",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "store_key",
+   "label": "Key",
+   "file_type": "code",
+   "source_file": "store/store.go",
+   "source_location": "L15",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -200,6 +233,8 @@
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L18",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -216,6 +251,8 @@
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L23",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -224,6 +261,7 @@
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L29",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -232,14 +270,8 @@
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L34",
-   "_origin": "ast"
-  },
-  {
-   "id": "t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -248,30 +280,25 @@
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L44",
+   "_callable": true,
    "_origin": "ast"
   },
   {
-   "id": "store_store_t",
-   "label": "Store[T]",
-   "file_type": "code",
-   "source_file": "store/store.go",
-   "source_location": "L49",
-   "_origin": "ast"
-  },
-  {
-   "id": "store_store_t_put",
+   "id": "store_store_put",
    "label": ".Put()",
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L49",
+   "_callable": true,
    "_origin": "ast"
   },
   {
-   "id": "store_store_t_get",
+   "id": "store_store_get",
    "label": ".Get()",
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L54",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -280,14 +307,7 @@
    "file_type": "code",
    "source_file": "store/store.go",
    "source_location": "L64",
-   "_origin": "ast"
-  },
-  {
-   "id": "n",
-   "label": "N",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -853,6 +873,16 @@
   },
   {
    "source": "store_store_go_store_store",
+   "target": "store_key",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "store/store.go",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "store_store_go_store_store",
    "target": "store_entity",
    "relation": "contains",
    "confidence": "EXTRACTED",
@@ -957,17 +987,6 @@
   },
   {
    "source": "store_store_go_store_store",
-   "target": "t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "store/store.go",
-   "source_location": "L40",
-   "weight": 1.0,
-   "context": "field",
-   "_origin": "ast"
-  },
-  {
-   "source": "store_store_go_store_store",
    "target": "store_store_newstore",
    "relation": "contains",
    "confidence": "EXTRACTED",
@@ -988,19 +1007,8 @@
    "_origin": "ast"
   },
   {
-   "source": "store_store_newstore",
-   "target": "t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "store/store.go",
-   "source_location": "L44",
-   "weight": 1.0,
-   "context": "generic_arg",
-   "_origin": "ast"
-  },
-  {
-   "source": "store_store_t",
-   "target": "store_store_t_put",
+   "source": "store_store_go_store_store",
+   "target": "store_store_put",
    "relation": "method",
    "confidence": "EXTRACTED",
    "source_file": "store/store.go",
@@ -1009,19 +1017,8 @@
    "_origin": "ast"
   },
   {
-   "source": "store_store_t_put",
-   "target": "t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "store/store.go",
-   "source_location": "L49",
-   "weight": 1.0,
-   "context": "parameter_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "store_store_t",
-   "target": "store_store_t_get",
+   "source": "store_store_go_store_store",
+   "target": "store_store_get",
    "relation": "method",
    "confidence": "EXTRACTED",
    "source_file": "store/store.go",
@@ -1030,7 +1027,7 @@
    "_origin": "ast"
   },
   {
-   "source": "store_store_t_get",
+   "source": "store_store_get",
    "target": "store_id",
    "relation": "references",
    "confidence": "EXTRACTED",
@@ -1038,17 +1035,6 @@
    "source_location": "L54",
    "weight": 1.0,
    "context": "parameter_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "store_store_t_get",
-   "target": "t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "store/store.go",
-   "source_location": "L54",
-   "weight": 1.0,
-   "context": "return_type",
    "_origin": "ast"
   },
   {
@@ -1062,18 +1048,7 @@
    "_origin": "ast"
   },
   {
-   "source": "store_store_sum",
-   "target": "n",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "store/store.go",
-   "source_location": "L64",
-   "weight": 1.0,
-   "context": "parameter_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "store_store_t_put",
+   "source": "store_store_put",
    "target": "store_model_identity",
    "relation": "calls",
    "context": "call",

@@ -63,17 +63,16 @@
       "super"
     ],
     "4": [
-      "circle_as_round",
       "cow",
       "hashmap",
       "hashset",
-      "registry",
       "src_lib",
       "src_lib_build",
       "src_lib_greeting",
       "src_lib_label",
       "src_lib_macro_square",
-      "src_lib_max_shapes"
+      "src_lib_max_shapes",
+      "src_lib_registry"
     ],
     "5": [
       "src_model_pair",
@@ -101,7 +100,7 @@
     "1": 0.16483516483516483,
     "2": 0.19230769230769232,
     "3": 0.21212121212121213,
-    "4": 0.18181818181818182,
+    "4": 0.2222222222222222,
     "5": 0.25,
     "6": 0.4,
     "7": 1.0
@@ -110,7 +109,7 @@
     {
       "id": "src_model_circle",
       "label": "Circle",
-      "degree": 13
+      "degree": 14
     },
     {
       "id": "src_model_shape",
@@ -160,6 +159,17 @@
   ],
   "surprises": [
     {
+      "source": "render()",
+      "target": "Circle",
+      "source_files": [
+        "src/util/mod.rs",
+        "src/model.rs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities; peripheral node `render()` unexpectedly reaches hub `Circle`"
+    },
+    {
       "source": "main()",
       "target": "round_kind()",
       "source_files": [
@@ -169,17 +179,6 @@
       "confidence": "INFERRED",
       "relation": "calls",
       "why": "inferred connection - not explicitly stated in source; bridges separate communities"
-    },
-    {
-      "source": "render()",
-      "target": "Circle",
-      "source_files": [
-        "src/util/mod.rs",
-        "src/model.rs"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "references",
-      "why": "bridges separate communities; peripheral node `render()` unexpectedly reaches hub `Circle`"
     },
     {
       "source": "main()",

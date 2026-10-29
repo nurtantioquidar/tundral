@@ -1,10 +1,10 @@
 {
   "communities": {
     "0": [
-      "bin_app",
-      "bin_app_main",
       "invalidargumentexception",
       "psr_log_loggerinterface",
+      "src_models_repository_repository",
+      "src_models_repository_repository_add",
       "src_service_userservice",
       "src_service_userservice_helper",
       "src_service_userservice_userservice",
@@ -14,79 +14,79 @@
       "src_service_userservice_userservice_register"
     ],
     "1": [
-      "src_models_repository",
-      "src_models_repository_repository",
-      "src_models_repository_repository_add",
-      "src_models_repository_repository_find",
-      "src_models_repository_timestamps",
-      "src_models_repository_timestamps_touch",
-      "src_service_userservice_userservice_make",
-      "static"
-    ],
-    "2": [
       "jsonserializable",
       "src_models_model",
       "src_models_model_model",
       "src_models_model_model_jsonserialize",
       "src_models_model_model_save",
       "src_models_model_model_table",
-      "src_models_model_model_validate"
+      "src_models_model_model_validate",
+      "src_models_repository_repository_find",
+      "src_models_user_user_save"
     ],
-    "3": [
-      "self",
-      "src_models_user_user",
-      "src_models_user_user_display",
-      "src_models_user_user_parse",
-      "src_models_user_user_save",
-      "src_models_user_user_table"
-    ],
-    "4": [
-      "phpunit_framework_testcase",
-      "tests_userservicetest",
-      "tests_userservicetest_userservicetest",
-      "tests_userservicetest_userservicetest_testparse",
-      "tests_userservicetest_userservicetest_testregister"
-    ],
-    "5": [
+    "2": [
       "src_models_status",
       "src_models_status_status",
       "src_models_status_status_active",
       "src_models_status_status_banned",
-      "src_models_status_status_label"
+      "src_models_status_status_label",
+      "src_models_user_user",
+      "src_models_user_user_display",
+      "src_models_user_user_table"
     ],
-    "6": [
+    "3": [
+      "phpunit_framework_testcase",
+      "self",
+      "src_models_user_user_parse",
+      "tests_userservicetest",
+      "tests_userservicetest_userservicetest",
+      "tests_userservicetest_userservicetest_testparse"
+    ],
+    "4": [
+      "bin_app",
+      "bin_app_main",
+      "src_service_userservice_userservice_make",
+      "static",
+      "tests_userservicetest_userservicetest_testregister"
+    ],
+    "5": [
       "default_role",
       "shop_support_str",
       "slugify",
       "src_models_user"
     ],
-    "7": [
+    "6": [
       "src_helpers",
       "src_helpers_helper",
       "src_helpers_slugify",
       "src_models_user_user_construct"
+    ],
+    "7": [
+      "src_models_repository",
+      "src_models_repository_timestamps",
+      "src_models_repository_timestamps_touch"
     ]
   },
   "cohesion": {
-    "0": 0.2909090909090909,
+    "0": 0.32727272727272727,
     "1": 0.25,
-    "2": 0.3333333333333333,
-    "3": 0.3333333333333333,
-    "4": 0.5,
-    "5": 0.4,
-    "6": 0.5,
+    "2": 0.2857142857142857,
+    "3": 0.4,
+    "4": 0.4,
+    "5": 0.5,
+    "6": 0.6666666666666666,
     "7": 0.6666666666666666
   },
   "gods": [
     {
       "id": "src_models_user_user",
       "label": "User",
-      "degree": 15
+      "degree": 14
     },
     {
       "id": "src_service_userservice_userservice",
       "label": "UserService",
-      "degree": 12
+      "degree": 10
     },
     {
       "id": "src_models_model_model",
@@ -131,17 +131,6 @@
   ],
   "surprises": [
     {
-      "source": "main()",
-      "target": "UserService",
-      "source_files": [
-        "bin/app.php",
-        "src/Service/UserService.php"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "connects across different repos/directories; peripheral node `main()` unexpectedly reaches hub `UserService`"
-    },
-    {
       "source": "User",
       "target": "Model",
       "source_files": [
@@ -150,17 +139,6 @@
       ],
       "confidence": "EXTRACTED",
       "relation": "inherits",
-      "why": "bridges separate communities"
-    },
-    {
-      "source": "UserService",
-      "target": "Repository",
-      "source_files": [
-        "src/Service/UserService.php",
-        "src/Models/Repository.php"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "references",
       "why": "bridges separate communities"
     },
     {
@@ -175,6 +153,17 @@
       "why": "bridges separate communities"
     },
     {
+      "source": "UserService",
+      "target": "Repository",
+      "source_files": [
+        "src/Service/UserService.php",
+        "src/Models/Repository.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    },
+    {
       "source": "User",
       "target": "Status",
       "source_files": [
@@ -183,7 +172,7 @@
       ],
       "confidence": "EXTRACTED",
       "relation": "references",
-      "why": "bridges separate communities"
+      "why": "cross-file semantic connection"
     }
   ],
   "tokens": {

@@ -19,21 +19,8 @@
       "queueable"
     ],
     "1": [
-      "classes",
-      "forms",
-      "math",
-      "pascal_demo_demo",
-      "pascal_demo_dpr_pascal_demo",
-      "pascal_demo_main",
-      "pascal_shapes",
-      "pascal_shapes_compute",
-      "pascal_shapes_log",
-      "pascal_shapes_register",
-      "pascal_shapes_shapes",
-      "sysutils"
-    ],
-    "2": [
       "idrawable",
+      "pascal_shapes_compute",
       "pascal_shapes_tcircle",
       "pascal_shapes_tcircle_area",
       "pascal_shapes_tcircle_grow",
@@ -44,6 +31,19 @@
       "pascal_shapes_tshape_paint",
       "pascal_shapes_tshape_setname",
       "tbaseshape"
+    ],
+    "2": [
+      "classes",
+      "forms",
+      "math",
+      "pascal_demo_demo",
+      "pascal_demo_dpr_pascal_demo",
+      "pascal_demo_main",
+      "pascal_shapes",
+      "pascal_shapes_log",
+      "pascal_shapes_register",
+      "pascal_shapes_shapes",
+      "sysutils"
     ],
     "3": [
       "cobol_billing",
@@ -58,18 +58,6 @@
       "cobol_billing_cbl_program_billing_paragraph_main_para"
     ],
     "4": [
-      "device",
-      "gpu_kernels",
-      "gpu_kernels_particle",
-      "gpu_kernels_particle_x",
-      "gpu_kernels_particle_y",
-      "gpu_kernels_speed",
-      "gpu_kernels_step",
-      "kernel",
-      "metal_stdlib",
-      "uint"
-    ],
-    "5": [
       "pascal_mainform",
       "pascal_mainform_cancelbuttonclick",
       "pascal_mainform_formcreate",
@@ -80,6 +68,16 @@
       "pascal_mainform_tmemo",
       "pascal_mainform_tpanel"
     ],
+    "5": [
+      "gpu_kernels",
+      "gpu_kernels_particle",
+      "gpu_kernels_particle_x",
+      "gpu_kernels_particle_y",
+      "gpu_kernels_speed",
+      "gpu_kernels_step",
+      "metal_stdlib",
+      "uint"
+    ],
     "6": [
       "byond_interface",
       "byond_interface_elem_infowindow_info",
@@ -89,23 +87,24 @@
       "byond_interface_window_mainwindow"
     ],
     "7": [
+      "extra",
+      "lcl",
+      "pascal_widgets_lpk_pascal_widgets",
+      "pascal_widgets_pas",
+      "pascal_widgets_widgetspkg"
+    ],
+    "8": [
       "pascal_geometry",
       "pascal_geometry_geometry",
       "pascal_geometry_tbaseshape",
       "pascal_geometry_tbaseshape_prepare",
       "tobject"
     ],
-    "8": [
+    "9": [
       "apex_accounttrigger",
       "apex_accounttrigger_accounttrigger",
       "apex_accounttrigger_trigger_account",
       "dml_upsert"
-    ],
-    "9": [
-      "extra",
-      "lcl",
-      "pascal_widgets_lpk_pascal_widgets",
-      "pascal_widgets_widgetspkg"
     ],
     "10": [
       "byond_icons",
@@ -148,19 +147,25 @@
       "byond_map"
     ],
     "19": [
+      "inert_page"
+    ],
+    "20": [
       "pascal_demo_dpk_pascal_demo"
+    ],
+    "21": [
+      "scripts_legacy"
     ]
   },
   "cohesion": {
     "0": 0.14166666666666666,
-    "1": 0.19696969696969696,
-    "2": 0.2727272727272727,
+    "1": 0.24242424242424243,
+    "2": 0.2,
     "3": 0.26666666666666666,
-    "4": 0.24444444444444444,
-    "5": 0.2222222222222222,
+    "4": 0.2222222222222222,
+    "5": 0.32142857142857145,
     "6": 0.3333333333333333,
     "7": 0.4,
-    "8": 0.5,
+    "8": 0.4,
     "9": 0.5,
     "10": 0.6666666666666666,
     "11": 0.6666666666666666,
@@ -171,7 +176,9 @@
     "16": 1.0,
     "17": 1.0,
     "18": 1.0,
-    "19": 1.0
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0
   },
   "gods": [
     {
@@ -193,11 +200,6 @@
       "id": "pascal_shapes_tshape",
       "label": "TShape",
       "degree": 9
-    },
-    {
-      "id": "gpu_kernels_step",
-      "label": "step()",
-      "degree": 5
     },
     {
       "id": "cobol_billing_cbl_program_billing_paragraph_main_para",
@@ -223,12 +225,17 @@
       "id": "pascal_shapes_tcircle",
       "label": "TCircle",
       "degree": 4
+    },
+    {
+      "id": "pascal_shapes_tcircle_grow",
+      "label": "Grow()",
+      "degree": 4
     }
   ],
   "surprises": [
     {
-      "source": "Area()",
-      "target": "Compute()",
+      "source": "Compute()",
+      "target": "Register()",
       "source_files": [
         "pascal/Shapes.pas",
         "pascal/Shapes.pas"

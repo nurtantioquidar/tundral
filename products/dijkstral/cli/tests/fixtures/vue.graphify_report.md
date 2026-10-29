@@ -1,11 +1,11 @@
-# Graph Report - vue  (2026-10-14)
+# Graph Report - vue  (2026-10-29)
 
 ## Corpus Check
 - 12 files · ~614 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 44 nodes · 85 edges · 6 communities (5 shown, 1 thin omitted)
+- 44 nodes · 84 edges · 6 communities (5 shown, 1 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -22,12 +22,12 @@
 2. `TodoStore` - 5 edges
 3. `formatTitle()` - 5 edges
 4. `pluralize()` - 5 edges
-5. `mount()` - 4 edges
-6. `createStore()` - 4 edges
-7. `label()` - 3 edges
-8. `isDone()` - 3 edges
-9. `useFilter()` - 3 edges
-10. `capitalize()` - 3 edges
+5. `createStore()` - 4 edges
+6. `label()` - 3 edges
+7. `isDone()` - 3 edges
+8. `useFilter()` - 3 edges
+9. `capitalize()` - 3 edges
+10. `onToggle()` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `increment()` --calls--> `pluralize()`  [EXTRACTED]

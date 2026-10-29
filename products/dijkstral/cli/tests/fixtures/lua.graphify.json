@@ -290,24 +290,8 @@
    "_origin": "ast"
   },
   {
-   "id": "shop",
-   "label": "shop",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
    "id": "dkjson",
    "label": "dkjson",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
-   "id": "shop_service",
-   "label": "shop_service",
    "file_type": "concept",
    "type": "external",
    "external": true,
@@ -317,7 +301,7 @@
  "edges": [
   {
    "source": "bin_shop",
-   "target": "shop",
+   "target": "bin_shop",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
@@ -709,7 +693,7 @@
   },
   {
    "source": "spec_service_spec",
-   "target": "shop_service",
+   "target": "lib_shop_service",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",

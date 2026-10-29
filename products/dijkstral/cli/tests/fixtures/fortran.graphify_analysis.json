@@ -11,10 +11,29 @@
       "src_shapes_external_draw",
       "src_shapes_f90_geometry",
       "src_shapes_f90_utils",
-      "src_shapes_make_circle",
       "src_shapes_shapes"
     ],
     "1": [
+      "legacy_solver",
+      "legacy_solver_label",
+      "legacy_solver_legacy_types",
+      "legacy_solver_options",
+      "legacy_solver_solve",
+      "legacy_solver_step",
+      "legacy_solver_trace",
+      "missing_routine"
+    ],
+    "2": [
+      "src_geometry_circumference",
+      "src_geometry_report_circle",
+      "src_shapes_make_circle",
+      "utils_f90_utils",
+      "utils_factorial",
+      "utils_label",
+      "utils_log_value",
+      "utils_utils"
+    ],
+    "3": [
       "app_main",
       "app_main_f90_geometry",
       "app_main_main",
@@ -23,35 +42,19 @@
       "app_main_summarize",
       "shapes"
     ],
-    "2": [
-      "legacy_solver",
-      "legacy_solver_label",
-      "legacy_solver_legacy_types",
-      "legacy_solver_options",
-      "legacy_solver_solve",
-      "legacy_solver_step",
-      "legacy_solver_trace"
-    ],
-    "3": [
+    "4": [
       "constants",
       "iso_fortran_env",
       "src_geometry",
       "src_geometry_geometry",
       "src_geometry_point3"
     ],
-    "4": [
+    "5": [
       "src_geometry_add_points",
       "src_geometry_origin",
       "src_geometry_point",
       "src_geometry_point_norm",
       "src_geometry_shift"
-    ],
-    "5": [
-      "utils_f90_utils",
-      "utils_factorial",
-      "utils_label",
-      "utils_log_value",
-      "utils_utils"
     ],
     "6": [
       "src_constants",
@@ -62,22 +65,17 @@
       "src_geometry_distance",
       "src_geometry_distance_coords",
       "src_geometry_distance_points"
-    ],
-    "8": [
-      "src_geometry_circumference",
-      "src_geometry_report_circle"
     ]
   },
   "cohesion": {
-    "0": 0.2727272727272727,
-    "1": 0.3333333333333333,
-    "2": 0.38095238095238093,
-    "3": 0.4,
+    "0": 0.2909090909090909,
+    "1": 0.32142857142857145,
+    "2": 0.25,
+    "3": 0.3333333333333333,
     "4": 0.4,
     "5": 0.4,
     "6": 0.6666666666666666,
-    "7": 1.0,
-    "8": 1.0
+    "7": 1.0
   },
   "gods": [
     {
@@ -101,13 +99,18 @@
       "degree": 7
     },
     {
+      "id": "app_main_main",
+      "label": "main",
+      "degree": 6
+    },
+    {
       "id": "src_shapes_describe",
       "label": "describe()",
       "degree": 6
     },
     {
-      "id": "app_main_main",
-      "label": "main",
+      "id": "legacy_solver_solve",
+      "label": "solve()",
       "degree": 5
     },
     {
@@ -121,14 +124,9 @@
       "degree": 4
     },
     {
-      "id": "utils_utils",
-      "label": "utils",
+      "id": "src_shapes_make_circle",
+      "label": "make_circle()",
       "degree": 4
-    },
-    {
-      "id": "app_main_summarize",
-      "label": "summarize()",
-      "degree": 3
     }
   ],
   "surprises": [
@@ -144,6 +142,17 @@
       "why": "connects across different repos/directories; bridges separate communities; peripheral node `options` unexpectedly reaches hub `describe()`"
     },
     {
+      "source": "main",
+      "target": "solve()",
+      "source_files": [
+        "app/main.f90",
+        "legacy/solver.f90"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
       "source": "summarize()",
       "target": "circle",
       "source_files": [
@@ -155,15 +164,26 @@
       "why": "connects across different repos/directories; bridges separate communities"
     },
     {
-      "source": "make_circle()",
-      "target": "point",
+      "source": "report_circle()",
+      "target": "log_value()",
       "source_files": [
-        "src/shapes.f90",
-        "src/geometry.f90"
+        "src/geometry.f90",
+        "utils.f90"
       ],
       "confidence": "EXTRACTED",
-      "relation": "references",
-      "why": "bridges separate communities"
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "make_circle()",
+      "target": "log_value()",
+      "source_files": [
+        "src/shapes.f90",
+        "utils.f90"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
     }
   ],
   "tokens": {

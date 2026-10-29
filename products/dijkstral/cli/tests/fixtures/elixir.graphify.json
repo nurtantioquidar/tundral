@@ -400,14 +400,6 @@
    "_origin": "ast"
   },
   {
-   "id": "config",
-   "label": "config",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
    "id": "logger",
    "label": "logger",
    "file_type": "concept",
@@ -443,7 +435,7 @@
  "edges": [
   {
    "source": "config_config",
-   "target": "config",
+   "target": "config_config",
    "relation": "imports",
    "confidence": "EXTRACTED",
    "source_file": "config/config.exs",

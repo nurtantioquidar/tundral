@@ -451,30 +451,6 @@
    "_origin": "ast"
   },
   {
-   "id": "userservice",
-   "label": "userservice",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
-   "id": "user",
-   "label": "user",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
-   "id": "format",
-   "label": "format",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
    "id": "role",
    "label": "role",
    "file_type": "concept",
@@ -561,7 +537,7 @@
   },
   {
    "source": "src_main_groovy_com_shop_app",
-   "target": "userservice",
+   "target": "src_main_groovy_com_shop_service_userservice",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
@@ -572,7 +548,7 @@
   },
   {
    "source": "src_main_groovy_com_shop_app",
-   "target": "user",
+   "target": "src_main_groovy_com_shop_model_user",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
@@ -696,7 +672,7 @@
   },
   {
    "source": "src_main_groovy_com_shop_model_user",
-   "target": "format",
+   "target": "src_main_groovy_com_shop_util_format",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
@@ -901,7 +877,7 @@
   },
   {
    "source": "src_main_groovy_com_shop_service_userservice",
-   "target": "user",
+   "target": "src_main_groovy_com_shop_model_user",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
@@ -1086,7 +1062,7 @@
   },
   {
    "source": "src_test_groovy_com_shop_userservicespec",
-   "target": "user",
+   "target": "src_main_groovy_com_shop_model_user",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
@@ -1097,7 +1073,7 @@
   },
   {
    "source": "src_test_groovy_com_shop_userservicespec",
-   "target": "userservice",
+   "target": "src_main_groovy_com_shop_service_userservice",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",

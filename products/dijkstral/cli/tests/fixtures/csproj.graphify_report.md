@@ -1,4 +1,4 @@
-# Graph Report - csproj  (2026-10-15)
+# Graph Report - csproj  (2026-10-29)
 
 ## Corpus Check
 - 20 files · ~550 words

@@ -62,7 +62,7 @@
   },
   "cohesion": {
     "0": 0.39285714285714285,
-    "1": 0.2857142857142857,
+    "1": 0.32142857142857145,
     "2": 0.3333333333333333,
     "3": 0.7,
     "4": 0.6666666666666666,
@@ -87,6 +87,11 @@
       "degree": 5
     },
     {
+      "id": "modules_shop_shop_new_shoporder",
+      "label": "New-ShopOrder()",
+      "degree": 5
+    },
+    {
       "id": "build_invoke_build",
       "label": "Invoke-Build()",
       "degree": 5
@@ -94,11 +99,6 @@
     {
       "id": "modules_shop_private_pricing_taxrule",
       "label": "TaxRule",
-      "degree": 4
-    },
-    {
-      "id": "modules_shop_shop_new_shoporder",
-      "label": "New-ShopOrder()",
       "degree": 4
     },
     {

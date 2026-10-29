@@ -1,11 +1,11 @@
-# Graph Report - javascript  (2026-10-13)
+# Graph Report - javascript  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available
 
 ## Summary
-- 36 nodes · 52 edges · 7 communities (2 shown, 5 thin omitted)
-- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 3 edges (avg confidence: 0.85)
+- 34 nodes · 52 edges · 6 communities (2 shown, 4 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -15,7 +15,6 @@
 - Community 3
 - Community 4
 - Community 5
-- Community 6
 
 ## God Nodes (most connected - your core abstractions)
 1. `Store` - 9 edges
@@ -25,9 +24,9 @@
 5. `formatAll()` - 4 edges
 6. `List()` - 3 edges
 7. `Row()` - 3 edges
-8. `fixture()` - 2 edges
+8. `clear()` - 2 edges
 9. `helper()` - 2 edges
-10. `clear()` - 2 edges
+10. `fixture()` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fixture()` --calls--> `Store`  [EXTRACTED]
@@ -38,25 +37,25 @@
 ## Import Cycles
 - None detected.
 
-## Communities (7 total, 5 thin omitted)
+## Communities (6 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.29
-Nodes (3): Store, fixture(), { Store }
+Cohesion: 0.31
+Nodes (5): App, List(), Row(), formatAll(), formatLabel()
 
-### Community 2 - "Community 2"
-Cohesion: 0.40
+### Community 1 - "Community 1"
+Cohesion: 0.33
 Nodes (3): CachedStore, clear(), utils
 
 ## Knowledge Gaps
-- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Store` connect `Community 0` to `Community 2`, `Community 4`?**
-  _High betweenness centrality (0.277) - this node is a cross-community bridge._
-- **Why does `CachedStore` connect `Community 2` to `Community 0`, `Community 3`, `Community 5`?**
-  _High betweenness centrality (0.129) - this node is a cross-community bridge._
-- **Why does `formatLabel()` connect `Community 6` to `Community 1`, `Community 3`, `Community 5`?**
-  _High betweenness centrality (0.066) - this node is a cross-community bridge._
+- **Why does `Store` connect `Community 3` to `Community 1`, `Community 4`, `Community 5`?**
+  _High betweenness centrality (0.278) - this node is a cross-community bridge._
+- **Why does `CachedStore` connect `Community 1` to `Community 0`, `Community 3`?**
+  _High betweenness centrality (0.136) - this node is a cross-community bridge._
+- **Why does `formatLabel()` connect `Community 0` to `Community 2`?**
+  _High betweenness centrality (0.070) - this node is a cross-community bridge._

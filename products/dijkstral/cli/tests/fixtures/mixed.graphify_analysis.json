@@ -8,9 +8,7 @@
       "package_scripts",
       "package_scripts_build",
       "package_version",
-      "ref_react",
-      "ref_typescript",
-      "ref_zod"
+      "ref_typescript"
     ],
     "1": [
       "scripts_build",
@@ -23,21 +21,23 @@
       "scripts_common_sh__entry"
     ],
     "2": [
+      "package_dependencies",
+      "package_dependencies_react",
+      "package_dependencies_zod",
+      "ref_react",
+      "ref_zod"
+    ],
+    "3": [
       "tsconfig",
       "tsconfig_compileroptions",
       "tsconfig_compileroptions_strict",
       "tsconfig_compileroptions_target",
       "tsconfig_include"
     ],
-    "3": [
+    "4": [
       "app_main",
       "app_main_helper",
       "app_main_main"
-    ],
-    "4": [
-      "package_dependencies",
-      "package_dependencies_react",
-      "package_dependencies_zod"
     ],
     "5": [
       "cargo_toml_pkg_mixed_fixture"
@@ -47,11 +47,11 @@
     ]
   },
   "cohesion": {
-    "0": 0.2,
+    "0": 0.2857142857142857,
     "1": 0.42857142857142855,
     "2": 0.4,
-    "3": 1.0,
-    "4": 0.6666666666666666,
+    "3": 0.4,
+    "4": 1.0,
     "5": 1.0,
     "6": 1.0
   },
@@ -92,19 +92,19 @@
       "degree": 2
     },
     {
-      "id": "scripts_build_sh__entry",
-      "label": "build.sh script",
+      "id": "package_dependencies_react",
+      "label": "react@^18.3.1",
       "degree": 2
     },
     {
-      "id": "scripts_build_compile_all",
-      "label": "compile_all()",
+      "id": "ref_react",
+      "label": "react",
       "degree": 2
     },
     {
-      "id": "package_scripts_build",
-      "label": "build",
-      "degree": 1
+      "id": "package_dependencies_zod",
+      "label": "zod@3.23.8",
+      "degree": 2
     }
   ],
   "surprises": [

@@ -1,17 +1,6 @@
 {
   "communities": {
     "0": [
-      "include_util",
-      "include_util_util_max",
-      "src_shape_shape_free",
-      "src_util",
-      "src_util_clamp",
-      "src_util_log_line",
-      "src_util_util_report",
-      "src_util_xmalloc",
-      "stdlib"
-    ],
-    "1": [
       "callback",
       "main",
       "main_apply",
@@ -21,6 +10,16 @@
       "src_shape_shape_area",
       "stdio"
     ],
+    "1": [
+      "include_util",
+      "include_util_util_max",
+      "src_shape_shape_free",
+      "src_util",
+      "src_util_clamp",
+      "src_util_log_line",
+      "src_util_util_report",
+      "stdlib"
+    ],
     "2": [
       "math",
       "shape",
@@ -28,31 +27,31 @@
       "src_shape_circle_area",
       "src_shape_rect_area",
       "src_shape_registry_add",
-      "string",
-      "util"
+      "string"
     ],
     "3": [
+      "areafn",
+      "point",
+      "shapekind",
+      "src_shape_pick_area",
+      "src_shape_shape_new",
+      "src_util_xmalloc"
+    ],
+    "4": [
       "assert",
       "include_shape",
       "stddef",
       "tests_test_shape",
       "tests_test_shape_main",
       "tests_test_shape_test_area"
-    ],
-    "4": [
-      "areafn",
-      "point",
-      "shapekind",
-      "src_shape_pick_area",
-      "src_shape_shape_new"
     ]
   },
   "cohesion": {
-    "0": 0.3055555555555556,
-    "1": 0.2857142857142857,
-    "2": 0.32142857142857145,
+    "0": 0.2857142857142857,
+    "1": 0.35714285714285715,
+    "2": 0.3333333333333333,
     "3": 0.4,
-    "4": 0.5
+    "4": 0.4
   },
   "gods": [
     {

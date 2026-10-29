@@ -85,6 +85,7 @@
    "file_type": "code",
    "source_file": "pkg/models.py",
    "source_location": "L31",
+   "_py_property": true,
    "_callable": true,
    "_origin": "ast"
   },
@@ -94,6 +95,7 @@
    "file_type": "code",
    "source_file": "pkg/models.py",
    "source_location": "L35",
+   "_py_return_type": "User",
    "_callable": true,
    "_origin": "ast"
   },
@@ -103,6 +105,7 @@
    "file_type": "code",
    "source_file": "pkg/models.py",
    "source_location": "L39",
+   "_py_return_type": "User",
    "_callable": true,
    "_origin": "ast"
   },
@@ -131,6 +134,7 @@
    "file_type": "code",
    "source_file": "pkg/models.py",
    "source_location": "L51",
+   "_py_return_type": "Admin",
    "_callable": true,
    "_origin": "ast"
   },
@@ -188,6 +192,7 @@
    "file_type": "code",
    "source_file": "pkg/models.py",
    "source_location": "L68",
+   "_py_return_type": "T",
    "_callable": true,
    "_origin": "ast"
   },
@@ -292,6 +297,7 @@
    "file_type": "code",
    "source_file": "pkg/service.py",
    "source_location": "L26",
+   "_py_return_type": "U",
    "_callable": true,
    "_origin": "ast"
   },
@@ -319,6 +325,7 @@
    "file_type": "code",
    "source_file": "pkg/service.py",
    "source_location": "L42",
+   "_py_return_type": "UserService",
    "_callable": true,
    "_origin": "ast"
   },
@@ -432,6 +439,7 @@
    "file_type": "code",
    "source_file": "tests/test_service.py",
    "source_location": "L17",
+   "_py_fixture": "?",
    "_callable": true,
    "_origin": "ast"
   },
@@ -1742,6 +1750,18 @@
    "confidence_score": 1.0,
    "source_file": "tests/test_service.py",
    "source_location": "L18",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "pkg_service_userservice_register",
+   "target": "pkg_models_validate",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "pkg/service.py",
+   "source_location": "L30",
    "weight": 1.0,
    "_origin": "ast"
   },

@@ -1,4 +1,4 @@
-# Graph Report - java  (2026-10-13)
+# Graph Report - java  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available

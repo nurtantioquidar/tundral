@@ -1,4 +1,4 @@
-# Graph Report - upd  (2026-10-14)
+# Graph Report - lua  (2026-10-29)
 
 ## Corpus Check
 - 8 files · ~458 words

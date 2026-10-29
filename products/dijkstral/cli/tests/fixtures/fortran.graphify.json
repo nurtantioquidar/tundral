@@ -113,6 +113,14 @@
    "_origin": "ast"
   },
   {
+   "id": "missing_routine",
+   "label": "missing_routine",
+   "file_type": "code",
+   "source_file": "",
+   "source_location": "",
+   "_origin": "ast"
+  },
+  {
    "id": "src_constants",
    "label": "constants.f90",
    "file_type": "code",
@@ -490,6 +498,17 @@
    "_origin": "ast"
   },
   {
+   "source": "app_main_main",
+   "target": "legacy_solver_solve",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "app/main.f90",
+   "source_location": "L15",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
    "source": "app_main_print_summary",
    "target": "app_main_print_summary_inner",
    "relation": "calls",
@@ -589,6 +608,17 @@
    "confidence": "EXTRACTED",
    "source_file": "legacy/solver.f90",
    "source_location": "L10",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "legacy_solver_solve",
+   "target": "missing_routine",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "legacy/solver.f90",
+   "source_location": "L12",
    "weight": 1.0,
    "context": "call",
    "_origin": "ast"
@@ -899,6 +929,17 @@
    "_origin": "ast"
   },
   {
+   "source": "src_geometry_report_circle",
+   "target": "utils_log_value",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/geometry.f90",
+   "source_location": "L69",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
    "source": "src_geometry_circumference",
    "target": "src_geometry_report_circle",
    "relation": "calls",
@@ -1107,6 +1148,17 @@
    "confidence": "EXTRACTED",
    "source_file": "src/shapes.f90",
    "source_location": "L39",
+   "weight": 1.0,
+   "context": "call",
+   "_origin": "ast"
+  },
+  {
+   "source": "src_shapes_make_circle",
+   "target": "utils_log_value",
+   "relation": "calls",
+   "confidence": "EXTRACTED",
+   "source_file": "src/shapes.f90",
+   "source_location": "L40",
    "weight": 1.0,
    "context": "call",
    "_origin": "ast"

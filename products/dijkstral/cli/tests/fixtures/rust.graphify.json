@@ -36,6 +36,15 @@
    "_origin": "ast"
   },
   {
+   "id": "src_lib_registry",
+   "label": "Registry",
+   "file_type": "code",
+   "source_file": "src/lib.rs",
+   "source_location": "L15",
+   "_rust_declaration_count": 1,
+   "_origin": "ast"
+  },
+  {
    "id": "src_lib_macro_square",
    "label": "square!",
    "file_type": "code",
@@ -49,14 +58,6 @@
    "file_type": "code",
    "source_file": "src/lib.rs",
    "source_location": "L24",
-   "_origin": "ast"
-  },
-  {
-   "id": "registry",
-   "label": "Registry",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
    "_origin": "ast"
   },
   {
@@ -502,14 +503,6 @@
    "_origin": "ast"
   },
   {
-   "id": "circle_as_round",
-   "label": "circle_as_round",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
    "id": "render",
    "label": "render",
    "file_type": "concept",
@@ -598,14 +591,6 @@
    "source_file": ""
   },
   {
-   "id": "fmt",
-   "label": "fmt",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
    "id": "super",
    "label": "super",
    "file_type": "concept",
@@ -624,14 +609,6 @@
   {
    "id": "render_as_render_shape",
    "label": "render_as_render_shape",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
-   "id": "model",
-   "label": "model",
    "file_type": "concept",
    "type": "external",
    "external": true,
@@ -676,7 +653,7 @@
   },
   {
    "source": "src_lib",
-   "target": "circle_as_round",
+   "target": "src_model_circle",
    "relation": "imports_from",
    "confidence": "EXTRACTED",
    "source_file": "src/lib.rs",
@@ -751,6 +728,16 @@
   },
   {
    "source": "src_lib",
+   "target": "src_lib_registry",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/lib.rs",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_lib",
    "target": "src_lib_macro_square",
    "relation": "contains",
    "confidence": "EXTRACTED",
@@ -771,7 +758,7 @@
   },
   {
    "source": "src_lib_build",
-   "target": "registry",
+   "target": "src_lib_registry",
    "relation": "references",
    "confidence": "EXTRACTED",
    "source_file": "src/lib.rs",
@@ -922,7 +909,7 @@
   },
   {
    "source": "src_model",
-   "target": "fmt",
+   "target": "src_util_fmt",
    "relation": "imports_from",
    "confidence": "EXTRACTED",
    "source_file": "src/model.rs",
@@ -1483,7 +1470,7 @@
   },
   {
    "source": "src_util_mod",
-   "target": "model",
+   "target": "src_model",
    "relation": "imports_from",
    "confidence": "EXTRACTED",
    "source_file": "src/util/mod.rs",
@@ -1516,7 +1503,7 @@
    "source": "src_util_mod_render",
    "target": "src_model_circle",
    "relation": "references",
-   "confidence": "EXTRACTED",
+   "confidence": "INFERRED",
    "source_file": "src/util/mod.rs",
    "source_location": "L19",
    "weight": 1.0,

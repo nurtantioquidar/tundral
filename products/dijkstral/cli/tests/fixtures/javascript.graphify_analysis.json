@@ -1,24 +1,19 @@
 {
   "communities": {
     "0": [
-      "lib_store_store",
-      "lib_store_store_add",
-      "lib_store_store_constructor",
-      "lib_store_store_create",
-      "lib_store_store_size",
-      "test_store_test",
-      "test_store_test_fixture",
-      "test_store_test_store"
+      "components_app",
+      "components_app_app",
+      "components_app_app_onclick",
+      "components_app_app_render",
+      "components_app_list",
+      "components_app_row",
+      "lib_format_formatall",
+      "lib_format_formatlabel",
+      "lib_format_formatlabel_pad",
+      "ref_react"
     ],
     "1": [
-      "lib_format",
-      "lib_format_helper",
-      "lib_format_rationale_7",
-      "lib_store_helper",
-      "ref_node_fs",
-      "ref_path"
-    ],
-    "2": [
+      "components_app_app_constructor",
       "lib_store",
       "lib_store_cachedstore",
       "lib_store_cachedstore_add",
@@ -26,39 +21,39 @@
       "lib_store_rationale_26",
       "lib_store_utils"
     ],
+    "2": [
+      "lib_format",
+      "lib_format_helper",
+      "lib_format_rationale_7",
+      "lib_store_helper",
+      "ref_node_fs",
+      "ref_path"
+    ],
     "3": [
-      "components_app",
-      "components_app_app_render",
-      "components_app_list",
-      "components_app_row",
-      "ref_react"
+      "lib_store_store",
+      "lib_store_store_add",
+      "lib_store_store_constructor",
+      "lib_store_store_size",
+      "test_store_test",
+      "test_store_test_fixture"
     ],
     "4": [
       "lib_default",
-      "lib_default_helper",
       "lib_default_lodash",
-      "lib_default_store",
       "ref_lodash"
     ],
     "5": [
-      "components_app_app",
-      "components_app_app_constructor",
-      "components_app_app_onclick",
-      "lib_format_formatall"
-    ],
-    "6": [
-      "lib_format_formatlabel",
-      "lib_format_formatlabel_pad"
+      "lib_default_helper",
+      "lib_store_store_create"
     ]
   },
   "cohesion": {
-    "0": 0.2857142857142857,
+    "0": 0.3111111111111111,
     "1": 0.3333333333333333,
-    "2": 0.4,
-    "3": 0.5,
-    "4": 0.4,
-    "5": 0.5,
-    "6": 1.0
+    "2": 0.3333333333333333,
+    "3": 0.4,
+    "4": 0.6666666666666666,
+    "5": 1.0
   },
   "gods": [
     {
@@ -97,6 +92,11 @@
       "degree": 3
     },
     {
+      "id": "lib_default_helper",
+      "label": "helper()",
+      "degree": 2
+    },
+    {
       "id": "lib_store_clear",
       "label": "clear()",
       "degree": 2
@@ -105,25 +105,9 @@
       "id": "lib_store_helper",
       "label": "helper()",
       "degree": 2
-    },
-    {
-      "id": "test_store_test_fixture",
-      "label": "fixture()",
-      "degree": 2
     }
   ],
   "surprises": [
-    {
-      "source": "Row()",
-      "target": "formatLabel()",
-      "source_files": [
-        "components/App.jsx",
-        "lib/format.mjs"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "connects across different repos/directories; bridges separate communities"
-    },
     {
       "source": "fixture()",
       "target": "Store",
@@ -134,6 +118,17 @@
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "connects across different repos/directories; peripheral node `fixture()` unexpectedly reaches hub `Store`"
+    },
+    {
+      "source": "Row()",
+      "target": "formatLabel()",
+      "source_files": [
+        "components/App.jsx",
+        "lib/format.mjs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
     }
   ],
   "tokens": {

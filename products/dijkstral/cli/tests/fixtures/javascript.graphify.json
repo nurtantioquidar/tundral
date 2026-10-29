@@ -34,6 +34,9 @@
    "source_location": "L18",
    "_callable": true,
    "_callable_class": true,
+   "_ts_fields": {
+    "store": "CachedStore"
+   },
    "_origin": "ast"
   },
   {
@@ -66,14 +69,6 @@
   {
    "id": "lib_default",
    "label": "default.cjs",
-   "file_type": "code",
-   "source_file": "lib/default.cjs",
-   "source_location": "L1",
-   "_origin": "ast"
-  },
-  {
-   "id": "lib_default_store",
-   "label": "{ Store }",
    "file_type": "code",
    "source_file": "lib/default.cjs",
    "source_location": "L1",
@@ -164,6 +159,9 @@
    "source_location": "L5",
    "_callable": true,
    "_callable_class": true,
+   "_ts_fields": {
+    "items": "Map"
+   },
    "_origin": "ast"
   },
   {
@@ -258,14 +256,6 @@
   {
    "id": "test_store_test",
    "label": "store.test.js",
-   "file_type": "code",
-   "source_file": "test/store.test.js",
-   "source_location": "L1",
-   "_origin": "ast"
-  },
-  {
-   "id": "test_store_test_store",
-   "label": "{ Store }",
    "file_type": "code",
    "source_file": "test/store.test.js",
    "source_location": "L1",
@@ -467,16 +457,6 @@
    "target": "lib_store_store",
    "relation": "imports",
    "context": "import",
-   "confidence": "EXTRACTED",
-   "source_file": "lib/default.cjs",
-   "source_location": "L1",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "lib_default",
-   "target": "lib_default_store",
-   "relation": "contains",
    "confidence": "EXTRACTED",
    "source_file": "lib/default.cjs",
    "source_location": "L1",
@@ -810,16 +790,6 @@
   },
   {
    "source": "test_store_test",
-   "target": "test_store_test_store",
-   "relation": "contains",
-   "confidence": "EXTRACTED",
-   "source_file": "test/store.test.js",
-   "source_location": "L1",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "test_store_test",
    "target": "test_store_test_fixture",
    "relation": "contains",
    "confidence": "EXTRACTED",
@@ -917,6 +887,30 @@
    "confidence_score": 1.0,
    "source_file": "test/store.test.js",
    "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "components_app_app_onclick",
+   "target": "lib_store_cachedstore_add",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "components/App.jsx",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "lib_default_helper",
+   "target": "lib_store_store_create",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "lib/default.cjs",
+   "source_location": "L6",
    "weight": 1.0,
    "_origin": "ast"
   }

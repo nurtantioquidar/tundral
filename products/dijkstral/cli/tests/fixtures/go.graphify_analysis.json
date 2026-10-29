@@ -1,24 +1,19 @@
 {
   "communities": {
     "0": [
-      "cmd_app_main",
-      "go_pkg_fmt",
-      "go_pkg_github_com_google_uuid",
-      "go_pkg_os",
-      "go_pkg_sort",
-      "service_greeter",
-      "service_greeter_greet",
-      "service_service",
-      "service_service_apply",
-      "service_service_logline",
-      "service_service_strings2upper"
+      "go_pkg_errors",
+      "store_key",
+      "store_number",
+      "store_store_get",
+      "store_store_go_store_store",
+      "store_store_newstore"
     ],
     "1": [
-      "cmd_app_main_main",
-      "n",
-      "service_service_newuserservice",
-      "store_helpers_format",
-      "store_store_sum"
+      "go_pkg_github_com_google_uuid",
+      "go_pkg_sort",
+      "service_service",
+      "service_service_logline",
+      "service_service_strings2upper"
     ],
     "2": [
       "go_pkg_strconv",
@@ -28,61 +23,73 @@
       "store_helpers_normalize"
     ],
     "3": [
-      "go_pkg_testing",
       "go_type_testing_t",
       "service_service_clean",
-      "service_service_test",
+      "service_service_newuserservice",
       "service_service_test_testregister"
     ],
     "4": [
       "service_user",
       "service_userservice",
       "service_userservice_greet",
-      "service_userservice_names",
       "service_userservice_register"
     ],
     "5": [
-      "go_pkg_errors",
-      "store_number",
-      "store_store_go_store_store",
-      "store_store_newstore"
-    ],
-    "6": [
-      "store_store_t",
-      "store_store_t_get",
-      "store_store_t_put",
-      "t"
-    ],
-    "7": [
       "store_id",
       "store_model_identity",
-      "store_store_go_store_model"
+      "store_store_go_store_model",
+      "store_store_put"
+    ],
+    "6": [
+      "cmd_app_main",
+      "go_pkg_fmt",
+      "go_pkg_os"
+    ],
+    "7": [
+      "cmd_app_main_main",
+      "store_helpers_format",
+      "store_store_sum"
     ],
     "8": [
+      "go_pkg_testing",
+      "service_service_test"
+    ],
+    "9": [
+      "service_greeter",
+      "service_greeter_greet"
+    ],
+    "10": [
+      "service_service_apply",
+      "service_userservice_names"
+    ],
+    "11": [
       "store_entity",
       "store_entity_identity"
     ],
-    "9": [
+    "12": [
       "pkg_example_com_shop"
     ]
   },
   "cohesion": {
-    "0": 0.2,
+    "0": 0.3333333333333333,
     "1": 0.4,
     "2": 0.5,
-    "3": 0.4,
-    "4": 0.7,
-    "5": 0.5,
+    "3": 0.5,
+    "4": 0.8333333333333334,
+    "5": 0.6666666666666666,
     "6": 0.6666666666666666,
-    "7": 1.0,
+    "7": 0.6666666666666666,
     "8": 1.0,
-    "9": 1.0
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0
   },
   "gods": [
     {
       "id": "store_store_go_store_store",
       "label": "Store",
-      "degree": 13
+      "degree": 15
     },
     {
       "id": "service_user",
@@ -125,12 +132,23 @@
       "degree": 4
     },
     {
-      "id": "store_store_sum",
-      "label": "Sum()",
-      "degree": 3
+      "id": "service_greeter",
+      "label": "Greeter",
+      "degree": 2
     }
   ],
   "surprises": [
+    {
+      "source": "main()",
+      "target": "NewUserService()",
+      "source_files": [
+        "cmd/app/main.go",
+        "service/service.go"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
     {
       "source": "User",
       "target": "Model",
@@ -152,17 +170,6 @@
       "confidence": "EXTRACTED",
       "relation": "references",
       "why": "connects across different repos/directories; bridges separate communities"
-    },
-    {
-      "source": "main()",
-      "target": "NewUserService()",
-      "source_files": [
-        "cmd/app/main.go",
-        "service/service.go"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "connects across different repos/directories"
     },
     {
       "source": "main()",

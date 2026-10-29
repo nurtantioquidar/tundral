@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -16,6 +16,7 @@
    "file_type": "code",
    "metadata": {
     "is_partial": true,
+    "type_path": "MainWindow",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -35,6 +36,7 @@
    "file_type": "code",
    "metadata": {
     "is_partial": true,
+    "type_path": "SettingsViewModel",
     "namespace": "Shop.ViewModels",
     "scope_chain": [
      "s3:0"
@@ -142,6 +144,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 2,
+    "signature": "object,EventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -159,6 +163,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 2,
+    "signature": "object,RoutedEventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -176,6 +182,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 2,
+    "signature": "object,TextChangedEventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -193,6 +201,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 2,
+    "signature": "object,RoutedEventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -210,6 +220,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 2,
+    "signature": "object,RoutedEventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -227,6 +239,8 @@
    "community": 2,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.ViewModels",
     "scope_chain": [
      "s3:0"
@@ -244,6 +258,8 @@
    "community": 2,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.ViewModels",
     "scope_chain": [
      "s3:0"
@@ -261,6 +277,8 @@
    "community": 3,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Core",
     "scope_chain": [
      "s0:0"
@@ -278,6 +296,8 @@
    "community": 3,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s2:0"

@@ -1,11 +1,11 @@
-# Graph Report - upd  (2026-10-15)
+# Graph Report - dart  (2026-10-29)
 
 ## Corpus Check
 - 7 files · ~307 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 68 nodes · 73 edges · 6 communities (5 shown, 1 thin omitted)
+- 67 nodes · 72 edges · 7 communities (5 shown, 2 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -16,6 +16,7 @@
 - shop.dart
 - format.dart
 - service_test.dart
+- Repository
 
 ## God Nodes (most connected - your core abstractions)
 1. `User` - 9 edges
@@ -40,15 +41,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (6 total, 1 thin omitted)
+## Communities (7 total, 2 thin omitted)
 
 ### Community 0 - "user.dart"
-Cohesion: 0.11
+Cohesion: 0.12
 Nodes (12): Address, city, compareTo, display, guest, home, id, label (+4 more)
 
 ### Community 1 - "service.dart"
-Cohesion: 0.12
-Nodes (11): all, everything, find, isUser, owner, register, Repository, save (+3 more)
+Cohesion: 0.13
+Nodes (9): all, everything, find, isUser, owner, register, save, store (+1 more)
 
 ### Community 2 - "User"
 Cohesion: 0.19
@@ -64,19 +65,19 @@ Nodes (4): defaultWidth, log, stamp, title
 
 ## Knowledge Gaps
 - **34 isolated node(s):** `shop`, `service`, `run`, `loadLibrary`, `id` (+29 more)
-  These have ≤1 connection - possible missing edges. (Counts symbols only; 53 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges. (Counts symbols only; 52 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `User` connect `User` to `user.dart`, `service.dart`, `service_test.dart`?**
-  _High betweenness centrality (0.279) - this node is a cross-community bridge._
+  _High betweenness centrality (0.280) - this node is a cross-community bridge._
 - **What connects `shop`, `service`, `run` to the rest of the system?**
   _34 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `user.dart` be split into smaller, more focused modules?**
-  _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
 - **Why does `Account` connect `User` to `user.dart`, `service.dart`?**
-  _High betweenness centrality (0.073) - this node is a cross-community bridge._
+  _High betweenness centrality (0.071) - this node is a cross-community bridge._
 - **Should `service.dart` be split into smaller, more focused modules?**
-  _Cohesion score 0.125 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._

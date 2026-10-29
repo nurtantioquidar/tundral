@@ -131,13 +131,13 @@
       "degree": 5
     },
     {
-      "id": "main_main",
-      "label": "main()",
-      "degree": 3
-    },
-    {
       "id": "pkg_models_validate",
       "label": "validate()",
+      "degree": 4
+    },
+    {
+      "id": "main_main",
+      "label": "main()",
       "degree": 3
     }
   ],

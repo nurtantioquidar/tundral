@@ -455,27 +455,19 @@
    "_origin": "ast"
   },
   {
-   "id": "kernel",
-   "label": "kernel",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
-   "id": "device",
-   "label": "device",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "uint",
    "label": "uint",
    "file_type": "code",
    "source_file": "",
    "source_location": "",
+   "_origin": "ast"
+  },
+  {
+   "id": "inert_page",
+   "label": "page.ejs",
+   "file_type": "code",
+   "source_file": "inert/page.ejs",
+   "source_location": "L1",
    "_origin": "ast"
   },
   {
@@ -776,7 +768,7 @@
   },
   {
    "id": "pascal_widgets_lpk_pascal_widgets",
-   "label": "Widgets",
+   "label": "Widgets.lpk",
    "file_type": "code",
    "source_file": "pascal/Widgets.lpk",
    "source_location": "L1",
@@ -793,6 +785,14 @@
   {
    "id": "lcl",
    "label": "LCL",
+   "file_type": "code",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "pascal_widgets_pas",
+   "label": "Widgets",
    "file_type": "code",
    "source_file": "pascal/Widgets.lpk",
    "source_location": "L1",
@@ -880,6 +880,14 @@
     "language": "bash",
     "kind": "bash_function"
    },
+   "_origin": "ast"
+  },
+  {
+   "id": "scripts_legacy",
+   "label": "legacy",
+   "file_type": "code",
+   "source_file": "scripts/legacy",
+   "source_location": "L1",
    "_origin": "ast"
   },
   {
@@ -1444,28 +1452,6 @@
   },
   {
    "source": "gpu_kernels_step",
-   "target": "kernel",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "gpu/kernels.metal",
-   "source_location": "L13",
-   "weight": 1.0,
-   "context": "return_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "gpu_kernels_step",
-   "target": "device",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "gpu/kernels.metal",
-   "source_location": "L13",
-   "weight": 1.0,
-   "context": "parameter_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "gpu_kernels_step",
    "target": "uint",
    "relation": "references",
    "confidence": "EXTRACTED",
@@ -1977,7 +1963,7 @@
   },
   {
    "source": "pascal_widgets_widgetspkg",
-   "target": "pascal_widgets_lpk_pascal_widgets",
+   "target": "pascal_widgets_pas",
    "relation": "contains",
    "confidence": "EXTRACTED",
    "source_file": "pascal/Widgets.lpk",

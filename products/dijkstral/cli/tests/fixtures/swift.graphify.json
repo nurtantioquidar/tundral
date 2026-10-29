@@ -259,30 +259,12 @@
    "_origin": "ast"
   },
   {
-   "id": "t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "sources_shop_models_shape_box_put",
    "label": ".put()",
    "file_type": "code",
    "source_file": "Sources/Shop/Models/Shape.swift",
    "source_location": "L40",
    "_callable": true,
-   "metadata": {
-    "unresolved_calls": [
-     {
-      "callee": "append",
-      "receiver_type": "T",
-      "lang": "swift",
-      "line": "L41"
-     }
-    ]
-   },
    "_origin": "ast"
   },
   {
@@ -302,22 +284,6 @@
    "source_location": "L49",
    "_callable": true,
    "_callable_class": true,
-   "_origin": "ast"
-  },
-  {
-   "id": "key",
-   "label": "Key",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
-   "id": "value",
-   "label": "Value",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
    "_origin": "ast"
   },
   {
@@ -1304,34 +1270,12 @@
   },
   {
    "source": "sources_shop_models_shape_box",
-   "target": "t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "Sources/Shop/Models/Shape.swift",
-   "source_location": "L38",
-   "weight": 1.0,
-   "context": "field",
-   "_origin": "ast"
-  },
-  {
-   "source": "sources_shop_models_shape_box",
    "target": "sources_shop_models_shape_box_put",
    "relation": "method",
    "confidence": "EXTRACTED",
    "source_file": "Sources/Shop/Models/Shape.swift",
    "source_location": "L40",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "sources_shop_models_shape_box_put",
-   "target": "t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "Sources/Shop/Models/Shape.swift",
-   "source_location": "L40",
-   "weight": 1.0,
-   "context": "parameter_type",
    "_origin": "ast"
   },
   {
@@ -1345,17 +1289,6 @@
    "_origin": "ast"
   },
   {
-   "source": "sources_shop_models_shape_box_first",
-   "target": "t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "Sources/Shop/Models/Shape.swift",
-   "source_location": "L44",
-   "weight": 1.0,
-   "context": "return_type",
-   "_origin": "ast"
-  },
-  {
    "source": "sources_shop_models_shape",
    "target": "sources_shop_models_shape_pair",
    "relation": "contains",
@@ -1363,28 +1296,6 @@
    "source_file": "Sources/Shop/Models/Shape.swift",
    "source_location": "L49",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "sources_shop_models_shape_pair",
-   "target": "key",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "Sources/Shop/Models/Shape.swift",
-   "source_location": "L50",
-   "weight": 1.0,
-   "context": "field",
-   "_origin": "ast"
-  },
-  {
-   "source": "sources_shop_models_shape_pair",
-   "target": "value",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "Sources/Shop/Models/Shape.swift",
-   "source_location": "L51",
-   "weight": 1.0,
-   "context": "field",
    "_origin": "ast"
   },
   {

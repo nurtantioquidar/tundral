@@ -17,18 +17,6 @@
       "src_models_user_validate"
     ],
     "1": [
-      "ref_fs",
-      "ref_node_path",
-      "ref_polyfill",
-      "src_models_index_admin",
-      "src_models_index_helper",
-      "src_models_index_storage",
-      "src_service",
-      "src_service_comparenames",
-      "src_service_helper",
-      "src_service_userservice_export"
-    ],
-    "2": [
       "src_models_index",
       "src_models_repo",
       "src_models_repo_entity",
@@ -38,20 +26,10 @@
       "src_models_repo_repo_all",
       "src_models_repo_repo_get",
       "src_models_repo_sealed",
-      "src_models_repo_storage"
+      "src_models_repo_storage",
+      "src_service_userservice_constructor"
     ],
-    "3": [
-      "ref_vitest",
-      "src_models_index_user",
-      "src_service_run",
-      "src_service_userservice",
-      "src_service_userservice_constructor",
-      "src_service_userservice_log",
-      "src_service_userservice_register",
-      "src_tests_service_test",
-      "src_tests_service_test_makeuser"
-    ],
-    "4": [
+    "2": [
       "src_models_user_admin",
       "src_models_user_admin_promote",
       "src_models_user_admin_promote_bump",
@@ -62,17 +40,17 @@
       "src_models_user_user_parse",
       "src_service_userservice_promote"
     ],
-    "5": [
-      "ref_legacy",
-      "ref_path",
-      "src_util",
-      "src_util_helper",
-      "src_util_join",
-      "src_util_legacy",
-      "src_util_slugify",
-      "src_util_traced"
+    "3": [
+      "ref_fs",
+      "ref_node_path",
+      "ref_polyfill",
+      "src_models_index_storage",
+      "src_service",
+      "src_service_comparenames",
+      "src_service_helper",
+      "src_service_userservice_export"
     ],
-    "6": [
+    "4": [
       "ref_react",
       "src_ui_app",
       "src_ui_app_app",
@@ -81,16 +59,34 @@
       "src_ui_app_badge",
       "src_ui_app_badgeprops",
       "src_ui_app_userlist"
+    ],
+    "5": [
+      "ref_legacy",
+      "ref_path",
+      "src_util",
+      "src_util_helper",
+      "src_util_join",
+      "src_util_slugify",
+      "src_util_traced"
+    ],
+    "6": [
+      "ref_vitest",
+      "src_service_run",
+      "src_service_userservice",
+      "src_service_userservice_log",
+      "src_service_userservice_register",
+      "src_tests_service_test",
+      "src_tests_service_test_makeuser"
     ]
   },
   "cohesion": {
     "0": 0.15384615384615385,
-    "1": 0.2222222222222222,
-    "2": 0.26666666666666666,
-    "3": 0.3055555555555556,
-    "4": 0.2777777777777778,
-    "5": 0.2857142857142857,
-    "6": 0.32142857142857145
+    "1": 0.23636363636363636,
+    "2": 0.2777777777777778,
+    "3": 0.2857142857142857,
+    "4": 0.32142857142857145,
+    "5": 0.3333333333333333,
+    "6": 0.42857142857142855
   },
   "gods": [
     {
@@ -204,8 +200,8 @@
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `User` connect `Community 4` to `Community 0`, `Community 1`, `Community 3`, `Community 6`?",
-      "why": "High betweenness centrality (0.239) - this node is a cross-community bridge."
+      "question": "Why does `User` connect `Community 2` to `Community 0`, `Community 1`, `Community 3`, `Community 4`, `Community 6`?",
+      "why": "High betweenness centrality (0.257) - this node is a cross-community bridge."
     },
     {
       "type": "isolated_nodes",
@@ -214,13 +210,13 @@
     },
     {
       "type": "bridge_node",
-      "question": "Why does `Repo` connect `Community 2` to `Community 1`, `Community 3`?",
-      "why": "High betweenness centrality (0.130) - this node is a cross-community bridge."
+      "question": "Why does `Repo` connect `Community 1` to `Community 3`, `Community 6`?",
+      "why": "High betweenness centrality (0.137) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `UserService` connect `Community 3` to `Community 1`, `Community 2`, `Community 4`, `Community 6`?",
-      "why": "High betweenness centrality (0.074) - this node is a cross-community bridge."
+      "question": "Why does `UserService` connect `Community 6` to `Community 1`, `Community 2`, `Community 3`, `Community 4`?",
+      "why": "High betweenness centrality (0.080) - this node is a cross-community bridge."
     }
   ]
 }

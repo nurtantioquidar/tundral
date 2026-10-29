@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -12,7 +12,7 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 4,
+   "community": 5,
    "file_type": "code",
    "norm_label": "particle",
    "source_file": "gpu/kernels.metal",
@@ -135,7 +135,7 @@
    "label": "speed()",
    "_callable": true,
    "_origin": "ast",
-   "community": 4,
+   "community": 5,
    "file_type": "code",
    "norm_label": "speed()",
    "source_file": "gpu/kernels.metal",
@@ -146,7 +146,7 @@
    "label": "step()",
    "_callable": true,
    "_origin": "ast",
-   "community": 4,
+   "community": 5,
    "file_type": "code",
    "norm_label": "step()",
    "source_file": "gpu/kernels.metal",
@@ -313,44 +313,14 @@
    "source_location": "L1"
   },
   {
-   "id": "pascal_demo_demo",
-   "label": "Demo",
+   "id": "idrawable",
+   "label": "IDrawable",
    "_origin": "ast",
    "community": 1,
    "file_type": "code",
-   "norm_label": "demo",
-   "source_file": "pascal/Demo.dpr",
-   "source_location": "L1"
-  },
-  {
-   "id": "pascal_demo_dpr_pascal_demo",
-   "label": "Demo.dpr",
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "demo.dpr",
-   "source_file": "pascal/Demo.dpr",
-   "source_location": "L1"
-  },
-  {
-   "id": "pascal_demo_main",
-   "label": "Main()",
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "main()",
-   "source_file": "pascal/Demo.dpr",
-   "source_location": "L9"
-  },
-  {
-   "id": "pascal_shapes",
-   "label": "Shapes.pas",
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "shapes.pas",
+   "norm_label": "idrawable",
    "source_file": "pascal/Shapes.pas",
-   "source_location": "L1"
+   "source_location": "L20"
   },
   {
    "id": "pascal_shapes_compute",
@@ -363,34 +333,104 @@
    "source_location": "L55"
   },
   {
-   "id": "pascal_shapes_log",
-   "label": "Log()",
+   "id": "pascal_shapes_tcircle",
+   "label": "TCircle",
    "_origin": "ast",
    "community": 1,
    "file_type": "code",
-   "norm_label": "log()",
+   "norm_label": "tcircle",
    "source_file": "pascal/Shapes.pas",
-   "source_location": "L45"
+   "source_location": "L32"
   },
   {
-   "id": "pascal_shapes_register",
-   "label": "Register()",
+   "id": "pascal_shapes_tcircle_area",
+   "label": "Area()",
    "_origin": "ast",
    "community": 1,
    "file_type": "code",
-   "norm_label": "register()",
+   "norm_label": "area()",
    "source_file": "pascal/Shapes.pas",
-   "source_location": "L50"
+   "source_location": "L33"
   },
   {
-   "id": "pascal_shapes_shapes",
-   "label": "Shapes",
+   "id": "pascal_shapes_tcircle_grow",
+   "label": "Grow()",
    "_origin": "ast",
    "community": 1,
    "file_type": "code",
-   "norm_label": "shapes",
+   "norm_label": "grow()",
    "source_file": "pascal/Shapes.pas",
-   "source_location": "L1"
+   "source_location": "L34"
+  },
+  {
+   "id": "pascal_shapes_tshape",
+   "label": "TShape",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "tshape",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L13"
+  },
+  {
+   "id": "pascal_shapes_tshape_area",
+   "label": "Area()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "area()",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L29"
+  },
+  {
+   "id": "pascal_shapes_tshape_create",
+   "label": "Create()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "create()",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L25"
+  },
+  {
+   "id": "pascal_shapes_tshape_draw",
+   "label": "Draw()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "draw()",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L27"
+  },
+  {
+   "id": "pascal_shapes_tshape_paint",
+   "label": "Paint()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "paint()",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L17"
+  },
+  {
+   "id": "pascal_shapes_tshape_setname",
+   "label": "SetName()",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "setname()",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L23"
+  },
+  {
+   "id": "tbaseshape",
+   "label": "TBaseShape",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "tbaseshape",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L20"
   },
   {
    "id": "byond_icons",
@@ -617,124 +657,104 @@
    "source_location": "L1"
   },
   {
+   "id": "inert_page",
+   "label": "page.ejs",
+   "_origin": "ast",
+   "community": 19,
+   "file_type": "code",
+   "norm_label": "page.ejs",
+   "source_file": "inert/page.ejs",
+   "source_location": "L1"
+  },
+  {
+   "id": "pascal_demo_demo",
+   "label": "Demo",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "demo",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L1"
+  },
+  {
+   "id": "pascal_demo_dpr_pascal_demo",
+   "label": "Demo.dpr",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "demo.dpr",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L1"
+  },
+  {
+   "id": "pascal_demo_main",
+   "label": "Main()",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "main()",
+   "source_file": "pascal/Demo.dpr",
+   "source_location": "L9"
+  },
+  {
+   "id": "pascal_shapes",
+   "label": "Shapes.pas",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "shapes.pas",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L1"
+  },
+  {
+   "id": "pascal_shapes_log",
+   "label": "Log()",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "log()",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L45"
+  },
+  {
+   "id": "pascal_shapes_register",
+   "label": "Register()",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "register()",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L50"
+  },
+  {
+   "id": "pascal_shapes_shapes",
+   "label": "Shapes",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "shapes",
+   "source_file": "pascal/Shapes.pas",
+   "source_location": "L1"
+  },
+  {
    "id": "pascal_demo_dpk_pascal_demo",
    "label": "Demo.dpk",
    "_origin": "ast",
-   "community": 19,
+   "community": 20,
    "file_type": "code",
    "norm_label": "demo.dpk",
    "source_file": "pascal/Demo.dpk",
    "source_location": "L1"
   },
   {
-   "id": "idrawable",
-   "label": "IDrawable",
+   "id": "scripts_legacy",
+   "label": "legacy",
    "_origin": "ast",
-   "community": 2,
+   "community": 21,
    "file_type": "code",
-   "norm_label": "idrawable",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L20"
-  },
-  {
-   "id": "pascal_shapes_tcircle",
-   "label": "TCircle",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "tcircle",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L32"
-  },
-  {
-   "id": "pascal_shapes_tcircle_area",
-   "label": "Area()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "area()",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L33"
-  },
-  {
-   "id": "pascal_shapes_tcircle_grow",
-   "label": "Grow()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "grow()",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L34"
-  },
-  {
-   "id": "pascal_shapes_tshape",
-   "label": "TShape",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "tshape",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L13"
-  },
-  {
-   "id": "pascal_shapes_tshape_area",
-   "label": "Area()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "area()",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L29"
-  },
-  {
-   "id": "pascal_shapes_tshape_create",
-   "label": "Create()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "create()",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L25"
-  },
-  {
-   "id": "pascal_shapes_tshape_draw",
-   "label": "Draw()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "draw()",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L27"
-  },
-  {
-   "id": "pascal_shapes_tshape_paint",
-   "label": "Paint()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "paint()",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L17"
-  },
-  {
-   "id": "pascal_shapes_tshape_setname",
-   "label": "SetName()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "setname()",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L23"
-  },
-  {
-   "id": "tbaseshape",
-   "label": "TBaseShape",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "tbaseshape",
-   "source_file": "pascal/Shapes.pas",
-   "source_location": "L20"
+   "norm_label": "legacy",
+   "source_file": "scripts/legacy",
+   "source_location": "L1"
   },
   {
    "id": "cobol_billing",
@@ -793,70 +813,10 @@
    "source_location": "L6"
   },
   {
-   "id": "device",
-   "label": "device",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "device",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "gpu_kernels",
-   "label": "kernels.metal",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "kernels.metal",
-   "source_file": "gpu/kernels.metal",
-   "source_location": "L1"
-  },
-  {
-   "id": "gpu_kernels_particle_x",
-   "label": "x",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "x",
-   "source_file": "gpu/kernels.metal",
-   "source_location": "L5"
-  },
-  {
-   "id": "gpu_kernels_particle_y",
-   "label": "y",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "y",
-   "source_file": "gpu/kernels.metal",
-   "source_location": "L6"
-  },
-  {
-   "id": "kernel",
-   "label": "kernel",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "kernel",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "uint",
-   "label": "uint",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "uint",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
    "id": "pascal_mainform",
    "label": "MainForm.dfm",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "mainform.dfm",
    "source_file": "pascal/MainForm.dfm",
@@ -866,7 +826,7 @@
    "id": "pascal_mainform_cancelbuttonclick",
    "label": "CancelButtonClick()",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "cancelbuttonclick()",
    "source_file": "pascal/MainForm.dfm",
@@ -876,7 +836,7 @@
    "id": "pascal_mainform_formcreate",
    "label": "FormCreate()",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "formcreate()",
    "source_file": "pascal/MainForm.dfm",
@@ -886,7 +846,7 @@
    "id": "pascal_mainform_memochange",
    "label": "MemoChange()",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "memochange()",
    "source_file": "pascal/MainForm.dfm",
@@ -896,7 +856,7 @@
    "id": "pascal_mainform_okbuttonclick",
    "label": "OkButtonClick()",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "okbuttonclick()",
    "source_file": "pascal/MainForm.dfm",
@@ -906,7 +866,7 @@
    "id": "pascal_mainform_tbutton",
    "label": "TButton",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "tbutton",
    "source_file": "pascal/MainForm.dfm",
@@ -916,7 +876,7 @@
    "id": "pascal_mainform_tmainform",
    "label": "TMainForm",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "tmainform",
    "source_file": "pascal/MainForm.dfm",
@@ -926,7 +886,7 @@
    "id": "pascal_mainform_tmemo",
    "label": "TMemo",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "tmemo",
    "source_file": "pascal/MainForm.dfm",
@@ -936,11 +896,51 @@
    "id": "pascal_mainform_tpanel",
    "label": "TPanel",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "norm_label": "tpanel",
    "source_file": "pascal/MainForm.dfm",
    "source_location": "L4"
+  },
+  {
+   "id": "gpu_kernels",
+   "label": "kernels.metal",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "kernels.metal",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L1"
+  },
+  {
+   "id": "gpu_kernels_particle_x",
+   "label": "x",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "x",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L5"
+  },
+  {
+   "id": "gpu_kernels_particle_y",
+   "label": "y",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "y",
+   "source_file": "gpu/kernels.metal",
+   "source_location": "L6"
+  },
+  {
+   "id": "uint",
+   "label": "uint",
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "uint",
+   "source_file": "",
+   "source_location": ""
   },
   {
    "id": "byond_interface",
@@ -1003,100 +1003,10 @@
    "source_location": "L5"
   },
   {
-   "id": "pascal_geometry",
-   "label": "Geometry.pas",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": "geometry.pas",
-   "source_file": "pascal/Geometry.pas",
-   "source_location": "L1"
-  },
-  {
-   "id": "pascal_geometry_geometry",
-   "label": "Geometry",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": "geometry",
-   "source_file": "pascal/Geometry.pas",
-   "source_location": "L1"
-  },
-  {
-   "id": "pascal_geometry_tbaseshape",
-   "label": "TBaseShape",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": "tbaseshape",
-   "source_file": "pascal/Geometry.pas",
-   "source_location": "L6"
-  },
-  {
-   "id": "pascal_geometry_tbaseshape_prepare",
-   "label": "Prepare()",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": "prepare()",
-   "source_file": "pascal/Geometry.pas",
-   "source_location": "L8"
-  },
-  {
-   "id": "tobject",
-   "label": "TObject",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": "tobject",
-   "source_file": "pascal/Geometry.pas",
-   "source_location": "L6"
-  },
-  {
-   "id": "apex_accounttrigger",
-   "label": "AccountTrigger.trigger",
-   "_origin": "ast",
-   "community": 8,
-   "file_type": "code",
-   "norm_label": "accounttrigger.trigger",
-   "source_file": "apex/AccountTrigger.trigger",
-   "source_location": "L1"
-  },
-  {
-   "id": "apex_accounttrigger_accounttrigger",
-   "label": "AccountTrigger",
-   "_origin": "ast",
-   "community": 8,
-   "file_type": "code",
-   "norm_label": "accounttrigger",
-   "source_file": "apex/AccountTrigger.trigger",
-   "source_location": "L1"
-  },
-  {
-   "id": "apex_accounttrigger_trigger_account",
-   "label": "Account",
-   "_origin": "ast",
-   "community": 8,
-   "file_type": "code",
-   "norm_label": "account",
-   "source_file": "apex/AccountTrigger.trigger",
-   "source_location": "L1"
-  },
-  {
-   "id": "dml_upsert",
-   "label": "upsert",
-   "_origin": "ast",
-   "community": 8,
-   "file_type": "code",
-   "norm_label": "upsert",
-   "source_file": "apex/AccountTrigger.trigger",
-   "source_location": "L5"
-  },
-  {
    "id": "extra",
    "label": "Extra",
    "_origin": "ast",
-   "community": 9,
+   "community": 7,
    "file_type": "code",
    "norm_label": "extra",
    "source_file": "pascal/Widgets.lpk",
@@ -1106,7 +1016,7 @@
    "id": "lcl",
    "label": "LCL",
    "_origin": "ast",
-   "community": 9,
+   "community": 7,
    "file_type": "code",
    "norm_label": "lcl",
    "source_file": "pascal/Widgets.lpk",
@@ -1114,9 +1024,19 @@
   },
   {
    "id": "pascal_widgets_lpk_pascal_widgets",
+   "label": "Widgets.lpk",
+   "_origin": "ast",
+   "community": 7,
+   "file_type": "code",
+   "norm_label": "widgets.lpk",
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1"
+  },
+  {
+   "id": "pascal_widgets_pas",
    "label": "Widgets",
    "_origin": "ast",
-   "community": 9,
+   "community": 7,
    "file_type": "code",
    "norm_label": "widgets",
    "source_file": "pascal/Widgets.lpk",
@@ -1126,16 +1046,106 @@
    "id": "pascal_widgets_widgetspkg",
    "label": "WidgetsPkg",
    "_origin": "ast",
-   "community": 9,
+   "community": 7,
    "file_type": "code",
    "norm_label": "widgetspkg",
    "source_file": "pascal/Widgets.lpk",
    "source_location": "L1"
   },
   {
+   "id": "pascal_geometry",
+   "label": "Geometry.pas",
+   "_origin": "ast",
+   "community": 8,
+   "file_type": "code",
+   "norm_label": "geometry.pas",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L1"
+  },
+  {
+   "id": "pascal_geometry_geometry",
+   "label": "Geometry",
+   "_origin": "ast",
+   "community": 8,
+   "file_type": "code",
+   "norm_label": "geometry",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L1"
+  },
+  {
+   "id": "pascal_geometry_tbaseshape",
+   "label": "TBaseShape",
+   "_origin": "ast",
+   "community": 8,
+   "file_type": "code",
+   "norm_label": "tbaseshape",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L6"
+  },
+  {
+   "id": "pascal_geometry_tbaseshape_prepare",
+   "label": "Prepare()",
+   "_origin": "ast",
+   "community": 8,
+   "file_type": "code",
+   "norm_label": "prepare()",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L8"
+  },
+  {
+   "id": "tobject",
+   "label": "TObject",
+   "_origin": "ast",
+   "community": 8,
+   "file_type": "code",
+   "norm_label": "tobject",
+   "source_file": "pascal/Geometry.pas",
+   "source_location": "L6"
+  },
+  {
+   "id": "apex_accounttrigger",
+   "label": "AccountTrigger.trigger",
+   "_origin": "ast",
+   "community": 9,
+   "file_type": "code",
+   "norm_label": "accounttrigger.trigger",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L1"
+  },
+  {
+   "id": "apex_accounttrigger_accounttrigger",
+   "label": "AccountTrigger",
+   "_origin": "ast",
+   "community": 9,
+   "file_type": "code",
+   "norm_label": "accounttrigger",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L1"
+  },
+  {
+   "id": "apex_accounttrigger_trigger_account",
+   "label": "Account",
+   "_origin": "ast",
+   "community": 9,
+   "file_type": "code",
+   "norm_label": "account",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L1"
+  },
+  {
+   "id": "dml_upsert",
+   "label": "upsert",
+   "_origin": "ast",
+   "community": 9,
+   "file_type": "code",
+   "norm_label": "upsert",
+   "source_file": "apex/AccountTrigger.trigger",
+   "source_location": "L5"
+  },
+  {
    "id": "classes",
    "label": "classes",
-   "community": 1,
+   "community": 2,
    "external": true,
    "file_type": "concept",
    "norm_label": "classes",
@@ -1145,7 +1155,7 @@
   {
    "id": "forms",
    "label": "forms",
-   "community": 1,
+   "community": 2,
    "external": true,
    "file_type": "concept",
    "norm_label": "forms",
@@ -1155,7 +1165,7 @@
   {
    "id": "math",
    "label": "math",
-   "community": 1,
+   "community": 2,
    "external": true,
    "file_type": "concept",
    "norm_label": "math",
@@ -1165,7 +1175,7 @@
   {
    "id": "sysutils",
    "label": "sysutils",
-   "community": 1,
+   "community": 2,
    "external": true,
    "file_type": "concept",
    "norm_label": "sysutils",
@@ -1175,7 +1185,7 @@
   {
    "id": "metal_stdlib",
    "label": "metal_stdlib",
-   "community": 4,
+   "community": 5,
    "external": true,
    "file_type": "concept",
    "norm_label": "metal_stdlib",
@@ -1498,36 +1508,12 @@
   },
   {
    "source": "gpu_kernels_step",
-   "target": "device",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "parameter_type",
-   "source_file": "gpu/kernels.metal",
-   "source_location": "L13",
-   "weight": 1.0
-  },
-  {
-   "source": "gpu_kernels_step",
    "target": "uint",
    "relation": "references",
    "_origin": "ast",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "context": "parameter_type",
-   "source_file": "gpu/kernels.metal",
-   "source_location": "L13",
-   "weight": 1.0
-  },
-  {
-   "source": "gpu_kernels_step",
-   "target": "kernel",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "return_type",
    "source_file": "gpu/kernels.metal",
    "source_location": "L13",
    "weight": 1.0
@@ -2052,6 +2038,17 @@
   {
    "source": "pascal_widgets_widgetspkg",
    "target": "extra",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "pascal/Widgets.lpk",
+   "source_location": "L1",
+   "weight": 1.0
+  },
+  {
+   "source": "pascal_widgets_widgetspkg",
+   "target": "pascal_widgets_pas",
    "relation": "contains",
    "_origin": "ast",
    "confidence": "EXTRACTED",

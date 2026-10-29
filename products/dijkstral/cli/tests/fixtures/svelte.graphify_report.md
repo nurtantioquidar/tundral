@@ -1,16 +1,16 @@
-# Graph Report - svelte  (2026-10-14)
+# Graph Report - svelte  (2026-10-29)
 
 ## Corpus Check
 - 7 files · ~301 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 29 nodes · 47 edges · 5 communities (2 shown, 3 thin omitted)
+- 28 nodes · 46 edges · 5 communities (2 shown, 3 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- lib/Cart.svelte
+- Cart.svelte
 - stores.ts
 - +page.svelte
 - CartRow.svelte
@@ -44,7 +44,7 @@
 
 ## Communities (5 total, 3 thin omitted)
 
-### Community 0 - "lib/Cart.svelte"
+### Community 0 - "Cart.svelte"
 Cohesion: 0.31
 Nodes (8): announce(), CART_KEY, clear(), compact, emptyMessage(), label(), title, plural()
 
@@ -58,9 +58,9 @@ Nodes (5): cart, Item, sumPrices(), total, load()
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `sumPrices()` connect `stores.ts` to `lib/Cart.svelte`?**
-  _High betweenness centrality (0.065) - this node is a cross-community bridge._
+- **Why does `sumPrices()` connect `stores.ts` to `Cart.svelte`?**
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
 - **Why does `addItem()` connect `+page.svelte` to `stores.ts`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `money()` connect `CartRow.svelte` to `lib/Cart.svelte`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+- **Why does `money()` connect `CartRow.svelte` to `Cart.svelte`?**
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._

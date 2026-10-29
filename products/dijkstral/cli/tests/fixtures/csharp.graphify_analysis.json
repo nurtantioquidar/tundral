@@ -17,7 +17,10 @@
       "src_shop_models_user_shop_models_user_touch",
       "src_shop_models_user_validation_shop_models_user",
       "src_shop_models_user_validation_shop_models_user_isvalid",
-      "src_shop_models_user_validation_shop_models_user_validate"
+      "src_shop_models_user_validation_shop_models_user_validate",
+      "src_shop_services_userservice_shop_services_iuserservice_register",
+      "src_shop_services_userservice_shop_services_userservice_notify",
+      "src_shop_services_userservice_shop_services_userservice_register"
     ],
     "1": [
       "csharp_namespace:b854194435a541c1",
@@ -39,49 +42,9 @@
       "xunit"
     ],
     "2": [
-      "dictionary",
-      "ienumerable",
-      "ireadonlylist",
-      "src_shop_services_irepository",
-      "src_shop_services_irepository_shop_services_inmemoryrepository_1",
-      "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
-      "src_shop_services_irepository_shop_services_inmemoryrepository_1_find",
-      "src_shop_services_irepository_shop_services_inmemoryrepository_1_save",
-      "src_shop_services_irepository_shop_services_irepository_1",
-      "src_shop_services_irepository_shop_services_irepository_1_all",
-      "src_shop_services_irepository_shop_services_irepository_1_find",
-      "src_shop_services_irepository_shop_services_irepository_1_save",
-      "src_shop_services_userservice_shop_services_userservice_names",
-      "src_shop_services_userservice_shop_services_userservice_pick"
-    ],
-    "3": [
-      "idisposable",
-      "src_shop_services_userservice_shop_services_ilogger",
-      "src_shop_services_userservice_shop_services_ilogger_log",
-      "src_shop_services_userservice_shop_services_iuserservice",
-      "src_shop_services_userservice_shop_services_iuserservice_register",
-      "src_shop_services_userservice_shop_services_userservice",
-      "src_shop_services_userservice_shop_services_userservice_audit",
-      "src_shop_services_userservice_shop_services_userservice_dispose",
-      "src_shop_services_userservice_shop_services_userservice_largest",
-      "src_shop_services_userservice_shop_services_userservice_notify",
-      "src_shop_services_userservice_shop_services_userservice_register",
-      "tests_shop_tests_userservicetests_shop_tests_nulllogger",
-      "tests_shop_tests_userservicetests_shop_tests_nulllogger_log"
-    ],
-    "4": [
       "csharp_namespace:ba08633b333ae873",
-      "src_shop_models_entity",
-      "src_shop_models_user",
-      "src_shop_models_user_validation",
-      "src_shop_services_userservice",
-      "system",
-      "system_collections_generic",
-      "system_datetime",
-      "system_math"
-    ],
-    "5": [
       "datetime",
+      "src_shop_models_entity",
       "src_shop_models_entity_shop_models_entity",
       "src_shop_models_entity_shop_models_entity_createdat",
       "src_shop_models_entity_shop_models_entity_describe",
@@ -89,9 +52,39 @@
       "src_shop_models_entity_shop_models_entity_isnew",
       "src_shop_models_entity_shop_models_ientity_1",
       "src_shop_models_entity_shop_models_ientity_1_describe",
-      "src_shop_models_entity_shop_models_ientity_1_id"
+      "src_shop_models_entity_shop_models_ientity_1_id",
+      "src_shop_models_user",
+      "src_shop_models_user_validation",
+      "system"
     ],
-    "6": [
+    "3": [
+      "idisposable",
+      "src_shop_services_userservice",
+      "src_shop_services_userservice_shop_services_ilogger",
+      "src_shop_services_userservice_shop_services_ilogger_log",
+      "src_shop_services_userservice_shop_services_iuserservice",
+      "src_shop_services_userservice_shop_services_userservice",
+      "src_shop_services_userservice_shop_services_userservice_audit",
+      "src_shop_services_userservice_shop_services_userservice_dispose",
+      "src_shop_services_userservice_shop_services_userservice_largest",
+      "system_datetime",
+      "system_math",
+      "tests_shop_tests_userservicetests_shop_tests_nulllogger",
+      "tests_shop_tests_userservicetests_shop_tests_nulllogger_log"
+    ],
+    "4": [
+      "dictionary",
+      "src_shop_services_irepository",
+      "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+      "src_shop_services_irepository_shop_services_inmemoryrepository_1_find",
+      "src_shop_services_irepository_shop_services_inmemoryrepository_1_save",
+      "src_shop_services_irepository_shop_services_irepository_1",
+      "src_shop_services_irepository_shop_services_irepository_1_find",
+      "src_shop_services_irepository_shop_services_irepository_1_save",
+      "src_shop_services_userservice_shop_services_userservice_register_512555",
+      "system_collections_generic"
+    ],
+    "5": [
       "src_shop_models_values",
       "src_shop_models_values_shop_models_money",
       "src_shop_models_values_shop_models_money_add",
@@ -99,7 +92,16 @@
       "src_shop_models_values_shop_models_point_length",
       "src_shop_models_values_shop_models_point_x",
       "src_shop_models_values_shop_models_point_y",
-      "src_shop_models_values_shop_models_range"
+      "src_shop_models_values_shop_models_range",
+      "src_shop_models_values_shop_models_userchanged"
+    ],
+    "6": [
+      "ienumerable",
+      "ireadonlylist",
+      "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
+      "src_shop_services_irepository_shop_services_irepository_1_all",
+      "src_shop_services_userservice_shop_services_userservice_names",
+      "src_shop_services_userservice_shop_services_userservice_pick"
     ],
     "7": [
       "src_shop_models_user_shop_models_status",
@@ -109,25 +111,25 @@
     ]
   },
   "cohesion": {
-    "0": 0.15441176470588236,
+    "0": 0.1631578947368421,
     "1": 0.125,
-    "2": 0.1978021978021978,
-    "3": 0.21794871794871795,
-    "4": 0.3055555555555556,
-    "5": 0.25,
-    "6": 0.25,
+    "2": 0.17582417582417584,
+    "3": 0.19230769230769232,
+    "4": 0.26666666666666666,
+    "5": 0.2222222222222222,
+    "6": 0.4,
     "7": 0.5
   },
   "gods": [
     {
       "id": "src_shop_models_user_validation_shop_models_user",
       "label": "User",
-      "degree": 23
+      "degree": 24
     },
     {
       "id": "src_shop_services_userservice_shop_services_userservice",
       "label": "UserService",
-      "degree": 13
+      "degree": 14
     },
     {
       "id": "src_shop_models_entity_shop_models_entity",

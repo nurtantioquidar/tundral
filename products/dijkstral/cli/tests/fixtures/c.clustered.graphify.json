@@ -3,81 +3,15 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
-  {
-   "id": "include_util_util_max",
-   "label": "util_max()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "util_max()",
-   "source_file": "include/util.h",
-   "source_location": "L9"
-  },
-  {
-   "id": "src_shape_shape_free",
-   "label": "shape_free()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "shape_free()",
-   "source_file": "src/shape.c",
-   "source_location": "L35"
-  },
-  {
-   "id": "src_util_clamp",
-   "label": "clamp()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "clamp()",
-   "source_file": "src/util.c",
-   "source_location": "L17"
-  },
-  {
-   "id": "src_util_log_line",
-   "label": "log_line()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "log_line()",
-   "source_file": "src/util.c",
-   "source_location": "L23"
-  },
-  {
-   "id": "src_util_util_report",
-   "label": "util_report()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "util_report()",
-   "source_file": "src/util.c",
-   "source_location": "L27"
-  },
-  {
-   "id": "src_util_xmalloc",
-   "label": "xmalloc()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "xmalloc()",
-   "source_file": "src/util.c",
-   "source_location": "L7"
-  },
   {
    "id": "main_apply",
    "label": "apply()",
    "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "apply()",
    "source_file": "main.c",
@@ -88,7 +22,7 @@
    "label": "main()",
    "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "main()",
    "source_file": "main.c",
@@ -99,7 +33,7 @@
    "label": "twice()",
    "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "twice()",
    "source_file": "main.c",
@@ -110,11 +44,66 @@
    "label": "shape_area()",
    "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "shape_area()",
    "source_file": "src/shape.c",
    "source_location": "L41"
+  },
+  {
+   "id": "include_util_util_max",
+   "label": "util_max()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "util_max()",
+   "source_file": "include/util.h",
+   "source_location": "L9"
+  },
+  {
+   "id": "src_shape_shape_free",
+   "label": "shape_free()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "shape_free()",
+   "source_file": "src/shape.c",
+   "source_location": "L35"
+  },
+  {
+   "id": "src_util_clamp",
+   "label": "clamp()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "clamp()",
+   "source_file": "src/util.c",
+   "source_location": "L17"
+  },
+  {
+   "id": "src_util_log_line",
+   "label": "log_line()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "log_line()",
+   "source_file": "src/util.c",
+   "source_location": "L23"
+  },
+  {
+   "id": "src_util_util_report",
+   "label": "util_report()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "util_report()",
+   "source_file": "src/util.c",
+   "source_location": "L27"
   },
   {
    "id": "src_shape_circle_area",
@@ -150,33 +139,11 @@
    "source_location": "L52"
   },
   {
-   "id": "tests_test_shape_main",
-   "label": "main()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "main()",
-   "source_file": "tests/test_shape.c",
-   "source_location": "L11"
-  },
-  {
-   "id": "tests_test_shape_test_area",
-   "label": "test_area()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "test_area()",
-   "source_file": "tests/test_shape.c",
-   "source_location": "L4"
-  },
-  {
    "id": "src_shape_pick_area",
    "label": "pick_area()",
    "_callable": true,
    "_origin": "ast",
-   "community": 4,
+   "community": 3,
    "file_type": "code",
    "norm_label": "pick_area()",
    "source_file": "src/shape.c",
@@ -187,37 +154,50 @@
    "label": "shape_new()",
    "_callable": true,
    "_origin": "ast",
-   "community": 4,
+   "community": 3,
    "file_type": "code",
    "norm_label": "shape_new()",
    "source_file": "src/shape.c",
    "source_location": "L25"
   },
   {
-   "id": "include_util",
-   "label": "util.h",
+   "id": "src_util_xmalloc",
+   "label": "xmalloc()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 3,
    "file_type": "code",
-   "norm_label": "util.h",
-   "source_file": "include/util.h",
-   "source_location": "L1"
+   "norm_label": "xmalloc()",
+   "source_file": "src/util.c",
+   "source_location": "L7"
   },
   {
-   "id": "src_util",
-   "label": "util.c",
+   "id": "tests_test_shape_main",
+   "label": "main()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 4,
    "file_type": "code",
-   "norm_label": "util.c",
-   "source_file": "src/util.c",
-   "source_location": "L1"
+   "norm_label": "main()",
+   "source_file": "tests/test_shape.c",
+   "source_location": "L11"
+  },
+  {
+   "id": "tests_test_shape_test_area",
+   "label": "test_area()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "test_area()",
+   "source_file": "tests/test_shape.c",
+   "source_location": "L4"
   },
   {
    "id": "callback",
    "label": "Callback",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "callback",
    "source_file": "",
@@ -227,10 +207,30 @@
    "id": "main",
    "label": "main.c",
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
    "norm_label": "main.c",
    "source_file": "main.c",
+   "source_location": "L1"
+  },
+  {
+   "id": "include_util",
+   "label": "util.h",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "util.h",
+   "source_file": "include/util.h",
+   "source_location": "L1"
+  },
+  {
+   "id": "src_util",
+   "label": "util.c",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "util.c",
+   "source_file": "src/util.c",
    "source_location": "L1"
   },
   {
@@ -254,30 +254,10 @@
    "source_location": "L1"
   },
   {
-   "id": "include_shape",
-   "label": "shape.h",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "shape.h",
-   "source_file": "include/shape.h",
-   "source_location": "L1"
-  },
-  {
-   "id": "tests_test_shape",
-   "label": "test_shape.c",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "test_shape.c",
-   "source_file": "tests/test_shape.c",
-   "source_location": "L1"
-  },
-  {
    "id": "areafn",
    "label": "AreaFn",
    "_origin": "ast",
-   "community": 4,
+   "community": 3,
    "file_type": "code",
    "norm_label": "areafn",
    "source_file": "",
@@ -287,7 +267,7 @@
    "id": "point",
    "label": "Point",
    "_origin": "ast",
-   "community": 4,
+   "community": 3,
    "file_type": "code",
    "norm_label": "point",
    "source_file": "",
@@ -297,26 +277,36 @@
    "id": "shapekind",
    "label": "ShapeKind",
    "_origin": "ast",
-   "community": 4,
+   "community": 3,
    "file_type": "code",
    "norm_label": "shapekind",
    "source_file": "",
    "source_location": ""
   },
   {
-   "id": "stdlib",
-   "label": "stdlib",
-   "community": 0,
-   "external": true,
-   "file_type": "concept",
-   "norm_label": "stdlib",
-   "source_file": "",
-   "type": "external"
+   "id": "include_shape",
+   "label": "shape.h",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "shape.h",
+   "source_file": "include/shape.h",
+   "source_location": "L1"
+  },
+  {
+   "id": "tests_test_shape",
+   "label": "test_shape.c",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "test_shape.c",
+   "source_file": "tests/test_shape.c",
+   "source_location": "L1"
   },
   {
    "id": "missing",
    "label": "missing",
-   "community": 1,
+   "community": 0,
    "external": true,
    "file_type": "concept",
    "norm_label": "missing",
@@ -326,10 +316,20 @@
   {
    "id": "stdio",
    "label": "stdio",
-   "community": 1,
+   "community": 0,
    "external": true,
    "file_type": "concept",
    "norm_label": "stdio",
+   "source_file": "",
+   "type": "external"
+  },
+  {
+   "id": "stdlib",
+   "label": "stdlib",
+   "community": 1,
+   "external": true,
+   "file_type": "concept",
+   "norm_label": "stdlib",
    "source_file": "",
    "type": "external"
   },
@@ -354,19 +354,9 @@
    "type": "external"
   },
   {
-   "id": "util",
-   "label": "util",
-   "community": 2,
-   "external": true,
-   "file_type": "concept",
-   "norm_label": "util",
-   "source_file": "",
-   "type": "external"
-  },
-  {
    "id": "assert",
    "label": "assert",
-   "community": 3,
+   "community": 4,
    "external": true,
    "file_type": "concept",
    "norm_label": "assert",
@@ -376,7 +366,7 @@
   {
    "id": "stddef",
    "label": "stddef",
-   "community": 3,
+   "community": 4,
    "external": true,
    "file_type": "concept",
    "norm_label": "stddef",
@@ -431,6 +421,54 @@
    "context": "call",
    "source_file": "tests/test_shape.c",
    "source_location": "L12",
+   "weight": 1.0
+  },
+  {
+   "source": "main",
+   "target": "missing",
+   "relation": "imports",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "import",
+   "metadata": {
+    "raw_include": "missing.h",
+    "include_kind": "quoted"
+   },
+   "source_file": "main.c",
+   "source_location": "L6",
+   "weight": 1.0
+  },
+  {
+   "source": "src_shape",
+   "target": "include_shape",
+   "relation": "imports",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "import",
+   "metadata": {
+    "raw_include": "shape.h",
+    "include_kind": "quoted"
+   },
+   "source_file": "src/shape.c",
+   "source_location": "L3",
+   "weight": 1.0
+  },
+  {
+   "source": "src_shape",
+   "target": "include_util",
+   "relation": "imports",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "import",
+   "metadata": {
+    "raw_include": "util.h",
+    "include_kind": "quoted"
+   },
+   "source_file": "src/shape.c",
+   "source_location": "L4",
    "weight": 1.0
   },
   {
@@ -494,18 +532,6 @@
    "weight": 1.0
   },
   {
-   "source": "main",
-   "target": "missing",
-   "relation": "imports",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "import",
-   "source_file": "main.c",
-   "source_location": "L6",
-   "weight": 1.0
-  },
-  {
    "source": "src_shape",
    "target": "math",
    "relation": "imports",
@@ -527,30 +553,6 @@
    "context": "import",
    "source_file": "src/shape.c",
    "source_location": "L2",
-   "weight": 1.0
-  },
-  {
-   "source": "src_shape",
-   "target": "shape",
-   "relation": "imports",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "import",
-   "source_file": "src/shape.c",
-   "source_location": "L3",
-   "weight": 1.0
-  },
-  {
-   "source": "src_shape",
-   "target": "util",
-   "relation": "imports",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "import",
-   "source_file": "src/shape.c",
-   "source_location": "L4",
    "weight": 1.0
   },
   {

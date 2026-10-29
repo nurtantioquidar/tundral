@@ -2,7 +2,7 @@
  "nodes": [
   {
    "id": "src_lib_badge",
-   "label": "lib/Badge.svelte",
+   "label": "Badge.svelte",
    "file_type": "code",
    "source_file": "src/lib/Badge.svelte",
    "source_location": "L1",
@@ -10,7 +10,7 @@
   },
   {
    "id": "src_lib_cart",
-   "label": "lib/Cart.svelte",
+   "label": "Cart.svelte",
    "file_type": "code",
    "source_file": "src/lib/Cart.svelte",
    "source_location": "L1",
@@ -197,19 +197,12 @@
    "_origin": "ast"
   },
   {
-   "id": "cart_svelte",
-   "label": "$lib/Cart.svelte",
+   "id": "lib",
+   "label": "$lib",
    "file_type": "code",
-   "source_file": "$lib/Cart.svelte",
+   "source_file": "$lib",
    "confidence": "EXTRACTED",
-   "_origin": "ast"
-  },
-  {
-   "id": "badge_svelte",
-   "label": "$lib/Badge.svelte",
-   "file_type": "code",
-   "source_file": "$lib/Badge.svelte",
-   "confidence": "EXTRACTED",
+   "type": "module",
    "_origin": "ast"
   },
   {
@@ -628,15 +621,7 @@
   },
   {
    "source": "src_routes_page_svelte_src_routes_page",
-   "target": "cart_svelte",
-   "relation": "imports_from",
-   "confidence": "EXTRACTED",
-   "source_file": "src/routes/+page.svelte",
-   "_origin": "ast"
-  },
-  {
-   "source": "src_routes_page_svelte_src_routes_page",
-   "target": "badge_svelte",
+   "target": "lib",
    "relation": "imports_from",
    "confidence": "EXTRACTED",
    "source_file": "src/routes/+page.svelte",

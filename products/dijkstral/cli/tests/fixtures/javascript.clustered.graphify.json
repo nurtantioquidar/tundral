@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -12,23 +12,14 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 0,
+   "_ts_fields": {
+    "items": "Map"
+   },
+   "community": 3,
    "file_type": "code",
    "norm_label": "store",
    "source_file": "lib/store.js",
    "source_location": "L5"
-  },
-  {
-   "id": "lib_store_cachedstore",
-   "label": "CachedStore",
-   "_callable": true,
-   "_callable_class": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "cachedstore",
-   "source_file": "lib/store.js",
-   "source_location": "L24"
   },
   {
    "id": "components_app_app",
@@ -36,117 +27,44 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 5,
+   "_ts_fields": {
+    "store": "CachedStore"
+   },
+   "community": 0,
    "file_type": "code",
    "norm_label": "app",
    "source_file": "components/App.jsx",
    "source_location": "L18"
   },
   {
-   "id": "lib_store_store_add",
-   "label": ".add()",
+   "id": "lib_store_cachedstore",
+   "label": "CachedStore",
    "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": ".add()",
-   "source_file": "lib/store.js",
-   "source_location": "L14"
-  },
-  {
-   "id": "lib_store_store_constructor",
-   "label": ".constructor()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": ".constructor()",
-   "source_file": "lib/store.js",
-   "source_location": "L6"
-  },
-  {
-   "id": "lib_store_store_create",
-   "label": ".create()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": ".create()",
-   "source_file": "lib/store.js",
-   "source_location": "L10"
-  },
-  {
-   "id": "lib_store_store_size",
-   "label": ".size()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": ".size()",
-   "source_file": "lib/store.js",
-   "source_location": "L19"
-  },
-  {
-   "id": "test_store_test_fixture",
-   "label": "fixture()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "fixture()",
-   "source_file": "test/store.test.js",
-   "source_location": "L10"
-  },
-  {
-   "id": "lib_format_helper",
-   "label": "helper()",
-   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast",
    "community": 1,
    "file_type": "code",
-   "norm_label": "helper()",
-   "source_file": "lib/format.mjs",
-   "source_location": "L19"
+   "norm_label": "cachedstore",
+   "source_file": "lib/store.js",
+   "source_location": "L24"
   },
   {
-   "id": "lib_store_helper",
-   "label": "helper()",
+   "id": "components_app_app_onclick",
+   "label": ".onClick()",
    "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 0,
    "file_type": "code",
-   "norm_label": "helper()",
-   "source_file": "lib/store.js",
-   "source_location": "L36"
-  },
-  {
-   "id": "lib_store_cachedstore_add",
-   "label": ".add()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": ".add()",
-   "source_file": "lib/store.js",
+   "norm_label": ".onclick()",
+   "source_file": "components/App.jsx",
    "source_location": "L25"
-  },
-  {
-   "id": "lib_store_clear",
-   "label": "clear()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "clear()",
-   "source_file": "lib/store.js",
-   "source_location": "L32"
   },
   {
    "id": "components_app_app_render",
    "label": ".render()",
    "_callable": true,
    "_origin": "ast",
-   "community": 3,
+   "community": 0,
    "file_type": "code",
    "norm_label": ".render()",
    "source_file": "components/App.jsx",
@@ -157,7 +75,7 @@
    "label": "List()",
    "_callable": true,
    "_origin": "ast",
-   "community": 3,
+   "community": 0,
    "file_type": "code",
    "norm_label": "list()",
    "source_file": "components/App.jsx",
@@ -168,51 +86,18 @@
    "label": "Row()",
    "_callable": true,
    "_origin": "ast",
-   "community": 3,
+   "community": 0,
    "file_type": "code",
    "norm_label": "row()",
    "source_file": "components/App.jsx",
    "source_location": "L6"
   },
   {
-   "id": "lib_default_helper",
-   "label": "helper()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "helper()",
-   "source_file": "lib/default.cjs",
-   "source_location": "L5"
-  },
-  {
-   "id": "components_app_app_constructor",
-   "label": ".constructor()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": ".constructor()",
-   "source_file": "components/App.jsx",
-   "source_location": "L19"
-  },
-  {
-   "id": "components_app_app_onclick",
-   "label": ".onClick()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": ".onclick()",
-   "source_file": "components/App.jsx",
-   "source_location": "L25"
-  },
-  {
    "id": "lib_format_formatall",
    "label": "formatAll()",
    "_callable": true,
    "_origin": "ast",
-   "community": 5,
+   "community": 0,
    "file_type": "code",
    "norm_label": "formatall()",
    "source_file": "lib/format.mjs",
@@ -223,7 +108,7 @@
    "label": "formatLabel()",
    "_callable": true,
    "_origin": "ast",
-   "community": 6,
+   "community": 0,
    "file_type": "code",
    "norm_label": "formatlabel()",
    "source_file": "lib/format.mjs",
@@ -234,57 +119,148 @@
    "label": "pad()",
    "_callable": true,
    "_origin": "ast",
-   "community": 6,
+   "community": 0,
    "file_type": "code",
    "norm_label": "pad()",
    "source_file": "lib/format.mjs",
    "source_location": "L9"
   },
   {
-   "id": "test_store_test",
-   "label": "store.test.js",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "store.test.js",
-   "source_file": "test/store.test.js",
-   "source_location": "L1"
-  },
-  {
-   "id": "test_store_test_store",
-   "label": "{ Store }",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "{ store }",
-   "source_file": "test/store.test.js",
-   "source_location": "L1"
-  },
-  {
-   "id": "lib_format",
-   "label": "format.mjs",
+   "id": "components_app_app_constructor",
+   "label": ".constructor()",
+   "_callable": true,
    "_origin": "ast",
    "community": 1,
    "file_type": "code",
-   "norm_label": "format.mjs",
-   "source_file": "lib/format.mjs",
-   "source_location": "L1"
+   "norm_label": ".constructor()",
+   "source_file": "components/App.jsx",
+   "source_location": "L19"
   },
   {
-   "id": "lib_format_rationale_7",
-   "label": "WHY: labels are shown in a fixed-width column.",
+   "id": "lib_store_cachedstore_add",
+   "label": ".add()",
+   "_callable": true,
    "_origin": "ast",
    "community": 1,
-   "file_type": "rationale",
-   "norm_label": "why: labels are shown in a fixed-width column.",
+   "file_type": "code",
+   "norm_label": ".add()",
+   "source_file": "lib/store.js",
+   "source_location": "L25"
+  },
+  {
+   "id": "lib_store_clear",
+   "label": "clear()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "clear()",
+   "source_file": "lib/store.js",
+   "source_location": "L32"
+  },
+  {
+   "id": "lib_format_helper",
+   "label": "helper()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "helper()",
    "source_file": "lib/format.mjs",
-   "source_location": "L7"
+   "source_location": "L19"
+  },
+  {
+   "id": "lib_store_helper",
+   "label": "helper()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "helper()",
+   "source_file": "lib/store.js",
+   "source_location": "L36"
+  },
+  {
+   "id": "lib_store_store_add",
+   "label": ".add()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": ".add()",
+   "source_file": "lib/store.js",
+   "source_location": "L14"
+  },
+  {
+   "id": "lib_store_store_constructor",
+   "label": ".constructor()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": ".constructor()",
+   "source_file": "lib/store.js",
+   "source_location": "L6"
+  },
+  {
+   "id": "lib_store_store_size",
+   "label": ".size()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": ".size()",
+   "source_file": "lib/store.js",
+   "source_location": "L19"
+  },
+  {
+   "id": "test_store_test_fixture",
+   "label": "fixture()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "fixture()",
+   "source_file": "test/store.test.js",
+   "source_location": "L10"
+  },
+  {
+   "id": "lib_default_helper",
+   "label": "helper()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "helper()",
+   "source_file": "lib/default.cjs",
+   "source_location": "L5"
+  },
+  {
+   "id": "lib_store_store_create",
+   "label": ".create()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": ".create()",
+   "source_file": "lib/store.js",
+   "source_location": "L10"
+  },
+  {
+   "id": "components_app",
+   "label": "App.jsx",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "app.jsx",
+   "source_file": "components/App.jsx",
+   "source_location": "L1"
   },
   {
    "id": "lib_store",
    "label": "store.js",
    "_origin": "ast",
-   "community": 2,
+   "community": 1,
    "file_type": "code",
    "norm_label": "store.js",
    "source_file": "lib/store.js",
@@ -294,7 +270,7 @@
    "id": "lib_store_utils",
    "label": "utils",
    "_origin": "ast",
-   "community": 2,
+   "community": 1,
    "file_type": "code",
    "norm_label": "utils",
    "source_file": "lib/store.js",
@@ -304,20 +280,40 @@
    "id": "lib_store_rationale_26",
    "label": "NOTE: invalidates the cache on every write.",
    "_origin": "ast",
-   "community": 2,
+   "community": 1,
    "file_type": "rationale",
    "norm_label": "note: invalidates the cache on every write.",
    "source_file": "lib/store.js",
    "source_location": "L26"
   },
   {
-   "id": "components_app",
-   "label": "App.jsx",
+   "id": "lib_format",
+   "label": "format.mjs",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "format.mjs",
+   "source_file": "lib/format.mjs",
+   "source_location": "L1"
+  },
+  {
+   "id": "lib_format_rationale_7",
+   "label": "WHY: labels are shown in a fixed-width column.",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "rationale",
+   "norm_label": "why: labels are shown in a fixed-width column.",
+   "source_file": "lib/format.mjs",
+   "source_location": "L7"
+  },
+  {
+   "id": "test_store_test",
+   "label": "store.test.js",
    "_origin": "ast",
    "community": 3,
    "file_type": "code",
-   "norm_label": "app.jsx",
-   "source_file": "components/App.jsx",
+   "norm_label": "store.test.js",
+   "source_file": "test/store.test.js",
    "source_location": "L1"
   },
   {
@@ -341,19 +337,19 @@
    "source_location": "L3"
   },
   {
-   "id": "lib_default_store",
-   "label": "{ Store }",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "{ store }",
-   "source_file": "lib/default.cjs",
-   "source_location": "L1"
+   "id": "ref_react",
+   "label": "ref_react",
+   "community": 0,
+   "external": true,
+   "file_type": "concept",
+   "norm_label": "ref_react",
+   "source_file": "",
+   "type": "external"
   },
   {
    "id": "ref_node_fs",
    "label": "ref_node_fs",
-   "community": 1,
+   "community": 2,
    "external": true,
    "file_type": "concept",
    "norm_label": "ref_node_fs",
@@ -363,20 +359,10 @@
   {
    "id": "ref_path",
    "label": "ref_path",
-   "community": 1,
+   "community": 2,
    "external": true,
    "file_type": "concept",
    "norm_label": "ref_path",
-   "source_file": "",
-   "type": "external"
-  },
-  {
-   "id": "ref_react",
-   "label": "ref_react",
-   "community": 3,
-   "external": true,
-   "file_type": "concept",
-   "norm_label": "ref_react",
    "source_file": "",
    "type": "external"
   },
@@ -450,6 +436,18 @@
    "context": "call",
    "source_file": "components/App.jsx",
    "source_location": "L7",
+   "weight": 1.0
+  },
+  {
+   "source": "lib_default_helper",
+   "target": "lib_store_store_create",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "lib/default.cjs",
+   "source_location": "L6",
    "weight": 1.0
   },
   {
@@ -727,17 +725,6 @@
   },
   {
    "source": "lib_default",
-   "target": "lib_default_store",
-   "relation": "contains",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "lib/default.cjs",
-   "source_location": "L2",
-   "weight": 1.0
-  },
-  {
-   "source": "lib_default",
    "target": "lib_default_lodash",
    "relation": "contains",
    "_origin": "ast",
@@ -833,17 +820,6 @@
    "confidence_score": 1.0,
    "source_file": "lib/store.js",
    "source_location": "L5",
-   "weight": 1.0
-  },
-  {
-   "source": "test_store_test",
-   "target": "test_store_test_store",
-   "relation": "contains",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "test/store.test.js",
-   "source_location": "L1",
    "weight": 1.0
   },
   {
@@ -966,6 +942,18 @@
    "context": "argument",
    "source_file": "lib/format.mjs",
    "source_location": "L16",
+   "weight": 1.0
+  },
+  {
+   "source": "components_app_app_onclick",
+   "target": "lib_store_cachedstore_add",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "components/App.jsx",
+   "source_location": "L26",
    "weight": 1.0
   },
   {

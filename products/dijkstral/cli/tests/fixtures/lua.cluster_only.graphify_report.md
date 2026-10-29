@@ -1,4 +1,4 @@
-# Graph Report - co  (2026-10-14)
+# Graph Report - lua  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available

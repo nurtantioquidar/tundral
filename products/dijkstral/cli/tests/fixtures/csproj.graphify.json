@@ -200,6 +200,8 @@
    "source_file": "src/Core/Models.cs",
    "source_location": "L15",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Core",
     "scope_chain": [
      "s0:0"
@@ -372,6 +374,8 @@
    "source_file": "src/Shop/Services/ItemService.cs",
    "source_location": "L7",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s2:0"
@@ -489,6 +493,7 @@
    "source_location": "L6",
    "metadata": {
     "is_partial": true,
+    "type_path": "SettingsViewModel",
     "namespace": "Shop.ViewModels",
     "scope_chain": [
      "s3:0"
@@ -527,6 +532,8 @@
    "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
    "source_location": "L15",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.ViewModels",
     "scope_chain": [
      "s3:0"
@@ -558,6 +565,8 @@
    "source_file": "src/Shop/ViewModels/SettingsViewModel.cs",
    "source_location": "L21",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.ViewModels",
     "scope_chain": [
      "s3:0"
@@ -702,6 +711,7 @@
    "source_location": "L5",
    "metadata": {
     "is_partial": true,
+    "type_path": "MainWindow",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -718,6 +728,8 @@
    "source_file": "src/Shop/Views/MainWindow.xaml.cs",
    "source_location": "L7",
    "metadata": {
+    "arity": 2,
+    "signature": "object,RoutedEventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -789,6 +801,8 @@
    "source_file": "src/Shop/Views/MainWindow.xaml.cs",
    "source_location": "L9",
    "metadata": {
+    "arity": 2,
+    "signature": "object,TextChangedEventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -820,6 +834,8 @@
    "source_file": "src/Shop/Views/MainWindow.xaml.cs",
    "source_location": "L11",
    "metadata": {
+    "arity": 2,
+    "signature": "object,RoutedEventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -859,6 +875,8 @@
    "source_file": "src/Shop/Views/MainWindow.xaml.cs",
    "source_location": "L13",
    "metadata": {
+    "arity": 2,
+    "signature": "object,RoutedEventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"
@@ -911,6 +929,8 @@
    "source_file": "src/Shop/Views/MainWindow.xaml.cs",
    "source_location": "L15",
    "metadata": {
+    "arity": 2,
+    "signature": "object,EventArgs",
     "namespace": "Shop.Views",
     "scope_chain": [
      "s2:0"

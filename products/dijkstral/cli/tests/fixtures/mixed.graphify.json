@@ -87,7 +87,7 @@
   },
   {
    "id": "package_dependencies_react",
-   "label": "react",
+   "label": "react@^18.3.1",
    "file_type": "code",
    "source_file": "package.json",
    "source_location": "L5",
@@ -103,7 +103,7 @@
   },
   {
    "id": "package_dependencies_zod",
-   "label": "zod",
+   "label": "zod@3.23.8",
    "file_type": "code",
    "source_file": "package.json",
    "source_location": "L5",
@@ -127,7 +127,7 @@
   },
   {
    "id": "package_devdependencies_typescript",
-   "label": "typescript",
+   "label": "typescript@5.6.3",
    "file_type": "code",
    "source_file": "package.json",
    "source_location": "L6",
@@ -393,6 +393,16 @@
    "_origin": "ast"
   },
   {
+   "source": "package_dependencies_react",
+   "target": "ref_react",
+   "relation": "declares",
+   "confidence": "EXTRACTED",
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
    "source": "package_dependencies",
    "target": "package_dependencies_zod",
    "relation": "contains",
@@ -411,6 +421,16 @@
    "source_location": "L5",
    "weight": 1.0,
    "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "package_dependencies_zod",
+   "target": "ref_zod",
+   "relation": "declares",
+   "confidence": "EXTRACTED",
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0,
    "_origin": "ast"
   },
   {
@@ -442,6 +462,16 @@
    "source_location": "L6",
    "weight": 1.0,
    "context": "import",
+   "_origin": "ast"
+  },
+  {
+   "source": "package_devdependencies_typescript",
+   "target": "ref_typescript",
+   "relation": "declares",
+   "confidence": "EXTRACTED",
+   "source_file": "package.json",
+   "source_location": "L6",
+   "weight": 1.0,
    "_origin": "ast"
   },
   {

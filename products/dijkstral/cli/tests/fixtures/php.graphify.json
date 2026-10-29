@@ -246,6 +246,17 @@
    "source_file": "src/Models/User.php",
    "source_location": "L44",
    "_callable": true,
+   "metadata": {
+    "unresolved_calls": [
+     {
+      "callee": "title",
+      "receiver_type": "Str",
+      "lang": "php",
+      "line": "L46",
+      "file": "src/Models/User.php"
+     }
+    ]
+   },
    "_origin": "ast"
   },
   {
@@ -1141,18 +1152,6 @@
    "_origin": "ast"
   },
   {
-   "source": "bin_app_main",
-   "target": "src_service_userservice_userservice",
-   "relation": "calls",
-   "context": "call",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "bin/app.php",
-   "source_location": "L13",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
    "source": "src_models_user_user_construct",
    "target": "src_helpers_slugify",
    "relation": "calls",
@@ -1165,8 +1164,68 @@
    "_origin": "ast"
   },
   {
+   "source": "bin_app_main",
+   "target": "src_service_userservice_userservice_make",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "bin/app.php",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_user_user_save",
+   "target": "src_models_model_model_save",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/Models/User.php",
+   "source_location": "L40",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_models_user_user_display",
+   "target": "src_models_status_status_label",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Models/User.php",
+   "source_location": "L46",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service_userservice_userservice_register",
+   "target": "src_models_user_user_save",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Service/UserService.php",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service_userservice_userservice_register",
+   "target": "src_models_repository_repository_add",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/Service/UserService.php",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
    "source": "tests_userservicetest_userservicetest_testparse",
-   "target": "src_models_user_user",
+   "target": "src_models_user_user_parse",
    "relation": "calls",
    "context": "call",
    "confidence": "EXTRACTED",
@@ -1178,7 +1237,7 @@
   },
   {
    "source": "tests_userservicetest_userservicetest_testregister",
-   "target": "src_service_userservice_userservice",
+   "target": "src_service_userservice_userservice_make",
    "relation": "calls",
    "context": "call",
    "confidence": "EXTRACTED",

@@ -1,11 +1,11 @@
-# Graph Report - rust  (2026-10-13)
+# Graph Report - rust  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available
 
 ## Summary
-- 79 nodes · 99 edges · 8 communities (6 shown, 2 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 3 edges (avg confidence: 0.85)
+- 78 nodes · 100 edges · 8 communities (6 shown, 2 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.78)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -18,7 +18,7 @@
 - Community 7
 
 ## God Nodes (most connected - your core abstractions)
-1. `Circle` - 13 edges
+1. `Circle` - 14 edges
 2. `Shape` - 9 edges
 3. `Kind` - 7 edges
 4. `round_kind()` - 5 edges
@@ -30,7 +30,7 @@
 10. `fixture()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `render()` --references--> `Circle`  [EXTRACTED]
+- `render()` --references--> `Circle`  [INFERRED]
   src/util/mod.rs → src/model.rs
 - `main()` --calls--> `round_kind()`  [INFERRED]
   src/main.rs → src/model.rs
@@ -63,8 +63,8 @@ Cohesion: 0.21
 Nodes (8): classify(), Kind, Empty, Round, Square, Platform, round_kind(), Unit
 
 ### Community 4 - "Community 4"
-Cohesion: 0.18
-Nodes (4): build(), GREETING, square!, MAX_SHAPES
+Cohesion: 0.22
+Nodes (5): build(), GREETING, square!, MAX_SHAPES, Registry
 
 ### Community 5 - "Community 5"
 Cohesion: 0.25
@@ -72,19 +72,19 @@ Nodes (4): Pair, Pair<T>, Wrapper, Wrapper<T>
 
 ## Knowledge Gaps
 - **4 isolated node(s):** `Pair<T>`, `Empty`, `Square`, `shapes`
-  These have ≤1 connection - possible missing edges. (Counts symbols only; 43 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges. (Counts symbols only; 41 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Shape` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`?**
-  _High betweenness centrality (0.382) - this node is a cross-community bridge._
+- **Why does `Circle` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`?**
+  _High betweenness centrality (0.270) - this node is a cross-community bridge._
 - **What connects `Pair<T>`, `Empty`, `Square` to the rest of the system?**
   _4 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
-- **Why does `Circle` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`?**
-  _High betweenness centrality (0.190) - this node is a cross-community bridge._
-- **Why does `Pair` connect `Community 5` to `Community 3`?**
-  _High betweenness centrality (0.065) - this node is a cross-community bridge._
+- **Why does `Shape` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`?**
+  _High betweenness centrality (0.251) - this node is a cross-community bridge._
+- **Why does `Kind` connect `Community 3` to `Community 1`?**
+  _High betweenness centrality (0.066) - this node is a cross-community bridge._

@@ -1,10 +1,10 @@
-# Graph Report - python  (2026-10-13)
+# Graph Report - python  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available
 
 ## Summary
-- 59 nodes · 107 edges · 9 communities (2 shown, 7 thin omitted)
+- 59 nodes · 108 edges · 9 communities (2 shown, 7 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.91)
 - Token cost: 0 input · 0 output
 
@@ -28,8 +28,8 @@
 6. `slugify()` - 6 edges
 7. `Admin` - 5 edges
 8. `TestUserService` - 5 edges
-9. `helper()` - 3 edges
-10. `traced()` - 3 edges
+9. `validate()` - 4 edges
+10. `service()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `TestUserService` --uses--> `User`  [INFERRED]
@@ -63,12 +63,12 @@ Nodes (3): main(), run(), UserService
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `User` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`?**
-  _High betweenness centrality (0.304) - this node is a cross-community bridge._
+  _High betweenness centrality (0.296) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `User` (e.g. with `UserService` and `TestUserService`) actually correct?**
   _`User` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Why does `Repo` connect `Community 5` to `Community 0`, `Community 2`, `Community 3`?**
-  _High betweenness centrality (0.142) - this node is a cross-community bridge._
+  _High betweenness centrality (0.141) - this node is a cross-community bridge._
 - **Are the 4 inferred relationships involving `UserService` (e.g. with `main()` and `Repo`) actually correct?**
   _`UserService` has 4 INFERRED edges - model-reasoned connections that need verification._
 - **Why does `UserService` connect `Community 3` to `Community 0`, `Community 1`, `Community 5`, `Community 6`, `Community 7`, `Community 8`?**
-  _High betweenness centrality (0.102) - this node is a cross-community bridge._
+  _High betweenness centrality (0.103) - this node is a cross-community bridge._

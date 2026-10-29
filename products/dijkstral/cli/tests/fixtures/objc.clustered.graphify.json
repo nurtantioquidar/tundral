@@ -3,9 +3,75 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
+  {
+   "id": "shop_services_repo_repo",
+   "label": "Repo",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "definition_file": "Shop/Services/Repo.m",
+   "definition_location": "L5",
+   "file_type": "code",
+   "norm_label": "repo",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L6"
+  },
+  {
+   "id": "shop_models_circle_circle",
+   "label": "Circle",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 2,
+   "definition_file": "Shop/Models/Circle.m",
+   "definition_location": "L3",
+   "file_type": "code",
+   "norm_label": "circle",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L3"
+  },
+  {
+   "id": "shop_models_shape_shape",
+   "label": "Shape",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 3,
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L3",
+   "file_type": "code",
+   "norm_label": "shape",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L18"
+  },
+  {
+   "id": "shop_bridge_bridge",
+   "label": "Bridge",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "bridge",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L9"
+  },
+  {
+   "id": "shop_models_shape_drawable",
+   "label": "<Drawable>",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "<drawable>",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L7"
+  },
   {
    "id": "shop_models_util_twice",
    "label": "twice()",
@@ -18,16 +84,163 @@
    "source_location": "L4"
   },
   {
-   "id": "shop_services_repo_repo",
-   "label": "Repo",
+   "id": "shop_models_circle_circle_area",
+   "label": "-area",
+   "_callable": true,
    "_origin": "ast",
-   "community": 0,
-   "definition_file": "Shop/Services/Repo.m",
+   "community": 2,
+   "definition_file": "Shop/Models/Circle.m",
    "definition_location": "L5",
    "file_type": "code",
-   "norm_label": "repo",
+   "norm_label": "-area",
+   "source_file": "Shop/Models/Circle.h",
+   "source_location": "L5"
+  },
+  {
+   "id": "shop_services_repo_repo_report",
+   "label": "-report",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "definition_file": "Shop/Services/Repo.m",
+   "definition_location": "L20",
+   "file_type": "code",
+   "norm_label": "-report",
    "source_file": "Shop/Services/Repo.h",
-   "source_location": "L6"
+   "source_location": "L12"
+  },
+  {
+   "id": "shop_models_circle_circle_draw",
+   "label": "-draw",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "-draw",
+   "source_file": "Shop/Models/Circle.m",
+   "source_location": "L9"
+  },
+  {
+   "id": "shop_models_shape_shape_area",
+   "label": "-area",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L19",
+   "file_type": "code",
+   "norm_label": "-area",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L23"
+  },
+  {
+   "id": "shop_services_repo_repo_find",
+   "label": "-find",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "definition_file": "Shop/Services/Repo.m",
+   "definition_location": "L13",
+   "file_type": "code",
+   "norm_label": "-find",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L11"
+  },
+  {
+   "id": "shop_bridge_bridge_run",
+   "label": "-run",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "-run",
+   "source_file": "Shop/Bridge.mm",
+   "source_location": "L10"
+  },
+  {
+   "id": "shop_models_shape_drawable_caption",
+   "label": "-caption",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "-caption",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L10"
+  },
+  {
+   "id": "shop_models_shape_drawable_draw",
+   "label": "-draw",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "-draw",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L8"
+  },
+  {
+   "id": "shop_models_shape_shape_initwithname",
+   "label": "-initWithName",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 6,
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L10",
+   "file_type": "code",
+   "norm_label": "-initwithname",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L22"
+  },
+  {
+   "id": "shop_models_shape_shape_shapenamed",
+   "label": "+shapeNamed",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 6,
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L32",
+   "file_type": "code",
+   "norm_label": "+shapenamed",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L25"
+  },
+  {
+   "id": "shop_models_shape_shape_draw",
+   "label": "-draw",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 7,
+   "definition_file": "Shop/Models/Shape.m",
+   "definition_location": "L28",
+   "file_type": "code",
+   "norm_label": "-draw",
+   "source_file": "Shop/Models/Shape.h",
+   "source_location": "L24"
+  },
+  {
+   "id": "shop_services_repo_repo_add",
+   "label": "-add",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 7,
+   "definition_file": "Shop/Services/Repo.m",
+   "definition_location": "L7",
+   "file_type": "code",
+   "norm_label": "-add",
+   "source_file": "Shop/Services/Repo.h",
+   "source_location": "L10"
+  },
+  {
+   "id": "shop_models_shape_shape_refresh",
+   "label": "-refresh",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 7,
+   "file_type": "code",
+   "norm_label": "-refresh",
+   "source_file": "Shop/Models/Shape.m",
+   "source_location": "L5"
   },
   {
    "id": "main",
@@ -130,52 +343,6 @@
    "source_location": "L1"
   },
   {
-   "id": "shop_models_circle_circle",
-   "label": "Circle",
-   "_origin": "ast",
-   "community": 2,
-   "definition_file": "Shop/Models/Circle.m",
-   "definition_location": "L3",
-   "file_type": "code",
-   "norm_label": "circle",
-   "source_file": "Shop/Models/Circle.h",
-   "source_location": "L3"
-  },
-  {
-   "id": "shop_models_circle_circle_area",
-   "label": "-area",
-   "_origin": "ast",
-   "community": 2,
-   "definition_file": "Shop/Models/Circle.m",
-   "definition_location": "L5",
-   "file_type": "code",
-   "norm_label": "-area",
-   "source_file": "Shop/Models/Circle.h",
-   "source_location": "L5"
-  },
-  {
-   "id": "shop_services_repo_repo_report",
-   "label": "-report",
-   "_origin": "ast",
-   "community": 2,
-   "definition_file": "Shop/Services/Repo.m",
-   "definition_location": "L20",
-   "file_type": "code",
-   "norm_label": "-report",
-   "source_file": "Shop/Services/Repo.h",
-   "source_location": "L12"
-  },
-  {
-   "id": "shop_models_circle_circle_draw",
-   "label": "-draw",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "-draw",
-   "source_file": "Shop/Models/Circle.m",
-   "source_location": "L9"
-  },
-  {
    "id": "shop_models_circle_h_shop_models_circle",
    "label": "Circle.h",
    "_origin": "ast",
@@ -194,42 +361,6 @@
    "norm_label": "circle.m",
    "source_file": "Shop/Models/Circle.m",
    "source_location": "L1"
-  },
-  {
-   "id": "shop_models_shape_shape_area",
-   "label": "-area",
-   "_origin": "ast",
-   "community": 3,
-   "definition_file": "Shop/Models/Shape.m",
-   "definition_location": "L19",
-   "file_type": "code",
-   "norm_label": "-area",
-   "source_file": "Shop/Models/Shape.h",
-   "source_location": "L23"
-  },
-  {
-   "id": "shop_models_shape_shape",
-   "label": "Shape",
-   "_origin": "ast",
-   "community": 3,
-   "definition_file": "Shop/Models/Shape.m",
-   "definition_location": "L3",
-   "file_type": "code",
-   "norm_label": "shape",
-   "source_file": "Shop/Models/Shape.h",
-   "source_location": "L18"
-  },
-  {
-   "id": "shop_services_repo_repo_find",
-   "label": "-find",
-   "_origin": "ast",
-   "community": 3,
-   "definition_file": "Shop/Services/Repo.m",
-   "definition_location": "L13",
-   "file_type": "code",
-   "norm_label": "-find",
-   "source_file": "Shop/Services/Repo.h",
-   "source_location": "L11"
   },
   {
    "id": "nsarray",
@@ -262,26 +393,6 @@
    "source_location": "L1"
   },
   {
-   "id": "shop_bridge_bridge",
-   "label": "Bridge",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "bridge",
-   "source_file": "Shop/Bridge.mm",
-   "source_location": "L9"
-  },
-  {
-   "id": "shop_bridge_bridge_run",
-   "label": "-run",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "-run",
-   "source_file": "Shop/Bridge.mm",
-   "source_location": "L10"
-  },
-  {
    "id": "shop_bridge_mm_nsobject",
    "label": "NSObject",
    "_origin": "ast",
@@ -290,36 +401,6 @@
    "norm_label": "nsobject",
    "source_file": "",
    "source_location": ""
-  },
-  {
-   "id": "shop_models_shape_drawable",
-   "label": "<Drawable>",
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": "<drawable>",
-   "source_file": "Shop/Models/Shape.h",
-   "source_location": "L7"
-  },
-  {
-   "id": "shop_models_shape_drawable_caption",
-   "label": "-caption",
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": "-caption",
-   "source_file": "Shop/Models/Shape.h",
-   "source_location": "L10"
-  },
-  {
-   "id": "shop_models_shape_drawable_draw",
-   "label": "-draw",
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": "-draw",
-   "source_file": "Shop/Models/Shape.h",
-   "source_location": "L8"
   },
   {
    "id": "shop_models_shape_h_nsobject",
@@ -332,30 +413,6 @@
    "source_location": ""
   },
   {
-   "id": "shop_models_shape_shape_initwithname",
-   "label": "-initWithName",
-   "_origin": "ast",
-   "community": 6,
-   "definition_file": "Shop/Models/Shape.m",
-   "definition_location": "L10",
-   "file_type": "code",
-   "norm_label": "-initwithname",
-   "source_file": "Shop/Models/Shape.h",
-   "source_location": "L22"
-  },
-  {
-   "id": "shop_models_shape_shape_shapenamed",
-   "label": "+shapeNamed",
-   "_origin": "ast",
-   "community": 6,
-   "definition_file": "Shop/Models/Shape.m",
-   "definition_location": "L32",
-   "file_type": "code",
-   "norm_label": "+shapenamed",
-   "source_file": "Shop/Models/Shape.h",
-   "source_location": "L25"
-  },
-  {
    "id": "self",
    "label": "self",
    "_origin": "ast",
@@ -364,40 +421,6 @@
    "norm_label": "self",
    "source_file": "",
    "source_location": ""
-  },
-  {
-   "id": "shop_models_shape_shape_draw",
-   "label": "-draw",
-   "_origin": "ast",
-   "community": 7,
-   "definition_file": "Shop/Models/Shape.m",
-   "definition_location": "L28",
-   "file_type": "code",
-   "norm_label": "-draw",
-   "source_file": "Shop/Models/Shape.h",
-   "source_location": "L24"
-  },
-  {
-   "id": "shop_services_repo_repo_add",
-   "label": "-add",
-   "_origin": "ast",
-   "community": 7,
-   "definition_file": "Shop/Services/Repo.m",
-   "definition_location": "L7",
-   "file_type": "code",
-   "norm_label": "-add",
-   "source_file": "Shop/Services/Repo.h",
-   "source_location": "L10"
-  },
-  {
-   "id": "shop_models_shape_shape_refresh",
-   "label": "-refresh",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": "-refresh",
-   "source_file": "Shop/Models/Shape.m",
-   "source_location": "L5"
   },
   {
    "id": "shop_models_shape_m_nsstring",
@@ -574,6 +597,22 @@
    "weight": 1.0
   },
   {
+   "source": "shop_services_repo_m_shop_services_repo",
+   "target": "shop_models_circle_h_shop_models_circle",
+   "relation": "imports",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "import",
+   "metadata": {
+    "raw_include": "Circle.h",
+    "include_kind": "quoted"
+   },
+   "source_file": "Shop/Services/Repo.m",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
    "source": "main",
    "target": "foundation",
    "relation": "imports",
@@ -715,18 +754,6 @@
    "context": "import",
    "source_file": "Shop/Services/Repo.m",
    "source_location": "L1",
-   "weight": 1.0
-  },
-  {
-   "source": "shop_services_repo_m_shop_services_repo",
-   "target": "shop_models_circle_circle",
-   "relation": "imports",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "import",
-   "source_file": "Shop/Services/Repo.m",
-   "source_location": "L2",
    "weight": 1.0
   },
   {

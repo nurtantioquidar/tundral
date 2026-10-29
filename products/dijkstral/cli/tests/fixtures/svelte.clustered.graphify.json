@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -141,11 +141,11 @@
   },
   {
    "id": "src_lib_cart",
-   "label": "lib/Cart.svelte",
+   "label": "Cart.svelte",
    "_origin": "ast",
    "community": 0,
    "file_type": "code",
-   "norm_label": "lib/cart.svelte",
+   "norm_label": "cart.svelte",
    "source_file": "src/lib/Cart.svelte",
    "source_location": "L1"
   },
@@ -220,24 +220,15 @@
    "source_location": "L1"
   },
   {
-   "id": "badge_svelte",
-   "label": "$lib/Badge.svelte",
+   "id": "lib",
+   "label": "$lib",
    "_origin": "ast",
    "community": 2,
    "confidence": "EXTRACTED",
    "file_type": "code",
-   "norm_label": "$lib/badge.svelte",
-   "source_file": "$lib/Badge.svelte"
-  },
-  {
-   "id": "cart_svelte",
-   "label": "$lib/Cart.svelte",
-   "_origin": "ast",
-   "community": 2,
-   "confidence": "EXTRACTED",
-   "file_type": "code",
-   "norm_label": "$lib/cart.svelte",
-   "source_file": "$lib/Cart.svelte"
+   "norm_label": "$lib",
+   "source_file": "$lib",
+   "type": "module"
   },
   {
    "id": "src_routes_page_svelte_src_routes_page",
@@ -281,11 +272,11 @@
   },
   {
    "id": "src_lib_badge",
-   "label": "lib/Badge.svelte",
+   "label": "Badge.svelte",
    "_origin": "ast",
    "community": 4,
    "file_type": "code",
-   "norm_label": "lib/badge.svelte",
+   "norm_label": "badge.svelte",
    "source_file": "src/lib/Badge.svelte",
    "source_location": "L1"
   },
@@ -824,16 +815,7 @@
   },
   {
    "source": "src_routes_page_svelte_src_routes_page",
-   "target": "badge_svelte",
-   "relation": "imports_from",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "src/routes/+page.svelte"
-  },
-  {
-   "source": "src_routes_page_svelte_src_routes_page",
-   "target": "cart_svelte",
+   "target": "lib",
    "relation": "imports_from",
    "_origin": "ast",
    "confidence": "EXTRACTED",

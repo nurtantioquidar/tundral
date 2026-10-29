@@ -54,14 +54,6 @@
    "_origin": "ast"
   },
   {
-   "id": "k",
-   "label": "K",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "src_main_kotlin_com_shop_model_model_entity_describe",
    "label": ".describe()",
    "file_type": "code",
@@ -78,6 +70,17 @@
    "source_location": "L16",
    "_callable": true,
    "_callable_class": true,
+   "metadata": {
+    "unresolved_calls": [
+     {
+      "callee": "now",
+      "receiver_type": "Instant",
+      "lang": "kotlin",
+      "line": "L17",
+      "file": "src/main/kotlin/com/shop/model/Model.kt"
+     }
+    ]
+   },
    "_origin": "ast"
   },
   {
@@ -159,6 +162,16 @@
    "file_type": "code",
    "source_file": "src/main/kotlin/com/shop/model/Model.kt",
    "source_location": "L37",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "src_main_kotlin_com_shop_model_model_userid",
+   "label": "UserId",
+   "file_type": "code",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L40",
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast"
@@ -301,14 +314,6 @@
    "_origin": "ast"
   },
   {
-   "id": "src_main_kotlin_com_shop_service_audit_kt_t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_save",
    "label": ".save()",
    "file_type": "code",
@@ -354,14 +359,6 @@
    "_origin": "ast"
   },
   {
-   "id": "src_main_kotlin_com_shop_service_userservice_kt_t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "src_main_kotlin_com_shop_service_userservice_repository_all",
    "label": ".all()",
    "file_type": "code",
@@ -378,6 +375,17 @@
    "source_location": "L18",
    "_callable": true,
    "_callable_class": true,
+   "metadata": {
+    "unresolved_calls": [
+     {
+      "callee": "getLogger",
+      "receiver_type": "LoggerFactory",
+      "lang": "kotlin",
+      "line": "L19",
+      "file": "src/main/kotlin/com/shop/service/UserService.kt"
+     }
+    ]
+   },
    "_origin": "ast"
   },
   {
@@ -403,6 +411,17 @@
    "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
    "source_location": "L23",
    "_callable": true,
+   "metadata": {
+    "unresolved_calls": [
+     {
+      "callee": "of",
+      "receiver_type": "Customer",
+      "lang": "kotlin",
+      "line": "L25",
+      "file": "src/main/kotlin/com/shop/service/UserService.kt"
+     }
+    ]
+   },
    "_origin": "ast"
   },
   {
@@ -568,14 +587,6 @@
    "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
    "source_location": "L14",
    "_callable": true,
-   "_origin": "ast"
-  },
-  {
-   "id": "src_main_kotlin_com_shop_util_strings_kt_t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
    "_origin": "ast"
   },
   {
@@ -764,17 +775,6 @@
   },
   {
    "source": "src_main_kotlin_com_shop_model_model_entity",
-   "target": "k",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
-   "source_location": "L7",
-   "weight": 1.0,
-   "context": "field",
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_kotlin_com_shop_model_model_entity",
    "target": "src_main_kotlin_com_shop_model_model_entity_describe",
    "relation": "method",
    "confidence": "EXTRACTED",
@@ -921,6 +921,16 @@
    "confidence": "EXTRACTED",
    "source_file": "src/main/kotlin/com/shop/model/Model.kt",
    "source_location": "L37",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_main_kotlin_com_shop_model_model",
+   "target": "src_main_kotlin_com_shop_model_model_userid",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "src/main/kotlin/com/shop/model/Model.kt",
+   "source_location": "L40",
    "weight": 1.0,
    "_origin": "ast"
   },
@@ -1219,34 +1229,12 @@
   },
   {
    "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
-   "target": "src_main_kotlin_com_shop_service_audit_kt_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
-   "source_location": "L9",
-   "weight": 1.0,
-   "context": "generic_arg",
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository",
    "target": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_save",
    "relation": "method",
    "confidence": "EXTRACTED",
    "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
    "source_location": "L12",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_save",
-   "target": "src_main_kotlin_com_shop_service_audit_kt_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
-   "source_location": "L12",
-   "weight": 1.0,
-   "context": "parameter_type",
    "_origin": "ast"
   },
   {
@@ -1257,17 +1245,6 @@
    "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
    "source_location": "L16",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_kotlin_com_shop_service_audit_inmemoryrepository_all",
-   "target": "src_main_kotlin_com_shop_service_audit_kt_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/kotlin/com/shop/service/Audit.kt",
-   "source_location": "L16",
-   "weight": 1.0,
-   "context": "generic_arg",
    "_origin": "ast"
   },
   {
@@ -1376,17 +1353,6 @@
    "_origin": "ast"
   },
   {
-   "source": "src_main_kotlin_com_shop_service_userservice_repository_save",
-   "target": "src_main_kotlin_com_shop_service_userservice_kt_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
-   "source_location": "L12",
-   "weight": 1.0,
-   "context": "parameter_type",
-   "_origin": "ast"
-  },
-  {
    "source": "src_main_kotlin_com_shop_service_userservice_repository",
    "target": "src_main_kotlin_com_shop_service_userservice_repository_all",
    "relation": "method",
@@ -1394,17 +1360,6 @@
    "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
    "source_location": "L14",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_kotlin_com_shop_service_userservice_repository_all",
-   "target": "src_main_kotlin_com_shop_service_userservice_kt_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/kotlin/com/shop/service/UserService.kt",
-   "source_location": "L14",
-   "weight": 1.0,
-   "context": "generic_arg",
    "_origin": "ast"
   },
   {
@@ -1780,17 +1735,6 @@
    "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
    "source_location": "L14",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_kotlin_com_shop_util_strings_second",
-   "target": "src_main_kotlin_com_shop_util_strings_kt_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/kotlin/com/shop/util/Strings.kt",
-   "source_location": "L14",
-   "weight": 1.0,
-   "context": "return_type",
    "_origin": "ast"
   },
   {

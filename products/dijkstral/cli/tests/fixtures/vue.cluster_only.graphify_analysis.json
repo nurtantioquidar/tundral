@@ -87,11 +87,6 @@
       "degree": 5
     },
     {
-      "id": "src_main_mount",
-      "label": "mount()",
-      "degree": 4
-    },
-    {
       "id": "src_store_createstore",
       "label": "createStore()",
       "degree": 4
@@ -115,6 +110,11 @@
       "id": "src_composables_usefilter_usefilter",
       "label": "useFilter()",
       "degree": 3
+    },
+    {
+      "id": "src_components_todoitem_props",
+      "label": "Props",
+      "degree": 2
     }
   ],
   "surprises": [

@@ -1,4 +1,4 @@
-# Graph Report - up  (2026-10-14)
+# Graph Report - scala  (2026-10-29)
 
 ## Corpus Check
 - 7 files · ~545 words
@@ -6,20 +6,17 @@
 - Unclassified: 1 file(s) not represented in the graph (top: .sbt 1)
 
 ## Summary
-- 94 nodes · 150 edges · 9 communities (5 shown, 4 thin omitted)
+- 91 nodes · 145 edges · 6 communities
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
+- UserService
 - Model.scala
 - User
-- InMemoryRepository
 - Main.scala
-- UserService
+- InMemoryRepository
 - String
-- UserService.scala
-- .names
-- Repository
 
 ## God Nodes (most connected - your core abstractions)
 1. `User` - 14 edges
@@ -46,23 +43,27 @@
 ## Import Cycles
 - None detected.
 
-## Communities (9 total, 4 thin omitted)
+## Communities (6 total, 0 thin omitted)
 
-### Community 0 - "Model.scala"
+### Community 0 - "UserService"
+Cohesion: 0.17
+Nodes (5): helper(), Registry, Repository, Stats, UserService
+
+### Community 1 - "Model.scala"
 Cohesion: 0.16
 Nodes (8): Active, Color, Green, Red, Entity, Inactive, Model, Status
 
-### Community 1 - "User"
+### Community 2 - "User"
 Cohesion: 0.22
 Nodes (3): Address, User, UserOps
-
-### Community 2 - "InMemoryRepository"
-Cohesion: 0.23
-Nodes (4): Auditable, Audited, InMemoryRepository, Logging
 
 ### Community 3 - "Main.scala"
 Cohesion: 0.15
 Nodes (3): Main, Formatter, UserServiceSuite
+
+### Community 4 - "InMemoryRepository"
+Cohesion: 0.24
+Nodes (4): Auditable, Audited, InMemoryRepository, Logging
 
 ### Community 5 - "String"
 Cohesion: 0.39
@@ -71,16 +72,15 @@ Nodes (3): Formatter, slugify(), words()
 ## Knowledge Gaps
 - **2 isolated node(s):** `Red`, `Green`
   These have ≤1 connection - possible missing edges. (Counts symbols only; 19 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `User` connect `User` to `Model.scala`, `Main.scala`?**
-  _High betweenness centrality (0.357) - this node is a cross-community bridge._
+  _High betweenness centrality (0.367) - this node is a cross-community bridge._
 - **What connects `Red`, `Green` to the rest of the system?**
   _2 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Why does `UserService` connect `UserService` to `Repository`, `InMemoryRepository`, `UserService.scala`, `.names`?**
-  _High betweenness centrality (0.256) - this node is a cross-community bridge._
+- **Why does `UserService` connect `UserService` to `InMemoryRepository`?**
+  _High betweenness centrality (0.261) - this node is a cross-community bridge._
 - **Why does `Address` connect `User` to `UserService`?**
-  _High betweenness centrality (0.174) - this node is a cross-community bridge._
+  _High betweenness centrality (0.179) - this node is a cross-community bridge._

@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -11,7 +11,7 @@
    "label": "helper()",
    "_callable": true,
    "_origin": "ast",
-   "community": 3,
+   "community": 4,
    "file_type": "code",
    "norm_label": "helper()",
    "source_file": "app/main.py",
@@ -22,7 +22,7 @@
    "label": "main()",
    "_callable": true,
    "_origin": "ast",
-   "community": 3,
+   "community": 4,
    "file_type": "code",
    "norm_label": "main()",
    "source_file": "app/main.py",
@@ -50,11 +50,11 @@
   },
   {
    "id": "package_devdependencies_typescript",
-   "label": "typescript",
+   "label": "typescript@5.6.3",
    "_origin": "ast",
    "community": 0,
    "file_type": "code",
-   "norm_label": "typescript",
+   "norm_label": "typescript@5.6.3",
    "source_file": "package.json",
    "source_location": "L6"
   },
@@ -99,16 +99,6 @@
    "source_location": "L3"
   },
   {
-   "id": "ref_react",
-   "label": "react",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "concept",
-   "norm_label": "react",
-   "source_file": "package.json",
-   "source_location": "L5"
-  },
-  {
    "id": "ref_typescript",
    "label": "typescript",
    "_origin": "ast",
@@ -117,16 +107,6 @@
    "norm_label": "typescript",
    "source_file": "package.json",
    "source_location": "L6"
-  },
-  {
-   "id": "ref_zod",
-   "label": "zod",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "concept",
-   "norm_label": "zod",
-   "source_file": "package.json",
-   "source_location": "L5"
   },
   {
    "id": "scripts_build",
@@ -241,10 +221,60 @@
    "source_location": "L1"
   },
   {
+   "id": "package_dependencies",
+   "label": "dependencies",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "dependencies",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "package_dependencies_react",
+   "label": "react@^18.3.1",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "react@^18.3.1",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "package_dependencies_zod",
+   "label": "zod@3.23.8",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "zod@3.23.8",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "ref_react",
+   "label": "react",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "concept",
+   "norm_label": "react",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
+   "id": "ref_zod",
+   "label": "zod",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "concept",
+   "norm_label": "zod",
+   "source_file": "package.json",
+   "source_location": "L5"
+  },
+  {
    "id": "tsconfig",
    "label": "tsconfig.json",
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": "tsconfig.json",
    "source_file": "tsconfig.json",
@@ -254,7 +284,7 @@
    "id": "tsconfig_compileroptions",
    "label": "compilerOptions",
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": "compileroptions",
    "source_file": "tsconfig.json",
@@ -264,7 +294,7 @@
    "id": "tsconfig_compileroptions_strict",
    "label": "strict",
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": "strict",
    "source_file": "tsconfig.json",
@@ -274,7 +304,7 @@
    "id": "tsconfig_compileroptions_target",
    "label": "target",
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": "target",
    "source_file": "tsconfig.json",
@@ -284,7 +314,7 @@
    "id": "tsconfig_include",
    "label": "include",
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": "include",
    "source_file": "tsconfig.json",
@@ -294,41 +324,11 @@
    "id": "app_main",
    "label": "main.py",
    "_origin": "ast",
-   "community": 3,
+   "community": 4,
    "file_type": "code",
    "norm_label": "main.py",
    "source_file": "app/main.py",
    "source_location": "L1"
-  },
-  {
-   "id": "package_dependencies",
-   "label": "dependencies",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "dependencies",
-   "source_file": "package.json",
-   "source_location": "L5"
-  },
-  {
-   "id": "package_dependencies_react",
-   "label": "react",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "react",
-   "source_file": "package.json",
-   "source_location": "L5"
-  },
-  {
-   "id": "package_dependencies_zod",
-   "label": "zod",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "zod",
-   "source_file": "package.json",
-   "source_location": "L5"
   },
   {
    "id": "cargo_toml_pkg_mixed_fixture",
@@ -663,6 +663,39 @@
    "confidence_score": 1.0,
    "source_file": "tsconfig.json",
    "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "package_dependencies_react",
+   "target": "ref_react",
+   "relation": "declares",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "package_dependencies_zod",
+   "target": "ref_zod",
+   "relation": "declares",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "package_devdependencies_typescript",
+   "target": "ref_typescript",
+   "relation": "declares",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "package.json",
+   "source_location": "L6",
    "weight": 1.0
   },
   {

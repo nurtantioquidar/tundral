@@ -17,8 +17,7 @@
       "lib_src_models_user_validator",
       "package_meta_meta_dart",
       "package_shop_src_util_format_dart",
-      "static_const_int",
-      "typedef"
+      "static_const_int"
     ],
     "1": [
       "dart_collection",
@@ -29,11 +28,9 @@
       "lib_src_service_isuser",
       "lib_src_service_owner",
       "lib_src_service_register",
-      "lib_src_service_repository",
       "lib_src_service_save",
       "lib_src_service_store",
       "lib_src_service_users",
-      "lib_src_service_userservice",
       "map",
       "models_user_dart",
       "t",
@@ -79,15 +76,20 @@
       "package_test_test_dart",
       "test_service_test",
       "test_service_test_main"
+    ],
+    "6": [
+      "lib_src_service_repository",
+      "lib_src_service_userservice"
     ]
   },
   "cohesion": {
-    "0": 0.1111111111111111,
-    "1": 0.125,
+    "0": 0.11764705882352941,
+    "1": 0.13333333333333333,
     "2": 0.19230769230769232,
     "3": 0.18181818181818182,
     "4": 0.4,
-    "5": 0.5
+    "5": 0.5,
+    "6": 1.0
   },
   "gods": [
     {
@@ -111,16 +113,6 @@
       "degree": 3
     },
     {
-      "id": "lib_src_service_repository",
-      "label": "Repository",
-      "degree": 2
-    },
-    {
-      "id": "lib_src_service_userservice",
-      "label": "UserService",
-      "degree": 2
-    },
-    {
       "id": "lib_src_models_base_comparable2",
       "label": "Comparable2",
       "degree": 2
@@ -128,6 +120,16 @@
     {
       "id": "lib_src_models_user_userlabels",
       "label": "UserLabels",
+      "degree": 2
+    },
+    {
+      "id": "lib_src_service_repository",
+      "label": "Repository",
+      "degree": 2
+    },
+    {
+      "id": "lib_src_service_userservice",
+      "label": "UserService",
       "degree": 2
     },
     {
@@ -180,7 +182,7 @@
     {
       "type": "bridge_node",
       "question": "Why does `User` connect `Community 2` to `Community 0`, `Community 1`, `Community 5`?",
-      "why": "High betweenness centrality (0.279) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.280) - this node is a cross-community bridge."
     },
     {
       "type": "isolated_nodes",
@@ -190,17 +192,17 @@
     {
       "type": "low_cohesion",
       "question": "Should `Community 0` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected."
+      "why": "Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected."
     },
     {
       "type": "bridge_node",
       "question": "Why does `Account` connect `Community 2` to `Community 0`, `Community 1`?",
-      "why": "High betweenness centrality (0.073) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.071) - this node is a cross-community bridge."
     },
     {
       "type": "low_cohesion",
       "question": "Should `Community 1` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.125 - nodes in this community are weakly interconnected."
+      "why": "Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected."
     }
   ]
 }

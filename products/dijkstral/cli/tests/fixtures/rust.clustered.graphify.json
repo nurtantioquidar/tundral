@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -71,6 +71,17 @@
    "norm_label": "unit",
    "source_file": "src/model.rs",
    "source_location": "L34"
+  },
+  {
+   "id": "src_lib_registry",
+   "label": "Registry",
+   "_origin": "ast",
+   "_rust_declaration_count": 1,
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "registry",
+   "source_file": "src/lib.rs",
+   "source_location": "L15"
   },
   {
    "id": "src_model_pair",
@@ -477,16 +488,6 @@
    "source_location": "L96"
   },
   {
-   "id": "registry",
-   "label": "Registry",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "registry",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
    "id": "src_lib",
    "label": "lib.rs",
    "_origin": "ast",
@@ -740,16 +741,6 @@
    "type": "external"
   },
   {
-   "id": "circle_as_round",
-   "label": "circle_as_round",
-   "community": 4,
-   "external": true,
-   "file_type": "concept",
-   "norm_label": "circle_as_round",
-   "source_file": "",
-   "type": "external"
-  },
-  {
    "id": "cow",
    "label": "cow",
    "community": 4,
@@ -969,7 +960,7 @@
   },
   {
    "source": "src_lib",
-   "target": "circle_as_round",
+   "target": "src_model_circle",
    "relation": "imports_from",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -1328,20 +1319,8 @@
    "weight": 1.0
   },
   {
-   "source": "src_util_mod_render",
-   "target": "src_model_circle",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "parameter_type",
-   "source_file": "src/util/mod.rs",
-   "source_location": "L19",
-   "weight": 1.0
-  },
-  {
    "source": "src_lib_build",
-   "target": "registry",
+   "target": "src_lib_registry",
    "relation": "references",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -1440,6 +1419,17 @@
    "confidence_score": 1.0,
    "source_file": "src/lib.rs",
    "source_location": "L14",
+   "weight": 1.0
+  },
+  {
+   "source": "src_lib",
+   "target": "src_lib_registry",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/lib.rs",
+   "source_location": "L15",
    "weight": 1.0
   },
   {
@@ -1913,6 +1903,18 @@
    "confidence_score": 1.0,
    "source_file": "src/model.rs",
    "source_location": "L83",
+   "weight": 1.0
+  },
+  {
+   "source": "src_util_mod_render",
+   "target": "src_model_circle",
+   "relation": "references",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.55,
+   "context": "parameter_type",
+   "source_file": "src/util/mod.rs",
+   "source_location": "L19",
    "weight": 1.0
   },
   {

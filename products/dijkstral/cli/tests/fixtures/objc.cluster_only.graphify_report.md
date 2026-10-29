@@ -1,4 +1,4 @@
-# Graph Report - objc  (2026-10-15)
+# Graph Report - objc  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available
@@ -21,14 +21,14 @@
 ## God Nodes (most connected - your core abstractions)
 1. `Shape` - 14 edges
 2. `Repo` - 8 edges
-3. `Circle` - 8 edges
+3. `Circle` - 7 edges
 4. `-report` - 6 edges
-5. `-find` - 5 edges
-6. `<Drawable>` - 5 edges
+5. `<Drawable>` - 5 edges
+6. `-find` - 5 edges
 7. `-refresh` - 5 edges
-8. `ShapeKind` - 4 edges
-9. `+shapeNamed` - 4 edges
-10. `-area` - 3 edges
+8. `+shapeNamed` - 4 edges
+9. `ShapeKind` - 4 edges
+10. `Bridge` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `-report` --calls--> `-area`  [INFERRED]
@@ -68,7 +68,7 @@ Cohesion: 0.67
 Nodes (3): -draw, -refresh, -add
 
 ## Knowledge Gaps
-- **4 isolated node(s):** `ShapeKindCircle`, `ShapeKindSquare`, `-caption`, `-draw`
+- **4 isolated node(s):** `-caption`, `-draw`, `ShapeKindCircle`, `ShapeKindSquare`
   These have ≤1 connection - possible missing edges. (Counts symbols only; 13 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -76,12 +76,12 @@ Nodes (3): -draw, -refresh, -add
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Shape` connect `Community 3` to `Community 1`, `Community 2`, `Community 5`, `Community 6`, `Community 7`?**
-  _High betweenness centrality (0.418) - this node is a cross-community bridge._
+  _High betweenness centrality (0.402) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `-report` (e.g. with `-run` and `-area`) actually correct?**
   _`-report` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `ShapeKindCircle`, `ShapeKindSquare`, `-caption` to the rest of the system?**
+- **What connects `-caption`, `-draw`, `ShapeKindCircle` to the rest of the system?**
   _4 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Why does `Circle` connect `Community 2` to `Community 0`, `Community 3`?**
-  _High betweenness centrality (0.188) - this node is a cross-community bridge._
 - **Why does `Repo` connect `Community 0` to `Community 2`, `Community 3`, `Community 4`, `Community 7`?**
-  _High betweenness centrality (0.162) - this node is a cross-community bridge._
+  _High betweenness centrality (0.186) - this node is a cross-community bridge._
+- **Why does `Circle` connect `Community 2` to `Community 0`, `Community 3`?**
+  _High betweenness centrality (0.149) - this node is a cross-community bridge._

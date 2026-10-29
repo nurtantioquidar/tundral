@@ -67,13 +67,15 @@
       "callee": "requireNonNull",
       "receiver_type": "Objects",
       "lang": "java",
-      "line": "L14"
+      "line": "L14",
+      "file": "src/main/java/com/shop/model/Model.java"
      },
      {
       "callee": "now",
       "receiver_type": "Instant",
       "lang": "java",
-      "line": "L15"
+      "line": "L15",
+      "file": "src/main/java/com/shop/model/Model.java"
      }
     ]
    },
@@ -102,6 +104,7 @@
    "file_type": "code",
    "source_file": "src/main/java/com/shop/model/Model.java",
    "source_location": "L23",
+   "_java_ret": "Status",
    "_callable": true,
    "_origin": "ast"
   },
@@ -182,6 +185,7 @@
    "file_type": "code",
    "source_file": "src/main/java/com/shop/model/User.java",
    "source_location": "L20",
+   "_java_ret": "Status",
    "_callable": true,
    "_origin": "ast"
   },
@@ -208,6 +212,7 @@
    "file_type": "code",
    "source_file": "src/main/java/com/shop/model/User.java",
    "source_location": "L29",
+   "_java_ret": "User",
    "_callable": true,
    "_origin": "ast"
   },
@@ -291,6 +296,7 @@
    "file_type": "code",
    "source_file": "src/main/java/com/shop/service/UserService.java",
    "source_location": "L15",
+   "_java_ret": "User",
    "_callable": true,
    "_origin": "ast"
   },
@@ -352,7 +358,8 @@
       "callee": "sort",
       "receiver_type": "Collections",
       "lang": "java",
-      "line": "L52"
+      "line": "L52",
+      "file": "src/main/java/com/shop/service/UserService.java"
      }
     ]
    },

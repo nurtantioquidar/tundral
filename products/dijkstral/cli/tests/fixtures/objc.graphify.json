@@ -14,6 +14,8 @@
    "file_type": "code",
    "source_file": "Shop/Bridge.mm",
    "source_location": "L9",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -30,6 +32,7 @@
    "file_type": "code",
    "source_file": "Shop/Bridge.mm",
    "source_location": "L10",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -46,6 +49,8 @@
    "file_type": "code",
    "source_file": "Shop/Models/Circle.h",
    "source_location": "L3",
+   "_callable": true,
+   "_callable_class": true,
    "definition_file": "Shop/Models/Circle.m",
    "definition_location": "L3",
    "_origin": "ast"
@@ -56,6 +61,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Circle.h",
    "source_location": "L5",
+   "_callable": true,
    "definition_file": "Shop/Models/Circle.m",
    "definition_location": "L5",
    "_origin": "ast"
@@ -74,6 +80,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Circle.m",
    "source_location": "L9",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -90,6 +97,8 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.h",
    "source_location": "L7",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast"
   },
   {
@@ -106,6 +115,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.h",
    "source_location": "L8",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -114,6 +124,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.h",
    "source_location": "L10",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -146,6 +157,8 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.h",
    "source_location": "L18",
+   "_callable": true,
+   "_callable_class": true,
    "definition_file": "Shop/Models/Shape.m",
    "definition_location": "L3",
    "_origin": "ast"
@@ -172,6 +185,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.h",
    "source_location": "L22",
+   "_callable": true,
    "definition_file": "Shop/Models/Shape.m",
    "definition_location": "L10",
    "_origin": "ast"
@@ -182,6 +196,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.h",
    "source_location": "L23",
+   "_callable": true,
    "definition_file": "Shop/Models/Shape.m",
    "definition_location": "L19",
    "_origin": "ast"
@@ -192,6 +207,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.h",
    "source_location": "L24",
+   "_callable": true,
    "definition_file": "Shop/Models/Shape.m",
    "definition_location": "L28",
    "_origin": "ast"
@@ -202,6 +218,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.h",
    "source_location": "L25",
+   "_callable": true,
    "definition_file": "Shop/Models/Shape.m",
    "definition_location": "L32",
    "_origin": "ast"
@@ -228,6 +245,7 @@
    "file_type": "code",
    "source_file": "Shop/Models/Shape.m",
    "source_location": "L5",
+   "_callable": true,
    "_origin": "ast"
   },
   {
@@ -269,6 +287,8 @@
    "file_type": "code",
    "source_file": "Shop/Services/Repo.h",
    "source_location": "L6",
+   "_callable": true,
+   "_callable_class": true,
    "definition_file": "Shop/Services/Repo.m",
    "definition_location": "L5",
    "_origin": "ast"
@@ -287,6 +307,7 @@
    "file_type": "code",
    "source_file": "Shop/Services/Repo.h",
    "source_location": "L10",
+   "_callable": true,
    "definition_file": "Shop/Services/Repo.m",
    "definition_location": "L7",
    "_origin": "ast"
@@ -297,6 +318,7 @@
    "file_type": "code",
    "source_file": "Shop/Services/Repo.h",
    "source_location": "L11",
+   "_callable": true,
    "definition_file": "Shop/Services/Repo.m",
    "definition_location": "L13",
    "_origin": "ast"
@@ -307,6 +329,7 @@
    "file_type": "code",
    "source_file": "Shop/Services/Repo.h",
    "source_location": "L12",
+   "_callable": true,
    "definition_file": "Shop/Services/Repo.m",
    "definition_location": "L20",
    "_origin": "ast"
@@ -863,13 +886,17 @@
   },
   {
    "source": "shop_services_repo_m_shop_services_repo",
-   "target": "shop_models_circle_circle",
+   "target": "shop_models_circle_h_shop_models_circle",
    "relation": "imports",
    "confidence": "EXTRACTED",
    "source_file": "Shop/Services/Repo.m",
    "source_location": "L2",
    "weight": 1.0,
    "context": "import",
+   "metadata": {
+    "raw_include": "Circle.h",
+    "include_kind": "quoted"
+   },
    "_origin": "ast"
   },
   {

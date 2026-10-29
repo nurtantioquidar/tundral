@@ -63,17 +63,16 @@
       "super"
     ],
     "4": [
-      "circle_as_round",
       "cow",
       "hashmap",
       "hashset",
-      "registry",
       "src_lib",
       "src_lib_build",
       "src_lib_greeting",
       "src_lib_label",
       "src_lib_macro_square",
-      "src_lib_max_shapes"
+      "src_lib_max_shapes",
+      "src_lib_registry"
     ],
     "5": [
       "src_model_pair",
@@ -101,7 +100,7 @@
     "1": 0.16483516483516483,
     "2": 0.19230769230769232,
     "3": 0.21212121212121213,
-    "4": 0.18181818181818182,
+    "4": 0.2222222222222222,
     "5": 0.25,
     "6": 0.4,
     "7": 1.0
@@ -110,7 +109,7 @@
     {
       "id": "src_model_circle",
       "label": "Circle",
-      "degree": 13
+      "degree": 14
     },
     {
       "id": "src_model_shape",
@@ -166,9 +165,9 @@
         "src/util/mod.rs",
         "src/model.rs"
       ],
-      "confidence": "EXTRACTED",
+      "confidence": "INFERRED",
       "relation": "references",
-      "why": "bridges separate communities; peripheral node `render()` unexpectedly reaches hub `Circle`"
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities; peripheral node `render()` unexpectedly reaches hub `Circle`"
     },
     {
       "source": "main()",
@@ -218,8 +217,8 @@
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `Shape` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`?",
-      "why": "High betweenness centrality (0.382) - this node is a cross-community bridge."
+      "question": "Why does `Circle` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`?",
+      "why": "High betweenness centrality (0.270) - this node is a cross-community bridge."
     },
     {
       "type": "isolated_nodes",
@@ -233,13 +232,13 @@
     },
     {
       "type": "bridge_node",
-      "question": "Why does `Circle` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`?",
-      "why": "High betweenness centrality (0.190) - this node is a cross-community bridge."
+      "question": "Why does `Shape` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`?",
+      "why": "High betweenness centrality (0.251) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `Pair` connect `Community 5` to `Community 3`?",
-      "why": "High betweenness centrality (0.065) - this node is a cross-community bridge."
+      "question": "Why does `Kind` connect `Community 3` to `Community 1`?",
+      "why": "High betweenness centrality (0.066) - this node is a cross-community bridge."
     }
   ]
 }

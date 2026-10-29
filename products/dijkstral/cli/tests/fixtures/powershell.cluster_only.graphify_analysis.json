@@ -62,7 +62,7 @@
   },
   "cohesion": {
     "0": 0.39285714285714285,
-    "1": 0.2857142857142857,
+    "1": 0.32142857142857145,
     "2": 0.3333333333333333,
     "3": 0.7,
     "4": 0.6666666666666666,
@@ -82,6 +82,11 @@
       "degree": 5
     },
     {
+      "id": "modules_shop_shop_new_shoporder",
+      "label": "New-ShopOrder()",
+      "degree": 5
+    },
+    {
       "id": "modules_shop_shop_priorityorder",
       "label": "PriorityOrder",
       "degree": 5
@@ -94,11 +99,6 @@
     {
       "id": "scripts_common_write_buildlog",
       "label": "Write-BuildLog()",
-      "degree": 4
-    },
-    {
-      "id": "modules_shop_shop_new_shoporder",
-      "label": "New-ShopOrder()",
       "degree": 4
     },
     {
@@ -198,12 +198,12 @@
     {
       "type": "bridge_node",
       "question": "Why does `New-ShopOrder()` connect `Community 1` to `Community 0`?",
-      "why": "High betweenness centrality (0.375) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.379) - this node is a cross-community bridge."
     },
     {
       "type": "verify_inferred",
-      "question": "Are the 3 inferred relationships involving `Write-BuildLog()` (e.g. with `Invoke-Build()` and `Test-Manifest()`) actually correct?",
-      "why": "`Write-BuildLog()` has 3 INFERRED edges - model-reasoned connections that need verification."
+      "question": "Are the 3 inferred relationships involving `New-ShopOrder()` (e.g. with `Invoke-Build()` and `Shop.Tests.ps1`) actually correct?",
+      "why": "`New-ShopOrder()` has 3 INFERRED edges - model-reasoned connections that need verification."
     },
     {
       "type": "bridge_node",

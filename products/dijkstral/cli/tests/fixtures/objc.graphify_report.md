@@ -1,4 +1,4 @@
-# Graph Report - objc  (2026-10-15)
+# Graph Report - objc  (2026-10-29)
 
 ## Corpus Check
 - 9 files · ~355 words
@@ -21,8 +21,8 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `Shape` - 14 edges
-2. `Circle` - 8 edges
-3. `Repo` - 8 edges
+2. `Repo` - 8 edges
+3. `Circle` - 7 edges
 4. `-report` - 6 edges
 5. `<Drawable>` - 5 edges
 6. `-refresh` - 5 edges
@@ -77,12 +77,12 @@ Nodes (3): -draw, -refresh, -add
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Shape` connect `Shape` to `Shape.h`, `Circle`, `<Drawable>`, `+shapeNamed`, `-refresh`?**
-  _High betweenness centrality (0.418) - this node is a cross-community bridge._
+  _High betweenness centrality (0.402) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `-report` (e.g. with `-run` and `-area`) actually correct?**
   _`-report` has 3 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `-draw`, `-caption`, `ShapeKindCircle` to the rest of the system?**
   _4 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Why does `Circle` connect `Circle` to `Repo`, `Shape`?**
-  _High betweenness centrality (0.188) - this node is a cross-community bridge._
 - **Why does `Repo` connect `Repo` to `Circle`, `Shape`, `Bridge.mm`, `-refresh`?**
-  _High betweenness centrality (0.162) - this node is a cross-community bridge._
+  _High betweenness centrality (0.186) - this node is a cross-community bridge._
+- **Why does `Circle` connect `Circle` to `Repo`, `Shape`?**
+  _High betweenness centrality (0.149) - this node is a cross-community bridge._

@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -82,6 +82,102 @@
    "source_location": "L7"
   },
   {
+   "id": "tests_test_service_service",
+   "label": "service()",
+   "_callable": true,
+   "_origin": "ast",
+   "_py_fixture": "?",
+   "community": 6,
+   "file_type": "code",
+   "norm_label": "service()",
+   "source_file": "tests/test_service.py",
+   "source_location": "L17"
+  },
+  {
+   "id": "pkg_models_user_display",
+   "label": ".display()",
+   "_callable": true,
+   "_origin": "ast",
+   "_py_property": true,
+   "community": 2,
+   "file_type": "code",
+   "norm_label": ".display()",
+   "source_file": "pkg/models.py",
+   "source_location": "L31"
+  },
+  {
+   "id": "pkg_models_admin_promote",
+   "label": ".promote()",
+   "_callable": true,
+   "_origin": "ast",
+   "_py_return_type": "Admin",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": ".promote()",
+   "source_file": "pkg/models.py",
+   "source_location": "L51"
+  },
+  {
+   "id": "pkg_models_repo_get",
+   "label": ".get()",
+   "_callable": true,
+   "_origin": "ast",
+   "_py_return_type": "T",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": ".get()",
+   "source_file": "pkg/models.py",
+   "source_location": "L68"
+  },
+  {
+   "id": "pkg_service_userservice_register",
+   "label": ".register()",
+   "_callable": true,
+   "_origin": "ast",
+   "_py_return_type": "U",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": ".register()",
+   "source_file": "pkg/service.py",
+   "source_location": "L26"
+  },
+  {
+   "id": "pkg_models_user_guest",
+   "label": ".guest()",
+   "_callable": true,
+   "_origin": "ast",
+   "_py_return_type": "User",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": ".guest()",
+   "source_file": "pkg/models.py",
+   "source_location": "L39"
+  },
+  {
+   "id": "pkg_models_user_parse",
+   "label": ".parse()",
+   "_callable": true,
+   "_origin": "ast",
+   "_py_return_type": "User",
+   "community": 7,
+   "file_type": "code",
+   "norm_label": ".parse()",
+   "source_file": "pkg/models.py",
+   "source_location": "L35"
+  },
+  {
+   "id": "pkg_service_run",
+   "label": "run()",
+   "_callable": true,
+   "_origin": "ast",
+   "_py_return_type": "UserService",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "run()",
+   "source_file": "pkg/service.py",
+   "source_location": "L42"
+  },
+  {
    "id": "pkg_util_helper",
    "label": "helper()",
    "_callable": true,
@@ -126,17 +222,6 @@
    "source_location": "L7"
   },
   {
-   "id": "pkg_models_admin_promote",
-   "label": ".promote()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": ".promote()",
-   "source_file": "pkg/models.py",
-   "source_location": "L51"
-  },
-  {
    "id": "pkg_models_admin_promote_bump",
    "label": "bump()",
    "_callable": true,
@@ -146,17 +231,6 @@
    "norm_label": "bump()",
    "source_file": "pkg/models.py",
    "source_location": "L52"
-  },
-  {
-   "id": "pkg_models_user_guest",
-   "label": ".guest()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": ".guest()",
-   "source_file": "pkg/models.py",
-   "source_location": "L39"
   },
   {
    "id": "pkg_service_userservice_promote",
@@ -192,17 +266,6 @@
    "source_location": "L81"
   },
   {
-   "id": "pkg_models_user_display",
-   "label": ".display()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": ".display()",
-   "source_file": "pkg/models.py",
-   "source_location": "L31"
-  },
-  {
    "id": "main_main",
    "label": "main()",
    "_callable": true,
@@ -212,28 +275,6 @@
    "norm_label": "main()",
    "source_file": "main.py",
    "source_location": "L10"
-  },
-  {
-   "id": "pkg_service_run",
-   "label": "run()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "run()",
-   "source_file": "pkg/service.py",
-   "source_location": "L42"
-  },
-  {
-   "id": "pkg_service_userservice_register",
-   "label": ".register()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": ".register()",
-   "source_file": "pkg/service.py",
-   "source_location": "L26"
   },
   {
    "id": "pkg_models_base_describe",
@@ -291,17 +332,6 @@
    "source_location": "L65"
   },
   {
-   "id": "pkg_models_repo_get",
-   "label": ".get()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": ".get()",
-   "source_file": "pkg/models.py",
-   "source_location": "L68"
-  },
-  {
    "id": "pkg_models_repo_init",
    "label": ".__init__()",
    "_callable": true,
@@ -324,17 +354,6 @@
    "source_location": "L22"
   },
   {
-   "id": "tests_test_service_service",
-   "label": "service()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 6,
-   "file_type": "code",
-   "norm_label": "service()",
-   "source_file": "tests/test_service.py",
-   "source_location": "L17"
-  },
-  {
    "id": "tests_test_service_test_run",
    "label": "test_run()",
    "_callable": true,
@@ -344,17 +363,6 @@
    "norm_label": "test_run()",
    "source_file": "tests/test_service.py",
    "source_location": "L21"
-  },
-  {
-   "id": "pkg_models_user_parse",
-   "label": ".parse()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": ".parse()",
-   "source_file": "pkg/models.py",
-   "source_location": "L35"
   },
   {
    "id": "tests_test_service_testuserservice_test_parse",
@@ -748,6 +756,18 @@
    "context": "call",
    "source_file": "pkg/service.py",
    "source_location": "L29",
+   "weight": 1.0
+  },
+  {
+   "source": "pkg_service_userservice_register",
+   "target": "pkg_models_validate",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "pkg/service.py",
+   "source_location": "L30",
    "weight": 1.0
   },
   {

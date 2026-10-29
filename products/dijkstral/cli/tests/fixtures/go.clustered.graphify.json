@@ -3,64 +3,145 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
-   "id": "cmd_app_main",
-   "label": "main.go",
+   "id": "store_key",
+   "label": "Key",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast",
    "community": 0,
    "file_type": "code",
-   "norm_label": "main.go",
-   "source_file": "cmd/app/main.go",
-   "source_location": "L1"
+   "norm_label": "key",
+   "source_file": "store/store.go",
+   "source_location": "L15"
+  },
+  {
+   "id": "store_number",
+   "label": "Number",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "number",
+   "source_file": "store/store.go",
+   "source_location": "L34"
+  },
+  {
+   "id": "store_store_go_store_store",
+   "label": "Store",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "store",
+   "source_file": "store/store.go",
+   "source_location": "L39"
+  },
+  {
+   "id": "store_entity",
+   "label": "Entity",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 11,
+   "file_type": "code",
+   "norm_label": "entity",
+   "source_file": "store/store.go",
+   "source_location": "L18"
+  },
+  {
+   "id": "service_user",
+   "label": "User",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "user",
+   "source_file": "service/service.go",
+   "source_location": "L15"
+  },
+  {
+   "id": "service_userservice",
+   "label": "UserService",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "userservice",
+   "source_file": "service/service.go",
+   "source_location": "L27"
+  },
+  {
+   "id": "store_id",
+   "label": "ID",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "id",
+   "source_file": "store/store.go",
+   "source_location": "L12"
+  },
+  {
+   "id": "store_store_go_store_model",
+   "label": "Model",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": "model",
+   "source_file": "store/store.go",
+   "source_location": "L23"
   },
   {
    "id": "service_greeter",
    "label": "Greeter",
+   "_callable": true,
+   "_callable_class": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 9,
    "file_type": "code",
    "norm_label": "greeter",
    "source_file": "service/service.go",
    "source_location": "L22"
   },
   {
-   "id": "service_greeter_greet",
-   "label": ".Greet()",
+   "id": "store_store_get",
+   "label": ".Get()",
+   "_callable": true,
    "_origin": "ast",
    "community": 0,
    "file_type": "code",
-   "norm_label": ".greet()",
-   "source_file": "service/service.go",
-   "source_location": "L23"
+   "norm_label": ".get()",
+   "source_file": "store/store.go",
+   "source_location": "L54"
   },
   {
-   "id": "service_service",
-   "label": "service.go",
+   "id": "store_store_newstore",
+   "label": "NewStore()",
+   "_callable": true,
    "_origin": "ast",
    "community": 0,
    "file_type": "code",
-   "norm_label": "service.go",
-   "source_file": "service/service.go",
-   "source_location": "L1"
-  },
-  {
-   "id": "service_service_apply",
-   "label": "apply()",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "apply()",
-   "source_file": "service/service.go",
-   "source_location": "L63"
+   "norm_label": "newstore()",
+   "source_file": "store/store.go",
+   "source_location": "L44"
   },
   {
    "id": "service_service_logline",
    "label": "logLine()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 1,
    "file_type": "code",
    "norm_label": "logline()",
    "source_file": "service/service.go",
@@ -69,48 +150,152 @@
   {
    "id": "service_service_strings2upper",
    "label": "strings2upper()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 1,
    "file_type": "code",
    "norm_label": "strings2upper()",
    "source_file": "service/service.go",
    "source_location": "L69"
   },
   {
-   "id": "cmd_app_main_main",
-   "label": "main()",
+   "id": "service_service_apply",
+   "label": "apply()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 10,
    "file_type": "code",
-   "norm_label": "main()",
-   "source_file": "cmd/app/main.go",
-   "source_location": "L11"
+   "norm_label": "apply()",
+   "source_file": "service/service.go",
+   "source_location": "L63"
   },
   {
-   "id": "n",
-   "label": "N",
+   "id": "service_userservice_names",
+   "label": ".Names()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 10,
    "file_type": "code",
-   "norm_label": "n",
-   "source_file": "",
-   "source_location": ""
+   "norm_label": ".names()",
+   "source_file": "service/service.go",
+   "source_location": "L49"
+  },
+  {
+   "id": "store_helpers_clean",
+   "label": "clean()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "clean()",
+   "source_file": "store/helpers.go",
+   "source_location": "L14"
+  },
+  {
+   "id": "store_helpers_normalize",
+   "label": "Normalize()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "normalize()",
+   "source_file": "store/helpers.go",
+   "source_location": "L9"
+  },
+  {
+   "id": "service_service_clean",
+   "label": "clean()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "clean()",
+   "source_file": "service/service.go",
+   "source_location": "L74"
   },
   {
    "id": "service_service_newuserservice",
    "label": "NewUserService()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 3,
    "file_type": "code",
    "norm_label": "newuserservice()",
    "source_file": "service/service.go",
    "source_location": "L33"
   },
   {
+   "id": "service_service_test_testregister",
+   "label": "TestRegister()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "testregister()",
+   "source_file": "service/service_test.go",
+   "source_location": "L5"
+  },
+  {
+   "id": "service_userservice_greet",
+   "label": ".Greet()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": ".greet()",
+   "source_file": "service/service.go",
+   "source_location": "L45"
+  },
+  {
+   "id": "service_userservice_register",
+   "label": ".Register()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": ".register()",
+   "source_file": "service/service.go",
+   "source_location": "L37"
+  },
+  {
+   "id": "store_model_identity",
+   "label": ".Identity()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": ".identity()",
+   "source_file": "store/store.go",
+   "source_location": "L29"
+  },
+  {
+   "id": "store_store_put",
+   "label": ".Put()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "norm_label": ".put()",
+   "source_file": "store/store.go",
+   "source_location": "L49"
+  },
+  {
+   "id": "cmd_app_main_main",
+   "label": "main()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 7,
+   "file_type": "code",
+   "norm_label": "main()",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L11"
+  },
+  {
    "id": "store_helpers_format",
    "label": "Format()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 7,
    "file_type": "code",
    "norm_label": "format()",
    "source_file": "store/helpers.go",
@@ -119,12 +304,45 @@
   {
    "id": "store_store_sum",
    "label": "Sum()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 7,
    "file_type": "code",
    "norm_label": "sum()",
    "source_file": "store/store.go",
    "source_location": "L64"
+  },
+  {
+   "id": "service_service",
+   "label": "service.go",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "service.go",
+   "source_file": "service/service.go",
+   "source_location": "L1"
+  },
+  {
+   "id": "store_entity_identity",
+   "label": ".Identity()",
+   "_origin": "ast",
+   "community": 11,
+   "file_type": "code",
+   "norm_label": ".identity()",
+   "source_file": "store/store.go",
+   "source_location": "L19"
+  },
+  {
+   "id": "pkg_example_com_shop",
+   "label": "example.com/shop",
+   "_origin": "ast",
+   "community": 12,
+   "ecosystem": "go",
+   "file_type": "code",
+   "norm_label": "example.com/shop",
+   "source_file": "go.mod",
+   "source_location": "L1",
+   "type": "package"
   },
   {
    "id": "store_helpers",
@@ -137,26 +355,6 @@
    "source_location": "L1"
   },
   {
-   "id": "store_helpers_clean",
-   "label": "clean()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "clean()",
-   "source_file": "store/helpers.go",
-   "source_location": "L14"
-  },
-  {
-   "id": "store_helpers_normalize",
-   "label": "Normalize()",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "normalize()",
-   "source_file": "store/helpers.go",
-   "source_location": "L9"
-  },
-  {
    "id": "go_type_testing_t",
    "label": "testing.T",
    "_origin": "ast",
@@ -167,231 +365,49 @@
    "source_location": ""
   },
   {
-   "id": "service_service_clean",
-   "label": "clean()",
+   "id": "cmd_app_main",
+   "label": "main.go",
    "_origin": "ast",
-   "community": 3,
+   "community": 6,
    "file_type": "code",
-   "norm_label": "clean()",
-   "source_file": "service/service.go",
-   "source_location": "L74"
+   "norm_label": "main.go",
+   "source_file": "cmd/app/main.go",
+   "source_location": "L1"
   },
   {
    "id": "service_service_test",
    "label": "service_test.go",
    "_origin": "ast",
-   "community": 3,
+   "community": 8,
    "file_type": "code",
    "norm_label": "service_test.go",
    "source_file": "service/service_test.go",
    "source_location": "L1"
   },
   {
-   "id": "service_service_test_testregister",
-   "label": "TestRegister()",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "testregister()",
-   "source_file": "service/service_test.go",
-   "source_location": "L5"
-  },
-  {
-   "id": "service_user",
-   "label": "User",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "user",
-   "source_file": "service/service.go",
-   "source_location": "L15"
-  },
-  {
-   "id": "service_userservice",
-   "label": "UserService",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "userservice",
-   "source_file": "service/service.go",
-   "source_location": "L27"
-  },
-  {
-   "id": "service_userservice_greet",
+   "id": "service_greeter_greet",
    "label": ".Greet()",
    "_origin": "ast",
-   "community": 4,
+   "community": 9,
    "file_type": "code",
    "norm_label": ".greet()",
    "source_file": "service/service.go",
-   "source_location": "L45"
-  },
-  {
-   "id": "service_userservice_names",
-   "label": ".Names()",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": ".names()",
-   "source_file": "service/service.go",
-   "source_location": "L49"
-  },
-  {
-   "id": "service_userservice_register",
-   "label": ".Register()",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": ".register()",
-   "source_file": "service/service.go",
-   "source_location": "L37"
-  },
-  {
-   "id": "store_number",
-   "label": "Number",
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": "number",
-   "source_file": "store/store.go",
-   "source_location": "L34"
-  },
-  {
-   "id": "store_store_go_store_store",
-   "label": "Store",
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": "store",
-   "source_file": "store/store.go",
-   "source_location": "L39"
-  },
-  {
-   "id": "store_store_newstore",
-   "label": "NewStore()",
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": "newstore()",
-   "source_file": "store/store.go",
-   "source_location": "L44"
-  },
-  {
-   "id": "store_store_t",
-   "label": "Store[T]",
-   "_origin": "ast",
-   "community": 6,
-   "file_type": "code",
-   "norm_label": "store[t]",
-   "source_file": "store/store.go",
-   "source_location": "L49"
-  },
-  {
-   "id": "store_store_t_get",
-   "label": ".Get()",
-   "_origin": "ast",
-   "community": 6,
-   "file_type": "code",
-   "norm_label": ".get()",
-   "source_file": "store/store.go",
-   "source_location": "L54"
-  },
-  {
-   "id": "store_store_t_put",
-   "label": ".Put()",
-   "_origin": "ast",
-   "community": 6,
-   "file_type": "code",
-   "norm_label": ".put()",
-   "source_file": "store/store.go",
-   "source_location": "L49"
-  },
-  {
-   "id": "t",
-   "label": "T",
-   "_origin": "ast",
-   "community": 6,
-   "file_type": "code",
-   "norm_label": "t",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "store_id",
-   "label": "ID",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": "id",
-   "source_file": "store/store.go",
-   "source_location": "L12"
-  },
-  {
-   "id": "store_model_identity",
-   "label": ".Identity()",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": ".identity()",
-   "source_file": "store/store.go",
-   "source_location": "L29"
-  },
-  {
-   "id": "store_store_go_store_model",
-   "label": "Model",
-   "_origin": "ast",
-   "community": 7,
-   "file_type": "code",
-   "norm_label": "model",
-   "source_file": "store/store.go",
    "source_location": "L23"
   },
   {
-   "id": "store_entity",
-   "label": "Entity",
-   "_origin": "ast",
-   "community": 8,
-   "file_type": "code",
-   "norm_label": "entity",
-   "source_file": "store/store.go",
-   "source_location": "L18"
-  },
-  {
-   "id": "store_entity_identity",
-   "label": ".Identity()",
-   "_origin": "ast",
-   "community": 8,
-   "file_type": "code",
-   "norm_label": ".identity()",
-   "source_file": "store/store.go",
-   "source_location": "L19"
-  },
-  {
-   "id": "pkg_example_com_shop",
-   "label": "example.com/shop",
-   "_origin": "ast",
-   "community": 9,
-   "ecosystem": "go",
-   "file_type": "code",
-   "norm_label": "example.com/shop",
-   "source_file": "go.mod",
-   "source_location": "L1",
-   "type": "package"
-  },
-  {
-   "id": "go_pkg_fmt",
-   "label": "go_pkg_fmt",
+   "id": "go_pkg_errors",
+   "label": "go_pkg_errors",
    "community": 0,
    "external": true,
    "file_type": "concept",
-   "norm_label": "go_pkg_fmt",
+   "norm_label": "go_pkg_errors",
    "source_file": "",
    "type": "external"
   },
   {
    "id": "go_pkg_github_com_google_uuid",
    "label": "go_pkg_github_com_google_uuid",
-   "community": 0,
+   "community": 1,
    "external": true,
    "file_type": "concept",
    "norm_label": "go_pkg_github_com_google_uuid",
@@ -399,19 +415,9 @@
    "type": "external"
   },
   {
-   "id": "go_pkg_os",
-   "label": "go_pkg_os",
-   "community": 0,
-   "external": true,
-   "file_type": "concept",
-   "norm_label": "go_pkg_os",
-   "source_file": "",
-   "type": "external"
-  },
-  {
    "id": "go_pkg_sort",
    "label": "go_pkg_sort",
-   "community": 0,
+   "community": 1,
    "external": true,
    "file_type": "concept",
    "norm_label": "go_pkg_sort",
@@ -439,22 +445,32 @@
    "type": "external"
   },
   {
-   "id": "go_pkg_testing",
-   "label": "go_pkg_testing",
-   "community": 3,
+   "id": "go_pkg_fmt",
+   "label": "go_pkg_fmt",
+   "community": 6,
    "external": true,
    "file_type": "concept",
-   "norm_label": "go_pkg_testing",
+   "norm_label": "go_pkg_fmt",
    "source_file": "",
    "type": "external"
   },
   {
-   "id": "go_pkg_errors",
-   "label": "go_pkg_errors",
-   "community": 5,
+   "id": "go_pkg_os",
+   "label": "go_pkg_os",
+   "community": 6,
    "external": true,
    "file_type": "concept",
-   "norm_label": "go_pkg_errors",
+   "norm_label": "go_pkg_os",
+   "source_file": "",
+   "type": "external"
+  },
+  {
+   "id": "go_pkg_testing",
+   "label": "go_pkg_testing",
+   "community": 8,
+   "external": true,
+   "file_type": "concept",
+   "norm_label": "go_pkg_testing",
    "source_file": "",
    "type": "external"
   }
@@ -533,7 +549,7 @@
    "weight": 1.0
   },
   {
-   "source": "store_store_t_put",
+   "source": "store_store_put",
    "target": "store_model_identity",
    "relation": "calls",
    "_origin": "ast",
@@ -569,18 +585,6 @@
    "weight": 1.0
   },
   {
-   "source": "store_store_go_store_store",
-   "target": "t",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "field",
-   "source_file": "store/store.go",
-   "source_location": "L40",
-   "weight": 1.0
-  },
-  {
    "source": "service_userservice",
    "target": "service_user",
    "relation": "references",
@@ -590,18 +594,6 @@
    "context": "generic_arg",
    "source_file": "service/service.go",
    "source_location": "L28",
-   "weight": 1.0
-  },
-  {
-   "source": "store_store_newstore",
-   "target": "t",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "generic_arg",
-   "source_file": "store/store.go",
-   "source_location": "L44",
    "weight": 1.0
   },
   {
@@ -833,7 +825,7 @@
    "weight": 1.0
   },
   {
-   "source": "store_store_t_get",
+   "source": "store_store_get",
    "target": "store_id",
    "relation": "references",
    "_origin": "ast",
@@ -842,18 +834,6 @@
    "context": "parameter_type",
    "source_file": "store/store.go",
    "source_location": "L54",
-   "weight": 1.0
-  },
-  {
-   "source": "store_store_t_put",
-   "target": "t",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "parameter_type",
-   "source_file": "store/store.go",
-   "source_location": "L49",
    "weight": 1.0
   },
   {
@@ -902,30 +882,6 @@
    "context": "return_type",
    "source_file": "store/store.go",
    "source_location": "L29",
-   "weight": 1.0
-  },
-  {
-   "source": "store_store_sum",
-   "target": "n",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "return_type",
-   "source_file": "store/store.go",
-   "source_location": "L64",
-   "weight": 1.0
-  },
-  {
-   "source": "store_store_t_get",
-   "target": "t",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "return_type",
-   "source_file": "store/store.go",
-   "source_location": "L54",
    "weight": 1.0
   },
   {
@@ -1084,6 +1040,17 @@
   },
   {
    "source": "store_store_go_store_store",
+   "target": "store_key",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "store/store.go",
+   "source_location": "L15",
+   "weight": 1.0
+  },
+  {
+   "source": "store_store_go_store_store",
    "target": "store_entity",
    "relation": "contains",
    "_origin": "ast",
@@ -1226,8 +1193,8 @@
    "weight": 1.0
   },
   {
-   "source": "store_store_t",
-   "target": "store_store_t_put",
+   "source": "store_store_go_store_store",
+   "target": "store_store_put",
    "relation": "method",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -1237,8 +1204,8 @@
    "weight": 1.0
   },
   {
-   "source": "store_store_t",
-   "target": "store_store_t_get",
+   "source": "store_store_go_store_store",
+   "target": "store_store_get",
    "relation": "method",
    "_origin": "ast",
    "confidence": "EXTRACTED",

@@ -3,9 +3,21 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
+  {
+   "id": "src_models_repository_repository",
+   "label": "Repository",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "repository",
+   "source_file": "src/Models/Repository.php",
+   "source_location": "L5"
+  },
   {
    "id": "src_service_userservice_userservice",
    "label": "UserService",
@@ -19,40 +31,28 @@
    "source_location": "L10"
   },
   {
-   "id": "src_models_repository_repository",
-   "label": "Repository",
-   "_callable": true,
-   "_callable_class": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "repository",
-   "source_file": "src/Models/Repository.php",
-   "source_location": "L5"
-  },
-  {
-   "id": "src_models_repository_timestamps",
-   "label": "Timestamps",
-   "_callable": true,
-   "_callable_class": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "timestamps",
-   "source_file": "src/Models/Repository.php",
-   "source_location": "L12"
-  },
-  {
    "id": "src_models_model_model",
    "label": "Model",
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 2,
+   "community": 1,
    "file_type": "code",
    "norm_label": "model",
    "source_file": "src/Models/Model.php",
    "source_location": "L10"
+  },
+  {
+   "id": "src_models_status_status",
+   "label": "Status",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "status",
+   "source_file": "src/Models/Status.php",
+   "source_location": "L5"
   },
   {
    "id": "src_models_user_user",
@@ -60,7 +60,7 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 3,
+   "community": 2,
    "file_type": "code",
    "norm_label": "user",
    "source_file": "src/Models/User.php",
@@ -72,34 +72,34 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 4,
+   "community": 3,
    "file_type": "code",
    "norm_label": "userservicetest",
    "source_file": "tests/UserServiceTest.php",
    "source_location": "L9"
   },
   {
-   "id": "src_models_status_status",
-   "label": "Status",
+   "id": "src_models_repository_timestamps",
+   "label": "Timestamps",
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 5,
+   "community": 7,
    "file_type": "code",
-   "norm_label": "status",
-   "source_file": "src/Models/Status.php",
-   "source_location": "L5"
+   "norm_label": "timestamps",
+   "source_file": "src/Models/Repository.php",
+   "source_location": "L12"
   },
   {
-   "id": "bin_app_main",
-   "label": "main()",
+   "id": "src_models_repository_repository_add",
+   "label": ".add()",
    "_callable": true,
    "_origin": "ast",
    "community": 0,
    "file_type": "code",
-   "norm_label": "main()",
-   "source_file": "bin/app.php",
-   "source_location": "L11"
+   "norm_label": ".add()",
+   "source_file": "src/Models/Repository.php",
+   "source_location": "L9"
   },
   {
    "id": "src_service_userservice_helper",
@@ -157,15 +157,48 @@
    "source_location": "L20"
   },
   {
-   "id": "src_models_repository_repository_add",
-   "label": ".add()",
+   "id": "src_models_model_model_jsonserialize",
+   "label": ".jsonSerialize()",
    "_callable": true,
    "_origin": "ast",
    "community": 1,
    "file_type": "code",
-   "norm_label": ".add()",
-   "source_file": "src/Models/Repository.php",
-   "source_location": "L9"
+   "norm_label": ".jsonserialize()",
+   "source_file": "src/Models/Model.php",
+   "source_location": "L27"
+  },
+  {
+   "id": "src_models_model_model_save",
+   "label": ".save()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": ".save()",
+   "source_file": "src/Models/Model.php",
+   "source_location": "L16"
+  },
+  {
+   "id": "src_models_model_model_table",
+   "label": ".table()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": ".table()",
+   "source_file": "src/Models/Model.php",
+   "source_location": "L14"
+  },
+  {
+   "id": "src_models_model_model_validate",
+   "label": ".validate()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": ".validate()",
+   "source_file": "src/Models/Model.php",
+   "source_location": "L22"
   },
   {
    "id": "src_models_repository_repository_find",
@@ -179,81 +212,59 @@
    "source_location": "L7"
   },
   {
-   "id": "src_models_repository_timestamps_touch",
-   "label": ".touch()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": ".touch()",
-   "source_file": "src/Models/Repository.php",
-   "source_location": "L16"
-  },
-  {
-   "id": "src_service_userservice_userservice_make",
-   "label": ".make()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": ".make()",
-   "source_file": "src/Service/UserService.php",
-   "source_location": "L38"
-  },
-  {
-   "id": "src_models_model_model_jsonserialize",
-   "label": ".jsonSerialize()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": ".jsonserialize()",
-   "source_file": "src/Models/Model.php",
-   "source_location": "L27"
-  },
-  {
-   "id": "src_models_model_model_save",
+   "id": "src_models_user_user_save",
    "label": ".save()",
    "_callable": true,
    "_origin": "ast",
-   "community": 2,
+   "community": 1,
    "file_type": "code",
    "norm_label": ".save()",
-   "source_file": "src/Models/Model.php",
-   "source_location": "L16"
+   "source_file": "src/Models/User.php",
+   "source_location": "L37"
   },
   {
-   "id": "src_models_model_model_table",
-   "label": ".table()",
+   "id": "src_models_status_status_label",
+   "label": ".label()",
    "_callable": true,
    "_origin": "ast",
    "community": 2,
    "file_type": "code",
-   "norm_label": ".table()",
-   "source_file": "src/Models/Model.php",
-   "source_location": "L14"
-  },
-  {
-   "id": "src_models_model_model_validate",
-   "label": ".validate()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": ".validate()",
-   "source_file": "src/Models/Model.php",
-   "source_location": "L22"
+   "norm_label": ".label()",
+   "source_file": "src/Models/Status.php",
+   "source_location": "L10"
   },
   {
    "id": "src_models_user_user_display",
    "label": ".display()",
    "_callable": true,
    "_origin": "ast",
-   "community": 3,
+   "community": 2,
    "file_type": "code",
+   "metadata": {
+    "unresolved_calls": [
+     {
+      "callee": "title",
+      "receiver_type": "Str",
+      "lang": "php",
+      "line": "L46",
+      "file": "src/Models/User.php"
+     }
+    ]
+   },
    "norm_label": ".display()",
    "source_file": "src/Models/User.php",
    "source_location": "L44"
+  },
+  {
+   "id": "src_models_user_user_table",
+   "label": ".table()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": ".table()",
+   "source_file": "src/Models/User.php",
+   "source_location": "L32"
   },
   {
    "id": "src_models_user_user_parse",
@@ -267,37 +278,37 @@
    "source_location": "L27"
   },
   {
-   "id": "src_models_user_user_save",
-   "label": ".save()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": ".save()",
-   "source_file": "src/Models/User.php",
-   "source_location": "L37"
-  },
-  {
-   "id": "src_models_user_user_table",
-   "label": ".table()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": ".table()",
-   "source_file": "src/Models/User.php",
-   "source_location": "L32"
-  },
-  {
    "id": "tests_userservicetest_userservicetest_testparse",
    "label": ".testParse()",
    "_callable": true,
    "_origin": "ast",
-   "community": 4,
+   "community": 3,
    "file_type": "code",
    "norm_label": ".testparse()",
    "source_file": "tests/UserServiceTest.php",
    "source_location": "L11"
+  },
+  {
+   "id": "bin_app_main",
+   "label": "main()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "main()",
+   "source_file": "bin/app.php",
+   "source_location": "L11"
+  },
+  {
+   "id": "src_service_userservice_userservice_make",
+   "label": ".make()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": ".make()",
+   "source_file": "src/Service/UserService.php",
+   "source_location": "L38"
   },
   {
    "id": "tests_userservicetest_userservicetest_testregister",
@@ -311,22 +322,11 @@
    "source_location": "L17"
   },
   {
-   "id": "src_models_status_status_label",
-   "label": ".label()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": ".label()",
-   "source_file": "src/Models/Status.php",
-   "source_location": "L10"
-  },
-  {
    "id": "src_helpers_helper",
    "label": "helper()",
    "_callable": true,
    "_origin": "ast",
-   "community": 7,
+   "community": 6,
    "file_type": "code",
    "norm_label": "helper()",
    "source_file": "src/helpers.php",
@@ -337,7 +337,7 @@
    "label": "slugify()",
    "_callable": true,
    "_origin": "ast",
-   "community": 7,
+   "community": 6,
    "file_type": "code",
    "norm_label": "slugify()",
    "source_file": "src/helpers.php",
@@ -348,21 +348,22 @@
    "label": ".__construct()",
    "_callable": true,
    "_origin": "ast",
-   "community": 7,
+   "community": 6,
    "file_type": "code",
    "norm_label": ".__construct()",
    "source_file": "src/Models/User.php",
    "source_location": "L21"
   },
   {
-   "id": "bin_app",
-   "label": "app.php",
+   "id": "src_models_repository_timestamps_touch",
+   "label": ".touch()",
+   "_callable": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 7,
    "file_type": "code",
-   "norm_label": "app.php",
-   "source_file": "bin/app.php",
-   "source_location": "L1"
+   "norm_label": ".touch()",
+   "source_file": "src/Models/Repository.php",
+   "source_location": "L16"
   },
   {
    "id": "invalidargumentexception",
@@ -395,30 +396,10 @@
    "source_location": "L1"
   },
   {
-   "id": "src_models_repository",
-   "label": "Repository.php",
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "repository.php",
-   "source_file": "src/Models/Repository.php",
-   "source_location": "L1"
-  },
-  {
-   "id": "static",
-   "label": "static",
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "static",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
    "id": "jsonserializable",
    "label": "JsonSerializable",
    "_origin": "ast",
-   "community": 2,
+   "community": 1,
    "file_type": "code",
    "norm_label": "jsonserializable",
    "source_file": "",
@@ -428,11 +409,51 @@
    "id": "src_models_model",
    "label": "Model.php",
    "_origin": "ast",
-   "community": 2,
+   "community": 1,
    "file_type": "code",
    "norm_label": "model.php",
    "source_file": "src/Models/Model.php",
    "source_location": "L1"
+  },
+  {
+   "id": "src_models_status",
+   "label": "Status.php",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "status.php",
+   "source_file": "src/Models/Status.php",
+   "source_location": "L1"
+  },
+  {
+   "id": "src_models_status_status_active",
+   "label": "Active",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "active",
+   "source_file": "src/Models/Status.php",
+   "source_location": "L7"
+  },
+  {
+   "id": "src_models_status_status_banned",
+   "label": "Banned",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "banned",
+   "source_file": "src/Models/Status.php",
+   "source_location": "L8"
+  },
+  {
+   "id": "phpunit_framework_testcase",
+   "label": "PHPUnit\\Framework\\TestCase",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "phpunit\\framework\\testcase",
+   "source_file": "",
+   "source_location": ""
   },
   {
    "id": "self",
@@ -445,60 +466,40 @@
    "source_location": ""
   },
   {
-   "id": "phpunit_framework_testcase",
-   "label": "PHPUnit\\Framework\\TestCase",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "phpunit\\framework\\testcase",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
    "id": "tests_userservicetest",
    "label": "UserServiceTest.php",
    "_origin": "ast",
-   "community": 4,
+   "community": 3,
    "file_type": "code",
    "norm_label": "userservicetest.php",
    "source_file": "tests/UserServiceTest.php",
    "source_location": "L1"
   },
   {
-   "id": "src_models_status",
-   "label": "Status.php",
+   "id": "bin_app",
+   "label": "app.php",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
-   "norm_label": "status.php",
-   "source_file": "src/Models/Status.php",
+   "norm_label": "app.php",
+   "source_file": "bin/app.php",
    "source_location": "L1"
   },
   {
-   "id": "src_models_status_status_active",
-   "label": "Active",
+   "id": "static",
+   "label": "static",
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
-   "norm_label": "active",
-   "source_file": "src/Models/Status.php",
-   "source_location": "L7"
-  },
-  {
-   "id": "src_models_status_status_banned",
-   "label": "Banned",
-   "_origin": "ast",
-   "community": 5,
-   "file_type": "code",
-   "norm_label": "banned",
-   "source_file": "src/Models/Status.php",
-   "source_location": "L8"
+   "norm_label": "static",
+   "source_file": "",
+   "source_location": ""
   },
   {
    "id": "shop_support_str",
    "label": "Shop\\Support\\Str",
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "norm_label": "shop\\support\\str",
    "source_file": "",
@@ -508,7 +509,7 @@
    "id": "src_models_user",
    "label": "User.php",
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "norm_label": "user.php",
    "source_file": "src/Models/User.php",
@@ -518,16 +519,26 @@
    "id": "src_helpers",
    "label": "helpers.php",
    "_origin": "ast",
-   "community": 7,
+   "community": 6,
    "file_type": "code",
    "norm_label": "helpers.php",
    "source_file": "src/helpers.php",
    "source_location": "L1"
   },
   {
+   "id": "src_models_repository",
+   "label": "Repository.php",
+   "_origin": "ast",
+   "community": 7,
+   "file_type": "code",
+   "norm_label": "repository.php",
+   "source_file": "src/Models/Repository.php",
+   "source_location": "L1"
+  },
+  {
    "id": "default_role",
    "label": "default_role",
-   "community": 6,
+   "community": 5,
    "external": true,
    "file_type": "concept",
    "norm_label": "default_role",
@@ -537,7 +548,7 @@
   {
    "id": "slugify",
    "label": "slugify",
-   "community": 6,
+   "community": 5,
    "external": true,
    "file_type": "concept",
    "norm_label": "slugify",
@@ -548,7 +559,7 @@
  "links": [
   {
    "source": "bin_app_main",
-   "target": "src_service_userservice_userservice",
+   "target": "src_service_userservice_userservice_make",
    "relation": "calls",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -580,6 +591,18 @@
    "context": "call",
    "source_file": "src/Models/Model.php",
    "source_location": "L19",
+   "weight": 1.0
+  },
+  {
+   "source": "src_models_user_user_save",
+   "target": "src_models_model_model_save",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "call",
+   "source_file": "src/Models/User.php",
+   "source_location": "L40",
    "weight": 1.0
   },
   {
@@ -620,7 +643,7 @@
   },
   {
    "source": "tests_userservicetest_userservicetest_testparse",
-   "target": "src_models_user_user",
+   "target": "src_models_user_user_parse",
    "relation": "calls",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -632,7 +655,7 @@
   },
   {
    "source": "tests_userservicetest_userservicetest_testregister",
-   "target": "src_service_userservice_userservice",
+   "target": "src_service_userservice_userservice_make",
    "relation": "calls",
    "_origin": "ast",
    "confidence": "EXTRACTED",
@@ -1359,6 +1382,42 @@
    "context": "call",
    "source_file": "src/Models/User.php",
    "source_location": "L23",
+   "weight": 1.0
+  },
+  {
+   "source": "src_models_user_user_display",
+   "target": "src_models_status_status_label",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "src/Models/User.php",
+   "source_location": "L46",
+   "weight": 1.0
+  },
+  {
+   "source": "src_service_userservice_userservice_register",
+   "target": "src_models_user_user_save",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "src/Service/UserService.php",
+   "source_location": "L26",
+   "weight": 1.0
+  },
+  {
+   "source": "src_service_userservice_userservice_register",
+   "target": "src_models_repository_repository_add",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "src/Service/UserService.php",
+   "source_location": "L27",
    "weight": 1.0
   }
  ],

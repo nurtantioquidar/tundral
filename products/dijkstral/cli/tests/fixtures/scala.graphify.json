@@ -80,14 +80,6 @@
    "_origin": "ast"
   },
   {
-   "id": "k",
-   "label": "K",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "src_main_scala_shop_model_model_entity_describe",
    "label": ".describe()",
    "file_type": "code",
@@ -445,14 +437,6 @@
    "_origin": "ast"
   },
   {
-   "id": "src_main_scala_shop_service_audit_scala_t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "src_main_scala_shop_service_audit_inmemoryrepository_all",
    "label": ".all()",
    "file_type": "code",
@@ -503,14 +487,6 @@
    "source_file": "src/main/scala/shop/service/UserService.scala",
    "source_location": "L10",
    "_callable": true,
-   "_origin": "ast"
-  },
-  {
-   "id": "src_main_scala_shop_service_userservice_scala_t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
    "_origin": "ast"
   },
   {
@@ -943,17 +919,6 @@
    "source_file": "src/main/scala/shop/model/Model.scala",
    "source_location": "L7",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_scala_shop_model_model_entity_id",
-   "target": "k",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/scala/shop/model/Model.scala",
-   "source_location": "L7",
-   "weight": 1.0,
-   "context": "return_type",
    "_origin": "ast"
   },
   {
@@ -1691,17 +1656,6 @@
   },
   {
    "source": "src_main_scala_shop_service_audit_inmemoryrepository_save",
-   "target": "src_main_scala_shop_service_audit_scala_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/scala/shop/service/Audit.scala",
-   "source_location": "L18",
-   "weight": 1.0,
-   "context": "parameter_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_scala_shop_service_audit_inmemoryrepository_save",
    "target": "src_main_scala_shop_service_audit_scala_unit",
    "relation": "references",
    "confidence": "EXTRACTED",
@@ -1730,17 +1684,6 @@
    "source_location": "L23",
    "weight": 1.0,
    "context": "return_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_scala_shop_service_audit_inmemoryrepository_all",
-   "target": "src_main_scala_shop_service_audit_scala_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/scala/shop/service/Audit.scala",
-   "source_location": "L23",
-   "weight": 1.0,
-   "context": "generic_arg",
    "_origin": "ast"
   },
   {
@@ -1841,17 +1784,6 @@
   },
   {
    "source": "src_main_scala_shop_service_userservice_repository_save",
-   "target": "src_main_scala_shop_service_userservice_scala_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/scala/shop/service/UserService.scala",
-   "source_location": "L10",
-   "weight": 1.0,
-   "context": "parameter_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_scala_shop_service_userservice_repository_save",
    "target": "src_main_scala_shop_service_userservice_scala_unit",
    "relation": "references",
    "confidence": "EXTRACTED",
@@ -1880,17 +1812,6 @@
    "source_location": "L12",
    "weight": 1.0,
    "context": "return_type",
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_scala_shop_service_userservice_repository_all",
-   "target": "src_main_scala_shop_service_userservice_scala_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main/scala/shop/service/UserService.scala",
-   "source_location": "L12",
-   "weight": 1.0,
-   "context": "generic_arg",
    "_origin": "ast"
   },
   {

@@ -290,14 +290,6 @@
    "source_file": ""
   },
   {
-   "id": "util",
-   "label": "util",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
    "id": "assert",
    "label": "assert",
    "file_type": "concept",
@@ -381,6 +373,10 @@
    "source_file": "main.c",
    "source_location": "L6",
    "weight": 1.0,
+   "metadata": {
+    "raw_include": "missing.h",
+    "include_kind": "quoted"
+   },
    "_origin": "ast"
   },
   {
@@ -459,24 +455,32 @@
   },
   {
    "source": "src_shape",
-   "target": "shape",
+   "target": "include_shape",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
    "source_file": "src/shape.c",
    "source_location": "L3",
    "weight": 1.0,
+   "metadata": {
+    "raw_include": "shape.h",
+    "include_kind": "quoted"
+   },
    "_origin": "ast"
   },
   {
    "source": "src_shape",
-   "target": "util",
+   "target": "include_util",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
    "source_file": "src/shape.c",
    "source_location": "L4",
    "weight": 1.0,
+   "metadata": {
+    "raw_include": "util.h",
+    "include_kind": "quoted"
+   },
    "_origin": "ast"
   },
   {

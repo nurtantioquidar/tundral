@@ -342,6 +342,15 @@
    "_origin": "ast"
   },
   {
+   "id": "tb_tb_top_alu_txn_drive",
+   "label": "drive",
+   "file_type": "code",
+   "source_file": "tb/tb_top.v",
+   "source_location": "L11",
+   "confidence_score": 1.0,
+   "_origin": "ast"
+  },
+  {
    "id": "tb_tb_top_later_txn",
    "label": "later_txn",
    "file_type": "code",
@@ -804,6 +813,17 @@
    "confidence_score": 1.0,
    "source_file": "tb/tb_top.v",
    "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "tb_tb_top_alu_txn",
+   "target": "tb_tb_top_alu_txn_drive",
+   "relation": "method",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "tb/tb_top.v",
+   "source_location": "L11",
    "weight": 1.0,
    "_origin": "ast"
   },

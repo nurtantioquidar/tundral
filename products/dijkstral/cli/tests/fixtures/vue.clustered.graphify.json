@@ -3,9 +3,24 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
+  {
+   "id": "src_store_todostore",
+   "label": "TodoStore",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "_ts_fields": {
+    "state": "StoreState"
+   },
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "todostore",
+   "source_file": "src/store.ts",
+   "source_location": "L8"
+  },
   {
    "id": "src_components_todoitem_props",
    "label": "Props",
@@ -29,18 +44,6 @@
    "norm_label": "storestate",
    "source_file": "src/store.ts",
    "source_location": "L4"
-  },
-  {
-   "id": "src_store_todostore",
-   "label": "TodoStore",
-   "_callable": true,
-   "_callable_class": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "todostore",
-   "source_file": "src/store.ts",
-   "source_location": "L8"
   },
   {
    "id": "src_types_todo",
@@ -571,18 +574,6 @@
    "context": "call",
    "source_file": "src/main.ts",
    "source_location": "L7",
-   "weight": 1.0
-  },
-  {
-   "source": "src_main_mount",
-   "target": "src_main_mount",
-   "relation": "calls",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "call",
-   "source_file": "src/main.ts",
-   "source_location": "L8",
    "weight": 1.0
   },
   {

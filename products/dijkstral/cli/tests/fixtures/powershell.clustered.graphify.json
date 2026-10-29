@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -1132,6 +1132,18 @@
    "context": "call",
    "source_file": "Modules/Shop/Shop.psm1",
    "source_location": "L23",
+   "weight": 1.0
+  },
+  {
+   "source": "tests_shop_tests",
+   "target": "modules_shop_shop_new_shoporder",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "tests/Shop.Tests.ps1",
+   "source_location": "L8",
    "weight": 1.0
   },
   {

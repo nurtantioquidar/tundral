@@ -60,6 +60,9 @@
    "source_location": "L10",
    "_callable": true,
    "_callable_class": true,
+   "_ts_fields": {
+    "items": "Map"
+   },
    "_origin": "ast"
   },
   {
@@ -168,6 +171,9 @@
    "source_location": "L15",
    "_callable": true,
    "_callable_class": true,
+   "_ts_fields": {
+    "id": "UserId"
+   },
    "_origin": "ast"
   },
   {
@@ -196,6 +202,9 @@
    "source_location": "L26",
    "_callable": true,
    "_callable_class": true,
+   "_ts_fields": {
+    "role": "Role"
+   },
    "_origin": "ast"
   },
   {
@@ -357,6 +366,17 @@
    "source_file": "src/service.ts",
    "source_location": "L27",
    "_callable": true,
+   "metadata": {
+    "unresolved_calls": [
+     {
+      "callee": "promote",
+      "receiver_type": "Administrator",
+      "lang": "typescript",
+      "line": "L28",
+      "file": "src/service.ts"
+     }
+    ]
+   },
    "_origin": "ast"
   },
   {
@@ -476,14 +496,6 @@
    "_origin": "ast"
   },
   {
-   "id": "src_util_legacy",
-   "label": "legacy",
-   "file_type": "code",
-   "source_file": "src/util.ts",
-   "source_location": "L2",
-   "_origin": "ast"
-  },
-  {
    "id": "src_util_slugify",
    "label": "slugify()",
    "file_type": "code",
@@ -519,14 +531,6 @@
    "source_file": ""
   },
   {
-   "id": "src_models_index_user",
-   "label": "src_models_index_user",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
    "id": "ref_polyfill",
    "label": "ref_polyfill",
    "file_type": "concept",
@@ -545,22 +549,6 @@
   {
    "id": "ref_node_path",
    "label": "ref_node_path",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
-   "id": "src_models_index_admin",
-   "label": "src_models_index_admin",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
-   "id": "src_models_index_helper",
-   "label": "src_models_index_helper",
    "file_type": "concept",
    "type": "external",
    "external": true,
@@ -648,17 +636,6 @@
    "source": "src_tests_service_test",
    "target": "src_models_index",
    "relation": "imports_from",
-   "context": "import",
-   "confidence": "EXTRACTED",
-   "source_file": "src/__tests__/service.test.ts",
-   "source_location": "L3",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_tests_service_test",
-   "target": "src_models_index_user",
-   "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
    "source_file": "src/__tests__/service.test.ts",
@@ -1156,39 +1133,6 @@
   },
   {
    "source": "src_service",
-   "target": "src_models_index_user",
-   "relation": "imports",
-   "context": "import",
-   "confidence": "EXTRACTED",
-   "source_file": "src/service.ts",
-   "source_location": "L4",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_service",
-   "target": "src_models_index_admin",
-   "relation": "imports",
-   "context": "import",
-   "confidence": "EXTRACTED",
-   "source_file": "src/service.ts",
-   "source_location": "L4",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_service",
-   "target": "src_models_index_helper",
-   "relation": "imports",
-   "context": "import",
-   "confidence": "EXTRACTED",
-   "source_file": "src/service.ts",
-   "source_location": "L4",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_service",
    "target": "src_models_index_storage",
    "relation": "imports",
    "context": "import",
@@ -1345,17 +1289,6 @@
    "_origin": "ast"
   },
   {
-   "source": "src_service_userservice_promote",
-   "target": "src_service_userservice_promote",
-   "relation": "calls",
-   "context": "call",
-   "confidence": "EXTRACTED",
-   "source_file": "src/service.ts",
-   "source_location": "L28",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
    "source": "src_service_userservice_export",
    "target": "src_service_comparenames",
    "relation": "indirect_call",
@@ -1380,17 +1313,6 @@
    "_origin": "ast"
   },
   {
-   "source": "src_service_userservice_log",
-   "target": "src_service_userservice_log",
-   "relation": "calls",
-   "context": "call",
-   "confidence": "EXTRACTED",
-   "source_file": "src/service.ts",
-   "source_location": "L38",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
    "source": "src_service_run",
    "target": "src_service_userservice",
    "relation": "calls",
@@ -1398,17 +1320,6 @@
    "confidence": "EXTRACTED",
    "source_file": "src/service.ts",
    "source_location": "L47",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_service_run",
-   "target": "src_service_userservice_register",
-   "relation": "calls",
-   "context": "call",
-   "confidence": "EXTRACTED",
-   "source_file": "src/service.ts",
-   "source_location": "L48",
    "weight": 1.0,
    "_origin": "ast"
   },
@@ -1447,17 +1358,6 @@
    "source": "src_ui_app",
    "target": "src_models_index",
    "relation": "imports_from",
-   "context": "import",
-   "confidence": "EXTRACTED",
-   "source_file": "src/ui/App.tsx",
-   "source_location": "L2",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_ui_app",
-   "target": "src_models_index_user",
-   "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
    "source_file": "src/ui/App.tsx",
@@ -1606,16 +1506,6 @@
    "target": "ref_legacy",
    "relation": "imports_from",
    "context": "import",
-   "confidence": "EXTRACTED",
-   "source_file": "src/util.ts",
-   "source_location": "L2",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_util",
-   "target": "src_util_legacy",
-   "relation": "contains",
    "confidence": "EXTRACTED",
    "source_file": "src/util.ts",
    "source_location": "L2",
@@ -1939,6 +1829,18 @@
    "confidence_score": 1.0,
    "source_file": "src/ui/App.tsx",
    "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "src_service_run",
+   "target": "src_service_userservice_register",
+   "relation": "calls",
+   "context": "call",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "src/service.ts",
+   "source_location": "L48",
    "weight": 1.0,
    "_origin": "ast"
   }

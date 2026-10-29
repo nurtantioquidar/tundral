@@ -22,8 +22,7 @@
       "src_routes_page_ts_src_routes_page"
     ],
     "2": [
-      "badge_svelte",
-      "cart_svelte",
+      "lib",
       "ref_lib",
       "src_lib_stores_additem",
       "src_routes_page_buy",
@@ -43,7 +42,7 @@
   "cohesion": {
     "0": 0.3055555555555556,
     "1": 0.39285714285714285,
-    "2": 0.4,
+    "2": 0.5,
     "3": 0.6,
     "4": 1.0
   },

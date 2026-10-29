@@ -265,6 +265,9 @@
    "source_location": "L8",
    "_callable": true,
    "_callable_class": true,
+   "_ts_fields": {
+    "state": "StoreState"
+   },
    "_origin": "ast"
   },
   {
@@ -981,17 +984,6 @@
    "confidence": "EXTRACTED",
    "source_file": "src/main.ts",
    "source_location": "L6",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_main_mount",
-   "target": "src_main_mount",
-   "relation": "calls",
-   "context": "call",
-   "confidence": "EXTRACTED",
-   "source_file": "src/main.ts",
-   "source_location": "L8",
    "weight": 1.0,
    "_origin": "ast"
   },

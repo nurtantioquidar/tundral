@@ -1,10 +1,10 @@
-# Graph Report - svelte  (2026-10-14)
+# Graph Report - svelte  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available
 
 ## Summary
-- 29 nodes · 47 edges · 5 communities (2 shown, 3 thin omitted)
+- 28 nodes · 46 edges · 5 communities (2 shown, 3 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -58,8 +58,8 @@ Nodes (5): cart, Item, sumPrices(), total, load()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `sumPrices()` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.065) - this node is a cross-community bridge._
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
 - **Why does `addItem()` connect `Community 2` to `Community 1`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Why does `money()` connect `Community 3` to `Community 0`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._

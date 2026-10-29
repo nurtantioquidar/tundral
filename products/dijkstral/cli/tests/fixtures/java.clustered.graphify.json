@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -175,6 +175,54 @@
    "source_location": "L7"
   },
   {
+   "id": "src_main_java_com_shop_model_model_model_status",
+   "label": ".status()",
+   "_callable": true,
+   "_java_ret": "Status",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": ".status()",
+   "source_file": "src/main/java/com/shop/model/Model.java",
+   "source_location": "L23"
+  },
+  {
+   "id": "src_main_java_com_shop_model_user_user_status",
+   "label": ".status()",
+   "_callable": true,
+   "_java_ret": "Status",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": ".status()",
+   "source_file": "src/main/java/com/shop/model/User.java",
+   "source_location": "L20"
+  },
+  {
+   "id": "src_main_java_com_shop_model_user_user_of",
+   "label": ".of()",
+   "_callable": true,
+   "_java_ret": "User",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": ".of()",
+   "source_file": "src/main/java/com/shop/model/User.java",
+   "source_location": "L29"
+  },
+  {
+   "id": "src_main_java_com_shop_service_userservice_userservice_register",
+   "label": ".register()",
+   "_callable": true,
+   "_java_ret": "User",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": ".register()",
+   "source_file": "src/main/java/com/shop/service/UserService.java",
+   "source_location": "L15"
+  },
+  {
    "id": "src_main_java_com_shop_service_userservice_formatter_format",
    "label": ".format()",
    "_callable": true,
@@ -242,7 +290,8 @@
       "callee": "sort",
       "receiver_type": "Collections",
       "lang": "java",
-      "line": "L52"
+      "line": "L52",
+      "file": "src/main/java/com/shop/service/UserService.java"
      }
     ]
    },
@@ -284,17 +333,6 @@
    "source_location": "L25"
   },
   {
-   "id": "src_main_java_com_shop_model_user_user_of",
-   "label": ".of()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": ".of()",
-   "source_file": "src/main/java/com/shop/model/User.java",
-   "source_location": "L29"
-  },
-  {
    "id": "src_main_java_com_shop_model_user_user_user",
    "label": ".User()",
    "_callable": true,
@@ -326,17 +364,6 @@
    "norm_label": ".run()",
    "source_file": "src/main/java/com/shop/service/UserService.java",
    "source_location": "L39"
-  },
-  {
-   "id": "src_main_java_com_shop_service_userservice_userservice_register",
-   "label": ".register()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": ".register()",
-   "source_file": "src/main/java/com/shop/service/UserService.java",
-   "source_location": "L15"
   },
   {
    "id": "src_main_java_com_shop_service_userservice_userservice_save",
@@ -406,30 +433,21 @@
       "callee": "requireNonNull",
       "receiver_type": "Objects",
       "lang": "java",
-      "line": "L14"
+      "line": "L14",
+      "file": "src/main/java/com/shop/model/Model.java"
      },
      {
       "callee": "now",
       "receiver_type": "Instant",
       "lang": "java",
-      "line": "L15"
+      "line": "L15",
+      "file": "src/main/java/com/shop/model/Model.java"
      }
     ]
    },
    "norm_label": ".model()",
    "source_file": "src/main/java/com/shop/model/Model.java",
    "source_location": "L13"
-  },
-  {
-   "id": "src_main_java_com_shop_model_model_model_status",
-   "label": ".status()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": ".status()",
-   "source_file": "src/main/java/com/shop/model/Model.java",
-   "source_location": "L23"
   },
   {
    "id": "src_test_java_com_shop_service_userservicetest_formatter_format",
@@ -474,17 +492,6 @@
    "norm_label": ".islive()",
    "source_file": "src/main/java/com/shop/model/Model.java",
    "source_location": "L35"
-  },
-  {
-   "id": "src_main_java_com_shop_model_user_user_status",
-   "label": ".status()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": ".status()",
-   "source_file": "src/main/java/com/shop/model/User.java",
-   "source_location": "L20"
   },
   {
    "id": "src_main_java_com_shop_service_userservice",

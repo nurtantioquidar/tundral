@@ -78,14 +78,14 @@
       "degree": 14
     },
     {
-      "id": "shop_models_circle_circle",
-      "label": "Circle",
-      "degree": 8
-    },
-    {
       "id": "shop_services_repo_repo",
       "label": "Repo",
       "degree": 8
+    },
+    {
+      "id": "shop_models_circle_circle",
+      "label": "Circle",
+      "degree": 7
     },
     {
       "id": "shop_services_repo_repo_report",

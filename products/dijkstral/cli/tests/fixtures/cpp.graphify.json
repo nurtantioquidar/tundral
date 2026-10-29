@@ -62,6 +62,22 @@
    "_origin": "ast"
   },
   {
+   "id": "include_geo_point_points",
+   "label": "Points",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L21",
+   "_origin": "ast"
+  },
+  {
+   "id": "include_geo_point_vec2",
+   "label": "Vec2",
+   "file_type": "code",
+   "source_file": "include/geo/point.h",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
    "id": "include_geo_point_bits",
    "label": "Bits",
    "file_type": "code",
@@ -283,14 +299,6 @@
    "_origin": "ast"
   },
   {
-   "id": "include_geo_shape_hpp_t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
-   "_origin": "ast"
-  },
-  {
    "id": "include_geo_shape_registry_size",
    "label": ".size()",
    "file_type": "code",
@@ -356,14 +364,6 @@
    "source_file": "src/kernels.cu",
    "source_location": "L3",
    "_callable": true,
-   "_origin": "ast"
-  },
-  {
-   "id": "global",
-   "label": "__global__",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
    "_origin": "ast"
   },
   {
@@ -489,14 +489,6 @@
    "source_file": "src/legacy.cxx",
    "source_location": "L27",
    "_callable": true,
-   "_origin": "ast"
-  },
-  {
-   "id": "src_legacy_cxx_t",
-   "label": "T",
-   "file_type": "code",
-   "source_file": "",
-   "source_location": "",
    "_origin": "ast"
   },
   {
@@ -722,14 +714,6 @@
    "type": "external",
    "external": true,
    "source_file": ""
-  },
-  {
-   "id": "shape",
-   "label": "shape",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
   }
  ],
  "edges": [
@@ -805,6 +789,26 @@
    "source_location": "L18",
    "weight": 1.0,
    "context": "field",
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point",
+   "target": "include_geo_point_points",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "include_geo_point",
+   "target": "include_geo_point_vec2",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "include/geo/point.h",
+   "source_location": "L22",
+   "weight": 1.0,
    "_origin": "ast"
   },
   {
@@ -1173,17 +1177,6 @@
    "_origin": "ast"
   },
   {
-   "source": "include_geo_shape_registry_add",
-   "target": "include_geo_shape_hpp_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "include/geo/shape.hpp",
-   "source_location": "L48",
-   "weight": 1.0,
-   "context": "generic_arg",
-   "_origin": "ast"
-  },
-  {
    "source": "include_geo_shape_registry",
    "target": "include_geo_shape_registry_size",
    "relation": "method",
@@ -1238,17 +1231,6 @@
   },
   {
    "source": "include_geo_shape_registry",
-   "target": "include_geo_shape_hpp_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "include/geo/shape.hpp",
-   "source_location": "L53",
-   "weight": 1.0,
-   "context": "generic_arg",
-   "_origin": "ast"
-  },
-  {
-   "source": "include_geo_shape_registry",
    "target": "include_geo_shape_registry_items",
    "relation": "defines",
    "confidence": "EXTRACTED",
@@ -1266,17 +1248,6 @@
    "source_file": "include/geo/shape.hpp",
    "source_location": "L57",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "include_geo_shape_registry_t_first",
-   "target": "include_geo_shape_hpp_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "include/geo/shape.hpp",
-   "source_location": "L57",
-   "weight": 1.0,
-   "context": "return_type",
    "_origin": "ast"
   },
   {
@@ -1309,17 +1280,6 @@
    "source_file": "src/kernels.cu",
    "source_location": "L3",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_kernels_scale_kernel",
-   "target": "global",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/kernels.cu",
-   "source_location": "L3",
-   "weight": 1.0,
-   "context": "return_type",
    "_origin": "ast"
   },
   {
@@ -1484,17 +1444,6 @@
    "source_file": "src/legacy.cxx",
    "source_location": "L27",
    "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "src_legacy_clamp_to",
-   "target": "src_legacy_cxx_t",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "source_file": "src/legacy.cxx",
-   "source_location": "L27",
-   "weight": 1.0,
-   "context": "return_type",
    "_origin": "ast"
   },
   {
@@ -1671,13 +1620,17 @@
   },
   {
    "source": "src_shape",
-   "target": "include_geo_shape_shape",
+   "target": "include_geo_shape",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
    "source_file": "src/shape.cpp",
    "source_location": "L1",
    "weight": 1.0,
+   "metadata": {
+    "raw_include": "geo/shape.hpp",
+    "include_kind": "quoted"
+   },
    "_origin": "ast"
   },
   {
@@ -1881,13 +1834,17 @@
   },
   {
    "source": "tests_shape_test",
-   "target": "shape",
+   "target": "include_geo_shape",
    "relation": "imports",
    "context": "import",
    "confidence": "EXTRACTED",
    "source_file": "tests/shape_test.cc",
    "source_location": "L3",
    "weight": 1.0,
+   "metadata": {
+    "raw_include": "geo/shape.hpp",
+    "include_kind": "quoted"
+   },
    "_origin": "ast"
   },
   {

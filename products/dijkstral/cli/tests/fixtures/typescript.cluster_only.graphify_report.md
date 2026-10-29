@@ -1,11 +1,11 @@
-# Graph Report - typescript  (2026-10-13)
+# Graph Report - typescript  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available
 
 ## Summary
-- 68 nodes · 119 edges · 7 communities (6 shown, 1 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.85)
+- 64 nodes · 111 edges · 7 communities (6 shown, 1 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 3 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -50,39 +50,39 @@
 Cohesion: 0.15
 Nodes (8): Base, formatName(), helper(), Role, Admin, Member, UserId, validate()
 
-### Community 2 - "Community 2"
-Cohesion: 0.27
+### Community 1 - "Community 1"
+Cohesion: 0.24
 Nodes (4): Entity, Repo, sealed(), Storage
 
-### Community 3 - "Community 3"
-Cohesion: 0.31
-Nodes (3): run(), UserService, makeUser()
-
-### Community 4 - "Community 4"
+### Community 2 - "Community 2"
 Cohesion: 0.28
 Nodes (3): Admin, Named, User
 
-### Community 5 - "Community 5"
-Cohesion: 0.29
-Nodes (4): helper(), { join }, legacy, slugify()
-
-### Community 6 - "Community 6"
+### Community 4 - "Community 4"
 Cohesion: 0.32
 Nodes (4): App, Badge(), BadgeProps, UserList()
 
+### Community 5 - "Community 5"
+Cohesion: 0.33
+Nodes (3): helper(), { join }, slugify()
+
+### Community 6 - "Community 6"
+Cohesion: 0.43
+Nodes (3): run(), UserService, makeUser()
+
 ## Knowledge Gaps
 - **2 isolated node(s):** `Admin`, `Member`
-  These have ≤1 connection - possible missing edges. (Counts symbols only; 28 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges. (Counts symbols only; 25 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `User` connect `Community 4` to `Community 0`, `Community 1`, `Community 3`, `Community 6`?**
-  _High betweenness centrality (0.239) - this node is a cross-community bridge._
+- **Why does `User` connect `Community 2` to `Community 0`, `Community 1`, `Community 3`, `Community 4`, `Community 6`?**
+  _High betweenness centrality (0.257) - this node is a cross-community bridge._
 - **What connects `Admin`, `Member` to the rest of the system?**
   _2 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Why does `Repo` connect `Community 2` to `Community 1`, `Community 3`?**
-  _High betweenness centrality (0.130) - this node is a cross-community bridge._
-- **Why does `UserService` connect `Community 3` to `Community 1`, `Community 2`, `Community 4`, `Community 6`?**
-  _High betweenness centrality (0.074) - this node is a cross-community bridge._
+- **Why does `Repo` connect `Community 1` to `Community 3`, `Community 6`?**
+  _High betweenness centrality (0.137) - this node is a cross-community bridge._
+- **Why does `UserService` connect `Community 6` to `Community 1`, `Community 2`, `Community 3`, `Community 4`?**
+  _High betweenness centrality (0.080) - this node is a cross-community bridge._

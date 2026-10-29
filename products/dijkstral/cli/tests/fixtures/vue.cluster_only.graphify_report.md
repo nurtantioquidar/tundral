@@ -1,10 +1,10 @@
-# Graph Report - vue  (2026-10-14)
+# Graph Report - vue  (2026-10-29)
 
 ## Corpus Check
 - cluster-only mode — file stats not available
 
 ## Summary
-- 44 nodes · 85 edges · 6 communities (5 shown, 1 thin omitted)
+- 44 nodes · 84 edges · 6 communities (5 shown, 1 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -21,12 +21,12 @@
 2. `TodoStore` - 5 edges
 3. `pluralize()` - 5 edges
 4. `formatTitle()` - 5 edges
-5. `mount()` - 4 edges
-6. `createStore()` - 4 edges
-7. `label()` - 3 edges
-8. `capitalize()` - 3 edges
-9. `isDone()` - 3 edges
-10. `useFilter()` - 3 edges
+5. `createStore()` - 4 edges
+6. `label()` - 3 edges
+7. `capitalize()` - 3 edges
+8. `isDone()` - 3 edges
+9. `useFilter()` - 3 edges
+10. `Props` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Props` --references--> `Todo`  [EXTRACTED]

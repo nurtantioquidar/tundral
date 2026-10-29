@@ -32,6 +32,7 @@
     ],
     "3": [
       "tb_tb_top_alu_txn",
+      "tb_tb_top_alu_txn_drive",
       "tb_tb_top_alu_txn_show",
       "tb_tb_top_alu_txn_width",
       "tb_tb_top_cloneable",
@@ -64,7 +65,7 @@
     "0": 0.2222222222222222,
     "1": 0.2857142857142857,
     "2": 0.3333333333333333,
-    "3": 0.4,
+    "3": 0.3333333333333333,
     "4": 0.5,
     "5": 0.5,
     "6": 1.0,
@@ -80,7 +81,7 @@
     {
       "id": "tb_tb_top_alu_txn",
       "label": "alu_txn",
-      "degree": 6
+      "degree": 7
     },
     {
       "id": "rtl_fifo_fifo",

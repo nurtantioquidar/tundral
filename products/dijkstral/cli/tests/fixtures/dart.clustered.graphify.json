@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -177,16 +177,6 @@
    "source_location": null
   },
   {
-   "id": "typedef",
-   "label": "typedef",
-   "_origin": "ast",
-   "community": 0,
-   "file_type": "code",
-   "norm_label": "typedef",
-   "source_file": null,
-   "source_location": null
-  },
-  {
    "id": "dart_collection",
    "label": "dart:collection",
    "_origin": "ast",
@@ -267,16 +257,6 @@
    "source_location": "L20"
   },
   {
-   "id": "lib_src_service_repository",
-   "label": "Repository",
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "repository",
-   "source_file": "lib/src/service.dart",
-   "source_location": "L5"
-  },
-  {
    "id": "lib_src_service_save",
    "label": "save",
    "_origin": "ast",
@@ -305,16 +285,6 @@
    "norm_label": "_users",
    "source_file": "lib/src/service.dart",
    "source_location": "L11"
-  },
-  {
-   "id": "lib_src_service_userservice",
-   "label": "UserService",
-   "_origin": "ast",
-   "community": 1,
-   "file_type": "code",
-   "norm_label": "userservice",
-   "source_file": "lib/src/service.dart",
-   "source_location": "L10"
   },
   {
    "id": "map",
@@ -685,6 +655,26 @@
    "norm_label": "main",
    "source_file": "test/service_test.dart",
    "source_location": "L4"
+  },
+  {
+   "id": "lib_src_service_repository",
+   "label": "Repository",
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "norm_label": "repository",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L5"
+  },
+  {
+   "id": "lib_src_service_userservice",
+   "label": "UserService",
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "norm_label": "userservice",
+   "source_file": "lib/src/service.dart",
+   "source_location": "L10"
   }
  ],
  "links": [
@@ -770,18 +760,6 @@
    "context": "variable_type",
    "source_file": "lib/src/models/user.dart",
    "source_location": "L32",
-   "weight": 1.0
-  },
-  {
-   "source": "lib_src_models_user",
-   "target": "typedef",
-   "relation": "references",
-   "_origin": "ast",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "context": "variable_type",
-   "source_file": "lib/src/models/user.dart",
-   "source_location": "L36",
    "weight": 1.0
   },
   {

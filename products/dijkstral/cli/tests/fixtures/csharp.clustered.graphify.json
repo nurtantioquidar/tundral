@@ -3,7 +3,7 @@
  "multigraph": false,
  "graph": {
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -35,6 +35,7 @@
    "file_type": "code",
    "metadata": {
     "is_partial": true,
+    "type_path": "User",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s0:0"
@@ -99,40 +100,40 @@
    "source_location": "L7"
   },
   {
-   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
-   "label": "InMemoryRepository",
+   "id": "src_shop_models_entity_shop_models_entity",
+   "label": "Entity",
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
    "community": 2,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Services",
+    "namespace": "Shop.Models",
     "scope_chain": [
-     "s3:0"
+     "s2:0"
     ]
    },
-   "norm_label": "inmemoryrepository",
-   "source_file": "src/Shop/Services/IRepository.cs",
-   "source_location": "L15"
+   "norm_label": "entity",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L16"
   },
   {
-   "id": "src_shop_services_irepository_shop_services_irepository_1",
-   "label": "IRepository",
+   "id": "src_shop_models_entity_shop_models_ientity_1",
+   "label": "IEntity",
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
    "community": 2,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Services",
+    "namespace": "Shop.Models",
     "scope_chain": [
-     "s3:0"
+     "s2:0"
     ]
    },
-   "norm_label": "irepository",
-   "source_file": "src/Shop/Services/IRepository.cs",
-   "source_location": "L6"
+   "norm_label": "ientity",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L8"
   },
   {
    "id": "src_shop_services_userservice_shop_services_ilogger",
@@ -208,40 +209,40 @@
    "source_location": "L25"
   },
   {
-   "id": "src_shop_models_entity_shop_models_entity",
-   "label": "Entity",
+   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1",
+   "label": "InMemoryRepository",
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Models",
+    "namespace": "Shop.Services",
     "scope_chain": [
-     "s2:0"
+     "s3:0"
     ]
    },
-   "norm_label": "entity",
-   "source_file": "src/Shop/Models/Entity.cs",
-   "source_location": "L16"
+   "norm_label": "inmemoryrepository",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L15"
   },
   {
-   "id": "src_shop_models_entity_shop_models_ientity_1",
-   "label": "IEntity",
+   "id": "src_shop_services_irepository_shop_services_irepository_1",
+   "label": "IRepository",
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Models",
+    "namespace": "Shop.Services",
     "scope_chain": [
-     "s2:0"
+     "s3:0"
     ]
    },
-   "norm_label": "ientity",
-   "source_file": "src/Shop/Models/Entity.cs",
-   "source_location": "L8"
+   "norm_label": "irepository",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L6"
   },
   {
    "id": "src_shop_models_values_shop_models_money",
@@ -249,7 +250,7 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "metadata": {
     "namespace": "Shop.Models",
@@ -267,7 +268,7 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "metadata": {
     "namespace": "Shop.Models",
@@ -285,7 +286,7 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "metadata": {
     "namespace": "Shop.Models",
@@ -296,6 +297,24 @@
    "norm_label": "range",
    "source_file": "src/Shop/Models/Values.cs",
    "source_location": "L22"
+  },
+  {
+   "id": "src_shop_models_values_shop_models_userchanged",
+   "label": "UserChanged",
+   "_callable": true,
+   "_callable_class": true,
+   "_origin": "ast",
+   "community": 5,
+   "file_type": "code",
+   "metadata": {
+    "namespace": "Shop.Models",
+    "scope_chain": [
+     "s0:0"
+    ]
+   },
+   "norm_label": "userchanged",
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L24"
   },
   {
    "id": "src_shop_models_user_shop_models_status",
@@ -323,6 +342,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s3:0"
@@ -332,7 +353,8 @@
       "callee": "Trim",
       "receiver_type": "Street",
       "lang": "csharp",
-      "line": "L63"
+      "line": "L63",
+      "file": "src/Shop/Models/User.cs"
      }
     ]
    },
@@ -348,6 +370,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "Address",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s3:0"
@@ -357,7 +381,8 @@
       "callee": "Add",
       "receiver_type": "List",
       "lang": "csharp",
-      "line": "L43"
+      "line": "L43",
+      "file": "src/Shop/Models/User.cs"
      }
     ]
    },
@@ -373,6 +398,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "User?",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s3:0"
@@ -390,6 +417,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s3:0"
@@ -407,6 +436,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s3:0"
@@ -424,6 +455,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s3:0"
@@ -433,7 +466,8 @@
       "callee": "NewGuid",
       "receiver_type": "Guid",
       "lang": "csharp",
-      "line": "L57"
+      "line": "L57",
+      "file": "src/Shop/Models/User.cs"
      }
     ]
    },
@@ -449,6 +483,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s3:0"
@@ -458,7 +494,8 @@
       "callee": "Invoke",
       "receiver_type": "Renamed",
       "lang": "csharp",
-      "line": "L54"
+      "line": "L54",
+      "file": "src/Shop/Models/User.cs"
      }
     ]
    },
@@ -474,6 +511,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s0:0"
@@ -491,6 +530,8 @@
    "community": 0,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s0:0"
@@ -501,6 +542,72 @@
    "source_location": "L10"
   },
   {
+   "id": "src_shop_services_userservice_shop_services_iuserservice_register",
+   "label": ".Register()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "metadata": {
+    "arity": 1,
+    "signature": "string",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "norm_label": ".register()",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L78"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_notify",
+   "label": ".Notify()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "metadata": {
+    "arity": 1,
+    "signature": "User",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "WriteLine",
+      "receiver_type": "Console",
+      "lang": "csharp",
+      "line": "L62",
+      "file": "src/Shop/Services/UserService.cs"
+     }
+    ]
+   },
+   "norm_label": ".notify()",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L60"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_register",
+   "label": ".Register()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "metadata": {
+    "arity": 1,
+    "signature": "string",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "norm_label": ".register()",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L22"
+  },
+  {
    "id": "src_shop_services_extensions_shop_services_formatter_format",
    "label": ".Format()",
    "_callable": true,
@@ -508,6 +615,8 @@
    "community": 1,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s2:0"
@@ -525,6 +634,9 @@
    "community": 1,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "min_arity": 0,
+    "signature": "this string",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s2:0"
@@ -542,6 +654,9 @@
    "community": 1,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "min_arity": 0,
+    "signature": "this string",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s2:0"
@@ -559,6 +674,8 @@
    "community": 1,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Tests",
     "scope_chain": [
      "s4:0"
@@ -568,7 +685,8 @@
       "callee": "NotEmpty",
       "receiver_type": "Assert",
       "lang": "csharp",
-      "line": "L22"
+      "line": "L22",
+      "file": "tests/Shop.Tests/UserServiceTests.cs"
      }
     ]
    },
@@ -584,6 +702,8 @@
    "community": 1,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.Tests",
     "scope_chain": [
      "s4:0"
@@ -593,7 +713,8 @@
       "callee": "Equal",
       "receiver_type": "Assert",
       "lang": "csharp",
-      "line": "L15"
+      "line": "L15",
+      "file": "tests/Shop.Tests/UserServiceTests.cs"
      }
     ]
    },
@@ -602,156 +723,61 @@
    "source_location": "L11"
   },
   {
-   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
-   "label": ".All()",
+   "id": "src_shop_models_entity_shop_models_entity_describe",
+   "label": ".Describe()",
    "_callable": true,
    "_origin": "ast",
    "community": 2,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Services",
+    "arity": 0,
+    "signature": "",
+    "namespace": "Shop.Models",
     "scope_chain": [
-     "s3:0"
+     "s2:0"
     ]
    },
-   "norm_label": ".all()",
-   "source_file": "src/Shop/Services/IRepository.cs",
-   "source_location": "L23"
+   "norm_label": ".describe()",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L28"
   },
   {
-   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_find",
-   "label": ".Find()",
+   "id": "src_shop_models_entity_shop_models_entity_isnew",
+   "label": ".IsNew()",
    "_callable": true,
    "_origin": "ast",
    "community": 2,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Services",
+    "arity": 0,
+    "signature": "",
+    "namespace": "Shop.Models",
     "scope_chain": [
-     "s3:0"
-    ],
-    "unresolved_calls": [
-     {
-      "callee": "TryGetValue",
-      "receiver_type": "Dictionary",
-      "lang": "csharp",
-      "line": "L21"
-     }
+     "s2:0"
     ]
    },
-   "norm_label": ".find()",
-   "source_file": "src/Shop/Services/IRepository.cs",
-   "source_location": "L21"
+   "norm_label": ".isnew()",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L30"
   },
   {
-   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_save",
-   "label": ".Save()",
+   "id": "src_shop_models_entity_shop_models_ientity_1_describe",
+   "label": ".Describe()",
    "_callable": true,
    "_origin": "ast",
    "community": 2,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Services",
+    "arity": 0,
+    "signature": "",
+    "namespace": "Shop.Models",
     "scope_chain": [
-     "s3:0"
+     "s2:0"
     ]
    },
-   "norm_label": ".save()",
-   "source_file": "src/Shop/Services/IRepository.cs",
-   "source_location": "L19"
-  },
-  {
-   "id": "src_shop_services_irepository_shop_services_irepository_1_all",
-   "label": ".All()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "metadata": {
-    "namespace": "Shop.Services",
-    "scope_chain": [
-     "s3:0"
-    ]
-   },
-   "norm_label": ".all()",
-   "source_file": "src/Shop/Services/IRepository.cs",
+   "norm_label": ".describe()",
+   "source_file": "src/Shop/Models/Entity.cs",
    "source_location": "L12"
-  },
-  {
-   "id": "src_shop_services_irepository_shop_services_irepository_1_find",
-   "label": ".Find()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "metadata": {
-    "namespace": "Shop.Services",
-    "scope_chain": [
-     "s3:0"
-    ]
-   },
-   "norm_label": ".find()",
-   "source_file": "src/Shop/Services/IRepository.cs",
-   "source_location": "L10"
-  },
-  {
-   "id": "src_shop_services_irepository_shop_services_irepository_1_save",
-   "label": ".Save()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "metadata": {
-    "namespace": "Shop.Services",
-    "scope_chain": [
-     "s3:0"
-    ]
-   },
-   "norm_label": ".save()",
-   "source_file": "src/Shop/Services/IRepository.cs",
-   "source_location": "L8"
-  },
-  {
-   "id": "src_shop_services_userservice_shop_services_userservice_names",
-   "label": ".Names()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "metadata": {
-    "namespace": "Shop.Services",
-    "scope_chain": [
-     "s7:0"
-    ],
-    "unresolved_calls": [
-     {
-      "callee": "Add",
-      "receiver_type": "List",
-      "lang": "csharp",
-      "line": "L44"
-     }
-    ]
-   },
-   "norm_label": ".names()",
-   "source_file": "src/Shop/Services/UserService.cs",
-   "source_location": "L39"
-  },
-  {
-   "id": "src_shop_services_userservice_shop_services_userservice_pick",
-   "label": ".Pick()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "metadata": {
-    "namespace": "Shop.Services",
-    "scope_chain": [
-     "s7:0"
-    ]
-   },
-   "norm_label": ".pick()",
-   "source_file": "src/Shop/Services/UserService.cs",
-   "source_location": "L49"
   },
   {
    "id": "src_shop_services_userservice_shop_services_ilogger_log",
@@ -761,6 +787,8 @@
    "community": 3,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s7:0"
@@ -771,23 +799,6 @@
    "source_location": "L83"
   },
   {
-   "id": "src_shop_services_userservice_shop_services_iuserservice_register",
-   "label": ".Register()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "metadata": {
-    "namespace": "Shop.Services",
-    "scope_chain": [
-     "s7:0"
-    ]
-   },
-   "norm_label": ".register()",
-   "source_file": "src/Shop/Services/UserService.cs",
-   "source_location": "L78"
-  },
-  {
    "id": "src_shop_services_userservice_shop_services_userservice_audit",
    "label": ".Audit()",
    "_callable": true,
@@ -795,6 +806,8 @@
    "community": 3,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s7:0"
@@ -804,7 +817,8 @@
       "callee": "WriteLine",
       "receiver_type": "Console",
       "lang": "csharp",
-      "line": "L68"
+      "line": "L68",
+      "file": "src/Shop/Services/UserService.cs"
      }
     ]
    },
@@ -820,6 +834,8 @@
    "community": 3,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s7:0"
@@ -837,6 +853,8 @@
    "community": 3,
    "file_type": "code",
    "metadata": {
+    "arity": 2,
+    "signature": "int,int",
     "namespace": "Shop.Services",
     "scope_chain": [
      "s7:0"
@@ -847,48 +865,6 @@
    "source_location": "L58"
   },
   {
-   "id": "src_shop_services_userservice_shop_services_userservice_notify",
-   "label": ".Notify()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "metadata": {
-    "namespace": "Shop.Services",
-    "scope_chain": [
-     "s7:0"
-    ],
-    "unresolved_calls": [
-     {
-      "callee": "WriteLine",
-      "receiver_type": "Console",
-      "lang": "csharp",
-      "line": "L62"
-     }
-    ]
-   },
-   "norm_label": ".notify()",
-   "source_file": "src/Shop/Services/UserService.cs",
-   "source_location": "L60"
-  },
-  {
-   "id": "src_shop_services_userservice_shop_services_userservice_register",
-   "label": ".Register()",
-   "_callable": true,
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "metadata": {
-    "namespace": "Shop.Services",
-    "scope_chain": [
-     "s7:0"
-    ]
-   },
-   "norm_label": ".register()",
-   "source_file": "src/Shop/Services/UserService.cs",
-   "source_location": "L22"
-  },
-  {
    "id": "tests_shop_tests_userservicetests_shop_tests_nulllogger_log",
    "label": ".Log()",
    "_callable": true,
@@ -896,6 +872,8 @@
    "community": 3,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "string",
     "namespace": "Shop.Tests",
     "scope_chain": [
      "s4:0"
@@ -906,64 +884,119 @@
    "source_location": "L27"
   },
   {
-   "id": "src_shop_models_entity_shop_models_entity_describe",
-   "label": ".Describe()",
+   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_find",
+   "label": ".Find()",
    "_callable": true,
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Models",
+    "arity": 1,
+    "signature": "string",
+    "namespace": "Shop.Services",
     "scope_chain": [
-     "s2:0"
+     "s3:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "TryGetValue",
+      "receiver_type": "Dictionary",
+      "lang": "csharp",
+      "line": "L21",
+      "file": "src/Shop/Services/IRepository.cs"
+     }
     ]
    },
-   "norm_label": ".describe()",
-   "source_file": "src/Shop/Models/Entity.cs",
-   "source_location": "L28"
+   "norm_label": ".find()",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L21"
   },
   {
-   "id": "src_shop_models_entity_shop_models_entity_isnew",
-   "label": ".IsNew()",
+   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_save",
+   "label": ".Save()",
    "_callable": true,
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Models",
+    "arity": 1,
+    "signature": "T",
+    "namespace": "Shop.Services",
     "scope_chain": [
-     "s2:0"
+     "s3:0"
     ]
    },
-   "norm_label": ".isnew()",
-   "source_file": "src/Shop/Models/Entity.cs",
-   "source_location": "L30"
+   "norm_label": ".save()",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L19"
   },
   {
-   "id": "src_shop_models_entity_shop_models_ientity_1_describe",
-   "label": ".Describe()",
+   "id": "src_shop_services_irepository_shop_services_irepository_1_find",
+   "label": ".Find()",
    "_callable": true,
    "_origin": "ast",
-   "community": 5,
+   "community": 4,
    "file_type": "code",
    "metadata": {
-    "namespace": "Shop.Models",
+    "arity": 1,
+    "signature": "string",
+    "namespace": "Shop.Services",
     "scope_chain": [
-     "s2:0"
+     "s3:0"
     ]
    },
-   "norm_label": ".describe()",
-   "source_file": "src/Shop/Models/Entity.cs",
-   "source_location": "L12"
+   "norm_label": ".find()",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L10"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_irepository_1_save",
+   "label": ".Save()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "metadata": {
+    "arity": 1,
+    "signature": "T",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "norm_label": ".save()",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L8"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_register_512555",
+   "label": ".Register()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "metadata": {
+    "arity": 2,
+    "signature": "User,Point",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "norm_label": ".register()",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L33"
   },
   {
    "id": "src_shop_models_values_shop_models_money_add",
    "label": ".Add()",
    "_callable": true,
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "metadata": {
+    "arity": 1,
+    "signature": "Money",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s0:0"
@@ -978,9 +1011,11 @@
    "label": ".Length()",
    "_callable": true,
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "metadata": {
+    "arity": 0,
+    "signature": "",
     "namespace": "Shop.Models",
     "scope_chain": [
      "s0:0"
@@ -989,6 +1024,91 @@
    "norm_label": ".length()",
    "source_file": "src/Shop/Models/Values.cs",
    "source_location": "L14"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_inmemoryrepository_1_all",
+   "label": ".All()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "metadata": {
+    "arity": 0,
+    "signature": "",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "norm_label": ".all()",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L23"
+  },
+  {
+   "id": "src_shop_services_irepository_shop_services_irepository_1_all",
+   "label": ".All()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "metadata": {
+    "arity": 0,
+    "signature": "",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s3:0"
+    ]
+   },
+   "norm_label": ".all()",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L12"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_names",
+   "label": ".Names()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "metadata": {
+    "arity": 0,
+    "signature": "",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ],
+    "unresolved_calls": [
+     {
+      "callee": "Add",
+      "receiver_type": "List",
+      "lang": "csharp",
+      "line": "L44",
+      "file": "src/Shop/Services/UserService.cs"
+     }
+    ]
+   },
+   "norm_label": ".names()",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L39"
+  },
+  {
+   "id": "src_shop_services_userservice_shop_services_userservice_pick",
+   "label": ".Pick()",
+   "_callable": true,
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "metadata": {
+    "arity": 1,
+    "signature": "`1:IEnumerable&lt;T&gt;",
+    "namespace": "Shop.Services",
+    "scope_chain": [
+     "s7:0"
+    ]
+   },
+   "norm_label": ".pick()",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L49"
   },
   {
    "id": "address",
@@ -1149,60 +1269,10 @@
    "source_location": ""
   },
   {
-   "id": "dictionary",
-   "label": "Dictionary",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "dictionary",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "ienumerable",
-   "label": "IEnumerable",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "ienumerable",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "ireadonlylist",
-   "label": "IReadOnlyList",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "ireadonlylist",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
-   "id": "src_shop_services_irepository",
-   "label": "IRepository.cs",
-   "_origin": "ast",
-   "community": 2,
-   "file_type": "code",
-   "norm_label": "irepository.cs",
-   "source_file": "src/Shop/Services/IRepository.cs",
-   "source_location": "L1"
-  },
-  {
-   "id": "idisposable",
-   "label": "IDisposable",
-   "_origin": "ast",
-   "community": 3,
-   "file_type": "code",
-   "norm_label": "idisposable",
-   "source_file": "",
-   "source_location": ""
-  },
-  {
    "id": "csharp_namespace:ba08633b333ae873",
    "label": "Shop.Models",
    "_origin": "ast",
-   "community": 4,
+   "community": 2,
    "file_type": "code",
    "metadata": {
     "kind": "csharp_namespace",
@@ -1214,60 +1284,30 @@
    "type": "namespace"
   },
   {
-   "id": "src_shop_models_entity",
-   "label": "Entity.cs",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "entity.cs",
-   "source_file": "src/Shop/Models/Entity.cs",
-   "source_location": "L1"
-  },
-  {
-   "id": "src_shop_models_user",
-   "label": "User.cs",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "user.cs",
-   "source_file": "src/Shop/Models/User.cs",
-   "source_location": "L1"
-  },
-  {
-   "id": "src_shop_models_user_validation",
-   "label": "User.Validation.cs",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "user.validation.cs",
-   "source_file": "src/Shop/Models/User.Validation.cs",
-   "source_location": "L1"
-  },
-  {
-   "id": "src_shop_services_userservice",
-   "label": "UserService.cs",
-   "_origin": "ast",
-   "community": 4,
-   "file_type": "code",
-   "norm_label": "userservice.cs",
-   "source_file": "src/Shop/Services/UserService.cs",
-   "source_location": "L1"
-  },
-  {
    "id": "datetime",
    "label": "DateTime",
    "_origin": "ast",
-   "community": 5,
+   "community": 2,
    "file_type": "code",
    "norm_label": "datetime",
    "source_file": "",
    "source_location": ""
   },
   {
+   "id": "src_shop_models_entity",
+   "label": "Entity.cs",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "entity.cs",
+   "source_file": "src/Shop/Models/Entity.cs",
+   "source_location": "L1"
+  },
+  {
    "id": "src_shop_models_entity_shop_models_entity_createdat",
    "label": "CreatedAt",
    "_origin": "ast",
-   "community": 5,
+   "community": 2,
    "file_type": "code",
    "metadata": {
     "namespace": "Shop.Models",
@@ -1283,7 +1323,7 @@
    "id": "src_shop_models_entity_shop_models_entity_id",
    "label": "Id",
    "_origin": "ast",
-   "community": 5,
+   "community": 2,
    "file_type": "code",
    "metadata": {
     "namespace": "Shop.Models",
@@ -1299,7 +1339,7 @@
    "id": "src_shop_models_entity_shop_models_ientity_1_id",
    "label": "Id",
    "_origin": "ast",
-   "community": 5,
+   "community": 2,
    "file_type": "code",
    "metadata": {
     "namespace": "Shop.Models",
@@ -1312,10 +1352,70 @@
    "source_location": "L10"
   },
   {
+   "id": "src_shop_models_user",
+   "label": "User.cs",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "user.cs",
+   "source_file": "src/Shop/Models/User.cs",
+   "source_location": "L1"
+  },
+  {
+   "id": "src_shop_models_user_validation",
+   "label": "User.Validation.cs",
+   "_origin": "ast",
+   "community": 2,
+   "file_type": "code",
+   "norm_label": "user.validation.cs",
+   "source_file": "src/Shop/Models/User.Validation.cs",
+   "source_location": "L1"
+  },
+  {
+   "id": "idisposable",
+   "label": "IDisposable",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "idisposable",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "src_shop_services_userservice",
+   "label": "UserService.cs",
+   "_origin": "ast",
+   "community": 3,
+   "file_type": "code",
+   "norm_label": "userservice.cs",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L1"
+  },
+  {
+   "id": "dictionary",
+   "label": "Dictionary",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "dictionary",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "src_shop_services_irepository",
+   "label": "IRepository.cs",
+   "_origin": "ast",
+   "community": 4,
+   "file_type": "code",
+   "norm_label": "irepository.cs",
+   "source_file": "src/Shop/Services/IRepository.cs",
+   "source_location": "L1"
+  },
+  {
    "id": "src_shop_models_values",
    "label": "Values.cs",
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "norm_label": "values.cs",
    "source_file": "src/Shop/Models/Values.cs",
@@ -1325,7 +1425,7 @@
    "id": "src_shop_models_values_shop_models_point_x",
    "label": "X",
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "metadata": {
     "namespace": "Shop.Models",
@@ -1341,7 +1441,7 @@
    "id": "src_shop_models_values_shop_models_point_y",
    "label": "Y",
    "_origin": "ast",
-   "community": 6,
+   "community": 5,
    "file_type": "code",
    "metadata": {
     "namespace": "Shop.Models",
@@ -1352,6 +1452,26 @@
    "norm_label": "y",
    "source_file": "src/Shop/Models/Values.cs",
    "source_location": "L12"
+  },
+  {
+   "id": "ienumerable",
+   "label": "IEnumerable",
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "norm_label": "ienumerable",
+   "source_file": "",
+   "source_location": ""
+  },
+  {
+   "id": "ireadonlylist",
+   "label": "IReadOnlyList",
+   "_origin": "ast",
+   "community": 6,
+   "file_type": "code",
+   "norm_label": "ireadonlylist",
+   "source_file": "",
+   "source_location": ""
   },
   {
    "id": "src_shop_models_user_shop_models_status_active",
@@ -1424,10 +1544,30 @@
   {
    "id": "system",
    "label": "system",
-   "community": 4,
+   "community": 2,
    "external": true,
    "file_type": "concept",
    "norm_label": "system",
+   "source_file": "",
+   "type": "external"
+  },
+  {
+   "id": "system_datetime",
+   "label": "system_datetime",
+   "community": 3,
+   "external": true,
+   "file_type": "concept",
+   "norm_label": "system_datetime",
+   "source_file": "",
+   "type": "external"
+  },
+  {
+   "id": "system_math",
+   "label": "system_math",
+   "community": 3,
+   "external": true,
+   "file_type": "concept",
+   "norm_label": "system_math",
    "source_file": "",
    "type": "external"
   },
@@ -1438,26 +1578,6 @@
    "external": true,
    "file_type": "concept",
    "norm_label": "system_collections_generic",
-   "source_file": "",
-   "type": "external"
-  },
-  {
-   "id": "system_datetime",
-   "label": "system_datetime",
-   "community": 4,
-   "external": true,
-   "file_type": "concept",
-   "norm_label": "system_datetime",
-   "source_file": "",
-   "type": "external"
-  },
-  {
-   "id": "system_math",
-   "label": "system_math",
-   "community": 4,
-   "external": true,
-   "file_type": "concept",
-   "norm_label": "system_math",
    "source_file": "",
    "type": "external"
   }
@@ -2135,7 +2255,7 @@
    "weight": 1.0
   },
   {
-   "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "source": "src_shop_services_userservice_shop_services_userservice_register_512555",
    "target": "src_shop_models_values_shop_models_point",
    "relation": "references",
    "_origin": "ast",
@@ -2241,6 +2361,21 @@
   },
   {
    "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_models_user_validation_shop_models_user",
+   "relation": "references",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "context": "return_type",
+   "metadata": {
+    "ref_token": "User"
+   },
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L22",
+   "weight": 1.0
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register_512555",
    "target": "src_shop_models_user_validation_shop_models_user",
    "relation": "references",
    "_origin": "ast",
@@ -2515,6 +2650,17 @@
    "confidence_score": 1.0,
    "source_file": "src/Shop/Models/Values.cs",
    "source_location": "L22",
+   "weight": 1.0
+  },
+  {
+   "source": "src_shop_models_values",
+   "target": "src_shop_models_values_shop_models_userchanged",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/Shop/Models/Values.cs",
+   "source_location": "L24",
    "weight": 1.0
   },
   {
@@ -2932,6 +3078,17 @@
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L22",
+   "weight": 1.0
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice",
+   "target": "src_shop_services_userservice_shop_services_userservice_register_512555",
+   "relation": "method",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "src/Shop/Services/UserService.cs",
    "source_location": "L33",
    "weight": 1.0
   },
@@ -3084,6 +3241,18 @@
   },
   {
    "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_models_user_shop_models_user_addaddress",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L25",
+   "weight": 1.0
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
    "target": "src_shop_services_irepository_shop_services_irepository_1_save",
    "relation": "calls",
    "_origin": "ast",
@@ -3096,6 +3265,18 @@
   },
   {
    "source": "src_shop_services_userservice_shop_services_userservice_register",
+   "target": "src_shop_models_user_shop_models_user_getname",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L29",
+   "weight": 1.0
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register",
    "target": "src_shop_services_userservice_shop_services_ilogger_log",
    "relation": "calls",
    "_origin": "ast",
@@ -3104,6 +3285,18 @@
    "context": "call",
    "source_file": "src/Shop/Services/UserService.cs",
    "source_location": "L29",
+   "weight": 1.0
+  },
+  {
+   "source": "src_shop_services_userservice_shop_services_userservice_register_512555",
+   "target": "src_shop_services_irepository_shop_services_irepository_1_save",
+   "relation": "calls",
+   "_origin": "ast",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "context": "call",
+   "source_file": "src/Shop/Services/UserService.cs",
+   "source_location": "L35",
    "weight": 1.0
   },
   {

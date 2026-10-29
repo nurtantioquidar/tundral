@@ -131,13 +131,13 @@
       "degree": 5
     },
     {
-      "id": "pkg_util_helper",
-      "label": "helper()",
-      "degree": 3
+      "id": "pkg_models_validate",
+      "label": "validate()",
+      "degree": 4
     },
     {
-      "id": "pkg_util_traced",
-      "label": "traced()",
+      "id": "tests_test_service_service",
+      "label": "service()",
       "degree": 3
     }
   ],
@@ -202,7 +202,7 @@
     {
       "type": "bridge_node",
       "question": "Why does `User` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`?",
-      "why": "High betweenness centrality (0.304) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.296) - this node is a cross-community bridge."
     },
     {
       "type": "verify_inferred",
@@ -212,7 +212,7 @@
     {
       "type": "bridge_node",
       "question": "Why does `Repo` connect `Community 5` to `Community 0`, `Community 2`, `Community 3`?",
-      "why": "High betweenness centrality (0.142) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.141) - this node is a cross-community bridge."
     },
     {
       "type": "verify_inferred",
@@ -222,7 +222,7 @@
     {
       "type": "bridge_node",
       "question": "Why does `UserService` connect `Community 3` to `Community 0`, `Community 1`, `Community 5`, `Community 6`, `Community 7`, `Community 8`?",
-      "why": "High betweenness centrality (0.102) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.103) - this node is a cross-community bridge."
     }
   ]
 }

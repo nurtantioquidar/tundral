@@ -409,22 +409,6 @@
    "source_file": ""
   },
   {
-   "id": "shapes",
-   "label": "shapes",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
-   "id": "hue",
-   "label": "hue",
-   "file_type": "concept",
-   "type": "external",
-   "external": true,
-   "source_file": ""
-  },
-  {
    "id": "missing",
    "label": "missing",
    "file_type": "concept",
@@ -456,7 +440,7 @@
   },
   {
    "source": "main",
-   "target": "shapes",
+   "target": "src_shapes",
    "relation": "imports_from",
    "confidence": "EXTRACTED",
    "source_file": "main.zig",
@@ -466,7 +450,7 @@
   },
   {
    "source": "main",
-   "target": "hue",
+   "target": "src_hue",
    "relation": "imports_from",
    "confidence": "EXTRACTED",
    "source_file": "main.zig",
@@ -806,7 +790,7 @@
   },
   {
    "source": "src_shapes",
-   "target": "hue",
+   "target": "src_hue",
    "relation": "imports_from",
    "confidence": "EXTRACTED",
    "source_file": "src/shapes.zig",

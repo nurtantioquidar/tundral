@@ -87,11 +87,6 @@
       "degree": 5
     },
     {
-      "id": "src_main_mount",
-      "label": "mount()",
-      "degree": 4
-    },
-    {
       "id": "src_store_createstore",
       "label": "createStore()",
       "degree": 4
@@ -115,6 +110,11 @@
       "id": "src_utils_format_capitalize",
       "label": "capitalize()",
       "degree": 3
+    },
+    {
+      "id": "src_app_ontoggle",
+      "label": "onToggle()",
+      "degree": 2
     }
   ],
   "surprises": [
