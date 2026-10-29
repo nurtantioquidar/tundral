@@ -213,9 +213,7 @@ pub fn resolve_with(files: Vec<(&SourceFile, FileFacts)>, extra: &[Pass]) -> Gra
     }
     redirects.extend(merge_rationale(&nodes));
 
-    if !redirects.is_empty() {
-        nodes.retain(|n| !redirects.contains_key(&n.id));
-    }
+    nodes.retain(|n| !redirects.contains_key(&n.id) && !n.id.starts_with(DROPPED));
     assign_file_labels(&mut nodes);
 
     let target = |id: &str| -> Option<String> {
@@ -242,10 +240,97 @@ pub fn resolve_with(files: Vec<(&SourceFile, FileFacts)>, extra: &[Pass]) -> Gra
     Graph::assemble_batches(nodes, batches)
 }
 
+/// Prefix of the ids of nodes [`merge_go_package_nodes`] dropped; they leave the graph after the
+/// cross-file passes, which skip them (their kind is no longer `Def`).
+const DROPPED: &str = "\u{0}dropped\u{0}";
+
+/// §12, Go type ids (`dir_T`) held by several files, before §4.5 renaming: when every Go
+/// declaration and receiver node of the id lies in one directory and in files of one kind (all
+/// `_test.go` or none), they keep one node, the first file in path order that declares the type,
+/// else the first receiver node. Build-tag variants, case variants (`ConfigProvider` and
+/// `configProvider`) and receivers in other files of the package merge so. Otherwise nothing
+/// merges and §4.5 renames every emitter, receiver nodes included. A declaration whose id a
+/// qualified stub of its own file holds counts without a node. Dropped nodes leave the graph;
+/// their files' edges keep the id, which the kept node answers to unless other emitters (a file
+/// node, a stub) still rename it.
+fn merge_go_package_nodes(files: &mut [(&SourceFile, FileFacts)]) {
+    let group_of = |rel: &str| -> (String, bool) {
+        let dir = rel.rfind('/').map_or("", |i| &rel[..i]).to_string();
+        (dir, rel.ends_with("_test.go"))
+    };
+    // Holders per id: (file, declares the type, holds a node).
+    let mut holders: HashMap<String, Vec<(usize, bool, bool)>> = HashMap::new();
+    for (fi, (_, facts)) in files.iter().enumerate() {
+        if let crate::facts::LangFacts::Go(g) = &facts.lang {
+            for (id, declared) in &g.pkg_nodes {
+                holders
+                    .entry(id.clone())
+                    .or_default()
+                    .push((fi, *declared, true));
+            }
+            for id in &g.stub_decls {
+                holders
+                    .entry(id.clone())
+                    .or_default()
+                    .push((fi, true, false));
+            }
+        }
+    }
+    let mut drops: Vec<(usize, String)> = Vec::new();
+    for (id, list) in holders {
+        let with_node: Vec<(usize, bool)> = list
+            .iter()
+            .filter(|(_, _, node)| *node)
+            .map(|&(fi, d, _)| (fi, d))
+            .collect();
+        if with_node.len() < 2 {
+            continue;
+        }
+        let groups: HashSet<(String, bool)> = list
+            .iter()
+            .map(|&(fi, _, _)| group_of(&files[fi].0.rel))
+            .collect();
+        if groups.len() != 1 {
+            continue;
+        }
+        let keep = with_node
+            .iter()
+            .find(|(_, d)| *d)
+            .unwrap_or(&with_node[0])
+            .0;
+        drops.extend(
+            with_node
+                .iter()
+                .filter(|&&(fi, _)| fi != keep)
+                .map(|&(fi, _)| (fi, id.clone())),
+        );
+    }
+    drop_go_nodes(files, drops);
+}
+
+/// Take the Go type or receiver node `id` of each file out of the graph (see [`DROPPED`]).
+fn drop_go_nodes(files: &mut [(&SourceFile, FileFacts)], drops: Vec<(usize, String)>) {
+    for (fi, id) in drops {
+        let facts = &mut files[fi].1;
+        if let Some(n) = facts
+            .nodes
+            .iter_mut()
+            .find(|n| n.id == id && n.kind == NodeKind::Def)
+        {
+            n.id = format!("{DROPPED}{id}");
+            n.kind = NodeKind::Stub;
+        }
+        if let crate::facts::LangFacts::Go(g) = &mut facts.lang {
+            g.types.retain(|(_, t)| *t != id);
+        }
+    }
+}
+
 /// §4.5: an id emitted by two or more files is rewritten for every emitter to
 /// `slug(path with extension)_id`, plus `_sha1(path)[:6]` if that still collides. Externals are
 /// shared and exempt.
-fn rename_collisions(files: Vec<(&SourceFile, FileFacts)>) -> Vec<View<'_>> {
+fn rename_collisions(mut files: Vec<(&SourceFile, FileFacts)>) -> Vec<View<'_>> {
+    merge_go_package_nodes(&mut files);
     let mut emitters: HashMap<&str, Vec<usize>> = HashMap::new();
     for (fi, (file, facts)) in files.iter().enumerate() {
         let mut local = HashSet::new();
@@ -253,7 +338,8 @@ fn rename_collisions(files: Vec<(&SourceFile, FileFacts)>) -> Vec<View<'_>> {
             // A node located in another file (a project a solution names, §43) is not an
             // emission of this file: every naming of that path merges into one node.
             let foreign = !n.source_file.is_empty() && n.source_file != file.rel;
-            if n.kind != NodeKind::External && !foreign && local.insert(n.id.as_str()) {
+            let dropped = n.id.starts_with(DROPPED);
+            if n.kind != NodeKind::External && !foreign && !dropped && local.insert(n.id.as_str()) {
                 emitters.entry(n.id.as_str()).or_default().push(fi);
             }
         }

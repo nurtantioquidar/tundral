@@ -1386,8 +1386,9 @@ ripgrep: 11 package nodes, 16 `depends_on` edges.
 ## 12. Go
 
 Fixture: `tests/fixtures/go/` (module `example.com/shop`; packages `store/`, `service/`, `cmd/app/`).
-Goldens: `go.graphify.json` (raw `--no-cluster`), `go.clustered.graphify.json`. Rules below were
-isolated with extra probes; the probe snippets are quoted inline.
+Goldens: `go.graphify.json` (raw `--no-cluster`), `go.clustered.graphify.json`, from Graphify
+0.9.97. Rules below were isolated with extra probes; the probe snippets are quoted inline. Where
+0.9.97 differs from 0.9.86 the text says so (2026-10-29: kubernetes and probes run through both).
 
 Notation: `slug` as in §4.1. `dir` = the **last path component of the directory containing the file**; for a file at
 the scan root it is the **basename of the scan root directory itself** (probe: `root.go` with
@@ -1399,12 +1400,11 @@ the scan root it is the **basename of the scan root directory itself** (probe: `
 | Construct | id | label | source_location | extra fields |
 |---|---|---|---|---|
 | file | `fileid` | basename (`helpers.go`) | `L1` | — |
-| `type X struct/interface/<named>` | `slug(dir)_slug(X)` → `store_id`, `service_user`, `store_entity` | `X` | line of the type spec | — |
-| func `F` | `fileid_slug(F)` → `store_helpers_normalize`, `service_service_newuserservice` | `F()` | line of `func` | — |
-| method `func (r T) M()` / `(r *T)` | `slug(dir)_slug(T)_slug(M)` → `service_userservice_register`, `store_model_identity` | `.M()` | line of `func` | — |
+| `type X struct/interface/<named>`, alias `type X = Y` (generic ones too, grouped ones too) | `slug(dir)_slug(X)` → `store_id`, `service_user`, `store_entity`, `store_key` | `X` | line of the type spec | `_callable`, `_callable_class` |
+| func `F` | `fileid_slug(F)` → `store_helpers_normalize`, `service_service_newuserservice` | `F()` | line of `func` | `_callable` |
+| method `func (r T) M()` / `(r *T)`, generic `func (s *Store[T]) Put` | `<id of T>_slug(M)` → `service_userservice_register`, `store_model_identity`, `store_store_put` (the receiver's type arguments are dropped) | `.M()` | line of `func` | `_callable` |
 | interface method `M()` | `<interface id>_slug(M)` → `service_greeter_greet` | `.M()` | line of the method spec | — |
-| generic receiver `func (s *Store[T]) Put` | method `store_store_t_put`; **plus** a separate receiver node `store_store_t` label `Store[T]` (see quirk G3) | | | |
-| type parameter used as a type (`T`, `N`) | `slug(T)` → `t`, `n` (global, shared across files and languages) | `T` | `""` | `source_file: ""` |
+| receiver type with no `type T` earlier in the file (quirk G3) | `slug(dir)_slug(T)` | `T` (no type arguments) | line of the first such method | `_callable`, `_callable_class` |
 | qualified external type `http.Request`, `testing.T` | `go_type_` + `slug(import path)` + `_` + `slug(Name)` → `go_type_net_http_request`, `go_type_testing_t` | `net/http.Request` (import path + `.` + Name) | `""` | `source_file: ""`, `file_type: "code"`, `_origin: "ast"` |
 | external import | `go_pkg_` + `slug(import path)` → `go_pkg_fmt`, `go_pkg_github_com_google_uuid` | **same as id** (quirk G6) | absent | `file_type: "concept"`, `type: "external"`, `external: true`, `source_file: ""`, no `_origin` |
 | `go.mod` | `pkg_` + `slug(module path)` → `pkg_example_com_shop` | module path `example.com/shop` | `L1` | `type: "package"`, `ecosystem: "go"`, `source_file: "go.mod"`; no edges; `require` lines produce nothing; stderr warns "yielded no symbols ... go.mod" |
@@ -1412,16 +1412,53 @@ the scan root it is the **basename of the scan root directory itself** (probe: `
 Raw key order: `id, label, file_type, [type, ecosystem,] source_file, source_location, _origin`.
 External: `id, label, file_type, type, external, source_file`.
 
-**No Go node ever carries `_callable` or `_callable_class`** (contrast Python/Java). No
-`metadata`, no `node_kind`.
+`_callable` and `_callable_class` are new in 0.9.97 (0.9.86 gave Go nodes neither). A type whose
+id a qualified stub of its own file already holds (`ktesting.TContext` in dir `ktesting`) leaves
+the stub's label in place but gives it both flags. `metadata` only carries
+`unresolved_calls` (§12.2). No `node_kind`.
 
-Not emitted at all (verified): `const`, `var` (incl. `var ErrNotFound`), type aliases
-`type Key = string` / grouped `G2 = int`, closures / func literals (`run := func(){}`), struct
-fields, and **any comment** — Go produces **no rationale nodes** (package doc, `// NOTE:`,
-`// WHY:`, `// TODO:`, `// HACK:`, `/* WHY: */` all ignored; probe `p6`). Grouped `type ( G1 struct{} )`
-is emitted normally.
+An alias is a node with its `contains` edge and nothing else: no `references` from its right-hand
+side, no interface methods for `type F = interface{ M() }` (probe `go-alias`, 0.9.86 emitted no
+alias at all).
 
-#### Cross-package type re-keying (quirk G1)
+**Case variants.** Names of one file whose ids coincide (`Set`/`set`, `STM`/`stm`, `IntervalTree`
+/`intervalTree`, `run`/`run_`) are told apart by `_` + `sha1(name)[:6]`, except that the group's
+only exported name (capital first letter) keeps the plain id: `concurrency_stm` (`STM`) and
+`concurrency_stm_a92c15` (`stm`); a suffixed type's methods hang off its suffixed id
+(`adt_intervaltree_5f7fc6_find`). This held for all 2,996 names in such groups on kubernetes.
+0.9.86 suffixed only functions and methods, and folded a type's case variants into one node.
+
+Not emitted at all (verified): `const`, `var` (incl. `var ErrNotFound`), closures / func literals
+(`run := func(){}`), struct fields, type parameters, and **any comment** — Go produces **no
+rationale nodes** (package doc, `// NOTE:`, `// WHY:`, `// TODO:`, `// HACK:`, `/* WHY: */` all
+ignored; probe `p6`). Grouped `type ( G1 struct{} )` is emitted normally.
+
+#### Type ids held by several files (0.9.97)
+
+Types are keyed by directory, so build-tag variants (`ztypes_linux_386.go` and
+`ztypes_aix_ppc.go` each declaring `Rusage`), case variants in different files
+(`ConfigProvider`/`configProvider`) and receiver nodes in files without the declaration share one
+id. Before the §4.5 rename (probes `go-xfile*`, `go-xdir`, `go-x9-*`; 2,996 kubernetes groups):
+
+- When every declaration and receiver node of the id (a stub-held declaration included) lies in
+  **one directory and in files of one kind** (all `_test.go`, or none), they keep **one node**:
+  the first file in path order that declares the type, else the first receiver node
+  (`admission_configprovider` labelled `configProvider` from `config.go`; `netlink_ifreq` labelled
+  `Ifreq`). The other files' nodes disappear; their `contains`, `method` and other edges stay on
+  the kept id.
+- Otherwise nothing merges: a receiver in a `_test.go` file beside a non-test declaration
+  (`realImageGCManager`), declarations in two directories with the same last component
+  (`cmd/kube-proxy/app` and `test/e2e/dra/test-driver/app` declaring `Options`) and a non-test
+  declaration plus a test one all go to §4.5, which renames every holder per file, receiver nodes
+  included.
+- After a merge, other emitters of the id (a same-named file node, a qualified stub of another
+  package, another language) still rename the kept node (§4.5): `a_x_go_a_util` beside `util.py`
+  and `util.ts`. A dropped file's edges keep the plain id and then dangle (`a/y.go`'s
+  `method` edge from `Util`).
+
+0.9.86 renamed every holder in every case.
+
+#### Cross-package type re-keying (quirk G1, unchanged in 0.9.97)
 
 A type defined in package dir `p` that is referenced **as a type through a package qualifier
 `p.T` from another package** (embed, struct field, parameter, return, generic arg) is re-keyed to
@@ -1459,8 +1496,19 @@ All Go edges have `weight: 1.0`, `_origin: "ast"`, `source_file` = file of the s
 | `contains` | file → top-level type / func | always | EXTRACTED | none | definition line |
 | `method` | receiver type id → method; interface → interface method | always (target type need not exist; id is computed) | EXTRACTED | none | method line |
 | `embeds` | struct/interface → embedded type (`store.Model`, `*Base`, `io.Reader`, interface `R`) | embedded field / embedded interface | EXTRACTED | none | line of the embedded field |
-| `references` | struct → field type | named field type resolvable to local type, type param, or `go_type_*` stub | EXTRACTED | `field` | field line |
+| `references` | struct → field type | named field type resolvable to a local type or a `go_type_*` stub | EXTRACTED | `field` | field line |
 | `references` | func/method → type | parameter / return / generic argument | EXTRACTED | `parameter_type` / `return_type` / `generic_arg` | the func line |
+
+A type parameter is no type: `[T any]`, a receiver's `[T]` and a constraint's parameters produce no
+stub and no edge, even where the parameter shadows a declared type (`func F[ID any](x ID) ID`).
+0.9.86 made global stubs `t`, `n` for them.
+
+Stubs bind by label over **every** definition of the graph, not only Go's: a bare `T` binds to
+the unique node labelled `T` (types, then functions), and a qualified `u.T` to the unique type `T`
+of `u`'s directory, but a Python class or a YAML key labelled `T` (anywhere for the bare form, in
+`u`'s directory for the qualified one) leaves the stub unbound (probes `go-blabel*`, `go-qlabel`;
+`pkg/kubelet/status/.mockery.yaml` lists `PodStatusProvider`, so `status.PodStatusProvider`
+becomes `go_type_k8s_io_kubernetes_pkg_kubelet_status_podstatusprovider`).
 | `imports_from` | file → `go_pkg_*` external | stdlib or unresolved import path | EXTRACTED | `import` | line of that import spec |
 | `imports_from` | file → **every file node** in the package dir | import path = `<go.mod module>/<dir path>` | EXTRACTED | `import` | import spec line |
 | `calls` | func/method → func/method/type | see resolution | EXTRACTED / INFERRED | `call` | call line |
@@ -1500,12 +1548,33 @@ Observed (fixture + probe `p4`):
 2. **Same file, method call on any receiver** `t.Only()` / `item.Identity()` → resolved by **bare method name among methods defined in the same file**, ignoring the receiver's type; when several types in the file define the name, the **last-defined** one wins (`t.Do()` with `t T1` → `lib_t2_do`; `item.Identity()` → `store_model_identity`, not the interface method). EXTRACTED, no score. Quirk G5.
 3. **Same package, other file, bare call** `OtherFile()`, `Dup()` → INFERRED, `confidence_score: 0.85` (`service_service_test_testregister -calls-> service_service_newuserservice`). The candidate set includes **methods** of other files (`OnlyMethodInB()` → `lib_t3_onlymethodinb`, quirk). A same-package candidate is preferred over a same-named func elsewhere (`clean(...)` in `service_test.go` → `service_service_clean`, not `store_helpers_clean`). Dot-imported funcs resolve the same way: `Normalize(name)` → `store_helpers_normalize` INFERRED 0.85.
 4. **Package-qualified** `pkg.F()` where `pkg` is the import alias or the **last import-path segment** (not the package clause: `mylib.Helper()` from dir `lib` is dropped) and the import resolves locally → EXTRACTED with `confidence_score: 1.0` (`cmd_app_main_main -calls-> store_store_sum`, `-> store_helpers_format`, `-> service_service_newuserservice`). Takes precedence over a same-named local func (`ml.Dup()` → `lib_a_dup` while bare `Dup()` → `app_main_dup`).
-5. **Dropped**: method calls on values whose method lives in another file (`svc.Register()`, `t.Only()` in `b.go`, `s.users.Put`), calls through fields/vars/closures (`s.log(...)`, `cb()`, `run()`), unknown qualified names (`ml.Missing()`), all external package calls (`fmt.Println`, `strings.ToLower`, `sort.Slice`, `uuidlib.New`) — Go never emits `calls` to `go_pkg_*`, composite literals `&T{}` / `T{}` (no constructor edge), `go f()` / `defer f()` count as plain calls.
-6. One `calls` edge per (caller, callee) pair; the first call site's line is kept.
+5. **Typed receivers (0.9.97).** `x.M(..)` that rule 2 binds to nothing, or only to the caller
+   itself (`func (o *Outer) Encode() { o.in.Encode() }`), with `x` typed `T` or `*T` (a plain name,
+   no qualifier, no type arguments) by a declaration: the caller's own receiver, parameters,
+   named results, `var x T`, `x := T{..}` / `&T{..}` / `new(T)`, else the **first** such
+   declaration of the name anywhere in the file (another function's parameter, a struct field,
+   a package `var`). Inside a method, `r.f.M(..)` on the receiver `r` types `f` from the file's
+   declarations alone (struct fields included; first wins, whatever type `r` has). `T` then
+   selects the unique Go type or receiver node labelled `T` (any directory) and its method `M`
+   through the `method` edges (interface methods too): `calls` INFERRED 0.85. A type that is
+   known but ambiguous or lacks `M` gives nothing (promoted methods are not followed); a `T` no
+   Go type carries (an undeclared or function-local type, a type parameter, a case variant
+   merged away) is recorded in the caller's `metadata.unresolved_calls` as
+   `{"callee","receiver_type","lang":"go","line","file"}`, once per callee and type, in call
+   order. Builtin types (`err error`) and call results (`x := NewT()`) type nothing (probes
+   `go-recv*`, `go-field*`, `go-deleg`).
+6. **Dropped**: method calls a declaration does not type (`svc := NewUserService();
+   svc.Register()`, `s.users.Put` outside methods), calls through fields/vars/closures
+   (`s.log(...)`, `cb()`, `run()`), unknown qualified names (`ml.Missing()`), all external package
+   calls (`fmt.Println`, `strings.ToLower`, `sort.Slice`, `uuidlib.New`) — Go never emits `calls`
+   to `go_pkg_*`, composite literals `&T{}` / `T{}` (no constructor edge), `go f()` / `defer f()`
+   count as plain calls.
+7. One `calls` edge per (caller, callee) pair; the first call site's line is kept.
 
 **dijkstral (Q24 not reproduced).** A method call whose receiver's type a declaration fixes
 resolves to that type's method wherever the package declares it, EXTRACTED with score 1.0, beside
-whatever the same-file name rule (G5) chose. The receiver's type comes from the method receiver,
+whatever the same-file name rule (G5) chose and only for pairs rule 5 did not already link (those
+keep Graphify's INFERRED 0.85). The receiver's type comes from the method receiver,
 parameters and named results, `var x T`, `x := T{..}` / `&T{..}` / `new(T)` / `v.(T)`, a
 type switch case with a single type, the declared results of the function or method a call
 reaches (`x, err := NewT()`, `a.B().C()`, conversions `T(x)`, explicitly instantiated
@@ -1532,12 +1601,17 @@ NewUserService()`), `TestRegister → UserService.Register`, `Register → Store
 
 - **G1** cross-package type re-keying to `<slug(def file)>_<dir>_<name>`; method ids not re-keyed.
 - **G2** id collisions merge file and type nodes (file node lost, self-loop `contains`), and func vs method.
-- **G3** generic receivers create a phantom node `store_store_t` label `Store[T]` at the first
-  method's line, owning `.Put()`/`.Get()` via `method`, with no `contains` from the file and no
-  link to the real `Store` type.
+- **G3** a receiver type not declared earlier in the file gets a node at the first method's line
+  (`func (m Mixed) Run()` before `type Mixed`), with no `contains` from the file; 0.9.97 merges it
+  with the package's declaration as above. 0.9.86 also kept generic receivers apart
+  (`store_store_t`, label `Store[T]`).
 - **G4** package imports link to `_test.go` files.
 - **G5** method calls resolved by bare name, last definition in the file wins.
 - **G6** external package nodes use the id as label (`go_pkg_fmt`), unlike Python (`json`).
+- **G7** (0.9.97) typed receiver calls type a variable by the first declaration of its name in
+  the whole file, and a receiver's field by name alone (`func (x *Box) M() { x.inner.Do() }`
+  follows whichever `inner` the file declares first). Reproduced: Graphify's edges are its
+  output; dijkstral's own inference (Q24) adds the sound targets beside them.
 - Root-level type ids depend on the name of the directory graphify was run in (`p1_r`), so the
   graph changes if the checkout directory is renamed.
 
@@ -1919,7 +1993,7 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 | Q11 | Java: a wildcard import resolves to a class named like the package; static imports link to every same-named class; whether an import targets a class depends on its use elsewhere in the repo; `@Override` gets one stub per file. | §13 |
 | Q12 | Python: calls to external modules are emitted only from top-level functions and only through `import x` / `import x as y` aliases. Calls qualified by a local module are dropped. | §9.4 |
 | Q13 | Collapse artefacts: `contains`/`method` links carrying `context: "call"` (935 in the corpus); `uses` links carrying `parameter_type`; an EXTRACTED link with `confidence_score: 0.85`. | §8.2 |
-| Q14 | Generic type parameters become global stub nodes (`t`, `u`, `f`) shared across unrelated files. | §9, §11, §12 |
+| Q14 | Generic type parameters become global stub nodes (`t`, `u`, `f`) shared across unrelated files (Go: 0.9.86 only). | §9, §11, §12 |
 | Q15 | Rust in-file and cross-file call resolution skips Python builtin names (`len`, `map`, `iter`, `min`, …). Rust type stubs can resolve to classes in extensionless Python scripts. | §11 |
 | Q16 | JSON key ids use only the immediate parent key (`package_c_d` for `deep.a.b.c.d`). TOML package files are reported as "yielded no symbols" yet emit a node. | §14 |
 | Q17 | `dynamic_import` edges have no `weight` and no `source_location`. | §7.1 |
@@ -2005,11 +2079,13 @@ section disagrees with an earlier one, this section wins; the module docs of eac
   importing directory. Class-expression methods, object-literal methods passed to module-level
   calls, and declarations inside top-level `describe`/`it` callbacks become module-level
   functions (needed for frappe-style codebases).
-- **Go (§12).** Type-parameter and unresolved stubs are per file, not global. Same-file names that
-  differ only in case get `_sha1(name)[:6]`. Stubs bind globally by label (unique type, else unique
-  function). In-file calls bind against all of the file's nodes, last wins, skipping a builtin
-  denylist; bare cross-file calls bind by path proximity. Generic receivers create a node for any
-  receiver type not declared earlier in the file.
+- **Go (§12).** Unresolved stubs are per file, not global; type parameters make none (0.9.97).
+  Same-file names that differ only in case get `_sha1(name)[:6]` unless the name is the group's
+  only exported one. Stubs bind globally by label (unique type, else unique function), and a
+  label any other language's definition carries binds nothing. In-file calls bind against all of
+  the file's nodes, last wins, skipping a builtin denylist; bare cross-file calls bind by path
+  proximity; typed receivers then bind by declared type (0.9.97). Receiver nodes exist for any
+  receiver type not declared earlier in the file, and merge with the package's declaration.
 - **Java (§13).** Scoped stubs use the last identifier as their label, except annotations, which
   keep the full name. Graphify counts external import nodes as emitters in the §4.5 collision
   rename; dijkstral exempts externals in every language (a few Java stub ids differ).
