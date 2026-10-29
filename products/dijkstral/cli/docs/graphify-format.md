@@ -4940,4 +4940,10 @@ spanning lines stays):
 Fixture: 100% of nodes and links, communities exact, report goldens exact. Probes: 293 of 293
 match. The seven `.sql` files of Graphify's repository at the bench pin (v0.9.86, `corpus.toml`),
 run through both tools as data: 68 of 68 node and link records match. Every quirk above is
-reproduced.
+reproduced. In the whole `graphify` corpus (2026-10-29, `parity.py --ext .sql` against 0.9.97 with
+the grammar) all 34 nodes and 34 links match and one link's line differs: `sample_schema_qualified.sql`
+gives `references` both from its `CREATE TABLE` (L6) and from an `ALTER TABLE` (L11), and Graphify
+keeps L6 there because the corpus also holds a C++ `Logger.h`/`Logger.cpp` pair, which turns the
+whole build to first-wins (quirk ZG2, §33.6, not reproduced). Without that pair it keeps L11, as
+dijkstral does. The corpus's non-SQL nodes and links are identical before and after SQL
+extraction.
