@@ -91,7 +91,9 @@ records the build and install commands and times, model calls (Graphify: shim tr
 dijkstral: a counting `codex` wrapper passed as `DIJKSTRAL_CODEX`), the tool's own token counts,
 graph size, install footprint, hook commands and versions. The manifest is written last, so an
 interrupted `prepare` resumes per corpus, reusing a finished copy and the tools' semantic caches.
-Workspaces bake in the tool paths (hooks, MCP command), so `run` refuses a different `--dijkstral`.
+Workspaces bake in the tool paths (hooks, MCP command), so `run` refuses a different `--dijkstral`,
+and `run` and `prepare` refuse a rebuild at the same path: the manifest records the binary's
+sha256, since `dijkstral --version` reads the same for every build (`prepare --force` rebuilds).
 
 **Sessions.** One fixed prompt for every arm: `Question: …`, `Question date: …` when the task has
 one, then "Answer from this repository. Cite file paths and symbol names where relevant. Be

@@ -48,6 +48,7 @@ import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from functools import cache
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -1230,9 +1231,41 @@ def tool_versions(ctx: Ctx, arm: str, semantic: bool) -> dict:
     if arm == "dijkstral":
         v["dijkstral"] = run_text([str(ctx.dijkstral), "--version"])
         v["dijkstral_path"] = str(ctx.dijkstral)
-        v["dijkstral_sha256"] = hashlib.sha256(ctx.dijkstral.read_bytes()).hexdigest()
+        v["dijkstral_sha256"] = binary_sha256(str(ctx.dijkstral))
         v["git_head"] = run_text(["git", "-C", str(BENCH), "rev-parse", "HEAD"])
     return v
+
+
+@cache
+def binary_sha256(path: str) -> str:
+    """The build's identity: `dijkstral --version` reads the same for every build."""
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def stale_dijkstral(ctx: Ctx, corpus_id: str, arm: str) -> str | None:
+    """Why the arm's prepared workspace came from another dijkstral than `ctx.dijkstral`, or None.
+
+    Its graph, hooks and MCP command come from the build that prepared it: another path is named
+    in its hooks, and a rebuild at the same path is caught by the content hash in its manifest
+    (manifests written before the hash was recorded are checked by path only)."""
+    if arm != "dijkstral":
+        return None
+    v = (read_json(ctx.manifest(corpus_id, arm)) or {}).get("versions") or {}
+    built, sha = v.get("dijkstral_path"), v.get("dijkstral_sha256")
+    if built and built != str(ctx.dijkstral):
+        return (
+            f"{corpus_id} [dijkstral] was prepared with {built} (its hooks.json names it); "
+            f"pass --dijkstral {built} or re-run prepare --force"
+        )
+    if sha and ctx.dijkstral.exists():
+        now = binary_sha256(str(ctx.dijkstral))
+        if now != sha:
+            return (
+                f"{corpus_id} [dijkstral] was prepared with another build of {ctx.dijkstral} "
+                f"(sha256 {sha[:12]}, now {now[:12]}); re-run prepare --force to rebuild it "
+                f"with this one (a semantic workspace calls the model again)"
+            )
+    return None
 
 
 def run_text(cmd: list[str]) -> str:
@@ -1601,6 +1634,13 @@ def cmd_prepare(ctx: Ctx, args, tasks: list[dict], arms: list[str]) -> None:
     pending = [
         it for it in items if args.force or not ctx.manifest(it[0], it[3]).exists()
     ]
+    stale = [
+        why
+        for it in items
+        if it not in pending and (why := stale_dijkstral(ctx, it[0], it[3]))
+    ]
+    if stale:
+        sys.exit("\n".join(stale))
     ctx.log(
         f"{len(items)} workspaces, {len(items) - len(pending)} already prepared, {len(pending)} to build, jobs {ctx.jobs}"
     )
@@ -1663,15 +1703,13 @@ def cmd_run(ctx: Ctx, args, tasks: list[dict], arms: list[str]) -> None:
         sys.exit(
             f"not prepared: {unprepared}; run `prepare` with the same --tasks/--arms first"
         )
-    for cid, arm in sorted({(t["corpus_id"], a) for t, a in items if a == "dijkstral"}):
-        built = ((read_json(ctx.manifest(cid, arm)) or {}).get("versions") or {}).get(
-            "dijkstral_path"
-        )
-        if built and built != str(ctx.dijkstral):
-            sys.exit(
-                f"{cid} [dijkstral] was prepared with {built} (its hooks.json names it); "
-                f"pass --dijkstral {built} or re-run prepare --force"
-            )
+    stale = [
+        why
+        for cid, arm in sorted({(t["corpus_id"], a) for t, a in items})
+        if (why := stale_dijkstral(ctx, cid, arm))
+    ]
+    if stale:
+        sys.exit("\n".join(stale))
     pending = [(t, a) for t, a in items if not session_done(ctx, t, a)]
     ctx.log(
         f"{len(items)} sessions, {len(items) - len(pending)} already done, {len(pending)} to run, jobs {ctx.jobs}"

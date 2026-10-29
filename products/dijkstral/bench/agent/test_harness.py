@@ -11,6 +11,7 @@ driven by the local fake provider (a shell command and a successful MCP call);
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import shutil
@@ -483,6 +484,46 @@ class Harness(unittest.TestCase):
                 tool_dir_name("graphify", True), "graphify-0.9.97-semantic"
             )
             self.assertEqual(tool_dir_name("dijkstral", False), "dijkstral")
+
+    def test_a_rebuilt_dijkstral_is_refused(self):
+        binary = self.ctx.dijkstral
+        binary.parent.mkdir(parents=True)
+        binary.write_bytes(b"build 1")
+        run.binary_sha256.cache_clear()
+        self.ctx.manifest("fastapi", "dijkstral").parent.mkdir(parents=True)
+        run.write_json(
+            self.ctx.manifest("fastapi", "dijkstral"),
+            {"versions": {"dijkstral_path": str(binary),
+                          "dijkstral_sha256": run.binary_sha256(str(binary))}},
+        )  # fmt: skip
+        self.assertIsNone(run.stale_dijkstral(self.ctx, "fastapi", "dijkstral"))
+        self.assertIsNone(run.stale_dijkstral(self.ctx, "fastapi", "none"))
+        # Rebuilt at the same path: `--version` is unchanged, the content hash is not.
+        binary.write_bytes(b"build 2")
+        run.binary_sha256.cache_clear()
+        why = run.stale_dijkstral(self.ctx, "fastapi", "dijkstral")
+        self.assertIn("another build", why or "")
+        corpus = self.tmp / "corpus"
+        corpus.mkdir()
+        t = task(corpus=str(corpus))
+        args = argparse.Namespace(force=False, max_requests=10)
+        for cmd in (run.cmd_run, run.cmd_prepare):
+            with self.assertRaises(SystemExit) as stop:
+                cmd(self.ctx, args, [t], ["dijkstral"])
+            self.assertIn("another build", str(stop.exception.code))
+        # Another path is named in the workspace's hooks.
+        run.write_json(
+            self.ctx.manifest("fastapi", "dijkstral"),
+            {"versions": {"dijkstral_path": "/elsewhere/dijkstral"}},
+        )
+        why = run.stale_dijkstral(self.ctx, "fastapi", "dijkstral")
+        self.assertIn("--dijkstral /elsewhere/dijkstral", why or "")
+        # A manifest from before the hash was recorded is checked by path only.
+        run.write_json(
+            self.ctx.manifest("fastapi", "dijkstral"),
+            {"versions": {"dijkstral_path": str(binary)}},
+        )
+        self.assertIsNone(run.stale_dijkstral(self.ctx, "fastapi", "dijkstral"))
 
     def test_base_path_drops_tool_dirs(self):
         d = self.tmp / "toolbin"
