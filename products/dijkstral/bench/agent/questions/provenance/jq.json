@@ -1,0 +1,567 @@
+{
+ "repo": "jq",
+ "commit": "34f7186b86743a083a589741b6cea95293524108",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [],
+ "indexers": [],
+ "oracle_commit": null,
+ "questions": {
+  "jq-k01": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "gen_import",
+     "type": "symbol",
+     "in": [
+      "src/parser.y",
+      "src/compile.c"
+     ]
+    },
+    {
+     "fact": "process_dependencies",
+     "type": "symbol",
+     "in": [
+      "src/linker.c"
+     ]
+    },
+    {
+     "fact": "find_lib",
+     "type": "symbol",
+     "in": [
+      "src/linker.c"
+     ]
+    },
+    {
+     "fact": "load_library",
+     "type": "symbol",
+     "in": [
+      "src/linker.c"
+     ]
+    },
+    {
+     "fact": "block_bind_library",
+     "type": "symbol",
+     "in": [
+      "src/compile.c",
+      "src/linker.c"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/parser.y",
+     "lines": "430-453",
+     "note": "import/include rules call gen_import"
+    },
+    {
+     "file": "src/compile.c",
+     "lines": "483-541",
+     "note": "block_take_imports collects DEPS; gen_import builds the DEPS instruction"
+    },
+    {
+     "file": "src/linker.c",
+     "lines": "435-477",
+     "note": "load_program parses, then calls process_dependencies"
+    },
+    {
+     "file": "src/linker.c",
+     "lines": "252-345",
+     "note": "process_dependencies: find_lib, load_library, block_bind_library, circular import check"
+    },
+    {
+     "file": "src/linker.c",
+     "lines": "144-238",
+     "note": "find_lib tries <dir>/<name>.jq, <name>/jq/main.jq, <name>/<basename>.jq over the search chain"
+    },
+    {
+     "file": "src/linker.c",
+     "lines": "349-406",
+     "note": "load_library: jq_parse_library, recursive process_dependencies, block_bind_self"
+    },
+    {
+     "file": "src/compile.c",
+     "lines": "372-404",
+     "note": "block_bind_library binds definitions as libname::symbol"
+    }
+   ]
+  },
+  "jq-k02": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "gen_try",
+     "type": "symbol",
+     "in": [
+      "src/compile.c",
+      "src/parser.y"
+     ]
+    },
+    {
+     "fact": "TRY_BEGIN",
+     "type": "symbol",
+     "in": [
+      "src/execute.c",
+      "src/compile.c",
+      "src/opcode_list.h"
+     ]
+    },
+    {
+     "fact": "f_error",
+     "type": "symbol",
+     "in": [
+      "src/builtin.c"
+     ]
+    },
+    {
+     "fact": "set_error",
+     "type": "symbol",
+     "in": [
+      "src/execute.c"
+     ]
+    },
+    {
+     "fact": "stack_restore",
+     "type": "symbol",
+     "in": [
+      "src/execute.c"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/parser.y",
+     "lines": "676-687",
+     "note": "try/catch rules call gen_try"
+    },
+    {
+     "file": "src/compile.c",
+     "lines": "1017-1051",
+     "note": "gen_try layout: TRY_BEGIN handler, exp, TRY_END, JUMP, handler"
+    },
+    {
+     "file": "src/builtin.c",
+     "lines": "1283-1285",
+     "note": "f_error returns jv_invalid_with_msg"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "906-932",
+     "note": "CALL_BUILTIN: invalid result with message -> set_error, goto do_backtrack"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "332-336",
+     "note": "set_error records the error for try/catch"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "804-871",
+     "note": "do_backtrack -> stack_restore; ON_BACKTRACK(TRY_BEGIN) jumps to the handler; ON_BACKTRACK(TRY_END) wraps"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "270-302",
+     "note": "stack_restore unwinds to the last fork point"
+    }
+   ]
+  },
+  "jq-k03": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "_modify",
+     "type": "symbol",
+     "in": [
+      "src/builtin.jq",
+      "src/parser.y"
+     ]
+    },
+    {
+     "fact": "PATH_BEGIN",
+     "type": "symbol",
+     "in": [
+      "src/execute.c",
+      "src/builtin.c"
+     ]
+    },
+    {
+     "fact": "path_append",
+     "type": "symbol",
+     "in": [
+      "src/execute.c"
+     ]
+    },
+    {
+     "fact": "jv_setpath",
+     "type": "symbol",
+     "in": [
+      "src/jv_aux.c",
+      "src/builtin.c"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/parser.y",
+     "lines": "364-366",
+     "note": "Expr \"|=\" Expr -> gen_call(\"_modify\", ...)"
+    },
+    {
+     "file": "src/builtin.jq",
+     "lines": "14-30",
+     "note": "_assign and _modify: reduce path(paths), getpath, setpath"
+    },
+    {
+     "file": "src/builtin.c",
+     "lines": "2094-2100",
+     "note": "path/1 is bytecoded as PATH_BEGIN, arg, PATH_END"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "627-800",
+     "note": "PATH_BEGIN/PATH_END; INDEX and EACH call path_append"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "234-249",
+     "note": "path_append extends jq->path"
+    },
+    {
+     "file": "src/builtin.c",
+     "lines": "1444-1444",
+     "note": "f_setpath calls jv_setpath"
+    },
+    {
+     "file": "src/jv_aux.c",
+     "lines": "390-447",
+     "note": "jv_setpath rebuilds the value recursively along the path"
+    }
+   ]
+  },
+  "jq-k04": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "check_literal",
+     "type": "symbol",
+     "in": [
+      "src/jv_parse.c"
+     ]
+    },
+    {
+     "fact": "jv_number_with_literal",
+     "type": "symbol",
+     "in": [
+      "src/jv_parse.c",
+      "src/jv.c"
+     ]
+    },
+    {
+     "fact": "jvp_literal_number",
+     "type": "symbol",
+     "in": [
+      "src/jv.c"
+     ]
+    },
+    {
+     "fact": "jv_number_get_literal",
+     "type": "symbol",
+     "in": [
+      "src/jv_print.c",
+      "src/jv.c"
+     ]
+    },
+    {
+     "fact": "jv_dump_term",
+     "type": "symbol",
+     "in": [
+      "src/jv_print.c"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/jv_parse.c",
+     "lines": "511-555",
+     "note": "check_literal: numeric token -> jv_number_with_literal under USE_DECNUM"
+    },
+    {
+     "file": "src/jv.c",
+     "lines": "529-670",
+     "note": "jvp_literal_number holds the decNumber; jv_number_get_literal returns the literal string"
+    },
+    {
+     "file": "src/jv_print.c",
+     "lines": "254-275",
+     "note": "jv_dump_term prints the literal if present, else jvp_dtoa_fmt of the double"
+    }
+   ]
+  },
+  "jq-k05": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "src/builtin.jq",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "bind_bytecoded_builtins",
+     "type": "symbol",
+     "in": [
+      "src/builtin.c"
+     ]
+    },
+    {
+     "fact": "function_list",
+     "type": "symbol",
+     "in": [
+      "src/builtin.c"
+     ]
+    },
+    {
+     "fact": "src/libm.h",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "gen_cbinding",
+     "type": "symbol",
+     "in": [
+      "src/compile.c",
+      "src/builtin.c"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/builtin.c",
+     "lines": "2127-2151",
+     "note": "jq_builtins from builtin.inc; builtins_bind combines all kinds"
+    },
+    {
+     "file": "src/builtin.c",
+     "lines": "2080-2125",
+     "note": "bind_bytecoded_builtins: empty, not, path, last, range"
+    },
+    {
+     "file": "src/builtin.c",
+     "lines": "1957-2050",
+     "note": "function_list of C builtins, including libm.h entries"
+    },
+    {
+     "file": "src/compile.c",
+     "lines": "1072-1082",
+     "note": "gen_cbinding wraps each cfunction as CLOSURE_CREATE_C"
+    },
+    {
+     "file": "src/builtin.jq",
+     "lines": "1-30",
+     "note": "builtins defined in jq"
+    }
+   ]
+  },
+  "jq-k06": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "src/exec_stack.h",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "stack_push_block",
+     "type": "symbol",
+     "in": [
+      "src/exec_stack.h",
+      "src/execute.c"
+     ]
+    },
+    {
+     "fact": "forkpoint",
+     "type": "symbol",
+     "in": [
+      "src/execute.c"
+     ]
+    },
+    {
+     "fact": "frame_push",
+     "type": "symbol",
+     "in": [
+      "src/execute.c"
+     ]
+    },
+    {
+     "fact": "stack_save",
+     "type": "symbol",
+     "in": [
+      "src/execute.c"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/exec_stack.h",
+     "lines": "1-120",
+     "note": "the stack as a forest of blocks; stack_push_block/stack_pop_block"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "19-71",
+     "note": "jq_state with stk, curr_frame, stk_top, fork_top; struct frame"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "130-180",
+     "note": "frame_push/frame_pop and stack_push/stack_pop on the shared stack"
+    },
+    {
+     "file": "src/execute.c",
+     "lines": "194-223",
+     "note": "struct forkpoint and stack_save"
+    }
+   ]
+  },
+  "jq-k07": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "src/jv.h",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "jv_refcnt",
+     "type": "symbol",
+     "in": [
+      "src/jv.c",
+      "src/jv.h"
+     ]
+    },
+    {
+     "fact": "jvp_refcnt_unshared",
+     "type": "symbol",
+     "in": [
+      "src/jv.c"
+     ]
+    },
+    {
+     "fact": "jvp_array_write",
+     "type": "symbol",
+     "in": [
+      "src/jv.c"
+     ]
+    },
+    {
+     "fact": "jvp_object_unshare",
+     "type": "symbol",
+     "in": [
+      "src/jv.c"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/jv.h",
+     "lines": "19-50",
+     "note": "jv struct and the consume/produce ownership rule"
+    },
+    {
+     "file": "src/jv.c",
+     "lines": "53-75",
+     "note": "jv_refcnt and jvp_refcnt_inc/dec/unshared"
+    },
+    {
+     "file": "src/jv.c",
+     "lines": "866-897",
+     "note": "jvp_array_write: in place only if unshared, else copy"
+    },
+    {
+     "file": "src/jv.c",
+     "lines": "1729-1752",
+     "note": "jvp_object_unshare copies a shared object before writing"
+    },
+    {
+     "file": "src/jv.c",
+     "lines": "2002-2030",
+     "note": "jv_copy increments, jv_free decrements and frees iteratively"
+    }
+   ]
+  },
+  "jq-k08": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "src/parser.y",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "src/linker.c",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "inst",
+     "type": "symbol",
+     "in": [
+      "src/compile.c"
+     ]
+    },
+    {
+     "fact": "block_compile",
+     "type": "symbol",
+     "in": [
+      "src/compile.c",
+      "src/execute.c"
+     ]
+    },
+    {
+     "fact": "src/bytecode.h",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/execute.c",
+     "lines": "1232-1258",
+     "note": "jq_compile_args: load_program, builtins_bind, block_compile, optimize"
+    },
+    {
+     "file": "src/linker.c",
+     "lines": "435-477",
+     "note": "load_program calls jq_parse and resolves dependencies"
+    },
+    {
+     "file": "src/parser.y",
+     "lines": "946-972",
+     "note": "jq_parse / jq_parse_library"
+    },
+    {
+     "file": "src/compile.c",
+     "lines": "11-63",
+     "note": "struct inst intermediate representation and binding fields"
+    },
+    {
+     "file": "src/compile.c",
+     "lines": "1367-1388",
+     "note": "block_compile produces struct bytecode"
+    },
+    {
+     "file": "src/bytecode.h",
+     "lines": "44-89",
+     "note": "struct cfunction, symbol_table, struct bytecode"
+    }
+   ]
+  }
+ }
+}

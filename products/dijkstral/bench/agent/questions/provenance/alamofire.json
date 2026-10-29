@@ -1,0 +1,630 @@
+{
+ "repo": "alamofire",
+ "commit": "bda9ed57d72988a3a2ada33d824583541f86eac6",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [],
+ "indexers": [],
+ "oracle_commit": null,
+ "questions": {
+  "alamofire-k01": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "RequestConvertible",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "readyToPerform",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Request.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "performSetupOperations",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "didCreateURLRequest",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Session.swift",
+      "Source/Core/Request.swift"
+     ]
+    },
+    {
+     "fact": "didCreateTask",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Session.swift",
+      "Source/Core/Request.swift"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "286-334",
+     "note": "RequestConvertible.asURLRequest builds URLRequest and runs the ParameterEncoding"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "393-407",
+     "note": "request(_:interceptor:) creates DataRequest, performEagerlyIfNecessary"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "589-610",
+     "note": "appendResponseSerializer resumes when startImmediately"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "768-791",
+     "note": "resume() -> delegate.readyToPerform when no task yet"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "1157-1203",
+     "note": "perform -> performDataRequest -> performSetupOperations"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "1246-1301",
+     "note": "asURLRequest, adapter, didCreateURLRequest -> request.task(for:using:), requestTaskMap, didCreateTask"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "1341-1343",
+     "note": "readyToPerform -> perform"
+    },
+    {
+     "file": "Source/Core/DataRequest.swift",
+     "lines": "119-121",
+     "note": "DataRequest makes a dataTask"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "388-422",
+     "note": "didCreateTask resumes the task in the resumed state"
+    }
+   ]
+  },
+  "alamofire-k02": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "didCompleteTask",
+     "type": "symbol",
+     "in": [
+      "Source/Core/SessionDelegate.swift",
+      "Source/Core/Session.swift",
+      "Source/Core/Request.swift"
+     ]
+    },
+    {
+     "fact": "disassociateIfNecessaryAfterCompletingTask",
+     "type": "symbol",
+     "in": [
+      "Source/Core/RequestTaskMap.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "retryOrFinish",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Request.swift"
+     ]
+    },
+    {
+     "fact": "processNextResponseSerializer",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Request.swift"
+     ]
+    },
+    {
+     "fact": "DecodableResponseSerializer",
+     "type": "symbol",
+     "in": [
+      "Source/Features/ResponseSerialization.swift",
+      "Source/Core/DataRequest.swift"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "Source/Core/SessionDelegate.swift",
+     "lines": "222-230",
+     "note": "didCompleteWithError -> stateProvider.didCompleteTask -> request.didCompleteTask"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "1392-1424",
+     "note": "metrics and completion both required before disassociating"
+    },
+    {
+     "file": "Source/Core/RequestTaskMap.swift",
+     "lines": "131-153",
+     "note": "disassociateIfNecessaryAfterCompletingTask"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "515-582",
+     "note": "didCompleteTask runs validators, retryOrFinish, finish starts serializers"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "613-662",
+     "note": "processNextResponseSerializer, responseSerializerDidComplete"
+    },
+    {
+     "file": "Source/Core/DataRequest.swift",
+     "lines": "243-310",
+     "note": "serializer closure: serialize, DataResponse, retry on serializer error"
+    },
+    {
+     "file": "Source/Core/DataRequest.swift",
+     "lines": "445-458",
+     "note": "responseDecodable uses DecodableResponseSerializer"
+    },
+    {
+     "file": "Source/Features/ResponseSerialization.swift",
+     "lines": "462-508",
+     "note": "DecodableResponseSerializer.serialize"
+    }
+   ]
+  },
+  "alamofire-k03": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "RequestEncodableConvertible",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "URLEncodedFormParameterEncoder",
+     "type": "symbol",
+     "in": [
+      "Source/Core/ParameterEncoder.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "encodesParametersInURL",
+     "type": "symbol",
+     "in": [
+      "Source/Core/ParameterEncoder.swift"
+     ]
+    },
+    {
+     "fact": "URLEncodedFormComponent",
+     "type": "symbol",
+     "in": [
+      "Source/Features/URLEncodedFormEncoder.swift"
+     ]
+    },
+    {
+     "fact": "URLEncodedFormSerializer",
+     "type": "symbol",
+     "in": [
+      "Source/Features/URLEncodedFormEncoder.swift"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "336-383",
+     "note": "RequestEncodableConvertible; default encoder URLEncodedFormParameterEncoder.default"
+    },
+    {
+     "file": "Source/Core/ParameterEncoder.swift",
+     "lines": "115-197",
+     "note": "Destination.encodesParametersInURL; query string vs httpBody"
+    },
+    {
+     "file": "Source/Features/URLEncodedFormEncoder.swift",
+     "lines": "432-479",
+     "note": "encode to URLEncodedFormComponent, then URLEncodedFormSerializer"
+    },
+    {
+     "file": "Source/Features/URLEncodedFormEncoder.swift",
+     "lines": "538-560",
+     "note": "URLEncodedFormContext, URLEncodedFormComponent"
+    },
+    {
+     "file": "Source/Features/URLEncodedFormEncoder.swift",
+     "lines": "1048-1115",
+     "note": "serialize objects/arrays into key=value pairs, escape"
+    }
+   ]
+  },
+  "alamofire-k04": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "attemptServerTrustAuthentication",
+     "type": "symbol",
+     "in": [
+      "Source/Core/SessionDelegate.swift"
+     ]
+    },
+    {
+     "fact": "ServerTrustManager",
+     "type": "symbol",
+     "in": [
+      "Source/Features/ServerTrustEvaluation.swift",
+      "Source/Core/SessionDelegate.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "serverTrustEvaluator",
+     "type": "symbol",
+     "in": [
+      "Source/Features/ServerTrustEvaluation.swift",
+      "Source/Core/SessionDelegate.swift"
+     ]
+    },
+    {
+     "fact": "didFailTask",
+     "type": "symbol",
+     "in": [
+      "Source/Core/SessionDelegate.swift",
+      "Source/Core/Request.swift"
+     ]
+    },
+    {
+     "fact": "serverTrustEvaluationFailed",
+     "type": "symbol",
+     "in": [
+      "Source/Core/AFError.swift",
+      "Source/Core/SessionDelegate.swift",
+      "Source/Features/ServerTrustEvaluation.swift"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "Source/Core/SessionDelegate.swift",
+     "lines": "95-148",
+     "note": "challenge dispatch by authentication method; attemptServerTrustAuthentication; didFailTask on error"
+    },
+    {
+     "file": "Source/Core/SessionDelegate.swift",
+     "lines": "59-69",
+     "note": "SessionStateProvider exposes serverTrustManager"
+    },
+    {
+     "file": "Source/Features/ServerTrustEvaluation.swift",
+     "lines": "31-91",
+     "note": "ServerTrustManager.serverTrustEvaluator(forHost:), allHostsMustBeEvaluated, ServerTrustEvaluating"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "498-526",
+     "note": "didFailTask stores the error; didCompleteTask -> retryOrFinish"
+    }
+   ]
+  },
+  "alamofire-k05": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "SessionDelegate",
+     "type": "symbol",
+     "in": [
+      "Source/Core/SessionDelegate.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "SessionStateProvider",
+     "type": "symbol",
+     "in": [
+      "Source/Core/SessionDelegate.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "RequestTaskMap",
+     "type": "symbol",
+     "in": [
+      "Source/Core/RequestTaskMap.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "RequestDelegate",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Request.swift",
+      "Source/Core/Session.swift"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "Source/Core/SessionDelegate.swift",
+     "lines": "28-69",
+     "note": "SessionDelegate, weak stateProvider, request(for:as:), SessionStateProvider protocol"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "89-98",
+     "note": "MutableState: requestTaskMap, activeRequests, waitingCompletions"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "150-163",
+     "note": "delegate.stateProvider = self"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "1334-1441",
+     "note": "Session as RequestDelegate and SessionStateProvider"
+    },
+    {
+     "file": "Source/Core/RequestTaskMap.swift",
+     "lines": "28-87",
+     "note": "two-way request/task map with task events"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "1251-1279",
+     "note": "RequestDelegate protocol"
+    }
+   ]
+  },
+  "alamofire-k06": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "EventMonitor",
+     "type": "symbol",
+     "in": [
+      "Source/Features/EventMonitor.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "CompositeEventMonitor",
+     "type": "symbol",
+     "in": [
+      "Source/Features/EventMonitor.swift",
+      "Source/Core/Session.swift",
+      "Source/Core/Request.swift"
+     ]
+    },
+    {
+     "fact": "performEvent",
+     "type": "symbol",
+     "in": [
+      "Source/Features/EventMonitor.swift"
+     ]
+    },
+    {
+     "fact": "AlamofireNotifications",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Notifications.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "ClosureEventMonitor",
+     "type": "symbol",
+     "in": [
+      "Source/Features/EventMonitor.swift"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "Source/Features/EventMonitor.swift",
+     "lines": "27-38",
+     "note": "EventMonitor protocol with queue"
+    },
+    {
+     "file": "Source/Features/EventMonitor.swift",
+     "lines": "225-231",
+     "note": "default queue .main and empty default implementations"
+    },
+    {
+     "file": "Source/Features/EventMonitor.swift",
+     "lines": "314-342",
+     "note": "CompositeEventMonitor.performEvent dispatches on each monitor's queue"
+    },
+    {
+     "file": "Source/Features/EventMonitor.swift",
+     "lines": "590-600",
+     "note": "ClosureEventMonitor"
+    },
+    {
+     "file": "Source/Core/Notifications.swift",
+     "lines": "83-100",
+     "note": "AlamofireNotifications posts notifications"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "82-87",
+     "note": "eventMonitor: CompositeEventMonitor, default [AlamofireNotifications()]"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "161-163",
+     "note": "CompositeEventMonitor on rootQueue shared with the delegate"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "1077-1095",
+     "note": "per-request eventMonitor(_:) recomposes"
+    }
+   ]
+  },
+  "alamofire-k07": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "rootQueue",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "requestQueue",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "serializationQueue",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Session.swift",
+      "Source/Core/Request.swift"
+     ]
+    },
+    {
+     "fact": "underlyingQueue",
+     "type": "symbol",
+     "in": [
+      "Source/Core/Request.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "Source/Core/Protected.swift",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "56-72",
+     "note": "rootQueue, requestQueue, serializationQueue documented"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "150-163",
+     "note": "requestQueue/serializationQueue default to targeting rootQueue"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "201-233",
+     "note": "rootQueue retargeted, URLSession delegateQueue on it"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "393-402",
+     "note": "requests get underlyingQueue: rootQueue and serializationQueue"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "1166-1197",
+     "note": "perform hops rootQueue -> requestQueue"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "70-73",
+     "note": "underlyingQueue and serializationQueue"
+    },
+    {
+     "file": "Source/Core/Request.swift",
+     "lines": "276-290",
+     "note": "mutableState = Protected(MutableState(...))"
+    },
+    {
+     "file": "Source/Core/Protected.swift",
+     "lines": "84-124",
+     "note": "Protected lock wrapper with read/write"
+    }
+   ]
+  },
+  "alamofire-k08": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "RequestAdapter",
+     "type": "symbol",
+     "in": [
+      "Source/Features/RequestInterceptor.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "RequestRetrier",
+     "type": "symbol",
+     "in": [
+      "Source/Features/RequestInterceptor.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "Interceptor",
+     "type": "symbol",
+     "in": [
+      "Source/Features/RequestInterceptor.swift",
+      "Source/Core/Session.swift"
+     ]
+    },
+    {
+     "fact": "RetryPolicy",
+     "type": "symbol",
+     "in": [
+      "Source/Features/RetryPolicy.swift"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "Source/Features/RequestInterceptor.swift",
+     "lines": "28-134",
+     "note": "RequestAdapter, RetryResult, RequestRetrier, RequestInterceptor"
+    },
+    {
+     "file": "Source/Features/RequestInterceptor.swift",
+     "lines": "221-339",
+     "note": "Interceptor chains adapters and retriers"
+    },
+    {
+     "file": "Source/Core/Session.swift",
+     "lines": "1315-1329",
+     "note": "adapter(for:)/retrier(for:) combine session and request interceptors, session first"
+    },
+    {
+     "file": "Source/Features/RetryPolicy.swift",
+     "lines": "29-60",
+     "note": "defaults: retry limit, backoff base/scale, retryable methods and status codes"
+    },
+    {
+     "file": "Source/Features/RetryPolicy.swift",
+     "lines": "308-339",
+     "note": "retry with exponential backoff delay; shouldRetry"
+    }
+   ]
+  }
+ }
+}

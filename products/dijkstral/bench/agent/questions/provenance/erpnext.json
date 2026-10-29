@@ -1,0 +1,619 @@
+{
+ "repo": "erpnext",
+ "commit": "7474d9e786277383de1242ab882f16856d17a9c9",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [],
+ "indexers": [],
+ "oracle_commit": null,
+ "questions": {
+  "erpnext-k01": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "build_gl_map",
+     "type": "symbol",
+     "in": [
+      "erpnext/accounts/doctype/payment_entry/payment_entry.py"
+     ]
+    },
+    {
+     "fact": "erpnext/accounts/general_ledger.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "create_payment_ledger_entry",
+     "type": "symbol",
+     "in": [
+      "erpnext/accounts/utils.py",
+      "erpnext/accounts/general_ledger.py"
+     ]
+    },
+    {
+     "fact": "erpnext/accounts/doctype/payment_ledger_entry/payment_ledger_entry.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "update_voucher_outstanding",
+     "type": "symbol",
+     "in": [
+      "erpnext/accounts/utils.py",
+      "erpnext/accounts/doctype/payment_ledger_entry/payment_ledger_entry.py"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "erpnext/accounts/doctype/payment_entry/payment_entry.py",
+     "lines": "204-214",
+     "note": "on_submit calls make_gl_entries and update_outstanding_amounts"
+    },
+    {
+     "file": "erpnext/accounts/doctype/payment_entry/payment_entry.py",
+     "lines": "1325-1356",
+     "note": "build_gl_map; make_gl_entries -> general_ledger.make_gl_entries"
+    },
+    {
+     "file": "erpnext/accounts/general_ledger.py",
+     "lines": "29-69",
+     "note": "make_gl_entries: process_gl_map, create_payment_ledger_entry, save_entries"
+    },
+    {
+     "file": "erpnext/accounts/utils.py",
+     "lines": "2127-2147",
+     "note": "create_payment_ledger_entry submits Payment Ledger Entry docs"
+    },
+    {
+     "file": "erpnext/accounts/doctype/payment_ledger_entry/payment_ledger_entry.py",
+     "lines": "158-176",
+     "note": "on_update calls update_voucher_outstanding for the against voucher"
+    },
+    {
+     "file": "erpnext/accounts/utils.py",
+     "lines": "2150-2204",
+     "note": "update_voucher_outstanding sets outstanding_amount and status on the invoice"
+    }
+   ]
+  },
+  "erpnext-k02": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "update_stock_ledger",
+     "type": "symbol",
+     "in": [
+      "erpnext/controllers/selling_controller.py",
+      "erpnext/stock/doctype/delivery_note/delivery_note.py"
+     ]
+    },
+    {
+     "fact": "make_sl_entries",
+     "type": "symbol",
+     "in": [
+      "erpnext/controllers/stock_controller.py",
+      "erpnext/stock/stock_ledger.py"
+     ]
+    },
+    {
+     "fact": "repost_current_voucher",
+     "type": "symbol",
+     "in": [
+      "erpnext/stock/stock_ledger.py"
+     ]
+    },
+    {
+     "fact": "update_entries_after",
+     "type": "symbol",
+     "in": [
+      "erpnext/stock/stock_ledger.py"
+     ]
+    },
+    {
+     "fact": "erpnext/stock/doctype/bin/bin.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "erpnext/stock/doctype/delivery_note/delivery_note.py",
+     "lines": "448-482",
+     "note": "on_submit: update_prevdoc_status, update_stock_ledger, make_gl_entries"
+    },
+    {
+     "file": "erpnext/controllers/selling_controller.py",
+     "lines": "653-683",
+     "note": "update_stock_ledger builds SLE dicts and calls make_sl_entries"
+    },
+    {
+     "file": "erpnext/controllers/stock_controller.py",
+     "lines": "1452-1461",
+     "note": "StockController.make_sl_entries delegates to stock_ledger.make_sl_entries"
+    },
+    {
+     "file": "erpnext/stock/stock_ledger.py",
+     "lines": "109-172",
+     "note": "make_sl_entries: make_entry, get_or_make_bin, repost_current_voucher, update_bin_qty"
+    },
+    {
+     "file": "erpnext/stock/stock_ledger.py",
+     "lines": "175-202",
+     "note": "repost_current_voucher runs update_entries_after"
+    },
+    {
+     "file": "erpnext/stock/stock_ledger.py",
+     "lines": "32-32",
+     "note": "update_bin_qty is bin.update_qty"
+    },
+    {
+     "file": "erpnext/stock/doctype/bin/bin.py",
+     "lines": "273-316",
+     "note": "update_qty sets actual/ordered/reserved/projected qty on the Bin"
+    }
+   ]
+  },
+  "erpnext-k03": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "process_item_selection",
+     "type": "symbol",
+     "in": [
+      "erpnext/public/js/controllers/transaction.js",
+      "erpnext/utilities/transaction_base.py"
+     ]
+    },
+    {
+     "fact": "get_item_details",
+     "type": "symbol",
+     "in": [
+      "erpnext/stock/get_item_details.py",
+      "erpnext/utilities/transaction_base.py",
+      "erpnext/public/js/controllers/transaction.js"
+     ]
+    },
+    {
+     "fact": "get_price_list_rate",
+     "type": "symbol",
+     "in": [
+      "erpnext/stock/get_item_details.py"
+     ]
+    },
+    {
+     "fact": "get_pricing_rule_for_item",
+     "type": "symbol",
+     "in": [
+      "erpnext/accounts/doctype/pricing_rule/pricing_rule.py",
+      "erpnext/stock/get_item_details.py"
+     ]
+    },
+    {
+     "fact": "get_pricing_rules",
+     "type": "symbol",
+     "in": [
+      "erpnext/accounts/doctype/pricing_rule/utils.py",
+      "erpnext/accounts/doctype/pricing_rule/pricing_rule.py"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "erpnext/public/js/controllers/transaction.js",
+     "lines": "755-800",
+     "note": "item_code -> process_item_selection (server) or get_item_details (legacy)"
+    },
+    {
+     "file": "erpnext/utilities/transaction_base.py",
+     "lines": "298-385",
+     "note": "fetch_item_details -> get_item_details; process_item_selection sets rates, taxes, totals"
+    },
+    {
+     "file": "erpnext/stock/get_item_details.py",
+     "lines": "85-200",
+     "note": "get_item_details: get_price_list_rate, then get_pricing_rule_for_item"
+    },
+    {
+     "file": "erpnext/accounts/doctype/pricing_rule/pricing_rule.py",
+     "lines": "446-500",
+     "note": "get_pricing_rule_for_item calls get_pricing_rules"
+    },
+    {
+     "file": "erpnext/accounts/doctype/pricing_rule/utils.py",
+     "lines": "27-61",
+     "note": "get_pricing_rules: by Item Code/Item Group/Brand, filter, priority"
+    }
+   ]
+  },
+  "erpnext-k04": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "make_stock_entry",
+     "type": "symbol",
+     "in": [
+      "erpnext/manufacturing/doctype/work_order/work_order.py",
+      "erpnext/manufacturing/doctype/work_order/work_order.js"
+     ]
+    },
+    {
+     "fact": "get_bom_raw_materials",
+     "type": "symbol",
+     "in": [
+      "erpnext/stock/doctype/stock_entry/stock_entry.py"
+     ]
+    },
+    {
+     "fact": "get_bom_items_as_dict",
+     "type": "symbol",
+     "in": [
+      "erpnext/manufacturing/doctype/bom/bom.py",
+      "erpnext/stock/doctype/stock_entry/stock_entry.py"
+     ]
+    },
+    {
+     "fact": "update_work_order",
+     "type": "symbol",
+     "in": [
+      "erpnext/stock/doctype/stock_entry/stock_entry.py"
+     ]
+    },
+    {
+     "fact": "update_work_order_qty",
+     "type": "symbol",
+     "in": [
+      "erpnext/manufacturing/doctype/work_order/work_order.py",
+      "erpnext/stock/doctype/stock_entry/stock_entry.py"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "erpnext/manufacturing/doctype/work_order/work_order.js",
+     "lines": "905-935",
+     "note": "Finish buttons call make_se(frm, \"Manufacture\")"
+    },
+    {
+     "file": "erpnext/manufacturing/doctype/work_order/work_order.js",
+     "lines": "1177-1200",
+     "note": "make_se calls work_order.make_stock_entry"
+    },
+    {
+     "file": "erpnext/manufacturing/doctype/work_order/work_order.py",
+     "lines": "2759-2816",
+     "note": "make_stock_entry creates the Stock Entry and calls get_items"
+    },
+    {
+     "file": "erpnext/stock/doctype/stock_entry/stock_entry.py",
+     "lines": "3075-3140",
+     "note": "get_items: default path get_bom_raw_materials(fg_completed_qty)"
+    },
+    {
+     "file": "erpnext/stock/doctype/stock_entry/stock_entry.py",
+     "lines": "3547-3556",
+     "note": "get_bom_raw_materials -> get_bom_items_as_dict"
+    },
+    {
+     "file": "erpnext/manufacturing/doctype/bom/bom.py",
+     "lines": "1481-1490",
+     "note": "get_bom_items_as_dict signature"
+    },
+    {
+     "file": "erpnext/stock/doctype/stock_entry/stock_entry.py",
+     "lines": "584-608",
+     "note": "on_submit calls update_work_order before update_stock_ledger"
+    },
+    {
+     "file": "erpnext/stock/doctype/stock_entry/stock_entry.py",
+     "lines": "2569-2608",
+     "note": "update_work_order runs update_work_order_qty and update_status"
+    },
+    {
+     "file": "erpnext/manufacturing/doctype/work_order/work_order.py",
+     "lines": "816-850",
+     "note": "update_work_order_qty recomputes produced_qty"
+    }
+   ]
+  },
+  "erpnext-k05": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "BuyingController",
+     "type": "symbol",
+     "in": [
+      "erpnext/controllers/buying_controller.py",
+      "erpnext/stock/doctype/purchase_receipt/purchase_receipt.py"
+     ]
+    },
+    {
+     "fact": "SubcontractingController",
+     "type": "symbol",
+     "in": [
+      "erpnext/controllers/subcontracting_controller.py",
+      "erpnext/controllers/buying_controller.py"
+     ]
+    },
+    {
+     "fact": "StockController",
+     "type": "symbol",
+     "in": [
+      "erpnext/controllers/stock_controller.py",
+      "erpnext/controllers/subcontracting_controller.py"
+     ]
+    },
+    {
+     "fact": "AccountsController",
+     "type": "symbol",
+     "in": [
+      "erpnext/controllers/accounts_controller.py",
+      "erpnext/controllers/stock_controller.py"
+     ]
+    },
+    {
+     "fact": "TransactionBase",
+     "type": "symbol",
+     "in": [
+      "erpnext/utilities/transaction_base.py",
+      "erpnext/controllers/accounts_controller.py"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "erpnext/stock/doctype/purchase_receipt/purchase_receipt.py",
+     "lines": "33-33",
+     "note": "class PurchaseReceipt(BuyingController)"
+    },
+    {
+     "file": "erpnext/controllers/buying_controller.py",
+     "lines": "33-75",
+     "note": "class BuyingController(SubcontractingController); validate"
+    },
+    {
+     "file": "erpnext/controllers/subcontracting_controller.py",
+     "lines": "27-80",
+     "note": "class SubcontractingController(StockController)"
+    },
+    {
+     "file": "erpnext/controllers/stock_controller.py",
+     "lines": "101-130",
+     "note": "class StockController(AccountsController)"
+    },
+    {
+     "file": "erpnext/controllers/accounts_controller.py",
+     "lines": "114-135",
+     "note": "class AccountsController(TransactionBase)"
+    },
+    {
+     "file": "erpnext/utilities/transaction_base.py",
+     "lines": "20-45",
+     "note": "class TransactionBase(StatusUpdater)"
+    },
+    {
+     "file": "erpnext/controllers/status_updater.py",
+     "lines": "181-181",
+     "note": "class StatusUpdater(Document)"
+    }
+   ]
+  },
+  "erpnext-k06": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "allow_regional",
+     "type": "symbol",
+     "in": [
+      "erpnext/__init__.py",
+      "erpnext/controllers/taxes_and_totals.py"
+     ]
+    },
+    {
+     "fact": "regional_overrides",
+     "type": "symbol",
+     "in": [
+      "erpnext/hooks.py",
+      "erpnext/__init__.py"
+     ]
+    },
+    {
+     "fact": "get_region",
+     "type": "symbol",
+     "in": [
+      "erpnext/__init__.py"
+     ]
+    },
+    {
+     "fact": "erpnext/hooks.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "erpnext/regional/italy/utils.py",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "erpnext/__init__.py",
+     "lines": "121-155",
+     "note": "get_region and the allow_regional decorator"
+    },
+    {
+     "file": "erpnext/hooks.py",
+     "lines": "643-656",
+     "note": "regional_overrides per country"
+    },
+    {
+     "file": "erpnext/controllers/taxes_and_totals.py",
+     "lines": "1280-1300",
+     "note": "@erpnext.allow_regional on update_itemised_tax_data and friends"
+    },
+    {
+     "file": "erpnext/regional/italy/utils.py",
+     "lines": "14-20",
+     "note": "Italy's update_itemised_tax_data"
+    }
+   ]
+  },
+  "erpnext-k07": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "setup_selling_controller",
+     "type": "symbol",
+     "in": [
+      "erpnext/public/js/utils/sales_common.js",
+      "erpnext/stock/doctype/delivery_note/delivery_note.js"
+     ]
+    },
+    {
+     "fact": "TransactionController",
+     "type": "symbol",
+     "in": [
+      "erpnext/public/js/controllers/transaction.js",
+      "erpnext/public/js/utils/sales_common.js"
+     ]
+    },
+    {
+     "fact": "erpnext/public/js/controllers/taxes_and_totals.js",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "erpnext/public/js/payment/payments.js",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "extend_cscript",
+     "type": "symbol",
+     "in": [
+      "erpnext/stock/doctype/delivery_note/delivery_note.js"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "erpnext/stock/doctype/delivery_note/delivery_note.js",
+     "lines": "1-14",
+     "note": "calls erpnext.sales_common.setup_selling_controller()"
+    },
+    {
+     "file": "erpnext/stock/doctype/delivery_note/delivery_note.js",
+     "lines": "135-138",
+     "note": "DeliveryNoteController extends erpnext.selling.SellingController"
+    },
+    {
+     "file": "erpnext/stock/doctype/delivery_note/delivery_note.js",
+     "lines": "448-448",
+     "note": "extend_cscript(cur_frm.cscript, new DeliveryNoteController)"
+    },
+    {
+     "file": "erpnext/public/js/utils/sales_common.js",
+     "lines": "1-12",
+     "note": "SellingController extends erpnext.TransactionController"
+    },
+    {
+     "file": "erpnext/public/js/controllers/transaction.js",
+     "lines": "37-37",
+     "note": "TransactionController extends erpnext.taxes_and_totals"
+    },
+    {
+     "file": "erpnext/public/js/controllers/taxes_and_totals.js",
+     "lines": "11-11",
+     "note": "taxes_and_totals extends erpnext.payments"
+    },
+    {
+     "file": "erpnext/public/js/payment/payments.js",
+     "lines": "4-4",
+     "note": "payments extends erpnext.stock.StockController"
+    },
+    {
+     "file": "erpnext/public/js/controllers/stock_controller.js",
+     "lines": "6-6",
+     "note": "StockController extends frappe.ui.form.Controller"
+    },
+    {
+     "file": "erpnext/public/js/erpnext.bundle.js",
+     "lines": "1-38",
+     "note": "bundle imports the shared controllers"
+    }
+   ]
+  },
+  "erpnext-k08": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "DepreciationScheduleController",
+     "type": "symbol",
+     "in": [
+      "erpnext/assets/doctype/asset_depreciation_schedule/deppreciation_schedule_controller.py",
+      "erpnext/assets/doctype/asset_depreciation_schedule/asset_depreciation_schedule.py"
+     ]
+    },
+    {
+     "fact": "erpnext/assets/doctype/asset_depreciation_schedule/depreciation_methods.py",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "post_depreciation_entries",
+     "type": "symbol",
+     "in": [
+      "erpnext/assets/doctype/asset/depreciation.py",
+      "erpnext/hooks.py"
+     ]
+    },
+    {
+     "fact": "make_depreciation_entry",
+     "type": "symbol",
+     "in": [
+      "erpnext/assets/doctype/asset/depreciation.py"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "erpnext/assets/doctype/asset_depreciation_schedule/asset_depreciation_schedule.py",
+     "lines": "19-60",
+     "note": "AssetDepreciationSchedule(DepreciationScheduleController)"
+    },
+    {
+     "file": "erpnext/assets/doctype/asset_depreciation_schedule/deppreciation_schedule_controller.py",
+     "lines": "17-60",
+     "note": "DepreciationScheduleController(StraightLineMethod, WDVMethod) builds schedule rows"
+    },
+    {
+     "file": "erpnext/assets/doctype/asset_depreciation_schedule/depreciation_methods.py",
+     "lines": "16-121",
+     "note": "StraightLineMethod and WDVMethod"
+    },
+    {
+     "file": "erpnext/hooks.py",
+     "lines": "515-525",
+     "note": "daily scheduler runs post_depreciation_entries"
+    },
+    {
+     "file": "erpnext/assets/doctype/asset/depreciation.py",
+     "lines": "37-80",
+     "note": "post_depreciation_entries -> book_depreciation_entries -> make_depreciation_entry"
+    },
+    {
+     "file": "erpnext/assets/doctype/asset/depreciation.py",
+     "lines": "166-250",
+     "note": "make_depreciation_entry creates the Journal Entry per due row"
+    }
+   ]
+  }
+ }
+}

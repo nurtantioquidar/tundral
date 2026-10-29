@@ -1,17 +1,19 @@
 """Offline key-fact coverage of one `context` answer per question (stdlib only).
 
 Runs `<binary> context "<question>" [extra args]` in each prepared dijkstral workspace (paths from
-`~/.cache/dijkstral-bench/agent/manifests/<repo>.dijkstral.json`) for the 60 key-fact questions,
+`~/.cache/dijkstral-bench/agent/manifests/<repo>.dijkstral.json`) for the key-fact questions,
 scores the output with `score.score_facts`, and prints per-kind recall/pass, tuning (fastapi,
-ripgrep) against held-out (kubernetes), and held-out per-kind aggregates. Kubernetes is never
-shown per question: tune on the first two repos only.
+ripgrep) and the second tuning set (erpnext, jq, serilog, alamofire: flow and architecture
+questions written like the blind set's, to tune for code `context` was not shaped on) against
+held-out (kubernetes), and per-kind aggregates of the second set and the held-out one. Kubernetes
+is never shown per question: tune on the tuning repos only.
 
     python3 context_eval.py <binary> [--low] [--blind] [--arg=ARG]...
 
 `--arg` adds an argument after the question; `{repo}` in it becomes the repository name, so an
 index per repository can be passed (`--arg=--index --arg=/tmp/dj-embed/{repo}/potion-code` for
 `dijkstral-embed`, `cli/docs/dijkstral-context-semantic.md`). `--low` lists the tuning questions
-below half recall. Also prints the median wall time of a call per repository.
+(both sets) below half recall. Also prints the median wall time of a call per repository.
 
 `--blind` also scores the blind set (okhttp, excalidraw: flow and architecture questions written
 after the tuning, by an author who saw neither tool's output). It is printed apart, as aggregates
@@ -35,8 +37,9 @@ import score
 
 QUESTIONS = HERE / "questions"
 MANIFESTS = Path(os.path.expanduser("~/.cache/dijkstral-bench/agent/manifests"))
-REPOS = ("fastapi", "ripgrep", "kubernetes")
+REPOS = ("fastapi", "ripgrep", "erpnext", "jq", "serilog", "alamofire", "kubernetes")
 TUNING = ("fastapi", "ripgrep")
+TUNING_2 = ("erpnext", "jq", "serilog", "alamofire")
 HELD_OUT = ("kubernetes",)
 BLIND = ("okhttp", "excalidraw")
 
@@ -74,7 +77,11 @@ def main() -> None:
             f"{k:13} recall {st.mean(x[0] for x in v):.2f} pass {sum(x[1] for x in v)}/{len(v)}"
             f" chars median {int(st.median(x[2] for x in v))}"
         )
-    for grp, keep in (("tuning", TUNING), ("held-out", HELD_OUT)):
+    for grp, keep in (
+        ("tuning", TUNING),
+        ("tuning-2", TUNING_2),
+        ("held-out", HELD_OUT),
+    ):
         g = [r for r in rows if r[0].split("-")[0] in keep]
         print(
             f"{grp:13} recall {st.mean(r[2] for r in g):.2f} pass {sum(r[3] for r in g)}/{len(g)}"
@@ -89,18 +96,19 @@ def main() -> None:
         )
     if a.low:
         for r in rows:
-            if r[2] < 0.5 and r[0].split("-")[0] in TUNING:
+            if r[2] < 0.5 and r[0].split("-")[0] in TUNING + TUNING_2:
                 print("  low:", r[0], r[1], round(r[2], 2), r[4])
-    # Held-out: per-kind aggregates only, never per question.
-    hk: dict[str, list] = {}
-    for i, k, rec, p, n in rows:
-        if i.split("-")[0] in HELD_OUT:
-            hk.setdefault(k, []).append((rec, p, n))
-    for k, v in sorted(hk.items()):
-        print(
-            f"held-out {k:13} recall {st.mean(x[0] for x in v):.2f} pass"
-            f" {sum(x[1] for x in v)}/{len(v)} chars median {int(st.median(x[2] for x in v))}"
-        )
+    # The second tuning set and the held-out one per kind (held-out: aggregates only).
+    for grp, keep in (("tuning-2", TUNING_2), ("held-out", HELD_OUT)):
+        gk: dict[str, list] = {}
+        for i, k, rec, p, n in rows:
+            if i.split("-")[0] in keep:
+                gk.setdefault(k, []).append((rec, p, n))
+        for k, v in sorted(gk.items()):
+            print(
+                f"{grp} {k:13} recall {st.mean(x[0] for x in v):.2f} pass"
+                f" {sum(x[1] for x in v)}/{len(v)} chars median {int(st.median(x[2] for x in v))}"
+            )
 
     # Blind: aggregates only, never per question.
     if blind:

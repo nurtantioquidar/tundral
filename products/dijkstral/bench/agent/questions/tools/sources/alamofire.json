@@ -1,0 +1,112 @@
+[
+  {
+    "id": "alamofire-k01", "kind": "flow",
+    "question": "When code calls `AF.request(url, method: .post, parameters: params, encoding: JSONEncoding.default)` and then attaches a response handler, how does that turn into a running URLSessionTask? Trace it from the request object through building and adapting the URLRequest to the task being created and resumed.",
+    "reference": "`Session.request` wraps the arguments in a `RequestConvertible` and creates a `DataRequest`; attaching a handler (`appendResponseSerializer`) calls `resume()`, which asks the `RequestDelegate` (the Session) to `readyToPerform`. `Session.perform` dispatches to `performDataRequest` and `performSetupOperations` (Source/Core/Session.swift), which calls `asURLRequest()` (building the URLRequest and running the parameter encoding), runs the session/request adapter, then `didCreateURLRequest` asks the request for its task (`DataRequest.task(for:using:)` makes a data task) and stores it in the request-task map; `Request.didCreateTask` resumes the task because the request is already in the resumed state.",
+    "facts": [
+      {"fact": "RequestConvertible", "aliases": [], "in": ["Source/Core/Session.swift"]},
+      {"fact": "readyToPerform", "aliases": [], "in": ["Source/Core/Request.swift", "Source/Core/Session.swift"]},
+      {"fact": "performSetupOperations", "aliases": [], "in": ["Source/Core/Session.swift"]},
+      {"fact": "didCreateURLRequest", "aliases": [], "in": ["Source/Core/Session.swift", "Source/Core/Request.swift"]},
+      {"fact": "didCreateTask", "aliases": [], "in": ["Source/Core/Session.swift", "Source/Core/Request.swift"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "Source/Core/Session.swift", "lines": "286-334", "note": "RequestConvertible.asURLRequest builds URLRequest and runs the ParameterEncoding"}, {"file": "Source/Core/Session.swift", "lines": "393-407", "note": "request(_:interceptor:) creates DataRequest, performEagerlyIfNecessary"}, {"file": "Source/Core/Request.swift", "lines": "589-610", "note": "appendResponseSerializer resumes when startImmediately"}, {"file": "Source/Core/Request.swift", "lines": "768-791", "note": "resume() -> delegate.readyToPerform when no task yet"}, {"file": "Source/Core/Session.swift", "lines": "1157-1203", "note": "perform -> performDataRequest -> performSetupOperations"}, {"file": "Source/Core/Session.swift", "lines": "1246-1301", "note": "asURLRequest, adapter, didCreateURLRequest -> request.task(for:using:), requestTaskMap, didCreateTask"}, {"file": "Source/Core/Session.swift", "lines": "1341-1343", "note": "readyToPerform -> perform"}, {"file": "Source/Core/DataRequest.swift", "lines": "119-121", "note": "DataRequest makes a dataTask"}, {"file": "Source/Core/Request.swift", "lines": "388-422", "note": "didCreateTask resumes the task in the resumed state"}]
+  },
+  {
+    "id": "alamofire-k02", "kind": "flow",
+    "question": "When URLSession reports that a data task has finished, how does that completion travel to the closure passed to `responseDecodable(of:)`? Name the steps that relay the completion, wait for any outstanding task information, run validation, give retry a chance, and finally run the decoding.",
+    "reference": "`SessionDelegate.urlSession(_:task:didCompleteWithError:)` calls the Session's `didCompleteTask`, which uses `RequestTaskMap.disassociateIfNecessaryAfterCompletingTask` to wait until metrics have also arrived before calling `Request.didCompleteTask`; that runs the validators and `retryOrFinish`, which asks the delegate for a retry decision and otherwise calls `finish()`. `finish` starts `processNextResponseSerializer`, which runs the serializer closure queued by `responseDecodable` on the serialization queue; it calls `DecodableResponseSerializer.serialize` (Source/Features/ResponseSerialization.swift) and hands the `DataResponse` back through `responseSerializerDidComplete`.",
+    "facts": [
+      {"fact": "didCompleteTask", "aliases": [], "in": ["Source/Core/SessionDelegate.swift", "Source/Core/Session.swift", "Source/Core/Request.swift"]},
+      {"fact": "disassociateIfNecessaryAfterCompletingTask", "aliases": [], "in": ["Source/Core/RequestTaskMap.swift", "Source/Core/Session.swift"]},
+      {"fact": "retryOrFinish", "aliases": [], "in": ["Source/Core/Request.swift"]},
+      {"fact": "processNextResponseSerializer", "aliases": [], "in": ["Source/Core/Request.swift"]},
+      {"fact": "DecodableResponseSerializer", "aliases": [], "in": ["Source/Features/ResponseSerialization.swift", "Source/Core/DataRequest.swift"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "Source/Core/SessionDelegate.swift", "lines": "222-230", "note": "didCompleteWithError -> stateProvider.didCompleteTask -> request.didCompleteTask"}, {"file": "Source/Core/Session.swift", "lines": "1392-1424", "note": "metrics and completion both required before disassociating"}, {"file": "Source/Core/RequestTaskMap.swift", "lines": "131-153", "note": "disassociateIfNecessaryAfterCompletingTask"}, {"file": "Source/Core/Request.swift", "lines": "515-582", "note": "didCompleteTask runs validators, retryOrFinish, finish starts serializers"}, {"file": "Source/Core/Request.swift", "lines": "613-662", "note": "processNextResponseSerializer, responseSerializerDidComplete"}, {"file": "Source/Core/DataRequest.swift", "lines": "243-310", "note": "serializer closure: serialize, DataResponse, retry on serializer error"}, {"file": "Source/Core/DataRequest.swift", "lines": "445-458", "note": "responseDecodable uses DecodableResponseSerializer"}, {"file": "Source/Features/ResponseSerialization.swift", "lines": "462-508", "note": "DecodableResponseSerializer.serialize"}]
+  },
+  {
+    "id": "alamofire-k03", "kind": "flow",
+    "question": "When an `Encodable` struct is passed as `parameters` to `AF.request(url, parameters: filter)` for a GET without naming an encoder, how does it end up as a percent-escaped `?key=value&...` query string on the URL rather than in the body?",
+    "reference": "The generic `Session.request` overload defaults the encoder to `URLEncodedFormParameterEncoder.default` and wraps everything in `RequestEncodableConvertible`, whose `asURLRequest` calls the encoder. `URLEncodedFormParameterEncoder.encode` (Source/Core/ParameterEncoder.swift) checks `Destination.encodesParametersInURL` (GET/HEAD/DELETE for the default method-dependent destination) and appends the encoded string to the URL's query. `URLEncodedFormEncoder` (Source/Features/URLEncodedFormEncoder.swift) encodes the value into a `URLEncodedFormComponent` tree via `_URLEncodedFormEncoder` and `URLEncodedFormSerializer` turns it into escaped `key=value` pairs joined with ampersands.",
+    "facts": [
+      {"fact": "RequestEncodableConvertible", "aliases": [], "in": ["Source/Core/Session.swift"]},
+      {"fact": "URLEncodedFormParameterEncoder", "aliases": [], "in": ["Source/Core/ParameterEncoder.swift", "Source/Core/Session.swift"]},
+      {"fact": "encodesParametersInURL", "aliases": [], "in": ["Source/Core/ParameterEncoder.swift"]},
+      {"fact": "URLEncodedFormComponent", "aliases": [], "in": ["Source/Features/URLEncodedFormEncoder.swift"]},
+      {"fact": "URLEncodedFormSerializer", "aliases": [], "in": ["Source/Features/URLEncodedFormEncoder.swift"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "Source/Core/Session.swift", "lines": "336-383", "note": "RequestEncodableConvertible; default encoder URLEncodedFormParameterEncoder.default"}, {"file": "Source/Core/ParameterEncoder.swift", "lines": "115-197", "note": "Destination.encodesParametersInURL; query string vs httpBody"}, {"file": "Source/Features/URLEncodedFormEncoder.swift", "lines": "432-479", "note": "encode to URLEncodedFormComponent, then URLEncodedFormSerializer"}, {"file": "Source/Features/URLEncodedFormEncoder.swift", "lines": "538-560", "note": "URLEncodedFormContext, URLEncodedFormComponent"}, {"file": "Source/Features/URLEncodedFormEncoder.swift", "lines": "1048-1115", "note": "serialize objects/arrays into key=value pairs, escape"}]
+  },
+  {
+    "id": "alamofire-k04", "kind": "flow",
+    "question": "When a server presents its certificate during the TLS handshake of a request made through a Session, how does Alamofire decide whether to trust it for that host, and how does a rejected certificate become the error the request's response handler finally sees?",
+    "reference": "The authentication-challenge callback in `SessionDelegate` routes server-trust challenges to `attemptServerTrustAuthentication`, which asks the Session's `ServerTrustManager` (via the state provider) for `serverTrustEvaluator(forHost:)` and calls the evaluator's `evaluate`; a missing evaluator when all hosts must be evaluated, or a failed evaluation, yields an `AFError.serverTrustEvaluationFailed` and cancels the challenge. The delegate passes that error to the request's `didFailTask(_:earlyWithError:)`, which stores it, so when the task then completes `didCompleteTask`/`retryOrFinish` finish the request with it and the serializers report it.",
+    "facts": [
+      {"fact": "attemptServerTrustAuthentication", "aliases": [], "in": ["Source/Core/SessionDelegate.swift"]},
+      {"fact": "ServerTrustManager", "aliases": [], "in": ["Source/Features/ServerTrustEvaluation.swift", "Source/Core/SessionDelegate.swift", "Source/Core/Session.swift"]},
+      {"fact": "serverTrustEvaluator", "aliases": [], "in": ["Source/Features/ServerTrustEvaluation.swift", "Source/Core/SessionDelegate.swift"]},
+      {"fact": "didFailTask", "aliases": [], "in": ["Source/Core/SessionDelegate.swift", "Source/Core/Request.swift"]},
+      {"fact": "serverTrustEvaluationFailed", "aliases": [], "in": ["Source/Core/AFError.swift", "Source/Core/SessionDelegate.swift", "Source/Features/ServerTrustEvaluation.swift"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "Source/Core/SessionDelegate.swift", "lines": "95-148", "note": "challenge dispatch by authentication method; attemptServerTrustAuthentication; didFailTask on error"}, {"file": "Source/Core/SessionDelegate.swift", "lines": "59-69", "note": "SessionStateProvider exposes serverTrustManager"}, {"file": "Source/Features/ServerTrustEvaluation.swift", "lines": "31-91", "note": "ServerTrustManager.serverTrustEvaluator(forHost:), allHostsMustBeEvaluated, ServerTrustEvaluating"}, {"file": "Source/Core/Request.swift", "lines": "498-526", "note": "didFailTask stores the error; didCompleteTask -> retryOrFinish"}]
+  },
+  {
+    "id": "alamofire-k05", "kind": "architecture",
+    "question": "How is responsibility divided between `Session`, the object that receives URLSession's delegate callbacks, and the individual request objects: how does a delegate callback find the request that owns a given task, and through what interface does a request call back into its session to start, retry or clean up?",
+    "reference": "`SessionDelegate` (Source/Core/SessionDelegate.swift) receives all URLSession callbacks and looks requests up through its weak `SessionStateProvider`, which the `Session` implements; the Session keeps a `RequestTaskMap` (both directions, plus completion/metrics bookkeeping) in its protected mutable state. Requests hold a weak `RequestDelegate` (declared in Source/Core/Request.swift, implemented by `Session`) with `readyToPerform`, `retryResult`, `retryRequest` and `cleanup(after:)`.",
+    "facts": [
+      {"fact": "SessionDelegate", "aliases": [], "in": ["Source/Core/SessionDelegate.swift", "Source/Core/Session.swift"]},
+      {"fact": "SessionStateProvider", "aliases": [], "in": ["Source/Core/SessionDelegate.swift", "Source/Core/Session.swift"]},
+      {"fact": "RequestTaskMap", "aliases": [], "in": ["Source/Core/RequestTaskMap.swift", "Source/Core/Session.swift"]},
+      {"fact": "RequestDelegate", "aliases": [], "in": ["Source/Core/Request.swift", "Source/Core/Session.swift"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "Source/Core/SessionDelegate.swift", "lines": "28-69", "note": "SessionDelegate, weak stateProvider, request(for:as:), SessionStateProvider protocol"}, {"file": "Source/Core/Session.swift", "lines": "89-98", "note": "MutableState: requestTaskMap, activeRequests, waitingCompletions"}, {"file": "Source/Core/Session.swift", "lines": "150-163", "note": "delegate.stateProvider = self"}, {"file": "Source/Core/Session.swift", "lines": "1334-1441", "note": "Session as RequestDelegate and SessionStateProvider"}, {"file": "Source/Core/RequestTaskMap.swift", "lines": "28-87", "note": "two-way request/task map with task events"}, {"file": "Source/Core/Request.swift", "lines": "1251-1279", "note": "RequestDelegate protocol"}]
+  },
+  {
+    "id": "alamofire-k06", "kind": "architecture",
+    "question": "How can outside code observe every lifecycle step of every request, for logging or metrics: what does an observer implement, how are several observers combined and on which queue is each one called, which observer does a Session install by default, and how can a single request get extra observers?",
+    "reference": "Observers conform to the `EventMonitor` protocol (Source/Features/EventMonitor.swift), whose methods all have empty default implementations and a `queue` (main by default). The Session wraps its monitors in a `CompositeEventMonitor`, whose `performEvent` dispatches each event to every monitor on that monitor's own queue, and shares it with the `SessionDelegate` and each request. The default monitor is `AlamofireNotifications` (Source/Core/Notifications.swift), which posts NotificationCenter notifications; `ClosureEventMonitor` offers closure properties instead, and `Request.eventMonitor(_:)` rebuilds the request's composite with an extra monitor.",
+    "facts": [
+      {"fact": "EventMonitor", "aliases": [], "in": ["Source/Features/EventMonitor.swift", "Source/Core/Session.swift"]},
+      {"fact": "CompositeEventMonitor", "aliases": [], "in": ["Source/Features/EventMonitor.swift", "Source/Core/Session.swift", "Source/Core/Request.swift"]},
+      {"fact": "performEvent", "aliases": [], "in": ["Source/Features/EventMonitor.swift"]},
+      {"fact": "AlamofireNotifications", "aliases": [], "in": ["Source/Core/Notifications.swift", "Source/Core/Session.swift"]},
+      {"fact": "ClosureEventMonitor", "aliases": [], "in": ["Source/Features/EventMonitor.swift"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "Source/Features/EventMonitor.swift", "lines": "27-38", "note": "EventMonitor protocol with queue"}, {"file": "Source/Features/EventMonitor.swift", "lines": "225-231", "note": "default queue .main and empty default implementations"}, {"file": "Source/Features/EventMonitor.swift", "lines": "314-342", "note": "CompositeEventMonitor.performEvent dispatches on each monitor's queue"}, {"file": "Source/Features/EventMonitor.swift", "lines": "590-600", "note": "ClosureEventMonitor"}, {"file": "Source/Core/Notifications.swift", "lines": "83-100", "note": "AlamofireNotifications posts notifications"}, {"file": "Source/Core/Session.swift", "lines": "82-87", "note": "eventMonitor: CompositeEventMonitor, default [AlamofireNotifications()]"}, {"file": "Source/Core/Session.swift", "lines": "161-163", "note": "CompositeEventMonitor on rootQueue shared with the delegate"}, {"file": "Source/Core/Request.swift", "lines": "1077-1095", "note": "per-request eventMonitor(_:) recomposes"}]
+  },
+  {
+    "id": "alamofire-k07", "kind": "architecture",
+    "question": "How is concurrency organised inside a Session and its requests: which dispatch queues exist, what work runs on each, how are they related to each other and to URLSession's delegate callbacks, and how is mutable state that several threads touch kept safe?",
+    "reference": "Source/Core/Session.swift: the serial `rootQueue` is the underlying queue of URLSession's delegate OperationQueue and runs all internal callbacks and state changes; `requestQueue` (URLRequest creation and adaptation) and `serializationQueue` (response serializers) target `rootQueue` by default. Each request gets the session's `rootQueue` as its `underlyingQueue` plus the `serializationQueue`. Shared mutable state (the Session's and each request's `MutableState`) lives in `Protected` (Source/Core/Protected.swift), a lock wrapper with `read`/`write`.",
+    "facts": [
+      {"fact": "rootQueue", "aliases": [], "in": ["Source/Core/Session.swift"]},
+      {"fact": "requestQueue", "aliases": [], "in": ["Source/Core/Session.swift"]},
+      {"fact": "serializationQueue", "aliases": [], "in": ["Source/Core/Session.swift", "Source/Core/Request.swift"]},
+      {"fact": "underlyingQueue", "aliases": [], "in": ["Source/Core/Request.swift", "Source/Core/Session.swift"]},
+      {"fact": "Source/Core/Protected.swift", "aliases": ["Protected.swift"], "in": []}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "Source/Core/Session.swift", "lines": "56-72", "note": "rootQueue, requestQueue, serializationQueue documented"}, {"file": "Source/Core/Session.swift", "lines": "150-163", "note": "requestQueue/serializationQueue default to targeting rootQueue"}, {"file": "Source/Core/Session.swift", "lines": "201-233", "note": "rootQueue retargeted, URLSession delegateQueue on it"}, {"file": "Source/Core/Session.swift", "lines": "393-402", "note": "requests get underlyingQueue: rootQueue and serializationQueue"}, {"file": "Source/Core/Session.swift", "lines": "1166-1197", "note": "perform hops rootQueue -> requestQueue"}, {"file": "Source/Core/Request.swift", "lines": "70-73", "note": "underlyingQueue and serializationQueue"}, {"file": "Source/Core/Request.swift", "lines": "276-290", "note": "mutableState = Protected(MutableState(...))"}, {"file": "Source/Core/Protected.swift", "lines": "84-124", "note": "Protected lock wrapper with read/write"}]
+  },
+  {
+    "id": "alamofire-k08", "kind": "architecture",
+    "question": "How are the hooks that modify outgoing requests and decide on retries organised: what does such a hook implement, how are several of them chained into one, how are a Session's hooks combined with a request's own, and what built-in retry strategy with exponential backoff is provided?",
+    "reference": "Source/Features/RequestInterceptor.swift defines `RequestAdapter` (adapt a URLRequest), `RequestRetrier` (return a `RetryResult`) and `RequestInterceptor` combining both. `Interceptor` holds arrays of adapters and retriers, adapting in sequence and asking retriers in order until one does not return doNotRetry; `Session.adapter(for:)`/`retrier(for:)` build an `Interceptor` with the Session's interceptor first, then the request's. `RetryPolicy` (Source/Features/RetryPolicy.swift) retries idempotent methods on selected status and URL error codes with exponential backoff up to a retry limit.",
+    "facts": [
+      {"fact": "RequestAdapter", "aliases": [], "in": ["Source/Features/RequestInterceptor.swift", "Source/Core/Session.swift"]},
+      {"fact": "RequestRetrier", "aliases": [], "in": ["Source/Features/RequestInterceptor.swift", "Source/Core/Session.swift"]},
+      {"fact": "Interceptor", "aliases": [], "in": ["Source/Features/RequestInterceptor.swift", "Source/Core/Session.swift"]},
+      {"fact": "RetryPolicy", "aliases": [], "in": ["Source/Features/RetryPolicy.swift"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "Source/Features/RequestInterceptor.swift", "lines": "28-134", "note": "RequestAdapter, RetryResult, RequestRetrier, RequestInterceptor"}, {"file": "Source/Features/RequestInterceptor.swift", "lines": "221-339", "note": "Interceptor chains adapters and retriers"}, {"file": "Source/Core/Session.swift", "lines": "1315-1329", "note": "adapter(for:)/retrier(for:) combine session and request interceptors, session first"}, {"file": "Source/Features/RetryPolicy.swift", "lines": "29-60", "note": "defaults: retry limit, backoff base/scale, retryable methods and status codes"}, {"file": "Source/Features/RetryPolicy.swift", "lines": "308-339", "note": "retry with exponential backoff delay; shouldRetry"}]
+  }
+]

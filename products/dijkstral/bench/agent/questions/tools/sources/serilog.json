@@ -1,0 +1,112 @@
+[
+  {
+    "id": "serilog-k01", "kind": "flow",
+    "question": "Trace a call such as `Log.Information(\"Processed {Count} items in {Elapsed} ms\", count, elapsed)` through the library: where is the template text parsed (and is that work reused across calls), where are the arguments matched to the named holes, and where are enrichers applied before the event is handed to the sinks?",
+    "reference": "The static `Log` forwards to `Logger.Write` (src/Serilog/Core/Logger.cs), which checks the level and calls `MessageTemplateProcessor.Process`: the template is parsed through `MessageTemplateCache` (a bounded cache in front of `MessageTemplateParser`) and `PropertyBinder.ConstructProperties` binds the arguments to the named or positional tokens via the `PropertyValueConverter`. The resulting `LogEvent` goes to `PostLevelCheckEmit`, which runs the enricher and then calls `Emit` on the logger's sink.",
+    "facts": [
+      {"fact": "MessageTemplateProcessor", "aliases": [], "in": ["src/Serilog/Capturing/MessageTemplateProcessor.cs", "src/Serilog/Core/Logger.cs"]},
+      {"fact": "MessageTemplateCache", "aliases": [], "in": ["src/Serilog/Core/Pipeline/MessageTemplateCache.cs", "src/Serilog/Capturing/MessageTemplateProcessor.cs"]},
+      {"fact": "PropertyBinder", "aliases": [], "in": ["src/Serilog/Capturing/PropertyBinder.cs", "src/Serilog/Capturing/MessageTemplateProcessor.cs"]},
+      {"fact": "PostLevelCheckEmit", "aliases": [], "in": ["src/Serilog/Core/Logger.cs"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "src/Serilog/Log.cs", "lines": "633-636", "note": "static Log.Information forwards to Logger"}, {"file": "src/Serilog/Core/Logger.cs", "lines": "409-431", "note": "Write: IsEnabled, _messageTemplateProcessor.Process, new LogEvent, PostLevelCheckEmit"}, {"file": "src/Serilog/Core/Logger.cs", "lines": "474-488", "note": "PostLevelCheckEmit: enricher.Enrich then _sink.Emit"}, {"file": "src/Serilog/Capturing/MessageTemplateProcessor.cs", "lines": "17-37", "note": "Process: MessageTemplateCache parse + PropertyBinder.ConstructProperties"}, {"file": "src/Serilog/Core/Pipeline/MessageTemplateCache.cs", "lines": "40-72", "note": "cache lookup, inner parser, bounded size"}, {"file": "src/Serilog/Capturing/PropertyBinder.cs", "lines": "38-137", "note": "ConstructProperties: positional vs named binding, CreatePropertyValue per token"}]
+  },
+  {
+    "id": "serilog-k02", "kind": "flow",
+    "question": "When code wraps work in `using (LogContext.PushProperty(\"OrderId\", id)) { ... }`, how does that property end up on events written inside the block by an ordinary logger, and how is it taken away again when the block ends?",
+    "reference": "`LogContext.PushProperty` (src/Serilog/Context/LogContext.cs) pushes a `PropertyEnricher` onto an immutable `EnricherStack` held in an AsyncLocal and returns a `ContextStackBookmark` that restores the previous stack on Dispose. The logger only sees it if configured with `Enrich.FromLogContext()`, which adds a `LogContextEnricher`; when the logger enriches an event (`PostLevelCheckEmit`), that enricher calls `LogContext.Enrich`, which walks the current stack and each `PropertyEnricher` calls `LogEvent.AddPropertyIfAbsent`.",
+    "facts": [
+      {"fact": "EnricherStack", "aliases": [], "in": ["src/Serilog/Context/EnricherStack.cs", "src/Serilog/Context/LogContext.cs"]},
+      {"fact": "ContextStackBookmark", "aliases": [], "in": ["src/Serilog/Context/LogContext.cs"]},
+      {"fact": "LogContextEnricher", "aliases": [], "in": ["src/Serilog/Context/LogContextEnricher.cs", "src/Serilog/Configuration/LoggerEnrichmentConfiguration.cs"]},
+      {"fact": "FromLogContext", "aliases": [], "in": ["src/Serilog/Configuration/LoggerEnrichmentConfiguration.cs"]},
+      {"fact": "AddPropertyIfAbsent", "aliases": [], "in": ["src/Serilog/Core/Enrichers/PropertyEnricher.cs", "src/Serilog/Events/LogEvent.cs"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "src/Serilog/Context/LogContext.cs", "lines": "38-80", "note": "AsyncLocal<EnricherStack>; PushProperty -> Push(PropertyEnricher) returns ContextStackBookmark"}, {"file": "src/Serilog/Context/LogContext.cs", "lines": "201-232", "note": "Enrich walks the stack; ContextStackBookmark.Dispose restores the previous stack"}, {"file": "src/Serilog/Context/EnricherStack.cs", "lines": "23-75", "note": "immutable linked stack, enumerated top first"}, {"file": "src/Serilog/Context/LogContextEnricher.cs", "lines": "17-23", "note": "delegates to LogContext.Enrich"}, {"file": "src/Serilog/Configuration/LoggerEnrichmentConfiguration.cs", "lines": "86-86", "note": "FromLogContext => With<LogContextEnricher>()"}, {"file": "src/Serilog/Core/Enrichers/PropertyEnricher.cs", "lines": "52-58", "note": "AddPropertyIfAbsent"}, {"file": "src/Serilog/Events/LogEvent.cs", "lines": "217-229", "note": "AddPropertyIfAbsent converts the value through the property factory"}]
+  },
+  {
+    "id": "serilog-k03", "kind": "flow",
+    "question": "With `MinimumLevel.Override(\"Microsoft\", LogEventLevel.Warning)` in the configuration, trace how a logger obtained with `ForContext<T>()` for a type in a `Microsoft.*` namespace ends up discarding its Debug events while other loggers still write them.",
+    "reference": "`LoggerMinimumLevelConfiguration.Override` wraps the level in a `LoggingLevelSwitch` and records it; `CreateLogger` (src/Serilog/LoggerConfiguration.cs) builds a `LevelOverrideMap` from the overrides (sorted so the most specific prefix matches first). `ForContext<T>()` becomes `ForContext(Constants.SourceContextPropertyName, type.FullName)`, which asks `LevelOverrideMap.GetEffectiveLevel` for that context and creates the child `Logger` with the override's switch; the child's `IsEnabled` then compares each level with the switch's minimum.",
+    "facts": [
+      {"fact": "LevelOverrideMap", "aliases": [], "in": ["src/Serilog/Core/LevelOverrideMap.cs", "src/Serilog/LoggerConfiguration.cs", "src/Serilog/Core/Logger.cs"]},
+      {"fact": "GetEffectiveLevel", "aliases": [], "in": ["src/Serilog/Core/LevelOverrideMap.cs", "src/Serilog/Core/Logger.cs"]},
+      {"fact": "SourceContextPropertyName", "aliases": [], "in": ["src/Serilog/Core/Constants.cs", "src/Serilog/Core/Logger.cs"]},
+      {"fact": "LoggingLevelSwitch", "aliases": [], "in": ["src/Serilog/Configuration/LoggerMinimumLevelConfiguration.cs", "src/Serilog/Core/LevelOverrideMap.cs", "src/Serilog/Core/Logger.cs"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "src/Serilog/Configuration/LoggerMinimumLevelConfiguration.cs", "lines": "114-138", "note": "Override(source, level) -> new LoggingLevelSwitch, _addOverride"}, {"file": "src/Serilog/LoggerConfiguration.cs", "lines": "70-83", "note": "MinimumLevel collects overrides into _overrides"}, {"file": "src/Serilog/LoggerConfiguration.cs", "lines": "171-175", "note": "CreateLogger builds LevelOverrideMap"}, {"file": "src/Serilog/Core/LevelOverrideMap.cs", "lines": "43-86", "note": "overrides sorted descending; GetEffectiveLevel prefix match on '.' boundary"}, {"file": "src/Serilog/Core/Logger.cs", "lines": "121-181", "note": "ForContext(SourceContext) consults _overrideMap; ForContext<T> -> ForContext(Type)"}, {"file": "src/Serilog/Core/Logger.cs", "lines": "298-305", "note": "IsEnabled checks _minimumLevel then the level switch"}, {"file": "src/Serilog/Core/Constants.cs", "lines": "20-28", "note": "SourceContextPropertyName"}]
+  },
+  {
+    "id": "serilog-k04", "kind": "flow",
+    "question": "How does a key-value setting such as `write-to:File.path` = `logs/app.txt`, passed to `ReadFrom.KeyValuePairs` together with a `using` entry naming the sink's assembly, turn into a call to the sink's configuration method with the right argument type?",
+    "reference": "`LoggerSettingsConfiguration.KeyValuePairs` wraps the settings in `KeyValuePairSettings` (src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs), whose `Configure` matches the key against the callable-directive regex, loads the assemblies named by `using` keys in `LoadConfigurationAssemblies`, collects candidate extension methods for the `WriteTo` receiver with `CallableConfigurationMethodFinder.FindConfigurationMethods`, picks one by argument names in `SelectConfigurationMethod`, converts each string value with `SettingValueConversions.ConvertToType`, and invokes it with the receiver as first argument.",
+    "facts": [
+      {"fact": "KeyValuePairSettings", "aliases": [], "in": ["src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs", "src/Serilog/Configuration/LoggerSettingsConfiguration.cs"]},
+      {"fact": "LoadConfigurationAssemblies", "aliases": [], "in": ["src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs"]},
+      {"fact": "FindConfigurationMethods", "aliases": [], "in": ["src/Serilog/Settings/KeyValuePairs/CallableConfigurationMethodFinder.cs", "src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs"]},
+      {"fact": "SelectConfigurationMethod", "aliases": [], "in": ["src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs"]},
+      {"fact": "ConvertToType", "aliases": [], "in": ["src/Serilog/Settings/KeyValuePairs/SettingValueConversions.cs", "src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "src/Serilog/Configuration/LoggerSettingsConfiguration.cs", "lines": "51-68", "note": "KeyValuePairs -> Settings(new KeyValuePairSettings(...))"}, {"file": "src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs", "lines": "36-70", "note": "callable directive regex and receiver types (write-to -> LoggerSinkConfiguration)"}, {"file": "src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs", "lines": "83-157", "note": "Configure: directives, LoadConfigurationAssemblies, FindConfigurationMethods, ApplyDirectives"}, {"file": "src/Serilog/Settings/KeyValuePairs/KeyValuePairSettings.cs", "lines": "214-283", "note": "ConvertOrLookupByName, ApplyDirectives invoke, SelectConfigurationMethod, LoadConfigurationAssemblies"}, {"file": "src/Serilog/Settings/KeyValuePairs/CallableConfigurationMethodFinder.cs", "lines": "17-58", "note": "extension methods on the receiver type plus surrogate methods"}, {"file": "src/Serilog/Settings/KeyValuePairs/SettingValueConversions.cs", "lines": "40-137", "note": "ConvertToType: enums, Uri/TimeSpan/Type, static member accessors, arrays, ChangeType"}]
+  },
+  {
+    "id": "serilog-k05", "kind": "architecture",
+    "question": "How is the chain of sink objects behind a logger put together when the logger is built from its configuration: what are the ordinary sinks combined into, how do audit sinks change how exceptions are handled, and how are global filters and per-sink minimum levels layered in?",
+    "reference": "In `CreateLogger` (src/Serilog/LoggerConfiguration.cs) the `WriteTo` sinks go into a `SafeAggregateSink` (exceptions swallowed and written to SelfLog); if `AuditTo` sinks exist, everything is wrapped in an `AggregateSink`, which rethrows failures as an AggregateException; global filters wrap the result in a `FilteringSink` (propagating exceptions when auditing). Per-sink `restrictedToMinimumLevel` or level switches are applied in `LoggerSinkConfiguration.Sink` by wrapping the sink in a `RestrictedSink`, with an `OptionalInterfaceForwardingSink` keeping disposal and failure-listener support of the wrapped sink.",
+    "facts": [
+      {"fact": "SafeAggregateSink", "aliases": [], "in": ["src/Serilog/Core/Sinks/SafeAggregateSink.cs", "src/Serilog/LoggerConfiguration.cs"]},
+      {"fact": "AggregateSink", "aliases": [], "in": ["src/Serilog/Core/Sinks/AggregateSink.cs", "src/Serilog/LoggerConfiguration.cs"]},
+      {"fact": "FilteringSink", "aliases": [], "in": ["src/Serilog/Core/Sinks/FilteringSink.cs", "src/Serilog/LoggerConfiguration.cs"]},
+      {"fact": "RestrictedSink", "aliases": [], "in": ["src/Serilog/Core/Sinks/RestrictedSink.cs", "src/Serilog/Configuration/LoggerSinkConfiguration.cs"]},
+      {"fact": "OptionalInterfaceForwardingSink", "aliases": [], "in": ["src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs", "src/Serilog/Configuration/LoggerSinkConfiguration.cs"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "src/Serilog/LoggerConfiguration.cs", "lines": "127-150", "note": "CreateLogger: SafeAggregateSink, AggregateSink when auditing, FilteringSink"}, {"file": "src/Serilog/Configuration/LoggerSinkConfiguration.cs", "lines": "61-94", "note": "Sink(): RestrictedSink for level/switch, OptionalInterfaceForwardingSink"}, {"file": "src/Serilog/Core/Sinks/SafeAggregateSink.cs", "lines": "17-40", "note": "catches per-sink exceptions"}, {"file": "src/Serilog/Core/Sinks/AggregateSink.cs", "lines": "17-47", "note": "collects and rethrows AggregateException"}, {"file": "src/Serilog/Core/Sinks/FilteringSink.cs", "lines": "17-49", "note": "filters, propagates exceptions when auditing"}, {"file": "src/Serilog/Core/Sinks/RestrictedSink.cs", "lines": "17-36", "note": "level switch check"}, {"file": "src/Serilog/Core/Sinks/OptionalInterfaceForwardingSink.cs", "lines": "17-92", "note": "forwards Dispose/DisposeAsync/SetFailureListener to the wrapped sink"}]
+  },
+  {
+    "id": "serilog-k06", "kind": "architecture",
+    "question": "How is the conversion of arbitrary .NET objects into captured property values organised: which kinds of pluggable rules are consulted and in what order, where do user-registered rules come from, and what stops runaway recursion into deeply nested objects?",
+    "reference": "`PropertyValueConverter` (src/Serilog/Capturing/PropertyValueConverter.cs) first tries its `IScalarConversionPolicy` list (primitive, simple built-in and user scalar types, enums, byte arrays), then, only for `@` destructuring, its `IDestructuringPolicy` list (user policies first, then delegate and reflection-type policies), then dictionaries/collections, value tuples and reflected structures. User rules are registered through `LoggerDestructuringConfiguration` (`Destructure.AsScalar`, `With`, `ToMaximumDepth`...) and passed in by `CreateLogger`; nested values go back through the `DepthLimiter`, which returns a null scalar once the maximum destructuring depth is reached.",
+    "facts": [
+      {"fact": "PropertyValueConverter", "aliases": [], "in": ["src/Serilog/Capturing/PropertyValueConverter.cs", "src/Serilog/LoggerConfiguration.cs"]},
+      {"fact": "IScalarConversionPolicy", "aliases": [], "in": ["src/Serilog/Core/IScalarConversionPolicy.cs", "src/Serilog/Capturing/PropertyValueConverter.cs"]},
+      {"fact": "IDestructuringPolicy", "aliases": [], "in": ["src/Serilog/Core/IDestructuringPolicy.cs", "src/Serilog/Capturing/PropertyValueConverter.cs"]},
+      {"fact": "DepthLimiter", "aliases": [], "in": ["src/Serilog/Capturing/DepthLimiter.cs", "src/Serilog/Capturing/PropertyValueConverter.cs"]},
+      {"fact": "LoggerDestructuringConfiguration", "aliases": [], "in": ["src/Serilog/Configuration/LoggerDestructuringConfiguration.cs", "src/Serilog/LoggerConfiguration.cs"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "src/Serilog/Capturing/PropertyValueConverter.cs", "lines": "42-82", "note": "scalar conversion policies, destructuring policies (user first), DepthLimiter"}, {"file": "src/Serilog/Capturing/PropertyValueConverter.cs", "lines": "121-170", "note": "order: Stringify, scalar policies, destructuring policies, enumerable, tuple, structure, ToString"}, {"file": "src/Serilog/Capturing/PropertyValueConverter.cs", "lines": "354-383", "note": "structures only when destructuring"}, {"file": "src/Serilog/Capturing/DepthLimiter.cs", "lines": "17-72", "note": "thread-static depth, null at maximum depth"}, {"file": "src/Serilog/Configuration/LoggerDestructuringConfiguration.cs", "lines": "20-101", "note": "AsScalar/With register scalar types and policies"}, {"file": "src/Serilog/LoggerConfiguration.cs", "lines": "99-112", "note": "Destructure property wires callbacks"}, {"file": "src/Serilog/LoggerConfiguration.cs", "lines": "152-160", "note": "CreateLogger constructs PropertyValueConverter and MessageTemplateProcessor"}]
+  },
+  {
+    "id": "serilog-k07", "kind": "architecture",
+    "question": "How is rendering an event through an output template such as `[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}` organised: which class walks the output template, which pieces handle the level abbreviation, the message text and the leftover properties, and what is reused when a value must be written as JSON?",
+    "reference": "`MessageTemplateTextFormatter` (src/Serilog/Formatting/Display/MessageTemplateTextFormatter.cs) parses the output template once and dispatches each token by the names in `OutputProperties`: `LevelOutputFormat` produces the abbreviated level, `MessageTemplateRenderer` renders the event's own message template (with the `l` and `j` options), and `PropertiesOutputFormat` writes properties not already used by either template. Both JSON paths reuse `JsonValueFormatter`, the visitor that also backs the `JsonFormatter`.",
+    "facts": [
+      {"fact": "MessageTemplateTextFormatter", "aliases": [], "in": ["src/Serilog/Formatting/Display/MessageTemplateTextFormatter.cs"]},
+      {"fact": "LevelOutputFormat", "aliases": [], "in": ["src/Serilog/Formatting/Display/LevelOutputFormat.cs", "src/Serilog/Formatting/Display/MessageTemplateTextFormatter.cs"]},
+      {"fact": "MessageTemplateRenderer", "aliases": [], "in": ["src/Serilog/Rendering/MessageTemplateRenderer.cs", "src/Serilog/Formatting/Display/MessageTemplateTextFormatter.cs"]},
+      {"fact": "PropertiesOutputFormat", "aliases": [], "in": ["src/Serilog/Formatting/Display/PropertiesOutputFormat.cs", "src/Serilog/Formatting/Display/MessageTemplateTextFormatter.cs"]},
+      {"fact": "JsonValueFormatter", "aliases": [], "in": ["src/Serilog/Formatting/Json/JsonValueFormatter.cs", "src/Serilog/Rendering/MessageTemplateRenderer.cs", "src/Serilog/Formatting/Display/PropertiesOutputFormat.cs"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "src/Serilog/Formatting/Display/MessageTemplateTextFormatter.cs", "lines": "28-161", "note": "parses output template; per-token dispatch on OutputProperties names"}, {"file": "src/Serilog/Formatting/Display/OutputProperties.cs", "lines": "21-67", "note": "built-in output token names"}, {"file": "src/Serilog/Formatting/Display/LevelOutputFormat.cs", "lines": "23-96", "note": "level monikers by case and width"}, {"file": "src/Serilog/Rendering/MessageTemplateRenderer.cs", "lines": "17-106", "note": "renders message template; l/j options, JsonValueFormatter"}, {"file": "src/Serilog/Formatting/Display/PropertiesOutputFormat.cs", "lines": "17-83", "note": "properties not in either template; j -> JsonValueFormatter"}, {"file": "src/Serilog/Formatting/Json/JsonValueFormatter.cs", "lines": "20-49", "note": "visitor over property values"}]
+  },
+  {
+    "id": "serilog-k08", "kind": "architecture",
+    "question": "How is failure reporting from sinks organised: what does a sink implement so that it can be told where to report problems, where do those reports go when nobody configured anything, and which pieces let `WriteTo.FallbackChain` send the events of a failing sink on to the next one?",
+    "reference": "A sink that can report failures implements `ISetLoggingFailureListener` and reports through an `ILoggingFailureListener` (`OnLoggingFailed` with a `LoggingFailureKind`); by default that is `SelfLog.FailureListener`, which writes to SelfLog (e.g. `BatchingSink` starts with it). `LoggerSinkConfiguration.FallbackChain` builds the chain from the last sink backwards: each earlier sink is wrapped in a `FailureListenerSink` (which installs the listener and also catches synchronous exceptions) whose listener is a `DelegatingLoggingFailureListener` that re-emits permanently failed events to the next sink.",
+    "facts": [
+      {"fact": "ISetLoggingFailureListener", "aliases": [], "in": ["src/Serilog/Core/ISetLoggingFailureListener.cs", "src/Serilog/Core/Sinks/Fallback/FailureListenerSink.cs"]},
+      {"fact": "ILoggingFailureListener", "aliases": [], "in": ["src/Serilog/Core/ILoggingFailureListener.cs", "src/Serilog/Core/Sinks/Fallback/FailureListenerSink.cs"]},
+      {"fact": "SelfLog", "aliases": [], "in": ["src/Serilog/Debugging/SelfLog.cs", "src/Serilog/Core/Sinks/Batching/BatchingSink.cs"]},
+      {"fact": "FailureListenerSink", "aliases": [], "in": ["src/Serilog/Core/Sinks/Fallback/FailureListenerSink.cs", "src/Serilog/Configuration/LoggerSinkConfiguration.cs"]},
+      {"fact": "DelegatingLoggingFailureListener", "aliases": [], "in": ["src/Serilog/Core/Sinks/Fallback/DelegatingLoggingFailureListener.cs", "src/Serilog/Configuration/LoggerSinkConfiguration.cs"]}
+    ],
+    "min_facts": 3,
+    "read": [{"file": "src/Serilog/Core/ISetLoggingFailureListener.cs", "lines": "20-28", "note": "SetFailureListener"}, {"file": "src/Serilog/Core/ILoggingFailureListener.cs", "lines": "20-37", "note": "OnLoggingFailed"}, {"file": "src/Serilog/Debugging/SelfLog.cs", "lines": "84-116", "note": "SelfLogFailureListener, SelfLog.FailureListener default"}, {"file": "src/Serilog/Core/Sinks/Batching/BatchingSink.cs", "lines": "50-50", "note": "default _failureListener = SelfLog.FailureListener"}, {"file": "src/Serilog/Configuration/LoggerSinkConfiguration.cs", "lines": "275-319", "note": "FallbackChain and Fallible wrap sinks in FailureListenerSink"}, {"file": "src/Serilog/Core/Sinks/Fallback/FailureListenerSink.cs", "lines": "17-43", "note": "installs listener, catches Emit exceptions"}, {"file": "src/Serilog/Core/Sinks/Fallback/DelegatingLoggingFailureListener.cs", "lines": "17-28", "note": "re-emits Permanent/Final failures to the next sink"}]
+  }
+]

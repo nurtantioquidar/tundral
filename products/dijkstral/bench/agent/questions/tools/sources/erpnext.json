@@ -1,0 +1,174 @@
+[
+  {
+    "id": "erpnext-k01", "kind": "flow",
+    "question": "A customer pays an invoice and the payment is recorded as a Payment Entry referencing that Sales Invoice. When the Payment Entry is submitted, how does the invoice's outstanding amount go down? Trace it from the payment's submit handler to the write of the new outstanding value on the invoice.",
+    "reference": "`PaymentEntry.on_submit` calls `make_gl_entries`, which builds the rows with `build_gl_map` (party, bank, deductions, tax) and passes them to `make_gl_entries` in erpnext/accounts/general_ledger.py; that calls `create_payment_ledger_entry` (erpnext/accounts/utils.py) before saving the GL Entries. Each Payment Ledger Entry's `on_update` (erpnext/accounts/doctype/payment_ledger_entry/payment_ledger_entry.py) calls `update_voucher_outstanding`, which recomputes the invoice's outstanding from the payment ledger and sets `outstanding_amount` and the invoice status.",
+    "facts": [
+      {"fact": "build_gl_map", "aliases": [], "in": ["erpnext/accounts/doctype/payment_entry/payment_entry.py"]},
+      {"fact": "erpnext/accounts/general_ledger.py", "aliases": ["accounts/general_ledger.py"], "in": []},
+      {"fact": "create_payment_ledger_entry", "aliases": [], "in": ["erpnext/accounts/utils.py", "erpnext/accounts/general_ledger.py"]},
+      {"fact": "erpnext/accounts/doctype/payment_ledger_entry/payment_ledger_entry.py", "aliases": ["payment_ledger_entry.py"], "in": []},
+      {"fact": "update_voucher_outstanding", "aliases": [], "in": ["erpnext/accounts/utils.py", "erpnext/accounts/doctype/payment_ledger_entry/payment_ledger_entry.py"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "erpnext/accounts/doctype/payment_entry/payment_entry.py", "lines": "204-214", "note": "on_submit calls make_gl_entries and update_outstanding_amounts"},
+      {"file": "erpnext/accounts/doctype/payment_entry/payment_entry.py", "lines": "1325-1356", "note": "build_gl_map; make_gl_entries -> general_ledger.make_gl_entries"},
+      {"file": "erpnext/accounts/general_ledger.py", "lines": "29-69", "note": "make_gl_entries: process_gl_map, create_payment_ledger_entry, save_entries"},
+      {"file": "erpnext/accounts/utils.py", "lines": "2127-2147", "note": "create_payment_ledger_entry submits Payment Ledger Entry docs"},
+      {"file": "erpnext/accounts/doctype/payment_ledger_entry/payment_ledger_entry.py", "lines": "158-176", "note": "on_update calls update_voucher_outstanding for the against voucher"},
+      {"file": "erpnext/accounts/utils.py", "lines": "2150-2204", "note": "update_voucher_outstanding sets outstanding_amount and status on the invoice"}
+    ]
+  },
+  {
+    "id": "erpnext-k02", "kind": "flow",
+    "question": "When a Delivery Note is submitted, how does the shipped quantity come off the warehouse's books? Trace it from the delivery document to the ledger row that records the stock movement, the recalculation of the item's valuation, and the update of the per-item, per-warehouse quantity summary.",
+    "reference": "`DeliveryNote.on_submit` calls `update_stock_ledger` (SellingController, erpnext/controllers/selling_controller.py), which builds one entry per stock item and calls StockController's `make_sl_entries`, which delegates to `make_sl_entries` in erpnext/stock/stock_ledger.py; that submits a Stock Ledger Entry per row (`make_entry`), then for stock items gets the Bin, runs `repost_current_voucher` (which uses `update_entries_after` to recompute qty after transaction, valuation rate and stock value) and finally updates the Bin quantities through `update_qty` in erpnext/stock/doctype/bin/bin.py.",
+    "facts": [
+      {"fact": "update_stock_ledger", "aliases": [], "in": ["erpnext/controllers/selling_controller.py", "erpnext/stock/doctype/delivery_note/delivery_note.py"]},
+      {"fact": "make_sl_entries", "aliases": [], "in": ["erpnext/controllers/stock_controller.py", "erpnext/stock/stock_ledger.py"]},
+      {"fact": "repost_current_voucher", "aliases": [], "in": ["erpnext/stock/stock_ledger.py"]},
+      {"fact": "update_entries_after", "aliases": [], "in": ["erpnext/stock/stock_ledger.py"]},
+      {"fact": "erpnext/stock/doctype/bin/bin.py", "aliases": ["bin.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "erpnext/stock/doctype/delivery_note/delivery_note.py", "lines": "448-482", "note": "on_submit: update_prevdoc_status, update_stock_ledger, make_gl_entries"},
+      {"file": "erpnext/controllers/selling_controller.py", "lines": "653-683", "note": "update_stock_ledger builds SLE dicts and calls make_sl_entries"},
+      {"file": "erpnext/controllers/stock_controller.py", "lines": "1452-1461", "note": "StockController.make_sl_entries delegates to stock_ledger.make_sl_entries"},
+      {"file": "erpnext/stock/stock_ledger.py", "lines": "109-172", "note": "make_sl_entries: make_entry, get_or_make_bin, repost_current_voucher, update_bin_qty"},
+      {"file": "erpnext/stock/stock_ledger.py", "lines": "175-202", "note": "repost_current_voucher runs update_entries_after"},
+      {"file": "erpnext/stock/stock_ledger.py", "lines": "32-32", "note": "update_bin_qty is bin.update_qty"},
+      {"file": "erpnext/stock/doctype/bin/bin.py", "lines": "273-316", "note": "update_qty sets actual/ordered/reserved/projected qty on the Bin"}
+    ]
+  },
+  {
+    "id": "erpnext-k03", "kind": "flow",
+    "question": "When a user picks an item on a row of a Sales Order in the browser, how does that row get its price list rate and any discount from the configured pricing rules? Trace it from the form's item handler to the code that chooses which rules apply.",
+    "reference": "The `item_code` handler in erpnext/public/js/controllers/transaction.js calls the document method `process_item_selection` (TransactionBase in erpnext/utilities/transaction_base.py; the legacy client path calls the same endpoint directly), which calls `get_item_details` in erpnext/stock/get_item_details.py; that fetches the rate with `get_price_list_rate` and then applies `get_pricing_rule_for_item` (erpnext/accounts/doctype/pricing_rule/pricing_rule.py), which finds candidate rules with `get_pricing_rules` (pricing_rule/utils.py: by item code, item group and brand, then filtered and prioritised) and applies the price or discount.",
+    "facts": [
+      {"fact": "process_item_selection", "aliases": [], "in": ["erpnext/public/js/controllers/transaction.js", "erpnext/utilities/transaction_base.py"]},
+      {"fact": "get_item_details", "aliases": [], "in": ["erpnext/stock/get_item_details.py", "erpnext/utilities/transaction_base.py", "erpnext/public/js/controllers/transaction.js"]},
+      {"fact": "get_price_list_rate", "aliases": [], "in": ["erpnext/stock/get_item_details.py"]},
+      {"fact": "get_pricing_rule_for_item", "aliases": [], "in": ["erpnext/accounts/doctype/pricing_rule/pricing_rule.py", "erpnext/stock/get_item_details.py"]},
+      {"fact": "get_pricing_rules", "aliases": [], "in": ["erpnext/accounts/doctype/pricing_rule/utils.py", "erpnext/accounts/doctype/pricing_rule/pricing_rule.py"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "erpnext/public/js/controllers/transaction.js", "lines": "755-800", "note": "item_code -> process_item_selection (server) or get_item_details (legacy)"},
+      {"file": "erpnext/utilities/transaction_base.py", "lines": "298-385", "note": "fetch_item_details -> get_item_details; process_item_selection sets rates, taxes, totals"},
+      {"file": "erpnext/stock/get_item_details.py", "lines": "85-200", "note": "get_item_details: get_price_list_rate, then get_pricing_rule_for_item"},
+      {"file": "erpnext/accounts/doctype/pricing_rule/pricing_rule.py", "lines": "446-500", "note": "get_pricing_rule_for_item calls get_pricing_rules"},
+      {"file": "erpnext/accounts/doctype/pricing_rule/utils.py", "lines": "27-61", "note": "get_pricing_rules: by Item Code/Item Group/Brand, filter, priority"}
+    ]
+  },
+  {
+    "id": "erpnext-k04", "kind": "flow",
+    "question": "On a submitted Work Order the user clicks Finish. How does ERPNext build the stock movement that consumes the raw materials and receives the finished goods, and how does submitting that movement update how much the Work Order has produced? Trace it from the Work Order's server-side method through the stock document and back.",
+    "reference": "The Finish button calls `make_stock_entry` in erpnext/manufacturing/doctype/work_order/work_order.py with purpose Manufacture, which creates a Stock Entry and calls its `get_items`; for a BOM-based entry that uses `get_bom_raw_materials` (erpnext/stock/doctype/stock_entry/stock_entry.py), which explodes the BOM with `get_bom_items_as_dict` (erpnext/manufacturing/doctype/bom/bom.py). On submit, `StockEntry.update_work_order` reloads the Work Order and runs its `update_work_order_qty`, which recomputes produced_qty (and transferred qty) from submitted Stock Entries, then update_status.",
+    "facts": [
+      {"fact": "make_stock_entry", "aliases": [], "in": ["erpnext/manufacturing/doctype/work_order/work_order.py", "erpnext/manufacturing/doctype/work_order/work_order.js"]},
+      {"fact": "get_bom_raw_materials", "aliases": [], "in": ["erpnext/stock/doctype/stock_entry/stock_entry.py"]},
+      {"fact": "get_bom_items_as_dict", "aliases": [], "in": ["erpnext/manufacturing/doctype/bom/bom.py", "erpnext/stock/doctype/stock_entry/stock_entry.py"]},
+      {"fact": "update_work_order", "aliases": [], "in": ["erpnext/stock/doctype/stock_entry/stock_entry.py"]},
+      {"fact": "update_work_order_qty", "aliases": [], "in": ["erpnext/manufacturing/doctype/work_order/work_order.py", "erpnext/stock/doctype/stock_entry/stock_entry.py"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "erpnext/manufacturing/doctype/work_order/work_order.js", "lines": "905-935", "note": "Finish buttons call make_se(frm, \"Manufacture\")"},
+      {"file": "erpnext/manufacturing/doctype/work_order/work_order.js", "lines": "1177-1200", "note": "make_se calls work_order.make_stock_entry"},
+      {"file": "erpnext/manufacturing/doctype/work_order/work_order.py", "lines": "2759-2816", "note": "make_stock_entry creates the Stock Entry and calls get_items"},
+      {"file": "erpnext/stock/doctype/stock_entry/stock_entry.py", "lines": "3075-3140", "note": "get_items: default path get_bom_raw_materials(fg_completed_qty)"},
+      {"file": "erpnext/stock/doctype/stock_entry/stock_entry.py", "lines": "3547-3556", "note": "get_bom_raw_materials -> get_bom_items_as_dict"},
+      {"file": "erpnext/manufacturing/doctype/bom/bom.py", "lines": "1481-1490", "note": "get_bom_items_as_dict signature"},
+      {"file": "erpnext/stock/doctype/stock_entry/stock_entry.py", "lines": "584-608", "note": "on_submit calls update_work_order before update_stock_ledger"},
+      {"file": "erpnext/stock/doctype/stock_entry/stock_entry.py", "lines": "2569-2608", "note": "update_work_order runs update_work_order_qty and update_status"},
+      {"file": "erpnext/manufacturing/doctype/work_order/work_order.py", "lines": "816-850", "note": "update_work_order_qty recomputes produced_qty"}
+    ]
+  },
+  {
+    "id": "erpnext-k05", "kind": "architecture",
+    "question": "The server-side class for a Purchase Receipt gets most of its behaviour from shared base classes. Which classes sit between it and frappe's Document, in order from the most specific to the most general, and roughly what is each layer responsible for?",
+    "reference": "PurchaseReceipt -> `BuyingController` (erpnext/controllers/buying_controller.py: supplier, rates, valuation, purchase-specific validation) -> `SubcontractingController` (erpnext/controllers/subcontracting_controller.py: supplied and consumed raw materials for subcontracting) -> `StockController` (erpnext/controllers/stock_controller.py: stock ledger entries, serial/batch bundles, inventory GL) -> `AccountsController` (erpnext/controllers/accounts_controller.py: currency, taxes and totals, party and payment validation) -> `TransactionBase` (erpnext/utilities/transaction_base.py: item selection, posting time, reference checks) -> StatusUpdater (erpnext/controllers/status_updater.py: status and percentages on linked documents) -> Document.",
+    "facts": [
+      {"fact": "BuyingController", "aliases": [], "in": ["erpnext/controllers/buying_controller.py", "erpnext/stock/doctype/purchase_receipt/purchase_receipt.py"]},
+      {"fact": "SubcontractingController", "aliases": [], "in": ["erpnext/controllers/subcontracting_controller.py", "erpnext/controllers/buying_controller.py"]},
+      {"fact": "StockController", "aliases": [], "in": ["erpnext/controllers/stock_controller.py", "erpnext/controllers/subcontracting_controller.py"]},
+      {"fact": "AccountsController", "aliases": [], "in": ["erpnext/controllers/accounts_controller.py", "erpnext/controllers/stock_controller.py"]},
+      {"fact": "TransactionBase", "aliases": [], "in": ["erpnext/utilities/transaction_base.py", "erpnext/controllers/accounts_controller.py"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "erpnext/stock/doctype/purchase_receipt/purchase_receipt.py", "lines": "33-33", "note": "class PurchaseReceipt(BuyingController)"},
+      {"file": "erpnext/controllers/buying_controller.py", "lines": "33-75", "note": "class BuyingController(SubcontractingController); validate"},
+      {"file": "erpnext/controllers/subcontracting_controller.py", "lines": "27-80", "note": "class SubcontractingController(StockController)"},
+      {"file": "erpnext/controllers/stock_controller.py", "lines": "101-130", "note": "class StockController(AccountsController)"},
+      {"file": "erpnext/controllers/accounts_controller.py", "lines": "114-135", "note": "class AccountsController(TransactionBase)"},
+      {"file": "erpnext/utilities/transaction_base.py", "lines": "20-45", "note": "class TransactionBase(StatusUpdater)"},
+      {"file": "erpnext/controllers/status_updater.py", "lines": "181-181", "note": "class StatusUpdater(Document)"}
+    ]
+  },
+  {
+    "id": "erpnext-k06", "kind": "architecture",
+    "question": "ERPNext lets country-specific code replace parts of core behaviour; for example, the itemised tax data of an invoice is computed differently for a company in Italy. How is this organised: how does a core function declare that it can be replaced, where are the per-country replacements registered, how is the country chosen at call time, and where does Italy's version live?",
+    "reference": "Core functions are wrapped with the `allow_regional` decorator from erpnext/__init__.py (e.g. update_itemised_tax_data in erpnext/controllers/taxes_and_totals.py); at call time it looks up the `regional_overrides` hook for the country returned by `get_region` (the company's country, else the system country) and, if the function's dotted path is overridden, calls the replacement instead. The mapping lives in erpnext/hooks.py and points Italy to erpnext/regional/italy/utils.py.",
+    "facts": [
+      {"fact": "allow_regional", "aliases": [], "in": ["erpnext/__init__.py", "erpnext/controllers/taxes_and_totals.py"]},
+      {"fact": "regional_overrides", "aliases": [], "in": ["erpnext/hooks.py", "erpnext/__init__.py"]},
+      {"fact": "get_region", "aliases": [], "in": ["erpnext/__init__.py"]},
+      {"fact": "erpnext/hooks.py", "aliases": ["hooks.py"], "in": []},
+      {"fact": "erpnext/regional/italy/utils.py", "aliases": ["italy/utils.py"], "in": []}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "erpnext/__init__.py", "lines": "121-155", "note": "get_region and the allow_regional decorator"},
+      {"file": "erpnext/hooks.py", "lines": "643-656", "note": "regional_overrides per country"},
+      {"file": "erpnext/controllers/taxes_and_totals.py", "lines": "1280-1300", "note": "@erpnext.allow_regional on update_itemised_tax_data and friends"},
+      {"file": "erpnext/regional/italy/utils.py", "lines": "14-20", "note": "Italy's update_itemised_tax_data"}
+    ]
+  },
+  {
+    "id": "erpnext-k07", "kind": "architecture",
+    "question": "In the browser, the Delivery Note form shares most of its behaviour (fetching item details, recalculating taxes and totals, handling payments) with the other selling forms. How are those client-side scripts layered: what chain of shared classes does the Delivery Note's form class extend, which file defines each link, and how is the form's class defined and attached to the form?",
+    "reference": "delivery_note.js calls `erpnext.sales_common.setup_selling_controller()` (erpnext/public/js/utils/sales_common.js), which defines erpnext.selling.SellingController extending `erpnext.TransactionController` (erpnext/public/js/controllers/transaction.js), which extends erpnext.taxes_and_totals (erpnext/public/js/controllers/taxes_and_totals.js), which extends erpnext.payments (erpnext/public/js/payment/payments.js), which extends erpnext.stock.StockController (erpnext/public/js/controllers/stock_controller.js) and frappe.ui.form.Controller. DeliveryNoteController extends SellingController and is attached with `extend_cscript(cur_frm.cscript, ...)`; the shared files are loaded through erpnext.bundle.js.",
+    "facts": [
+      {"fact": "setup_selling_controller", "aliases": [], "in": ["erpnext/public/js/utils/sales_common.js", "erpnext/stock/doctype/delivery_note/delivery_note.js"]},
+      {"fact": "TransactionController", "aliases": [], "in": ["erpnext/public/js/controllers/transaction.js", "erpnext/public/js/utils/sales_common.js"]},
+      {"fact": "erpnext/public/js/controllers/taxes_and_totals.js", "aliases": ["taxes_and_totals.js"], "in": []},
+      {"fact": "erpnext/public/js/payment/payments.js", "aliases": ["payments.js"], "in": []},
+      {"fact": "extend_cscript", "aliases": [], "in": ["erpnext/stock/doctype/delivery_note/delivery_note.js"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "erpnext/stock/doctype/delivery_note/delivery_note.js", "lines": "1-14", "note": "calls erpnext.sales_common.setup_selling_controller()"},
+      {"file": "erpnext/stock/doctype/delivery_note/delivery_note.js", "lines": "135-138", "note": "DeliveryNoteController extends erpnext.selling.SellingController"},
+      {"file": "erpnext/stock/doctype/delivery_note/delivery_note.js", "lines": "448-448", "note": "extend_cscript(cur_frm.cscript, new DeliveryNoteController)"},
+      {"file": "erpnext/public/js/utils/sales_common.js", "lines": "1-12", "note": "SellingController extends erpnext.TransactionController"},
+      {"file": "erpnext/public/js/controllers/transaction.js", "lines": "37-37", "note": "TransactionController extends erpnext.taxes_and_totals"},
+      {"file": "erpnext/public/js/controllers/taxes_and_totals.js", "lines": "11-11", "note": "taxes_and_totals extends erpnext.payments"},
+      {"file": "erpnext/public/js/payment/payments.js", "lines": "4-4", "note": "payments extends erpnext.stock.StockController"},
+      {"file": "erpnext/public/js/controllers/stock_controller.js", "lines": "6-6", "note": "StockController extends frappe.ui.form.Controller"},
+      {"file": "erpnext/public/js/erpnext.bundle.js", "lines": "1-38", "note": "bundle imports the shared controllers"}
+    ]
+  },
+  {
+    "id": "erpnext-k08", "kind": "architecture",
+    "question": "How is fixed-asset depreciation organised in the code: what computes an asset's depreciation schedule, where do the individual calculation methods such as straight line and written-down value live and how are they combined, and what turns the scheduled rows into posted accounting entries as time passes?",
+    "reference": "The Asset Depreciation Schedule doctype (erpnext/assets/doctype/asset_depreciation_schedule/asset_depreciation_schedule.py) inherits `DepreciationScheduleController` (deppreciation_schedule_controller.py), which builds the schedule rows and mixes in StraightLineMethod and WDVMethod from erpnext/assets/doctype/asset_depreciation_schedule/depreciation_methods.py. A daily scheduler job registered in erpnext/hooks.py, `post_depreciation_entries` (erpnext/assets/doctype/asset/depreciation.py), calls book_depreciation_entries, which runs `make_depreciation_entry` for each due schedule row to create and submit a depreciation Journal Entry.",
+    "facts": [
+      {"fact": "DepreciationScheduleController", "aliases": [], "in": ["erpnext/assets/doctype/asset_depreciation_schedule/deppreciation_schedule_controller.py", "erpnext/assets/doctype/asset_depreciation_schedule/asset_depreciation_schedule.py"]},
+      {"fact": "erpnext/assets/doctype/asset_depreciation_schedule/depreciation_methods.py", "aliases": ["depreciation_methods.py"], "in": []},
+      {"fact": "post_depreciation_entries", "aliases": [], "in": ["erpnext/assets/doctype/asset/depreciation.py", "erpnext/hooks.py"]},
+      {"fact": "make_depreciation_entry", "aliases": [], "in": ["erpnext/assets/doctype/asset/depreciation.py"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "erpnext/assets/doctype/asset_depreciation_schedule/asset_depreciation_schedule.py", "lines": "19-60", "note": "AssetDepreciationSchedule(DepreciationScheduleController)"},
+      {"file": "erpnext/assets/doctype/asset_depreciation_schedule/deppreciation_schedule_controller.py", "lines": "17-60", "note": "DepreciationScheduleController(StraightLineMethod, WDVMethod) builds schedule rows"},
+      {"file": "erpnext/assets/doctype/asset_depreciation_schedule/depreciation_methods.py", "lines": "16-121", "note": "StraightLineMethod and WDVMethod"},
+      {"file": "erpnext/hooks.py", "lines": "515-525", "note": "daily scheduler runs post_depreciation_entries"},
+      {"file": "erpnext/assets/doctype/asset/depreciation.py", "lines": "37-80", "note": "post_depreciation_entries -> book_depreciation_entries -> make_depreciation_entry"},
+      {"file": "erpnext/assets/doctype/asset/depreciation.py", "lines": "166-250", "note": "make_depreciation_entry creates the Journal Entry per due row"}
+    ]
+  }
+]

@@ -81,6 +81,17 @@ common English word an answer could name by accident, became its file
 `packages/excalidraw/actions/register.ts`. The set was committed before it was first scored;
 `../context_eval.py --blind` reports it as aggregates only, and no tuning uses it.
 
+### Second tuning set: erpnext, jq, serilog and alamofire
+
+Added on 2026-10-29, after the blind set showed `context` covering far fewer of its facts than of
+the first two repositories': 8 questions each for erpnext (Python and JavaScript), jq (C), serilog
+(C#) and alamofire (Swift), 4 flow and 4 architecture per repository, at the commits pinned in
+`../../corpus.toml`. It was written exactly as the blind set was (the same brief, from the source
+code only, by authors who saw neither tool's output or code, without SCIP), in languages the
+blind set does not use, so that `context` can be tuned on questions like the blind set's while
+the blind set stays unseen. It was committed before any change was tuned on it;
+`../context_eval.py` reports it per question as `tuning-2`.
+
 ### Scope notes
 
 - **kubernetes**: the SCIP index covers `pkg/scheduler/...` and
@@ -124,3 +135,7 @@ Counts at the time of writing:
 | kubernetes | 5 | 5 | 4 | 3 | 3 | 20 |
 | okhttp | 0 | 0 | 0 | 4 | 4 | 8 |
 | excalidraw | 0 | 0 | 0 | 4 | 4 | 8 |
+| erpnext | 0 | 0 | 0 | 4 | 4 | 8 |
+| jq | 0 | 0 | 0 | 4 | 4 | 8 |
+| serilog | 0 | 0 | 0 | 4 | 4 | 8 |
+| alamofire | 0 | 0 | 0 | 4 | 4 | 8 |

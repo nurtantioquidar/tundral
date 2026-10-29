@@ -1,0 +1,165 @@
+[
+  {
+    "id": "jq-k01", "kind": "flow",
+    "question": "A jq program starts with `import \"mylib\" as lib;` and later calls `lib::f`. How is mylib.jq found on disk, loaded, and wired up so that the call to `lib::f` resolves? Trace it from where the import statement is parsed.",
+    "reference": "The parser's import rule (src/parser.y) emits a DEPS instruction via `gen_import` (src/compile.c); `load_program` in src/linker.c calls `process_dependencies`, which pulls the imports off the program with `block_take_imports`, resolves each relative path against the search path with `find_lib`, parses the file with `load_library` (recursing into its own imports and detecting circular ones), and binds the library's definitions into the importing program under the `lib::` prefix with `block_bind_library` (src/compile.c).",
+    "facts": [
+      {"fact": "gen_import", "aliases": [], "in": ["src/parser.y", "src/compile.c"]},
+      {"fact": "process_dependencies", "aliases": [], "in": ["src/linker.c"]},
+      {"fact": "find_lib", "aliases": [], "in": ["src/linker.c"]},
+      {"fact": "load_library", "aliases": [], "in": ["src/linker.c"]},
+      {"fact": "block_bind_library", "aliases": [], "in": ["src/compile.c", "src/linker.c"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "src/parser.y", "lines": "430-453", "note": "import/include rules call gen_import"},
+      {"file": "src/compile.c", "lines": "483-541", "note": "block_take_imports collects DEPS; gen_import builds the DEPS instruction"},
+      {"file": "src/linker.c", "lines": "435-477", "note": "load_program parses, then calls process_dependencies"},
+      {"file": "src/linker.c", "lines": "252-345", "note": "process_dependencies: find_lib, load_library, block_bind_library, circular import check"},
+      {"file": "src/linker.c", "lines": "144-238", "note": "find_lib tries <dir>/<name>.jq, <name>/jq/main.jq, <name>/<basename>.jq over the search chain"},
+      {"file": "src/linker.c", "lines": "349-406", "note": "load_library: jq_parse_library, recursive process_dependencies, block_bind_self"},
+      {"file": "src/compile.c", "lines": "372-404", "note": "block_bind_library binds definitions as libname::symbol"}
+    ]
+  },
+  {
+    "id": "jq-k02", "kind": "flow",
+    "question": "In a filter like `try error(\"boom\") catch .`, how does the error raised inside the try body get back to the catch handler at run time? Trace it from the code generated for the try/catch, through the point where the error is produced, to the jump into the handler.",
+    "reference": "The parser turns try/catch into `gen_try` (src/compile.c), which emits `TRY_BEGIN <handler>`, the body, `TRY_END` and a jump past the handler; `TRY_BEGIN` saves a fork point. `f_error` (src/builtin.c) returns an invalid value carrying the message; the CALL_BUILTIN case in `jq_next` (src/execute.c) records it with `set_error` and backtracks; `stack_restore` unwinds to the saved fork point and the `ON_BACKTRACK(TRY_BEGIN)` case, seeing an unwrapped error, pushes the message and jumps to the handler (errors raised after TRY_END are wrapped so the same try does not catch them).",
+    "facts": [
+      {"fact": "gen_try", "aliases": [], "in": ["src/compile.c", "src/parser.y"]},
+      {"fact": "TRY_BEGIN", "aliases": [], "in": ["src/execute.c", "src/compile.c", "src/opcode_list.h"]},
+      {"fact": "f_error", "aliases": [], "in": ["src/builtin.c"]},
+      {"fact": "set_error", "aliases": [], "in": ["src/execute.c"]},
+      {"fact": "stack_restore", "aliases": [], "in": ["src/execute.c"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "src/parser.y", "lines": "676-687", "note": "try/catch rules call gen_try"},
+      {"file": "src/compile.c", "lines": "1017-1051", "note": "gen_try layout: TRY_BEGIN handler, exp, TRY_END, JUMP, handler"},
+      {"file": "src/builtin.c", "lines": "1283-1285", "note": "f_error returns jv_invalid_with_msg"},
+      {"file": "src/execute.c", "lines": "906-932", "note": "CALL_BUILTIN: invalid result with message -> set_error, goto do_backtrack"},
+      {"file": "src/execute.c", "lines": "332-336", "note": "set_error records the error for try/catch"},
+      {"file": "src/execute.c", "lines": "804-871", "note": "do_backtrack -> stack_restore; ON_BACKTRACK(TRY_BEGIN) jumps to the handler; ON_BACKTRACK(TRY_END) wraps"},
+      {"file": "src/execute.c", "lines": "270-302", "note": "stack_restore unwinds to the last fork point"}
+    ]
+  },
+  {
+    "id": "jq-k03", "kind": "flow",
+    "question": "When a program does an update such as `.a.b |= . + 1`, how does jq work out which part of the input to change and then write the new value back into the document? Trace it from the parser to the function that rebuilds the JSON value.",
+    "reference": "src/parser.y turns `|=` into a call to `_modify`, which is written in jq in src/builtin.jq: it reduces over `path(paths)`, reads each location with getpath and writes it with setpath. `path` is a bytecoded builtin emitting PATH_BEGIN/PATH_END (src/builtin.c); while PATH_BEGIN is active, the interpreter's INDEX and EACH cases in src/execute.c record each step with `path_append`, and PATH_END yields the collected path. setpath is the C builtin `f_setpath`, which calls `jv_setpath` in src/jv_aux.c to rebuild the value along the path.",
+    "facts": [
+      {"fact": "_modify", "aliases": [], "in": ["src/builtin.jq", "src/parser.y"]},
+      {"fact": "PATH_BEGIN", "aliases": [], "in": ["src/execute.c", "src/builtin.c"]},
+      {"fact": "path_append", "aliases": [], "in": ["src/execute.c"]},
+      {"fact": "jv_setpath", "aliases": [], "in": ["src/jv_aux.c", "src/builtin.c"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "src/parser.y", "lines": "364-366", "note": "Expr \"|=\" Expr -> gen_call(\"_modify\", ...)"},
+      {"file": "src/builtin.jq", "lines": "14-30", "note": "_assign and _modify: reduce path(paths), getpath, setpath"},
+      {"file": "src/builtin.c", "lines": "2094-2100", "note": "path/1 is bytecoded as PATH_BEGIN, arg, PATH_END"},
+      {"file": "src/execute.c", "lines": "627-800", "note": "PATH_BEGIN/PATH_END; INDEX and EACH call path_append"},
+      {"file": "src/execute.c", "lines": "234-249", "note": "path_append extends jq->path"},
+      {"file": "src/builtin.c", "lines": "1444-1444", "note": "f_setpath calls jv_setpath"},
+      {"file": "src/jv_aux.c", "lines": "390-447", "note": "jv_setpath rebuilds the value recursively along the path"}
+    ]
+  },
+  {
+    "id": "jq-k04", "kind": "flow",
+    "question": "If the input contains an integer with more digits than a double can hold, say 100000000000000000000000000001, and the filter is just `.`, jq prints it back digit for digit. How does the number keep its exact digits on the way from the input text to the output? Trace it through the JSON reader, the in-memory value and the printer.",
+    "reference": "In src/jv_parse.c, `check_literal` finishes a numeric token and (when built with decNumber support) calls `jv_number_with_literal`; src/jv.c stores it as a `jvp_literal_number` that keeps the decNumber (and the lazily converted double) instead of only a double. When printing, `jv_dump_term` in src/jv_print.c asks `jv_number_get_literal` for the canonical decimal string and writes it unchanged, falling back to the double formatter only for numbers without a literal.",
+    "facts": [
+      {"fact": "check_literal", "aliases": [], "in": ["src/jv_parse.c"]},
+      {"fact": "jv_number_with_literal", "aliases": [], "in": ["src/jv_parse.c", "src/jv.c"]},
+      {"fact": "jvp_literal_number", "aliases": [], "in": ["src/jv.c"]},
+      {"fact": "jv_number_get_literal", "aliases": [], "in": ["src/jv_print.c", "src/jv.c"]},
+      {"fact": "jv_dump_term", "aliases": [], "in": ["src/jv_print.c"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "src/jv_parse.c", "lines": "511-555", "note": "check_literal: numeric token -> jv_number_with_literal under USE_DECNUM"},
+      {"file": "src/jv.c", "lines": "529-670", "note": "jvp_literal_number holds the decNumber; jv_number_get_literal returns the literal string"},
+      {"file": "src/jv_print.c", "lines": "254-275", "note": "jv_dump_term prints the literal if present, else jvp_dtoa_fmt of the double"}
+    ]
+  },
+  {
+    "id": "jq-k05", "kind": "architecture",
+    "question": "jq's built-in functions do not all come from one place. What different kinds of builtins are there, where is each kind defined, and where are they all combined and made visible to a user's program?",
+    "reference": "Three kinds, combined by `builtins_bind` in src/builtin.c: builtins written in jq itself in src/builtin.jq (embedded at build time and parsed as a library), a few hand-assembled bytecode builtins such as empty, not, path, last and range from `bind_bytecoded_builtins`, and C functions listed in the `function_list` table (including the math functions generated from src/libm.h), which `gen_cbinding` (src/compile.c) turns into definitions; the result is bound to the user's program with block_bind_referenced.",
+    "facts": [
+      {"fact": "src/builtin.jq", "aliases": ["builtin.jq"], "in": []},
+      {"fact": "bind_bytecoded_builtins", "aliases": [], "in": ["src/builtin.c"]},
+      {"fact": "function_list", "aliases": [], "in": ["src/builtin.c"]},
+      {"fact": "src/libm.h", "aliases": ["libm.h"], "in": []},
+      {"fact": "gen_cbinding", "aliases": [], "in": ["src/compile.c", "src/builtin.c"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "src/builtin.c", "lines": "2127-2151", "note": "jq_builtins from builtin.inc; builtins_bind combines all kinds"},
+      {"file": "src/builtin.c", "lines": "2080-2125", "note": "bind_bytecoded_builtins: empty, not, path, last, range"},
+      {"file": "src/builtin.c", "lines": "1957-2050", "note": "function_list of C builtins, including libm.h entries"},
+      {"file": "src/compile.c", "lines": "1072-1082", "note": "gen_cbinding wraps each cfunction as CLOSURE_CREATE_C"},
+      {"file": "src/builtin.jq", "lines": "1-30", "note": "builtins defined in jq"}
+    ]
+  },
+  {
+    "id": "jq-k06", "kind": "architecture",
+    "question": "While a compiled jq program runs, where does the interpreter keep the values it is working on, the function call frames, and the points it can resume from when it backtracks for the next output? Are these separate stacks, and how are they organised in memory?",
+    "reference": "All three live in one `struct stack` defined in src/exec_stack.h, a forest of variably sized blocks allocated with `stack_push_block`; `jq_state` (src/execute.c) keeps three pointers into it: stk_top for data values, curr_frame for call frames (`struct frame`, created by `frame_push`) and fork_top for backtracking points (`struct forkpoint`, created by `stack_save` and consumed by stack_restore), so a saved fork point can keep older values and frames alive.",
+    "facts": [
+      {"fact": "src/exec_stack.h", "aliases": ["exec_stack.h"], "in": []},
+      {"fact": "stack_push_block", "aliases": [], "in": ["src/exec_stack.h", "src/execute.c"]},
+      {"fact": "forkpoint", "aliases": [], "in": ["src/execute.c"]},
+      {"fact": "frame_push", "aliases": [], "in": ["src/execute.c"]},
+      {"fact": "stack_save", "aliases": [], "in": ["src/execute.c"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "src/exec_stack.h", "lines": "1-120", "note": "the stack as a forest of blocks; stack_push_block/stack_pop_block"},
+      {"file": "src/execute.c", "lines": "19-71", "note": "jq_state with stk, curr_frame, stk_top, fork_top; struct frame"},
+      {"file": "src/execute.c", "lines": "130-180", "note": "frame_push/frame_pop and stack_push/stack_pop on the shared stack"},
+      {"file": "src/execute.c", "lines": "194-223", "note": "struct forkpoint and stack_save"}
+    ]
+  },
+  {
+    "id": "jq-k07", "kind": "architecture",
+    "question": "jq's C code passes JSON values around by value everywhere. How is a value laid out, how are strings, arrays and objects shared between copies and released, and why does appending to an array that another variable also holds not change that other variable's copy?",
+    "reference": "A `jv` (src/jv.h) is a small struct with a kind/flags byte, offset, size and either a double or a pointer to a heap payload that starts with a `jv_refcnt`; every jv_* function consumes its arguments and returns an owned result, jv_copy increments the count and jv_free decrements it. Mutations are copy-on-write in src/jv.c: `jvp_array_write` reuses the array only when `jvp_refcnt_unshared` says the count is 1, otherwise it allocates a new array, and objects do the same through `jvp_object_unshare`.",
+    "facts": [
+      {"fact": "src/jv.h", "aliases": ["jv.h"], "in": []},
+      {"fact": "jv_refcnt", "aliases": [], "in": ["src/jv.c", "src/jv.h"]},
+      {"fact": "jvp_refcnt_unshared", "aliases": [], "in": ["src/jv.c"]},
+      {"fact": "jvp_array_write", "aliases": [], "in": ["src/jv.c"]},
+      {"fact": "jvp_object_unshare", "aliases": [], "in": ["src/jv.c"]}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "src/jv.h", "lines": "19-50", "note": "jv struct and the consume/produce ownership rule"},
+      {"file": "src/jv.c", "lines": "53-75", "note": "jv_refcnt and jvp_refcnt_inc/dec/unshared"},
+      {"file": "src/jv.c", "lines": "866-897", "note": "jvp_array_write: in place only if unshared, else copy"},
+      {"file": "src/jv.c", "lines": "1729-1752", "note": "jvp_object_unshare copies a shared object before writing"},
+      {"file": "src/jv.c", "lines": "2002-2030", "note": "jv_copy increments, jv_free decrements and frees iteratively"}
+    ]
+  },
+  {
+    "id": "jq-k08", "kind": "architecture",
+    "question": "What are the stages of jq's compiler between the filter text and the code the interpreter executes? Which source file owns each stage, and what in-memory form is handed from one stage to the next?",
+    "reference": "jq_compile_args (src/execute.c) drives it: the flex/bison front end (src/lexer.l, src/parser.y, entry jq_parse) builds a block, a doubly linked list of `inst` defined in src/compile.c; src/linker.c (load_program) resolves imports and binds libraries, builtins_bind adds the builtins, and `block_compile` in src/compile.c binds names and lowers the block into a `struct bytecode` (src/bytecode.h, opcodes listed in src/opcode_list.h), which a small tail-call optimiser then rewrites before execution.",
+    "facts": [
+      {"fact": "src/parser.y", "aliases": ["parser.y"], "in": []},
+      {"fact": "src/linker.c", "aliases": ["linker.c"], "in": []},
+      {"fact": "inst", "aliases": [], "in": ["src/compile.c"]},
+      {"fact": "block_compile", "aliases": [], "in": ["src/compile.c", "src/execute.c"]},
+      {"fact": "src/bytecode.h", "aliases": ["bytecode.h"], "in": []}
+    ],
+    "min_facts": 3,
+    "read": [
+      {"file": "src/execute.c", "lines": "1232-1258", "note": "jq_compile_args: load_program, builtins_bind, block_compile, optimize"},
+      {"file": "src/linker.c", "lines": "435-477", "note": "load_program calls jq_parse and resolves dependencies"},
+      {"file": "src/parser.y", "lines": "946-972", "note": "jq_parse / jq_parse_library"},
+      {"file": "src/compile.c", "lines": "11-63", "note": "struct inst intermediate representation and binding fields"},
+      {"file": "src/compile.c", "lines": "1367-1388", "note": "block_compile produces struct bytecode"},
+      {"file": "src/bytecode.h", "lines": "44-89", "note": "struct cfunction, symbol_table, struct bytecode"}
+    ]
+  }
+]
