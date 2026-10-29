@@ -48,6 +48,7 @@ tree-sitter-objc.workspace = true
 tree-sitter-zig.workspace = true
 tree-sitter-fortran.workspace = true
 tree-sitter-verilog.workspace = true
+tree-sitter-sequel.workspace = true
 unicode-normalization.workspace = true
 
 [dev-dependencies]

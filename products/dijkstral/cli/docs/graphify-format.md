@@ -63,6 +63,7 @@ Status labels used below:
 26. Groovy
 27. Dart
 28. Lua
+45. SQL
 
 ---
 
@@ -100,10 +101,11 @@ Status labels used below:
 | `verilog/` | `rtl/{top,alu,fifo}.v`, `mem/ram.v`, `counter.v`, `tb/tb_top.v`, `tb/model.py`, `vlang/main.v` (a V-language file), `empty.v` (0 bytes) | `verilog.graphify.json` | `verilog.clustered.graphify.json` |
 | `solidity/` | `contracts/{Base,Token}.sol`, `scripts/deploy.py` | `solidity.graphify.json` | `solidity.clustered.graphify.json` |
 | `csproj/` | `Shop.sln`, `Shop.slnx`, `src/{Shop,Core}/*.csproj`, `tests/Shop.Tests/Shop.Tests.csproj`, `legacy/{Legacy.vbproj,Broken.csproj}`, `src/Shop/Pages/{Index,Widget,_Imports}.razor`, `src/Shop/Views/{Home.cshtml,*.xaml,MainWindow.xaml.cs}`, view model and C# models (§43) | `csproj.graphify.json` | `csproj.clustered.graphify.json` |
-| `misc/` | `pascal/` (`.pas .dpr .dpk .inc .dfm .lfm .lpk`), `apex/` (`.cls .trigger`), `cobol/` (`.cbl .cpy`), `byond/` (`.dmf .dmi .dmm`), `gpu/kernels.metal`, `inert/` (`.r .sql .tf .ejs`), `scripts/` (shebangs) (§44) | `misc.graphify.json` | `misc.clustered.graphify.json` |
+| `misc/` | `pascal/` (`.pas .dpr .dpk .inc .dfm .lfm .lpk`), `apex/` (`.cls .trigger`), `cobol/` (`.cbl .cpy`), `byond/` (`.dmf .dmi .dmm`), `gpu/kernels.metal`, `inert/` (`.r .tf .ejs`), `scripts/` (shebangs) (§44) | `misc.graphify.json` | `misc.clustered.graphify.json` |
 | `groovy/` | `build.gradle`, `settings.gradle`, `src/main/groovy/com/shop/{App,model/{Base,User},service/UserService,util/Format}.groovy`, `src/main/java/com/shop/{util/Logger,model/Auditable}.java`, `src/test/groovy/com/shop/UserServiceSpec.groovy` | `groovy.graphify.json` | `groovy.clustered.graphify.json` |
 | `dart/` | `lib/shop.dart`, `lib/src/{shop_part,service}.dart`, `lib/src/models/{base,user}.dart`, `lib/src/util/format.dart`, `test/service_test.dart` | `dart.graphify.json` | `dart.clustered.graphify.json` |
 | `lua/` | `lib/shop/{init,util,service}.lua`, `lib/shop/models/{base,user}.lua`, `spec/service_spec.lua`, `bin/shop` (lua shebang), `plugins/server.luau` | `lua.graphify.json` | `lua.clustered.graphify.json` |
+| `sql/` | `db/migrations/{001_init,002_views,003_functions}.sql`, `db/procedures.sql`, `db/schema.sql` (pg_dump style), `db/mysql/legacy.sql`, `db/seed.sql` (DML only), `db/empty.sql` (0 bytes) (§45; Graphify **0.9.97** with tree-sitter-sql) | `sql.graphify.json` | `sql.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -1825,8 +1827,8 @@ Code (by extension, observed): `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .go .j
 and also `.astro .psm1 .psd1 .cls .vbproj` (§38–§42).
 `.d.ts` and `.min.js` are code (not filtered).
 
-- `.r`, `.sql`, `.tf` count as code but contribute nothing, not even a file node (stderr: optional
-  grammar missing); `.ejs` likewise ("no AST extractor"). The project, markup and grammar-less
+- `.r`, `.tf` count as code but contribute nothing, not even a file node (stderr: optional
+  grammar missing), and so does `.sql` without Graphify's SQL extra (§45); `.ejs` likewise ("no AST extractor"). The project, markup and grammar-less
   formats `.csproj .fsproj .vbproj .sln .slnx .razor .cshtml .xaml .pas .dpr .pp .inc .lpr .dpk
   .dfm .lfm .lpk .cls .trigger .cob .cbl .cpy .dmf .dmi .dmm .metal` are code too (§43, §44; the
   final per-extension and shebang check is §44.8).
@@ -4252,7 +4254,8 @@ goldens `solidity.*`. Implementation: `Lang::Solidity` in `crates/core/src/lang.
 - **Rule.** `.sol` counts as code (§3) but Graphify 0.9.86 ships without its optional
   `tree-sitter-solidity` extra, so every `.sol` file contributes nothing: no file node, no
   symbols, no edges. `extract` warns `N .sol file(s) contributed nothing to the graph because a
-  dependency is missing` (the other "count but contribute nothing" extensions are `.r .sql .tf`).
+  dependency is missing` (the other "count but contribute nothing" extensions are `.r .tf`, and
+  `.sql` without the SQL extra, §45).
 - The files still count: `GRAPH_REPORT.md`'s corpus check lists them in its file and word totals
   (`3 files · ~105 words` for two contracts and one Python file). A repository of `.sol` files
   only gives an empty graph with a non-zero corpus check.
@@ -4448,7 +4451,7 @@ fixture's communities are unaffected).
 ## 44. Other code-counted files (2026-10-15)
 
 Fixture `misc/` (Pascal unit/program/package/include, a Delphi form, a Lazarus form and package,
-Apex class and trigger, COBOL program and copybook, BYOND skin/icon/map, Metal, `.r .sql .tf .ejs`,
+Apex class and trigger, COBOL program and copybook, BYOND skin/icon/map, Metal, `.r .tf .ejs`,
 five shebang scripts); goldens `misc.graphify.json`, `misc.clustered.graphify.json` (110 nodes,
 109 links) and the §17.6 report goldens. Implementation: `crates/core/src/extract/legacy/` and
 `crates/core/src/resolve/legacy.rs`. None of these uses a grammar; every file node is at `L1`,
@@ -4535,7 +4538,7 @@ elements produce nothing. `.dmi`: the PNG `tEXt` `Description` chunk's `state = 
 ### 44.7 Notes and gaps
 
 - `.metal` is C++ (§25) and matches Graphify's output.
-- **Inert code**: `.r .sql .tf .ejs` and `perl`, `fish`, `tcsh` shebang scripts count as code (the
+- **Inert code**: `.r .tf .ejs` and `perl`, `fish`, `tcsh` shebang scripts count as code (the
   report's file and word counts) but produce nothing, not even a file node.
 - Not reproduced: zTXt (compressed) `.dmi` headers (no inflate; only the file node), and the
   rename Graphify applies to a `.pas` file node when an `.lpk` names its unit from another stem
@@ -4549,7 +4552,7 @@ elements produce nothing. `.dmi`: the PNG `tEXt` `Description` chunk's `state = 
 Running both tools over one file of every extension and shebang of §14.5 plus the new ones, every
 file produces nodes in dijkstral exactly when it does in Graphify, except the languages other
 stages add (Astro, Dart, Elixir, Fortran, Groovy/Gradle, Julia, Lua/Luau, Objective-C `.mm`,
-PowerShell `.ps1 .psd1 .psm1`, Svelte, Verilog `.v .sv .svh .vh`, Vue, Zig). Shebangs are matched
+PowerShell `.ps1 .psd1 .psm1`, SQL `.sql` (§45), Svelte, Verilog `.v .sv .svh .vh`, Vue, Zig). Shebangs are matched
 by exact interpreter name after `env` and its flags: `python python2 python3` (not `python3.11`,
 `Python3`, `pypy3`), `sh bash zsh ksh dash`, `ruby` (not `ruby2.7`), `node nodejs` (JavaScript),
 `php`, and the inert `perl fish tcsh`; a BOM or a blank first line hides the shebang.
@@ -4806,3 +4809,114 @@ array order identical. Graphify's `sample.luau`: 100%.
 - **Shared loader.** The `graph.json` loader behind `dijkstral cluster-only` keeps any location
   that is not `L<n>` verbatim (the bare `"3"` of quirk LU1), so re-clustering Graphify's own Lua
   graph reproduces its link order.
+
+## 45. SQL (2026-10-29)
+
+Fixture `tests/fixtures/sql/` (§1); goldens `sql.*` from **Graphify 0.9.97** with tree-sitter-sql
+0.3.11 installed (its `postgres` extra; from 0.9.97 also `[sql]`), the only goldens not made with
+0.9.86. Implementation: `crates/core/src/extract/sql.rs` and `crates/core/src/resolve/sql.rs`, on
+the same grammar (derekstride/tree-sitter-sql 0.3.11, published to crates.io as
+`tree-sitter-sequel`). Derived from 192 single-purpose probes, compared as clustered node and link
+sets.
+
+### 45.1 Which install
+
+Without the grammar, `.sql` counts as code and contributes nothing (§14); 0.9.97 warns `N .sql
+file(s) contributed nothing to the graph because a dependency is missing … pip install
+"graphifyy[sql]"`. With it, `.sql` files are extracted as below. **Deliberate:** dijkstral always
+extracts them, so on `.sql` it matches Graphify with the extra, not the base install. 0.9.86 with
+the grammar differs from 0.9.97 only by lacking `writes_to`.
+
+### 45.2 Nodes
+
+- The file node has `source_location: null` even with content (contrast §6). A file without
+  definitions (DML only, comments only, empty) keeps its file node.
+- A pre-order walk of the whole tree (function bodies and `ERROR` nodes included) gives, each
+  `file_slug(label)` with `contains` from the file at the statement's line:
+
+  | Statement | Label |
+  |---|---|
+  | `create_table` (also `IF NOT EXISTS`, `TEMP`, `AS SELECT`) | the name as written: `"Quoted Table"`, `` `users` ``, `billing.invoices` |
+  | `create_view` (also `OR REPLACE`; never `MATERIALIZED`) | the name |
+  | `create_function` | `name()` |
+  | `create_trigger` | the name |
+  | `create_index` with a name (`CREATE INDEX ON t` gives nothing) | the name |
+
+- Procedures come after every tree node (S2).
+- Schemas, types, sequences, materialized views, grants, comments and DML give nothing.
+- A name defined twice in a file keeps the first node (§4.5), which collects both definitions'
+  edges.
+
+### 45.3 Edges
+
+All EXTRACTED, weight 1.0, in tree order, then S1, then procedures.
+
+| Relation | From → to | Line |
+|---|---|---|
+| `references` | table → each object after `REFERENCES` (column or table constraint) | the table's |
+| `references` | the table an `ALTER TABLE [ONLY|IF EXISTS]` names (resolved like any name) → each `REFERENCES` object | the `ALTER`'s |
+| `reads_from` | view or function → each relation in a `FROM` or `JOIN` (subqueries, CTE bodies, `UNION` arms); CTE names excluded even when a table has that name | the relation's |
+| `indexes` | index → its table | the statement's |
+| `triggers` | trigger → its `ON` table | the statement's |
+| `executes` | trigger → `EXECUTE FUNCTION|PROCEDURE f()` when a **function** with that key was defined **earlier in the same file**; otherwise nothing | the statement's |
+| `writes_to` | procedure → each written table (S2; 0.9.97) | the keyword's |
+| `reads_from` | procedure → each read table (S2) | the keyword's |
+
+Not emitted: reads of `CREATE TABLE … AS SELECT`, a function's writes, top-level DML. Repeated
+edges are all emitted; the build keeps the last (a view reading `u` twice keeps the later line).
+
+**Quirk S1 (references from the raw text).** Each `CREATE\s+TABLE\s+(\w+)\s*\(` in the source
+(case-insensitive, anywhere in a line; never `IF NOT EXISTS`, `TEMP`, quoted or schema-qualified
+names) owns the text up to the next line that begins, at column 0, with `CREATE` or `ALTER`
+(case-insensitive, even inside a block comment). Every `REFERENCES\s+(\w+)` in that text adds
+`references` from the table to the word, at the table's line. So `REFERENCES catalog.suppliers (id)`
+also references a stub `catalog`, and words in comments and strings count (`-- … REFERENCES
+legacy_items`).
+
+**Quirk S2 (procedures from the text).** The grammar cannot parse `CREATE PROCEDURE`. Graphify reads
+procedures from the source with comments and one-line `'…'` strings blanked (a string spanning
+lines stays):
+
+- A line starting (after spaces) with `CREATE [OR REPLACE] PROCEDURE name` (`name` is
+  `[^\s(]+` as written: `"s"."P"`, `billing.close_invoice`) gives `name()` at that line. A second
+  procedure with the same id is skipped, body included.
+- The body runs to the next line starting (after spaces) with `CREATE` or `ALTER`, so top-level
+  DML after the closing `$$` belongs to it and a `CREATE VIEW` later on the same line does not end
+  it.
+- In the body, in text order: `writes_to` for `(INSERT\s+INTO|UPDATE|DELETE(\s+FROM)?|MERGE\s+INTO)\s+name`
+  and `reads_from` for `(FROM|JOIN)\s+name`, where `name` is `[\w$."]+`, optionally in `[…]`
+  (dropped from the label; backticks never match). A read is skipped when its `FROM` belongs to a
+  `DELETE FROM`, when the name is a CTE (`x AS (`, `x(cols) AS (`) or is followed by `(` (a
+  function). Either is skipped for `ONLY`, `LATERAL`, `SET` and `DUAL`: `UPDATE ONLY t` writes
+  nothing, and only the first table of `FROM t1, t2` is read.
+- A name whose slug is empty (`MERGE … THEN DELETE $$` writes to `$$`) gives a raw node with id
+  `""`, which the build drops; dijkstral never emits it.
+
+### 45.4 Names and resolution
+
+- A name's key is its text without `"`, `` ` `` and whitespace, lowercased, schema included:
+  `s.t` is not `t`, and `public.orders` is not `orders`.
+- A definition in the file (any kind, before or after the use) is the target.
+- Otherwise the file emits a stub `slug(name)`, label as written, at first use. These stubs take
+  part in the §4.5 rename: when two files emit stub `t` they become `a_sql_t` and `b_sql_t`, and a
+  stub `t` renames another file's node `t` too, **even when the stub then resolves** (quirk S3, as
+  Python's §4.5 case): a file `t.sql` becomes `t_sql_t` once another file reads `t`.
+- Across files (`crate::resolve::sql`), a stub whose key has exactly one SQL definition anywhere
+  (labels without `()`: tables, views, functions, procedures, triggers, indexes; never another
+  language's nodes) is replaced by it. Otherwise, undefined or ambiguous, every file's stub for the
+  key folds onto the first file's: two files reading an undefined `zz` share `a_sql_zz`, and in the
+  fixture `customers`, defined by a migration and by the MySQL dump, is one shared stub.
+
+### 45.5 Build stage
+
+`reads_from` ranks below `writes_to` (rank 3.7 in §8.2's order): a procedure's
+`UPDATE t SET a = (SELECT b FROM t)` keeps `writes_to`. Its place against `uses` and `calls` is
+**Open**; no SQL pair has shown it.
+
+### 45.6 Parity
+
+Fixture: 100% of nodes and links, communities exact, report goldens exact. Probes: 191 of 192
+match. Not reproduced:
+
+- **S4.** In a procedure body Graphify does not read `d` in `EXTRACT(YEAR FROM d)`; dijkstral does.
+  Why is **Open**.

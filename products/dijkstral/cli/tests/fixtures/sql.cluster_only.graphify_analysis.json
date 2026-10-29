@@ -1,0 +1,193 @@
+{
+  "communities": {
+    "0": [
+      "catalog",
+      "catalog_suppliers",
+      "db_migrations_001_init",
+      "db_migrations_001_init_customers",
+      "db_migrations_001_init_order_items",
+      "db_migrations_001_init_order_items_order_idx",
+      "db_migrations_001_init_products",
+      "db_migrations_001_init_products_sku_idx",
+      "legacy_items"
+    ],
+    "1": [
+      "db_migrations_001_init_orders",
+      "db_migrations_002_views",
+      "db_migrations_002_views_all_people",
+      "db_migrations_002_views_big_customers",
+      "db_migrations_002_views_order_totals",
+      "db_migrations_002_views_sql_customers",
+      "db_procedures_refresh_totals",
+      "staff"
+    ],
+    "2": [
+      "db_migrations_003_functions",
+      "db_migrations_003_functions_invoices_close",
+      "db_migrations_003_functions_order_items_touch",
+      "db_migrations_003_functions_order_total",
+      "db_migrations_003_functions_touch_order"
+    ],
+    "3": [
+      "db_schema",
+      "db_schema_billing_invoices",
+      "db_schema_invoices_order_idx",
+      "db_schema_public_orders_archive",
+      "public_orders"
+    ],
+    "4": [
+      "db_mysql_legacy",
+      "db_mysql_legacy_customers",
+      "db_mysql_legacy_team_sizes",
+      "db_mysql_legacy_teams"
+    ],
+    "5": [
+      "db_procedures",
+      "db_procedures_archive_orders",
+      "db_procedures_billing_close_invoice",
+      "orders_archive"
+    ],
+    "6": [
+      "db_empty"
+    ],
+    "7": [
+      "db_seed"
+    ]
+  },
+  "cohesion": {
+    "0": 0.3055555555555556,
+    "1": 0.39285714285714285,
+    "2": 0.5,
+    "3": 0.5,
+    "4": 1.0,
+    "5": 0.5,
+    "6": 1.0,
+    "7": 1.0
+  },
+  "gods": [
+    {
+      "id": "db_migrations_001_init_order_items",
+      "label": "order_items",
+      "degree": 8
+    },
+    {
+      "id": "db_migrations_001_init_orders",
+      "label": "orders",
+      "degree": 8
+    },
+    {
+      "id": "db_migrations_001_init_products",
+      "label": "products",
+      "degree": 5
+    },
+    {
+      "id": "db_migrations_002_views_order_totals",
+      "label": "order_totals",
+      "degree": 5
+    },
+    {
+      "id": "db_schema_billing_invoices",
+      "label": "billing.invoices",
+      "degree": 5
+    },
+    {
+      "id": "db_migrations_001_init_customers",
+      "label": "customers",
+      "degree": 4
+    },
+    {
+      "id": "db_migrations_002_views_big_customers",
+      "label": "big_customers",
+      "degree": 4
+    },
+    {
+      "id": "db_procedures_refresh_totals",
+      "label": "refresh_totals()",
+      "degree": 4
+    },
+    {
+      "id": "db_migrations_002_views_all_people",
+      "label": "all_people",
+      "degree": 3
+    },
+    {
+      "id": "db_migrations_003_functions_order_items_touch",
+      "label": "order_items_touch",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "order_total()",
+      "target": "order_totals",
+      "source_files": [
+        "db/migrations/003_functions.sql",
+        "db/migrations/002_views.sql"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "reads_from",
+      "why": "bridges separate communities; peripheral node `order_total()` unexpectedly reaches hub `order_totals`"
+    },
+    {
+      "source": "invoices_close",
+      "target": "billing.invoices",
+      "source_files": [
+        "db/migrations/003_functions.sql",
+        "db/schema.sql"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "triggers",
+      "why": "bridges separate communities; peripheral node `invoices_close` unexpectedly reaches hub `billing.invoices`"
+    },
+    {
+      "source": "billing.close_invoice()",
+      "target": "billing.invoices",
+      "source_files": [
+        "db/procedures.sql",
+        "db/schema.sql"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "writes_to",
+      "why": "bridges separate communities; peripheral node `billing.close_invoice()` unexpectedly reaches hub `billing.invoices`"
+    },
+    {
+      "source": "order_totals",
+      "target": "order_items",
+      "source_files": [
+        "db/migrations/002_views.sql",
+        "db/migrations/001_init.sql"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "reads_from",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "order_items_touch",
+      "target": "order_items",
+      "source_files": [
+        "db/migrations/003_functions.sql",
+        "db/migrations/001_init.sql"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "triggers",
+      "why": "bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `order_items` connect `Community 0` to `Community 1`, `Community 2`?",
+      "why": "High betweenness centrality (0.226) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `orders` connect `Community 1` to `Community 0`, `Community 2`, `Community 5`?",
+      "why": "High betweenness centrality (0.170) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `refresh_totals()` connect `Community 1` to `Community 0`, `Community 5`?",
+      "why": "High betweenness centrality (0.142) - this node is a cross-community bridge."
+    }
+  ]
+}

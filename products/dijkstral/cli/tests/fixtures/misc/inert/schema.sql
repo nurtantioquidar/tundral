@@ -1,1 +1,0 @@
-CREATE TABLE items (id INT PRIMARY KEY);

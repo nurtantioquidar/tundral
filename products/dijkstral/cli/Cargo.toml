@@ -79,6 +79,8 @@ tree-sitter-objc = "3.0.2"
 tree-sitter-zig = "1.1.2"
 tree-sitter-fortran = "0.6.0"
 tree-sitter-verilog = "1.0.3"
+# SQL: derekstride/tree-sitter-sql, the grammar Graphify's `[sql]` extra installs (0.3.11).
+tree-sitter-sequel = "0.3.11"
 unicode-normalization = "0.1"
 # HTTP for the semantic pass's API backends (rustls, no OpenSSL).
 ureq = { version = "2.12", default-features = false, features = ["tls"] }

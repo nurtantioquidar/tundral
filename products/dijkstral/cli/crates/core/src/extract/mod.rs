@@ -27,6 +27,7 @@ pub mod rust;
 pub mod scala;
 pub mod script;
 pub mod sfc;
+pub mod sql;
 pub mod swift;
 pub mod verilog;
 pub mod xml;
@@ -70,6 +71,7 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Verilog => verilog::extract(&mut cx, tree.as_ref()),
         // Graphify counts `.sol` files but has no grammar for them: no nodes at all (§37).
         Lang::Solidity => {}
+        Lang::Sql => sql::extract(&mut cx, tree.as_ref()),
         Lang::Groovy => groovy::extract(&mut cx, tree.as_ref()),
         Lang::Dart => dart::extract(&mut cx),
         Lang::Lua => lua::extract(&mut cx, tree.as_ref()),

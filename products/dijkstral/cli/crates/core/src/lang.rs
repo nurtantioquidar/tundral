@@ -64,6 +64,8 @@ pub enum Lang {
     Verilog,
     /// `.sol`: counted, never extracted (Graphify lacks the grammar, §37).
     Solidity,
+    /// `.sql`: tables, views, functions, procedures, triggers and indexes (§45).
+    Sql,
     /// `.csproj`, `.fsproj`, `.vbproj` (§43.1).
     MsBuild,
     /// `.sln` (§43.2).
@@ -74,7 +76,7 @@ pub enum Lang {
     Razor,
     /// `.xaml` (§43.4).
     Xaml,
-    /// Code Graphify counts but extracts nothing from (§44.8): `.r`, `.sql`, `.tf`, `.ejs`, and
+    /// Code Graphify counts but extracts nothing from (§44.8): `.r`, `.tf`, `.ejs`, and
     /// perl, fish and tcsh shebang scripts.
     Inert,
     /// `.pas .dpr .pp .inc .lpr .dpk` (§44.1).
@@ -128,6 +130,7 @@ pub enum Family {
     Fortran,
     Verilog,
     Solidity,
+    Sql,
     /// .NET project and markup files (§43).
     Dotnet,
     /// Counted as code, never extracted (§44).
@@ -186,13 +189,14 @@ impl Lang {
             "f" | "f90" | "f95" | "f03" | "f08" => Lang::Fortran,
             "v" | "sv" | "svh" | "vh" => Lang::Verilog,
             "sol" => Lang::Solidity,
+            "sql" => Lang::Sql,
             "h" => return crate::extract::objc::header_lang(path),
             "csproj" | "fsproj" | "vbproj" => Lang::MsBuild,
             "sln" => Lang::Sln,
             "slnx" => Lang::Slnx,
             "razor" | "cshtml" => Lang::Razor,
             "xaml" => Lang::Xaml,
-            "r" | "sql" | "tf" | "ejs" => Lang::Inert,
+            "r" | "tf" | "ejs" => Lang::Inert,
             "metal" => Lang::Cpp,
             "pas" | "dpr" | "pp" | "inc" | "lpr" | "dpk" => Lang::Pascal,
             "dfm" | "lfm" => Lang::DelphiForm,
@@ -234,6 +238,7 @@ impl Lang {
             Lang::Fortran => Family::Fortran,
             Lang::Verilog => Family::Verilog,
             Lang::Solidity => Family::Solidity,
+            Lang::Sql => Family::Sql,
             Lang::MsBuild | Lang::Sln | Lang::Slnx | Lang::Razor | Lang::Xaml => Family::Dotnet,
             Lang::Inert => Family::Inert,
             Lang::Pascal
@@ -276,6 +281,7 @@ impl Lang {
             Lang::ObjC => tree_sitter_objc::LANGUAGE.into(),
             Lang::Fortran => tree_sitter_fortran::LANGUAGE.into(),
             Lang::Verilog => tree_sitter_verilog::LANGUAGE.into(),
+            Lang::Sql => tree_sitter_sequel::LANGUAGE.into(),
             Lang::Groovy => tree_sitter_groovy::LANGUAGE.into(),
             Lang::Lua => tree_sitter_lua::LANGUAGE.into(),
             Lang::Dart | Lang::Markdown => return None,

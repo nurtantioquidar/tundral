@@ -1,7 +1,7 @@
-# Graph Report - misc  (2026-10-15)
+# Graph Report - misc  (2026-10-29)
 
 ## Corpus Check
-- 25 files · ~661 words
+- 24 files · ~654 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 1 file(s) not represented in the graph (top: (none) 1)
 

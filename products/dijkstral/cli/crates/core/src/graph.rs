@@ -38,6 +38,8 @@ fn rank(relation: &str) -> u8 {
         "calls" | "case_of" | "dynamic_import" => 30,
         "references_constant" => 35,
         "uses_static_prop" => 36,
+        // SQL (§45.5): a procedure's later read of a table it writes leaves `writes_to`.
+        "reads_from" => 37,
         "instantiates" => 41,
         "imports" => 45,
         "imports_from" | "indirect_call" | "re_exports" => 50,

@@ -31,6 +31,7 @@ pub mod ruby;
 pub mod rust;
 pub mod scala;
 pub mod script;
+pub mod sql;
 pub mod swift;
 pub mod verilog;
 pub mod zig;
@@ -144,6 +145,7 @@ pub fn resolve_with(files: Vec<(&SourceFile, FileFacts)>, extra: &[Pass]) -> Gra
         objc::resolve,
         fortran::resolve,
         verilog::resolve,
+        sql::resolve,
         dotnet::resolve,
         legacy::resolve,
         groovy::resolve,
