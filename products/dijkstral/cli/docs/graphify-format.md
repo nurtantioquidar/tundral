@@ -1828,7 +1828,8 @@ and also `.astro .psm1 .psd1 .cls .vbproj` (§38–§42).
 `.d.ts` and `.min.js` are code (not filtered).
 
 - `.r`, `.tf` count as code but contribute nothing, not even a file node (stderr: optional
-  grammar missing), and so does `.sql` without Graphify's SQL extra (§45); `.ejs` likewise ("no AST extractor"). The project, markup and grammar-less
+  grammar missing), and so does `.sql` without Graphify's SQL extra (§45). `.ejs` gets its file node
+  (§44.7). The project, markup and grammar-less
   formats `.csproj .fsproj .vbproj .sln .slnx .razor .cshtml .xaml .pas .dpr .pp .inc .lpr .dpk
   .dfm .lfm .lpk .cls .trigger .cob .cbl .cpy .dmf .dmi .dmm .metal` are code too (§43, §44; the
   final per-extension and shebang check is §44.8).
@@ -1851,8 +1852,9 @@ Extensionless files with a shebang are code: `#!/usr/bin/env python3`, `#!/usr/b
 `#!/bin/sh`, `#!/bin/bash`/`env bash`, `#!/bin/zsh` (shell extractor; note `.zsh` *extension* is
 not classified — quirk), `#!/usr/bin/env node`, `#!/usr/bin/env ruby`, `#!/usr/bin/env perl`
 (counted as code, zero nodes). `#!/usr/bin/env -S deno run` is not classified. Interpreter names
-are matched exactly (§44.8): `ksh`/`dash` are shell, `node`/`nodejs` JavaScript, `php` PHP,
-`fish`/`tcsh` inert like `perl`; `python3.11` and `ruby2.7` are not classified.
+are matched with an optional version suffix (§44.8): `ksh`/`dash` are shell, `node`/`nodejs`
+JavaScript, `php` PHP, `fish`/`tcsh` inert like `perl`; `python3.11`, `ruby2.7` and `node18`
+count, `Python3` and `pypy3` do not.
 Example in corpus: ripgrep `benchsuite/benchsuite` (python shebang) → file node id
 `benchsuite_benchsuite`, label `benchsuite`.
 
@@ -4016,7 +4018,8 @@ nesting.
 
 ### 35.4 Cross-file binding
 
-Nothing else crosses files: calls, `use` and type-bound targets stay in their file.
+Nothing else crosses files: function references, `use` and type-bound targets stay in their
+file; only `call` statements and type names go through stubs.
 
 - **Rule.** A per-file stub binds to the only node, of **any language**, labelled exactly `t`,
   else the only function labelled `t()` — a Fortran module, type, procedure or `use` node, a
@@ -4027,8 +4030,12 @@ Nothing else crosses files: calls, `use` and type-bound targets stay in their fi
 
 ### 35.5 Calls
 
-- `call s(...)` always targets `file_slug(s)`; an `s` the file does not define dangles and the
-  build drops it (§8.1). `call x%m()` gives nothing.
+- `call s(...)` targets `file_slug(s)` when the file defines `s`; otherwise it goes through the
+  per-file stub `slug(s)` of §35.4 (0.9.97; 0.9.86 left it dangling): `call ext1()` binds to the
+  only function `ext1()` of any file and language, a module (`call geo()`) or a type of that name
+  binds too, and an ambiguous or unknown name keeps the stub (`call missing_routine(n)` →
+  `missing_routine`, renamed per file by §4.5 when several files call it). `call x%m()` gives
+  nothing.
 - A function reference or array element `f(...)` (also inside `print`, conditions, keyword
   arguments) is a call only when the file has a node `file_slug(f)`: a procedure, an interface, a
   type (`Point(1.0, 2.0)` calls the type) or a module. A function naming itself in an expression
@@ -4064,7 +4071,8 @@ host and a procedure calling or referencing its module.
 
 - **FO1** `use m` creates a separate per-file node `m` instead of linking to module `m`, so
   every using file gets its own renamed node and the import never reaches the module.
-- **FO2** Cross-file calls are never resolved; `call s` to a procedure of another file dangles.
+- **FO2** Cross-file calls bind by label only (§35.4), and only `call` statements cross files:
+  a function reference `f(...)` to another file's function gives nothing.
 - **FO3** Type stubs bind by exact label across languages (a JSON key `name`, a Python class).
 - **FO4** Only the first declarator of a type-bound `procedure` statement is bound.
 - **FO5** A type used before its definition in the same file goes through a stub (and binds back
@@ -4105,8 +4113,8 @@ Implementation: `crates/core/src/{extract,resolve}/verilog.rs`.
 
 | Construct | id | label | extra |
 |---|---|---|---|
-| file | file id | §5.1 | `confidence_score: 1.0` |
-| module (also nested, `macromodule`, `extern module`) | `file_slug(name)` | `name` | `confidence_score: 1.0` |
+| file | file id | §5.1 | `confidence: "INFERRED"`, `confidence_score: 1.0` |
+| module (also nested, `macromodule`, `extern module`) | `file_slug(name)` | `name` | same |
 | function inside a module | `module_slug(name)` | `name()` | same |
 | task inside a module | `module_slug(name)` | `name` (no parentheses) | same |
 | function or task outside every module (package, interface, program, file scope) | `slug(path with extension)_slug(name)` (`rtl_alu_v_scale`) | as above | same |
@@ -4115,9 +4123,9 @@ Implementation: `crates/core/src/{extract,resolve}/verilog.rs`.
 | class base / interface (§36.5) | `file_slug(Base)` | `Base` | same, at the class's line |
 | class method (§36.5) | `class_slug(name)` | `name` (no parentheses) | same |
 
-- **V1** Every Verilog node, file nodes and stubs included, carries the node field
-  `confidence_score: 1.0` (raw and clustered); every in-file edge carries `confidence_score: 1.0`
-  in raw output too.
+- **V1** Every Verilog node, file nodes and stubs included, carries the node fields
+  `confidence: "INFERRED"` and `confidence_score: 1.0` (raw and clustered; 0.9.86 had only the
+  score); every in-file edge carries `confidence_score: 1.0` in raw output too.
 - **V2** A module's name is the first identifier anywhere in its header, so an attribute comes
   first: `(* keep_hierarchy *) module wide_path` is module `keep_hierarchy`.
 - **V3** Definitions outside modules hang off the file's internal id, which keeps the extension
@@ -4182,7 +4190,12 @@ nothing. Context is never set.
 - the body gives methods for `\bfunction\s+\w+\s+(\w+)\s*\(`: exactly one return-type word, so
   `function void f()`, `virtual function void f()`, `static function int f(int x)` and an
   `extern` prototype count, while `function new()`, `function automatic void f()`,
-  `function bit [7:0] f()`, `function void f;` and tasks do not;
+  `function bit [7:0] f()` and `function void f;` do not;
+- then, in a second scan of the body, for `\btask\s+(\w+)\s*\(` (0.9.97; 0.9.86 skipped class
+  tasks): `task drive()`, `task t ()`, `extern task t()`, `static task t()` and a name on the
+  next line count, `task automatic run(...)` and `virtual task t;` do not. A task named like an
+  earlier function is the same node (the function's line) and its `method` edge, emitted later,
+  is the one that survives;
 - nodes come after every tree-derived node of the file; edges in the order `defines`, `inherits`,
   `implements`, `method`s.
 
@@ -4201,7 +4214,7 @@ file-level functions.
 
 ### 36.6 Quirks (Verilog)
 
-- **V1** `confidence_score: 1.0` as a node field on every Verilog node.
+- **V1** `confidence: "INFERRED"` and `confidence_score: 1.0` as node fields on every Verilog node.
 - **V2** Attributes name modules.
 - **V3** Out-of-module functions and tasks keep the extension in their id prefix.
 - **V4** Instantiations depend on tree-sitter's ambiguous reading (UDP/interface/gate instances
@@ -4500,9 +4513,13 @@ edge once, at its first line.
 `Package/Name` (else the file stem) → `<file>_<slug(name)>`, `file -contains->`; each
 `RequiredPkgs/*/PackageName` → node `slug(name)` and `imports` (context `import`); each
 `Files/*/UnitName` → node `slug(unit)` and `contains`; all at `L1`. A unit named like exactly one
-`.pas`/`.pp` file takes that file's id as emitted by the package: when that is the package file's
-own id (same directory and stem) the unit *is* the package file node, which takes the shorter label
-(`sample`) and of the two opposite `contains` edges the one with the smaller source survives.
+`.pas`/`.pp` file **in the package's directory or below** (the `Filename` value is ignored:
+`zz.pas` with unit `C` finds `sub/c.pas`; `../e/f.pas` is never found) takes that file's id as
+emitted by the package, which the §4.5 rename turns into `<package file>_<pas file id>`
+(`d_d_lpk_d_sub_c`). When that id is the package file's own (same directory and stem), the unit
+is a node `slug(<pas path with extension>)` instead (`pascal/Widgets.pas` → `pascal_widgets_pas`,
+label `Widgets`) and the package file keeps its label (`Widgets.lpk`); 0.9.86 merged the unit into
+the package file node.
 
 ### 44.4 Apex (`.cls`, `.trigger`)
 
@@ -4538,8 +4555,12 @@ elements produce nothing. `.dmi`: the PNG `tEXt` `Description` chunk's `state = 
 ### 44.7 Notes and gaps
 
 - `.metal` is C++ (§25) and matches Graphify's output.
-- **Inert code**: `.r .tf .ejs` and `perl`, `fish`, `tcsh` shebang scripts count as code (the
+- **Inert code**: `.r .tf` and `perl`, `fish`, `tcsh` shebang scripts count as code (the
   report's file and word counts) but produce nothing, not even a file node.
+- **EJS** (0.9.97): an `.ejs` file has its file node (`null` location when empty). Graphify also
+  extracts the JavaScript of its `<% … %>` scriptlets and `<script>` blocks (`function foo()` →
+  `foo()`, `contains`, in-file `calls`) and links `<%- include('b') %>` to `b.ejs` with an
+  `includes` edge; dijkstral emits only the file node (no corpus has `.ejs`).
 - Not reproduced: zTXt (compressed) `.dmi` headers (no inflate; only the file node), and the
   rename Graphify applies to a `.pas` file node when an `.lpk` names its unit from another stem
   (`c.pas` → `d_sub_c_pas_d_sub_c`).
@@ -4553,8 +4574,10 @@ Running both tools over one file of every extension and shebang of §14.5 plus t
 file produces nodes in dijkstral exactly when it does in Graphify, except the languages other
 stages add (Astro, Dart, Elixir, Fortran, Groovy/Gradle, Julia, Lua/Luau, Objective-C `.mm`,
 PowerShell `.ps1 .psd1 .psm1`, SQL `.sql` (§45), Svelte, Verilog `.v .sv .svh .vh`, Vue, Zig). Shebangs are matched
-by exact interpreter name after `env` and its flags: `python python2 python3` (not `python3.11`,
-`Python3`, `pypy3`), `sh bash zsh ksh dash`, `ruby` (not `ruby2.7`), `node nodejs` (JavaScript),
+by interpreter name after `env` and its flags, with an optional version `\d+(\.\d+)*` (0.9.97:
+`python3.11`, `python311`, `python3.11.4`, `node18`, `nodejs20`, `ksh93`, `zsh5.9`, `ruby2.7`,
+`php8` count; `Python3`, `pypy3`, `pythonw`, `python3.`, `python3.11a`, `python3-dbg`, `node-18`
+do not): `python`, `sh bash zsh ksh dash`, `ruby`, `node nodejs` (JavaScript), `julia`,
 `php`, and the inert `perl fish tcsh`; a BOM or a blank first line hides the shebang.
 ## 26. Groovy (2026-10-15)
 

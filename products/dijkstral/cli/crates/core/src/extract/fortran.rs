@@ -28,7 +28,7 @@
 //!   `crate::resolve::fortran`. Type-bound and generic targets bind to any node of the file, else
 //!   a stub.
 //! - Calls come after the walk, in source order, from the innermost procedure or program: `call
-//!   s(...)` always targets `file_slug(s)` (an undefined `s` dangles and the build drops it), a
+//!   s(...)` targets `file_slug(s)` when the file defines it, else a per-file stub `slug(s)`, a
 //!   function reference or array element `f(...)` only when the file has a node `file_slug(f)`
 //!   (procedures, interfaces, types as constructors, modules) other than the caller itself.
 //!   Recursion through `call` keeps its self-loop.
@@ -360,7 +360,10 @@ impl F<'_, '_> {
                     .child_by_field_name("subroutine")
                     .filter(|s| s.kind() == "identifier");
                 if let (Some(c), Some(s)) = (caller, callee) {
-                    let target = self.local_id(&self.text(s));
+                    // A name the file does not define goes through a per-file stub, bound
+                    // across files like a type stub.
+                    let name = self.text(s);
+                    let target = self.target(&name);
                     let line = Ctx::line(node);
                     self.cx.add_edge(c, &target, "calls", line, Some("call"));
                 }
@@ -581,7 +584,7 @@ mod tests {
                 "a -defines-> a_s -",
                 "a_s -references-> later parameter_type",
                 "a -defines-> a_f -",
-                "a_s -calls-> a_nowhere call",
+                "a_s -calls-> nowhere call",
                 "a_s -calls-> a_f call",
                 "a_s -calls-> a_s call",
             ]
