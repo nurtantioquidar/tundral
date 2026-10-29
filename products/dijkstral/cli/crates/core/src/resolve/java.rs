@@ -15,7 +15,8 @@
 //!   INFERRED 0.85 through `x`'s declared type when that names one local class, and never
 //!   when the type is unknown. Unbound `new X()` binds INFERRED 0.85 to `X` when it is the only
 //!   class or constructor of that name and the file does not use `X` as a type.
-//! - `metadata.unresolved_calls`: `Type.m()`, or a typed `x.m()` (common JDK types excepted),
+//! - `metadata.unresolved_calls`: `Type.m()`, or a typed `x.m()` (common JDK types excepted,
+//!   and types naming a class-like node of another language, such as a Kotlin class),
 //!   whose type names no local class; one entry per (callee, type) and caller.
 //!
 //! Deliberate departures from Graphify (quirk Q11, see `docs/graphify-format.md` §13.4): an
@@ -232,6 +233,16 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         }
     }
 
+    // Labels of the class-like nodes of other languages: a Java receiver naming one is not
+    // unresolved.
+    let foreign_classes: HashSet<&str> = files
+        .iter()
+        .filter(|v| v.file.lang != Lang::Java)
+        .flat_map(|v| v.facts.nodes.iter())
+        .filter(|n| n.kind == NodeKind::Def && n.attr("_callable_class").is_some())
+        .map(|n| n.label.as_str())
+        .collect();
+
     // Static imports link their class; then calls.
     for (v, j) in &java {
         let rel = v.file.rel.as_str();
@@ -290,7 +301,9 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             None
         };
         // `metadata.unresolved_calls`, in source order: a `Type.m()` or a typed `x.m()` whose
-        // type names no local class (common JDK receivers excepted for typed variables).
+        // type names no class of the repository (Java, or a class-like node of any other
+        // language: Kotlin classes, objects and anonymous objects, Scala classes…), common JDK
+        // receivers excepted for typed variables.
         let mut unresolved: Vec<(String, Vec<String>)> = Vec::new();
         let mut recorded: HashSet<(String, String, String)> = HashSet::new();
         for c in &j.calls {
@@ -299,7 +312,10 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                 JCallKind::Member => !c.receiver.is_empty() && !is_common_jdk_type(&c.receiver),
                 _ => false,
             };
-            if !record || classes.by_name.contains_key(&c.receiver) {
+            if !record
+                || classes.by_name.contains_key(&c.receiver)
+                || foreign_classes.contains(c.receiver.as_str())
+            {
                 continue;
             }
             // One entry per (callee, receiver type) and caller, first site kept.
@@ -308,10 +324,11 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                 continue;
             }
             let entry = format!(
-                "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"java\",\"line\":\"L{}\"}}",
+                "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"java\",\"line\":\"L{}\",\"file\":{}}}",
                 json_str(&c.name),
                 json_str(&c.receiver),
-                c.line
+                c.line,
+                json_str(rel)
             );
             match unresolved.iter_mut().find(|(id, _)| *id == caller) {
                 Some((_, list)) => list.push(entry),

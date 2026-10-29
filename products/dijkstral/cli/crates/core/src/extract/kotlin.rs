@@ -5,8 +5,9 @@
 //! members belong to the enclosing class), enum entries and their methods, anonymous objects
 //! inside functions (`method_object_Type_l<line>`), per-file type stubs (`slug(Name)`), and the
 //! in-file `contains`, `method`, `case_of`, `inherits`, `implements`, `references` and `calls`
-//! edges. Properties, type aliases, constructors, `init` blocks, accessors, local functions and
-//! script statements yield no nodes; KDoc and comments yield no rationale.
+//! edges. A `typealias` is a class-like node (`file_Name`) its file or class contains.
+//! Properties, constructors, `init` blocks, accessors, local functions and script statements
+//! yield no nodes; KDoc and comments yield no rationale.
 //!
 //! - Supertypes: a constructor invocation (`Base()`) `inherits`, any other specifier (`Iface`,
 //!   `Iface by impl`) `implements` (last name segment, never denied); their type arguments are
@@ -15,8 +16,9 @@
 //!   member properties, `parameter_type`/`return_type` from functions (at the function's line),
 //!   `generic_arg` for every type argument, `attribute` for every annotation (class annotations
 //!   also for their `X::class` arguments). A qualified type is referenced by its first segment;
-//!   common Kotlin/JDK types never produce a reference ([`is_denied_type`]); generic type
-//!   parameters do (`T` becomes a stub). A type binds locally only to a class declared earlier.
+//!   common Kotlin/JDK types never produce a reference ([`is_denied_type`]), nor do the type
+//!   parameters of the enclosing classes and function (an undeclared `T` still becomes a stub).
+//!   A type binds locally only to a class declared earlier.
 //! - Calls bind in the file by name to the file's last function, method, class or anonymous
 //!   object of that name, whatever the receiver; names in [`is_denied_call`] never bind.
 //!   Function bodies come first, then property initializers (caller: the class, or the file at
@@ -331,6 +333,95 @@ const DENIED_CALLS: &[&str] = &[
     "zip",
 ];
 
+/// Receivers whose `Type.m()` calls are never recorded in `metadata.unresolved_calls`
+/// (§21.4). Probed name by name on Graphify 0.9.97; the full list is larger than what was
+/// probed. Sorted.
+pub fn is_denied_receiver(name: &str) -> bool {
+    DENIED_RECEIVERS.binary_search(&name).is_ok()
+}
+
+const DENIED_RECEIVERS: &[&str] = &[
+    "AbortController",
+    "AnyObject",
+    "Array",
+    "BigInt",
+    "Blob",
+    "Bool",
+    "Boolean",
+    "Bundle",
+    "Calendar",
+    "Character",
+    "Color",
+    "Data",
+    "Date",
+    "DateFormatter",
+    "Decimal",
+    "DispatchGroup",
+    "DispatchQueue",
+    "Double",
+    "Error",
+    "EvalError",
+    "File",
+    "FileManager",
+    "Float",
+    "Font",
+    "FormData",
+    "Headers",
+    "Int",
+    "Int16",
+    "Int32",
+    "Int64",
+    "Int8",
+    "Intl",
+    "JSON",
+    "JSONDecoder",
+    "JSONEncoder",
+    "Locale",
+    "Map",
+    "Math",
+    "NSError",
+    "NSLock",
+    "NSString",
+    "NotificationCenter",
+    "Number",
+    "NumberFormatter",
+    "Object",
+    "OperationQueue",
+    "Promise",
+    "Proxy",
+    "RangeError",
+    "ReferenceError",
+    "Reflect",
+    "RegExp",
+    "Request",
+    "Response",
+    "Sendable",
+    "Set",
+    "String",
+    "Symbol",
+    "SyntaxError",
+    "TextDecoder",
+    "TextEncoder",
+    "TimeZone",
+    "TypeError",
+    "UInt",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+    "UInt8",
+    "URIError",
+    "URL",
+    "URLComponents",
+    "URLRequest",
+    "URLSearchParams",
+    "URLSession",
+    "UUID",
+    "UserDefaults",
+    "View",
+    "WeakMap",
+    "WeakSet",
+];
+
 struct Kt<'c, 'a, 't> {
     cx: &'c mut Ctx<'a>,
     /// `slug(path with extension)`: a definition with this id merges into the file node.
@@ -347,6 +438,8 @@ struct Kt<'c, 'a, 't> {
     bodies: Vec<(String, TsNode<'t>)>,
     /// (caller, expression) of property initializers, in source order.
     deferred: Vec<(String, TsNode<'t>)>,
+    /// Type parameters of the enclosing classes and function: never referenced.
+    tparams: Vec<String>,
     facts: KotlinFacts,
 }
 
@@ -363,6 +456,7 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
         refs_seen: HashSet::new(),
         bodies: Vec::new(),
         deferred: Vec::new(),
+        tparams: Vec::new(),
         facts: KotlinFacts {
             file_id,
             ..KotlinFacts::default()
@@ -410,13 +504,14 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
         }
         let package = self.facts.package.clone();
         for d in &decls {
-            if is_class_decl(d.kind()) {
+            if is_class_decl(d.kind()) || d.kind() == "type_alias" {
                 self.declare(*d, &file_id, &package);
             }
         }
         for d in decls {
             match d.kind() {
                 k if is_class_decl(k) => self.class(d, &file_id, &file_id),
+                "type_alias" => self.type_alias(d, &file_id, &file_id),
                 "function_declaration" => self.function(d, &file_id, true),
                 "property_declaration" => self.property(d, &file_id, &file_id, false),
                 _ => {}
@@ -468,7 +563,10 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
 
     /// Pre-pass: local ids and FQNs of every named class, object and enum of the file.
     fn declare(&mut self, decl: TsNode, file_id: &str, outer_fqn: &str) {
-        let Some(name) = decl.child_by_field_name("name") else {
+        let Some(name) = decl
+            .child_by_field_name("name")
+            .or_else(|| decl.child_by_field_name("type"))
+        else {
             return;
         };
         let name = self.text(name).to_string();
@@ -488,7 +586,7 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
             .filter(|n| matches!(n.kind(), "class_body" | "enum_class_body"))
         {
             for (m, _) in members(body) {
-                if is_class_decl(m.kind()) {
+                if is_class_decl(m.kind()) || m.kind() == "type_alias" {
                     self.declare(m, file_id, &fqn);
                 } else if m.kind() == "companion_object" {
                     for cb in named_children(m)
@@ -550,6 +648,7 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
         if !self.merged_id(&id) {
             self.callables.insert(name, id.clone());
         }
+        let depth = self.push_tparams(decl);
         self.header(decl, &id, line);
         for body in named_children(decl)
             .into_iter()
@@ -557,6 +656,41 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
         {
             self.body(body, file_id, &id);
         }
+        self.tparams.truncate(depth);
+    }
+
+    /// `typealias Name = …` (in the file or a class body): a class-like node that `parent`
+    /// contains; its right-hand side references nothing.
+    fn type_alias(&mut self, decl: TsNode<'t>, file_id: &str, parent: &str) {
+        let Some(name) = decl.child_by_field_name("type") else {
+            return;
+        };
+        let name = self.text(name).to_string();
+        let id = Ctx::child_id(file_id, &name);
+        let line = Ctx::line(decl);
+        self.put_def(&id, name.clone(), line, true);
+        self.edge(parent, &id, "contains", line, None);
+        let nid = self.nid(&id);
+        self.local_types.entry(name).or_insert(nid);
+    }
+
+    /// Pushes the declaration's type parameters; returns the depth to truncate back to.
+    fn push_tparams(&mut self, decl: TsNode) -> usize {
+        let depth = self.tparams.len();
+        for p in named_children(decl)
+            .into_iter()
+            .filter(|n| n.kind() == "type_parameters")
+            .flat_map(named_children)
+            .filter(|n| n.kind() == "type_parameter")
+        {
+            if let Some(n) = named_children(p)
+                .into_iter()
+                .find(|n| n.kind() == "identifier")
+            {
+                self.tparams.push(self.text(n).to_string());
+            }
+        }
+        depth
     }
 
     fn merged_id(&self, id: &str) -> bool {
@@ -683,6 +817,7 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
                 "property_declaration" => self.property(m, file_id, owner, true),
                 "function_declaration" => self.function(m, owner, false),
                 k if is_class_decl(k) => self.class(m, file_id, owner),
+                "type_alias" => self.type_alias(m, file_id, owner),
                 "companion_object" => {
                     for cb in named_children(m)
                         .into_iter()
@@ -782,6 +917,7 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
         if !self.merged_id(&id) {
             self.callables.insert(name, id.clone());
         }
+        let depth = self.push_tparams(decl);
         let children = named_children(decl);
         let params_at = children
             .iter()
@@ -807,6 +943,7 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
             self.bodies.push((id.clone(), *body));
             self.object_literals(*body, &id);
         }
+        self.tparams.truncate(depth);
     }
 
     /// Anonymous objects in a function body (not inside local functions or classes).
@@ -930,7 +1067,13 @@ impl<'c, 'a, 't> Kt<'c, 'a, 't> {
         match t.kind() {
             "user_type" => {
                 if let Some(name) = self.user_type_name(t) {
-                    if !is_denied_type(&name) {
+                    let tparam = self.tparams.contains(&name)
+                        && named_children(t)
+                            .iter()
+                            .filter(|n| n.kind() == "identifier")
+                            .count()
+                            == 1;
+                    if !is_denied_type(&name) && !tparam {
                         let target = self.target(&name);
                         self.reference(source, &target, ctx, line);
                     }
@@ -1146,6 +1289,7 @@ mod tests {
 
     #[test]
     fn deny_lists_are_sorted() {
+        assert!(super::DENIED_RECEIVERS.windows(2).all(|w| w[0] < w[1]));
         assert!(DENIED_TYPES.windows(2).all(|w| w[0] < w[1]));
         assert!(DENIED_CALLS.windows(2).all(|w| w[0] < w[1]));
     }

@@ -2,14 +2,17 @@
 //!
 //! - Part-file definitions (`@dartpart:<library id>_<name>`) get Graphify's absolute id: the slug
 //!   of the canonical scan root, `_`, then the library-relative id (quirk DA1).
+//! - An anonymous extension's id gets the slug of its file's canonical absolute path without the
+//!   extension, then `_anonymous_extension` (quirk DA3).
 //! - A referenced type node (`inherits`, `implements`, `references` …) binds to the only Dart
-//!   definition labelled with its name (a trailing `?` ignored); otherwise it stays.
+//!   definition labelled with its name (a trailing `?` ignored); otherwise it stays. Annotation
+//!   nodes never bind.
 
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
 use super::{Index, Resolution, View};
-use crate::extract::dart::{DartFacts, PART};
+use crate::extract::dart::{DartFacts, ANON, PART};
 use crate::extract::slug;
 use crate::facts::{LangFacts, NodeKind};
 use crate::lang::Lang;
@@ -58,6 +61,30 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
             node.id = id.clone();
             res.nodes.push(node);
             res.redirects.push((n.id.clone(), id));
+        }
+        // Anonymous extensions.
+        let anon = v
+            .facts
+            .nodes
+            .iter()
+            .find(|n| n.kind == NodeKind::Def && n.id.ends_with(ANON));
+        if let Some(n) = anon {
+            let abs = std::fs::canonicalize(&v.file.abs).unwrap_or_else(|_| v.file.abs.clone());
+            let stem = abs.with_extension("");
+            let local = slug(&format!("{}_anonymous_extension", stem.to_string_lossy()));
+            let base = n.id.strip_suffix(ANON).unwrap_or(&n.id);
+            let base = moved
+                .get(&n.id)
+                .and_then(|m| m.strip_suffix(ANON))
+                .unwrap_or(base);
+            let id = format!("{base}{local}");
+            let mut node = n.clone();
+            node.id = id.clone();
+            res.nodes.push(node);
+            res.redirects.push((
+                moved.get(&n.id).cloned().unwrap_or_else(|| n.id.clone()),
+                id,
+            ));
         }
     }
 
