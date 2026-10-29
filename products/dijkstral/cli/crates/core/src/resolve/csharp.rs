@@ -17,18 +17,26 @@
 //!   typed lower-case receiver and a bare call (through the enclosing type and its bases, else
 //!   the only method of that name) are INFERRED 0.85. Receiver types resolve by namespace first,
 //!   then by unique simple name. A capitalized or typed receiver whose type names no local type
-//!   is recorded in the caller's `metadata.unresolved_calls`.
+//!   is recorded in the caller's `metadata.unresolved_calls` (with the caller's `file`).
+//! - Receivers typed through other files (INFERRED 0.85): a `var` initialized by a call takes the
+//!   declared return type of the method that call bound to, when it has no overloads; `a.f`
+//!   takes the declared type of field `f` of `a`'s type or its bases; `new T(…)` and a field's
+//!   element type are `T`.
+//! - A name finds the overloads of its first method; the call binds to the only one that takes
+//!   its argument count, else to the first. "The only method named `M`" counts types.
 //! - `new T()` (INFERRED 0.85): by C# name lookup; when the file never uses `T` as a type, else
-//!   the method or type named `T` nearest the caller's directory; when it does, never to a type
-//!   the caller already references.
-//! - `dispatches_to` (INFERRED 0.85, context `call`): an interface method to the only
-//!   implementing method of a local class that lists the interface in its base list, unless a
-//!   call already joins the two.
+//!   the type named `T` nearest the caller's directory; when it does, never to a type the caller
+//!   already references.
+//! - `dispatches_to` (INFERRED, context `call`): an interface method to the implementing method
+//!   (same signature, else the first of that name) of every local class that lists the interface
+//!   in its base list, scored 0.85 for one such class, 0.75 for two, 0.65 for more; dropped
+//!   when the implementation calls the interface method and its id is the larger (Graphify's
+//!   collapse ranks the two relations equally and keeps the larger source).
 
 use std::collections::{HashMap, HashSet};
 
 use super::{Index, Resolution, View};
-use crate::extract::csharp::{json_str, namespace_id, CsCallKind, CsFacts, VIRTUAL};
+use crate::extract::csharp::{json_str, namespace_id, CsCallKind, CsFacts, CsMember, VIRTUAL};
 use crate::extract::{external_node, origin, slug};
 use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc, Node, NodeKind};
 use crate::lang::Lang;
@@ -255,6 +263,10 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
     // Canonical type id → its declarations (file index, type index).
     let mut decls: HashMap<String, Vec<(usize, usize)>> = HashMap::new();
     let mut methods: HashMap<(String, String), String> = HashMap::new();
+    // (canonical owner, name) → its overloads in declaration order.
+    let mut families: HashMap<(String, String), Vec<(String, &CsMember)>> = HashMap::new();
+    // Method id → (file index, member).
+    let mut member_of: HashMap<String, (usize, &CsMember)> = HashMap::new();
     let mut by_method_name: HashMap<&str, Vec<String>> = HashMap::new();
     let mut iface_methods: HashMap<String, Vec<(String, String)>> = HashMap::new();
     let mut metas: HashMap<String, String> = HashMap::new();
@@ -293,6 +305,11 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
             methods
                 .entry((owner.clone(), m.name.clone()))
                 .or_insert_with(|| id.clone());
+            let family = families.entry((owner.clone(), m.name.clone())).or_default();
+            if !family.iter().any(|(x, _)| *x == id) {
+                family.push((id.clone(), m));
+            }
+            member_of.entry(id.clone()).or_insert((fi, m));
             let named = by_method_name.entry(m.name.as_str()).or_default();
             if !named.contains(&id) {
                 named.push(id.clone());
@@ -325,8 +342,50 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
         }
         out
     };
+    // The type a field or property of a type (or of its bases, nearest first) is declared with.
+    let field_type = |class: &str, field: &str| -> Option<String> {
+        let mut queue = vec![class.to_string()];
+        let mut seen: HashSet<String> = HashSet::new();
+        let mut i = 0;
+        while i < queue.len() && i < 64 {
+            let c = queue[i].clone();
+            i += 1;
+            if !seen.insert(c.clone()) {
+                continue;
+            }
+            for &(fi, ti) in decls.get(&c).into_iter().flatten() {
+                let (f, t) = (cs[fi].1, &cs[fi].1.types[ti]);
+                if let Some((_, lookup, arity)) = t.fields.iter().find(|(n, _, _)| n == field) {
+                    return types.resolve(f, t.scope, lookup, *arity).or_else(|| {
+                        match types.by_name.get(last(lookup)) {
+                            Some(ids) if ids.len() == 1 => Some(ids[0].clone()),
+                            _ => None,
+                        }
+                    });
+                }
+            }
+            queue.extend(bases_of(&c));
+        }
+        None
+    };
+    // Among a method's overloads, the only one that takes `argc` arguments, else the first.
+    let pick = |owner: &str, name: &str, first: String, argc: u32| -> String {
+        let fits: Vec<&String> = families
+            .get(&(owner.to_string(), name.to_string()))
+            .map(|f| {
+                f.iter()
+                    .filter(|(_, m)| m.accepts(argc))
+                    .map(|(id, _)| id)
+                    .collect()
+            })
+            .unwrap_or_default();
+        match fits.as_slice() {
+            [only] => (*only).clone(),
+            _ => first,
+        }
+    };
     // A method of a type or of its bases, nearest first.
-    let find_member = |class: &str, name: &str, skip_self: bool| -> Option<String> {
+    let find_member = |class: &str, name: &str, skip_self: bool, argc: u32| -> Option<String> {
         let mut queue: Vec<String> = if skip_self {
             bases_of(class)
         } else {
@@ -341,7 +400,7 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                 continue;
             }
             if let Some(m) = methods.get(&(c.clone(), name.to_string())) {
-                return Some(m.clone());
+                return Some(pick(&c, name, m.clone(), argc));
             }
             queue.extend(bases_of(&c));
         }
@@ -437,11 +496,33 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
         }
     }
 
-    let unique_method = |name: &str| -> Option<String> {
-        match by_method_name.get(name) {
-            Some(ids) if ids.len() == 1 => Some(ids[0].clone()),
-            _ => None,
+    // The only type (or file, for functions) with methods named `name`: its overload for
+    // `argc` arguments.
+    let unique_method = |name: &str, argc: u32| -> Option<String> {
+        let mut owners = by_method_name
+            .get(name)
+            .into_iter()
+            .flatten()
+            .filter_map(|id| member_of.get(id))
+            .map(|(fi, m)| {
+                if m.owner.is_empty() {
+                    format!("@file{fi}")
+                } else {
+                    canon_of(cs[*fi].0.id(&m.owner))
+                }
+            });
+        let first = owners.next()?;
+        if owners.any(|o| o != first) {
+            return None;
         }
+        let ids = by_method_name.get(name)?;
+        let (fi, m) = member_of.get(&ids[0])?;
+        let owner = if m.owner.is_empty() {
+            String::new()
+        } else {
+            canon_of(cs[*fi].0.id(&m.owner))
+        };
+        Some(pick(&owner, name, ids[0].clone(), argc))
     };
     // Calls, per file: unbound bare calls and `new` first, then the rest, in source order.
     let mut called: HashSet<(String, String)> = HashSet::new();
@@ -484,17 +565,20 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                 return;
             }
             let entry = format!(
-                "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"csharp\",\"line\":\"L{line}\"}}",
+                "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"csharp\",\"line\":\"L{line}\",\"file\":{}}}",
                 json_str(callee),
-                json_str(ty)
+                json_str(ty),
+                json_str(rel)
             );
             match unresolved.iter_mut().find(|(id, _)| id == caller) {
                 Some((_, list)) => list.push(entry),
                 None => unresolved.push((caller.to_string(), vec![entry])),
             }
         };
+        // Call index → the method or type it bound to (receivers of `Returned` calls).
+        let mut bound: HashMap<u32, String> = HashMap::new();
         for phase in 0..2 {
-            for c in &f.calls {
+            for (i, c) in f.calls.iter().enumerate() {
                 let p = match c.kind {
                     CsCallKind::Bare | CsCallKind::New | CsCallKind::NewTyped => 0,
                     _ => 1,
@@ -513,23 +597,17 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                         let own = if owner.is_empty() {
                             None
                         } else {
-                            find_member(&owner, &c.name, false)
+                            find_member(&owner, &c.name, false, c.argc)
                         };
-                        own.or_else(|| unique_method(&c.name))
+                        own.or_else(|| unique_method(&c.name, c.argc))
                             .map(|t| (t, Confidence::Inferred, 0.85))
                     }
                     // `new T()` with `T` not used as a type in the file: C# name lookup, else
-                    // the only method named `T`, else the only type named `T`.
+                    // the type named `T` nearest the caller's file.
                     CsCallKind::New => types
                         .resolve(f, c.scope, &c.name, 0)
                         .or_else(|| {
-                            // Methods and types named `T`: the one nearest the caller's file.
-                            let n = last(&c.name);
-                            let cands = by_method_name
-                                .get(n)
-                                .into_iter()
-                                .flatten()
-                                .chain(types.by_name.get(n).into_iter().flatten());
+                            let cands = types.by_name.get(last(&c.name)).into_iter().flatten();
                             nearest(rel, cands, &file_of)
                         })
                         .map(|t| (t, Confidence::Inferred, 0.85)),
@@ -539,12 +617,10 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                         .resolve(f, c.scope, &c.name, 0)
                         .filter(|t| !referenced.contains(&(caller.clone(), t.clone())))
                         .map(|t| (t, Confidence::Inferred, 0.85)),
-                    CsCallKind::This => {
-                        find_member(&owner, &c.name, false).map(|t| (t, Confidence::Extracted, 1.0))
-                    }
-                    CsCallKind::Base => {
-                        find_member(&owner, &c.name, true).map(|t| (t, Confidence::Extracted, 1.0))
-                    }
+                    CsCallKind::This => find_member(&owner, &c.name, false, c.argc)
+                        .map(|t| (t, Confidence::Extracted, 1.0)),
+                    CsCallKind::Base => find_member(&owner, &c.name, true, c.argc)
+                        .map(|t| (t, Confidence::Extracted, 1.0)),
                     // `X.m()`: `X` as a type, else its declared type; failing both, the only
                     // method of that name (INFERRED).
                     CsCallKind::Static => {
@@ -559,7 +635,7 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                                         .flatten()
                                 });
                         match class {
-                            Some(class) => find_member(&class, &c.name, false)
+                            Some(class) => find_member(&class, &c.name, false, c.argc)
                                 .map(|t| (t, Confidence::Extracted, 1.0)),
                             None => {
                                 let ty = if c.receiver_type.is_empty() {
@@ -576,10 +652,54 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                             }
                         }
                     }
+                    // `x.m()` after `var x = <call>`: the declared return type of the method that
+                    // call bound to (when it has no overloads), looked up from that method's
+                    // file; nothing is recorded when it names no local type.
+                    CsCallKind::Returned => {
+                        let callee = match c.from_call {
+                            Some(k) => bound.get(&k).cloned(),
+                            None => Some(v.id(&c.receiver).to_string()),
+                        };
+                        callee
+                            .and_then(|id| member_of.get(&id).copied())
+                            .filter(|(fi, m)| {
+                                let owner = if m.owner.is_empty() {
+                                    String::new()
+                                } else {
+                                    canon_of(cs[*fi].0.id(&m.owner))
+                                };
+                                !m.ret.is_empty()
+                                    && families
+                                        .get(&(owner, m.name.clone()))
+                                        .is_some_and(|f| f.len() == 1)
+                            })
+                            .and_then(|(fi, m)| {
+                                types
+                                    .resolve(cs[fi].1, m.scope, &m.ret, m.ret_arity)
+                                    .or_else(|| match types.by_name.get(last(&m.ret)) {
+                                        Some(ids) if ids.len() == 1 => Some(ids[0].clone()),
+                                        _ => None,
+                                    })
+                            })
+                            .and_then(|class| find_member(&class, &c.name, false, c.argc))
+                            .map(|t| (t, Confidence::Inferred, 0.85))
+                    }
+                    // `a.f.m()` through `f`'s declared type; `new T(…).m()` through `T`.
+                    CsCallKind::Field => {
+                        let base = types.resolve_or_unique(f, c.scope, &c.receiver_type);
+                        let class = if c.receiver.is_empty() {
+                            base
+                        } else {
+                            base.and_then(|b| field_type(&b, &c.receiver))
+                        };
+                        class
+                            .and_then(|class| find_member(&class, &c.name, false, c.argc))
+                            .map(|t| (t, Confidence::Inferred, 0.85))
+                    }
                     CsCallKind::Member => {
                         let ty = c.receiver_type.as_str();
                         match types.resolve_or_unique(f, c.scope, ty) {
-                            Some(class) => find_member(&class, &c.name, false)
+                            Some(class) => find_member(&class, &c.name, false, c.argc)
                                 .map(|t| (t, Confidence::Inferred, 0.85)),
                             None => {
                                 if !types.by_name.contains_key(last(ty)) {
@@ -593,6 +713,7 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                 let Some((target, confidence, score)) = found else {
                     continue;
                 };
+                bound.insert(i as u32, target.clone());
                 if !called.insert((caller.clone(), target.clone())) {
                     continue;
                 }
@@ -617,7 +738,8 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
         res.attrs.push((id, "metadata".into(), Attr::Json(json)));
     }
 
-    // dispatches_to: an interface method with exactly one implementing method.
+    // dispatches_to: an interface method to each implementing method, scored by how many
+    // classes implement it.
     // Interface method → its implementing methods: (method, file index, class line).
     type Impls = Vec<(String, Vec<(String, usize, u32)>)>;
     let mut impls: Impls = Vec::new();
@@ -632,9 +754,18 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                     continue;
                 }
                 for (name, im) in iface_methods.get(&iface).into_iter().flatten() {
-                    let Some(cm) = methods.get(&(class.clone(), name.clone())) else {
+                    // The class's overload with the interface method's signature, else its
+                    // first method of that name.
+                    let Some(family) = families.get(&(class.clone(), name.clone())) else {
                         continue;
                     };
+                    let sig = member_of.get(im).map(|(_, m)| m.sig.as_str());
+                    let cm = family
+                        .iter()
+                        .find(|(_, m)| Some(m.sig.as_str()) == sig)
+                        .unwrap_or(&family[0])
+                        .0
+                        .clone();
                     let slot = match impls.iter_mut().position(|(k, _)| k == im) {
                         Some(i) => i,
                         None => {
@@ -642,31 +773,36 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                             impls.len() - 1
                         }
                     };
-                    if !impls[slot].1.iter().any(|(x, _, _)| x == cm) {
-                        impls[slot].1.push((cm.clone(), fi, t.line));
+                    if !impls[slot].1.iter().any(|(x, _, _)| *x == cm) {
+                        impls[slot].1.push((cm, fi, t.line));
                     }
                 }
             }
         }
     }
     for (im, list) in impls {
-        let [(cm, fi, line)] = list.as_slice() else {
-            continue;
+        let score = match list.len() {
+            1 => 0.85,
+            2 => 0.75,
+            _ => 0.65,
         };
-        if called.contains(&(im.clone(), cm.clone())) || called.contains(&(cm.clone(), im.clone()))
-        {
-            continue;
+        for (cm, fi, line) in list {
+            // A call the implementation makes to the interface method ranks with
+            // `dispatches_to` in the collapse: of the two, the larger source survives.
+            if called.contains(&(cm.clone(), im.clone())) && cm > im {
+                continue;
+            }
+            let mut e = edge(
+                im.clone(),
+                cm,
+                "dispatches_to",
+                (cs[fi].0.file.rel.as_str(), line),
+                Confidence::Inferred,
+                score,
+            );
+            e.context = Some("call".into());
+            res.edges.push(e);
         }
-        let mut e = edge(
-            im,
-            cm.clone(),
-            "dispatches_to",
-            (cs[*fi].0.file.rel.as_str(), *line),
-            Confidence::Inferred,
-            0.85,
-        );
-        e.context = Some("call".into());
-        res.edges.push(e);
     }
     res
 }

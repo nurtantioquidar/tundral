@@ -88,3 +88,24 @@ fn types_bind_in_file_then_to_the_only_powershell_class() {
     // that link folds into `method` (one link per pair, §8.2).
     assert!(!l.contains("a_k -references-> a_k [field]"), "{l:#?}");
 }
+
+/// Top-level commands belong to the file; only those naming no function of the file reach other
+/// files (§41.2).
+#[test]
+fn top_level_commands_call_from_the_file() {
+    let l = probe::links(&[
+        ("lib/Lib.ps1", "function Get-Thing { 'x' }\n"),
+        (
+            "run.ps1",
+            "Get-Thing\nLocal-One\nDescribe 'x' { It 'y' { Get-Thing } }\nfunction Local-One { 'y' }\n",
+        ),
+    ]);
+    assert!(
+        l.contains("run -calls-> lib_lib_get_thing [call]"),
+        "{l:#?}"
+    );
+    assert!(
+        !l.iter().any(|x| x.starts_with("run -calls-> run_")),
+        "{l:#?}"
+    );
+}
