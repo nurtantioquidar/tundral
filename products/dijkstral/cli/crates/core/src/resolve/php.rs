@@ -7,10 +7,17 @@
 //! - A per-file stub (a type, `X::CONST` or `X::$p` naming no class of its file) binds to the
 //!   only class, interface, trait or enum of that name in the repository.
 //! - A bare call `f()` the file could not bind goes to the function or method of that name
-//!   nearest to the caller's file ([`nearest`]; INFERRED 0.85).
-//! - `new X` / `X::m()` (any qualification, last segment) bind to class `X`: through a
-//!   non-aliased import of `X` (EXTRACTED 1.0), else, unless the file writes `X` as a type, to
-//!   the nearest class of that name (INFERRED 0.85). Aliased names bind nothing.
+//!   nearest to the caller's file ([`nearest`]; INFERRED 0.85). A node of any language labelled
+//!   exactly `f` (a JSON or YAML key, a package) competes as a candidate but binds nothing
+//!   ([`label_blockers`]).
+//! - `new X` (any qualification, last segment) binds to class `X`: through a non-aliased import
+//!   of `X` (EXTRACTED 1.0), else, unless the file writes `X` as a type, to the nearest class of
+//!   that name (INFERRED 0.85). Aliased names bind nothing.
+//! - `X::m()` (last segment, aliases not expanded) binds to the own method `m` of the only
+//!   class-like of that name in the repository (EXTRACTED 1.0); a typed `$v->m()` binds the same
+//!   way to its type's own `m` (INFERRED 0.85). Two classes of the name, or a class without its
+//!   own `m`, bind nothing; no class at all records the call in the caller's
+//!   `metadata.unresolved_calls` (`parent::m()` excepted), once per callee and receiver type.
 //! - Per-file stubs reserved for collision renaming but never linked are removed.
 //! - A cross-file call is dropped when the caller already links to its target in the file
 //!   (a type reference, a constant use), and kept once per (caller, target).
@@ -20,7 +27,7 @@ use std::collections::{HashMap, HashSet};
 use super::{Index, Resolution, View};
 use crate::extract::php::{PCallKind, PhpFacts, IMPORT, SUPER};
 use crate::extract::{origin, slug};
-use crate::facts::{Confidence, Edge, LangFacts, Loc, Node, NodeKind};
+use crate::facts::{Attr, Confidence, Edge, LangFacts, Loc, Node, NodeKind};
 use crate::lang::Lang;
 
 /// Redirect target that removes a node (nothing links to it).
@@ -112,6 +119,51 @@ pub(crate) fn nearest(from: &str, cands: &[(String, String)]) -> Option<String> 
     (!tied).then(|| id.to_string())
 }
 
+/// Prefix of candidates that only block a name in [`nearest`] (see [`label_blockers`]).
+pub(crate) const BLOCK: &str = "@block:";
+
+/// For each of `names`, the nodes of any file labelled exactly like it, as candidates
+/// `(BLOCK + id, path)`: Graphify weighs them against the functions and methods of that name
+/// (whose labels end in `()`) and binds nothing when one is nearest.
+pub(crate) fn label_blockers(
+    files: &[View],
+    names: &HashSet<&str>,
+) -> HashMap<String, Vec<(String, String)>> {
+    let mut out: HashMap<String, Vec<(String, String)>> = HashMap::new();
+    if names.is_empty() {
+        return out;
+    }
+    for v in files {
+        for n in &v.facts.nodes {
+            if n.source_file.is_empty() || !names.contains(n.label.as_str()) {
+                continue;
+            }
+            out.entry(n.label.clone())
+                .or_default()
+                .push((format!("{BLOCK}{}", v.id(&n.id)), v.file.rel.clone()));
+        }
+    }
+    out
+}
+
+/// The function or method `name` nearest to `rel`, unless a blocking node is nearer.
+pub(crate) fn nearest_callable(
+    rel: &str,
+    name: &str,
+    callables: &HashMap<&str, Vec<(String, String)>>,
+    blockers: &HashMap<String, Vec<(String, String)>>,
+) -> Option<String> {
+    let own = callables.get(name)?;
+    let target = match blockers.get(name) {
+        Some(b) => {
+            let all: Vec<(String, String)> = own.iter().chain(b).cloned().collect();
+            nearest(rel, &all)
+        }
+        None => nearest(rel, own),
+    }?;
+    (!target.starts_with(BLOCK)).then_some(target)
+}
+
 /// A cross-file edge.
 pub(crate) fn cross_edge(
     source: String,
@@ -149,12 +201,17 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
 
     let mut by_fqn: HashMap<&str, String> = HashMap::new();
     let mut by_name: HashMap<&str, Vec<(String, String)>> = HashMap::new();
+    let mut methods: HashMap<String, HashMap<&str, String>> = HashMap::new();
     let mut callables: HashMap<&str, Vec<(String, String)>> = HashMap::new();
     for (v, p) in &php {
         let rel = v.file.rel.clone();
         for c in &p.classes {
             let id = v.id(&c.id).to_string();
             by_fqn.entry(c.fqn.as_str()).or_insert_with(|| id.clone());
+            let own = methods.entry(id.clone()).or_default();
+            for (name, local) in &c.methods {
+                own.insert(name.as_str(), v.id(local).to_string());
+            }
             by_name
                 .entry(c.name.as_str())
                 .or_default()
@@ -231,6 +288,16 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
     }
 
     // Calls the files could not bind.
+    let bare: HashSet<&str> = php
+        .iter()
+        .flat_map(|(_, p)| &p.calls)
+        .filter_map(|c| match &c.kind {
+            PCallKind::Bare(name) => Some(name.as_str()),
+            _ => None,
+        })
+        .collect();
+    let blockers = label_blockers(files, &bare);
+    let mut unresolved: Vec<(String, Vec<String>)> = Vec::new();
     for (v, p) in &php {
         let rel = v.file.rel.as_str();
         let final_id = |t: &str| -> String { redirect.get(t).cloned().unwrap_or_else(|| t.into()) };
@@ -247,12 +314,57 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             .filter(|(_, alias)| alias.is_none())
             .map(|(fqn, _)| (fqn.rsplit('\\').next().unwrap_or(fqn), fqn.as_str()))
             .collect();
+        let mut recorded: HashSet<(String, String, String)> = HashSet::new();
         for c in &p.calls {
             let caller = v.id(&c.caller).to_string();
+            // `X::m()` and typed `$v->m()`: the own method of the only class of that name.
+            let method_of =
+                |written: &str, method: &str| -> Result<Option<String>, ()> {
+                    let short = written.rsplit('\\').next().unwrap_or(written);
+                    match by_name.get(short) {
+                        None => Err(()),
+                        Some(_) => Ok(unique(short)
+                            .and_then(|class| methods.get(&class)?.get(method).cloned())),
+                    }
+                };
+            let mut unbound = |receiver: &str, method: &str| {
+                if !recorded.insert((caller.clone(), method.to_string(), receiver.to_string())) {
+                    return;
+                }
+                let entry = format!(
+                    "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"php\",\"line\":\"L{}\",\"file\":{}}}",
+                    json_str(method),
+                    json_str(receiver),
+                    c.line,
+                    json_str(rel)
+                );
+                match unresolved.iter_mut().find(|(id, _)| *id == caller) {
+                    Some((_, list)) => list.push(entry),
+                    None => unresolved.push((caller.clone(), vec![entry])),
+                }
+            };
             let found = match &c.kind {
-                PCallKind::Bare(name) => callables
-                    .get(name.as_str())
-                    .and_then(|cands| nearest(rel, cands))
+                PCallKind::Static {
+                    scope,
+                    method,
+                    report,
+                } => match method_of(scope, method) {
+                    Ok(t) => t.map(|t| (t, Confidence::Extracted, 1.0)),
+                    Err(()) => {
+                        if *report {
+                            unbound(scope, method);
+                        }
+                        None
+                    }
+                },
+                PCallKind::Typed { ty, method } => match method_of(ty, method) {
+                    Ok(t) => t.map(|t| (t, Confidence::Inferred, 0.85)),
+                    Err(()) => {
+                        unbound(ty, method);
+                        None
+                    }
+                },
+                PCallKind::Bare(name) => nearest_callable(rel, name, &callables, &blockers)
                     .map(|t| (t, Confidence::Inferred, 0.85)),
                 PCallKind::Class(written) => {
                     let short = written.rsplit('\\').next().unwrap_or(written);
@@ -285,8 +397,16 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             ));
         }
     }
+    for (id, entries) in unresolved {
+        let json = format!("{{\"unresolved_calls\":[{}]}}", entries.join(","));
+        res.attrs.push((id, "metadata".into(), Attr::Json(json)));
+    }
     res.redirects.extend(redirect);
     res
+}
+
+fn json_str(s: &str) -> String {
+    serde_json::to_string(s).unwrap_or_else(|_| "\"\"".into())
 }
 
 #[cfg(test)]

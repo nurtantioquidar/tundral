@@ -5,8 +5,8 @@
 //! One file yields:
 //!
 //! - its file node, at `L1` even for a 0-byte file (V8); every Verilog node, file nodes and stubs
-//!   included, carries the node field `confidence_score: 1.0`, and so does every in-file edge
-//!   (V1);
+//!   included, carries the node fields `confidence: "INFERRED"` and `confidence_score: 1.0`;
+//!   every in-file edge carries `confidence_score: 1.0` (V1);
 //! - modules (`file_slug(name)`, bare label) with `defines` from the file, nested modules too.
 //!   The name is the first identifier anywhere in the header, so `(* keep *) module m` is named
 //!   `keep` (V2);
@@ -22,14 +22,15 @@
 //!   tree (V5): `class Name ... ; body endclass` → class `file_slug(Name)` with `defines` from the
 //!   file; `extends B` / `implements I, J` in the header → `inherits` / `implements` edges to a
 //!   node `file_slug(B)` labelled `B` at the class's line (never bound to the real class elsewhere,
-//!   V6); `function T name (` in the body → method `class_slug(name)`, bare label, `method` edge.
+//!   V6); `function T name (` and `task name (` in the body → method `class_slug(name)`, bare
+//!   label, `method` edge.
 //!   Class lines come from offsets in the stripped text applied to the original text, so they
 //!   drift upwards after comments; a method's line is its class's line plus the newlines of the
-//!   stripped body before it (V7).
+//!   stripped body before it (V7). Every function is scanned before the first task.
 //!
 //! Not emitted: ports, nets, variables, parameters, `always`/`initial` blocks, calls of functions
 //! and tasks, `` `include ``/`` `define ``, packages, interfaces, programs and primitives themselves,
-//! class tasks, and comments (no rationale nodes).
+//! and comments (no rationale nodes).
 
 use std::collections::{HashMap, HashSet};
 
@@ -46,9 +47,12 @@ pub struct VerilogFacts {
     pub stubs: Vec<(String, String)>,
 }
 
-/// The `confidence_score: 1.0` every Verilog node carries.
-pub fn score() -> (String, Attr) {
-    ("confidence_score".into(), Attr::Float(1.0))
+/// The `confidence: "INFERRED"` and `confidence_score: 1.0` every Verilog node carries (V1).
+pub fn score() -> Vec<(String, Attr)> {
+    vec![
+        ("confidence".into(), Attr::Str("INFERRED".into())),
+        ("confidence_score".into(), Attr::Float(1.0)),
+    ]
 }
 
 struct W<'c, 'a> {
@@ -62,7 +66,7 @@ struct W<'c, 'a> {
 }
 
 pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
-    cx.add_file_node(vec![score()]);
+    cx.add_file_node(score());
     // Even a 0-byte file is at `L1` (V8).
     if let Some(file) = cx.facts.nodes.first_mut() {
         file.loc = Loc::Line(1);
@@ -133,7 +137,7 @@ impl W<'_, '_> {
                 if let Some(name) = self.module_name(node) {
                     let id = Ctx::child_id(&self.cx.file_id, &name);
                     let line = Ctx::line(node);
-                    self.cx.add_def(id.clone(), name, line, vec![score()]);
+                    self.cx.add_def(id.clone(), name, line, score());
                     let file = self.cx.file_id.clone();
                     push(self.cx, &file, &id, "defines", line);
                     for child in children(node) {
@@ -161,7 +165,7 @@ impl W<'_, '_> {
                     let id = Ctx::child_id(&parent, &name);
                     let label = if task { name } else { format!("{name}()") };
                     let line = Ctx::line(node);
-                    self.cx.add_def(id.clone(), label, line, vec![score()]);
+                    self.cx.add_def(id.clone(), label, line, score());
                     push(self.cx, &owner, &id, "contains", line);
                 }
             }
@@ -175,7 +179,7 @@ impl W<'_, '_> {
                             if self.stub_ids.insert(id.clone()) {
                                 self.cx.add_stub(id.clone(), name.clone());
                                 if let Some(stub) = self.cx.facts.nodes.last_mut() {
-                                    stub.attrs.push(score());
+                                    stub.attrs.extend(score());
                                 }
                                 self.stubs.push((id.clone(), name));
                             }
@@ -350,25 +354,41 @@ fn implements_list(header: &[char]) -> Vec<String> {
         .collect()
 }
 
-/// `\bfunction\s+\w+\s+(\w+)\s*\(` in a class body, non-overlapping.
+/// Methods of a class body: `\bfunction\s+\w+\s+(\w+)\s*\(` matches, then
+/// `\btask\s+(\w+)\s*\(` matches, each scan non-overlapping (V7). A task and a function of the
+/// same name are one node (the function's, first), with the task's `method` edge last.
 fn scan_methods(body: &[char]) -> Vec<(String, usize)> {
-    let kw: Vec<char> = "function".chars().collect();
     let mut out = Vec::new();
-    let mut from = 0;
-    while let Some(at) = find_word(body, &kw, from) {
-        from = at + 1;
-        let i = at + kw.len();
-        let j = skip_space(body, i);
-        let k = skip_word(body, j);
-        let l = skip_space(body, k);
-        let name_end = skip_word(body, l);
-        let p = skip_space(body, name_end);
-        if j == i || k == j || l == k || name_end == l || body.get(p) != Some(&'(') {
-            continue;
+    for (kw, typed) in [("function", true), ("task", false)] {
+        let kw: Vec<char> = kw.chars().collect();
+        let mut from = 0;
+        while let Some(at) = find_word(body, &kw, from) {
+            from = at + 1;
+            let i = at + kw.len();
+            let j = skip_space(body, i);
+            if j == i {
+                continue;
+            }
+            // A function names its return type first; a task has none.
+            let l = if typed {
+                let k = skip_word(body, j);
+                let l = skip_space(body, k);
+                if k == j || l == k {
+                    continue;
+                }
+                l
+            } else {
+                j
+            };
+            let name_end = skip_word(body, l);
+            let p = skip_space(body, name_end);
+            if name_end == l || body.get(p) != Some(&'(') {
+                continue;
+            }
+            let newlines = body[..at].iter().filter(|&&c| c == '\n').count();
+            out.push((body[l..name_end].iter().collect(), newlines));
+            from = p + 1;
         }
-        let newlines = body[..at].iter().filter(|&&c| c == '\n').count();
-        out.push((body[l..name_end].iter().collect(), newlines));
-        from = p + 1;
     }
     out
 }
@@ -386,19 +406,19 @@ fn classes(cx: &mut Ctx) {
         let upto = m.start.min(src.len());
         let line = src[..upto].iter().filter(|&&c| c == '\n').count() as u32 + 1;
         let id = Ctx::child_id(&file, &m.name);
-        cx.add_def(id.clone(), m.name.clone(), line, vec![score()]);
+        cx.add_def(id.clone(), m.name.clone(), line, score());
         push(cx, &file, &id, "defines", line);
         for (bases, relation) in [(&m.bases, "inherits"), (&m.interfaces, "implements")] {
             for b in bases {
                 let bid = Ctx::child_id(&file, b);
-                cx.add_def(bid.clone(), b.clone(), line, vec![score()]);
+                cx.add_def(bid.clone(), b.clone(), line, score());
                 push(cx, &id, &bid, relation, line);
             }
         }
         for (name, newlines) in &m.methods {
             let mline = line + *newlines as u32;
             let mid = Ctx::child_id(&id, name);
-            cx.add_def(mid.clone(), name.clone(), mline, vec![score()]);
+            cx.add_def(mid.clone(), name.clone(), mline, score());
             push(cx, &id, &mid, "method", mline);
         }
     }

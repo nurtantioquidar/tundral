@@ -1072,7 +1072,8 @@ All Rust nodes carry `file_type: "code"`, `_origin: "ast"`, `source_file`, `sour
 |---|---|---|---|---|
 | file | `F` | basename (`mod.rs`); raw output disambiguates duplicate basenames with a path suffix (`x/dupe.rs`) | – | – |
 | `struct` (named, tuple, unit), `enum`, `trait` | `F_slug(name)` | `Name` | `_rust_declaration_count` | `contains` from `F` |
-| `union`, `type` alias, trait associated `type` | **not emitted** | | | |
+| `type` alias at module level, inline modules included (0.9.97; generic `type R<T> = …` too) | `F_slug(name)` (`src_lib_registry`) | `Name` | `_rust_declaration_count` (two `#[cfg]` aliases → `2`, first line) | `contains` from `F`; no references from its right-hand side |
+| `union`, trait/impl associated `type`, `type` inside a fn body | **not emitted** | | | |
 | enum variant | `F_enum_variant` (`src_model_kind_round`) | `Round` | – | `case_of` from enum |
 | free `fn` (incl. `async`, `const`, `unsafe`, `pub(crate)`, `extern "C" { fn }`) | `F_slug(name)` | `name()` | – | `contains` from `F` |
 | method / associated fn in `impl` or `trait` (incl. default methods) | `<owner>_slug(name)` | `.name()` | – | `method` from owner |
@@ -1091,6 +1092,14 @@ Inline `mod` blocks (including `#[cfg(test)] mod tests`) are flattened into the 
 items get `F_name` ids and a `contains` edge from `F` (`src_model_fixture`,
 `src_model_area_is_positive`; `inner::helper` → `src_util_mod_helper`). Test files (`tests/it.rs`)
 and `#[test]` fns are ordinary nodes; there is no test-specific handling.
+
+**Case collisions (0.9.97).** File-level items whose ids collide although their names differ
+(only in case) keep the plain id when they are a type (struct, enum, trait, alias) and take
+`F_slug(name)_<sha1(name)[:6]>` when they are a function, constant or static: `struct Logger` +
+`const LOGGER` → `src_lib_logger` and `src_lib_logger_d3a35e`; `static MSG` + `fn msg()` → both
+suffixed; `fn e()` + `fn E()` → `src_lib_e_58e6b3`, `src_lib_e_e0184a` (ripgrep:
+`crates_core_messages_messages_17f346`/`…_85cda8`). Equal names are not suffixed (below), and an
+enum variant and a method of the enum (`B`/`.b()`) still share one node.
 
 **Duplicate ids: first definition wins.** Flattening makes `util::inner::helper` (L7) and
 `util::inner::deeper::helper` (L13) both `src_util_mod_helper`; only the L7 node exists and every
@@ -1149,21 +1158,22 @@ Rules, all observed:
    `Settings` used in `src/util/fmt.rs` and `src/util/mod.rs` → `src_util_fmt_rs_settings` and
    `src_util_mod_rs_settings`. Note `_rs_`: unlike file ids, the extension is kept. External
    import stubs are never file-scoped. ripgrep: `crates_cli_src_process_rs_read`.
-3. **Resolution:** after file-scoping, a stub whose label equals the label of exactly one
-   declared struct/enum/trait node is deleted and every edge pointing at its id is redirected to
-   that node (EXTRACTED, no `confidence_score`). With 0 or ≥2 candidates the stub stays
-   (`Match` in ripgrep has 5 declarations → stubs remain). Candidates are restricted by language:
+3. **Resolution (0.9.97):** a stub whose name the file imports resolves through that import
+   (§11.3) or not at all: `use std::fs::File` keeps the stub `file` although the repository
+   declares one `File`, and so does ripgrep's `use grep::printer::ColorSpecs` (another crate).
+   Any other stub (globs count as not importing) binds by label: the only declared
+   struct/enum/trait/alias of that label (with 0 or ≥2 candidates the stub stays: `Match` in
+   ripgrep has 5 declarations); a global stub binds EXTRACTED, a file-scoped one **INFERRED,
+   score 0.55** (`src_util_mod_render -references-> src_model_circle` through `use super::model::*`;
+   0.9.86 bound every stub EXTRACTED and ignored imports). Candidates are restricted by language:
    a Rust stub does not resolve to a Python class in a `.py` file, but *does* resolve to one in an
-   extensionless script (`benchsuite/benchsuite`; ripgrep `use std::process::Command` →
-   `benchsuite_benchsuite_command`). *Quirk.*
-4. **Import rewiring is a side effect of rule 3.** Import edges point at `slug(last segment)`.
-   When a *global* (non-file-scoped) type stub with that same id is resolved, the import edge is
-   redirected with it; otherwise it stays on the external stub. The path is ignored entirely:
-   `use std::fmt::Circle` resolves to the repo's `Circle` if any one other file mentions `Circle`
-   as a type. Consequences in the fixture: `use shapes::{.., Shape}` in `main.rs` →
-   `src_model_shape` (only `lib.rs` uses `Shape` as a type); `use shapes::model::{.., Circle}` →
-   external `circle` (two files use `Circle` as a type → file-scoped → not shared). *Quirk:
-   reproduce for parity, but this is name coincidence, not module resolution.*
+   extensionless script (`benchsuite/benchsuite`). *Quirk.*
+4. **Import rewiring.** Import edges point at the stub id of their leaf (§11.3); when that id is
+   redirected — a local leaf resolved, or a global type stub of that id resolved — every file's
+   edge to it follows, whatever its path: `use shapes::fromroot` in `src/main.rs` lands on
+   `src_model_fromroot` because `src/lib.rs` has `pub use crate::model::fromroot`, while
+   `use shapes::model::round_kind` stays external when no local import names `round_kind`.
+   *Quirk: name coincidence, not module resolution.*
 
 **Clustered-build file-stem remap** (clustered/`update` output only; raw `--no-cluster` is never
 remapped). An external stub whose label equals the filename stem of exactly one file node is
@@ -1192,27 +1202,39 @@ ripgrep: 21/21 such stubs remapped (`hostname`, `path` → `crates_printer_src_p
 Every Rust import edge is `relation: "imports_from"`, `context: "import"`, EXTRACTED, weight 1.0,
 `source` = `F`, `source_location` = line of the imported leaf itself (in a multi-line group each
 leaf reports its own line: `use std::{\n ffi::OsStr,\n io::{\n self,\n Read }}` → L2, L4, L5). Rust never emits `imports` or `re_exports`; `pub use` / `pub(crate) use` are treated
-like `use`. One edge per imported leaf, target = stub id of the last path segment:
+like `use`. One edge per imported leaf; `use` inside a fn body, `extern crate x [as y];` and
+`mod x;` give nothing. The edge first targets the leaf's **stub id**:
 
-| form | target id(s) |
+| form | stub id(s) |
 |---|---|
 | `use std::borrow::Cow;` | `cow` |
 | `use std::collections::{HashMap, HashSet};` | `hashmap`, `hashset` |
 | `use std::{ffi::OsStr, io::{self, Read}, path::Path};` | `osstr`, `io` (`self` → parent segment), `read`, `path` |
-| `use crate::model::{Shape, Circle as Round};` | `src_model_shape` (via rule 4), `circle_as_round` |
-| `use self::fmt::render as render_shape;` | `render_as_render_shape` |
-| `use a::b::{self as bee};` | `b_as_bee` |
+| `use self::fmt::render as render_shape;`, `use a::b::{self as bee};` | `render_as_render_shape`, `b_as_bee` |
 | `use x::y::Z as _;` | `z_as` (trailing `_` trimmed) |
 | `use super::model::*;` / `use super::*;` | `model` / `super` (segment before `*`) |
-| `use q::{r::*, s::T as Tee};` | `r`, `t_as_tee` |
-| `use crate::model;` | `model` |
-| `use ::absolute::Thing;` | `thing` |
-| `use Single;` | `single` |
-| `use` inside an inline `mod` | emitted on `F` at its own line |
-| `use` inside a fn body, `extern crate x [as y];`, `mod x;` | nothing |
+| `use crate::model;`, `use ::absolute::Thing;`, `use Single;` | `model`, `thing`, `single` |
 
-There is no module-path resolution: `crate::`, `self::`, `super::`, the crate name (`shapes::`)
-and external crates are all handled identically, and `mod model;` declarations produce no edge.
+(rule 1 of §11.2: a type stub of the same id in the file takes the edge). **0.9.97 then resolves
+local leaves**: a path starting with `crate`, `self`, `super` or a module the file declares
+(`model::Kind` in `lib.rs`; not `util::h1` from a `main.rs` that declares no `mod util`, not the
+package's own crate name `shapes::…`) names the **definition** whose name is its last segment —
+a function, struct, enum, trait, alias, const, static, macro (`src_model_macro_sq`) or enum
+variant (`Kind::A` → `src_model_kind_a`); `Circle as Round` names `Circle`. A module leaf or a
+glob names the module's file when it is a `name.rs` (`use crate::util::fmt` → `src_util_fmt`,
+`use super::model::*` → `src_model`) but not a directory's `mod.rs` (`use crate::util` stays
+`util`); methods (`Circle::new`) and inline modules stay external. Graphify finds the definition
+**by name alone**: the path is not checked (`use crate::util::Circle` finds `model.rs`'s
+`Circle`) and a name defined twice resolves nothing (`render`, `dup`, `Kind` → externals).
+The stub id is redirected, so other files' edges to it follow (§11.2 rule 4).
+
+dijkstral resolves the same local leaves through its module tree (`resolve/rust/modules.rs`):
+identical where the name is unique, and the defining item where Graphify's name lookup gives up
+or guesses (quirk **R1**; ripgrep: `use grep_regex::RegexMatcher` is Graphify's
+`searcher/src/testutil.rs` `RegexMatcher` through rule 4). Leaves Graphify leaves unresolved
+but the module tree places in the repository (crate names, workspace crates, `mod.rs`
+modules, `use` in fn bodies) keep a file → file edge to the defining file (Q7 not reproduced).
+ripgrep `.rs` against 0.9.97: `imports_from` 692 shared, 174 ours only, 119 Graphify's only.
 
 ### 11.4 Edges
 
@@ -1362,7 +1384,8 @@ ripgrep: 11 package nodes, 16 `depends_on` edges.
 
 ### 11.7 Rust quirks summary (reproduce for parity, flag in dijkstral-native data)
 
-1. Import resolution is name coincidence via type-stub ids (rule 4), not module resolution.
+1. Import resolution is by unique definition name and stub-id rewiring (§11.3, rule 4), not
+   module resolution (R1: a name defined twice resolves nothing, a wrong path still resolves).
 2. The clustered build's file-stem remap rewires `use std::fmt` to a repo file `fmt.rs` and drops
    cross-language import edges.
 3. Generic-impl and foreign-impl owner nodes are disconnected duplicates of the real type.
@@ -1856,7 +1879,8 @@ and also `.astro .psm1 .psd1 .cls .vbproj` (§38–§42).
 `.d.ts` and `.min.js` are code (not filtered).
 
 - `.r`, `.tf` count as code but contribute nothing, not even a file node (stderr: optional
-  grammar missing), and so does `.sql` without Graphify's SQL extra (§45); `.ejs` likewise ("no AST extractor"). The project, markup and grammar-less
+  grammar missing), and so does `.sql` without Graphify's SQL extra (§45). `.ejs` gets its file node
+  (§44.7). The project, markup and grammar-less
   formats `.csproj .fsproj .vbproj .sln .slnx .razor .cshtml .xaml .pas .dpr .pp .inc .lpr .dpk
   .dfm .lfm .lpk .cls .trigger .cob .cbl .cpy .dmf .dmi .dmm .metal` are code too (§43, §44; the
   final per-extension and shebang check is §44.8).
@@ -1879,8 +1903,9 @@ Extensionless files with a shebang are code: `#!/usr/bin/env python3`, `#!/usr/b
 `#!/bin/sh`, `#!/bin/bash`/`env bash`, `#!/bin/zsh` (shell extractor; note `.zsh` *extension* is
 not classified — quirk), `#!/usr/bin/env node`, `#!/usr/bin/env ruby`, `#!/usr/bin/env perl`
 (counted as code, zero nodes). `#!/usr/bin/env -S deno run` is not classified. Interpreter names
-are matched exactly (§44.8): `ksh`/`dash` are shell, `node`/`nodejs` JavaScript, `php` PHP,
-`fish`/`tcsh` inert like `perl`; `python3.11` and `ruby2.7` are not classified.
+are matched with an optional version suffix (§44.8): `ksh`/`dash` are shell, `node`/`nodejs`
+JavaScript, `php` PHP, `fish`/`tcsh` inert like `perl`; `python3.11`, `ruby2.7` and `node18`
+count, `Python3` and `pypy3` do not.
 Example in corpus: ripgrep `benchsuite/benchsuite` (python shebang) → file node id
 `benchsuite_benchsuite`, label `benchsuite`.
 
@@ -2503,7 +2528,7 @@ is code that yields nothing.
 | Construct | Id | Label | Fields |
 |---|---|---|---|
 | class, interface, trait, enum (any namespace, any depth) | `file_name` | `User` | `_callable`, `_callable_class` |
-| method (abstract and interface methods included) | `type_name` (`__construct` → `construct`) | `.__construct()` | `_callable` |
+| method (abstract and interface methods included) | `type_name` (`__construct` → `construct`) | `.__construct()` | `_callable`; `metadata.unresolved_calls` (§19.4) |
 | function at any depth (in `if (!function_exists())`, nested in a function, in a braced namespace) | `file_name` | `slugify()` | `_callable` |
 | method of an anonymous class | `file_name` (a function) | `am()` | `_callable` |
 | closure / arrow function | `file_closure_<n>`, numbered per file in pre-order | `{closure#n}()` | `_callable` |
@@ -2529,7 +2554,7 @@ not), PHPDoc and `// NOTE:` comments (no rationale nodes at all), anonymous clas
 | `references` | class → type | typed properties and promoted constructor parameters (each member: parameter ref, then field ref) | EXTRACTED | `field` | property line; constructor line for promotion |
 | `imports` | file → class or import stub | `use A\B [as C]`, grouped `use A\{B, C}` | EXTRACTED | `import` | statement line |
 | `imports` | file → external | `use function` / `use const` (never resolved to a function) | EXTRACTED | `import` | statement line |
-| `calls` | caller → callable / class | §19.4 | EXTRACTED (in file), EXTRACTED 1.0 or INFERRED 0.85 | `call` | first call line |
+| `calls` | caller → callable / class (`new X` only) | §19.4 | EXTRACTED (in file), EXTRACTED 1.0 or INFERRED 0.85 | `call` | first call line |
 | `references_constant` | caller → class | `X::CONST`, `X::class` inside a function (§19.4) | EXTRACTED 1.0 | — | first use |
 | `uses_static_prop` | caller → class | `X::$prop` inside a function | EXTRACTED 1.0 | — | first use |
 
@@ -2563,18 +2588,49 @@ not), PHPDoc and `// NOTE:` comments (no rationale nodes at all), anonymous clas
 
 Calls are attributed to the innermost function, method, closure or anonymous-class method;
 top-level code and class bodies have no caller. Deduplicated per (caller, target), first line.
+The 0.9.97 rules below come from twelve probe repositories (static calls, typed receivers,
+closures, ambiguity, unresolved records) and guzzle (5,969/5,969 calls).
 
 | Form | Result |
 |---|---|
-| `f()`, `$x->m()`, `$this->m()` with a definition named `f`/`m` in the file | EXTRACTED to the **last** function or method of that name in the file (any class, quirk like Q8) |
-| `$x?->m()`, `self::m()`, `static::m()`, `parent::m()`, `\Ns\f()` | dropped |
-| `new X` / `X::m()` with class `X` in the file | EXTRACTED to the class (never to the method) |
-| `new X` / `X::m()` where `X`'s last segment is a non-aliased import of a class | EXTRACTED 1.0 to the class |
-| otherwise (also `new A\B`, `new \X`), unless the file writes `X` as a type | INFERRED 0.85 to the nearest class `X` (§19.5) |
-| `X::m()` with a qualified `X`; an aliased `new C` | dropped |
+| `f()`, `$x->m()`, `$this->m()` with a definition named `f`/`m` in the file | EXTRACTED to the **last** function or method of that name in the file (any class, quirk like Q8); `$this->m()` inside `m` keeps its self-loop |
+| `$x->m()` / `$this->p->m()` with no `m` in the file, `$x` / `p` typed by the file (below) | INFERRED 0.85 to the own method `m` of the only class-like named like the type |
+| `$this->m()` with no `m` in the file, untyped receivers, `$x?->m()`, `Status::A->m()`, `foo()->m()` | dropped |
+| `X::m()` (name or qualified name, `\` prefix allowed, last segment; aliases not expanded) | a class of the file named `X` → its own method `m`; else the only class-like named `X` in the repository → its own `m`, EXTRACTED 1.0. Never the class |
+| `self::m()`, `static::m()` in a method | the method's class's own `m`, EXTRACTED |
+| `parent::m()` in a method | the own `m` of the class's written parent (in the file or the only one of that name), EXTRACTED |
+| `self::`/`static::`/`parent::` inside a closure or arrow function | dropped |
+| `X::m()` resolving to the calling method itself (`self::rec()` in `rec`) | dropped |
+| `new X` with class `X` in the file | EXTRACTED to the class |
+| `new X` where `X`'s last segment is a non-aliased import of a class | EXTRACTED 1.0 to the class |
+| `new X` otherwise (also `new A\B`, `new \X`), unless the file writes `X` as a type | INFERRED 0.85 to the nearest class `X` (§19.5) |
+| an aliased `new C` | dropped |
 | bare `f()` not in the file | INFERRED 0.85 to the nearest function or method `f` |
-| a builtin-like name (`Proxy`, `Promise`, `Map`, `len`, `sorted`, … the Q15 list) as `f()`, `new X` or `X::` | dropped |
+| a builtin-like name (`Proxy`, `Promise`, `Map`, `len`, `sorted`, … the Q15 list) as `f()` or `new X` | dropped (`Map::of()` and a `Map $m` receiver bind like any other class) |
 | a cross-file call whose caller already links to the target in the file (type reference, constant use) | dropped |
+
+- **Receiver types (Rule).** One map per file, built over the whole file before any call (a use
+  may precede the declaration, and a type declared in one method types the same variable name
+  in every other function, class and closure of the file): variable or property name → the
+  **first** declaration in source order among typed parameters (promoted ones included),
+  typed properties (`private ?T $p` types both `$p` and `$this->p`) and `$v = new T(...)`. A
+  declared type names a class only as `T`, `?T` or `\A\T` (last segment); unions,
+  intersections and primitive types type nothing; `self` stays the name `self`. A static call's
+  result (`$v = X::make()`) types nothing.
+- **Class lookup.** By short name over every class, interface, trait and enum of the repository,
+  ignoring namespaces and imports (`use App\A\Dup; Dup::dm()` with two `Dup` classes binds
+  nothing). Only the class's **own** methods count: an inherited `m` binds nothing.
+- **Rule (`metadata.unresolved_calls`).** A typed `$x->m()` whose type, or an `X::m()` whose
+  name, matches no class-like of the repository is recorded on the caller (closures included) as
+  `{"callee": m, "receiver_type": …, "lang": "php", "line": "L<n>", "file": <caller's file>}`, in
+  source order, once per (callee, receiver type) and caller. The receiver type is the typed name
+  (last segment: `Ext4` for `\Vendor\Ext4 $c`, `R` for an alias) or the static scope as written
+  (`\Vendor\Ext`, `Psr7\DiagnosticValue`); builtin-like names are recorded too
+  (`Promise::all()`). An ambiguous name, a class without the method and `parent::m()` record
+  nothing. guzzle: 831 callers, 1,600 entries.
+- **Changed from 0.9.86.** `X::m()` linked the class (EXTRACTED, 1.0 through an import, or
+  INFERRED to the nearest class); `self::`/`static::`/`parent::` were dropped; typed receivers
+  and `metadata` did not exist.
 
 `X::CONST`/`X::class`/`X::$p` link only when the file declares `X` or writes it in a signature
 (→ its per-file stub) or a supertype list (→ the shared supertype stub); unqualified names only;
@@ -2584,7 +2640,16 @@ top-level code and class bodies have no caller. Deduplicated per (caller, target
 
 A name bound across files (INFERRED) picks the candidate with the greatest key
 (**the candidate is a test file exactly when the caller is**, shared leading directories, same
-directory, same file); an equal best binds nothing. Test files: a `test`, `tests`, `spec`, `specs`
+directory, same file); an equal best binds nothing.
+
+- **Rule (blocking labels).** For a bare call `f()` (PHP) or `f` (Ruby), every node of any
+  language whose label is exactly `f` competes too — a JSON key (`scripts.aa`), a package
+  dependency (`ref_bb`, `bb@1.0`), a Cargo package, and since 0.9.97 a YAML key — while other
+  languages' functions (`cc()` in Python, `dd()` in JavaScript) do not. When such a node is the
+  nearest candidate, or ties with the best function, the call binds nothing: sinatra's
+  `env['…']` in `lib/` lost its link to `rack-protection/spec/support/spec_helpers.rb` because
+  `.github/workflows/test.yml` has two `env` keys (non-test candidates beat a test one, and the
+  two tie). Test files: a `test`, `tests`, `spec`, `specs`
 or `__tests__` directory, or `*_test`, `*_spec`, `test_*`, `*.test.*`, `*.spec.*`. Measured
 pairwise from `rack-protection/spec/support/x.rb`: `test/` beats `rack-protection/lib/rack/`,
 `rack-protection/spec/` beats `test/`, `test/` ties `spec/`.
@@ -2596,8 +2661,11 @@ pairwise from `rack-protection/spec/support/x.rb`: `test/` beats `rack-protectio
 - **Open.** `use GuzzleHttp\Server\Server;` inside a braced namespace becomes the external
   `server` when a later namespace block of the file defines a function (guzzle
   `tests/bootstrap.php`); dijkstral keeps the class import.
-- **Parity (2026-10-14, guzzle, `--ext .php`).** Nodes 4151/4152 (the `server` external), links
-  9634/9635 recall and precision; def nodes 100%.
+- **Parity (2026-10-29, guzzle against 0.9.97, `--ext .php`).** Nodes 4151/4152 (the `server`
+  external), links 12,006/12,007 recall and precision, calls 5,969/5,969, no field differences.
+- **Open (pre-existing).** Graphify binds an unqualified type to the class of the current
+  namespace (`Dup` in `App\A` → `App\A\Dup`) when several classes share the name; dijkstral
+  keeps the per-file stub.
 
 ---
 
@@ -4255,7 +4323,8 @@ nesting.
 
 ### 35.4 Cross-file binding
 
-Nothing else crosses files: calls, `use` and type-bound targets stay in their file.
+Nothing else crosses files: function references, `use` and type-bound targets stay in their
+file; only `call` statements and type names go through stubs.
 
 - **Rule.** A per-file stub binds to the only node, of **any language**, labelled exactly `t`,
   else the only function labelled `t()` — a Fortran module, type, procedure or `use` node, a
@@ -4266,8 +4335,12 @@ Nothing else crosses files: calls, `use` and type-bound targets stay in their fi
 
 ### 35.5 Calls
 
-- `call s(...)` always targets `file_slug(s)`; an `s` the file does not define dangles and the
-  build drops it (§8.1). `call x%m()` gives nothing.
+- `call s(...)` targets `file_slug(s)` when the file defines `s`; otherwise it goes through the
+  per-file stub `slug(s)` of §35.4 (0.9.97; 0.9.86 left it dangling): `call ext1()` binds to the
+  only function `ext1()` of any file and language, a module (`call geo()`) or a type of that name
+  binds too, and an ambiguous or unknown name keeps the stub (`call missing_routine(n)` →
+  `missing_routine`, renamed per file by §4.5 when several files call it). `call x%m()` gives
+  nothing.
 - A function reference or array element `f(...)` (also inside `print`, conditions, keyword
   arguments) is a call only when the file has a node `file_slug(f)`: a procedure, an interface, a
   type (`Point(1.0, 2.0)` calls the type) or a module. A function naming itself in an expression
@@ -4303,7 +4376,8 @@ host and a procedure calling or referencing its module.
 
 - **FO1** `use m` creates a separate per-file node `m` instead of linking to module `m`, so
   every using file gets its own renamed node and the import never reaches the module.
-- **FO2** Cross-file calls are never resolved; `call s` to a procedure of another file dangles.
+- **FO2** Cross-file calls bind by label only (§35.4), and only `call` statements cross files:
+  a function reference `f(...)` to another file's function gives nothing.
 - **FO3** Type stubs bind by exact label across languages (a JSON key `name`, a Python class).
 - **FO4** Only the first declarator of a type-bound `procedure` statement is bound.
 - **FO5** A type used before its definition in the same file goes through a stub (and binds back
@@ -4344,8 +4418,8 @@ Implementation: `crates/core/src/{extract,resolve}/verilog.rs`.
 
 | Construct | id | label | extra |
 |---|---|---|---|
-| file | file id | §5.1 | `confidence_score: 1.0` |
-| module (also nested, `macromodule`, `extern module`) | `file_slug(name)` | `name` | `confidence_score: 1.0` |
+| file | file id | §5.1 | `confidence: "INFERRED"`, `confidence_score: 1.0` |
+| module (also nested, `macromodule`, `extern module`) | `file_slug(name)` | `name` | same |
 | function inside a module | `module_slug(name)` | `name()` | same |
 | task inside a module | `module_slug(name)` | `name` (no parentheses) | same |
 | function or task outside every module (package, interface, program, file scope) | `slug(path with extension)_slug(name)` (`rtl_alu_v_scale`) | as above | same |
@@ -4354,9 +4428,9 @@ Implementation: `crates/core/src/{extract,resolve}/verilog.rs`.
 | class base / interface (§36.5) | `file_slug(Base)` | `Base` | same, at the class's line |
 | class method (§36.5) | `class_slug(name)` | `name` (no parentheses) | same |
 
-- **V1** Every Verilog node, file nodes and stubs included, carries the node field
-  `confidence_score: 1.0` (raw and clustered); every in-file edge carries `confidence_score: 1.0`
-  in raw output too.
+- **V1** Every Verilog node, file nodes and stubs included, carries the node fields
+  `confidence: "INFERRED"` and `confidence_score: 1.0` (raw and clustered; 0.9.86 had only the
+  score); every in-file edge carries `confidence_score: 1.0` in raw output too.
 - **V2** A module's name is the first identifier anywhere in its header, so an attribute comes
   first: `(* keep_hierarchy *) module wide_path` is module `keep_hierarchy`.
 - **V3** Definitions outside modules hang off the file's internal id, which keeps the extension
@@ -4421,7 +4495,12 @@ nothing. Context is never set.
 - the body gives methods for `\bfunction\s+\w+\s+(\w+)\s*\(`: exactly one return-type word, so
   `function void f()`, `virtual function void f()`, `static function int f(int x)` and an
   `extern` prototype count, while `function new()`, `function automatic void f()`,
-  `function bit [7:0] f()`, `function void f;` and tasks do not;
+  `function bit [7:0] f()` and `function void f;` do not;
+- then, in a second scan of the body, for `\btask\s+(\w+)\s*\(` (0.9.97; 0.9.86 skipped class
+  tasks): `task drive()`, `task t ()`, `extern task t()`, `static task t()` and a name on the
+  next line count, `task automatic run(...)` and `virtual task t;` do not. A task named like an
+  earlier function is the same node (the function's line) and its `method` edge, emitted later,
+  is the one that survives;
 - nodes come after every tree-derived node of the file; edges in the order `defines`, `inherits`,
   `implements`, `method`s.
 
@@ -4440,7 +4519,7 @@ file-level functions.
 
 ### 36.6 Quirks (Verilog)
 
-- **V1** `confidence_score: 1.0` as a node field on every Verilog node.
+- **V1** `confidence: "INFERRED"` and `confidence_score: 1.0` as node fields on every Verilog node.
 - **V2** Attributes name modules.
 - **V3** Out-of-module functions and tasks keep the extension in their id prefix.
 - **V4** Instantiations depend on tree-sitter's ambiguous reading (UDP/interface/gate instances
@@ -4739,9 +4818,13 @@ edge once, at its first line.
 `Package/Name` (else the file stem) → `<file>_<slug(name)>`, `file -contains->`; each
 `RequiredPkgs/*/PackageName` → node `slug(name)` and `imports` (context `import`); each
 `Files/*/UnitName` → node `slug(unit)` and `contains`; all at `L1`. A unit named like exactly one
-`.pas`/`.pp` file takes that file's id as emitted by the package: when that is the package file's
-own id (same directory and stem) the unit *is* the package file node, which takes the shorter label
-(`sample`) and of the two opposite `contains` edges the one with the smaller source survives.
+`.pas`/`.pp` file **in the package's directory or below** (the `Filename` value is ignored:
+`zz.pas` with unit `C` finds `sub/c.pas`; `../e/f.pas` is never found) takes that file's id as
+emitted by the package, which the §4.5 rename turns into `<package file>_<pas file id>`
+(`d_d_lpk_d_sub_c`). When that id is the package file's own (same directory and stem), the unit
+is a node `slug(<pas path with extension>)` instead (`pascal/Widgets.pas` → `pascal_widgets_pas`,
+label `Widgets`) and the package file keeps its label (`Widgets.lpk`); 0.9.86 merged the unit into
+the package file node.
 
 ### 44.4 Apex (`.cls`, `.trigger`)
 
@@ -4778,8 +4861,12 @@ elements produce nothing. `.dmi`: the PNG `tEXt` `Description` chunk's `state = 
 
 - `.metal` is C++ (§25) and matches Graphify's output; since 0.9.97 Metal's function qualifiers
   and address spaces (`kernel`, `device`, ...) give no type reference (§25.2).
-- **Inert code**: `.r .tf .ejs` and `perl`, `fish`, `tcsh` shebang scripts count as code (the
+- **Inert code**: `.r .tf` and `perl`, `fish`, `tcsh` shebang scripts count as code (the
   report's file and word counts) but produce nothing, not even a file node.
+- **EJS** (0.9.97): an `.ejs` file has its file node (`null` location when empty). Graphify also
+  extracts the JavaScript of its `<% … %>` scriptlets and `<script>` blocks (`function foo()` →
+  `foo()`, `contains`, in-file `calls`) and links `<%- include('b') %>` to `b.ejs` with an
+  `includes` edge; dijkstral emits only the file node (no corpus has `.ejs`).
 - Not reproduced: zTXt (compressed) `.dmi` headers (no inflate; only the file node), and the
   rename Graphify applies to a `.pas` file node when an `.lpk` names its unit from another stem
   (`c.pas` → `d_sub_c_pas_d_sub_c`).
@@ -4793,8 +4880,10 @@ Running both tools over one file of every extension and shebang of §14.5 plus t
 file produces nodes in dijkstral exactly when it does in Graphify, except the languages other
 stages add (Astro, Dart, Elixir, Fortran, Groovy/Gradle, Julia, Lua/Luau, Objective-C `.mm`,
 PowerShell `.ps1 .psd1 .psm1`, SQL `.sql` (§45), Svelte, Verilog `.v .sv .svh .vh`, Vue, Zig). Shebangs are matched
-by exact interpreter name after `env` and its flags: `python python2 python3` (not `python3.11`,
-`Python3`, `pypy3`), `sh bash zsh ksh dash`, `ruby` (not `ruby2.7`), `node nodejs` (JavaScript),
+by interpreter name after `env` and its flags, with an optional version `\d+(\.\d+)*` (0.9.97:
+`python3.11`, `python311`, `python3.11.4`, `node18`, `nodejs20`, `ksh93`, `zsh5.9`, `ruby2.7`,
+`php8` count; `Python3`, `pypy3`, `pythonw`, `python3.`, `python3.11a`, `python3-dbg`, `node-18`
+do not): `python`, `sh bash zsh ksh dash`, `ruby`, `node nodejs` (JavaScript), `julia`,
 `php`, and the inert `perl fish tcsh`; a BOM or a blank first line hides the shebang.
 ## 26. Groovy (2026-10-15)
 

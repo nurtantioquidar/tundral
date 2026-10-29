@@ -391,7 +391,9 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
     };
     let root = tree.root_node();
     let mut w = Walker::new(cx);
-    w.prescan(root);
+    let mut names = Vec::new();
+    w.prescan(root, &mut names);
+    w.case_ids = case_ids(&w.file, &names);
     w.items(root);
     w.finish();
 }
@@ -399,9 +401,12 @@ pub fn extract(cx: &mut Ctx, tree: Option<&Tree>) {
 struct Walker<'c, 'a> {
     cx: &'c mut Ctx<'a>,
     file: String,
-    /// Declared struct/enum/trait name → id (pre-scan), and the number of declarations per id.
+    /// Declared struct/enum/trait/type alias name → id (pre-scan), and the number of
+    /// declarations per id.
     declared: HashMap<&'a str, String>,
     decl_count: HashMap<String, i64>,
+    /// Functions, constants and statics whose id is `_sha1(name)[:6]`-suffixed (see [`case_ids`]).
+    case_ids: HashMap<&'a str, String>,
     enums: HashSet<&'a str>,
     emitted: HashSet<String>,
     stubs: HashSet<String>,
@@ -451,6 +456,33 @@ struct Walker<'c, 'a> {
     returns: Vec<RsReturn>,
 }
 
+/// Graphify 0.9.97: file-level items whose ids collide but whose names differ (only in case:
+/// `LOGGER` and `Logger`, `e` and `E`) keep the id for a type (struct, enum, trait, alias) and
+/// suffix every function, constant and static with `_sha1(name)[:6]`. Equal names stay one node.
+fn case_ids<'a>(file: &str, names: &[(&'a str, bool)]) -> HashMap<&'a str, String> {
+    let mut by_id: HashMap<String, Vec<(&'a str, bool)>> = HashMap::new();
+    for &(name, is_type) in names {
+        by_id
+            .entry(Ctx::child_id(file, name))
+            .or_default()
+            .push((name, is_type));
+    }
+    let mut out = HashMap::new();
+    for (id, group) in by_id {
+        let first = group[0].0;
+        if group.iter().all(|(n, _)| *n == first) {
+            continue;
+        }
+        for (name, is_type) in group {
+            if !is_type {
+                let digest = sha1_smol::Sha1::from(name.as_bytes()).digest().to_string();
+                out.insert(name, format!("{id}_{}", &digest[..6]));
+            }
+        }
+    }
+    out
+}
+
 fn push_distinct(v: &mut Vec<String>, id: &str) {
     if !v.iter().any(|x| x == id) {
         v.push(id.to_string());
@@ -475,6 +507,7 @@ impl<'c, 'a> Walker<'c, 'a> {
             file,
             declared: HashMap::new(),
             decl_count: HashMap::new(),
+            case_ids: HashMap::new(),
             enums: HashSet::new(),
             emitted,
             stubs: HashSet::new(),
@@ -521,11 +554,17 @@ impl<'c, 'a> Walker<'c, 'a> {
 
     // ---- pre-scan -------------------------------------------------------------------------
 
-    /// Item-level only: struct/enum/trait declarations at file level and in inline modules.
-    fn prescan(&mut self, container: TsNode) {
+    /// Item-level only: struct/enum/trait/type alias declarations at file level and in inline
+    /// modules; `names` collects every file-level item name with whether it is a type.
+    fn prescan(&mut self, container: TsNode, names: &mut Vec<(&'a str, bool)>) {
         for item in named_children(container) {
             match item.kind() {
-                "struct_item" | "enum_item" | "trait_item" => {
+                "function_item" | "function_signature_item" | "const_item" | "static_item" => {
+                    if let Some(name) = self.field_text(item, "name") {
+                        names.push((name, false));
+                    }
+                }
+                "struct_item" | "enum_item" | "trait_item" | "type_item" => {
                     let Some(name) = self.field_text(item, "name") else {
                         continue;
                     };
@@ -536,17 +575,26 @@ impl<'c, 'a> Walker<'c, 'a> {
                     if item.kind() == "trait_item" && !self.traits.iter().any(|t| t == name) {
                         self.traits.push(name.to_string());
                     }
+                    names.push((name, true));
                     self.declared.entry(name).or_insert_with(|| id.clone());
                     *self.decl_count.entry(id).or_default() += 1;
                 }
                 "mod_item" => {
                     if let Some(body) = item.child_by_field_name("body") {
-                        self.prescan(body);
+                        self.prescan(body, names);
                     }
                 }
                 _ => {}
             }
         }
+    }
+
+    /// The id of a file-level function, constant or static.
+    fn value_id(&self, name: &str) -> String {
+        self.case_ids
+            .get(name)
+            .cloned()
+            .unwrap_or_else(|| Ctx::child_id(&self.file, name))
     }
 
     // ---- emission helpers ----------------------------------------------------------------
@@ -1143,7 +1191,7 @@ impl<'c, 'a> Walker<'c, 'a> {
         let Some(name) = self.field_text(n, "name") else {
             return;
         };
-        let id = Ctx::child_id(&self.file, name);
+        let id = self.value_id(name);
         let line = Ctx::line(n);
         // Only a function whose node the build keeps is a call target.
         let kept = self.def(&id, format!("{name}()"), line, vec![]);
@@ -1166,12 +1214,18 @@ impl<'c, 'a> Walker<'c, 'a> {
         }
     }
 
-    /// `type Name = a::B;` for module resolution (`Name::new()` is `a::B::new()`).
+    /// `type Name = …;`: a node like a struct's (no references from its definition), and for
+    /// module resolution `type Name = a::B;` makes `Name::new()` `a::B::new()`.
     fn type_alias(&mut self, n: TsNode) {
         let (Some(name), Some(ty)) = (self.field_text(n, "name"), n.child_by_field_name("type"))
         else {
             return;
         };
+        let id = Ctx::child_id(&self.file, name);
+        let line = Ctx::line(n);
+        self.def(&id, name.to_string(), line, vec![]);
+        let file = self.file.clone();
+        self.edge(&file, &id, "contains", line, None);
         let mark = self.push_generics(n.child_by_field_name("type_parameters"));
         let mut segs = Vec::new();
         if self.field_type_path(ty, false, &mut segs) == Some(false)
@@ -1190,7 +1244,7 @@ impl<'c, 'a> Walker<'c, 'a> {
         let Some(name) = self.field_text(n, "name") else {
             return;
         };
-        let id = Ctx::child_id(&self.file, name);
+        let id = self.value_id(name);
         let line = Ctx::line(n);
         self.def(&id, name.to_string(), line, vec![]);
         let file = self.file.clone();

@@ -5,9 +5,10 @@
 //!   file's own node for it is dropped when nothing else points at it.
 //! - A method's call that the file could not resolve walks the caller's base classes (in the
 //!   file, then in used units) and calls the first method of that name (EXTRACTED 1.0).
-//! - An `.lpk` unit named like exactly one Pascal file takes that file's id as the package file
-//!   emits it (so a unit named like the package file is the package file node, which takes the
-//!   shorter label); otherwise it stays `slug(unit)`.
+//! - An `.lpk` unit named like exactly one Pascal file in the package's directory or below takes
+//!   that file's id as the package file emits it (`<package file>_<pas file id>`, or the Pascal
+//!   file's path with its extension, `pascal_widgets_pas`, when the ids coincide); otherwise it
+//!   stays `slug(unit)`.
 
 use std::collections::{HashMap, HashSet};
 
@@ -35,21 +36,34 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
 }
 
 fn lpk_units(files: &[View], res: &mut Resolution) {
-    let mut stems: HashMap<String, Vec<&View>> = HashMap::new();
-    for v in files.iter().filter(|v| v.file.lang == Lang::Pascal) {
-        let base = v.file.rel.rsplit('/').next().unwrap_or("");
-        let (stem, ext) = base.rsplit_once('.').unwrap_or((base, ""));
-        if ext.eq_ignore_ascii_case("pas") || ext.eq_ignore_ascii_case("pp") {
-            stems.entry(stem.to_lowercase()).or_default().push(v);
-        }
-    }
+    let pascal: Vec<&View> = files
+        .iter()
+        .filter(|v| {
+            let base = v.file.rel.rsplit('/').next().unwrap_or("");
+            let ext = base.rsplit_once('.').map_or("", |(_, e)| e);
+            v.file.lang == Lang::Pascal
+                && (ext.eq_ignore_ascii_case("pas") || ext.eq_ignore_ascii_case("pp"))
+        })
+        .collect();
     for v in files.iter().filter(|v| v.file.lang == Lang::Lpk) {
         let Some(f) = legacy(v) else {
             continue;
         };
+        // Units bind only to Pascal files in the package's directory or below.
+        let under = v.file.rel.rsplit_once('/').map(|(d, _)| format!("{d}/"));
+        let mut stems: HashMap<String, Vec<&View>> = HashMap::new();
+        for p in &pascal {
+            if under
+                .as_ref()
+                .is_some_and(|d| !p.file.rel.starts_with(d.as_str()))
+            {
+                continue;
+            }
+            let base = p.file.rel.rsplit('/').next().unwrap_or("");
+            let stem = base.rsplit_once('.').map_or(base, |(s, _)| s);
+            stems.entry(stem.to_lowercase()).or_default().push(p);
+        }
         let own = crate::ids::file_id(&v.file.rel);
-        let own_final = v.id(&own).to_string();
-        let mut file_to_pkg = true;
         for (local, name, target) in &f.units {
             let node = v.id(local).to_string();
             let Some([pas]) = stems.get(&name.to_lowercase()).map(Vec::as_slice) else {
@@ -60,47 +74,26 @@ fn lpk_units(files: &[View], res: &mut Resolution) {
                 res.redirects.push((node, DROP.into()));
             }
             let pas_id = crate::ids::file_id(&pas.file.rel);
-            if pas_id == own {
-                // The package file's own node: it takes the shorter label. Of the two opposite
-                // `contains` edges between it and the package, the smaller source survives.
-                let base = v.file.rel.rsplit('/').next().unwrap_or("");
-                let best = [name.as_str(), base]
-                    .into_iter()
-                    .min_by(|a, b| a.chars().count().cmp(&b.chars().count()).then(a.cmp(b)))
-                    .unwrap_or(base);
-                res.labels.push((own_final.clone(), best.to_string()));
-                let pkg = f
-                    .package
-                    .as_ref()
-                    .map(|(p, _)| v.id(p).to_string())
-                    .unwrap_or_default();
-                if pkg < own_final {
-                    file_to_pkg = false;
-                    res.redirects.push((target.clone(), own_final.clone()));
-                } else {
-                    res.redirects.push((target.clone(), DROP.into()));
-                }
+            // A Pascal file whose id is the package file's own (same directory and stem) is
+            // named by its path with the extension instead (`pascal_widgets_pas`).
+            let id = if pas_id == own {
+                slug(&pas.file.rel)
             } else {
-                let id = format!("{}_{pas_id}", slug(&v.file.rel));
-                res.nodes.push(crate::facts::Node {
-                    id: id.clone(),
-                    label: name.clone(),
-                    kind: NodeKind::Def,
-                    file_type: "code".into(),
-                    source_file: v.file.rel.clone(),
-                    loc: Loc::Line(1),
-                    attrs: vec![crate::extract::origin()],
-                });
-                res.redirects.push((target.clone(), id));
-            }
+                format!("{}_{pas_id}", slug(&v.file.rel))
+            };
+            res.nodes.push(crate::facts::Node {
+                id: id.clone(),
+                label: name.clone(),
+                kind: NodeKind::Def,
+                file_type: "code".into(),
+                source_file: v.file.rel.clone(),
+                loc: Loc::Line(1),
+                attrs: vec![crate::extract::origin()],
+            });
+            res.redirects.push((target.clone(), id));
         }
         if let Some((pkg, target)) = &f.package {
-            let to = if file_to_pkg {
-                v.id(pkg).to_string()
-            } else {
-                DROP.to_string()
-            };
-            res.redirects.push((target.clone(), to));
+            res.redirects.push((target.clone(), v.id(pkg).to_string()));
         }
     }
 }

@@ -76,9 +76,11 @@ pub enum Lang {
     Razor,
     /// `.xaml` (§43.4).
     Xaml,
-    /// Code Graphify counts but extracts nothing from (§44.8): `.r`, `.tf`, `.ejs`, and
-    /// perl, fish and tcsh shebang scripts.
+    /// Code Graphify counts but extracts nothing from (§44.8): `.r`, `.tf`, and perl, fish and
+    /// tcsh shebang scripts.
     Inert,
+    /// `.ejs` templates: the file node (§44.7).
+    Ejs,
     /// `.pas .dpr .pp .inc .lpr .dpk` (§44.1).
     Pascal,
     /// `.dfm .lfm` (§44.2).
@@ -196,7 +198,8 @@ impl Lang {
             "slnx" => Lang::Slnx,
             "razor" | "cshtml" => Lang::Razor,
             "xaml" => Lang::Xaml,
-            "r" | "tf" | "ejs" => Lang::Inert,
+            "r" | "tf" => Lang::Inert,
+            "ejs" => Lang::Ejs,
             "metal" => Lang::Cpp,
             "pas" | "dpr" | "pp" | "inc" | "lpr" | "dpk" => Lang::Pascal,
             "dfm" | "lfm" => Lang::DelphiForm,
@@ -240,7 +243,7 @@ impl Lang {
             Lang::Solidity => Family::Solidity,
             Lang::Sql => Family::Sql,
             Lang::MsBuild | Lang::Sln | Lang::Slnx | Lang::Razor | Lang::Xaml => Family::Dotnet,
-            Lang::Inert => Family::Inert,
+            Lang::Inert | Lang::Ejs => Family::Inert,
             Lang::Pascal
             | Lang::DelphiForm
             | Lang::Lpk
@@ -293,6 +296,7 @@ impl Lang {
             | Lang::Razor
             | Lang::Xaml
             | Lang::Inert
+            | Lang::Ejs
             | Lang::Pascal
             | Lang::DelphiForm
             | Lang::Lpk
@@ -304,7 +308,8 @@ impl Lang {
 }
 
 /// Extensionless scripts: the interpreter named by a shebang (after `env` and its flags) decides
-/// the language, by exact name (§14.5, §44.8): `python3.11` or `Python3` are not code.
+/// the language, by name with an optional version (§14.5, §44.8): `python3.11`, `node18` and
+/// `ksh93` count, `Python3`, `pypy3`, `python3-dbg` and `node-18` do not.
 fn shebang(path: &Path) -> Option<Lang> {
     let mut head = [0u8; 128];
     let n = std::fs::File::open(path).ok()?.read(&mut head).ok()?;
@@ -315,16 +320,33 @@ fn shebang(path: &Path) -> Option<Lang> {
     if prog == "env" {
         prog = words.find(|w| !w.starts_with('-'))?;
     }
-    Some(match prog {
-        "python" | "python2" | "python3" => Lang::Python,
+    Some(match unversioned(prog) {
+        "python" => Lang::Python,
         "sh" | "bash" | "zsh" | "ksh" | "dash" => Lang::Shell,
         "ruby" => Lang::Ruby,
         "node" | "nodejs" => Lang::JavaScript,
         "php" => Lang::Php,
         "lua" => Lang::Lua,
+        "julia" => Lang::Julia,
         "perl" | "fish" | "tcsh" => Lang::Inert,
         _ => return None,
     })
+}
+
+/// `prog` without a trailing version `\d+(\.\d+)*` (`python3.11` → `python`).
+fn unversioned(prog: &str) -> &str {
+    let base = prog.trim_end_matches(|c: char| c.is_ascii_digit() || c == '.');
+    let version = &prog[base.len()..];
+    let valid = version.is_empty()
+        || (!version.starts_with('.')
+            && !version.ends_with('.')
+            && !version.contains("..")
+            && !base.is_empty());
+    if valid {
+        base
+    } else {
+        prog
+    }
 }
 
 thread_local! {

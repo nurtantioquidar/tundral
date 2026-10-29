@@ -2,10 +2,11 @@
 //!
 //! 1. External nodes for `use` leaves (appended after every per-file node, so a type-reference
 //!    stub with the same id wins, §11.2 rule 1).
-//! 2. Type-stub resolution (§11.2 rule 3): a stub whose label names exactly one Rust struct, enum
-//!    or trait (or, when no type has that name, exactly one other Rust definition: fn, const,
-//!    variant, macro, impl owner) is deleted and redirected to it. Import edges that target the
-//!    same id follow (rule 4).
+//! 2. Type-stub resolution (§11.2 rule 3): a stub its file imports resolves through the import;
+//!    any other stub whose label names exactly one Rust struct, enum, trait or alias (or, when no
+//!    type has that name, exactly one other Rust definition: fn, const, variant, macro, impl
+//!    owner) is deleted and redirected to it, INFERRED when the stub is file-scoped. Import edges
+//!    that target the same id follow (rule 4).
 //! 3. Bare calls left unresolved in-file (§11.5): among the Rust definitions labelled `name()`,
 //!    `.name()` or `Name`, the one closest to the caller (longest shared directory prefix, then
 //!    same directory, then same file) gets an INFERRED `calls` or `references` (`constructor`)
@@ -15,13 +16,15 @@
 //!    trait, the unique method `name` among all impls of that type name gets an EXTRACTED `calls`
 //!    edge with score 1.0 (`impl Atlas` split across `lib.rs` and `rank.rs`).
 //!
-//! Deliberate departures from Graphify 0.9.86 (Q7 not reproduced), through the module tree in
-//! [`modules`]:
+//! `use` leaves (§11.3) through the module tree in [`modules`]: a local leaf (`crate`, `self`,
+//! `super`, a declared module) redirects its stub id to the definition it names, or to the file
+//! of a `name.rs` module, as Graphify 0.9.97 does by name; leaves of one id naming different
+//! things redirect nothing. Deliberate departures (Q7, R1 not reproduced):
 //!
-//! - Every `use` leaf that resolves into the repository (function bodies included) adds a
-//!   file → file `imports_from` edge to the file defining it (`use crate::flags::HiArgs` →
-//!   `flags/hiargs.rs` through the `pub use` in `flags/mod.rs`). The per-leaf edges to the
-//!   `slug(leaf)` external stubs stay as Graphify emits them.
+//! - The module tree decides, not the name: a name defined twice still resolves.
+//! - A `use` leaf whose edge stays on its stub but that resolves into the repository (crate
+//!   names, workspace crates, `mod.rs` modules, function bodies) adds a file → file
+//!   `imports_from` edge to the file defining it (`use grep::cli::…` → `crates/cli/src/…`).
 //! - A type stub named by one of its file's imports resolves through that import: to the
 //!   definition it names, or not at all when the import leads outside the repository
 //!   (`use termcolor::Color` never becomes another crate's `Color`). Only names no import
@@ -244,8 +247,52 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         }
     }
 
+    // Graphify 0.9.97 points a local `use` leaf (§11.3) at what it names: the definition, or the
+    // file of a module (not a `mod.rs`). Its edge targets the stub id of the leaf (`slug(last)`,
+    // `name_as_alias`, a glob's module), so the id is redirected for every file: another file's
+    // path to the same leaf follows (`shapes::fromroot` after `use crate::model::fromroot`).
+    // Local leaves of one id that name different things redirect nothing.
+    let mut leaf_redirects: HashMap<String, Option<String>> = HashMap::new();
+    for fi in 0..modules.views.len() {
+        // A leaf named like one of the file's type stubs targets that stub (§11.2 rule 1),
+        // which resolves through the import below.
+        let stubs: HashSet<String> = modules.views[fi]
+            .facts
+            .nodes
+            .iter()
+            .filter(|n| n.kind == NodeKind::Stub)
+            .map(|n| crate::extract::slug(&n.label))
+            .collect();
+        for u in modules.uses(fi).iter().filter(|u| !u.in_fn) {
+            if !modules.is_local(fi, u) {
+                continue;
+            }
+            let Some(id) = leaf_stub_id(u) else { continue };
+            if stubs.contains(&id) {
+                continue;
+            }
+            let target = match modules.resolve_use(fi, u) {
+                Some(Res::Item(t, name)) => defs[t].get(name).map(|s| s.to_string()),
+                Some(Res::File(t)) if t != fi && !modules.is_mod_rs(t) => {
+                    index.file_ids.get(&modules.views[t].file.rel).cloned()
+                }
+                _ => None,
+            };
+            let Some(target) = target else { continue };
+            leaf_redirects
+                .entry(id)
+                .and_modify(|e| {
+                    if e.as_deref() != Some(target.as_str()) {
+                        *e = None;
+                    }
+                })
+                .or_insert(Some(target));
+        }
+    }
+
     let mut externals: HashSet<&str> = HashSet::new();
     let mut redirected: HashSet<&str> = HashSet::new();
+    let mut inferred_stubs: Vec<(usize, String, String)> = Vec::new();
     for (fi, v) in rust.iter().enumerate() {
         let LangFacts::Rust(facts) = &v.facts.lang else {
             continue;
@@ -263,25 +310,67 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             if index.get(files, &n.id).map(|k| k.kind) != Some(NodeKind::Stub) {
                 continue;
             }
-            let target = match imported_name(&modules, fi, &n.label, &defs) {
+            let (target, by_label) = match imported_name(&modules, fi, &n.label, &defs, false) {
                 // Another file's leaf with this id would follow the redirect somewhere else.
                 Some(Some(t))
                     if leaf_targets
                         .get(&n.id)
                         .is_some_and(|v| v.iter().any(|&(f, x)| f != fi && x != Some(t))) =>
                 {
-                    None
+                    (None, false)
                 }
-                Some(found) => found,
-                None if type_targets.has(&n.label) => type_targets.unique(&n.label).map(|t| t.id),
-                None => stub_targets.unique(&n.label).map(|t| t.id),
+                Some(found) => (found, false),
+                // A name only a glob brings in binds like a label (INFERRED when file-scoped).
+                None => match imported_name(&modules, fi, &n.label, &defs, true) {
+                    Some(found) => (found, true),
+                    None if type_targets.has(&n.label) => {
+                        (type_targets.unique(&n.label).map(|t| t.id), true)
+                    }
+                    None => (stub_targets.unique(&n.label).map(|t| t.id), true),
+                },
             };
-            if let Some(t) = target.filter(|t| *t != n.id) {
-                redirected.insert(&n.id);
+            let Some(t) = target.filter(|t| *t != n.id) else {
+                continue;
+            };
+            redirected.insert(&n.id);
+            // A stub several files emit (renamed per file, §11.2 rule 2) that only its label
+            // binds: 0.9.97 links it INFERRED (score 0.55 by default).
+            if by_label && n.id != crate::extract::slug(&n.label) {
+                inferred_stubs.push((fi, n.id.clone(), t.to_string()));
+                out.redirects.push((n.id.clone(), DROPPED.to_string()));
+            } else {
                 out.redirects.push((n.id.clone(), t.to_string()));
             }
         }
     }
+
+    for (fi, stub, target) in inferred_stubs {
+        for e in rust[fi].facts.edges.iter().filter(|e| e.target == stub) {
+            let mut e = e.clone();
+            e.target = target.clone();
+            e.confidence = Confidence::Inferred;
+            e.score = None;
+            out.edges.push(e);
+        }
+    }
+    for (id, target) in &leaf_redirects {
+        if let Some(target) = target {
+            if !redirected.contains(id.as_str()) && id != target {
+                out.redirects.push((id.clone(), target.clone()));
+            }
+        }
+    }
+    let leaf_bound = |fi: usize, id: &str| -> bool {
+        // The leaf's edge targets the file's type stub of that name when there is one.
+        let stub = modules.views[fi]
+            .facts
+            .nodes
+            .iter()
+            .find(|n| n.kind == NodeKind::Stub && crate::extract::slug(&n.label) == id)
+            .map(|n| n.id.as_str());
+        let id = stub.unwrap_or(id);
+        redirected.contains(id) || leaf_redirects.get(id).is_some_and(Option::is_some)
+    };
 
     // Methods by (owner type key, name): the key is the owner's `_rust_impl_key`, else its label.
     let mut type_methods: HashMap<(&str, &str), Vec<&str>> = HashMap::new();
@@ -317,6 +406,10 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         };
         let mut seen: HashSet<usize> = HashSet::new();
         for u in modules.uses(fi) {
+            // Graphify's own leaf edge already links what this import names.
+            if !u.in_fn && leaf_stub_id(u).is_some_and(|id| leaf_bound(fi, &id)) {
+                continue;
+            }
             let Some(t) = modules.resolve_use(fi, u).and_then(Res::file) else {
                 continue;
             };
@@ -495,9 +588,27 @@ fn imported_name<'d>(
     f: usize,
     name: &str,
     defs: &[HashMap<&str, &'d str>],
+    globs: bool,
 ) -> Option<Option<&'d str>> {
-    let uses: Vec<&RsUse> = modules.uses(f).iter().collect();
+    let uses: Vec<&RsUse> = modules.uses(f).iter().filter(|u| u.glob == globs).collect();
     Some(imported(modules, f, name, &uses, false)?.and_then(|(t, n)| defs[t].get(n).copied()))
+}
+
+/// Redirect target of a stub replaced by INFERRED copies of its edges.
+const DROPPED: &str = "@drop";
+
+/// The id of the stub a `use` leaf's Graphify edge targets: `slug(last)`, `slug(name as alias)`,
+/// a glob's module, `slug(name as _)` for an anonymous import.
+fn leaf_stub_id(u: &RsUse) -> Option<String> {
+    let last = u.path.last()?;
+    let text = match (&u.bound, u.glob) {
+        (_, true) => last.clone(),
+        (Some(b), false) if b != last => format!("{last} as {b}"),
+        (Some(_), false) => last.clone(),
+        (None, false) => format!("{last} as _"),
+    };
+    let id = crate::extract::slug(&text);
+    (!id.is_empty()).then_some(id)
 }
 
 /// The item a name used in Rust file `f` names through the imports `uses` (with `in_body`, the
@@ -761,22 +872,19 @@ impl<'v> Types<'v> {
 
     /// The declared type a resolved path names, through `type` aliases (a few hops deep).
     fn type_of(&self, modules: &Modules<'v, '_>, r: Option<Res<'_>>) -> Option<&'v str> {
-        let (mut t, name) = match r? {
+        let (mut t, mut name) = match r? {
             Res::Item(t, name) => (t, name),
             _ => return None,
         };
-        if let Some(&id) = self.types[t].get(name) {
-            return Some(id);
-        }
-        let mut alias = *self.aliases.get(&(t, name))?;
-        for _ in 0..4 {
+        // An alias of a path is followed first: since 0.9.97 it has a node of its own.
+        for _ in 0..5 {
+            let Some(alias) = self.aliases.get(&(t, name)) else {
+                return self.types[t].get(name).copied();
+            };
             match modules.resolve_qualifier(t, alias.depth, &alias.ty)? {
                 Res::Item(t2, n2) => {
-                    if let Some(&id) = self.types[t2].get(n2) {
-                        return Some(id);
-                    }
                     t = t2;
-                    alias = self.aliases.get(&(t2, n2))?;
+                    name = n2;
                 }
                 _ => return None,
             }
@@ -1274,7 +1382,7 @@ mod tests {
                  fn colon() { use crate::b::Colon as Sep; Sep::new(); }\n\
                  pub struct Holder(Box<crate::b::Inner>);\n\
                  impl Holder {\n    fn go(&self) { self.0.run(); self.0.clone(); }\n}\n\
-                 // `fn welcome` shares the struct's id: its calls would start from the struct.\n\
+                 // `fn welcome` beside `struct Welcome` has its own `_sha1` id (0.9.97): no struct calls.\n\
                  pub struct Welcome;\nfn welcome() { crate::b::helper(); }\n\
                  #[cfg(test)]\nmod tests {\n    use crate::b::Comma;\n    use ext::helper;\n    \
                  fn t() { Comma::new(); helper(); }\n}\n",

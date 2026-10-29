@@ -9,13 +9,15 @@
 //!   is looked up in the lexical scopes first (`Sinatra::Helpers` from `Sinatra::Base`), then
 //!   like a call.
 //! - A bare call that did not bind in its file goes to the method or function of that name
-//!   nearest to the caller's file (`resolve::php::nearest`; INFERRED 0.85).
+//!   nearest to the caller's file (`resolve::php::nearest`; INFERRED 0.85), unless a node of any
+//!   language labelled exactly like the name (a JSON or YAML key) is nearer
+//!   (`resolve::php::label_blockers`).
 //!
 //! Each (caller, target) pair is linked once, in-file edges included.
 
 use std::collections::{HashMap, HashSet};
 
-use super::php::{cross_edge, nearest};
+use super::php::{cross_edge, label_blockers, nearest_callable};
 use super::{Index, Resolution, View};
 use crate::extract::ruby::{RCallKind, RubyFacts};
 use crate::facts::{Confidence, LangFacts};
@@ -119,6 +121,15 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
         .collect();
 
     // Graphify's order: inferred bare calls, then mixins, then calls on constants.
+    let bare: HashSet<&str> = ruby
+        .iter()
+        .flat_map(|(_, r)| &r.calls)
+        .filter_map(|c| match &c.kind {
+            RCallKind::Bare(name) => Some(name.as_str()),
+            _ => None,
+        })
+        .collect();
+    let blockers = label_blockers(files, &bare);
     for (fi, (v, r)) in ruby.iter().enumerate() {
         let rel = v.file.rel.as_str();
         for c in &r.calls {
@@ -126,10 +137,7 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                 continue;
             };
             let caller = v.id(&c.caller).to_string();
-            let Some(target) = callables
-                .get(name.as_str())
-                .and_then(|cands| nearest(rel, cands))
-            else {
+            let Some(target) = nearest_callable(rel, name, &callables, &blockers) else {
                 continue;
             };
             if linked[fi].insert((caller.clone(), target.clone())) {

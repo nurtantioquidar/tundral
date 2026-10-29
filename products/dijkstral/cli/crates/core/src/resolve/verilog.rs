@@ -60,7 +60,7 @@ pub fn resolve(files: &[View], _index: &Index) -> Resolution {
                             file_type: "code".into(),
                             source_file: String::new(),
                             loc: Loc::Empty,
-                            attrs: vec![origin(), score()],
+                            attrs: [vec![origin()], score()].concat(),
                         });
                     }
                 }

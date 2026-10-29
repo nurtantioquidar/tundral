@@ -396,6 +396,22 @@ impl<'v, 'a> Modules<'v, 'a> {
         self.facts[f].map_or(&[], |x| x.uses.as_slice())
     }
 
+    /// Whether Graphify resolves a `use` of file `f` at all (0.9.97): its path starts with
+    /// `crate`, `self`, `super` or a child module `f` declares. Crate names (the package's own
+    /// included) are not resolved.
+    pub(super) fn is_local(&self, f: usize, u: &RsUse) -> bool {
+        match u.path.first().map(String::as_str) {
+            Some("crate" | "self" | "super") => true,
+            Some("") | None => false,
+            Some(name) => self.children[f].contains_key(name),
+        }
+    }
+
+    /// Whether file `f` is a directory module's `mod.rs`.
+    pub(super) fn is_mod_rs(&self, f: usize) -> bool {
+        self.views[f].file.rel.rsplit('/').next() == Some("mod.rs")
+    }
+
     /// What a `use` leaf of file `f` names.
     pub(super) fn resolve_use(&self, f: usize, u: &'v RsUse) -> Option<Res<'v>> {
         self.resolve_path(f, u.depth, &u.path)
