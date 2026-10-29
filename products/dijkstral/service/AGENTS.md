@@ -25,6 +25,10 @@ mode, `mcp::Options::hosted`).
 - `src/github.rs`: the GitHub App's JWT and cached installation tokens.
 - `src/db.rs`: the SQLite schema and queries (`<data>/db/service.sqlite`).
 - `src/config.rs`: environment configuration and the free-tier limits.
+- `Dockerfile`: the deployed image (context `products/dijkstral`, which `../.dockerignore`
+  narrows to the crates the build reads): non-root, with `git` and CA certificates.
+- `compose.yaml`: that image hardened as on charon, with local bare repositories for GitHub;
+  `scripts/smoke.sh` drives it end to end over HTTP.
 
 ## Ownership boundaries
 
@@ -71,3 +75,7 @@ webhooks; `tests/github_app.rs` checks the app JWT, token minting and caching, a
 credential's path into `git` against a fake GitHub API with a key generated at test time. A
 change to tenant isolation, authentication or the build sandbox needs a test that fails without
 it.
+
+A change to the `Dockerfile`, `compose.yaml` or the service's runtime needs (environment,
+executables, writable paths) also passes the image smoke test (usage at the top of
+`scripts/smoke.sh`; on a Mac without Docker, Opossum runs the same Compose file).

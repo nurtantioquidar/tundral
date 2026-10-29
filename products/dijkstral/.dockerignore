@@ -1,0 +1,7 @@
+# Context of service/Dockerfile: leaves out what the service's release build never reads.
+**/target/
+bench/
+cli/docs/
+cli/tests/
+service/scripts/
+service/tests/

@@ -1,0 +1,31 @@
+# The service image run locally, hardened as on charon (DIJKSTRAL_HOSTED_DESIGN.md §4), with
+# bare repositories under $DIJKSTRAL_LOCAL_SOURCE (<owner>/<repo>.git) standing in for GitHub.
+# Secrets come from the shell or a .env file beside this one.
+name: dijkstral
+
+services:
+  service:
+    build:
+      context: ..
+      dockerfile: service/Dockerfile
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 2g
+    ports:
+      - "127.0.0.1:8095:8095"
+    environment:
+      DIJKSTRAL_SERVICE_WEBHOOK_SECRET: ${DIJKSTRAL_SERVICE_WEBHOOK_SECRET:?set a webhook secret}
+      DIJKSTRAL_SERVICE_INTERNAL_TOKEN: ${DIJKSTRAL_SERVICE_INTERNAL_TOKEN:?set an internal token}
+      DIJKSTRAL_SERVICE_LOCAL_SOURCE: /github
+    volumes:
+      - data:/data
+      - ${DIJKSTRAL_LOCAL_SOURCE:?set a directory of bare repositories}:/github:ro
+
+volumes:
+  data:
