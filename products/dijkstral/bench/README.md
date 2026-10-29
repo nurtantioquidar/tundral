@@ -164,11 +164,14 @@ breakdown and the build table to `results/agent-<epoch>.md` and `.json` (no answ
 
 ## Method
 
-- **Pins**: Graphify `graphifyy==0.9.86` (git `a5ba60dd`, Python 3.13, graspologic-native Leiden).
-  Corpus commits are in `corpus.toml`. Record the dijkstral commit and binary sha256 with every
-  dijkstral row. `GRAPHIFY_VERSION=<version>` points `setup.sh`, `reference.sh`, `run.py`,
-  `hook.py` and `agent/run.py` at another Graphify release; the pin stays 0.9.86 because
-  dijkstral's format spec follows it ([the 0.9.97 re-check](#graphify-0997-re-check--2026-10-29)).
+- **Pins**: dijkstral's extraction follows Graphify `graphifyy[leiden,mcp,sql]==0.9.97` since
+  2026-10-29 ([below](#dijkstral-at-graphify-0997-parity--2026-10-29)); run the scripts with
+  `GRAPHIFY_VERSION=0.9.97` (references in `reference-0.9.97/`). Their default is still the earlier
+  pin `graphifyy==0.9.86` (git `a5ba60dd`, Python 3.13, graspologic-native Leiden), so earlier
+  results keep their paths and the query, export and memory surfaces, still specified against
+  0.9.86, keep their baseline. `GRAPHIFY_VERSION=<version>` points `setup.sh`, `reference.sh`,
+  `run.py`, `hook.py` and `agent/run.py` at any release. Corpus commits are in `corpus.toml`.
+  Record the dijkstral commit and binary sha256 with every dijkstral row.
 - **Commands compared**:
 
   | Scenario | Graphify | Dijkstral |
@@ -1207,3 +1210,90 @@ indexes markdown structurally, as Graphify's does (fastapi: 26,841 nodes after t
 9,342 cold), so its fastapi update costs more than its cold build. dijkstral's Kubernetes cold
 peak is 2,701 MB against 2,078 MB on 2026-10-13 (10 threads then, and before local type
 inference); this run does not separate the two causes.
+
+### dijkstral at Graphify 0.9.97 parity — 2026-10-29
+
+dijkstral's extraction now follows Graphify 0.9.97: `cli/docs/graphify-format.md`, the fixture
+goldens (all 34 regenerated) and the code moved together, and every changed rule was found by
+running 0.9.86 and 0.9.97 on the same probes. The query, MCP, export, git, memory and multi-repo
+surfaces stay specified against 0.9.86; their goldens read frozen 0.9.86 fixture graphs
+(`cli/tests/fixtures/graphs-0.9.86/`). The semantic pass and markdown structure follow 0.9.97
+(`cli/docs/graphify-semantic.md`), with goldens re-recorded by replaying the recorded model replies
+(no model call). What 0.9.97 changed, now reproduced:
+
+- **YAML** under `--code-only` (§46): keys as nodes like JSON, multi-document files, Graphify's
+  skip classes and bounds, and its broader sensitive-file filter (all file types).
+- **New node fields**: `_callable`/`_callable_class` on Go and Objective-C, `_py_return_type`,
+  `_py_property`, `_py_fixture`, `_ts_fields`, `_java_ret`, C# method `arity`/`signature`, `file`
+  in every `unresolved_calls` entry, `confidence` on Verilog nodes.
+- **Per language**: generic-parameter stubs gone (Go, Kotlin, Scala, Swift, C++); Go aliases and
+  generic receivers on the real type, package-node merging and typed receiver calls; C/C++ quoted
+  includes by path suffix, `extern "C"` headers as C++, typedefs and aliases as nodes; C# overload
+  ids, delegates and `dispatches_to`; PHP `$this->m()`, static and typed calls; Rust aliases and
+  `use … as` leaves; Kotlin typealiases; TS/JS typed member calls and `package.json` dependency
+  labels; Python property reads; Fortran cross-file calls; Swift `dispatches_to`.
+
+Builds stay byte-identical across thread counts (Kubernetes, fmt and erpnext at 1, 5 and 12
+threads). Parity against the 0.9.97 references, `extract --code-only`, all extensions, recall /
+precision % (before: `05b387a`, the 0.9.86-era code):
+
+| repo | nodes, before | nodes, now | links, before | links, now |
+|---|---|---|---|---|
+| monet | 98.4 / 97.2 | 98.7 / 99.7 | 95.9 / 87.5 | 98.4 / 90.2 |
+| graphify | 98.9 / 99.4 | 99.9 / 99.4 | 98.3 / 95.9 | 98.8 / 96.0 |
+| fastapi | 78.3 / 97.8 | 98.9 / 98.3 | 83.6 / 93.9 | 94.5 / 94.6 |
+| ripgrep | 93.8 / 96.5 | 97.0 / 99.5 | 90.4 / 75.0 | 94.6 / 78.3 |
+| excalidraw | 95.3 / 99.8 | 99.7 / 99.9 | 97.7 / 99.5 | 99.5 / 99.5 |
+| erpnext | 96.5 / 99.6 | 99.8 / 99.6 | 92.4 / 90.8 | 94.2 / 91.0 |
+| kubernetes | 55.1 / 93.9 | 100.0 / 99.9 | 84.1 / 91.4 | 99.9 / 95.7 |
+| jq | 72.2 / 97.2 | 99.1 / 100.0 | 82.9 / 90.3 | 99.8 / 99.9 |
+| fmt | 91.6 / 92.8 | 98.0 / 98.6 | 90.2 / 85.2 | 96.9 / 96.4 |
+| serilog | 82.4 / 100.0 | 100.0 / 100.0 | 79.9 / 95.3 | 99.9 / 99.9 |
+| okhttp | 98.4 / 99.3 | 99.9 / 99.6 | 97.9 / 98.6 | 98.6 / 99.0 |
+| munit | 94.5 / 98.3 | 99.9 / 99.6 | 95.7 / 96.3 | 99.2 / 98.7 |
+| alamofire | 96.4 / 98.3 | 99.9 / 100.0 | 95.8 / 96.9 | 99.4 / 99.2 |
+| guzzle | 98.1 / 100.0 | 100.0 / 100.0 | 74.7 / 93.8 | 100.0 / 100.0 |
+| sinatra | 85.9 / 100.0 | 100.0 / 100.0 | 90.1 / 99.5 | 100.0 / 100.0 |
+| dart-http | 94.3 / 99.7 | 99.7 / 99.8 | 94.1 / 98.0 | 99.2 / 98.9 |
+| ecto | 97.0 / 100.0 | 100.0 / 100.0 | 98.4 / 100.0 | 100.0 / 100.0 |
+| penlight | 95.7 / 100.0 | 100.0 / 100.0 | 97.9 / 100.0 | 100.0 / 100.0 |
+| afnetworking | 94.1 / 99.3 | 100.0 / 99.9 | 94.5 / 97.9 | 100.0 / 100.0 |
+
+What remains is listed per language in the spec. The largest parts are deliberate: the
+typed-receiver calls of local type inference (Q23, Q24: ripgrep, monet and Kubernetes link
+precision), TS/JS calls through `const me = this` (0.9.97 dropped them) and aliased imports. The
+rest predates 0.9.97: fastapi's stub-versus-external precedence, erpnext's file-stem remap (Q6),
+okhttp's Java-to-Kotlin binding, fmt's error-recovery cases, and Graphify following symlinked
+files (Y1).
+
+**Build time**, median wall s, Graphify 0.9.97 / dijkstral and the speedup, with cold peak
+process-tree RSS MB and cold node counts. Same machine as the re-check above (Apple M4 Pro, 12
+cores); Graphify's rows are the re-check's runs, dijkstral at `f844c0a` (release), 3 runs per
+scenario including Kubernetes. Raw: `results/build-1793258302.json`.
+
+| repo | cold s | × | warm s | × | update s | × | cold RSS MB | nodes |
+|---|---|---|---|---|---|---|---|---|
+| monet | 2.03 / 0.14 | 14× | 1.09 / 0.04 | 30× | 1.96 / 0.11 | 18× | 819 / 92 | 3,374 / 3,339 |
+| graphify | 10.36 / 0.47 | 22× | 5.95 / 0.04 | 153× | 8.96 / 0.43 | 21× | 1,104 / 268 | 16,988 / 17,071 |
+| fastapi | 7.45 / 0.30 | 25× | 4.72 / 0.04 | 110× | 11.03 / 0.88 | 12× | 852 / 139 | 11,670 / 11,747 |
+| ripgrep | 1.63 / 0.15 | 11× | 1.05 / 0.04 | 29× | 1.08 / 0.11 | 10× | 783 / 102 | 4,271 / 4,161 |
+| excalidraw | 4.71 / 0.24 | 20× | 1.91 / 0.04 | 50× | 4.38 / 0.15 | 29× | 905 / 96 | 5,139 / 5,129 |
+| erpnext | 24.52 / 0.97 | 25× | 8.77 / 0.06 | 159× | 22.53 / 0.46 | 49× | 1,231 / 364 | 25,443 / 25,482 |
+| kubernetes | 797.6 / 11.86 | 67× | 178.6 / 0.36 | 496× | 771.3 / 8.23 | 94× | 4,388 / 3,460 | 436,879 / 437,145 |
+| jq | 1.38 / 0.12 | 12× | 0.69 / 0.04 | 17× | 0.90 / 0.21 | 4× | 774 / 62 | 1,618 / 1,603 |
+| fmt | 2.30 / 0.18 | 13× | 1.30 / 0.04 | 35× | 1.48 / 0.12 | 12× | 845 / 109 | 6,361 / 6,326 |
+| serilog | 1.46 / 0.13 | 12× | 0.93 / 0.04 | 25× | 1.03 / 0.09 | 11× | 748 / 60 | 2,277 / 2,277 |
+| okhttp | 4.72 / 0.36 | 13× | 3.93 / 0.04 | 91× | 3.96 / 0.24 | 16× | 880 / 202 | 12,589 / 12,627 |
+| munit | 1.22 / 0.15 | 8× | 0.74 / 0.04 | 20× | 0.84 / 0.08 | 10× | 736 / 65 | 2,169 / 2,175 |
+| alamofire | 2.06 / 0.17 | 12× | 1.14 / 0.04 | 31× | 2.01 / 0.16 | 13× | 850 / 100 | 3,681 / 3,677 |
+| guzzle | 2.17 / 0.19 | 12× | 1.16 / 0.04 | 32× | 1.54 / 0.13 | 12× | 889 / 126 | 4,296 / 4,295 |
+| sinatra | 0.98 / 0.10 | 10× | 0.54 / 0.04 | 15× | 0.65 / 0.08 | 8× | 736 / 47 | 1,564 / 1,564 |
+| dart-http | 16.40 / 0.32 | 51× | 3.43 / 0.04 | 88× | 3.14 / 0.21 | 15× | 812 / 221 | 17,891 / 17,876 |
+| ecto | 1.06 / 0.12 | 9× | 0.64 / 0.04 | 18× | 0.70 / 0.07 | 9× | 714 / 55 | 2,015 / 2,014 |
+| penlight | 0.83 / 0.08 | 10× | 0.45 / 0.03 | 13× | 0.53 / 0.07 | 8× | 668 / 37 | 946 / 946 |
+| afnetworking | 0.91 / 0.10 | 9× | 0.54 / 0.04 | 15× | 0.59 / 0.09 | 7× | 676 / 56 | 1,271 / 1,272 |
+
+dijkstral is faster (4× to 496×) and lower in peak memory in all 57 scenarios, and the two tools
+now build graphs of the same size, so the Kubernetes rows compare equal work. Indexing Kubernetes'
+YAML (180k more nodes) took dijkstral's cold build from 9.16 s and 2,701 MB to 11.86 s and
+3,460 MB; the time goes to clustering, writing and caching the larger graph, not to extraction.
