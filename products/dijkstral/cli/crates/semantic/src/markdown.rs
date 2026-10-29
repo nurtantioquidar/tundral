@@ -11,6 +11,7 @@ use std::path::{Component, Path, PathBuf};
 use std::sync::Mutex;
 
 use dijkstral_core::discover::SourceFile;
+use dijkstral_core::extract::data::yaml::{self, PyValue};
 use dijkstral_core::extract::{count_words, origin};
 use dijkstral_core::facts::{Attr, Confidence, Edge, FileFacts, Loc, Node, NodeKind};
 use dijkstral_core::ids::{file_id, make_id};
@@ -303,14 +304,18 @@ fn parse_page(rel: &str, content: &[u8], resolve_link: &dyn Fn(&str) -> Option<S
     let mut section = fid.clone();
     let mut linked: HashSet<String> = HashSet::new();
     let mut spans = Vec::new();
-    let mut in_fence = false;
+    let mut fence: Option<(char, usize)> = None;
     for (i, line) in lines.iter().enumerate().skip(body_start) {
         let n = i as u32 + 1;
-        if line.trim_start().starts_with("```") {
-            in_fence = !in_fence;
+        let trimmed = line.trim();
+        if let Some((c, len)) = fence {
+            if trimmed.len() >= len && trimmed.chars().all(|x| x == c) {
+                fence = None;
+            }
             continue;
         }
-        if in_fence {
+        if let Some(open) = fence_open(trimmed) {
+            fence = Some(open);
             continue;
         }
         if let Some((level, label)) = heading(line) {
@@ -376,22 +381,86 @@ fn edge(source: &str, target: &str, relation: &str, rel: &str, line: u32) -> Edg
     }
 }
 
+/// A fence opener (§3.3), on a stripped line: three or more backticks (no backtick after them) or
+/// tildes. The fence closes on a line of only that character, at least as many.
+fn fence_open(trimmed: &str) -> Option<(char, usize)> {
+    for c in ['`', '~'] {
+        let n = trimmed.chars().take_while(|&x| x == c).count();
+        if n >= 3 {
+            return (c == '~' || !trimmed[n..].contains('`')).then_some((c, n));
+        }
+    }
+    None
+}
+
 /// Front matter (§3.2): the serialized `frontmatter` object (absent when nothing usable) and the
-/// index of the first line after the block.
+/// index of the first line after the block. The block is read as YAML; a block a safe loader
+/// rejects falls back to its `key: value` lines.
 fn front_matter(lines: &[&str]) -> (Option<String>, usize) {
-    if lines.first() != Some(&"---") {
+    if lines.first().map(|l| l.trim()) != Some("---") {
         return (None, 0);
     }
     let Some(end) = lines
         .iter()
         .skip(1)
-        .position(|l| *l == "---")
+        .position(|l| matches!(l.trim(), "---" | "..."))
         .map(|p| p + 1)
     else {
         return (None, 0);
     };
+    let block = &lines[1..end];
+    let map = match yaml::safe_load(&block.join("\n")) {
+        Ok(PyValue::Dict(pairs)) => front_object(&pairs),
+        Ok(_) => serde_json::Map::new(),
+        Err(()) => front_lines(block),
+    };
+    let fm = (!map.is_empty()).then(|| serde_json::Value::Object(map).to_string());
+    (fm, end + 1)
+}
+
+/// A loaded front matter mapping: keys as Python's `str()` of them, strings without ASCII control
+/// characters and HTML-escaped, at any depth. Values JSON cannot hold (`.inf`, `.nan`, integers
+/// beyond 64 bits) are written as `null` or a float (Graphify writes bare `Infinity`/`NaN`).
+fn front_object(pairs: &[(PyValue, PyValue)]) -> serde_json::Map<String, serde_json::Value> {
     let mut map = serde_json::Map::new();
-    for line in &lines[1..end] {
+    for (k, v) in pairs {
+        map.insert(html_escape(&clean(&k.py_str())), front_value(v));
+    }
+    map
+}
+
+fn front_value(v: &PyValue) -> serde_json::Value {
+    use serde_json::{Number, Value};
+    match v {
+        PyValue::None => Value::Null,
+        PyValue::Bool(b) => Value::Bool(*b),
+        PyValue::Int(d) => d
+            .parse::<i64>()
+            .map(Value::from)
+            .or_else(|_| d.parse::<u64>().map(Value::from))
+            .unwrap_or_else(|_| {
+                d.parse::<f64>()
+                    .ok()
+                    .and_then(Number::from_f64)
+                    .map_or(Value::Null, Value::Number)
+            }),
+        PyValue::Float(x) => Number::from_f64(*x).map_or(Value::Null, Value::Number),
+        PyValue::Str(s) | PyValue::Text(s) => Value::String(html_escape(&clean(s))),
+        PyValue::List(items) => Value::Array(items.iter().map(front_value).collect()),
+        PyValue::Dict(pairs) => Value::Object(front_object(pairs)),
+    }
+}
+
+/// Text without ASCII control characters (`\t`, `\n`, `\r`, DEL…).
+fn clean(s: &str) -> String {
+    s.chars().filter(|&c| c >= ' ' && c != '\u{7f}').collect()
+}
+
+/// The fallback for front matter that is not valid YAML: each non-indented `key: value` line
+/// with a non-empty value, as a string.
+fn front_lines(block: &[&str]) -> serde_json::Map<String, serde_json::Value> {
+    let mut map = serde_json::Map::new();
+    for line in block {
         if line.starts_with([' ', '\t', '#']) {
             continue;
         }
@@ -413,8 +482,7 @@ fn front_matter(lines: &[&str]) -> (Option<String>, usize) {
             serde_json::Value::String(html_escape(value)),
         );
     }
-    let fm = (!map.is_empty()).then(|| serde_json::Value::Object(map).to_string());
-    (fm, end + 1)
+    map
 }
 
 /// Python's `html.escape(s, quote=True)`.
@@ -433,13 +501,27 @@ fn html_escape(s: &str) -> String {
     out
 }
 
-/// `^#{1,6} +(.+)` at column 0 (§3.3): the level and the stripped label.
+/// `^ {0,3}#{1,6}[ \t]` (§3.3): the level and the label, stripped and without a closing run of
+/// `#` that follows a space or tab; a heading with no text is none.
 fn heading(line: &str) -> Option<(usize, &str)> {
-    let level = line.bytes().take_while(|&b| b == b'#').count();
-    if !(1..=6).contains(&level) || !line[level..].starts_with(' ') {
+    let body = line.trim_start_matches(' ');
+    if line.len() - body.len() > 3 {
         return None;
     }
-    let label = line[level..].trim();
+    let line = body;
+    let level = line.bytes().take_while(|&b| b == b'#').count();
+    if !(1..=6).contains(&level) || !line[level..].starts_with([' ', '\t']) {
+        return None;
+    }
+    let mut label = line[level..].trim();
+    let bare = label.trim_end_matches('#');
+    if bare.len() < label.len() {
+        if bare.is_empty() {
+            label = "";
+        } else if bare.ends_with([' ', '\t']) {
+            label = bare.trim_end();
+        }
+    }
     (!label.is_empty()).then_some((level, label))
 }
 
@@ -782,22 +864,27 @@ mod tests {
     }
 
     #[test]
-    fn headings_follow_the_column_zero_rule() {
+    fn headings_allow_three_spaces_and_drop_closing_hashes() {
         assert_eq!(heading("# A"), Some((1, "A")));
         assert_eq!(heading("###### Six"), Some((6, "Six")));
         assert_eq!(heading("####### seven"), None);
         assert_eq!(heading("#NoSpace"), None);
+        assert_eq!(heading("#\tTab"), Some((1, "Tab")));
         assert_eq!(heading("#"), None);
-        assert_eq!(heading("   ### Indented"), None);
+        assert_eq!(heading("# #"), None);
+        assert_eq!(heading("   ### Indented"), Some((3, "Indented")));
+        assert_eq!(heading("    #### Code"), None);
+        assert_eq!(heading("\t# Tab indent"), None);
         assert_eq!(heading("\u{feff}# Bom"), None);
-        assert_eq!(
-            heading("# Closing hashes ##"),
-            Some((1, "Closing hashes ##"))
-        );
+        assert_eq!(heading("# Closing hashes ##"), Some((1, "Closing hashes")));
+        assert_eq!(heading("#  Two  spaces  #"), Some((1, "Two  spaces")));
+        assert_eq!(heading("# A#"), Some((1, "A#")));
+        assert_eq!(heading("# Escaped \\#"), Some((1, "Escaped \\#")));
+        assert_eq!(heading("# Trail ##x"), Some((1, "Trail ##x")));
     }
 
     #[test]
-    fn front_matter_values_are_escaped_strings() {
+    fn front_matter_is_yaml_with_escaped_strings() {
         let lines = [
             "---",
             "title: \"Probe\"",
@@ -814,8 +901,27 @@ mod tests {
         assert_eq!(start, 9);
         assert_eq!(
             fm.unwrap(),
-            r#"{"title":"Probe","html":"&lt;b&gt;&amp;&quot;&#x27;&lt;/b&gt;","dup":"second"}"#
+            r#"{"title":"Probe","html":"&lt;b&gt;&amp;&quot;&#x27;&lt;/b&gt;","empty":["nested"],"dup":"second"}"#
         );
+        // Typed values, `str()` keys, control characters dropped, `...` closing the block.
+        let (fm, _) = front_matter(&[
+            " --- ",
+            "n: 0x1F",
+            "t: yes",
+            "d: 2026-01-02T03:04:05Z",
+            "1: one",
+            "true: two",
+            "q: \"a\\tb\"",
+            "...",
+        ]);
+        assert_eq!(
+            fm.unwrap(),
+            r#"{"n":31,"t":true,"d":"2026-01-02 03:04:05+00:00","1":"two","q":"ab"}"#
+        );
+        // Not valid YAML: the `key: value` lines, as strings; valid but not a mapping: nothing.
+        let (fm, _) = front_matter(&["---", "custom: !Ref x", "n: 1", "---"]);
+        assert_eq!(fm.unwrap(), r#"{"custom":"!Ref x","n":"1"}"#);
+        assert_eq!(front_matter(&["---", "- a: 1", "---"]), (None, 3));
         assert_eq!(front_matter(&["---", "a: 1"]), (None, 0));
         assert_eq!(front_matter(&["x", "---", "a: 1", "---"]), (None, 0));
     }
@@ -907,18 +1013,18 @@ mod tests {
     }
 
     #[test]
-    fn fenced_lines_are_skipped_but_tilde_fences_are_not() {
-        let src = "# Top\n```\n# Hidden `x`\n```\n~~~\n## Tilde `y`\n~~~\n";
+    fn fenced_lines_are_skipped() {
+        let src = "# Top\n```\n# Hidden `x`\n```\n~~~\n## Tilde `y`\n~~~\n    ```\n## Four\n``` x\n````\n## After `z`\n``` a`b\n## Info `w`\n";
         let page = parse_page("a.md", src.as_bytes(), &no_links);
         let labels: Vec<&str> = page.facts.nodes.iter().map(|n| n.label.as_str()).collect();
-        assert_eq!(labels, ["a.md", "Top", "Tilde `y`"]);
+        assert_eq!(labels, ["a.md", "Top", "After `z`", "Info `w`"]);
         let spans: Vec<(&str, u32)> = page
             .spans
             .iter()
             .map(|s| (s.text.as_str(), s.line))
             .collect();
-        assert_eq!(spans, [("y", 6)]);
-        assert_eq!(page.spans[0].section, "a_tilde_y");
+        assert_eq!(spans, [("z", 12), ("w", 14)]);
+        assert_eq!(page.spans[0].section, "a_after_z");
     }
 
     /// Resolve `spans` against code nodes `(id, label, source_file, callable)` (a label ending in

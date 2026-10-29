@@ -100,11 +100,11 @@ fn extract_merges_replies_and_reruns_without_a_model_call() {
     assert!(report.contains("## Hyperedges (group relationships)"));
     assert!(report.contains("## Ambiguous Edges - Review These"));
 
-    // Every file answered: the rerun takes all of them from the cache (`_origin: "semantic"`),
+    // Every file answered (YAML is code since 0.9.97): the rerun takes all of them from the cache,
     // then there is nothing to do at all.
     let second = ok(&extract);
     assert!(
-        second.contains("8 hit / 0 miss") && second.contains("model calls: 0"),
+        second.contains("7 hit / 0 miss") && second.contains("model calls: 0"),
         "{second}"
     );
     assert!(graph(&root)["nodes"]

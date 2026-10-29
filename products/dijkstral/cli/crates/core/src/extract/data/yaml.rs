@@ -622,6 +622,358 @@ fn timestamp_constructs(text: &str) -> bool {
     }
 }
 
+/// A value as Python's `yaml.safe_load` builds it, for callers that render it themselves
+/// (markdown front matter, `docs/graphify-semantic.md` §3.2).
+#[derive(Debug, Clone, PartialEq)]
+pub enum PyValue {
+    None,
+    Bool(bool),
+    /// An `int`, as its decimal digits (Python ints are unbounded).
+    Int(String),
+    Float(f64),
+    Str(String),
+    /// A date, datetime, `bytes` or `set`, as Python's `str()` of it.
+    Text(String),
+    /// A list, or the list of `(key, value)` tuples of `!!omap` and `!!pairs`.
+    List(Vec<PyValue>),
+    /// A dict in insertion order; a repeated key (by Python equality: `1`, `1.0` and `true` are
+    /// one key) keeps its first position and takes the last value.
+    Dict(Vec<(PyValue, PyValue)>),
+}
+
+impl PyValue {
+    /// Python's `str()`.
+    pub fn py_str(&self) -> String {
+        match self {
+            PyValue::None => "None".into(),
+            PyValue::Bool(b) => if *b { "True" } else { "False" }.into(),
+            PyValue::Int(d) => d.clone(),
+            PyValue::Float(x) => py_float_str(*x),
+            PyValue::Str(s) | PyValue::Text(s) => s.clone(),
+            PyValue::List(_) | PyValue::Dict(_) => self.py_repr(),
+        }
+    }
+
+    /// Python's `repr()` (a tuple pair renders as a list; never reached by front matter keys).
+    fn py_repr(&self) -> String {
+        match self {
+            PyValue::Str(s) => py_str_repr(s),
+            PyValue::List(items) => format!(
+                "[{}]",
+                items
+                    .iter()
+                    .map(PyValue::py_repr)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ),
+            PyValue::Dict(pairs) => format!(
+                "{{{}}}",
+                pairs
+                    .iter()
+                    .map(|(k, v)| format!("{}: {}", k.py_repr(), v.py_repr()))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ),
+            other => other.py_str(),
+        }
+    }
+
+    /// The number a numeric value equals, for Python's `1 == 1.0 == True`.
+    fn number(&self) -> Option<f64> {
+        match self {
+            PyValue::Bool(b) => Some(if *b { 1.0 } else { 0.0 }),
+            PyValue::Int(d) => d.parse().ok(),
+            PyValue::Float(x) => Some(*x),
+            _ => None,
+        }
+    }
+
+    fn same_key(&self, other: &PyValue) -> bool {
+        match (self.number(), other.number()) {
+            (Some(a), Some(b)) => a == b,
+            (None, None) => self == other,
+            _ => false,
+        }
+    }
+}
+
+/// `str(float)`: `repr` with `inf`, `-inf` and `nan`.
+fn py_float_str(x: f64) -> String {
+    if x.is_nan() {
+        "nan".into()
+    } else if x.is_infinite() {
+        if x > 0.0 { "inf" } else { "-inf" }.into()
+    } else {
+        crate::pyjson::float_repr(x)
+    }
+}
+
+/// `repr(str)`: single quotes unless the text has one and no double quote.
+fn py_str_repr(s: &str) -> String {
+    let quote = if s.contains('\'') && !s.contains('"') {
+        '"'
+    } else {
+        '\''
+    };
+    let mut out = String::from(quote);
+    for c in s.chars() {
+        match c {
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            c if c == quote => {
+                out.push('\\');
+                out.push(c);
+            }
+            c if (c as u32) < 0x20 || c == '\u{7f}' => {
+                out.push_str(&format!("\\x{:02x}", c as u32))
+            }
+            c => out.push(c),
+        }
+    }
+    out.push(quote);
+    out
+}
+
+/// `repr(bytes)`.
+fn py_bytes_repr(b: &[u8]) -> String {
+    let quote = if b.contains(&b'\'') && !b.contains(&b'"') {
+        '"'
+    } else {
+        '\''
+    };
+    let mut out = format!("b{quote}");
+    for &c in b {
+        match c {
+            b'\\' => out.push_str("\\\\"),
+            b'\n' => out.push_str("\\n"),
+            b'\r' => out.push_str("\\r"),
+            b'\t' => out.push_str("\\t"),
+            c if c as char == quote => {
+                out.push('\\');
+                out.push(c as char);
+            }
+            0x20..=0x7e => out.push(c as char),
+            c => out.push_str(&format!("\\x{c:02x}")),
+        }
+    }
+    out.push(quote);
+    out
+}
+
+/// `yaml.safe_load(text)`: the single document's value (`None` for an empty stream), or `Err`
+/// when a safe loader raises (invalid YAML, several documents, a custom tag, an impossible date…).
+#[allow(clippy::result_unit_err)]
+pub fn safe_load(text: &str) -> Result<PyValue, ()> {
+    let graph = compose(text.as_bytes()).ok_or(())?;
+    if graph.docs.len() > 1 || !graph.constructs() {
+        return Err(());
+    }
+    match graph.docs.first() {
+        None => Ok(PyValue::None),
+        Some(&doc) => graph.construct(doc, 0).ok_or(()),
+    }
+}
+
+impl Graph {
+    fn construct(&self, idx: usize, depth: usize) -> Option<PyValue> {
+        if depth > MAX_DEPTH {
+            return None;
+        }
+        let node = &self.nodes[idx];
+        let tag = match resolve(node) {
+            Resolved::Unknown => return None,
+            Resolved::Core(t) => t.to_string(),
+            Resolved::Explicit(t) => t,
+        };
+        let sub = |i: usize| self.construct(i, depth + 1);
+        Some(match (&node.kind, tag.as_str()) {
+            (Kind::Scalar(text, _), t) => construct_scalar(t, text)?,
+            (Kind::Seq(items), "seq") => {
+                PyValue::List(items.iter().map(|&i| sub(i)).collect::<Option<_>>()?)
+            }
+            (Kind::Seq(items), "omap" | "pairs") => PyValue::List(
+                items
+                    .iter()
+                    .map(|&i| {
+                        let Kind::Map(p) = self.kind(i) else {
+                            return None;
+                        };
+                        let &(k, v) = p.first()?;
+                        Some(PyValue::List(vec![sub(k)?, sub(v)?]))
+                    })
+                    .collect::<Option<_>>()?,
+            ),
+            (Kind::Map(_), "map" | "set") => {
+                let mut pairs: Vec<(PyValue, PyValue)> = Vec::new();
+                for (k, v) in self.flatten(idx, 0)? {
+                    let (k, v) = (sub(k)?, sub(v)?);
+                    match pairs.iter_mut().find(|(have, _)| have.same_key(&k)) {
+                        Some(slot) => slot.1 = v,
+                        None => pairs.push((k, v)),
+                    }
+                }
+                if tag == "set" {
+                    // Python orders a set by hash; insertion order is the stable stand-in.
+                    let items: Vec<String> = pairs.iter().map(|(k, _)| k.py_repr()).collect();
+                    PyValue::Text(if items.is_empty() {
+                        "set()".into()
+                    } else {
+                        format!("{{{}}}", items.join(", "))
+                    })
+                } else {
+                    PyValue::Dict(pairs)
+                }
+            }
+            _ => return None,
+        })
+    }
+}
+
+fn construct_scalar(tag: &str, text: &str) -> Option<PyValue> {
+    Some(match tag {
+        "str" => PyValue::Str(text.to_string()),
+        "null" => PyValue::None,
+        "bool" => PyValue::Bool(matches!(
+            text.to_ascii_lowercase().as_str(),
+            "yes" | "true" | "on"
+        )),
+        "int" => PyValue::Int(construct_int(text)?),
+        "float" => PyValue::Float(construct_float(text)?),
+        "timestamp" => PyValue::Text(construct_timestamp(text)?),
+        "binary" => {
+            let clean: String = text.chars().filter(|c| !c.is_whitespace()).collect();
+            use base64::Engine;
+            let bytes = base64::engine::general_purpose::STANDARD
+                .decode(clean.as_bytes())
+                .ok()?;
+            PyValue::Text(py_bytes_repr(&bytes))
+        }
+        _ => return None,
+    })
+}
+
+/// YAML 1.1 ints (`0b`, `0x`, a leading `0` for octal, `:` for base 60, `_` ignored), as decimal
+/// digits.
+fn construct_int(text: &str) -> Option<String> {
+    let v = text.replace('_', "");
+    let (neg, v) = match v.strip_prefix('-') {
+        Some(rest) => (true, rest.to_string()),
+        None => (false, v.strip_prefix('+').unwrap_or(&v).to_string()),
+    };
+    let (digits, base): (Vec<u32>, u32) = if v == "0" {
+        (vec![0], 10)
+    } else if let Some(b) = v.strip_prefix("0b") {
+        (b.chars().map(|c| c.to_digit(2)).collect::<Option<_>>()?, 2)
+    } else if let Some(h) = v.strip_prefix("0x") {
+        (
+            h.chars().map(|c| c.to_digit(16)).collect::<Option<_>>()?,
+            16,
+        )
+    } else if v.contains(':') {
+        (
+            v.split(':')
+                .map(|p| p.parse().ok())
+                .collect::<Option<_>>()?,
+            60,
+        )
+    } else if let Some(o) = v.strip_prefix('0') {
+        (o.chars().map(|c| c.to_digit(8)).collect::<Option<_>>()?, 8)
+    } else {
+        (
+            v.chars().map(|c| c.to_digit(10)).collect::<Option<_>>()?,
+            10,
+        )
+    };
+    // Arbitrary precision: little-endian base-10^9 limbs.
+    let mut limbs: Vec<u64> = vec![0];
+    for d in digits {
+        let mut carry = u64::from(d);
+        for limb in limbs.iter_mut() {
+            let x = *limb * u64::from(base) + carry;
+            *limb = x % 1_000_000_000;
+            carry = x / 1_000_000_000;
+        }
+        while carry > 0 {
+            limbs.push(carry % 1_000_000_000);
+            carry /= 1_000_000_000;
+        }
+    }
+    let mut out = format!("{}", limbs.last().copied().unwrap_or(0));
+    for limb in limbs.iter().rev().skip(1) {
+        out.push_str(&format!("{limb:09}"));
+    }
+    Some(if neg && out != "0" {
+        format!("-{out}")
+    } else {
+        out
+    })
+}
+
+fn construct_float(text: &str) -> Option<f64> {
+    let v = text.replace('_', "").to_ascii_lowercase();
+    let (neg, v) = match v.strip_prefix('-') {
+        Some(rest) => (true, rest.to_string()),
+        None => (false, v.strip_prefix('+').unwrap_or(&v).to_string()),
+    };
+    let x = if v == ".inf" {
+        f64::INFINITY
+    } else if v == ".nan" {
+        f64::NAN
+    } else if v.contains(':') {
+        v.split(':')
+            .try_fold(0.0, |acc, p| p.parse::<f64>().ok().map(|x| acc * 60.0 + x))?
+    } else {
+        v.parse::<f64>().ok()?
+    };
+    Some(if neg { -x } else { x })
+}
+
+/// `str()` of the date or datetime a YAML 1.1 timestamp constructs (fractions to microseconds,
+/// a zone as a fixed offset, `Z` as `+00:00`).
+fn construct_timestamp(text: &str) -> Option<String> {
+    if !timestamp_constructs(text) {
+        return None;
+    }
+    static RE: OnceLock<Regex> = OnceLock::new();
+    let re = RE.get_or_init(|| {
+        Regex::new(
+            r"^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})(?:(?:[Tt]|[ \t]+)([0-9]{1,2}):([0-9]{2}):([0-9]{2})(?:\.([0-9]*))?(?:[ \t]*(Z|([-+])([0-9]{1,2})(?::([0-9]{2}))?))?)?$",
+        )
+        .unwrap()
+    });
+    let c = re.captures(text)?;
+    let num = |i: usize| {
+        c.get(i)
+            .map_or(0, |m| m.as_str().parse::<u32>().unwrap_or(0))
+    };
+    let mut out = format!("{:04}-{:02}-{:02}", num(1), num(2), num(3));
+    if c.get(4).is_none() {
+        return Some(out);
+    }
+    out.push_str(&format!(" {:02}:{:02}:{:02}", num(4), num(5), num(6)));
+    if let Some(f) = c.get(7) {
+        let mut micro: String = f.as_str().chars().take(6).collect();
+        while micro.len() < 6 {
+            micro.push('0');
+        }
+        if micro != "000000" {
+            out.push('.');
+            out.push_str(&micro);
+        }
+    }
+    if let Some(z) = c.get(8) {
+        if z.as_str() == "Z" {
+            out.push_str("+00:00");
+        } else {
+            let sign = c.get(9).map_or("+", |m| m.as_str());
+            out.push_str(&format!("{sign}{:02}:{:02}", num(10), num(11)));
+        }
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::extract::extract_file;
@@ -641,6 +993,43 @@ mod tests {
 
     fn y(path: &str, src: &str) -> FileFacts {
         extract_file(Lang::Yaml, path, src.as_bytes())
+    }
+
+    #[test]
+    fn safe_load_builds_python_values() {
+        use super::{safe_load, PyValue};
+        let s = |x: &str| PyValue::Str(x.into());
+        let i = |x: &str| PyValue::Int(x.into());
+        assert_eq!(
+            safe_load("a: 0x1F\nb: 017\nc: 1:30\nd: 999999999999999999999999\ne: -0b101\n"),
+            Ok(PyValue::Dict(vec![
+                (s("a"), i("31")),
+                (s("b"), i("15")),
+                (s("c"), i("90")),
+                (s("d"), i("999999999999999999999999")),
+                (s("e"), i("-5")),
+            ]))
+        );
+        // `1`, `1.0` and `true` are one key: first position, last value.
+        assert_eq!(
+            safe_load("1: a\n1.0: b\ntrue: c\n"),
+            Ok(PyValue::Dict(vec![(i("1"), s("c"))]))
+        );
+        assert_eq!(
+            safe_load("t: 2026-1-2T03:04:05.5Z\nd: 2026-01-02\n"),
+            Ok(PyValue::Dict(vec![
+                (
+                    s("t"),
+                    PyValue::Text("2026-01-02 03:04:05.500000+00:00".into())
+                ),
+                (s("d"), PyValue::Text("2026-01-02".into())),
+            ]))
+        );
+        assert_eq!(safe_load(""), Ok(PyValue::None));
+        assert_eq!(safe_load("x: !Ref y\n"), Err(()));
+        assert_eq!(safe_load("a: 1\n---\nb: 2\n"), Err(()));
+        assert_eq!(PyValue::Bool(true).py_str(), "True");
+        assert_eq!(PyValue::Float(1e16).py_str(), "1e+16");
     }
 
     #[test]

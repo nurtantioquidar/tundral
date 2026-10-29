@@ -50,7 +50,7 @@
    }
   ],
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -59,7 +59,7 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": "jobqueue",
    "source_file": "src/app/service.py",
@@ -70,7 +70,7 @@
    "label": "slugify()",
    "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 2,
    "file_type": "code",
    "norm_label": "slugify()",
    "source_file": "src/app/util.py",
@@ -81,7 +81,7 @@
    "label": ".__init__()",
    "_callable": true,
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": ".__init__()",
    "source_file": "src/app/service.py",
@@ -92,7 +92,7 @@
    "label": ".push()",
    "_callable": true,
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": ".push()",
    "source_file": "src/app/service.py",
@@ -103,17 +103,77 @@
    "label": "run_job()",
    "_callable": true,
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "code",
    "norm_label": "run_job()",
    "source_file": "src/app/service.py",
    "source_location": "L17"
   },
   {
+   "id": "config_queue",
+   "label": "queue.yaml",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "queue.yaml",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1"
+  },
+  {
+   "id": "config_queue_cache",
+   "label": "cache",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "cache",
+   "source_file": "config/queue.yaml",
+   "source_location": "L4"
+  },
+  {
+   "id": "config_queue_cache_policy",
+   "label": "policy",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "policy",
+   "source_file": "config/queue.yaml",
+   "source_location": "L5"
+  },
+  {
+   "id": "config_queue_queue",
+   "label": "queue",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "queue",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1"
+  },
+  {
+   "id": "config_queue_queue_max_items",
+   "label": "max_items",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "max_items",
+   "source_file": "config/queue.yaml",
+   "source_location": "L3"
+  },
+  {
+   "id": "config_queue_queue_name",
+   "label": "name",
+   "_origin": "ast",
+   "community": 1,
+   "file_type": "code",
+   "norm_label": "name",
+   "source_file": "config/queue.yaml",
+   "source_location": "L2"
+  },
+  {
    "id": "src_app_service",
    "label": "service.py",
    "_origin": "ast",
-   "community": 1,
+   "community": 2,
    "file_type": "code",
    "norm_label": "service.py",
    "source_file": "src/app/service.py",
@@ -123,7 +183,7 @@
    "id": "src_app_util",
    "label": "util.py",
    "_origin": "ast",
-   "community": 1,
+   "community": 2,
    "file_type": "code",
    "norm_label": "util.py",
    "source_file": "src/app/util.py",
@@ -133,7 +193,7 @@
    "id": "src_app_service_rationale_1",
    "label": "Job service: queue jobs and run them.",
    "_origin": "ast",
-   "community": 1,
+   "community": 2,
    "file_type": "rationale",
    "norm_label": "job service: queue jobs and run them.",
    "source_file": "src/app/service.py",
@@ -143,7 +203,7 @@
    "id": "src_app_service_rationale_7",
    "label": "In-memory queue of pending jobs.",
    "_origin": "ast",
-   "community": 2,
+   "community": 3,
    "file_type": "rationale",
    "norm_label": "in-memory queue of pending jobs.",
    "source_file": "src/app/service.py",
@@ -153,7 +213,7 @@
    "id": "src_app_init",
    "label": "__init__.py",
    "_origin": "ast",
-   "community": 8,
+   "community": 9,
    "file_type": "code",
    "norm_label": "__init__.py",
    "source_file": "src/app/__init__.py",
@@ -162,6 +222,7 @@
   {
    "id": "docs_glossary_term_job",
    "label": "job",
+   "_origin": "semantic",
    "community": 0,
    "file_type": "concept",
    "norm_label": "job",
@@ -170,6 +231,7 @@
   {
    "id": "readme_slugify",
    "label": "slugify()",
+   "_origin": "semantic",
    "community": 0,
    "file_type": "concept",
    "norm_label": "slugify()",
@@ -178,6 +240,7 @@
   {
    "id": "Docs Guide/Operator Guide!",
    "label": "Operator Guide",
+   "_origin": "semantic",
    "community": 0,
    "file_type": "document",
    "norm_label": "operator guide",
@@ -186,14 +249,35 @@
   {
    "id": "readme_job_service",
    "label": "Job Service",
+   "_origin": "semantic",
    "community": 0,
    "file_type": "document",
    "norm_label": "job service",
    "source_file": "README.md"
   },
   {
+   "id": "img",
+   "label": "diagram",
+   "_origin": "semantic",
+   "community": 0,
+   "file_type": "image",
+   "norm_label": "diagram",
+   "source_file": "images/architecture.png"
+  },
+  {
+   "id": "paper",
+   "label": "paper",
+   "_origin": "semantic",
+   "community": 0,
+   "file_type": "paper",
+   "norm_label": "paper",
+   "source_file": "papers/write_through.pdf",
+   "source_location": "p1"
+  },
+  {
    "id": "why_wt",
    "label": "why write-through",
+   "_origin": "semantic",
    "community": 0,
    "file_type": "rationale",
    "norm_label": "why write-through",
@@ -202,47 +286,17 @@
   {
    "id": "dup_node",
    "label": "first",
-   "community": 1,
+   "_origin": "semantic",
+   "community": 2,
    "file_type": "concept",
    "norm_label": "first",
    "source_file": "README.md",
    "source_location": "L1"
   },
   {
-   "id": "config_queue_cfg",
-   "label": "queue config",
-   "community": 3,
-   "file_type": "concept",
-   "norm_label": "queue config",
-   "source_file": "config/queue.yaml"
-  },
-  {
-   "id": "floating",
-   "label": "floating concept",
-   "community": 3,
-   "file_type": "concept",
-   "norm_label": "floating concept"
-  },
-  {
-   "id": "img",
-   "label": "diagram",
-   "community": 3,
-   "file_type": "image",
-   "norm_label": "diagram",
-   "source_file": "images/architecture.png"
-  },
-  {
-   "id": "paper",
-   "label": "paper",
-   "community": 3,
-   "file_type": "paper",
-   "norm_label": "paper",
-   "source_file": "papers/write_through.pdf",
-   "source_location": "p1"
-  },
-  {
    "id": "code_typed",
    "label": "code typed",
+   "_origin": "semantic",
    "community": 4,
    "file_type": "code",
    "norm_label": "code typed",
@@ -251,6 +305,7 @@
   },
   {
    "id": "no_label",
+   "_origin": "semantic",
    "community": 4,
    "file_type": "concept",
    "norm_label": "",
@@ -259,6 +314,7 @@
   {
    "id": "with_extra",
    "label": "extra keys",
+   "_origin": "semantic",
    "community": 5,
    "confidence": "INFERRED",
    "file_type": "concept",
@@ -269,6 +325,7 @@
   {
    "id": "readme",
    "label": "readme id",
+   "_origin": "semantic",
    "community": 5,
    "file_type": "concept",
    "norm_label": "readme id",
@@ -277,6 +334,7 @@
   {
    "id": "conv",
    "label": "runbook",
+   "_origin": "semantic",
    "community": 6,
    "file_type": "document",
    "norm_label": "runbook",
@@ -285,10 +343,19 @@
   {
    "id": "dot_readme",
    "label": "dot readme",
+   "_origin": "semantic",
    "community": 7,
    "file_type": "concept",
    "norm_label": "dot readme",
    "source_file": "./README.md"
+  },
+  {
+   "id": "floating",
+   "label": "floating concept",
+   "_origin": "semantic",
+   "community": 8,
+   "file_type": "concept",
+   "norm_label": "floating concept"
   }
  ],
  "links": [
@@ -337,6 +404,61 @@
    "confidence_score": 1.0,
    "context": "import",
    "source_file": "src/app/service.py",
+   "source_location": "L3",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue",
+   "target": "config_queue_queue",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
+   "source_location": "L1",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue",
+   "target": "config_queue_cache",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue_cache",
+   "target": "config_queue_cache_policy",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue_queue",
+   "target": "config_queue_queue_name",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue_queue",
+   "target": "config_queue_queue_max_items",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
    "source_location": "L3",
    "weight": 1.0
   },
@@ -433,6 +555,7 @@
    "source": "img",
    "target": "paper",
    "relation": "conceptually_related_to",
+   "_origin": "semantic",
    "confidence": "AMBIGUOUS",
    "confidence_score": 0.2,
    "source_file": "images/architecture.png"
@@ -441,6 +564,7 @@
    "source": "paper",
    "target": "why_wt",
    "relation": "cites",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "papers/write_through.pdf",
@@ -450,6 +574,7 @@
    "source": "why_wt",
    "target": "readme_job_service",
    "relation": "rationale_for",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "README.md"
@@ -458,6 +583,7 @@
    "source": "Docs Guide/Operator Guide!",
    "target": "readme_job_service",
    "relation": "references",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "docs/guide.md"
@@ -466,6 +592,7 @@
    "source": "code_typed",
    "target": "no_label",
    "relation": "references",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "README.md"
@@ -474,6 +601,7 @@
    "source": "readme_job_service",
    "target": "src_app_service_run_job",
    "relation": "references",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "README.md",
@@ -484,6 +612,7 @@
    "source": "readme_job_service",
    "target": "readme_job_service",
    "relation": "references",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "README.md"
@@ -492,21 +621,16 @@
    "source": "with_extra",
    "target": "readme",
    "relation": "references",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "README.md"
   },
   {
-   "source": "config_queue_cfg",
-   "target": "paper",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "config/queue.yaml"
-  },
-  {
    "source": "readme_job_service",
    "target": "src_app_util_slugify",
    "relation": "mentions",
+   "_origin": "semantic",
    "confidence": "INFERRED",
    "confidence_score": 0.55,
    "source_file": "README.md"
@@ -515,6 +639,7 @@
    "source": "dup_node",
    "target": "src_app_util",
    "relation": "references",
+   "_origin": "semantic",
    "confidence": "INFERRED",
    "confidence_score": 0.6,
    "context": "probe",
@@ -525,6 +650,7 @@
    "source": "readme_job_service",
    "target": "docs_glossary_term_job",
    "relation": "semantically_similar_to",
+   "_origin": "semantic",
    "confidence": "INFERRED",
    "confidence_score": 0.7,
    "source_file": "README.md"
@@ -533,16 +659,10 @@
    "source": "readme_slugify",
    "target": "docs_glossary_term_job",
    "relation": "conceptually_related_to",
-   "confidence": "maybe",
+   "_origin": "semantic",
+   "confidence": "INFERRED",
    "confidence_score": 1.0,
    "source_file": "README.md"
-  },
-  {
-   "source": "config_queue_cfg",
-   "target": "floating",
-   "relation": "shares_data_with",
-   "confidence_score": 1.0,
-   "source_file": "config/queue.yaml"
   }
  ],
  "hyperedges": [

@@ -1,6 +1,54 @@
 {
  "nodes": [
   {
+   "id": "config_queue",
+   "label": "queue.yaml",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_queue",
+   "label": "queue",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_queue_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_queue_max_items",
+   "label": "max_items",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_cache",
+   "label": "cache",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_cache_policy",
+   "label": "policy",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
    "id": "src_app_init",
    "label": "__init__.py",
    "file_type": "code",
@@ -96,7 +144,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "readme_run_job",
@@ -108,7 +157,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "readme_jobqueue",
@@ -120,7 +170,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "readme_slugify",
@@ -132,7 +183,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "readme_cache",
@@ -144,19 +196,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": "Write-through caching was adopted because lazy invalidation caused stale reads. Retain it and revisit the decision if write latency exceeds 2 seconds."
-  },
-  {
-   "id": "config_queue",
-   "label": "Queue configuration: jobs, maximum 1000 items, write-through cache",
-   "file_type": "document",
-   "source_file": "config/queue.yaml",
-   "source_location": null,
-   "source_url": null,
-   "captured_at": null,
-   "author": null,
-   "contributor": null,
-   "rationale": null
+   "rationale": "Write-through caching was adopted because lazy invalidation caused stale reads. Retain it and revisit the decision if write latency exceeds 2 seconds.",
+   "_origin": "semantic"
   },
   {
    "id": "docs_glossary",
@@ -168,7 +209,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "docs_glossary_job",
@@ -180,7 +222,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "docs_glossary_slug",
@@ -192,7 +235,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "docs_guide",
@@ -204,7 +248,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "docs_guide_jobqueue_push",
@@ -216,7 +261,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "graphify_out_converted_capacity_e7fd8f6a",
@@ -228,7 +274,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "graphify_out_converted_runbook_b3207a85",
@@ -240,7 +287,8 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "papers_write_through",
@@ -252,7 +300,8 @@
    "captured_at": null,
    "author": "A. Example, B. Sample",
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "papers_write_through_smith_wong_2019",
@@ -264,7 +313,8 @@
    "captured_at": null,
    "author": "J. Smith, L. Wong",
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   },
   {
    "id": "images_architecture",
@@ -276,10 +326,61 @@
    "captured_at": null,
    "author": null,
    "contributor": null,
-   "rationale": null
+   "rationale": null,
+   "_origin": "semantic"
   }
  ],
  "edges": [
+  {
+   "source": "config_queue",
+   "target": "config_queue_queue",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_queue_queue",
+   "target": "config_queue_queue_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_queue_queue",
+   "target": "config_queue_queue_max_items",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_queue",
+   "target": "config_queue_cache",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_queue_cache",
+   "target": "config_queue_cache_policy",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
   {
    "source": "src_app_service",
    "target": "src_app_util",
@@ -415,7 +516,8 @@
    "confidence_score": 1.0,
    "source_file": "README.md",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme",
@@ -425,7 +527,8 @@
    "confidence_score": 1.0,
    "source_file": "README.md",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme",
@@ -435,7 +538,8 @@
    "confidence_score": 1.0,
    "source_file": "README.md",
    "source_location": "Caching",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme",
@@ -445,7 +549,8 @@
    "confidence_score": 1.0,
    "source_file": "README.md",
    "source_location": "Caching",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme",
@@ -455,7 +560,8 @@
    "confidence_score": 1.0,
    "source_file": "README.md",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme",
@@ -465,27 +571,8 @@
    "confidence_score": 1.0,
    "source_file": "README.md",
    "source_location": null,
-   "weight": 1.0
-  },
-  {
-   "source": "config_queue",
-   "target": "readme_jobqueue",
-   "relation": "conceptually_related_to",
-   "confidence": "INFERRED",
-   "confidence_score": 0.95,
-   "source_file": "config/queue.yaml",
-   "source_location": "queue",
-   "weight": 1.0
-  },
-  {
-   "source": "config_queue",
-   "target": "readme_cache",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "config/queue.yaml",
-   "source_location": "cache.policy",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_glossary",
@@ -495,7 +582,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/glossary.txt",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_glossary",
@@ -505,7 +593,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/glossary.txt",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_glossary",
@@ -515,7 +604,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/glossary.txt",
    "source_location": "write-through definition",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_glossary_job",
@@ -525,7 +615,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/glossary.txt",
    "source_location": "job definition",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_glossary_slug",
@@ -535,7 +626,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/glossary.txt",
    "source_location": "slug definition",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_guide",
@@ -545,7 +637,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/guide.md",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_guide",
@@ -555,7 +648,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/guide.md",
    "source_location": "Running jobs",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_guide",
@@ -565,7 +659,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/guide.md",
    "source_location": "Running jobs",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "docs_guide_jobqueue_push",
@@ -575,7 +670,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/guide.md",
    "source_location": "Running jobs",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme_run_job",
@@ -585,7 +681,8 @@
    "confidence_score": 1.0,
    "source_file": "docs/guide.md",
    "source_location": "Running jobs",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "graphify_out_converted_capacity_e7fd8f6a",
@@ -595,7 +692,8 @@
    "confidence_score": 1.0,
    "source_file": "graphify-out/converted/capacity_e7fd8f6a.md",
    "source_location": "Capacity table",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "graphify_out_converted_capacity_e7fd8f6a",
@@ -605,7 +703,8 @@
    "confidence_score": 1.0,
    "source_file": "graphify-out/converted/capacity_e7fd8f6a.md",
    "source_location": "Capacity table",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "graphify_out_converted_runbook_b3207a85",
@@ -615,7 +714,8 @@
    "confidence_score": 1.0,
    "source_file": "graphify-out/converted/runbook_b3207a85.md",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "graphify_out_converted_runbook_b3207a85",
@@ -625,7 +725,8 @@
    "confidence_score": 1.0,
    "source_file": "graphify-out/converted/runbook_b3207a85.md",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "graphify_out_converted_runbook_b3207a85",
@@ -635,7 +736,8 @@
    "confidence_score": 1.0,
    "source_file": "graphify-out/converted/runbook_b3207a85.md",
    "source_location": "Escalation",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "papers_write_through",
@@ -645,7 +747,8 @@
    "confidence_score": 1.0,
    "source_file": "papers/write_through.pdf",
    "source_location": "Abstract",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "papers_write_through",
@@ -655,7 +758,8 @@
    "confidence_score": 0.95,
    "source_file": "papers/write_through.pdf",
    "source_location": "Abstract",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "papers_write_through",
@@ -665,7 +769,8 @@
    "confidence_score": 1.0,
    "source_file": "papers/write_through.pdf",
    "source_location": "Abstract",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "papers_write_through",
@@ -675,7 +780,8 @@
    "confidence_score": 1.0,
    "source_file": "papers/write_through.pdf",
    "source_location": "References [1]",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "images_architecture",
@@ -685,7 +791,8 @@
    "confidence_score": 1.0,
    "source_file": "images/architecture.png",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "images_architecture",
@@ -695,7 +802,8 @@
    "confidence_score": 1.0,
    "source_file": "images/architecture.png",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "images_architecture",
@@ -705,7 +813,8 @@
    "confidence_score": 1.0,
    "source_file": "images/architecture.png",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "images_architecture",
@@ -715,7 +824,8 @@
    "confidence_score": 1.0,
    "source_file": "images/architecture.png",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "images_architecture",
@@ -725,7 +835,8 @@
    "confidence_score": 1.0,
    "source_file": "images/architecture.png",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme_run_job",
@@ -735,7 +846,8 @@
    "confidence_score": 0.7,
    "source_file": "images/architecture.png",
    "source_location": "downward arrow from run_job to slugify",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme_slugify",
@@ -745,7 +857,8 @@
    "confidence_score": 1.0,
    "source_file": "images/architecture.png",
    "source_location": "slugify \u2192 Cache",
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   }
  ],
  "hyperedges": [

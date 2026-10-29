@@ -1,9 +1,9 @@
 {
  "cache_dirs": [
-  "semantic/p5e80268fecd6"
+  "semantic/p58e6ae4bea3f"
  ],
  "deep_cache_dirs": [
-  "semantic-deep/pd68e17f4cee0"
+  "semantic-deep/pa58267e92d11"
  ],
  "entries": {
   "README.md": {
@@ -41,6 +41,10 @@
   }
  },
  "manifest_md5": {
+  "config/queue.yaml": {
+   "ast_hash": "032f607f9c65cc287c34ab5ff6aff70f",
+   "semantic_hash": "032f607f9c65cc287c34ab5ff6aff70f"
+  },
   "src/app/__init__.py": {
    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
@@ -56,10 +60,6 @@
   "README.md": {
    "ast_hash": "cb6ac961dc55e355390268f23b6ca83b",
    "semantic_hash": "cb6ac961dc55e355390268f23b6ca83b"
-  },
-  "config/queue.yaml": {
-   "ast_hash": "032f607f9c65cc287c34ab5ff6aff70f",
-   "semantic_hash": "032f607f9c65cc287c34ab5ff6aff70f"
   },
   "docs/glossary.txt": {
    "ast_hash": "c85796feb67307b59107c5448ed66741",

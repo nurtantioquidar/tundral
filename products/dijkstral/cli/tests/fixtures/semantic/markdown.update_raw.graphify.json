@@ -272,7 +272,11 @@
    "frontmatter": {
     "title": "Markdown Probe",
     "owner": "docs team",
-    "version": "2",
+    "version": 2,
+    "empty": null,
+    "list": [
+     "one"
+    ],
     "html": "&lt;b&gt;&amp;&quot;&#x27;&lt;/b&gt;",
     "dup": "second"
    },
@@ -280,7 +284,7 @@
   },
   {
    "id": "readme_markdown_probe",
-   "label": "Markdown Probe ##",
+   "label": "Markdown Probe",
    "file_type": "document",
    "node_kind": "heading",
    "source_file": "README.md",
@@ -306,15 +310,6 @@
    "_origin": "ast"
   },
   {
-   "id": "readme_tilde_fenced_heading",
-   "label": "Tilde fenced heading",
-   "file_type": "document",
-   "node_kind": "heading",
-   "source_file": "README.md",
-   "source_location": "L32",
-   "_origin": "ast"
-  },
-  {
    "id": "readme_setup_35",
    "label": "Setup",
    "file_type": "document",
@@ -330,6 +325,15 @@
    "node_kind": "heading",
    "source_file": "README.md",
    "source_location": "L38",
+   "_origin": "ast"
+  },
+  {
+   "id": "readme_indented_three_spaces",
+   "label": "Indented three spaces",
+   "file_type": "document",
+   "node_kind": "heading",
+   "source_file": "README.md",
+   "source_location": "L46",
    "_origin": "ast"
   },
   {
@@ -1089,16 +1093,6 @@
   },
   {
    "source": "readme_markdown_probe",
-   "target": "readme_tilde_fenced_heading",
-   "relation": "contains",
-   "confidence": "EXTRACTED",
-   "source_file": "README.md",
-   "source_location": "L32",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "readme_markdown_probe",
    "target": "readme_setup_35",
    "relation": "contains",
    "confidence": "EXTRACTED",
@@ -1119,6 +1113,16 @@
   },
   {
    "source": "readme_comment_heading",
+   "target": "readme_indented_three_spaces",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "README.md",
+   "source_location": "L46",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "readme_indented_three_spaces",
    "target": "readme_deep_link_http_example_com_heading",
    "relation": "contains",
    "confidence": "EXTRACTED",
@@ -1528,30 +1532,6 @@
    "_origin": "ast"
   },
   {
-   "source": "readme",
-   "target": "a_run",
-   "relation": "references",
-   "context": "run",
-   "confidence": "INFERRED",
-   "confidence_score": 0.95,
-   "source_file": "README.md",
-   "source_location": "L13",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "readme",
-   "target": "a_alpha",
-   "relation": "references",
-   "context": "Alpha",
-   "confidence": "INFERRED",
-   "confidence_score": 0.95,
-   "source_file": "README.md",
-   "source_location": "L13",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
    "source": "readme_setup",
    "target": "a_run",
    "relation": "references",
@@ -1576,30 +1556,6 @@
    "_origin": "ast"
   },
   {
-   "source": "readme_install_pip",
-   "target": "web_c_gamma",
-   "relation": "references",
-   "context": "Gamma",
-   "confidence": "INFERRED",
-   "confidence_score": 0.95,
-   "source_file": "README.md",
-   "source_location": "L31",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "docs_guide_api",
-   "target": "web_c_tsfn",
-   "relation": "references",
-   "context": "tsFn",
-   "confidence": "INFERRED",
-   "confidence_score": 0.95,
-   "source_file": "docs/guide.md",
-   "source_location": "L10",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
    "source": "docs_guide_api",
    "target": "web_c_gamma_area",
    "relation": "references",
@@ -1608,18 +1564,6 @@
    "confidence_score": 0.95,
    "source_file": "docs/guide.md",
    "source_location": "L10",
-   "weight": 1.0,
-   "_origin": "ast"
-  },
-  {
-   "source": "docs_refs_unique_function",
-   "target": "a_run",
-   "relation": "references",
-   "context": "run",
-   "confidence": "INFERRED",
-   "confidence_score": 0.95,
-   "source_file": "docs/refs.md",
-   "source_location": "L4",
    "weight": 1.0,
    "_origin": "ast"
   },
@@ -1668,6 +1612,54 @@
    "confidence_score": 0.95,
    "source_file": "docs/refs.md",
    "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "readme",
+   "target": "a_run",
+   "relation": "references",
+   "context": "run",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "README.md",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "readme",
+   "target": "a_alpha",
+   "relation": "references",
+   "context": "Alpha",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "README.md",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "docs_guide_api",
+   "target": "web_c_tsfn",
+   "relation": "references",
+   "context": "tsFn",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "docs/guide.md",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "docs_refs_unique_function",
+   "target": "a_run",
+   "relation": "references",
+   "context": "run",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "docs/refs.md",
+   "source_location": "L4",
    "weight": 1.0,
    "_origin": "ast"
   },

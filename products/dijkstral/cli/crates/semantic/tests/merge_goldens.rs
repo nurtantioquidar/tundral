@@ -53,10 +53,9 @@ fn copy_dir(from: &Path, to: &Path) {
     }
 }
 
-/// The eight files Graphify dispatched for `mixed/` (office files as their conversions).
+/// The seven files Graphify dispatched for `mixed/` (office files as their conversions).
 const DISPATCHED: &[&str] = &[
     "README.md",
-    "config/queue.yaml",
     "docs/glossary.txt",
     "docs/guide.md",
     "graphify-out/converted/capacity_e7fd8f6a.md",
@@ -98,7 +97,7 @@ impl Documents for Replay {
                     .then(|| fs::read_to_string(root.join(rel)).ok())
                     .flatten()
                     .or_else(|| {
-                        (rel.ends_with(".txt") || rel.ends_with(".yaml"))
+                        rel.ends_with(".txt")
                             .then(|| fs::read_to_string(root.join(rel)).unwrap())
                     });
                 Dispatched::new(*rel, text)
@@ -156,7 +155,7 @@ fn transcript_reply(file: &str) -> (MergeInput, (u64, u64)) {
     let text = t["response"]["text"].as_str().unwrap();
     let usage = &t["response"]["usage"];
     (
-        MergeInput::parse(text, false).unwrap(),
+        MergeInput::parse(text).unwrap(),
         (
             usage["input_tokens"].as_u64().unwrap(),
             usage["output_tokens"].as_u64().unwrap(),
@@ -297,7 +296,6 @@ fn deep_reply_matches_graphify_deep_extract() {
 fn assert_probe(name: &str, allowed: &[&str]) {
     let reply = MergeInput::parse(
         &fs::read_to_string(fixtures().join(format!("{name}.reply.json"))).unwrap(),
-        false,
     )
     .unwrap();
     let ours = build_with_reply(reply, (0, 0));

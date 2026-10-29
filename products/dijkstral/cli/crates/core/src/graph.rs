@@ -17,7 +17,7 @@ use crate::facts::{Attr, Confidence, Edge, Loc, Node, NodeKind};
 
 pub const SCHEMA_VERSION: u32 = 1;
 /// The Graphify version whose output format this crate reproduces.
-pub const COMPAT_VERSION: &str = "0.9.86";
+pub const COMPAT_VERSION: &str = "0.9.97";
 
 #[derive(Debug, Default)]
 pub struct Graph {
@@ -1082,7 +1082,7 @@ mod tests {
         let g = Graph::assemble(vec![n, node("a")], vec![edge("a", "z", "calls", 1)]);
         let json = g.to_graphify_json(None, None);
         assert!(json.starts_with(
-            "{\"directed\":false,\"multigraph\":false,\"graph\":{\"schema_version\":1,\"graphify_version\":\"0.9.86\"},\"nodes\":[{\"id\":\"z\",\"label\":\"\\u00dcber\",\"_origin\":\"ast\""
+            "{\"directed\":false,\"multigraph\":false,\"graph\":{\"schema_version\":1,\"graphify_version\":\"0.9.97\"},\"nodes\":[{\"id\":\"z\",\"label\":\"\\u00dcber\",\"_origin\":\"ast\""
         ));
         assert!(json.contains("\"norm_label\":\"uber\""));
         assert!(json.contains("{\"source\":\"a\",\"target\":\"z\",\"relation\":\"calls\",\"confidence\":\"EXTRACTED\",\"confidence_score\":1.0,"));

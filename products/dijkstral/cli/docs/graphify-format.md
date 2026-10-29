@@ -152,12 +152,13 @@ How to compare against the goldens:
 **Rule.** The clustered shape is NetworkX node-link data and is the compatibility contract:
 
 ```json
-{"directed":false,"multigraph":false,"graph":{"schema_version":1,"graphify_version":"0.9.86"},
+{"directed":false,"multigraph":false,"graph":{"schema_version":1,"graphify_version":"0.9.97"},
  "nodes":[...],"links":[...],"hyperedges":[],"built_at_commit":"e89fff89ac9af12e8d4ce9d5fd07beb408ca730f"}
 ```
 
 - `directed` is `false`, `multigraph` is `false`, and `graph` is exactly
-  `{"schema_version":1,"graphify_version":"0.9.86"}`.
+  `{"schema_version":1,"graphify_version":"0.9.97"}` (the release; dijkstral writes the release it
+  reproduces).
 - `hyperedges` is always `[]` in code-only builds.
 - `built_at_commit` is present **only** when the scan root is inside a git work tree with at least
   one commit. Its value is `git rev-parse HEAD` of the enclosing repository, even when the scan root
