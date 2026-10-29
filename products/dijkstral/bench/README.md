@@ -11,9 +11,9 @@ outside the source tree under `$DIJKSTRAL_BENCH_HOME` (default `~/.cache/dijkstr
 | File | Purpose |
 |---|---|
 | `corpus.toml` | Pinned corpus: repo, commit, size tier, languages, the file the `update` scenario edits |
-| `setup.sh` | Installs pinned Graphify (`graphifyy[leiden,mcp]`, Python 3.13 so Leiden uses graspologic-native) into an isolated venv and fetches each repo at its pinned commit |
+| `setup.sh` | Installs pinned Graphify (`graphifyy[leiden,mcp]`, Python 3.13 so Leiden uses graspologic-native) into an isolated venv and fetches each repo at its pinned commit; `GRAPHIFY_VERSION=<version>` installs another release beside the pin (with the `sql` extra from 0.9.97) |
 | `run.py` | Build benchmark: cold / warm / one-file update, wall, CPU, process-tree peak RSS, node and edge counts → `results/build-<epoch>.json`; `report` prints the markdown table. Tools: `graphify`, `graphify-nocluster`, `dijkstral` |
-| `reference.sh` | Freezes Graphify's cold `extract --code-only` graph per repo as `$DIJKSTRAL_BENCH_HOME/reference/<repo>.graph.json` |
+| `reference.sh` | Freezes Graphify's cold `extract --code-only` graph per repo as `$DIJKSTRAL_BENCH_HOME/reference/<repo>.graph.json` (another `GRAPHIFY_VERSION`: `reference-<version>/<repo>.graph.json`) |
 | `parity.py` | Compares two `graph.json` files as sets: nodes by kind, links by relation, field agreement, samples of each difference; for clustered graphs, community agreement (same id, NMI, ARI) and array order |
 | `accuracy/` | Stage-2 SCIP oracle: precision and recall of both tools' graphs against compiler-grade indexes ([accuracy/README.md](accuracy/README.md)) |
 | `query.py` | Stage-3 query benchmark: `latency` (fresh process per call, p50/p95, peak RSS; Graphify on its reference graph, dijkstral on its own `graph.dij` and on Graphify's `graph.json`) → `results/query-<epoch>.json`; `parity` (both tools on Graphify's reference graph, seeds, NODE lists, EDGE sets and full output compared) → `results/query-parity-<epoch>.json`; `mcp` (MCP servers over stdio: spawn → `tools/list`, first and warm `query_graph` calls, peak RSS) → `results/mcp-<epoch>.json`; `report` prints the tables |
@@ -75,7 +75,10 @@ uv run --no-project python -m unittest discover -s bench/agent -p 'test_*.py'
 
 Every command takes `--arms`, `--limit N`, `--ids a,b`, `--jobs N` (default 2), `--model`
 (default `gpt-6.1-sol`), `--effort` (default `medium`), `--timeout` (seconds per Codex call,
-default 900) and `--retries` (default 2).
+default 900) and `--retries` (default 2). `GRAPHIFY_VERSION=<version>` (installed by `setup.sh`
+under the same variable) runs the `graphify` arm on another Graphify release: its workspace,
+manifest, sessions and build state are stored as `graphify-<version>`, apart from the pin's, and
+the report header names the version.
 
 **Workspaces.** `prepare` copies the corpus (`/bin/cp -cR`, an APFS clone; the tools' own
 `graphify-out/` and `dijkstral-out/` are dropped, the checkouts are never written) to
@@ -163,7 +166,9 @@ breakdown and the build table to `results/agent-<epoch>.md` and `.json` (no answ
 
 - **Pins**: Graphify `graphifyy==0.9.86` (git `a5ba60dd`, Python 3.13, graspologic-native Leiden).
   Corpus commits are in `corpus.toml`. Record the dijkstral commit and binary sha256 with every
-  dijkstral row.
+  dijkstral row. `GRAPHIFY_VERSION=<version>` points `setup.sh`, `reference.sh`, `run.py`,
+  `hook.py` and `agent/run.py` at another Graphify release; the pin stays 0.9.86 because
+  dijkstral's format spec follows it ([the 0.9.97 re-check](#graphify-0997-re-check--2026-10-29)).
 - **Commands compared**:
 
   | Scenario | Graphify | Dijkstral |
@@ -1079,3 +1084,126 @@ shipped lexical order (`782cbbb`):
 About $0.0005 and 1.5–2 s per question. Not run as an agent benchmark: Codex's read-only sandbox
 blocks the network the reranker needs (as it would for Codex users), and a 3-point coverage gain
 needs more runs than three to show. Not shipped; a candidate for the hosted product.
+
+### Graphify 0.9.97 re-check — 2026-10-29
+
+Graphify `graphifyy[leiden,mcp,sql]==0.9.97` beside the 0.9.86 pin on all 19 corpus repos, no
+model calls. Both sets of references were frozen the same day; the refrozen 0.9.86 references
+reproduce the node and edge counts of the 2026-10-12 baseline. dijkstral at `05b387a` (release
+build). Apple M4 Pro, 12 cores, 24 GB (not the M5 of the earlier sections), 12 workers and
+threads, 3 runs per scenario (Kubernetes 1), with another agent session open on the machine. Raw:
+`results/build-1793245487.json`, `results/build-1793246352.json` (Kubernetes).
+
+**What changed in Graphify.** `parity.py` of the 0.9.97 reference against the 0.9.86 one, recall /
+precision %, without `.yaml` and `.yml` files:
+
+| repo | 0.9.86 nodes | 0.9.97 nodes | of them YAML | without YAML: nodes | links |
+|---|---:|---:|---:|---|---|
+| monet | 3,454 | 3,374 | 0 | 96.8 / 99.1 | 96.2 / 96.2 |
+| graphify | 16,790 | 16,988 | 172 | 99.9 / 99.8 | 100.0 / 99.7 |
+| fastapi | 9,268 | 11,670 | 2,402 | 99.9 / 99.9 | 99.9 / 99.8 |
+| ripgrep | 4,232 | 4,271 | 130 | 96.7 / 98.8 | 95.1 / 95.0 |
+| excalidraw | 4,990 | 5,139 | 227 | 98.3 / 99.9 | 97.6 / 99.2 |
+| erpnext | 24,633 | 25,443 | 791 | 99.9 / 99.9 | 99.4 / 99.3 |
+| kubernetes | 256,424 | 436,879 | 188,804 | 93.9 / 97.0 | 95.9 / 96.1 |
+| jq | 1,203 | 1,618 | 404 | 97.2 / 96.3 | 90.4 / 89.7 |
+| fmt | 6,292 | 6,361 | 302 | 94.4 / 98.0 | 88.3 / 95.4 |
+| serilog | 1,877 | 2,277 | 31 | 100.0 / 83.6 | 95.4 / 80.5 |
+| okhttp | 12,437 | 12,589 | 184 | 99.7 / 100.0 | 99.7 / 99.8 |
+| munit | 2,080 | 2,169 | 116 | 98.7 / 100.0 | 97.6 / 99.9 |
+| alamofire | 3,615 | 3,681 | 123 | 98.3 / 99.9 | 97.5 / 98.4 |
+| guzzle | 4,217 | 4,296 | 79 | 100.0 / 100.0 | 93.8 / 75.3 |
+| sinatra | 1,343 | 1,564 | 221 | 100.0 / 100.0 | 99.5 / 100.0 |
+| dart-http | 16,922 | 17,891 | 960 | 100.0 / 99.9 | 99.1 / 99.8 |
+| ecto | 1,954 | 2,015 | 60 | 100.0 / 99.9 | 100.0 / 100.0 |
+| penlight | 905 | 946 | 41 | 100.0 / 100.0 | 100.0 / 100.0 |
+| afnetworking | 1,204 | 1,271 | 56 | 95.2 / 94.2 | 90.5 / 89.8 |
+
+- **YAML.** 0.9.97 extracts `.yaml` and `.yml` files under `--code-only`. 18 of the 19 repos have
+  some, and they are most of the growth: Kubernetes gains 188,804 YAML nodes, fastapi 2,402,
+  dart-http 960. dijkstral extracts no YAML.
+- **Per language**, read from the differing samples:
+  - Go (Kubernetes): about 15.7k of 0.9.86's nodes are gone and 7.4k new definitions appear;
+    method ids and the targets of type references and embeds change, moving about 56k links each
+    way.
+  - C# (serilog): overloaded methods get separate ids (a hash suffix), and interface methods link
+    to their implementations (`dispatches_to`): +369 nodes, +1,177 links.
+  - PHP (guzzle): +2,976 calls between methods of the same class, −604 calls whose target is a
+    class.
+  - C and C++: fmt loses 1,414 references to header-qualified type ids; jq's references move
+    about 500 each way.
+  - Objective-C (AFNetworking): category ids no longer embed the checkout's absolute path (quirk
+    OC1, `cli/docs/graphify-format.md` §34; 51 nodes), which dijkstral never reproduced, so
+    dijkstral agrees better with 0.9.97 there.
+  - Fewer source-less stub nodes: fmt −336, ripgrep −106, monet −92, excalidraw −74.
+  - SQL: the `sql` extra gives the graphify repo's seven `.sql` files 34 nodes, which dijkstral
+    already matches (§45).
+  - Unchanged or nearly: Lua (Penlight), Elixir (ecto, one node), Ruby (sinatra, 10 links).
+
+**dijkstral's parity**, `extract --code-only` against each reference, recall / precision %:
+
+| repo | vs 0.9.86: nodes | links | vs 0.9.97: nodes | links | vs 0.9.97 without YAML: nodes | links |
+|---|---|---|---|---|---|---|
+| monet | 98.2 / 99.3 | 97.2 / 88.7 | 98.4 / 97.2 | 95.9 / 87.5 | 98.4 / 97.2 | 95.9 / 87.5 |
+| graphify | 99.9 / 99.2 | 99.0 / 95.8 | 98.9 / 99.4 | 98.3 / 95.9 | 99.9 / 99.4 | 98.8 / 95.9 |
+| fastapi | 98.7 / 97.9 | 93.8 / 94.0 | 78.3 / 97.8 | 83.6 / 93.9 | 98.6 / 97.8 | 93.6 / 93.9 |
+| ripgrep | 97.3 / 99.2 | 94.9 / 77.3 | 93.8 / 96.5 | 90.4 / 75.0 | 96.7 / 96.5 | 92.0 / 75.0 |
+| excalidraw | 98.2 / 99.9 | 97.3 / 99.5 | 95.3 / 99.8 | 97.7 / 99.5 | 99.7 / 99.8 | 98.8 / 99.5 |
+| erpnext | 99.8 / 99.6 | 94.1 / 91.1 | 96.5 / 99.6 | 92.4 / 90.8 | 99.6 / 99.6 | 93.6 / 90.8 |
+| kubernetes | 100.0 / 100.0 | 99.9 / 94.9 | 55.1 / 93.9 | 84.1 / 91.4 | 97.0 / 93.9 | 96.3 / 91.4 |
+| jq | 100.0 / 100.0 | 100.0 / 99.9 | 72.2 / 97.2 | 82.9 / 90.3 | 96.3 / 97.2 | 89.7 / 90.3 |
+| fmt | 98.0 / 98.2 | 96.3 / 95.9 | 91.6 / 92.8 | 90.2 / 85.2 | 96.2 / 92.8 | 92.4 / 85.2 |
+| serilog | 100.0 / 100.0 | 99.7 / 99.9 | 82.4 / 100.0 | 79.9 / 95.3 | 83.6 / 100.0 | 80.3 / 95.3 |
+| okhttp | 99.9 / 99.6 | 98.7 / 98.9 | 98.4 / 99.3 | 97.9 / 98.6 | 99.9 / 99.3 | 98.6 / 98.6 |
+| munit | 99.9 / 99.6 | 99.2 / 98.7 | 94.5 / 98.3 | 95.7 / 96.3 | 99.9 / 98.3 | 99.1 / 96.3 |
+| alamofire | 99.9 / 100.0 | 99.1 / 99.2 | 96.4 / 98.3 | 95.8 / 96.9 | 99.8 / 98.3 | 97.8 / 96.9 |
+| guzzle | 100.0 / 100.0 | 100.0 / 100.0 | 98.1 / 100.0 | 74.7 / 93.8 | 100.0 / 100.0 | 75.3 / 93.8 |
+| sinatra | 100.0 / 100.0 | 100.0 / 100.0 | 85.9 / 100.0 | 90.1 / 99.5 | 100.0 / 100.0 | 100.0 / 99.5 |
+| dart-http | 99.7 / 99.8 | 99.3 / 98.9 | 94.3 / 99.7 | 94.1 / 98.0 | 99.6 / 99.7 | 99.1 / 98.0 |
+| ecto | 100.0 / 100.0 | 100.0 / 100.0 | 97.0 / 100.0 | 98.4 / 100.0 | 99.9 / 100.0 | 100.0 / 100.0 |
+| penlight | 100.0 / 100.0 | 100.0 / 100.0 | 95.7 / 100.0 | 97.9 / 100.0 | 100.0 / 100.0 | 100.0 / 100.0 |
+| afnetworking | 95.8 / 95.7 | 92.6 / 92.6 | 94.1 / 99.3 | 94.5 / 97.9 | 98.4 / 99.4 | 97.2 / 97.9 |
+
+Against its pin, the movements since the earlier sections are known ones: link precision in monet,
+ripgrep and Kubernetes is lower from the deliberate extra calls of local type inference
+(2026-10-17); ripgrep's node recall is 97.3% against 97.9% at stage 1, all of it in stub nodes
+(definitions 100%); graphify's and serilog's recall is higher since their stage-4 languages
+landed. Against
+0.9.97, YAML is most of the gap (Kubernetes node recall
+55.1% → 97.0% without it), and the rest is the per-language drift above. Catching up with 0.9.97
+means YAML extraction plus the Go, C#, PHP and C/C++ changes, each specified from Graphify's
+output as before. Until then the spec, the goldens and the parity claims stay on 0.9.86; the `sql`
+extra is the only part taken from 0.9.97 (§45).
+
+**Build time**, median wall s, Graphify 0.9.97 / dijkstral and the speedup, with cold peak
+process-tree RSS MB:
+
+| repo | cold s | × | warm s | × | update s | × | cold RSS MB |
+|---|---|---|---|---|---|---|---|
+| monet | 2.03 / 0.14 | 14× | 1.09 / 0.04 | 30× | 1.96 / 0.10 | 19× | 819 / 61 |
+| graphify | 10.36 / 0.47 | 22× | 5.95 / 0.04 | 161× | 8.96 / 0.43 | 21× | 1,104 / 257 |
+| fastapi | 7.45 / 0.28 | 27× | 4.72 / 0.04 | 121× | 11.03 / 0.86 | 13× | 852 / 112 |
+| ripgrep | 1.63 / 0.14 | 12× | 1.05 / 0.04 | 30× | 1.08 / 0.10 | 11× | 783 / 74 |
+| excalidraw | 4.71 / 0.23 | 20× | 1.91 / 0.04 | 52× | 4.38 / 0.15 | 29× | 905 / 105 |
+| erpnext | 24.52 / 1.03 | 24× | 8.77 / 0.06 | 159× | 22.53 / 0.44 | 51× | 1,231 / 352 |
+| kubernetes | 797.6 / 9.16 | 87× | 178.6 / 0.39 | 453× | 771.3 / 6.36 | 121× | 4,388 / 2,701 |
+| jq | 1.38 / 0.11 | 12× | 0.69 / 0.04 | 19× | 0.90 / 0.21 | 4× | 774 / 58 |
+| fmt | 2.30 / 0.17 | 13× | 1.30 / 0.04 | 35× | 1.48 / 0.12 | 12× | 845 / 109 |
+| serilog | 1.46 / 0.12 | 12× | 0.93 / 0.04 | 26× | 1.03 / 0.09 | 12× | 748 / 58 |
+| okhttp | 4.72 / 0.36 | 13× | 3.93 / 0.04 | 89× | 3.96 / 0.24 | 17× | 880 / 210 |
+| munit | 1.22 / 0.14 | 8× | 0.74 / 0.04 | 20× | 0.84 / 0.08 | 11× | 736 / 37 |
+| alamofire | 2.06 / 0.16 | 13× | 1.14 / 0.04 | 31× | 2.01 / 0.15 | 13× | 850 / 111 |
+| guzzle | 2.17 / 0.17 | 13× | 1.16 / 0.03 | 34× | 1.54 / 0.12 | 13× | 889 / 121 |
+| sinatra | 0.98 / 0.09 | 10× | 0.54 / 0.03 | 16× | 0.65 / 0.08 | 9× | 736 / 44 |
+| dart-http | 16.40 / 0.31 | 53× | 3.43 / 0.04 | 90× | 3.14 / 0.20 | 16× | 812 / 213 |
+| ecto | 1.06 / 0.12 | 9× | 0.64 / 0.03 | 19× | 0.70 / 0.07 | 10× | 714 / 54 |
+| penlight | 0.83 / 0.08 | 10× | 0.45 / 0.03 | 13× | 0.53 / 0.07 | 8× | 668 / 35 |
+| afnetworking | 0.91 / 0.10 | 9× | 0.54 / 0.04 | 14× | 0.59 / 0.09 | 7× | 676 / 52 |
+
+dijkstral is faster (4× to 453×) and lower in peak memory in all 57 scenarios, but the two tools
+no longer build the same graph: Graphify's includes the YAML files (Kubernetes 436,879 nodes
+against dijkstral's 256,451), so the Kubernetes rows compare unequal work. dijkstral's `update`
+indexes markdown structurally, as Graphify's does (fastapi: 26,841 nodes after the update against
+9,342 cold), so its fastapi update costs more than its cold build. dijkstral's Kubernetes cold
+peak is 2,701 MB against 2,078 MB on 2026-10-13 (10 threads then, and before local type
+inference); this run does not separate the two causes.

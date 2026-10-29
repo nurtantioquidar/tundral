@@ -62,7 +62,10 @@ import score
 ARMS = ("none", "graphify", "dijkstral")
 MODEL = "gpt-6.1-sol"
 EFFORT = "medium"
-GRAPHIFY_VERSION = "0.9.86"
+GRAPHIFY_PIN = "0.9.86"
+# The Graphify the graphify arm runs; `GRAPHIFY_VERSION=0.9.97` compares another release (installed
+# by `bench/setup.sh` under the same variable). See `Ctx.slot`.
+GRAPHIFY_VERSION = os.environ.get("GRAPHIFY_VERSION", GRAPHIFY_PIN)
 QUOTA_EXIT = 75  # EX_TEMPFAIL: rerun the same command later to resume
 PROMPT_VERSION = "agent-prompt-v1"
 OUT_DIRS = ("graphify-out", "dijkstral-out")  # never copied from a corpus checkout
@@ -214,16 +217,24 @@ class Ctx:
     def agent(self) -> Path:
         return self.home / "agent"
 
+    def slot(self, arm: str) -> str:
+        """The arm's name in stored paths (workspace, manifest, homes, build state, sessions): a
+        graphify arm on another Graphify than the pin is `graphify-<version>`, so its graph and
+        answers never mix with the pin's; the pin keeps `graphify`, so earlier results stay valid."""
+        if arm == "graphify" and GRAPHIFY_VERSION != GRAPHIFY_PIN:
+            return f"graphify-{GRAPHIFY_VERSION}"
+        return arm
+
     def pair_dir(self, corpus_id: str, arm: str) -> Path:
         # Opaque directory name under a neutral root: the session's working directory names
         # neither the arm nor either tool (the bench home is called dijkstral-bench).
-        return ws_root() / sha("ws", corpus_id, arm, n=10)
+        return ws_root() / sha("ws", corpus_id, self.slot(arm), n=10)
 
     def workspace(self, corpus_id: str, arm: str) -> Path:
         return self.pair_dir(corpus_id, arm) / corpus_id
 
     def manifest(self, corpus_id: str, arm: str) -> Path:
-        return self.agent / "manifests" / f"{corpus_id}.{arm}.json"
+        return self.agent / "manifests" / f"{corpus_id}.{self.slot(arm)}.json"
 
     def graphify_bin(self, semantic: bool) -> Path:
         return (self.graphify_semantic_venv if semantic else self.graphify_venv) / "bin"
@@ -419,7 +430,7 @@ def session_key(ctx: Ctx, task: dict) -> str:
 
 
 def session_paths(ctx: Ctx, arm: str, task_id: str) -> dict[str, Path]:
-    d = ctx.sessions_dir / arm
+    d = ctx.sessions_dir / ctx.slot(arm)
     safe = task_id.replace("/", "_")
     return {
         "dir": d,
@@ -927,8 +938,8 @@ def print_prepare_plan(
     ctx: Ctx, corpus_id: str, src: Path, semantic: bool, arm: str, max_requests: int
 ) -> None:
     pair, ws = ctx.pair_dir(corpus_id, arm), ctx.workspace(corpus_id, arm)
-    home = ctx.agent / "homes" / f"{corpus_id}.{arm}"
-    builds = ctx.agent / "builds" / f"{corpus_id}.{arm}"
+    home = ctx.agent / "homes" / f"{corpus_id}.{ctx.slot(arm)}"
+    builds = ctx.agent / "builds" / f"{corpus_id}.{ctx.slot(arm)}"
     state = (
         "prepared (skipped without --force)"
         if ctx.manifest(corpus_id, arm).exists()
@@ -992,14 +1003,14 @@ def prepare_pair(
     a finished copy (`.copied`) is kept so the tools' own caches (semantic chunks) are reused."""
     manifest_path = ctx.manifest(corpus_id, arm)
     pair, ws = ctx.pair_dir(corpus_id, arm), ctx.workspace(corpus_id, arm)
-    home = ctx.agent / "homes" / f"{corpus_id}.{arm}"
+    home = ctx.agent / "homes" / f"{corpus_id}.{ctx.slot(arm)}"
     builds = ctx.agent / "builds"
     label = f"{corpus_id} [{arm}{', semantic' if semantic else ''}]"
     if manifest_path.exists() and not force:
         return "skipped"
     if ctx.stop.is_set():
         return "stopped"
-    state_path = builds / f"{corpus_id}.{arm}.state.json"
+    state_path = builds / f"{corpus_id}.{ctx.slot(arm)}.state.json"
     if force:
         manifest_path.unlink(missing_ok=True)
         state_path.unlink(missing_ok=True)
@@ -1041,7 +1052,9 @@ def prepare_pair(
         transcripts = calls_log = None
         if semantic and arm == "graphify":
             transcripts = (
-                builds / f"{corpus_id}.{arm}" / f"attempt-{int(time.time() * 1000)}"
+                builds
+                / f"{corpus_id}.{ctx.slot(arm)}"
+                / f"attempt-{int(time.time() * 1000)}"
             )
             port = free_port()
             transcripts.parent.mkdir(parents=True, exist_ok=True)
@@ -1065,7 +1078,7 @@ def prepare_pair(
                 }
             )
         if semantic and arm == "dijkstral":
-            calls_log = builds / f"{corpus_id}.{arm}.calls"
+            calls_log = builds / f"{corpus_id}.{ctx.slot(arm)}.calls"
             calls_log.unlink(missing_ok=True)
             Path(str(calls_log) + ".events.jsonl").unlink(missing_ok=True)
             env.update(
@@ -1088,7 +1101,7 @@ def prepare_pair(
             if shim_log is not None:
                 shim_log.close()
         wall = round(time.monotonic() - t0, 2)
-        log_path = builds / f"{corpus_id}.{arm}.build.log"
+        log_path = builds / f"{corpus_id}.{ctx.slot(arm)}.build.log"
         log_path.write_text(
             p.stdout[-20000:] + "\n--- stderr ---\n" + p.stderr[-20000:]
         )
@@ -1356,8 +1369,9 @@ def render(summary: dict, prep: list[dict]) -> str:
     out = ["## Agent outcome", ""]
     m = summary["meta"]
     out.append(
-        f"Model `{m['model']}` (reasoning effort {m['effort']}), {m['codex']}, tasks `{m['tasks_file']}`, "
-        f"{m['date']}. Pass = key facts matched (all, or `min_facts`); score = the suite's own rule (LOCOMO per "
+        f"Model `{m['model']}` (reasoning effort {m['effort']}), {m['codex']}, "
+        + (f"Graphify {m['graphify']}, " if m.get("graphify") else "")
+        + f"tasks `{m['tasks_file']}`, {m['date']}. Pass = key facts matched (all, or `min_facts`); score = the suite's own rule (LOCOMO per "
         "category, LongMemEval abstention or F1 proxy); judge = blind judge score (0–1; judge "
         f"`{m.get('judge_model', m['model'])}`, effort {m.get('judge_effort', m['effort'])}). "
         "Tokens = input (incl. cached) + output per session."
@@ -1463,6 +1477,7 @@ def report(ctx: Ctx, tasks: list[dict], arms: list[str], tasks_file: Path) -> No
             "codex": run_text([ctx.codex, "--version"]),
             "tasks_file": str(tasks_file),
             "arms": arms,
+            "graphify": GRAPHIFY_VERSION if "graphify" in arms else None,
             "prompt_version": PROMPT_VERSION,
             "judge_version": JUDGE_VERSION,
             "sessions_dir": str(ctx.sessions_dir),

@@ -13,12 +13,17 @@ only="${1:-}"
 
 mkdir -p "$bench_home/tools" "$bench_home/corpus"
 
+# From 0.9.97 the `sql` extra installs tree-sitter-sql; without it Graphify gives `.sql` files no
+# nodes, and dijkstral always extracts them (cli/docs/graphify-format.md §45.1).
+extras="leiden,mcp"
+[[ "$(printf '%s\n' 0.9.97 "$graphify_version" | sort -V | head -1)" == 0.9.97 ]] && extras+=",sql"
 tool="$bench_home/tools/graphify-$graphify_version"
-if [[ ! -x "$tool/bin/graphify" ]]; then
-  echo "installing graphifyy==$graphify_version (leiden, mcp) into $tool"
+if [[ ! -x "$tool/bin/graphify" || "$(cat "$tool/.bench-extras" 2>/dev/null)" != "$extras" ]]; then
+  echo "installing graphifyy[$extras]==$graphify_version into $tool"
   # Python 3.13 so the leiden extra uses graspologic-native, the backend Graphify prefers.
-  uv venv -q --python 3.13 "$tool"
-  VIRTUAL_ENV="$tool" uv pip install -q "graphifyy[leiden,mcp]==$graphify_version"
+  [[ -x "$tool/bin/python" ]] || uv venv -q --python 3.13 "$tool"
+  VIRTUAL_ENV="$tool" uv pip install -q "graphifyy[$extras]==$graphify_version"
+  echo "$extras" >"$tool/.bench-extras"
 fi
 
 # name|url|commit triples from corpus.toml (flat format, parsed without extra dependencies).
