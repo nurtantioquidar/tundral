@@ -58,6 +58,7 @@ pub fn app(config: Config) -> anyhow::Result<(Router, Arc<AppState>)> {
                 .remove(&repo);
         }),
     );
+    builder.recover(&config, &db)?;
     let state = Arc::new(AppState {
         config,
         db,

@@ -18,6 +18,8 @@ mode, `mcp::Options::hosted`).
 - `src/webhook.rs`: `X-Hub-Signature-256` verification and the events acted on.
 - `src/builder.rs`: the build queue (one build at a time, coalesced per repository), the build
   steps and the atomic swap of `<data>/repos/<id>/current`; `child_main` is the build child.
+  At start, `Builder::recover` queues again what a stop cut short (charon stops its apps for
+  every backup) and every graph a restore lost (backups hold `db/`, never `repos/`).
 - `src/git.rs`: fetching a default branch with `git`, hardened; credentials reach `git` only
   through its environment.
 - `src/github.rs`: the GitHub App's JWT and cached installation tokens.
@@ -63,8 +65,9 @@ From the repository root: `bun run --filter @tundral/dijkstral-service check`.
 ## Verification
 
 Every change passes the module `check`. Tests are offline: `tests/e2e.rs` drives install, build,
-MCP queries, a push rebuild, token revocation and uninstall against a local bare repository
-standing in for GitHub, with signed webhooks; `tests/github_app.rs` checks the app JWT, token
-minting and caching, and the credential's path into `git` against a fake GitHub API with a key
-generated at test time. A change to tenant isolation, authentication or the build sandbox needs a
-test that fails without it.
+MCP queries, a push rebuild, token revocation, uninstall, and restarts after a cut-short build
+and after a restore, against a local bare repository standing in for GitHub, with signed
+webhooks; `tests/github_app.rs` checks the app JWT, token minting and caching, and the
+credential's path into `git` against a fake GitHub API with a key generated at test time. A
+change to tenant isolation, authentication or the build sandbox needs a test that fails without
+it.

@@ -78,12 +78,23 @@ fn world() -> World {
     git(&work, &["commit", "-q", "-m", "one"]);
     git(&work, &["push", "-q", bare.to_str().unwrap(), "main"]);
     let data = tmp.path().join("data");
-    let (router, _) = app(Config {
-        data: data.clone(),
+    let router = start(tmp.path());
+    World {
+        _tmp: tmp,
+        work,
+        data,
+        router,
+    }
+}
+
+/// The service over `<root>/data`, fetching from `<root>/github`.
+fn start(root: &Path) -> Router {
+    app(Config {
+        data: root.join("data"),
         listen: "127.0.0.1:0".parse().unwrap(),
         webhook_secret: SECRET.to_vec(),
         internal_token: INTERNAL.into(),
-        source: SourceConfig::Local(source),
+        source: SourceConfig::Local(root.join("github")),
         exe: PathBuf::from(env!("CARGO_BIN_EXE_dijkstral-service")),
         build_threads: 2,
         limits: Limits {
@@ -91,13 +102,8 @@ fn world() -> World {
             ..Limits::default()
         },
     })
-    .unwrap();
-    World {
-        _tmp: tmp,
-        work,
-        data,
-        router,
-    }
+    .unwrap()
+    .0
 }
 
 async fn send(router: &Router, req: Request<Body>) -> (StatusCode, Value) {
@@ -419,5 +425,102 @@ async fn install_build_query_push_uninstall() {
         .await
         .0,
         StatusCode::NOT_FOUND
+    );
+}
+
+/// A restarted service finishes what the stopped one left: a build cut short (charon stops its
+/// apps for every backup) and, after a restore (the database without `repos/`), lost graphs.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn restart_resumes_cut_short_builds_and_lost_graphs() {
+    let World {
+        _tmp: tmp,
+        data,
+        router,
+        ..
+    } = world();
+    let install = json!({"action": "created",
+        "installation": {"id": 7, "account": {"login": "acme"}},
+        "repositories": [{"id": 100, "full_name": "acme/demo"}]});
+    assert_eq!(
+        send(&router, signed("installation", &install, SECRET))
+            .await
+            .0,
+        StatusCode::ACCEPTED
+    );
+    let (_, a) = send(
+        &router,
+        internal(
+            "POST",
+            "/internal/accounts",
+            Some(json!({"github_id": 1, "login": "alice", "installation_ids": [7]})),
+        ),
+    )
+    .await;
+    let alice = a["account_id"].as_i64().unwrap();
+    let first = built(&router, alice, 100, None).await;
+    drop(router);
+
+    // Stopped mid-build: the repository says building, its build runs, its checkout lies around.
+    let db = dijkstral_service::db::Db::open(&data.join("db/service.sqlite")).unwrap();
+    db.set_state(100, "building", None).unwrap();
+    let cut = db.start_build(100).unwrap();
+    drop(db);
+    let stale = data.join(format!("repos/100/work-{cut}"));
+    std::fs::create_dir_all(&stale).unwrap();
+    std::fs::write(stale.join("leak.py"), "x = 1\n").unwrap();
+    let router = start(tmp.path());
+    let again = built(&router, alice, 100, None).await;
+    assert_eq!(again["built_commit"], first["built_commit"]);
+    assert!(!stale.exists());
+    let state: String = rusqlite::Connection::open(data.join("db/service.sqlite"))
+        .unwrap()
+        .query_row("SELECT state FROM builds WHERE id = ?1", [cut], |r| {
+            r.get(0)
+        })
+        .unwrap();
+    assert_eq!(state, "failed");
+    drop(router);
+
+    // Restored from a backup: the database is back, `repos/` is not.
+    std::fs::remove_dir_all(data.join("repos")).unwrap();
+    let router = start(tmp.path());
+    let started = Instant::now();
+    while !data
+        .join("repos/100/current/dijkstral-out/graph.dij")
+        .exists()
+    {
+        assert!(
+            started.elapsed() < Duration::from_secs(120),
+            "the lost graph was not rebuilt"
+        );
+        tokio::time::sleep(Duration::from_millis(100)).await;
+    }
+    built(&router, alice, 100, None).await;
+    let (_, t) = send(
+        &router,
+        internal(
+            "POST",
+            &format!("/internal/accounts/{alice}/tokens"),
+            Some(json!({"name": "laptop"})),
+        ),
+    )
+    .await;
+    let token = t["token"].as_str().unwrap();
+    let (code, v) = send(
+        &router,
+        mcp(
+            Some(token),
+            "acme/demo",
+            tool("context", json!({"question": "Who calls slugify?"})),
+        ),
+    )
+    .await;
+    assert_eq!(code, StatusCode::OK, "{v}");
+    assert!(
+        v["result"]["content"][0]["text"]
+            .as_str()
+            .unwrap()
+            .contains("slugify"),
+        "{v}"
     );
 }

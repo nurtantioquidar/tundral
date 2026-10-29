@@ -76,6 +76,29 @@ impl Builder {
             let _ = self.tx.send(repo);
         }
     }
+
+    /// At start, before any build runs: fails the builds a stopped service left running, deletes
+    /// their checkouts, and queues every repository whose build was cut short or whose last good
+    /// graph is gone (a restore brings back the database, never `repos/`).
+    pub fn recover(&self, config: &Config, db: &Db) -> Result<()> {
+        db.interrupt_running_builds()?;
+        for r in db.repos()? {
+            if let Ok(entries) = std::fs::read_dir(repo_dir(config, r.id)) {
+                for e in entries {
+                    let e = e?;
+                    if e.file_name().to_string_lossy().starts_with("work-") {
+                        std::fs::remove_dir_all(e.path())?;
+                    }
+                }
+            }
+            let cut_short = matches!(r.state.as_str(), "queued" | "building");
+            let lost = r.built_commit.is_some() && !current_graph(config, r.id).exists();
+            if cut_short || lost {
+                self.enqueue(r.id);
+            }
+        }
+        Ok(())
+    }
 }
 
 pub fn repo_dir(config: &Config, repo: i64) -> PathBuf {

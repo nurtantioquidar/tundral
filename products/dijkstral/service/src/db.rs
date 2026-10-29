@@ -194,6 +194,16 @@ impl Db {
         })
     }
 
+    pub fn repos(&self) -> Result<Vec<Repo>> {
+        self.with(|c| {
+            let mut s = c.prepare(&format!("SELECT {REPO_COLUMNS} FROM repos"))?;
+            let repos = s
+                .query_map([], repo_row)?
+                .collect::<rusqlite::Result<Vec<Repo>>>();
+            repos
+        })
+    }
+
     pub fn repos_of_installation(&self, installation: i64) -> Result<Vec<i64>> {
         self.with(|c| {
             let mut s = c.prepare("SELECT id FROM repos WHERE installation_id = ?1")?;
@@ -249,6 +259,18 @@ impl Db {
                 |r| r.get::<_, i64>(0),
             )
             .map(|n| n as usize)
+        })
+    }
+
+    /// Fails the builds a stopped service left running.
+    pub fn interrupt_running_builds(&self) -> Result<()> {
+        self.with(|c| {
+            c.execute(
+                "UPDATE builds SET finished_at = ?1, state = 'failed', error = 'interrupted'
+                 WHERE state = 'running'",
+                [now()],
+            )
+            .map(drop)
         })
     }
 
