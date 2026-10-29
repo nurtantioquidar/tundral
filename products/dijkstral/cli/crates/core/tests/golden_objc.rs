@@ -1,8 +1,8 @@
 //! Parity with Graphify's clustered golden for `tests/fixtures/objc` (§34).
 //!
-//! The fixture has no `A+B.h` category file: Graphify prefixes those categories' ids with the
-//! absolute scan root (quirk OC1), which a golden made in one scratch directory cannot share with
-//! a test run in another. `extract::objc` covers that id rule in its unit tests.
+//! The fixture has no `A+B.h` category file (Graphify 0.9.86 prefixed those categories' ids with
+//! the absolute scan root, quirk OC1, fixed in 0.9.97); `extract::objc` covers that id rule in its
+//! unit tests.
 
 mod common;
 

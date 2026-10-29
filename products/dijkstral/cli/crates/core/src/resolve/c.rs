@@ -1,19 +1,22 @@
 //! Cross-file pass for C and C++ (§24, §25). See `docs/graphify-format.md`.
 //!
-//! - `#include "p"` links to the indexed file at `p` relative to the including file; anything
-//!   else (`<p>`, a missing or macro path) links to the external `slug(stem of p)`, unless exactly
-//!   one C/C++ file in the repository has that stem, which then takes its place (§8.1).
+//! - `#include "p"` links to the indexed file at `p` relative to the including file, else to the
+//!   indexed file whose path ends with `p`, nearest by shared directories (a tie finds nothing),
+//!   with `metadata {"raw_include", "include_kind": "quoted"}`; anything else (`<p>`, a missing or
+//!   macro path) links to the external `slug(stem of p)`, unless exactly one C/C++ file in the
+//!   repository has that stem, which then takes its place (§8.1).
 //! - Type stubs bind to the unique C/C++ definition labelled like them (classes, enumerators,
 //!   fields); an ambiguous or unknown name stays a stub.
 //! - Bare calls with no definition of that name in their file bind to the nearest C/C++
 //!   definition with that name by path proximity (INFERRED 0.85).
-//! - `x.m()` through `x`'s declared type binds to member `m` of the unique class of that name
-//!   (INFERRED 0.85); `Q::m()` binds to member `m` of the unique class `Q`, else to the unique
-//!   out-of-line definition `Q::m()` (EXTRACTED 1.0); a `Q` that names no class falls back to the
-//!   file's own definition named like the rest of the call.
+//! - `x.m()` through `x`'s declared type binds to member `m` of the unique class (or typedef) of
+//!   that name (INFERRED 0.85); `Q::m()` binds to member `m` of the unique class `Q`, else to the
+//!   unique out-of-line definition `Q::m()` (EXTRACTED 1.0); a class without the member is
+//!   referenced instead (context `call`); a `Q` that names no class falls back to the file's own
+//!   definition named like the rest of the call.
 //! - `metadata.unresolved_calls` (C++ only): typed calls whose type names no class, and
 //!   qualified calls with a capitalised scope that names no class; one entry per (callee, type)
-//!   and caller.
+//!   and caller, with the caller's `file`, at most 64 per caller.
 
 use std::collections::{HashMap, HashSet};
 
@@ -48,6 +51,83 @@ fn join(dir: &str, path: &str) -> Option<String> {
         }
     }
     Some(parts.join("/"))
+}
+
+/// `os.path.normpath` of an include path (`./a/b.h` → `a/b.h`, `a/../b.h` → `b.h`); `None` when
+/// a `..` is left over, since no indexed path ends with one.
+fn normalize(path: &str) -> Option<String> {
+    let mut parts: Vec<&str> = Vec::new();
+    for p in path.split('/') {
+        match p {
+            "" | "." => {}
+            ".." => {
+                parts.pop()?;
+            }
+            p => parts.push(p),
+        }
+    }
+    (!parts.is_empty()).then(|| parts.join("/"))
+}
+
+/// Indexed files by file name, for [`search_include`].
+pub(super) struct ByName<'i>(HashMap<&'i str, Vec<&'i str>>);
+
+impl<'i> ByName<'i> {
+    pub(super) fn new(index: &'i Index) -> Self {
+        Self::from_paths(index.file_ids.keys().map(String::as_str))
+    }
+
+    fn from_paths(paths: impl Iterator<Item = &'i str>) -> Self {
+        let mut m: HashMap<&str, Vec<&str>> = HashMap::new();
+        for rel in paths {
+            m.entry(rel.rsplit('/').next().unwrap_or(rel))
+                .or_default()
+                .push(rel);
+        }
+        for v in m.values_mut() {
+            v.sort_unstable();
+        }
+        ByName(m)
+    }
+
+    /// A quoted include that names no file relative to the including one: the indexed file whose
+    /// path ends with it (whole components, after `normpath`), the one sharing the most leading
+    /// directories with the including file when several do; a tie finds nothing (§24.4).
+    pub(super) fn search(&self, from: &str, path: &str) -> Option<&'i str> {
+        let norm = normalize(path)?;
+        let name = norm.rsplit('/').next().unwrap_or(&norm);
+        let dir: Vec<&str> = parent(from).split('/').filter(|p| !p.is_empty()).collect();
+        let mut best: Option<(usize, &str)> = None;
+        let mut tied = false;
+        for &rel in self.0.get(name)? {
+            if rel != norm && !rel.ends_with(&format!("/{norm}")) {
+                continue;
+            }
+            let shared = parent(rel)
+                .split('/')
+                .filter(|p| !p.is_empty())
+                .zip(&dir)
+                .take_while(|(a, b)| a == *b)
+                .count();
+            match best {
+                Some((b, _)) if shared < b => {}
+                Some((b, _)) if shared == b => tied = true,
+                _ => {
+                    best = Some((shared, rel));
+                    tied = false;
+                }
+            }
+        }
+        best.filter(|_| !tied).map(|(_, rel)| rel)
+    }
+}
+
+/// `metadata` of an include that did not resolve relative to the including file.
+pub(super) fn include_metadata(path: &str) -> Attr {
+    Attr::Json(format!(
+        "{{\"raw_include\":{},\"include_kind\":\"quoted\"}}",
+        json_str(path)
+    ))
 }
 
 /// The file name without its final extension.
@@ -189,23 +269,25 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                 .push((vi, ci));
         }
     }
-    // The unique class labelled `name` and its member `member`.
-    let class_member = |name: &str, member: &str| -> (bool, Option<String>) {
+    // The unique class (or alias) labelled `name` and its member `member`: (whether any class has
+    // that label, the unique class, its member).
+    let class_member = |name: &str, member: &str| -> (bool, Option<String>, Option<String>) {
         // A templated scope (`formatter<std::tm, Char>::parse`) is never looked up as a class.
         let Some(cands) = classes.get(name).filter(|_| !name.contains('<')) else {
-            return (false, None);
+            return (false, None, None);
         };
         if cands.len() != 1 {
-            return (true, None);
+            return (true, None, None);
         }
         let (vi, ci) = cands[0];
         let (v, c) = views[vi];
-        let found = c.classes[ci]
+        let class = &c.classes[ci];
+        let found = class
             .members
             .iter()
             .find(|(m, _)| m == member)
             .map(|(_, id)| v.id(id).to_string());
-        (true, found)
+        (true, Some(v.id(&class.id).to_string()), found)
     };
     let is_stub = |id: &str| {
         index
@@ -253,17 +335,22 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
     };
 
     // Includes, then stubs.
+    let by_file_name = ByName::new(index);
     let mut externals: HashSet<String> = HashSet::new();
     for (v, c) in &views {
         let rel = v.file.rel.as_str();
         let file_id = v.id(&c.file_id).to_string();
         for inc in &c.includes {
-            let local = inc
+            let relative = inc
                 .quoted
                 .then(|| join(parent(rel), &inc.path))
                 .flatten()
                 .and_then(|p| index.file_ids.get(&p).cloned());
-            let target = match local {
+            let searched = (inc.quoted && relative.is_none())
+                .then(|| by_file_name.search(rel, &inc.path))
+                .flatten()
+                .and_then(|p| index.file_ids.get(p).cloned());
+            let target = match relative.clone().or(searched) {
                 Some(t) => t,
                 None => {
                     let id = slug(stem(&inc.path));
@@ -306,7 +393,12 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                 confidence: Confidence::Extracted,
                 score: None,
             };
-            res.edges.push(edge(file_id.clone(), target, &spec));
+            let mut e = edge(file_id.clone(), target, &spec);
+            if inc.quoted && relative.is_none() {
+                e.attrs
+                    .push(("metadata".into(), include_metadata(&inc.path)));
+            }
+            res.edges.push(e);
         }
         for (local, label) in &c.stubs {
             let stub = v.id(local);
@@ -404,20 +496,24 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
         let mut recorded: HashSet<(String, String, String)> = HashSet::new();
         for call in c.calls.iter().filter(|c| c.kind != CCallKind::Bare) {
             let caller = v.id(&call.caller).to_string();
-            let (known, member) = class_member(&call.receiver, &call.name);
+            let (known, class, member) = class_member(&call.receiver, &call.name);
+            // A class without the member is referenced instead (`references`, context `call`).
             let found = match call.kind {
-                CCallKind::Typed => member.map(|t| (t, Confidence::Inferred, Some(0.85))),
+                CCallKind::Typed => member
+                    .map(|t| (t, "calls", Confidence::Inferred, Some(0.85)))
+                    .or_else(|| class.map(|t| (t, "references", Confidence::Inferred, Some(0.85)))),
                 _ => member
                     .or_else(|| {
                         let key = format!("{}::{}", call.receiver, call.name);
                         unique(out_of_line.get(key.as_str())).cloned()
                     })
-                    .map(|t| (t, Confidence::Extracted, Some(1.0)))
+                    .map(|t| (t, "calls", Confidence::Extracted, Some(1.0)))
+                    .or_else(|| class.map(|t| (t, "references", Confidence::Extracted, Some(1.0))))
                     .or_else(|| {
                         (!known)
                             .then_some(call.fallback.as_ref())
                             .flatten()
-                            .map(|t| (v.id(t).to_string(), Confidence::Extracted, None))
+                            .map(|t| (v.id(t).to_string(), "calls", Confidence::Extracted, None))
                     }),
             };
             let record = !known
@@ -427,17 +523,18 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             if record && recorded.insert((caller.clone(), call.name.clone(), call.receiver.clone()))
             {
                 let entry = format!(
-                    "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"cpp\",\"line\":\"L{}\"}}",
+                    "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"cpp\",\"line\":\"L{}\",\"file\":{}}}",
                     json_str(&call.name),
                     json_str(&call.receiver),
-                    call.line
+                    call.line,
+                    json_str(rel)
                 );
                 match unresolved.iter_mut().find(|(id, _)| *id == caller) {
                     Some((_, list)) => list.push(entry),
                     None => unresolved.push((caller.clone(), vec![entry])),
                 }
             }
-            let Some((target, confidence, score)) = found else {
+            let Some((target, relation, confidence, score)) = found else {
                 continue;
             };
             // Through a class, a method never calls itself (`S::r()` inside `S::r`).
@@ -446,7 +543,7 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
             }
             if called.insert((caller.clone(), target.clone())) {
                 let spec = Spec {
-                    relation: "calls",
+                    relation,
                     context: "call",
                     rel,
                     line: call.line,
@@ -456,7 +553,9 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
                 res.edges.push(edge(caller, target, &spec));
             }
         }
-        for (id, entries) in unresolved {
+        for (id, mut entries) in unresolved {
+            // Graphify keeps the first 64 of a caller.
+            entries.truncate(64);
             let json = format!("{{\"unresolved_calls\":[{}]}}", entries.join(","));
             res.attrs.push((id, "metadata".into(), Attr::Json(json)));
         }
@@ -467,6 +566,45 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn quoted_includes_search_by_suffix_and_shared_directories() {
+        let files = [
+            "include/shape.h",
+            "inc/sub/v.h",
+            "other/v.h",
+            "ab/y.h",
+            "a/b/c/p.h",
+            "a/p.h",
+            "a/b/d/q.h",
+            "a/b/e/q.h",
+            "deep/inc/z.h",
+        ];
+        let by = ByName::from_paths(files.into_iter());
+        let s = |from: &str, p: &str| by.search(from, p);
+        assert_eq!(s("src/shape.c", "shape.h"), Some("include/shape.h"));
+        assert_eq!(s("a/x.c", "sub/v.h"), Some("inc/sub/v.h"));
+        assert_eq!(s("a/x.c", "./sub/v.h"), Some("inc/sub/v.h"));
+        assert_eq!(s("a/x.c", "../sub/v.h"), None);
+        assert_eq!(
+            s("a/x.c", "v.h"),
+            None,
+            "two candidates sharing nothing tie"
+        );
+        assert_eq!(s("a/x.c", "b/y.h"), None, "whole components only");
+        assert_eq!(s("a/b/x.c", "p.h"), Some("a/b/c/p.h"));
+        assert_eq!(
+            s("a/b/x.c", "q.h"),
+            None,
+            "two candidates sharing `a/b` tie"
+        );
+        assert_eq!(
+            s("x.c", "z.h"),
+            Some("deep/inc/z.h"),
+            "a single candidate anywhere"
+        );
+        assert_eq!(normalize("a/../b.h").as_deref(), Some("b.h"));
+    }
 
     #[test]
     fn include_paths_join_relative_to_the_including_directory() {

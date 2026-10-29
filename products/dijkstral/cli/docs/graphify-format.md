@@ -2978,18 +2978,21 @@ byte for byte.
 
 Fixture `tests/fixtures/c/`; goldens `c.graphify.json`, `c.clustered.graphify.json` and the report
 goldens of §17.6. Extensions `.c` and `.h`; tree-sitter-c 0.24.2 (Graphify's version). Rules were
-isolated with probe repositories run through `graphify extract --code-only`; jq (`.c`/`.h`) is the
-corpus check. Implementation: `crates/core/src/{extract,resolve}/c.rs` (shared with C++).
+isolated with probe repositories run through `graphify extract --code-only` (0.9.97, each change
+from 0.9.86 checked by running both releases on the same probe); jq (`.c`/`.h`) is the corpus
+check. Implementation: `crates/core/src/{extract,resolve}/c.rs` (shared with C++).
 
 ### 24.1 Which language a file is
 
 - **Rule.** `.c` is C. `.h` is C++ when its bytes contain any of `class `, `namespace `,
-  `template`, `::`, `public:`, `private:`, `protected:` anywhere, comments included (case
-  sensitive, plain substrings: `// subclass Foo` makes a header C++, `// class` followed by a
-  newline does not, `extern "C"` and `__cplusplus` do not). Every other `.h` is C. Probed up to
-  200 KB into a file.
-- C headers therefore get no class, struct or field nodes even in C++ projects (jq's headers,
-  fmt's C++ headers are C++).
+  `template`, `::`, `public:`, `private:`, `protected:` or `extern "C"` anywhere, comments
+  included (case sensitive, plain substrings: `// subclass Foo` makes a header C++, `// class`
+  followed by a newline does not; `extern "C"` must be written exactly so: `extern "C++"`,
+  `extern  "C"` and `extern"C"` do not count, nor does `__cplusplus` alone). Every other `.h` is
+  C. Probed up to 200 KB into a file. `extern "C"` is new in 0.9.97.
+- C headers therefore get no class, struct, field or typedef nodes. jq's headers, which all wrap
+  their declarations in `#ifdef __cplusplus extern "C" {`, are C++ since 0.9.97 (their structs,
+  enums and typedefs are nodes); fmt's C++ headers always were.
 
 ### 24.2 Nodes
 
@@ -3004,8 +3007,9 @@ corpus check. Implementation: `crates/core/src/{extract,resolve}/c.rs` (shared w
   branches (`#if`/`#else` both), `extern "C"` blocks, and the `ERROR` nodes of error recovery
   (jq's `util.c`, `jv_dtoa.c`, decNumber). A definition the parse nested inside another
   function's body is not a node.
-- Not emitted: prototypes, `struct`/`union`/`enum` (with or without body), typedefs, macros
-  (`#define`), globals, and comments: C has no rationale nodes (`NOTE:`/`WHY:`/`HACK:` ignored).
+- Not emitted (C files and C headers): prototypes, `struct`/`union`/`enum` (with or without
+  body), typedefs, macros (`#define`), globals, and comments: C has no rationale nodes
+  (`NOTE:`/`WHY:`/`HACK:` ignored).
 - Same-file duplicates (two `static` definitions under `#if` branches) keep the first (§8.1).
 
 ### 24.3 Edges
@@ -3025,10 +3029,24 @@ corpus check. Implementation: `crates/core/src/{extract,resolve}/c.rs` (shared w
 ### 24.4 Includes
 
 `#include "p"` resolves to the indexed file at `p` relative to the including file's directory
-(`../include/util.h` works; a path relative to the repository root or to an include directory does
-not). `<p>` never resolves that way. Otherwise the target is the external id
-`E = slug(stem of p)` (`<sys/types.h>` → `types`), and Graphify then lands the edge, in this
-order, on:
+(`../include/util.h` works). `<p>` never resolves that way.
+
+**Search (0.9.97).** A quoted `p` that names no file relative to the including one is looked up
+by suffix: the indexed files whose path is `p` or ends with `/p`, whole components, after
+`os.path.normpath` (`./sub/v.h` is `sub/v.h`; a `..` left over, as in `../sub/w.h`, finds nothing).
+One candidate is taken wherever it is; among several, the one sharing the most leading directories
+with the including file, and a tie (two candidates sharing as many, including none) finds nothing.
+There is no depth tie-break (`a/b/p.h` and `a/b/c/p.h` tie for `a/x.c`). Probes: `"shape.h"` from
+`src/shape.c` → `include/shape.h`; `"geo/shape.hpp"` from `src/` → `include/geo/shape.hpp`;
+`"b/y.h"` does not match `ab/y.h`. Angle includes are never searched (`<sub/v.h>` with a single
+`inc/sub/v.h` stays external).
+
+Every quoted include that did not resolve relative to the including file, found by the search or
+not, carries `metadata {"raw_include": p, "include_kind": "quoted"}` (`p` as written) on its edge,
+whatever it lands on below; relative and angle includes carry none.
+
+Otherwise the target is the external id `E = slug(stem of p)` (`<sys/types.h>` → `types`), and
+Graphify then lands the edge, in this order, on:
 
 1. the stub of the first header (`.h`/`.hpp`, by path) that has a renamed (§4.5) stub `E`
    (`#include "jv.h"` from `tests/` → `src_jv_h_jv`; fmt's `<vector>` →
@@ -3039,7 +3057,8 @@ order, on:
 4. the only definition labelled exactly `E` (a class, field or enumerator `E`, or a function
    `E()`; not a method): fmt's `<ostream>` → class `ostream`, `"fmt/printf.h"` → `printf()`;
 5. the only file whose stem is `E`, in any language (§8.1; jq's `"version.h"` →
-   `scripts/version`);
+   `scripts/version`; since 0.9.97 indexes YAML, jq's `"oniguruma.h"` →
+   `.github/workflows/oniguruma.yml` and fmt's `<windows.h>` → `windows.yml`);
 6. the external node `E` (label = id, §4.4).
 
 A macro include (`#include FOO_H`) emits nothing. Each directive gives an edge; duplicates fold
@@ -3062,6 +3081,8 @@ as usual.
   `globals`, `locals`, `property`, `staticmethod`, `classmethod`, `frozenset`, `bytearray`,
   `memoryview`, `ascii`, `bin`, `breakpoint`, `complex`, `divmod`, `issubclass`, `require`, typed
   arrays, `Function`, `DataView`, `ArrayBuffer`); 82 names, listed in `extract/c.rs`.
+- A bare `f()` named like a stub of the file (a type `F` the file references anywhere, `Pod()`
+  beside a parameter `Pod p`) binds nothing, in the file or across files.
 - Calls through pointers (`fp(x)`, `(*fp)(x)`), macros and calls at file scope bind nothing; one
   edge per (caller, callee), first line kept.
 
@@ -3112,7 +3133,22 @@ Fixture `tests/fixtures/cpp/` (also `.cu` and a C++ `.h`); goldens `cpp.*`. Exte
 - Destructor and constructor share an id (`~Outer` slugs to `outer`); overloads merge (§8.1).
   Operator names slug to `operator`; conversion operators (`operator bool`) and declarators
   behind a reference (`Outer &operator=(...)`, out-of-line too) give nothing.
-- Namespaces, `using`, typedefs, aliases, macros and comments give nothing (no rationale).
+- **Typedefs and aliases (0.9.97).** `typedef T X;` (each declarator, through pointer, array and
+  function declarators: `typedef int A1, *B1;`, `typedef int (*Fn)(int);`), `typedef struct
+  {...} X;` and `using X = T;` (template aliases too) give a node `file_slug(X)`, label `X`, line
+  of the declaration, no `_callable`, contained by the file, with no other edge; at file or
+  namespace scope, in `extern "C"` blocks and `#if` branches. Not: in class bodies (also a misread
+  class body, §25.1 below, and `#if` inside one), in function bodies, when the nearest enclosing
+  scope (`template` and `#if` aside) is an error-recovery node (fmt's `format.h`, whose namespaces
+  open through macros), and when `T`'s last name is `X` itself (`using qux = ns::qux;`,
+  `typedef ns::zed zed;`, fmt's `using named_arg = detail::named_arg<T, Char>`; `using Any =
+  ::absl::any` is a node). The declared names come before a class the typedef's type declares;
+  that class then keeps the typedef's label and line and gains `_callable`/`_callable_class`
+  (jq: `typedef struct yy_buffer_state *YY_BUFFER_STATE;` is node `YY_BUFFER_STATE` with both
+  flags); after a class of the same id the typedef changes nothing (`using r = R;`). Type names
+  and calls bind to these nodes like classes without members (§25.3, §25.4).
+- Namespaces, `using` declarations and directives, macros and comments give nothing (no
+  rationale).
 - **Misread classes.** `class MACRO Name { ... }` (fmt's `FMT_API`, gtest's `GTEST_API_`) parses
   as a function definition; Graphify still emits class `Name`. With a base list the name is in an
   `ERROR` node and the base is the declarator (an `inherits` edge). In the body (a compound
@@ -3138,6 +3174,18 @@ Fixture `tests/fixtures/cpp/` (also `.cu` and a C++ `.h`); goldens `cpp.*`. Exte
 - Method declarations carry no references; qualified types reference their last name
   (`std::string` → stub `string`, `geo::Point` → `Point`); `auto`, primitives and `decltype` give
   nothing.
+- **Template parameters (0.9.97)** give no reference anywhere in their template (parameters,
+  return types, fields, template arguments, out-of-line `T Box<T>::get()`), also when one shadows
+  a class (`template <class Point> Point same(Point p)`); 0.9.86 made stubs `t`, `n`. A `T` outside
+  any template is a stub as before, and a base `struct D : T` still `inherits` the stub `T`.
+- **GPU qualifiers (0.9.97).** In `.cu` files `__global__`, `__device__`, `__host__`,
+  `__shared__`, `__constant__`, `__managed__`, `__forceinline__`, `__noinline__`,
+  `__launch_bounds__` and `__grid_constant__`, and in `.metal` files `kernel`, `vertex`,
+  `fragment`, `device`, `constant`, `thread`, `threadgroup`, `threadgroup_imageblock`, `ray_data`
+  and `object_data`, which the grammar reads as type names, give no reference (probed one word per
+  file; `__restrict__`, `__align__`, `visible`, `mesh`, OpenCL's `__kernel`/`__global` and
+  macros like `MYAPI` are unchanged). The real type behind them is lost with them
+  (`fragment half4 fs(thread Frag f)` references nothing).
 
 ### 25.3 Type targets and bases
 
@@ -3148,8 +3196,10 @@ Fixture `tests/fixtures/cpp/` (also `.cu` and a C++ `.h`); goldens `cpp.*`. Exte
   `::testing::Test` → `testing::Test`, `detail::buffer<char>` → `buffer<char>` (id
   `buffer_char`); the in-file lookup uses the innermost name (`buffer`) and never the class
   itself (`struct is_contiguous : detail::is_contiguous<T>` → stub `is_contiguous<T>`).
-- Stubs bind across files to the only definition labelled like them (classes, enumerators,
-  fields): `Rect` with a class `Rect` and an enumerator `Rect` stays a stub.
+- Stubs bind across files to the only definition labelled like them (classes, typedefs and
+  aliases, enumerators, fields): `Rect` with a class `Rect` and an enumerator `Rect` stays a stub.
+- A type name binds in its file to a typedef or alias declared anywhere in it, later ones too
+  (like classes).
 
 ### 25.4 Calls
 
@@ -3160,9 +3210,11 @@ In-file binding is §24.5, with two additions:
 
 Qualified calls `A::...::f(...)` (scope = outermost qualifier, name = the rest):
 
-1. scope names exactly one class (not templated: `formatter<std::tm, Char>::parse` skips this)
-   → its member (method, field or enumerator) `f`, else the only out-of-line definition
-   `A::f()`; EXTRACTED 1.0; a method never calls itself this way;
+1. scope names exactly one class, typedef or alias (not templated: `formatter<std::tm,
+   Char>::parse` skips this) → its member (method, field or enumerator) `f`, else the only
+   out-of-line definition `A::f()`, EXTRACTED 1.0; else the class itself is `references`d with
+   context `call`, EXTRACTED 1.0 (`Widget::missing()`, `Gadget::draw()` on an alias); a method
+   never calls itself this way;
 2. otherwise the file's node answering to the rest of the name (`ns::helper()` → `helper()`,
    `std::f()` → a local `f()`, `internal::FilePath::MakeFileName` → the out-of-line
    `FilePath::MakeFileName()`), EXTRACTED; never across files.
@@ -3171,13 +3223,17 @@ Typed calls: `x.m()` / `x->m()` with no `m` in the file use `x`'s type, taken fr
 **first** local declaration of `x` (any function, earlier or later) that has a single declarator
 and a capitalised type name (`Shape s;`, `Shape *p = ...;`, `const Shape &r = ...;`,
 `geo::Shape g;` → `Shape`, condition declarations; not parameters, `auto`, templates
-`Box<int> b`, `Shape a, b;`, range-for). The class's member `m` binds INFERRED 0.85; no
-inheritance walk, out-of-line definitions are not members here.
+`Box<int> b`, `Shape a, b;`, range-for). The class's member `m` binds INFERRED 0.85; a class (or
+typedef, alias, enum) without one is `references`d with context `call`, INFERRED 0.85; an alias
+is not followed to its type (`Gadget q; q.draw()` references `Gadget`). No inheritance walk,
+out-of-line definitions are not members here.
 
-`metadata.unresolved_calls` (§6), `{"callee","receiver_type","lang":"cpp","line"}` in source
-order, once per (callee, type) and caller: typed calls whose type names no class
-(`BiggestConvertible parsed; parsed.push_back(...)`), and qualified calls whose scope starts with a
-capital and names no class (`L::lm()`, `TypeParameterizedTest<...>::Register`).
+`metadata.unresolved_calls` (§6), `{"callee","receiver_type","lang":"cpp","line","file"}` in
+source order, once per (callee, type) and caller, the first 64 of a caller only: typed calls whose
+type names no class, typedef or alias (`BiggestConvertible parsed; parsed.push_back(...)`,
+`T x; x.push_back(1)` in a template), and qualified calls whose scope starts with a capital and
+names none (`L::lm()`, `TypeParameterizedTest<...>::Register`). `file` (the caller's path) is new
+in 0.9.97; C++ has no receiver denylist (`String`, `NSString`, `Color` are recorded).
 
 ### 25.5 Declaration and definition merge
 
@@ -3207,6 +3263,9 @@ usual (their file nodes: `x_h_x`, `x_cpp_x`).
   0.25.10 on error recovery.
 - **Header capture order.** §24.4 step 1 picks the first header by path; only the jq, fmt and
   probe cases pin it.
+- **An include landing on the file's own definition.** gtest.h's `#include "absl/types/any.h"`
+  lands on the alias `Any` two lines below it (`test_gtest_gtest_gtest_any`), not on a stub `any`;
+  dijkstral's step 2 only looks at the file's stubs (one fmt link).
 - **Error recovery.** A few fmt and gtest regions (methods attached to `buffer`, iterator buffer
   fields) come out of the parse differently, which moves `contains`/`references` lines and a
   handful of nodes.
@@ -3785,12 +3844,13 @@ AFNetworking. Implementation: `crates/core/src/{extract,resolve}/objc.rs`.
 
 | Construct | id | label | extra |
 |---|---|---|---|
-| `@interface`/`@implementation X`, class extension `X ()`, category `X (C)` | `file_slug(X)`, one node for all of them in a file (first wins) | `X` | — |
-| the same, as a category or extension in a file whose stem is exactly `Before+After` | `slug(abs_root/dir/Before)_slug(X)` (OC1) | `X` | — |
-| `@protocol P` | `file_slug(P)` | `<P>` | — |
-| method `- (T)a:(U)x b:(V)y` / `+ ...` | `owner_slug(selector)` | `-ab` / `+ab` | — |
-| method outside any class (error recovery) | `slug(path with extension)_slug(selector)` | as above | — |
+| `@interface`/`@implementation X`, class extension `X ()`, category `X (C)` | `file_slug(X)`, one node for all of them in a file (first wins) | `X` | `_callable`, `_callable_class` |
+| the same, as a category or extension in a file whose stem is exactly `Before+After` | `slug(dir/Before)_slug(X)` (0.9.86 prefixed the absolute scan root, OC1) | `X` | `_callable`, `_callable_class` |
+| `@protocol P` | `file_slug(P)` | `<P>` | `_callable`, `_callable_class` |
+| method `- (T)a:(U)x b:(V)y` / `+ ...` | `owner_slug(selector)` | `-ab` / `+ab` | `_callable`; `metadata.unresolved_calls` (§34.5) |
+| method outside any class (error recovery) | `slug(path with extension)_slug(selector)` | as above | `_callable` |
 | `typedef enum { ... } E;`, `enum E { ... }` with a body | `file_slug(E)` | `E` | — |
+| `typedef NS_ENUM(T, E) { ... };`, `NS_OPTIONS`, `NS_CLOSED_ENUM` (0.9.97) | `file_slug(E)`, after every other node of the file | `E` | — |
 | enumerator | `enum_slug(NAME)` | `NAME` | — |
 | type stub (superclass, protocol, property type, `[X alloc]`) | `slug(name)`, per file | name | stub |
 
@@ -3802,10 +3862,22 @@ AFNetworking. Implementation: `crates/core/src/{extract,resolve}/objc.rs`.
   instance-variable block; anything under `#if` in an interface is ignored. An `@implementation`
   and a `@protocol` contribute their methods at any depth (`#if` included, also `@optional` /
   `@required`). Protocol properties give nothing.
+- `_callable`/`_callable_class` (classes, categories, extensions, protocols) and `_callable`
+  (methods) are new in 0.9.97; enums and enumerators get neither.
+- **Macro enums (0.9.97).** The parse loses `typedef NS_ENUM(NSInteger, Mode) { ... };`; Graphify
+  reads it from the text after the walk, so the enum, its `contains` edge and its enumerators
+  (`case_of`, each at its own line; the enum at the `typedef` line) come after every other node of
+  the file. Matched: `typedef NS_ENUM`, `NS_OPTIONS` or `NS_CLOSED_ENUM` `(type, Name)` then `{`
+  (spacing and newlines free, `unsigned long` as the type), a body closed by `}` and `;`, each
+  enumerator a name with an optional `= value` (comments, `(1 << 2)`, `MAX(1, 2)`, `-1`, `A | B`
+  allowed; an empty body gives the enum alone). Not matched, nothing emitted: `NS_ERROR_ENUM`,
+  `CF_ENUM`, `CF_OPTIONS`, custom macros, `NS_ENUM` without `typedef`, a macro between `)` and `{`
+  (`NS_SWIFT_NAME(...)`) or between `}` and `;` (`API_AVAILABLE(...)`), and a body with any
+  enumerator carrying an attribute (`A API_AVAILABLE(ios(13)) = 4`, `B __deprecated`).
 - Not emitted: C functions and anything in their bodies (`main`), structs, unions, typedefs of
-  non-enums, `NS_ENUM`/`NS_OPTIONS` (the macro defeats the parse), `@class`, globals, macros,
-  properties, instance variables, comments (no rationale: `NOTE:`/`WHY:` are ignored), and the C++
-  of `.mm` files.
+  non-enums, the macro enums above that do not match, `@class`, globals, macros, properties,
+  instance variables, comments (no rationale: `NOTE:`/`WHY:` are ignored), and the C++ of `.mm`
+  files.
 - A method label `-Bar` beside `-bar` merges into the first (same slug, §8.1).
 
 ### 34.3 Edges
@@ -3860,8 +3932,14 @@ Each message with a typed receiver, in source order, after the in-file pass:
 | `self`, `super` | the enclosing `@implementation`'s class (`super` too) | EXTRACTED 1.0 |
 | an identifier declared `T *x` anywhere in the file (first declaration wins, other methods and classes included; not parameters, `for (T *x in ...)`, block parameters or `id`) | `T` | INFERRED 0.85 |
 | another capitalised identifier | itself (case-insensitive: `[FOO base]` finds `Foo`) | EXTRACTED 1.0 |
-| another lower-case identifier | the instance variable of that name on the class or a superclass, any file | INFERRED 0.85 |
+| another lower-case identifier | the instance variable, else the property, of that name on the class or a superclass, any file | INFERRED 0.85 |
 | `self.prop` | the property's type on the class or a superclass, any file; a generic or protocol-qualified type (`T<P> *`) gives nothing | INFERRED 0.85 |
+
+"The class" is the enclosing class itself (by id: its header, implementation and extensions
+together, not a same-named class of another file: the iOS and macOS example `AppDelegate`s of
+AFNetworking keep their own `window`), then its superclass by name when exactly one class has that
+name. A declaration with two type names, as `@property IBOutlet UIImageView *v` reads, has no
+type.
 
 The class must be the only Objective-C class with that name. If it has a method of that selector
 (`class_slug(selector)`: instance or class method, no inheritance walk), the caller `calls` it,
@@ -3869,11 +3947,35 @@ else it `references` the class with context `call`. A pair the file already link
 access or `alloc` reference, after stub binding) is skipped, the first edge of a pair wins, and a
 method never calls itself.
 
+**`metadata.unresolved_calls` (0.9.97).** A message whose receiver type no Objective-C class has
+(not an ambiguous name: two classes `Dup` record nothing) is recorded on the caller as
+`{"callee": selector, "receiver_type": T, "lang": "objc", "line", "file"}` (the selector's
+keywords concatenated, `foobar` for `foo:bar:`), in pre-order source order (`[NSDictionary
+outer:[NSSet inner]]` records `outer` then `inner`; `[[NSMutableSet alloc] init...]` records
+`alloc`), once per (selector, type), the first 64 of a caller only. `self`/`super` never record.
+Receiver types never recorded (observed): the JavaScript and Python builtins of §24.5's list that
+start with a capital plus `Intl` and `globalThis`; `Bool`, `Character`, `Double`, `Float`, `Int`,
+`Int8`–`Int64`, `UInt`, `UInt8`–`UInt64`, `AnyObject`, `Data`, `Decimal`, `UUID`, `URLRequest`,
+`URLComponents`, `URLSession`, `Bundle`, `Calendar`, `Locale`, `TimeZone`, `DateFormatter`,
+`ISO8601DateFormatter`, `NumberFormatter`, `JSONDecoder`, `JSONEncoder`, `DispatchQueue`,
+`DispatchGroup`, `OperationQueue`, `RunLoop`, `FileManager`, `NotificationCenter`, `UserDefaults`,
+`IndexPath`, `IndexSet`, `Codable`, `Decodable`, `Encodable`, `Equatable`, `Hashable`,
+`Comparable`, `Identifiable`, `Sendable`, `CaseIterable`, `CustomStringConvertible`,
+`RawRepresentable`, `View`, `Color`, `Font`, and `NSString`, `NSObject`, `NSError`, `NSLock`,
+`NSAttributedString` (other Foundation and UIKit classes, `NSMutableString` and `NSRecursiveLock`
+included, are recorded). The list is in `resolve/objc.rs`; names beyond the ~250 probed may be
+missing.
+
 ### 34.6 Imports
 
 `#import`/`#include "p"` names the file at `p` relative to the importing file when it is indexed
-(its id before collision renaming), else, like `<p>` and `@import M`, `slug(stem of p)`. That id
-lands, in order, on:
+(its id before collision renaming), else (0.9.97) the file the search of §24.4 finds, with the
+same `metadata {"raw_include", "include_kind": "quoted"}` on every quoted import that is not
+relative; else, like `<p>` and `@import M`, `slug(stem of p)`. Within a file, every import of the
+same key (the relative file's id, else `slug(stem of p)`, whether or not a search follows) lands
+where the first one did: `<Lib/Core/Session.h>` then `"Session.h"` both land on the external
+`session`, the other order on the header the search found. Once any definition merges (§34.7)
+imports keep the first edge of a pair too. Otherwise the id lands, in order, on:
 
 1. a node with exactly that id (an unrenamed file, stub, class, external);
 2. the node with that id of the first header (`.h`, by path) that emitted it before collision
@@ -3912,12 +4014,11 @@ share are renamed as usual.
 
 ### 34.8 Quirks (Objective-C)
 
-- **OC1** In a file whose stem is exactly `Before+After` (`UIButton+AFNetworking.h`), categories
-  and class extensions get the id `slug(absolute scan root/dir/Before)_slug(Class)`: the absolute
-  path of the checkout (`/private/tmp/...` resolved) leaks into the ids of the class node and its
-  methods. Dijkstral emits `slug(dir/Before)_slug(Class)`, the same id without the root prefix, so a
-  reference graph compares after stripping `slug(root)_` (51 AFNetworking nodes). Stems with no or
-  two `+` (`A+B+C.h`, `+L.h`, `T+.h`) use the file id.
+- **OC1** (fixed in 0.9.97) In a file whose stem is exactly `Before+After`
+  (`UIButton+AFNetworking.h`), categories and class extensions get the id
+  `slug(dir/Before)_slug(Class)`; 0.9.86 prefixed the absolute scan root (`/private/tmp/...`
+  resolved) and dijkstral never did. Stems with no or two `+` (`A+B+C.h`, `+L.h`, `T+.h`) use the
+  file id.
 - **OC2** In-file messages bind by id suffix, regardless of receiver, so one message fans out to
   every method, class, protocol or structural stub whose id ends like its selector.
 - **OC3** `.h` classification is a substring test that also reads comments (§24.1 is the C/C++
@@ -3930,12 +4031,12 @@ share are renamed as usual.
   file's extension (`afnetworking_afurlsessionmanager_m_dealloc`); in AFURLSessionManager.m the
   whole file is one `ERROR` node, so 73 methods hang off the file with body text in their names.
 
-### 34.9 Parity (AFNetworking, Graphify's frozen reference, `.m .h`)
+### 34.9 Parity (AFNetworking, Graphify's frozen reference, `.m .h .mm`)
 
-After stripping the OC1 root prefix (`users_hades_cache_dijkstral_bench_corpus_afnetworking_`):
-nodes 1137/1137 and links 2494/2494 (recall and precision 100%), one link field differing (OC4).
-Raw, without stripping: 51 category nodes and their links differ by id only. Two Graphify runs on
-fresh copies are identical, so the reference is stable. The `objc` golden matches at 1.0 with exact
+Against 0.9.97 (2026-10-29): nodes and links at 100% recall and precision, every node field equal
+(323 methods with `unresolved_calls` included), one link field differing (OC4). Against 0.9.86 the
+51 category nodes differed by the OC1 root prefix only. Two Graphify runs on fresh copies are
+identical, so the reference is stable. The `objc` golden matches at 1.0 with exact
 communities; its extract-time surprise order is not compared (§17.7). Two analysis differences
 seen on Graphify's own graphs turned out to be shared rules (§17.4–§17.5): surprise ties follow
 the sorted-link adjacency (no `definition_file` rule is needed), and bridges come from the top
@@ -4537,7 +4638,8 @@ elements produce nothing. `.dmi`: the PNG `tEXt` `Description` chunk's `state = 
 
 ### 44.7 Notes and gaps
 
-- `.metal` is C++ (§25) and matches Graphify's output.
+- `.metal` is C++ (§25) and matches Graphify's output; since 0.9.97 Metal's function qualifiers
+  and address spaces (`kernel`, `device`, ...) give no type reference (§25.2).
 - **Inert code**: `.r .tf .ejs` and `perl`, `fish`, `tcsh` shebang scripts count as code (the
   report's file and word counts) but produce nothing, not even a file node.
 - Not reproduced: zTXt (compressed) `.dmi` headers (no inflate; only the file node), and the
