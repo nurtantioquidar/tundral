@@ -1420,5 +1420,52 @@ cache absorbs (75–79% of input cached in every arm). The lead in the tables ab
 fitting its tuning questions, and is not a claim to publish. What generalises from it is
 narrower: a graph helps the agent over no graph, and dijkstral's builds are far faster
 (timing table above). Next for `context`: rules that hold on unseen code, tuned on a second new
-set so this one stays blind. Raw: `results/agent-1793269946.json`, `agent-1793270347.json`,
+set so this one stays blind (done below: offline recall on this set 0.18 → 0.32). Raw: `results/agent-1793269946.json`, `agent-1793270347.json`,
 `agent-1793270716.json`.
+
+### Generalising `context`: a second tuning set — 2026-10-29
+
+To tune `context` on questions like the blind set's without touching it, a second set was written
+the same way (`agent/questions/README.md`, "Second tuning set"): 8 flow and architecture questions
+each on erpnext (Python/JavaScript), jq (C), serilog (C#) and alamofire (Swift), languages the
+blind set does not use, committed (`9de5dbc`) before anything was tuned on it. It reproduces the
+blind finding: one `context` call held 0.27 of its key facts. Most missed facts are in the graph;
+the code-text ranking puts only 12 of 154 among its top 4 (67 of 141 on fastapi and ripgrep),
+because these questions describe behaviour in a reader's words ("taken away when the block
+ends") that function bodies do not use, and from the anchors it did pick, only 12 of the 112
+missed facts were within two calls.
+
+Three changes were kept (`b7b137c`, spec `cli/docs/dijkstral-context.md` §1 "code examples" and
+§3 "names"):
+
+- **Names sharing the question's words**: up to 20 symbols outside tests whose names carry the
+  question's rarer terms, grouped by file (about 1,000 characters). Names are where code states a
+  reader's vocabulary outright (`FilteringSink`, `LoggerFilterConfiguration`); it is also what
+  Graphify's `query` finds, which alone held 0.21 of the second set's facts and with `context`
+  0.41.
+- **Backticked code** is parsed for its names (`AF.request(url, …)` → `AF.request()`,
+  `responseDecodable(of:)` → `responseDecodable()`) instead of being looked up whole and failing.
+- Those **names from a code example join the search instead of replacing it**: the code a
+  question quotes is usually the caller's (`Depends(get_x)`), not the mechanism it asks about.
+
+Two more were measured and dropped as fits to one repository or too small: base-class chains of
+the classes shown (+0.07 on the second set's architecture questions, all of it two erpnext
+questions) and following the first anchor's calls four deep for the names that share the question's
+words (+0.05 on its flow questions, nothing on the first set).
+
+Offline key-fact recall of one call, before (`c0e1b89`) and after (`b7b137c`); the blind set was
+scored once, after the changes were fixed:
+
+| set | questions | before | after |
+|---|---:|---:|---:|
+| fastapi + ripgrep (first tuning set) | 40 | 0.81 (28 complete) | 0.85 (30) |
+| erpnext, jq, serilog, alamofire (second tuning set) | 32 | 0.27 (8) | 0.42 (13) |
+| Kubernetes (held out) | 20 | 0.66 (13) | 0.67 (14) |
+| all of the above | 92 | 0.59 (49) | 0.66 (57) |
+| **okhttp + excalidraw (blind)** | 16 | **0.18 (1)** | **0.32 (4)** |
+
+No tuning question lost recall. Answers grow from a median of 3,240 to 4,205 characters (blind:
+3,583 to 4,738), about 250 tokens. The blind gain (+0.14) matches the second set's (+0.15), so the
+changes generalise rather than fit; `context` still finds less on unseen code than on the code it
+was first tuned on. The name list costs about 0.13 s per call on Kubernetes, a few milliseconds
+elsewhere. Whether agents answer better with it is for an agent run on the blind set.
