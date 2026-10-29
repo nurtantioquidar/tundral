@@ -1,0 +1,40 @@
+# Service settings, read at start-up.
+name: shop
+version: 2.1
+server:
+  host: 0.0.0.0
+  port: 8080
+  tls:
+    cert: /etc/tls/cert.pem
+    options:
+      ciphers: [modern]
+database: &db
+  driver: postgres
+  pool:
+    min: 1
+    max: 10
+replica: *db
+cache:
+  <<: *db
+  driver: redis
+workers:
+  - name: mailer
+    queue: mail
+  - name: billing
+    retry:
+      attempts: 3
+  - - nested: true
+features: {search: on, export: {csv: yes}}
+yes: legacy-flag
+0x1F: hex-key
+"quoted key": 1
+"esc\"aped": 2
+Ünïcode: 3
+"@/*": dropped
+~: dropped
+notes: |
+  free text
+  over lines
+retries: 1
+retries:
+  max: 5

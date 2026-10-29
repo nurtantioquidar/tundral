@@ -76,7 +76,7 @@ pub fn extract_file(lang: Lang, rel: &str, source: &[u8]) -> FileFacts {
         Lang::Dart => dart::extract(&mut cx),
         Lang::Lua => lua::extract(&mut cx, tree.as_ref()),
         Lang::GoMod => go::extract_mod(&mut cx),
-        Lang::Json | Lang::Toml | Lang::Shell => data::extract(&mut cx),
+        Lang::Json | Lang::Toml | Lang::Yaml | Lang::Shell => data::extract(&mut cx),
         Lang::MsBuild | Lang::Sln | Lang::Slnx | Lang::Razor | Lang::Xaml => {
             dotnet::extract(&mut cx)
         }

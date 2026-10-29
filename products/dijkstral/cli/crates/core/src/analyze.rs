@@ -305,7 +305,7 @@ fn top_dir(path: &str) -> &str {
 const CROSS_TYPE_SCORE: u32 = 2;
 
 /// A source file's kind for surprises: `paper` (PDF), `image`, `doc` (the documents the semantic
-/// pass reads, office files included), otherwise `code`.
+/// pass reads, office files included), otherwise `code` (YAML too since Graphify 0.9.97, §46).
 pub fn file_category(source_file: &str) -> &'static str {
     let name = source_file.rsplit('/').next().unwrap_or(source_file);
     let ext = name
@@ -315,7 +315,7 @@ pub fn file_category(source_file: &str) -> &'static str {
     match ext.as_str() {
         "pdf" => "paper",
         "png" | "jpg" | "jpeg" | "gif" | "webp" | "svg" => "image",
-        "md" | "mdx" | "rst" | "txt" | "html" | "yaml" | "yml" | "docx" | "xlsx" => "doc",
+        "md" | "mdx" | "rst" | "txt" | "html" | "docx" | "xlsx" => "doc",
         _ => "code",
     }
 }

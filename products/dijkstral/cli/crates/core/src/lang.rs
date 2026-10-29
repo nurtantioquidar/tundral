@@ -21,6 +21,8 @@ pub enum Lang {
     Json,
     /// `Cargo.toml` and `pyproject.toml` only.
     Toml,
+    /// `.yaml`, `.yml` (§46).
+    Yaml,
     /// `go.mod`.
     GoMod,
     /// `.sh`, `.bash`, and sh/bash/zsh shebang scripts.
@@ -153,7 +155,7 @@ impl Lang {
         match name {
             "Cargo.toml" | "pyproject.toml" => return Some(Lang::Toml),
             "go.mod" => return Some(Lang::GoMod),
-            "package-lock.json" => return None,
+            "package-lock.json" | "pnpm-lock.yaml" => return None,
             _ => {}
         }
         let Some(ext) = path.extension().and_then(|e| e.to_str()) else {
@@ -169,6 +171,7 @@ impl Lang {
             "java" => Lang::Java,
             "swift" => Lang::Swift,
             "json" => Lang::Json,
+            "yaml" | "yml" => Lang::Yaml,
             "sh" | "bash" => Lang::Shell,
             "cs" => Lang::CSharp,
             "php" => Lang::Php,
@@ -222,7 +225,7 @@ impl Lang {
             Lang::Go | Lang::GoMod => Family::Go,
             Lang::Java => Family::Java,
             Lang::Swift => Family::Swift,
-            Lang::Json | Lang::Toml => Family::Data,
+            Lang::Json | Lang::Toml | Lang::Yaml => Family::Data,
             Lang::Shell => Family::Shell,
             Lang::CSharp => Family::CSharp,
             Lang::Php => Family::Php,
@@ -288,7 +291,7 @@ impl Lang {
             Lang::Groovy => tree_sitter_groovy::LANGUAGE.into(),
             Lang::Lua => tree_sitter_lua::LANGUAGE.into(),
             Lang::Dart | Lang::Markdown => return None,
-            Lang::Json | Lang::Toml | Lang::GoMod | Lang::Shell => return None,
+            Lang::Json | Lang::Toml | Lang::Yaml | Lang::GoMod | Lang::Shell => return None,
             Lang::Solidity => return None,
             Lang::MsBuild
             | Lang::Sln

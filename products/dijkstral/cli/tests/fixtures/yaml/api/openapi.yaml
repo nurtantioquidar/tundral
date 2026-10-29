@@ -1,0 +1,11 @@
+openapi: 3.0.0
+paths:
+  /users:
+    get:
+      responses:
+        "200":
+          $ref: "#/components/responses/Users"
+components:
+  responses:
+    Users:
+      description: users

@@ -1,0 +1,233 @@
+{
+  "communities": {
+    "0": [
+      "deploy_k8s_app",
+      "deploy_k8s_app_configmap_data",
+      "deploy_k8s_app_configmap_kind",
+      "deploy_k8s_app_data_mode",
+      "deploy_k8s_app_deployment_shop_apiversion",
+      "deploy_k8s_app_deployment_shop_kind",
+      "deploy_k8s_app_deployment_shop_metadata",
+      "deploy_k8s_app_deployment_shop_spec",
+      "deploy_k8s_app_doc0_deployment_shop",
+      "deploy_k8s_app_doc2_configmap",
+      "deploy_k8s_app_doc3_doc_3",
+      "deploy_k8s_app_doc_3_metadata",
+      "deploy_k8s_app_doc_3_spec",
+      "deploy_k8s_app_labels_app",
+      "deploy_k8s_app_metadata_labels",
+      "deploy_k8s_app_metadata_name",
+      "deploy_k8s_app_service_shop_metadata",
+      "deploy_k8s_app_spec_replicas",
+      "deploy_k8s_app_spec_x"
+    ],
+    "1": [
+      "config_app_0x1f",
+      "config_app_esc_aped",
+      "config_app_export_csv",
+      "config_app_features",
+      "config_app_features_export",
+      "config_app_features_search",
+      "config_app_name",
+      "config_app_notes",
+      "config_app_quoted_key",
+      "config_app_retries",
+      "config_app_retries_max",
+      "config_app_version",
+      "config_app_yaml_config_app",
+      "config_app_yes",
+      "config_app_ünïcode"
+    ],
+    "2": [
+      "github_workflows_ci",
+      "github_workflows_ci_env_ci",
+      "github_workflows_ci_jobs",
+      "github_workflows_ci_jobs_test",
+      "github_workflows_ci_name",
+      "github_workflows_ci_on",
+      "github_workflows_ci_on_pull_request",
+      "github_workflows_ci_on_push",
+      "github_workflows_ci_push_branches",
+      "github_workflows_ci_steps_env",
+      "github_workflows_ci_steps_name",
+      "github_workflows_ci_steps_run",
+      "github_workflows_ci_steps_uses",
+      "github_workflows_ci_test_runs_on",
+      "github_workflows_ci_test_steps"
+    ],
+    "3": [
+      "config_app_cache",
+      "config_app_cache_driver",
+      "config_app_cache_pool",
+      "config_app_database",
+      "config_app_database_driver",
+      "config_app_database_pool",
+      "config_app_pool_max",
+      "config_app_pool_min",
+      "config_app_replica",
+      "config_app_replica_driver",
+      "config_app_replica_pool"
+    ],
+    "4": [
+      "deploy_k8s_job",
+      "deploy_k8s_job_apiversion",
+      "deploy_k8s_job_containers_image",
+      "deploy_k8s_job_containers_name",
+      "deploy_k8s_job_kind",
+      "deploy_k8s_job_metadata",
+      "deploy_k8s_job_metadata_name",
+      "deploy_k8s_job_spec",
+      "deploy_k8s_job_spec_containers",
+      "deploy_k8s_job_spec_template",
+      "deploy_k8s_job_template_spec"
+    ],
+    "5": [
+      "config_app_options_ciphers",
+      "config_app_server",
+      "config_app_server_host",
+      "config_app_server_port",
+      "config_app_server_tls",
+      "config_app_tls_cert",
+      "config_app_tls_options"
+    ],
+    "6": [
+      "docker_compose",
+      "docker_compose_db_image",
+      "docker_compose_services",
+      "docker_compose_services_db",
+      "docker_compose_services_web",
+      "docker_compose_web_depends_on",
+      "docker_compose_web_image"
+    ],
+    "7": [
+      "config_app_retry_attempts",
+      "config_app_workers",
+      "config_app_workers_name",
+      "config_app_workers_nested",
+      "config_app_workers_queue",
+      "config_app_workers_retry"
+    ],
+    "8": [
+      "deploy_k8s_app_doc1_service_shop",
+      "deploy_k8s_app_ports_port",
+      "deploy_k8s_app_service_shop_apiversion",
+      "deploy_k8s_app_service_shop_kind",
+      "deploy_k8s_app_service_shop_spec",
+      "deploy_k8s_app_spec_ports"
+    ],
+    "9": [
+      "config_settings_k_yaml",
+      "config_settings_yaml_config_settings",
+      "config_settings_yaml_config_settings_k"
+    ],
+    "10": [
+      "config_settings_k_yml",
+      "config_settings_yml_config_settings",
+      "config_settings_yml_config_settings_k"
+    ],
+    "11": [
+      "travis",
+      "travis_language",
+      "travis_python"
+    ],
+    "12": [
+      "config_app_load",
+      "config_app_py_config_app"
+    ]
+  },
+  "cohesion": {
+    "0": 0.1111111111111111,
+    "1": 0.13333333333333333,
+    "2": 0.13333333333333333,
+    "3": 0.21818181818181817,
+    "4": 0.18181818181818182,
+    "5": 0.2857142857142857,
+    "6": 0.2857142857142857,
+    "7": 0.3333333333333333,
+    "8": 0.3333333333333333,
+    "9": 0.6666666666666666,
+    "10": 0.6666666666666666,
+    "11": 0.6666666666666666,
+    "12": 1.0
+  },
+  "gods": [
+    {
+      "id": "deploy_k8s_app_doc0_deployment_shop",
+      "label": "Deployment shop",
+      "degree": 5
+    },
+    {
+      "id": "github_workflows_ci_test_steps",
+      "label": "steps",
+      "degree": 5
+    },
+    {
+      "id": "config_app_workers",
+      "label": "workers",
+      "degree": 5
+    },
+    {
+      "id": "deploy_k8s_app_doc1_service_shop",
+      "label": "Service shop",
+      "degree": 5
+    },
+    {
+      "id": "config_app_server",
+      "label": "server",
+      "degree": 4
+    },
+    {
+      "id": "deploy_k8s_app_deployment_shop_metadata",
+      "label": "metadata",
+      "degree": 3
+    },
+    {
+      "id": "deploy_k8s_app_doc2_configmap",
+      "label": "ConfigMap",
+      "degree": 3
+    },
+    {
+      "id": "deploy_k8s_app_doc3_doc_3",
+      "label": "doc 3",
+      "degree": 3
+    },
+    {
+      "id": "deploy_k8s_app_metadata_name",
+      "label": "name",
+      "degree": 3
+    },
+    {
+      "id": "config_app_features",
+      "label": "features",
+      "degree": 3
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `server` connect `Community 5` to `Community 1`?",
+      "why": "High betweenness centrality (0.035) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `workers` connect `Community 7` to `Community 1`?",
+      "why": "High betweenness centrality (0.031) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 2` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

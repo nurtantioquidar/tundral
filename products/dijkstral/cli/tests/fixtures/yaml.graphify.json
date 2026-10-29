@@ -1,0 +1,1924 @@
+{
+ "nodes": [
+  {
+   "id": "github_workflows_ci",
+   "label": "ci.yml",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_on",
+   "label": "on",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_on_push",
+   "label": "push",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_push_branches",
+   "label": "branches",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_on_pull_request",
+   "label": "pull_request",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_jobs",
+   "label": "jobs",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_jobs_test",
+   "label": "test",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_test_runs_on",
+   "label": "runs-on",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_test_steps",
+   "label": "steps",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_steps_uses",
+   "label": "uses",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_steps_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_steps_run",
+   "label": "run",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_steps_env",
+   "label": "env",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "github_workflows_ci_env_ci",
+   "label": "CI",
+   "file_type": "code",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "travis",
+   "label": ".travis.yml",
+   "file_type": "code",
+   "source_file": ".travis.yml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "travis_language",
+   "label": "language",
+   "file_type": "code",
+   "source_file": ".travis.yml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "travis_python",
+   "label": "python",
+   "file_type": "code",
+   "source_file": ".travis.yml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_py_config_app",
+   "label": "app.py",
+   "file_type": "code",
+   "source_file": "config/app.py",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_load",
+   "label": "load()",
+   "file_type": "code",
+   "source_file": "config/app.py",
+   "source_location": "L1",
+   "_callable": true,
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_yaml_config_app",
+   "label": "config/app.yaml",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_version",
+   "label": "version",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_server",
+   "label": "server",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_server_host",
+   "label": "host",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_server_port",
+   "label": "port",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_server_tls",
+   "label": "tls",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_tls_cert",
+   "label": "cert",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_tls_options",
+   "label": "options",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_options_ciphers",
+   "label": "ciphers",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_database",
+   "label": "database",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_database_driver",
+   "label": "driver",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_database_pool",
+   "label": "pool",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_pool_min",
+   "label": "min",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_pool_max",
+   "label": "max",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_replica",
+   "label": "replica",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L16",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_replica_driver",
+   "label": "driver",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_replica_pool",
+   "label": "pool",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_cache",
+   "label": "cache",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L17",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_cache_driver",
+   "label": "driver",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L19",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_cache_pool",
+   "label": "pool",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L13",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_workers",
+   "label": "workers",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L20",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_workers_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L21",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_workers_queue",
+   "label": "queue",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_workers_retry",
+   "label": "retry",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_retry_attempts",
+   "label": "attempts",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L25",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_workers_nested",
+   "label": "nested",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_features",
+   "label": "features",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_features_search",
+   "label": "search",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_features_export",
+   "label": "export",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_export_csv",
+   "label": "csv",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L27",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_yes",
+   "label": "yes",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L28",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_0x1f",
+   "label": "0x1F",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_quoted_key",
+   "label": "quoted key",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L30",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_esc_aped",
+   "label": "esc\"aped",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L31",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_\u00fcn\u00efcode",
+   "label": "\u00dcn\u00efcode",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L32",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_notes",
+   "label": "notes",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L35",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_retries",
+   "label": "retries",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L39",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_app_retries_max",
+   "label": "max",
+   "file_type": "code",
+   "source_file": "config/app.yaml",
+   "source_location": "L40",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_settings_yaml_config_settings",
+   "label": "settings.yaml",
+   "file_type": "code",
+   "source_file": "config/settings.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_settings_yaml_config_settings_k",
+   "label": "k",
+   "file_type": "code",
+   "source_file": "config/settings.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_settings_k_yaml",
+   "label": "yaml",
+   "file_type": "code",
+   "source_file": "config/settings.yaml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_settings_yml_config_settings",
+   "label": "settings.yml",
+   "file_type": "code",
+   "source_file": "config/settings.yml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_settings_yml_config_settings_k",
+   "label": "k",
+   "file_type": "code",
+   "source_file": "config/settings.yml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_settings_k_yml",
+   "label": "yml",
+   "file_type": "code",
+   "source_file": "config/settings.yml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app",
+   "label": "k8s/app.yaml",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_doc0_deployment_shop",
+   "label": "Deployment shop",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_deployment_shop_apiversion",
+   "label": "apiVersion",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_deployment_shop_kind",
+   "label": "kind",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_deployment_shop_metadata",
+   "label": "metadata",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_metadata_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_metadata_labels",
+   "label": "labels",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_labels_app",
+   "label": "app",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_deployment_shop_spec",
+   "label": "spec",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_spec_replicas",
+   "label": "replicas",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_doc1_service_shop",
+   "label": "Service shop",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_service_shop_apiversion",
+   "label": "apiVersion",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_service_shop_kind",
+   "label": "kind",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L11",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_service_shop_metadata",
+   "label": "metadata",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L12",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_service_shop_spec",
+   "label": "spec",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L14",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_spec_ports",
+   "label": "ports",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L15",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_ports_port",
+   "label": "port",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L16",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_doc2_configmap",
+   "label": "ConfigMap",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_configmap_kind",
+   "label": "kind",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L22",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_configmap_data",
+   "label": "data",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L23",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_data_mode",
+   "label": "mode",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L24",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_doc3_doc_3",
+   "label": "doc 3",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_doc_3_metadata",
+   "label": "metadata",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L26",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_doc_3_spec",
+   "label": "spec",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L28",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_app_spec_x",
+   "label": "x",
+   "file_type": "code",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L29",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job",
+   "label": "job.yaml",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_apiversion",
+   "label": "apiVersion",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_kind",
+   "label": "kind",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_metadata",
+   "label": "metadata",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_metadata_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_spec",
+   "label": "spec",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_spec_template",
+   "label": "template",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_template_spec",
+   "label": "spec",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L7",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_spec_containers",
+   "label": "containers",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L8",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_containers_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L9",
+   "_origin": "ast"
+  },
+  {
+   "id": "deploy_k8s_job_containers_image",
+   "label": "image",
+   "file_type": "code",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L10",
+   "_origin": "ast"
+  },
+  {
+   "id": "docker_compose",
+   "label": "docker-compose.yml",
+   "file_type": "code",
+   "source_file": "docker-compose.yml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "docker_compose_services",
+   "label": "services",
+   "file_type": "code",
+   "source_file": "docker-compose.yml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "docker_compose_services_web",
+   "label": "web",
+   "file_type": "code",
+   "source_file": "docker-compose.yml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "docker_compose_web_image",
+   "label": "image",
+   "file_type": "code",
+   "source_file": "docker-compose.yml",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "docker_compose_web_depends_on",
+   "label": "depends_on",
+   "file_type": "code",
+   "source_file": "docker-compose.yml",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "docker_compose_services_db",
+   "label": "db",
+   "file_type": "code",
+   "source_file": "docker-compose.yml",
+   "source_location": "L6",
+   "_origin": "ast"
+  },
+  {
+   "id": "docker_compose_db_image",
+   "label": "image",
+   "file_type": "code",
+   "source_file": "docker-compose.yml",
+   "source_location": "L7",
+   "_origin": "ast"
+  }
+ ],
+ "edges": [
+  {
+   "source": "github_workflows_ci",
+   "target": "github_workflows_ci_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci",
+   "target": "github_workflows_ci_on",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_on",
+   "target": "github_workflows_ci_on_push",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_on_push",
+   "target": "github_workflows_ci_push_branches",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_on",
+   "target": "github_workflows_ci_on_pull_request",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci",
+   "target": "github_workflows_ci_jobs",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_jobs",
+   "target": "github_workflows_ci_jobs_test",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_jobs_test",
+   "target": "github_workflows_ci_test_runs_on",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_jobs_test",
+   "target": "github_workflows_ci_test_steps",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_test_steps",
+   "target": "github_workflows_ci_steps_uses",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_test_steps",
+   "target": "github_workflows_ci_steps_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_test_steps",
+   "target": "github_workflows_ci_steps_run",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_test_steps",
+   "target": "github_workflows_ci_steps_env",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "github_workflows_ci_steps_env",
+   "target": "github_workflows_ci_env_ci",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".github/workflows/ci.yml",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "travis",
+   "target": "travis_language",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".travis.yml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "travis",
+   "target": "travis_python",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": ".travis.yml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_py_config_app",
+   "target": "config_app_load",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.py",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_version",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_server",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_server",
+   "target": "config_app_server_host",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_server",
+   "target": "config_app_server_port",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_server",
+   "target": "config_app_server_tls",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_server_tls",
+   "target": "config_app_tls_cert",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_server_tls",
+   "target": "config_app_tls_options",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_tls_options",
+   "target": "config_app_options_ciphers",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_database",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_database",
+   "target": "config_app_database_driver",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_database",
+   "target": "config_app_database_pool",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_database_pool",
+   "target": "config_app_pool_min",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_database_pool",
+   "target": "config_app_pool_max",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_replica",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_replica",
+   "target": "config_app_replica_driver",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_replica",
+   "target": "config_app_replica_pool",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_replica_pool",
+   "target": "config_app_pool_min",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_replica_pool",
+   "target": "config_app_pool_max",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_cache",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L17",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_cache",
+   "target": "config_app_cache_driver",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L19",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_cache",
+   "target": "config_app_cache_pool",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_cache_pool",
+   "target": "config_app_pool_min",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_cache_pool",
+   "target": "config_app_pool_max",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_workers",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L20",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_workers",
+   "target": "config_app_workers_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L21",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_workers",
+   "target": "config_app_workers_queue",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_workers",
+   "target": "config_app_workers_retry",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_workers_retry",
+   "target": "config_app_retry_attempts",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L25",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_workers",
+   "target": "config_app_workers_nested",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_features",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_features",
+   "target": "config_app_features_search",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_features",
+   "target": "config_app_features_export",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_features_export",
+   "target": "config_app_export_csv",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_yes",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_0x1f",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_quoted_key",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L30",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_esc_aped",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L31",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_\u00fcn\u00efcode",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L32",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_notes",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L35",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_yaml_config_app",
+   "target": "config_app_retries",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L39",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_app_retries",
+   "target": "config_app_retries_max",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/app.yaml",
+   "source_location": "L40",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_settings_yaml_config_settings",
+   "target": "config_settings_yaml_config_settings_k",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/settings.yaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_settings_yaml_config_settings_k",
+   "target": "config_settings_k_yaml",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/settings.yaml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_settings_yml_config_settings",
+   "target": "config_settings_yml_config_settings_k",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/settings.yml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_settings_yml_config_settings_k",
+   "target": "config_settings_k_yml",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/settings.yml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app",
+   "target": "deploy_k8s_app_doc0_deployment_shop",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc0_deployment_shop",
+   "target": "deploy_k8s_app_deployment_shop_apiversion",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc0_deployment_shop",
+   "target": "deploy_k8s_app_deployment_shop_kind",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc0_deployment_shop",
+   "target": "deploy_k8s_app_deployment_shop_metadata",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_deployment_shop_metadata",
+   "target": "deploy_k8s_app_metadata_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_deployment_shop_metadata",
+   "target": "deploy_k8s_app_metadata_labels",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_metadata_labels",
+   "target": "deploy_k8s_app_labels_app",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc0_deployment_shop",
+   "target": "deploy_k8s_app_deployment_shop_spec",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_deployment_shop_spec",
+   "target": "deploy_k8s_app_spec_replicas",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app",
+   "target": "deploy_k8s_app_doc1_service_shop",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc1_service_shop",
+   "target": "deploy_k8s_app_service_shop_apiversion",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc1_service_shop",
+   "target": "deploy_k8s_app_service_shop_kind",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L11",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc1_service_shop",
+   "target": "deploy_k8s_app_service_shop_metadata",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L12",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_service_shop_metadata",
+   "target": "deploy_k8s_app_metadata_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L13",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc1_service_shop",
+   "target": "deploy_k8s_app_service_shop_spec",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L14",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_service_shop_spec",
+   "target": "deploy_k8s_app_spec_ports",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L15",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_spec_ports",
+   "target": "deploy_k8s_app_ports_port",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L16",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app",
+   "target": "deploy_k8s_app_doc2_configmap",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc2_configmap",
+   "target": "deploy_k8s_app_configmap_kind",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L22",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc2_configmap",
+   "target": "deploy_k8s_app_configmap_data",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L23",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_configmap_data",
+   "target": "deploy_k8s_app_data_mode",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L24",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app",
+   "target": "deploy_k8s_app_doc3_doc_3",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc3_doc_3",
+   "target": "deploy_k8s_app_doc_3_metadata",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L26",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc_3_metadata",
+   "target": "deploy_k8s_app_metadata_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L27",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc3_doc_3",
+   "target": "deploy_k8s_app_doc_3_spec",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L28",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_app_doc_3_spec",
+   "target": "deploy_k8s_app_spec_x",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/app.yaml",
+   "source_location": "L29",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job",
+   "target": "deploy_k8s_job_apiversion",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job",
+   "target": "deploy_k8s_job_kind",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job",
+   "target": "deploy_k8s_job_metadata",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job_metadata",
+   "target": "deploy_k8s_job_metadata_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job",
+   "target": "deploy_k8s_job_spec",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job_spec",
+   "target": "deploy_k8s_job_spec_template",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job_spec_template",
+   "target": "deploy_k8s_job_template_spec",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job_template_spec",
+   "target": "deploy_k8s_job_spec_containers",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L8",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job_spec_containers",
+   "target": "deploy_k8s_job_containers_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L9",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "deploy_k8s_job_spec_containers",
+   "target": "deploy_k8s_job_containers_image",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "deploy/k8s/job.yaml",
+   "source_location": "L10",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "docker_compose",
+   "target": "docker_compose_services",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "docker-compose.yml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "docker_compose_services",
+   "target": "docker_compose_services_web",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "docker-compose.yml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "docker_compose_services_web",
+   "target": "docker_compose_web_image",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "docker-compose.yml",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "docker_compose_services_web",
+   "target": "docker_compose_web_depends_on",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "docker-compose.yml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "docker_compose_services",
+   "target": "docker_compose_services_db",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "docker-compose.yml",
+   "source_location": "L6",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "docker_compose_services_db",
+   "target": "docker_compose_db_image",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "docker-compose.yml",
+   "source_location": "L7",
+   "weight": 1.0,
+   "_origin": "ast"
+  }
+ ],
+ "hyperedges": [],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

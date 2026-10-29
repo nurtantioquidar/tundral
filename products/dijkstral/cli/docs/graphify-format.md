@@ -64,6 +64,7 @@ Status labels used below:
 27. Dart
 28. Lua
 45. SQL
+46. YAML
 
 ---
 
@@ -106,6 +107,7 @@ Status labels used below:
 | `dart/` | `lib/shop.dart`, `lib/src/{shop_part,service}.dart`, `lib/src/models/{base,user}.dart`, `lib/src/util/format.dart`, `test/service_test.dart` | `dart.graphify.json` | `dart.clustered.graphify.json` |
 | `lua/` | `lib/shop/{init,util,service}.lua`, `lib/shop/models/{base,user}.lua`, `spec/service_spec.lua`, `bin/shop` (lua shebang), `plugins/server.luau` | `lua.graphify.json` | `lua.clustered.graphify.json` |
 | `sql/` | `db/migrations/{001_init,002_views,003_functions}.sql`, `db/procedures.sql`, `db/plpgsql.sql` and `db/maintenance.sql` (routines the grammar loses), `db/schema.sql` (pg_dump style), `db/mysql/legacy.sql`, `db/seed.sql` (DML only), `db/empty.sql` (0 bytes) (§45; Graphify **0.9.97** with tree-sitter-sql) | `sql.graphify.json` | `sql.clustered.graphify.json` |
+| `yaml/` | `config/app.yaml` (nesting, sequences, anchors, merges, repeated and odd keys) and `config/app.py` (an id collision), `.github/workflows/ci.yml`, `.travis.yml`, `docker-compose.yml`, `deploy/k8s/{app,job}.yaml` (multi-document manifests), `api/openapi.yaml` (skipped), `config/{flat,list,empty,comment,settings}.yaml`, `config/settings.yml`, `broken/{syntax,stack,chart}.yaml` (refused by the loader), `pnpm-lock.yaml`, `config/secrets.yaml` and `credentials/db.yaml` (dropped as sensitive) (§46; Graphify **0.9.97**) | `yaml.graphify.json` | `yaml.clustered.graphify.json` |
 
 How the goldens were produced (from `tests/fixtures/`):
 
@@ -244,6 +246,7 @@ The full probe tables are in §14 and in the mixed fixture notes. In summary:
 - **Code extensions** (case-insensitive):
   - This spec: `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .rs .go .java .kt .kts .scala`, and `.cs` (§18).
   - Also counted as code but out of scope here: `.json` (allowlisted manifests only, §14.1),
+    `.yaml .yml` (since 0.9.97, §46),
     `Cargo.toml`/`pyproject.toml` (only those names, §14.2), `.sh .bash` (§14.3), and `.rb .c .h
     .cpp .cc .cxx .hpp .cu .cs .kt .kts .swift .php .scala .groovy .gradle .dart .lua .zig .ex .exs
     .erl .ml .jl .m .mm .v .sol .f90 .vb .vue .svelte .astro .ps1 .r .sql .tf`.
@@ -251,7 +254,7 @@ The full probe tables are in §14 and in the mixed fixture notes. In summary:
   - Extensionless files with a python, sh, bash, zsh, node, ruby or perl shebang are code. Example:
     ripgrep's `benchsuite/benchsuite` becomes file node `benchsuite_benchsuite`.
 - **Skipped in `--code-only`:**
-  - Docs: `.md .mdx .rst .txt .html .yaml .yml`.
+  - Docs: `.md .mdx .rst .txt .html` (and `.yaml .yml` before 0.9.97).
   - Papers and images: `.pdf`, `.png .svg`, and so on.
   - Not classified: `.css .scss .graphql .proto .xml .ini .cfg .lock .pyi .ipynb`, `Dockerfile`,
     `Makefile`, and so on.
@@ -266,8 +269,9 @@ The full probe tables are in §14 and in the mixed fixture notes. In summary:
   - `.graphifyignore` is always honoured.
   - `--no-gitignore` disables only `.gitignore`.
 - **Lockfiles and sensitive files:**
-  - `package-lock.json` is silently dropped.
-  - Files that look sensitive (`.env*`, `*.pem`) are dropped.
+  - `package-lock.json` and `pnpm-lock.yaml` are silently dropped.
+  - Files that look sensitive (`.env*`, `*.pem`, data and documents named like secrets, anything
+    under `.ssh`) are dropped (§14.5).
   - `credentials.py` and `secrets.py` are not dropped.
 - **Test files** (`tests/`, `test_*.py`, `*.test.ts`, `__tests__/`, `*_test.go`, `src/test/java`)
   get no special treatment in any language.
@@ -1875,7 +1879,7 @@ Every file falls into one of: code (extracted), doc/paper/image (counted then sk
 Code (by extension, observed): `.py .ts .tsx .mts .cts .js .jsx .mjs .cjs .go .java .rs .json
 .toml* .sh .bash .rb .rake .c .h .cpp .cc .cxx .hpp .cu .cs .kt .kts .swift .php .scala .groovy
 .gradle .dart .lua .zig .ex .exs .erl .ml .jl .m .mm .v .sol .f90 .vb .vue .svelte .ps1 .r .sql .tf`,
-and also `.astro .psm1 .psd1 .cls .vbproj` (§38–§42).
+and also `.astro .psm1 .psd1 .cls .vbproj` (§38–§42), and since 0.9.97 `.yaml .yml` (§46).
 `.d.ts` and `.min.js` are code (not filtered).
 
 - `.r`, `.tf` count as code but contribute nothing, not even a file node (stderr: optional
@@ -1891,7 +1895,8 @@ and also `.astro .psm1 .psd1 .cls .vbproj` (§38–§42).
 - `*.toml`: only files named `Cargo.toml` and `pyproject.toml` are code; `config.toml` is
   "not classified".
 
-Doc (skipped in code-only): `.md .mdx .rst .txt .html .yaml .yml`, and `CMakeLists.txt` (as .txt).
+Doc (skipped in code-only): `.md .mdx .rst .txt .html`, and `CMakeLists.txt` (as .txt). Before
+0.9.97 `.yaml .yml` were docs too.
 Paper: `.pdf`. Image: `.png .svg`.
 
 Not classified: `.css .scss .less .graphql .proto .xml .ini .cfg .conf .csv .jsonc .json5 .geojson
@@ -1935,11 +1940,27 @@ Hidden *files* (`.hidden.py`) are extracted. Generated-looking files (`foo_pb2.p
 
 #### Lockfiles and sensitive files
 
-- `package-lock.json` is silently dropped (not counted as code, not reported). `yarn.lock`,
-  `Cargo.lock`, `composer.lock`, `bun.lock` are `.lock` → not classified. `pnpm-lock.yaml` is
-  yaml (doc).
-- Sensitive filter (reported as `N file(s) skipped as potentially sensitive`): `.env`,
-  `.env.local`, `*.pem`. Not flagged: `credentials.py`, `secrets.py`, `id_rsa.py` (extracted).
+- `package-lock.json` and `pnpm-lock.yaml` are silently dropped (not counted as code, not
+  reported). `yarn.lock`, `Cargo.lock`, `composer.lock`, `bun.lock` are `.lock` → not classified.
+- Sensitive filter (reported as `N file(s) skipped as potentially sensitive`, probed on 0.9.86 and
+  0.9.97 alike; only JSON mattered for the graph before YAML became code):
+  - Always, whatever the type: `.env`, `.env.*`, `.envrc`, `*.pem`, `*.der`, `*.key`, `*.crt`,
+    `*.p12`, `*.pfx`, `id_rsa`, `id_rsa.pub`, `id_ed25519`, `.netrc`, `.npmrc`, `.pgpass`,
+    `.pypirc`, `.htpasswd`, `secring*`, and everything below a directory named `.ssh`, `.aws`,
+    `.gnupg` or `.gcloud` (any depth, case-insensitive; `.ssh/x.py` too).
+  - Files that are not source code (JSON and YAML count as not source; `.py .go .ts .sql .tf
+    .csproj .xaml …` are spared): anything below a `secrets`, `credentials` or `.secrets`
+    directory, and names whose stem (the name without its last extension), case-insensitively,
+    ends with one of `secret secrets token tokens credential credentials password passwords
+    passwd serviceaccount service-account service_account private_key` after `-`, `_` or `.`, is
+    one of them, or has at most two such parts and starts with one: `secret.yaml`,
+    `core.v1.Secret.yaml`, `x-token.json`, `token-config.yaml`, `secret.x.yaml`, `.secret`,
+    `api_token.txt`; not `my-token-config.yaml`, `a-secret-b.yaml`, `tokenizer.yaml`,
+    `secretary.yaml`, `private-key.yaml`, `api_key.yaml`. Markdown and reStructuredText are
+    dropped only for the bare word (`secret.md`, `token.md`; not `tokens.md`, `x-secret.md`).
+  - Not flagged: `credentials.py`, `secrets.py`, `id_rsa.py`, `secrets/mod.py` (extracted).
+  - dijkstral implements this list in `discover.rs`; Graphify's own documentation describes
+    further prose carve-outs that no corpus exercises.
 
 #### `built_at_commit`
 
@@ -5299,3 +5320,121 @@ keeps L6 there because the corpus also holds a C++ `Logger.h`/`Logger.cpp` pair,
 whole build to first-wins (quirk ZG2, §33.6, not reproduced). Without that pair it keeps L11, as
 dijkstral does. The corpus's non-SQL nodes and links are identical before and after SQL
 extraction.
+
+---
+
+## 46. YAML (2026-10-29)
+
+Graphify 0.9.97 (`graphifyy`; YAML extraction arrived in 0.9.95 and was reworked in 0.9.97, per its
+changelog) classifies `.yaml` and `.yml` (any case) as code and extracts them structurally, like
+JSON manifests (§14.1) but with sequences descended and its own rules for which documents count.
+Fixture `tests/fixtures/yaml/`, goldens `yaml.*` (Graphify 0.9.97). Probes were run through
+`graphify extract --code-only` on scratch copies, 0.9.86 beside 0.9.97, and checked on the 19 bench
+corpora (§46.6). Implementation: `crates/core/src/extract/data/yaml.rs`.
+
+### 46.1 Which files and documents count
+
+- **Loading** (Rule). The text is loaded as a safe YAML 1.1 loader does, every document of the
+  stream. If any document fails to load, the file yields nothing at all: a syntax error, a tab
+  where YAML forbids one, an undefined alias, a local or foreign tag (`!Ref`, `!Sub`,
+  `!!python/name:…`; core tags such as `!!str`, `!!set`, `!!omap`, `!!binary` load), a collection
+  used as a key (`? {a: 1}`, an unquoted Helm `{{ .Values.x }}`), a plain `=` value, a `<<` merge
+  whose value is not a mapping or a list of mappings, an impossible date (`2019-02-30`), text an
+  explicit `!!int`/`!!float`/`!!bool`/`!!binary`/`!!timestamp` cannot read, characters YAML
+  refuses (C0 controls), or a file over **1 MiB** (1,048,576 bytes still loads). A UTF-8 BOM, CRLF
+  line ends, `%YAML 1.1` and `...` are fine.
+- **Configuration files** (Rule): a basename in this list (case-insensitive) or any file below a
+  `.github/workflows` directory (any depth, case-insensitive). Every mapping and every sequence
+  document counts (scalar and empty documents do not); OpenAPI and JSON-Schema documents count too.
+  `mkdocs.yml mkdocs.yaml docker-compose.yml docker-compose.yaml compose.yml compose.yaml
+  .gitlab-ci.yml .gitlab-ci.yaml action.yml action.yaml pubspec.yaml chart.yaml chart.yml
+  values.yaml values.yml kustomization.yaml kustomization.yml .travis.yml .pre-commit-config.yaml
+  serverless.yml serverless.yaml environment.yml cloudbuild.yaml cloudbuild.yml
+  azure-pipelines.yml appveyor.yml skaffold.yaml`. Probed and not in it: `pubspec.yml`,
+  `.travis.yaml`, `environment.yaml`, `azure-pipelines.yaml`, `.pre-commit-config.yml`,
+  `values-prod.yaml`, `docker-compose.override.yml`, `bitbucket-pipelines.yml`, `.drone.yml`,
+  `.github/dependabot.yml`, `templates/*.yaml` and some 40 other CI and deployment names.
+- **Other files** (Rule): a document counts when it is a mapping whose top-level keys, compared
+  case-insensitively, are neither an OpenAPI/Swagger spec (`openapi` or `swagger`, and `paths`) nor
+  a JSON Schema (`$schema`, and `definitions`, `$defs` or `$id`, as §14.1), and that has at least
+  one collection value (a mapping or sequence, empty or not, even under a key that is then dropped)
+  or a structural key: `apiversion dependencies functions hosts jobs kind metadata name networks
+  on pipeline provider resources roles scripts services spec stages steps tasks version volumes
+  workflows` (found among 496 candidate keys, one file each). So `a: 1` and fastapi's
+  `language_names.yml` yield nothing while `kind: x` counts; top-level sequences and scalars never
+  count.
+- No document counts → no file node either (like a non-manifest JSON file).
+- `pnpm-lock.yaml` is dropped silently, and secret-looking names are dropped (§14.5):
+  Kubernetes `secret.yaml`, `*-serviceaccount.yaml`, `token-config.yaml`, `core.v1.Secret.yaml`.
+
+### 46.2 Nodes and edges
+
+- **File node** (Rule): `fileid`, label the basename (disambiguated as any file, §5.1), `L1`,
+  no extra fields.
+- **Key nodes** (Rule): every key of a counting mapping becomes a node `{"id","label",
+  "file_type":"code","source_file","source_location","_origin":"ast"}` at the key's line, with a
+  `contains` edge (EXTRACTED, no context) from its parent at the same line, in pre-order (node,
+  edge, then the key's value). Values are never nodes and no other relation is ever emitted
+  (`depends_on`, `$ref`, `INHERIT`, image names: nothing).
+- **Ids** (Rule): depth 1 `<fileid>_<slug(key)>`; deeper `<fileid>_<slug(parent key)>_<slug(key)>`,
+  only the immediate parent key, as JSON's quirk (§14.1). A sequence is transparent: the mappings
+  in it, at any nesting of sequences, are children of the key that holds the sequence
+  (`list: [{k: 1}]` → `…_list_k`). A key whose slug is empty (`"@/*"`, `~`, `""`) is skipped with
+  its subtree. When a key's id equals its parent's (`items` in a list under `items`), the node
+  merges into the parent and no self-loop is written. Same-id keys elsewhere in the file are one
+  node (the build keeps the first, §8) with a `contains` edge from each parent.
+- **Labels** (Rule): the key's text as written (unquoted, escapes decoded): `yes`, `0x1F`,
+  `2001-12-14`, `True`, `x"y`, `Ünïcode`, `a.b/c d`. Keys are compared by that text, so `null` and
+  `Null` are two keys (whose slugs then merge the nodes). A key repeated in one mapping keeps its
+  first position and takes the last line and value (`dup: {a}` then `dup: {b}` → only `dup_b`), as
+  a Python dict does.
+- **Aliases and merges** (Rule): an alias walks its anchor's node again under the alias's key, so
+  the children keep the anchor's lines (`replica: *db` → `…_replica_driver` at the anchor's line).
+  `<<` merges as YAML 1.1 does: merged pairs first (from a list of mappings, the last mapping's
+  first), then the mapping's own pairs, which win over merged ones; there is no `<<` node.
+- **Bounds** (Rule): at most **500** key nodes per file in pre-order (document nodes do not
+  count; the JSON budget, §14.1); keys only for mappings at most **6** collections below the
+  document (`a.b.c.d.e.f.g` stops after `g`; each sequence counts as a level), one level fewer
+  when the file has document nodes.
+
+### 46.3 Documents
+
+- One counting document: its keys hang off the file node (a sequence document in a configuration
+  file: the file node alone).
+- Several (Rule): each gets a document node, numbered `i` among the counting documents only,
+  id `<fileid>_doc<i>_<slug(label)>`, at the line of the document's first node, with
+  `contains` from the file. Its depth-1 keys are `<fileid>_<slug(label)>_<slug(key)>` (the label
+  acts as the parent key). The label is `Kind name` when the document's `kind` is a non-empty
+  string and `metadata.name` is one too (`Deployment shop`, `RoleBinding system::leader-locking-…`),
+  `Kind` with `kind` alone (`ConfigMap`, also with only `metadata.generateName`), else
+  `doc <i>` (`kind: 5`, `Kind: Pod`, a sequence document). Two documents with the same label have
+  distinct document nodes but share their key ids (`…_pod_p1_spec`, first wins).
+
+### 46.4 Discovery and other paths
+
+- YAML is no longer a document for `update`'s semantic pass or the markdown structure (§3).
+- Code references bound to YAML keys: see §46.5.
+
+### 46.5 Quirks not reproduced
+
+- **Y1** A symlinked file is read through the link and its key ids embed the absolute path of the
+  checkout (`users_hades_…_docs_content_manual_manual_body`, jq's `manual.yml → v1.8/manual.yml`).
+  Graphify does this for every language (a symlinked `.py` too, also in 0.9.86); dijkstral's walk
+  does not follow file symlinks, so the 15 nodes are absent.
+- **Y2** Other languages' resolvers bind an unresolved name to a YAML key with that label: Python
+  `Path(…)` → a workflow's `path` key (51 links in the graphify corpus), `*args` → a pre-commit
+  `args` key (fastapi), `@patch` → codecov's `patch` (erpnext), a Rust `use …::version` → a
+  workflow's `version` output (ripgrep). These are wrong links and dijkstral makes none. C
+  includes are not bound to JSON or YAML keys in either tool (`<sys/types.h>` stays an external);
+  `<windows.h>` does reach `windows.yml` through the file-stem rule (§8.1) in both.
+- **Y3** Go method edges whose receiver id was renamed attach to a YAML file node ending in the
+  same id (`test_images_apparmor_loader_example_pod -method-> example_pod_deepcopy`, Kubernetes,
+  3 links); dijkstral makes none.
+
+### 46.6 Parity
+
+Fixture: 100% of nodes and links, communities exact, report goldens exact. All probes match except
+a contrived second document with a stray `]` that Graphify's loader refuses and dijkstral's accepts.
+Corpora (2026-10-29, `parity.py --ext .yaml,.yml` against 0.9.97): all 19 at 100% of YAML nodes
+and links except jq (15 nodes and 14 links of the symlinked `manual.yml`, Y1); Kubernetes
+188,804 YAML nodes match.
