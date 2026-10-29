@@ -60,11 +60,24 @@ fn var(name: &str) -> Result<String> {
     std::env::var(name).with_context(|| format!("{name} is not set"))
 }
 
+/// `DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_BASE64` (the PEM on one line, as env files hold it), or
+/// else `DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_FILE`.
+fn github_private_key() -> Result<Vec<u8>> {
+    use base64::Engine;
+    if let Ok(b64) = std::env::var("DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_BASE64") {
+        return base64::engine::general_purpose::STANDARD
+            .decode(b64.trim())
+            .context("DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_BASE64 is not base64");
+    }
+    let key = var("DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_FILE")?;
+    std::fs::read(&key).with_context(|| format!("reading the GitHub App key {key}"))
+}
+
 impl Config {
     /// `DIJKSTRAL_SERVICE_DATA`, `DIJKSTRAL_SERVICE_LISTEN` (default `127.0.0.1:8095`),
     /// `DIJKSTRAL_SERVICE_WEBHOOK_SECRET`, `DIJKSTRAL_SERVICE_INTERNAL_TOKEN`, and the source:
-    /// `DIJKSTRAL_SERVICE_GITHUB_APP_ID` with `DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_FILE` (a PEM
-    /// file), or `DIJKSTRAL_SERVICE_LOCAL_SOURCE` (a directory of bare repositories).
+    /// `DIJKSTRAL_SERVICE_GITHUB_APP_ID` with the app's private key (`github_private_key`), or
+    /// `DIJKSTRAL_SERVICE_LOCAL_SOURCE` (a directory of bare repositories).
     pub fn from_env() -> Result<Config> {
         let webhook_secret = var("DIJKSTRAL_SERVICE_WEBHOOK_SECRET")?.into_bytes();
         let internal_token = var("DIJKSTRAL_SERVICE_INTERNAL_TOKEN")?;
@@ -80,16 +93,12 @@ impl Config {
             webhook_secret,
             internal_token,
             source: match std::env::var("DIJKSTRAL_SERVICE_GITHUB_APP_ID") {
-                Ok(app_id) => {
-                    let key = var("DIJKSTRAL_SERVICE_GITHUB_PRIVATE_KEY_FILE")?;
-                    SourceConfig::GitHub(crate::github::GitHubApp {
-                        app_id,
-                        private_key_pem: std::fs::read(&key)
-                            .with_context(|| format!("reading the GitHub App key {key}"))?,
-                        api: "https://api.github.com".into(),
-                        web: "https://github.com".into(),
-                    })
-                }
+                Ok(app_id) => SourceConfig::GitHub(crate::github::GitHubApp {
+                    app_id,
+                    private_key_pem: github_private_key()?,
+                    api: "https://api.github.com".into(),
+                    web: "https://github.com".into(),
+                }),
                 Err(_) => SourceConfig::Local(var("DIJKSTRAL_SERVICE_LOCAL_SOURCE")?.into()),
             },
             exe: std::env::current_exe()?,
