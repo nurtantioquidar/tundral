@@ -239,6 +239,7 @@ pub fn resolve(files: &[View], index: &Index) -> Resolution {
     r.imports(&mut out);
     r.refs(&mut out, index);
     let called = r.calls(&mut out);
+    r.property_reads(&mut out);
     r.indirect(&mut out, &called);
     r.uses(&mut out);
     Resolution {
@@ -1232,6 +1233,76 @@ impl<'a> Resolver<'a> {
             }
         }
         first
+    }
+
+    /// `references` (`property_read`) to `_py_property` methods (§9.3): `self.p` through the
+    /// class and its bases (EXTRACTED; never the property itself), `x.p` on a typed receiver to
+    /// a property defined on that class (INFERRED 0.85). One edge per (reader, property), at the
+    /// last read.
+    fn property_reads(&self, out: &mut Out) {
+        for (fi, f) in self.files.iter().enumerate() {
+            let mut order: Vec<(u32, String)> = Vec::new();
+            let mut found: HashMap<(u32, String), (u32, Confidence, Option<f64>)> = HashMap::new();
+            for r in &f.py.reads {
+                let target = match &r.kind {
+                    CallKind::SelfMethod(class) => self
+                        .method((fi, *class), &r.name, true)
+                        .filter(|&(f2, d)| self.def(f2, d).property && (f2, d) != (fi, r.caller))
+                        .filter(|&t| self.live(t))
+                        .map(|(f2, d)| {
+                            (
+                                self.id(f2, d).to_string(),
+                                Confidence::Extracted,
+                                (f2 != fi).then_some(1.0),
+                            )
+                        }),
+                    CallKind::Typed(class) => self.typed_property(fi, r.caller, class, &r.name),
+                    _ => None,
+                };
+                let Some((t, conf, score)) = target else {
+                    continue;
+                };
+                let key = (r.caller, t);
+                if !found.contains_key(&key) {
+                    order.push(key.clone());
+                }
+                found.insert(key, (r.line, conf, score));
+            }
+            for key in order {
+                let (line, conf, score) = found[&key];
+                out.edges.push(edge(
+                    &f.ids[key.0 as usize],
+                    &key.1,
+                    "references",
+                    f.rel,
+                    line,
+                    Some("property_read"),
+                    conf,
+                    score,
+                ));
+            }
+        }
+    }
+
+    /// `x.p` where `x` holds an instance of the class written `class`: the property `p` defined
+    /// directly on that class, INFERRED.
+    fn typed_property(
+        &self,
+        fi: usize,
+        caller: u32,
+        class: &str,
+        name: &str,
+    ) -> Option<(String, Confidence, Option<f64>)> {
+        let (q, n) = split_dotted(class);
+        let Lookup::Found(cls) = self.resolve_type(fi, Some(caller), n, q) else {
+            return None;
+        };
+        Some(cls)
+            .filter(|&(f2, d)| self.def(f2, d).kind == DefKind::Class)
+            .and_then(|cls| self.method(cls, name, false))
+            .filter(|&(f2, d)| self.def(f2, d).property)
+            .filter(|&t| self.live(t))
+            .map(|(f2, d)| (self.id(f2, d).to_string(), Confidence::Inferred, Some(0.85)))
     }
 
     /// `recv.name()` where `recv` is a class, a local module or an external module.

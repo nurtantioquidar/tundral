@@ -108,11 +108,12 @@ fn commonjs_requires_bind_names_and_stub_missing_ones() {
         "main -imports-> lib_a",
         "main -imports-> lib_b",
         "main -imports-> lib_zz",
-        "main -contains-> main_lib",
         "main_go -calls-> lib_a",
         "lib -indirect_call-> lib_a",
     ] {
         assert!(links.contains(e), "missing `{e}` in:\n{links:#?}");
     }
     assert!(nodes.contains("lib_zz"));
+    // A relative `require` binding is no node (§10.1).
+    assert!(!nodes.contains("main_lib"), "{nodes:#?}");
 }

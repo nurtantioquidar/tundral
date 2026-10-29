@@ -12,25 +12,14 @@ use serde_json::Value;
 /// Documented, deliberate differences (quirks not reproduced; see docs/graphify-format.md §15).
 /// Each entry is a line as printed by the parity summary.
 const ALLOWED: &[&str] = &[
-    // Q9: names imported through the `src/models/index.ts` barrel leave a dangling stub next to
-    // the real edge in Graphify. Dijkstral resolves `export *` chains and emits only the real one.
-    "src_models_index_admin",
-    "src_models_index_helper",
-    "src_models_index_user",
-    "src_service -imports-> src_models_index_admin",
-    "src_service -imports-> src_models_index_helper",
-    "src_service -imports-> src_models_index_user",
-    "src_tests_service_test -imports-> src_models_index_user",
-    "src_ui_app -imports-> src_models_index_user",
-    // Q8: `console.log(…)` and `admin.promote(…)` bind to the last same-file method of that name
-    // (self-loops). Dijkstral binds member calls by receiver: `admin: Administrator` is the
-    // imported `Admin`, so `admin.promote()` is an INFERRED call to `Admin.promote`.
-    "src_service_userservice_log -calls-> src_service_userservice_log",
-    "src_service_userservice_promote -calls-> src_service_userservice_promote",
+    // `admin: Administrator` is the imported `Admin` (`Admin as Administrator`): dijkstral binds
+    // the member call through the import, Graphify looks the alias up by name and records it in
+    // `metadata.unresolved_calls` instead (§10.4).
     "src_service_userservice_promote -calls-> src_models_user_admin_promote",
-    // Q9 consequence: Graphify cannot see `User` through the barrel from a method, so
-    // `new User(name)` in `register` is dropped and its `references (return_type)` survives the
-    // one-link-per-pair fold; dijkstral resolves the call, which outranks the reference (§8.2).
+    // Q9 consequence: Graphify cannot see `User` through the `src/models/index.ts` barrel from a
+    // method, so `new User(name)` in `register` is dropped and its `references (return_type)`
+    // survives the one-link-per-pair fold; dijkstral resolves the call, which outranks the
+    // reference (§8.2).
     "src_service_userservice_register -references-> src_models_user_user",
     "src_service_userservice_register -calls-> src_models_user_user",
     // Q9 consequence: `.map(modelHelper)` passes the barrel-imported `helper` (aliased).
@@ -39,11 +28,12 @@ const ALLOWED: &[&str] = &[
 
 #[test]
 fn typescript_fixture_matches_graphify() {
-    // Community ids move with the ALLOWED differences (graphify-format.md §17.7).
+    // Community ids move with the ALLOWED differences (graphify-format.md §17.7); without them
+    // the partition is Graphify's (NMI 1.0).
     common::assert_fixture(
         "typescript",
         ALLOWED,
-        common::Communities::MinNmi(0.85),
+        common::Communities::MinNmiWithoutAllowedLinks(0.99),
         false,
     );
 }

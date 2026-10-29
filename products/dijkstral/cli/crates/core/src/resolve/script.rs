@@ -746,14 +746,7 @@ impl<'a> Resolver<'a> {
                     Receiver::Name(n) => (n, Confidence::Extracted, 1.0),
                     Receiver::Typed(t) => (t, Confidence::Inferred, 0.85),
                 };
-                // Static and typed member calls follow ESM bindings only (Graphify drops calls
-                // through destructured `require` aliases, §10.4).
-                if self.bindings[vi]
-                    .get(class_name.as_str())
-                    .is_some_and(|b| b.2)
-                {
-                    continue;
-                }
+                let src = self.local_id(vi, caller);
                 let Some(class) = self.binding(vi, class_name) else {
                     continue;
                 };
@@ -770,7 +763,6 @@ impl<'a> Resolver<'a> {
                     continue;
                 }
                 let t = self.local_id(cvi, mid).to_string();
-                let src = self.local_id(vi, caller);
                 if called.insert((src.to_string(), t.clone())) {
                     self.edge(
                         vi,
@@ -783,6 +775,53 @@ impl<'a> Resolver<'a> {
                         Some(score),
                     );
                 }
+            }
+        }
+        self.unresolved_calls(&script);
+    }
+
+    /// `metadata.unresolved_calls` (§10.4): calls on receivers whose type (as Graphify types
+    /// them) is no TS/JS module-level name of the repository other than a function's (classes,
+    /// interfaces, type aliases, enums, namespaces and values, compared case-insensitively) and
+    /// not a standard global, once per (callee, type) and caller, in source order.
+    fn unresolved_calls(&mut self, script: &[usize]) {
+        let known: HashSet<String> = script
+            .iter()
+            .flat_map(|&vi| self.facts[vi].expect("script view").top.iter())
+            .filter(|d| d.kind != DefKind::Function)
+            .map(|d| d.name.to_lowercase())
+            .collect();
+        for &vi in script {
+            let f = self.facts[vi].expect("script view");
+            let rel = self.views[vi].file.rel.as_str();
+            let mut order: Vec<&str> = Vec::new();
+            let mut entries: HashMap<&str, Vec<String>> = HashMap::new();
+            let mut seen: HashSet<(&str, &str, &str)> = HashSet::new();
+            for u in &f.unresolved {
+                if known.contains(&u.ty.to_lowercase()) || GLOBAL_TYPES.contains(&u.ty.as_str()) {
+                    continue;
+                }
+                if !seen.insert((u.caller.as_str(), u.callee.as_str(), u.ty.as_str())) {
+                    continue;
+                }
+                let list = entries.entry(u.caller.as_str()).or_insert_with(|| {
+                    order.push(u.caller.as_str());
+                    Vec::new()
+                });
+                list.push(format!(
+                    "{{\"callee\":{},\"receiver_type\":{},\"lang\":\"typescript\",\"line\":\"L{}\",\"file\":{}}}",
+                    json_str(&u.callee),
+                    json_str(&u.ty),
+                    u.line,
+                    json_str(rel),
+                ));
+            }
+            for caller in order {
+                let json = format!("{{\"unresolved_calls\":[{}]}}", entries[caller].join(","));
+                let id = self.local_id(vi, caller).to_string();
+                self.res
+                    .attrs
+                    .push((id, "metadata".into(), Attr::Json(json)));
             }
         }
     }
@@ -1180,6 +1219,52 @@ fn export_target(v: &Value) -> Option<String> {
         Value::Array(a) => a.iter().find_map(export_target),
         _ => None,
     }
+}
+
+/// Standard globals never recorded as unresolved receiver types (§10.4).
+const GLOBAL_TYPES: [&str; 38] = [
+    "Map",
+    "Set",
+    "WeakMap",
+    "WeakSet",
+    "Array",
+    "Promise",
+    "Date",
+    "RegExp",
+    "Error",
+    "TypeError",
+    "RangeError",
+    "SyntaxError",
+    "ReferenceError",
+    "EvalError",
+    "URIError",
+    "Object",
+    "String",
+    "Number",
+    "Boolean",
+    "Symbol",
+    "BigInt",
+    "JSON",
+    "Math",
+    "Intl",
+    "URL",
+    "URLSearchParams",
+    "Headers",
+    "Request",
+    "Response",
+    "Proxy",
+    "Reflect",
+    "FormData",
+    "Blob",
+    "File",
+    "AbortController",
+    "AbortSignal",
+    "TextEncoder",
+    "TextDecoder",
+];
+
+fn json_str(s: &str) -> String {
+    serde_json::to_string(s).unwrap_or_default()
 }
 
 #[cfg(test)]

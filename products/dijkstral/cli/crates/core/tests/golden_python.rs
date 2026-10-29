@@ -22,8 +22,6 @@ const ALLOWED: &[&str] = &[
     "pkg_service_userservice_register -references-> pkg_models_user",
     "pkg_service_userservice_register -calls-> pkg_models_user",
     "pkg_service_userservice_register -calls-> pkg_models_user_save",
-    // Q12: a call qualified by a local module (`models.validate(user)`) is resolved.
-    "pkg_service_userservice_register -calls-> pkg_models_validate",
     // An aliased import passed as an argument (`map(util_helper, …)`) is resolved like the
     // aliased call it names (§9.3 notes Graphify leaves it unresolved).
     "pkg_service_userservice_export -indirect_call-> pkg_util_helper",
@@ -198,8 +196,8 @@ fn nested_signatures_and_rationale() {
 
 #[test]
 fn same_file_id_clashes() {
-    // Probe p21: plain functions and methods keep apart with a name hash; classes, nested and
-    // decorated functions merge into the first definition.
+    // Probe p21: module-level functions and classes and the methods of module-level classes,
+    // decorated or not, keep apart with a name hash; nested definitions merge into the first.
     let l = links(&[(
         "a.py",
         "def get_x():\n    pass\n\n\ndef _get_x():\n    def inner():\n        pass\n\n\ndef Get_Y():\n    pass\n\n\ndef get_y():\n    pass\n\n\nclass K:\n    def m(self):\n        pass\n\n    @classmethod\n    def _m(cls):\n        pass\n\n\nclass Foo:\n    pass\n\n\ndef foo():\n    pass\n",
@@ -211,11 +209,12 @@ fn same_file_id_clashes() {
         "a -contains-> a_get_y_966285",
         "a -contains-> a_get_y_9d4c8e",
         "a_k -method-> a_k_m",
-        "a -contains-> a_foo",
+        "a_k -method-> a_k_m_75f7d7",
+        "a -contains-> a_foo_201a6b",
+        "a -contains-> a_foo_0beec7",
     ] {
         assert!(has(&l, want), "missing {want}: {l:#?}");
     }
-    assert!(!l.iter().any(|x| x.contains("a_k_m_")), "{l:#?}");
 }
 
 #[test]

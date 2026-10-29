@@ -124,13 +124,25 @@ fn walk(
             Some((ps, _)) => format!("{}_{ps}_{s}", cx.file_id),
         };
         let at = line(k);
-        cx.add_def(id.clone(), label(&key), at, vec![]);
+        // A dependency with a non-empty version string is labelled `name@version` and
+        // `declares` its package; `""`, numbers and objects are plain keys.
+        let version = (parent_key.is_some_and(|(_, raw)| DEP_SECTIONS.contains(&raw))
+            && v.kind() == "string")
+            .then(|| decode(src, v))
+            .filter(|v| !v.is_empty());
+        let text = match &version {
+            Some(ver) => label(&format!("{key}@{ver}")),
+            None => label(&key),
+        };
+        cx.add_def(id.clone(), text, at, vec![]);
         cx.add_edge(parent, &id, "contains", at, None);
 
         let file_id = cx.file_id.clone();
-        if parent_key.is_some_and(|(_, raw)| DEP_SECTIONS.contains(&raw)) && v.kind() == "string" {
+        if version.is_some() {
             add_ref(cx, &key, at);
-            cx.add_edge(&file_id, &format!("ref_{s}"), "imports", at, Some("import"));
+            let r = format!("ref_{s}");
+            cx.add_edge(&file_id, &r, "imports", at, Some("import"));
+            cx.add_edge(&id, &r, "declares", at, None);
         }
         if key == "extends" {
             match v.kind() {
