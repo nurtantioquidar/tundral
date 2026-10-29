@@ -2276,7 +2276,10 @@ Fixture `tests/fixtures/csharp/` (file-scoped and block namespaces `Shop.Models`
 `User.Validation.cs`). Goldens: `csharp.graphify.json`, `csharp.clustered.graphify.json` and the
 §17.6 report goldens. Probes `p1`–`p6` (namespaces, members, call forms, `new`, `.csproj` and
 `.razor`) and the serilog corpus (Graphify's `graphify-out/cache/ast/*.json` per-file facts,
-`raw_calls` and `member_field_tables`, were read as observable output). Implementation:
+`raw_calls` and `member_field_tables`, were read as observable output). Re-checked against
+Graphify 0.9.97 (2026-10-29) with probes `p1`–`p15` run through both releases: overload ids,
+signature metadata, delegates, overload-aware calls, receivers typed by return types, `foreach`
+and field steps, and `dispatches_to` changed. Implementation:
 `crates/core/src/{extract,resolve}/csharp.rs`.
 
 ### 18.1 Nodes
@@ -2285,23 +2288,45 @@ Fixture `tests/fixtures/csharp/` (file-scoped and block namespaces `Shop.Models`
 |---|---|---|---|
 | file | `fileid` (§4.2) | basename | — |
 | namespace (every declaration, nested ones joined: `Outer.Inner`) | `csharp_namespace:` + `sha1(name)[:16]` — one node per name for the whole repo | the full name | `type: "namespace"`, `metadata {"kind":"csharp_namespace","namespace":…}`; `source_file`/`source_location` of the first declaring file in path order |
-| class, struct, interface, enum, record, `record struct` (**nested types flat**) | `fileid_slug(ns.Name)`, plus `_<arity>` for generic types (`…_ientity_1`, `…_c3_2`); global namespace `fileid_slug(Name)` | `Name` | `_callable`, `_callable_class` |
-| method (also interface/abstract/partial, explicit `IX.Do()`); overloads merge, first line kept | `typeid_slug(name)` | `.Name()` | `_callable` |
+| class, struct, interface, enum, record, `record struct`, delegate (**nested types flat**) | `fileid_slug(ns.Name)`, plus `_<arity>` for generic types (`…_ientity_1`, `…_c3_2`, delegate `Factory<T>` → `…_factory_1`); global namespace `fileid_slug(Name)` | `Name` | `_callable`, `_callable_class` |
+| method (also interface/abstract/partial/extern, explicit `IX.Do()`) | `typeid_slug(name)`; an overload whose signature differs from the **previous** declaration with that id gets `_` + `sha1(signature)[:6]` (below) | `.Name()` | `_callable` |
 | property (interface properties too) | `typeid_slug(Name)` | `Name` | — |
 | enum member | `enumid_slug(Name)` | `Name` | — |
-| method outside any type (tree-sitter error recovery, e.g. serilog `ILogger.cs` broken by `#if`) | `fileid_slug(name)` (no namespace) | `name()` | `_callable` |
+| method outside any type (tree-sitter error recovery, e.g. serilog `ILogger.cs` broken by `#if`) | `fileid_slug(name)` (no namespace); overloads merge, first line kept, no signature metadata | `name()` | `_callable` |
 | unresolved type (field, parameter, return, base, generic argument, attribute) | `slug(Name)`, **one global node** (no §4.5 renaming) | `Name` | stub shape |
 | `using N;` of a non-local namespace, `using static`, alias to a non-local type | `slug(text as written)` (`system_collections_generic`, `system_math`, `system_datetime`) | = id | external |
 
-Every symbol node in a namespace has `metadata` (keys sorted): `is_nested_type: true` (nested
-types), `is_partial: true` (a `partial` declaration), `namespace`, `scope_chain` — the
+Every symbol node in a namespace has `metadata`, keys in this order: for methods `arity`,
+`min_arity`, `variadic` and `signature` (below); `is_nested_type: true` (nested types),
+`is_partial: true` (a `partial` declaration) and, after it, `type_path` (the enclosing types and
+the name, without namespace: `User`, `Outer.Inner`); `namespace`; `scope_chain` — the
 `s<row>:<col>` (0-based) of every enclosing namespace declaration, outermost first (a file-scoped
 namespace on line 15 is `["s14:0"]`) — and, cross-file, `unresolved_calls`. Symbols in the global
-namespace have no `metadata` unless they are nested, partial or have unresolved calls.
+namespace have no `metadata` unless they are methods, nested, partial or have unresolved calls.
+
+**Method signature (Rule, 0.9.97).** `signature` joins the parameters with `,`: each is its
+modifiers (`ref`, `out`, `in`, `readonly`, `this`, `params`) and its type with every whitespace
+character removed (`Dictionary<string, int>` → `Dictionary<string,int>`, `scoped Span<int>` →
+`scopedSpan<int>`, a named tuple `(int a, string b)` → `(inta,stringb)`, qualified names as
+written: `System.String`, `global::System.Int32`), joined by a space (`ref readonly int`,
+`params object[]`, `this string`); attributes, names and default values are left out and
+`__arglist` is an empty entry. A generic method prefixes `` `N: `` (`` `2:T,U ``). The stored text
+is HTML-escaped (`List&lt;int&gt;`); the overload suffix hashes the unescaped text
+(`User,Point` → `_512555`; an empty list → `_da39a3`). `arity` counts the parameters;
+`min_arity`, written only when smaller, counts those without a default value that are neither
+`this` nor `params` (`#if` lines inside the list do not count); `variadic: true` marks a `params`
+parameter. A property and a method with the same id stay one node (the property's), as before.
+
+**Overload ids (Rule, 0.9.97).** Ids are assigned in declaration order. The first method with an
+id keeps it; a later one with the same id keeps it too when its signature equals the previous
+declaration's under that id (both merge, the node keeping the first line), and otherwise takes
+`_<sha1(signature)[:6]>` (`Do()`, `Do(int)`, `Do(int)` → `do`, `do_46f8ab`, `do`; probe `p10`:
+`Twin(int)`, `Twin(int)`, `Twin(string)`, `Twin(string)` → `twin`, `twin`, `twin_ecb252`,
+`twin`). serilog: 369 suffixed nodes, every suffix reproduced. 0.9.86 merged every overload.
 
 Not emitted: constructors (static ones too), fields, events, indexers, operators, conversion
-operators, destructors, delegates, local functions, lambdas, top-level statements and their local
-functions, type parameters (no stub).
+operators, destructors, local functions, lambdas, top-level statements and their local
+functions, type parameters (no stub). A delegate's parameters give no reference.
 
 **Partial types**: every `partial` declaration with the same namespace, enclosing types, name
 and arity merges into the declaration of the first file in path order (`User.Validation.cs`
@@ -2348,35 +2373,55 @@ are looked up by name and arity. No unique-name fallback for references.
 
 ### 18.4 Calls
 
-Per file (no `confidence_score`): a bare call `M()`, and a call on any receiver that is not a
-name, `this` or `base` (`f().M()`, `a.b.M()`, `kvp.Key.Render()`), binds to a method named `M`
-of the enclosing type, else of any type in the file; `new T()` binds to a type `T` declared in the
-file (constructors or not). Calls named like a predefined type (`Int()`, `String()`,
-`Decimal()`) are ignored. Constructors' calls come from their type; lambdas' and local functions'
-from the enclosing method.
+Per file (no `confidence_score`): a bare call `M()` binds to a method named `M` of the enclosing
+type, else of any type in the file; `new T()` binds to a type `T` declared in the file
+(constructors or not). Calls named like a predefined type (`Int()`, `String()`, `Decimal()`) are
+ignored. Constructors' calls come from their type; lambdas' and local functions' from the
+enclosing method. **0.9.97:** a call on any other receiver that is not a name, `this` or `base`
+(`f().M()`, `a.b.c.M()`, `kvp.Key.Render()`, `d["k"].M()`) no longer binds by name in the file;
+the forms below type some of them.
+
+**Overloads (Rule, 0.9.97).** Whatever finds a method by name finds the overloads of the first
+declaration with that name; the call binds to the **only** one that takes its argument count
+(`min_arity ≤ n ≤ arity`, any `n ≥ min_arity` when variadic), else to the first (probe `p9`:
+`Do(1)` → `do_46f8ab`; `Q()` and `Q(1,2,3)`, which fit none, → `q`; serilog
+`CreatePropertyValue(value, d, 1)`, which fits two, → the first). "The only method named `M`"
+counts types, not overloads.
 
 Cross-file (unbound bare and `new` calls of the file first, then the rest in source order):
 
 | form | binds to | confidence |
 |---|---|---|
-| `M()` | the enclosing type's or a base type's `M`, else the only method named `M` | INFERRED 0.85 |
+| `M()` | the enclosing type's or a base type's `M`, else the only type's method named `M` | INFERRED 0.85 |
 | `this.M()`, `base.M()` | own type and bases / bases | EXTRACTED 1.0 |
 | `X.M()`, `X?.M()` with a capitalized `X`; `(x as T).M()`, `((T)x).M()` | `X` as a type (lookup, else the only type named `X`), else the declared type of field/property/local `X` | EXTRACTED 1.0 |
-| `x.M()` on a lower-case parameter, local (`T x`, `var x = new T()`, `is T x`), field or property (also `this.x`) of non-predefined declared type | that type (lookup, else unique name) and its bases | INFERRED 0.85 |
-| `new T()`, `T` not used as a type in the file | lookup, else the method or type named `T` nearest the caller's directory (`new LogEventProperty(…)` in a test → `Some.LogEventProperty()`) | INFERRED 0.85 |
+| `x.M()` on a lower-case parameter, local (`T x`, `var x = new T()`, `is T x`, `out T x`, `foreach (T x in …)`), field or property (also `this.x`) of non-predefined declared type | that type (lookup, else unique name) and its bases | INFERRED 0.85 |
+| `x.M()` after `var x = <call>` (0.9.97), the call being `F()`, `this.F()`, `base.F()`, `X.F()` or `y.F()` on a typed name, `await` not included | the declared return type of the method that call binds to, when that method has no overloads (`User?` → `User`, `Box<User>` → `Box<T>`); looked up from the callee's file; never recorded in `unresolved_calls` | INFERRED 0.85 |
+| `x.M()` in `foreach (var x in f)` and `f[i].M()` (0.9.97), `f` a field or property (also `this.f`) of type `T[]` or a one-argument generic `G<T>`, not shadowed by a local | `T` | INFERRED 0.85 |
+| `a.f.M()`, `a` a name of declared type and `f` a field or property of that type or a base | `f`'s declared type (one step: `a.f.g.M()` binds nothing) | INFERRED 0.85 |
+| `new T(…).M()` (0.9.97) | `T` | INFERRED 0.85 |
+| `new T()`, `T` not used as a type in the file | lookup, else the **type** named `T` nearest the caller's directory (0.9.86 also took same-named methods: `new LogEventProperty(…)` in a test went to `Some.LogEventProperty()`) | INFERRED 0.85 |
 | `new T()`, `T` used as a type in the file | lookup only, and not when the caller already references `T` | INFERRED 0.85 |
 
-`foreach (T x in …)` and `var x = f()` give `x` no type; an untyped lower-case receiver never
-binds. **`metadata.unresolved_calls`** lists, per caller and in source order, one
-`{"callee","receiver_type","lang":"csharp","line"}` per (callee, type) for a capitalized or typed
-receiver whose type names no local type: `Console`, `Assert`, `Guid`, `List` (from
+`foreach (var x in …)` over anything else, `var x = f()` on an overloaded `f` or on a chain, and
+`var x = a.f` give `x` no type; an untyped lower-case receiver never binds.
+**`metadata.unresolved_calls`** lists, per caller and in source order, one
+`{"callee","receiver_type","lang":"csharp","line","file"}` per (callee, type) for a capitalized or
+typed receiver whose type names no local type: `Console`, `Assert`, `Guid`, `List` (from
 `List<Address> _addresses`), `T`, `TextWriter` (a property `Output` of that type), and `Street` /
-`Renamed` (a property of predefined type, an event: the receiver's own name).
+`Renamed` (a property of predefined type, an event: the receiver's own name). `file` (0.9.97) is
+the caller's file.
 
-**`dispatches_to`**: for each class listing a local interface in its base list, each interface
-method with a same-named method in the class; emitted only when that interface method has exactly
-one such implementation in the repo (serilog: 2 of 7 interface methods) and no call already joins
-the pair (a call outranks it in the collapse).
+**`dispatches_to` (Rule, 0.9.97)**: for each class listing a local interface in its base list,
+each interface method links to the class's method of that name with the same signature, else its
+first method of that name, INFERRED with context `call` at the class's line in its file. The score
+counts the classes that implement the interface method: 0.85 for one, 0.75 for two, 0.65 for
+three or more (no cap; serilog `ILogEventSink.Emit` has 11). A call from the implementation to the
+interface method ranks with `dispatches_to` in the collapse (§8.2, opposite orientation, equal
+rank, different relations): the larger source survives, so `ILogEventEnricher.Enrich` keeps its
+dispatches over `ConditionalEnricher`'s forwarding call while the `…sinks_…` forwarders keep their
+calls (serilog: 13 dispatches, all reproduced). 0.9.86 linked only an interface method with
+exactly one implementation and no call.
 
 ### 18.5 `.csproj`, `.sln`, `.razor` in a code-only build
 
@@ -2398,6 +2443,25 @@ Resolved: see §43 (project files, solutions, Razor, XAML).
 - Surprises: an earlier reading had Graphify list one surprise per (source label, target label,
   source files). It does not (alamofire lists two `.value → Result` links); the `csharp` fixture's
   order is the sorted-link tie order of §17.4.
+
+### 18.7 Parity (2026-10-29, Graphify 0.9.97)
+
+- Golden `csharp`: nodes 93/93, links 142/142, identical communities, analysis and report; the
+  three CS1 field differences remain. `csproj`: nodes 113/113, links 134/134.
+- serilog (`--ext .cs,.csproj,.sln,.slnx,.props,.targets` against the frozen 0.9.97 reference):
+  nodes 2,238/2,238 both ways (0.9.86 code: recall 83.5%); links 6,038 shared, 4 only ours and 5
+  only Graphify's, all `calls` (0.9.86 code: recall 80.3%, precision 95.3%); `references`,
+  `method`, `dispatches_to` and the rest exact. The calls that remain differ against 0.9.86 too
+  (**Open**): a primary-constructor parameter as a typed receiver
+  (`DelegatingLoggingFailureListener(ILogEventSink sink)`), `new A()` binding to a property `A`
+  of another nested type rather than the nested class `A`, a local function `CreateLogger()`
+  bound to a same-named method of another class, and `Error(…)` from one of its own overloads,
+  which Graphify leaves unlinked.
+- Field differences there: CS1 (3), CS4 receivers in `unresolved_calls` (5 callers), and 8
+  `new T()` calls Graphify marks EXTRACTED where dijkstral says INFERRED 0.85 (also against
+  0.9.86, **Open**).
+- Graphify corpus `.cs`/XAML/Razor/project and PowerShell files: the 12 method `metadata` fields
+  now agree; the differences of §41.3 and §43 remain.
 ## 19. PHP
 
 Fixture `php/`; goldens `php.graphify.json` and `php.clustered.graphify.json` (50 nodes, 71
@@ -3594,8 +3658,12 @@ in other languages never count (`[UniquePy]` stays a stub).
   graphify corpus; `Private/Pricing.psm1` → the module file); a file importing itself loses the
   link.
 
-**Calls** (Rule): callers are functions and methods (top-level code has none; a nested function
-owns its own calls; calls in script blocks belong to the enclosing function). In the file, a
+**Calls** (Rule): callers are functions and methods (a nested function owns its own calls; calls
+in script blocks belong to the enclosing function). **0.9.97:** top-level commands, script blocks
+included (Pester `Describe`/`It`), are the file node's: a command naming no function of the file
+links the file to the function across files as below (`tests_shop_tests -calls->
+modules_shop_shop_new_shoporder`); one naming a function of the file shows nothing (it would fold
+into `contains`). 0.9.86 gave top-level code no caller. In the file, a
 command name binds case-insensitively to a function of the file, `$this.M()` to the class's method
 and `[Class]::M()` to a method of a class of the file, EXTRACTED without context, once per pair,
 grouped by caller in definition order. Other command names go to the function **or method** of
@@ -3604,7 +3672,7 @@ context `call`; `[Other]::M()` across files, `$x.M()`, `& F` and `[T]::new()` gi
 
 ### 41.3 Parity
 
-- Golden: nodes 43/43, links 63/63, identical communities, analysis and report.
+- Golden (0.9.97): nodes 43/43, links 64/64, identical communities, analysis and report.
 - Graphify corpus fixtures (`--ext .ps1,.psm1,.psd1`, frozen reference): nodes 25 shared of 28,
   links 27 shared of 34 (theirs) / 36 (ours), NMI 1.0. Every difference comes from §4.5 renames
   caused by `tests/fixtures/sample.{zig,jl,java}`, which define `Shape`, `Circle` and a

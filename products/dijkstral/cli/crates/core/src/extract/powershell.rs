@@ -19,10 +19,11 @@
 //!   `using module ./Shop.psm1` → `psm1`). Quoted or variable paths give nothing. In a `.psd1`
 //!   manifest, `RootModule`, `NestedModules` (every string inside) and `RequiredModules` (strings
 //!   and `ModuleName` entries, sorted) give `imports_from` with context `import` on the key's line.
-//! - Calls belong to the innermost function or method (top-level code has no caller). A command
-//!   naming a function of the file (case-insensitive), `$this.M()` and `[Class]::M()` on a class
-//!   of the file are EXTRACTED calls without context, once per pair in caller order; any other
-//!   command name is left to the cross-file pass. Class method bodies contribute calls only: no
+//! - Calls belong to the innermost function or method. A command naming a function of the file
+//!   (case-insensitive), `$this.M()` and `[Class]::M()` on a class of the file are EXTRACTED
+//!   calls without context, once per pair in caller order; any other command name is left to the
+//!   cross-file pass. Top-level commands (script blocks included) are the file's: only those
+//!   naming no function of the file reach the cross-file pass. Class method bodies contribute calls only: no
 //!   functions or imports inside them.
 //! - No rationale: comments are ignored.
 
@@ -379,12 +380,17 @@ impl Walker<'_, '_> {
                 if !sc.in_method {
                     self.import_command(&name, &ks, Ctx::line(node));
                 }
-                if let Some(caller) = sc.caller {
-                    self.events.push(Event::Command {
+                match sc.caller {
+                    Some(caller) => self.events.push(Event::Command {
                         caller,
                         name,
                         line: Ctx::line(node),
-                    });
+                    }),
+                    None if !sc.in_method && !self.functions.contains_key(&name.to_lowercase()) => {
+                        let file = self.cx.file_id.clone();
+                        self.facts.calls.push((file, name, Ctx::line(node)));
+                    }
+                    None => {}
                 }
             }
             "command_invokation_operator" if self.text(*first) == "." && !sc.in_method => {
