@@ -15,9 +15,11 @@
 //!    in favour of the code node.
 //! 3. Attributes: `file_type` outside the six types becomes `concept`, `community` is removed,
 //!    `code` nodes whose label does not occur in their file get `verification: "unverified"`,
-//!    cached nodes and edges `_origin: "semantic"`.
-//! 4. Edges: drop those with an endpoint that is neither a kept reply node nor a graph node, fill a
-//!    missing `source_file` from the source node, and fold the rest into the graph
+//!    nodes and edges without an `_origin` get `_origin: "semantic"`, fresh or cached.
+//! 4. Edges: drop those naming an out-of-scope node, those with an endpoint that is neither a kept
+//!    reply node nor a graph node, and those touching the code graph under a `source_file` not
+//!    sent in this run; fill a missing `source_file` from the source node, else the target;
+//!    normalise `confidence` and its score; fold the rest into the graph
 //!    ([`Graph::fold_semantic`]).
 //! 5. Hyperedges: members renamed, unknown members removed, sorted like nodes and links.
 
@@ -39,26 +41,23 @@ pub const FILE_TYPES: &[&str] = &["code", "document", "paper", "image", "concept
 pub struct MergeInput {
     /// The reply object: `nodes`, `edges`, `hyperedges` (other keys are ignored).
     pub reply: Map<String, Value>,
-    /// Read back from the cache rather than returned by the model in this run: its nodes and
-    /// edges carry `_origin: "semantic"` (quirk S5).
-    pub cached: bool,
 }
 
 impl MergeInput {
-    pub fn new(reply: Map<String, Value>, cached: bool) -> MergeInput {
-        MergeInput { reply, cached }
+    pub fn new(reply: Map<String, Value>) -> MergeInput {
+        MergeInput { reply }
     }
 
     /// Parse a reply object from JSON text.
-    pub fn parse(text: &str, cached: bool) -> anyhow::Result<MergeInput> {
+    pub fn parse(text: &str) -> anyhow::Result<MergeInput> {
         match serde_json::from_str(text)? {
-            Value::Object(reply) => Ok(MergeInput { reply, cached }),
+            Value::Object(reply) => Ok(MergeInput { reply }),
             _ => anyhow::bail!("reply is not a JSON object"),
         }
     }
 
     /// A typed reply: every `Some` field becomes a key (a typed reply cannot say `null`).
-    pub fn from_reply(reply: &Reply, cached: bool) -> MergeInput {
+    pub fn from_reply(reply: &Reply) -> MergeInput {
         fn put<T: serde::Serialize>(m: &mut Map<String, Value>, k: &str, v: &Option<T>) {
             if let Some(v) = v {
                 m.insert(k.into(), serde_json::to_value(v).unwrap_or(Value::Null));
@@ -117,7 +116,7 @@ impl MergeInput {
             "hyperedges".into(),
             Value::Array(reply.hyperedges.iter().map(hyper).collect()),
         );
-        MergeInput { reply: m, cached }
+        MergeInput { reply: m }
     }
 
     fn items(&self, key: &str) -> impl Iterator<Item = &Map<String, Value>> {
@@ -259,8 +258,10 @@ pub fn merge(graph: &mut Graph, dispatched: &[Dispatched], inputs: &[MergeInput]
 
     // 1. Nodes in reply order: first of a raw id wins, out-of-scope ones dropped.
     let mut seen: HashMap<String, String> = HashMap::new();
-    let mut kept: Vec<(&Map<String, Value>, bool)> = Vec::new();
+    let mut kept: Vec<&Map<String, Value>> = Vec::new();
     let mut out_of_scope: HashSet<String> = HashSet::new();
+    // Raw ids of the out-of-scope nodes: edges naming them are dropped too (§7.1).
+    let mut dropped_ids: HashSet<&str> = HashSet::new();
     for input in inputs {
         for n in input.items("nodes") {
             let Some(id) = n.get("id").and_then(Value::as_str) else {
@@ -270,6 +271,7 @@ pub fn merge(graph: &mut Graph, dispatched: &[Dispatched], inputs: &[MergeInput]
             if let Some(sf) = n.get("source_file").and_then(Value::as_str) {
                 if !scope.contains_key(canonical(sf)) {
                     stats.out_of_scope_nodes += 1;
+                    dropped_ids.insert(id);
                     if out_of_scope.insert(sf.to_string()) {
                         stats.out_of_scope.push(sf.to_string());
                     }
@@ -291,7 +293,7 @@ pub fn merge(graph: &mut Graph, dispatched: &[Dispatched], inputs: &[MergeInput]
                 }
                 None => {
                     seen.insert(id.to_string(), label);
-                    kept.push((n, input.cached));
+                    kept.push(n);
                 }
             }
         }
@@ -302,7 +304,7 @@ pub fn merge(graph: &mut Graph, dispatched: &[Dispatched], inputs: &[MergeInput]
     let mut order: Vec<String> = Vec::new();
     let mut nodes: HashMap<String, Node> = HashMap::new();
     let mut files_with_nodes: HashSet<String> = HashSet::new();
-    for (n, cached) in kept {
+    for n in kept {
         let raw = n["id"].as_str().unwrap_or_default();
         let sf = n.get("source_file").and_then(Value::as_str);
         let id = sf.map_or_else(|| raw.to_string(), |sf| rewrite_id(raw, sf));
@@ -314,7 +316,7 @@ pub fn merge(graph: &mut Graph, dispatched: &[Dispatched], inputs: &[MergeInput]
             stats.code_collisions += 1;
             continue;
         }
-        let mut node = to_node(&id, n, cached);
+        let mut node = to_node(&id, n);
         if node.file_type == "code" {
             let evidence = sf
                 .and_then(|sf| scope.get(canonical(sf)))
@@ -365,16 +367,28 @@ pub fn merge(graph: &mut Graph, dispatched: &[Dispatched], inputs: &[MergeInput]
                 stats.edges_dropped += 1;
                 continue;
             };
-            let (s, t) = (renamed(s), renamed(t));
-            let Some(fallback) = source_files.get(&s) else {
-                stats.edges_dropped += 1;
-                continue;
-            };
-            if !source_files.contains_key(&t) {
+            if dropped_ids.contains(s) || dropped_ids.contains(t) {
                 stats.edges_dropped += 1;
                 continue;
             }
-            edges.push(to_edge(s, t, e, fallback.as_deref(), input.cached));
+            let (s, t) = (renamed(s), renamed(t));
+            let (Some(source_sf), Some(target_sf)) = (source_files.get(&s), source_files.get(&t))
+            else {
+                stats.edges_dropped += 1;
+                continue;
+            };
+            // An edge the reply attributes to a file not sent in this run may not touch the code
+            // graph.
+            let given = e.get("source_file").and_then(Value::as_str);
+            if given.is_some_and(|sf| !scope.contains_key(canonical(sf)))
+                && (code_ids.contains(&s) || code_ids.contains(&t))
+            {
+                stats.edges_dropped += 1;
+                continue;
+            }
+            // A missing `source_file` comes from the source node, else from the target.
+            let fallback = source_sf.as_deref().or(target_sf.as_deref());
+            edges.push(to_edge(s, t, e, fallback));
         }
     }
     let before = graph.edges.len();
@@ -451,7 +465,7 @@ fn merge_node(existing: &mut Node, new: Node) {
     *existing = Node { attrs, ..new };
 }
 
-fn to_node(id: &str, n: &Map<String, Value>, cached: bool) -> Node {
+fn to_node(id: &str, n: &Map<String, Value>) -> Node {
     let mut attrs: Vec<(String, Attr)> = Vec::new();
     let text = |k: &str| n.get(k).and_then(Value::as_str).map(str::to_string);
     // Required strings: absent → not written; present but not a string → written verbatim.
@@ -491,7 +505,8 @@ fn to_node(id: &str, n: &Map<String, Value>, cached: bool) -> Node {
             attrs.push((k.clone(), attr_of(v)));
         }
     }
-    if cached {
+    // 0.9.97 fills `_origin` on every reply node, as 0.9.86 did on cached ones (§7.2).
+    if !n.contains_key("_origin") {
         attrs.push(("_origin".into(), Attr::Str("semantic".into())));
     }
     Node {
@@ -505,12 +520,31 @@ fn to_node(id: &str, n: &Map<String, Value>, cached: bool) -> Node {
     }
 }
 
+/// A given `confidence_score` read as Python's `float()` would (numbers, booleans, numeric
+/// strings); anything unreadable, negative or not finite scores 1.0 in the clustered graph (§7.2).
+fn score_of(v: &Value) -> f64 {
+    let x = match v {
+        Value::Number(n) => n.as_f64(),
+        Value::Bool(b) => Some(if *b { 1.0 } else { 0.0 }),
+        Value::String(s) => s.trim().parse::<f64>().ok(),
+        _ => None,
+    };
+    x.map_or(1.0, usable_score)
+}
+
+fn usable_score(x: f64) -> f64 {
+    if x.is_finite() && x >= 0.0 {
+        x
+    } else {
+        1.0
+    }
+}
+
 fn to_edge(
     source: String,
     target: String,
     e: &Map<String, Value>,
     fallback_source_file: Option<&str>,
-    cached: bool,
 ) -> Edge {
     let mut attrs: Vec<(String, Attr)> = Vec::new();
     let relation = match e.get("relation") {
@@ -524,15 +558,28 @@ fn to_edge(
             String::new()
         }
     };
+    // §7.2: a number is the score the model meant; a string is matched without case and
+    // anything else `INFERRED`; a falsy value given with a score is `INFERRED` too. What is left
+    // (`true`, or `null`/`false` with no score) is kept and scored 1.0.
+    let has_score = e.contains_key("confidence_score");
+    let mut moved_score = None;
     let confidence = match e.get("confidence") {
         None => {
             attrs.push(("confidence".into(), Attr::Absent));
             Confidence::Extracted
         }
-        Some(Value::String(s)) if s == "EXTRACTED" => Confidence::Extracted,
-        Some(Value::String(s)) if s == "INFERRED" => Confidence::Inferred,
-        Some(Value::String(s)) if s == "AMBIGUOUS" => Confidence::Ambiguous,
-        // Invalid values are kept and scored as `EXTRACTED` (1.0).
+        Some(Value::Number(n)) => {
+            if !has_score {
+                moved_score = n.as_f64();
+            }
+            Confidence::Inferred
+        }
+        Some(Value::String(s)) => match s.to_uppercase().as_str() {
+            "EXTRACTED" => Confidence::Extracted,
+            "AMBIGUOUS" => Confidence::Ambiguous,
+            _ => Confidence::Inferred,
+        },
+        Some(Value::Null | Value::Bool(false)) if has_score => Confidence::Inferred,
         Some(other) => {
             attrs.push(("confidence".into(), attr_of(other)));
             Confidence::Extracted
@@ -586,16 +633,20 @@ fn to_edge(
             attrs.push((k.clone(), attr_of(v)));
         }
     }
-    if cached {
+    if !e.contains_key("_origin") {
         attrs.push(("_origin".into(), Attr::Str("semantic".into())));
     }
     let number = |k: &str| e.get(k).filter(|v| v.is_number()).and_then(Value::as_f64);
+    let score = match e.get("confidence_score") {
+        Some(v) => Some(score_of(v)),
+        None => moved_score.map(usable_score),
+    };
     Edge {
         source,
         target,
         relation,
         confidence,
-        score: number("confidence_score"),
+        score,
         context,
         source_file,
         loc,

@@ -1,17 +1,6 @@
 {
   "communities": {
     "0": [
-      "config_queue",
-      "docs_glossary",
-      "docs_glossary_job",
-      "docs_glossary_slug",
-      "graphify_out_converted_capacity_e7fd8f6a",
-      "papers_write_through",
-      "papers_write_through_smith_wong_2019",
-      "readme_cache",
-      "readme_slugify"
-    ],
-    "1": [
       "src_app_service",
       "src_app_service_jobqueue",
       "src_app_service_jobqueue_init",
@@ -22,39 +11,61 @@
       "src_app_util",
       "src_app_util_slugify"
     ],
+    "1": [
+      "config_queue",
+      "config_queue_cache",
+      "config_queue_cache_policy",
+      "config_queue_queue",
+      "config_queue_queue_max_items",
+      "config_queue_queue_name"
+    ],
     "2": [
       "docs_guide",
       "docs_guide_jobqueue_push",
+      "graphify_out_converted_capacity_e7fd8f6a",
       "graphify_out_converted_runbook_b3207a85",
-      "images_architecture",
-      "readme",
       "readme_jobqueue",
       "readme_run_job"
     ],
     "3": [
+      "images_architecture",
+      "papers_write_through",
+      "papers_write_through_smith_wong_2019",
+      "readme",
+      "readme_cache",
+      "readme_slugify"
+    ],
+    "4": [
+      "docs_glossary",
+      "docs_glossary_job",
+      "docs_glossary_slug"
+    ],
+    "5": [
       "src_app_init"
     ]
   },
   "cohesion": {
-    "0": 0.2777777777777778,
+    "0": 0.3333333333333333,
     "1": 0.3333333333333333,
-    "2": 0.5714285714285714,
-    "3": 1.0
+    "2": 0.4666666666666667,
+    "3": 0.6666666666666666,
+    "4": 0.6666666666666666,
+    "5": 1.0
   },
   "gods": [
     {
+      "id": "readme",
+      "label": "Job Service README",
+      "degree": 7
+    },
+    {
       "id": "readme_jobqueue",
       "label": "JobQueue",
-      "degree": 8
+      "degree": 7
     },
     {
       "id": "readme_cache",
       "label": "Write-through cache",
-      "degree": 8
-    },
-    {
-      "id": "readme",
-      "label": "Job Service README",
       "degree": 7
     },
     {
@@ -83,42 +94,31 @@
       "degree": 5
     },
     {
-      "id": "src_app_service_run_job",
-      "label": "run_job()",
+      "id": "config_queue_queue",
+      "label": "queue",
       "degree": 3
     },
     {
-      "id": "src_app_util_slugify",
-      "label": "slugify()",
+      "id": "src_app_service_run_job",
+      "label": "run_job()",
       "degree": 3
     }
   ],
   "surprises": [
     {
-      "source": "Job Service README",
-      "target": "Write-Through Caching for Job Queues",
+      "source": "Architecture diagram: README \u2192 run_job \u2192 JobQueue; run_job \u2192 slugify \u2192 Cache",
+      "target": "run_job",
       "source_files": [
-        "README.md",
-        "papers/write_through.pdf"
+        "images/architecture.png",
+        "README.md"
       ],
       "confidence": "EXTRACTED",
       "relation": "references",
-      "why": "crosses file types (doc \u2194 paper); connects across different repos/directories; bridges separate communities"
-    },
-    {
-      "source": "Queue configuration: jobs, maximum 1000 items, write-through cache",
-      "target": "JobQueue",
-      "source_files": [
-        "config/queue.yaml",
-        "README.md"
-      ],
-      "confidence": "INFERRED",
-      "relation": "conceptually_related_to",
-      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities; peripheral node `Queue configuration: jobs, maximum 1000 items, write-through cache` unexpectedly reaches hub `JobQueue`"
+      "why": "crosses file types (doc \u2194 image); connects across different repos/directories; bridges separate communities"
     },
     {
       "source": "Architecture diagram: README \u2192 run_job \u2192 JobQueue; run_job \u2192 slugify \u2192 Cache",
-      "target": "slugify",
+      "target": "JobQueue",
       "source_files": [
         "images/architecture.png",
         "README.md"
@@ -139,15 +139,26 @@
       "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 paper); connects across different repos/directories"
     },
     {
+      "source": "Write-Through Caching for Job Queues",
+      "target": "JobQueue.push",
+      "source_files": [
+        "papers/write_through.pdf",
+        "docs/guide.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc \u2194 paper); connects across different repos/directories; bridges separate communities"
+    },
+    {
       "source": "Architecture diagram: README \u2192 run_job \u2192 JobQueue; run_job \u2192 slugify \u2192 Cache",
-      "target": "Write-through cache",
+      "target": "Job Service README",
       "source_files": [
         "images/architecture.png",
         "README.md"
       ],
       "confidence": "EXTRACTED",
       "relation": "references",
-      "why": "crosses file types (doc \u2194 image); connects across different repos/directories; bridges separate communities"
+      "why": "crosses file types (doc \u2194 image); connects across different repos/directories"
     }
   ],
   "tokens": {

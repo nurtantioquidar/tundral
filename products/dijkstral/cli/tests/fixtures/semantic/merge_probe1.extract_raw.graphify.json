@@ -1,6 +1,54 @@
 {
  "nodes": [
   {
+   "id": "config_queue",
+   "label": "queue.yaml",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_queue",
+   "label": "queue",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_queue_name",
+   "label": "name",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L2",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_queue_max_items",
+   "label": "max_items",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L3",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_cache",
+   "label": "cache",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L4",
+   "_origin": "ast"
+  },
+  {
+   "id": "config_queue_cache_policy",
+   "label": "policy",
+   "file_type": "code",
+   "source_file": "config/queue.yaml",
+   "source_location": "L5",
+   "_origin": "ast"
+  },
+  {
    "id": "src_app_init",
    "label": "__init__.py",
    "file_type": "code",
@@ -48,7 +96,8 @@
    "id": "src_app_service_run_job",
    "label": "run_job",
    "file_type": "concept",
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "id": "src_app_service_rationale_1",
@@ -70,7 +119,8 @@
    "id": "src_app_util",
    "label": "util file as doc",
    "file_type": "document",
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "id": "src_app_util_slugify",
@@ -85,73 +135,78 @@
    "id": "readme_job_service",
    "label": "Job Service",
    "file_type": "document",
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "id": "readme_slugify",
    "label": "slugify()",
    "file_type": "concept",
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "id": "Docs Guide/Operator Guide!",
    "label": "Operator Guide",
    "file_type": "document",
-   "source_file": "docs/guide.md"
+   "source_file": "docs/guide.md",
+   "_origin": "semantic"
   },
   {
    "id": "glossary_term_job",
    "label": "job",
-   "source_file": "docs/glossary.txt"
-  },
-  {
-   "id": "queue_cfg",
-   "label": "queue config",
-   "file_type": "widget",
-   "source_file": "config/queue.yaml"
+   "source_file": "docs/glossary.txt",
+   "_origin": "semantic"
   },
   {
    "id": "dot_readme",
    "label": "dot readme",
    "file_type": "concept",
-   "source_file": "./README.md"
+   "source_file": "./README.md",
+   "_origin": "semantic"
   },
   {
    "id": "floating",
    "label": "floating concept",
-   "file_type": "concept"
+   "file_type": "concept",
+   "_origin": "semantic"
   },
   {
    "id": "dup_node",
    "label": "second",
    "file_type": "concept",
    "source_file": "README.md",
-   "source_location": "L9"
+   "source_location": "L9",
+   "_origin": "semantic"
   },
   {
    "id": "img",
    "label": "diagram",
    "file_type": "image",
-   "source_file": "images/architecture.png"
+   "source_file": "images/architecture.png",
+   "_origin": "semantic"
   },
   {
    "id": "paper",
    "label": "paper",
    "file_type": "paper",
    "source_file": "papers/write_through.pdf",
-   "source_location": "p1"
+   "source_location": "p1",
+   "_origin": "semantic"
   },
   {
    "id": "why_wt",
    "label": "why write-through",
    "file_type": "rationale",
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "id": "conv",
    "label": "runbook",
    "file_type": "document",
-   "source_file": "graphify-out/converted/runbook_b3207a85.md"
+   "source_file": "graphify-out/converted/runbook_b3207a85.md",
+   "_origin": "semantic"
   },
   {
    "id": "with_extra",
@@ -160,28 +215,82 @@
    "source_file": "README.md",
    "x_custom": 7,
    "community": 99,
-   "confidence": "INFERRED"
+   "confidence": "INFERRED",
+   "_origin": "semantic"
   },
   {
    "id": "readme",
    "label": "readme id",
    "file_type": "concept",
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "id": "no_label",
    "file_type": "concept",
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "id": "code_typed",
    "label": "code typed",
    "file_type": "code",
    "source_file": "README.md",
-   "verification": "unverified"
+   "verification": "unverified",
+   "_origin": "semantic"
   }
  ],
  "edges": [
+  {
+   "source": "config_queue",
+   "target": "config_queue_queue",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_queue_queue",
+   "target": "config_queue_queue_name",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L2",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_queue_queue",
+   "target": "config_queue_queue_max_items",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L3",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_queue",
+   "target": "config_queue_cache",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L4",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
+  {
+   "source": "config_queue_cache",
+   "target": "config_queue_cache_policy",
+   "relation": "contains",
+   "confidence": "EXTRACTED",
+   "source_file": "config/queue.yaml",
+   "source_location": "L5",
+   "weight": 1.0,
+   "_origin": "ast"
+  },
   {
    "source": "src_app_service",
    "target": "src_app_util",
@@ -317,14 +426,16 @@
    "confidence_score": 1.0,
    "source_file": "README.md",
    "source_location": null,
-   "weight": 1.0
+   "weight": 1.0,
+   "_origin": "semantic"
   },
   {
    "source": "readme_job_service",
    "target": "src_app_util_slugify",
    "relation": "mentions",
    "confidence": "INFERRED",
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "source": "readme_job_service",
@@ -332,33 +443,24 @@
    "relation": "semantically_similar_to",
    "confidence": "INFERRED",
    "confidence_score": 0.7,
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "source": "readme_slugify",
    "target": "glossary_term_job",
    "relation": "conceptually_related_to",
-   "confidence": "maybe",
+   "confidence": "INFERRED",
    "confidence_score": "high",
-   "source_file": "README.md"
-  },
-  {
-   "source": "queue_cfg",
-   "target": "floating",
-   "relation": "shares_data_with",
-   "source_file": "config/queue.yaml"
-  },
-  {
-   "source": "queue_cfg",
-   "target": "paper",
-   "confidence": "EXTRACTED",
-   "source_file": "config/queue.yaml"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "source": "readme_job_service",
    "target": "readme_job_service",
    "relation": "references",
    "confidence": "EXTRACTED",
+   "_origin": "semantic",
    "source_file": "README.md"
   },
   {
@@ -367,6 +469,7 @@
    "relation": "implements",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
+   "_origin": "semantic",
    "source_file": "README.md"
   },
   {
@@ -375,6 +478,7 @@
    "relation": "conceptually_related_to",
    "confidence": "AMBIGUOUS",
    "confidence_score": 0.2,
+   "_origin": "semantic",
    "source_file": "images/architecture.png"
   },
   {
@@ -384,6 +488,7 @@
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "weight": 0.5,
+   "_origin": "semantic",
    "source_file": "papers/write_through.pdf"
   },
   {
@@ -392,7 +497,8 @@
    "relation": "rationale_for",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
-   "source_file": "README.md"
+   "source_file": "README.md",
+   "_origin": "semantic"
   },
   {
    "source": "Docs Guide/Operator Guide!",
@@ -400,6 +506,7 @@
    "relation": "references",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
+   "_origin": "semantic",
    "source_file": "docs/guide.md"
   },
   {
@@ -410,6 +517,7 @@
    "confidence_score": 0.6,
    "context": "probe",
    "x_edge": 1,
+   "_origin": "semantic",
    "source_file": "README.md"
   },
   {
@@ -417,6 +525,7 @@
    "target": "readme",
    "relation": "references",
    "confidence": "EXTRACTED",
+   "_origin": "semantic",
    "source_file": "README.md"
   },
   {
@@ -424,6 +533,7 @@
    "target": "no_label",
    "relation": "references",
    "confidence": "EXTRACTED",
+   "_origin": "semantic",
    "source_file": "README.md"
   }
  ],

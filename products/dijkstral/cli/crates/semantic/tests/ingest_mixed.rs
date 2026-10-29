@@ -44,7 +44,6 @@ fn dispatch_order_kinds_and_estimates() {
         got,
         [
             ("README.md", DocKind::Document, 142),
-            ("config/queue.yaml", DocKind::Document, 63),
             ("docs/glossary.txt", DocKind::Document, 81),
             ("docs/guide.md", DocKind::Document, 92),
             (
@@ -61,10 +60,10 @@ fn dispatch_order_kinds_and_estimates() {
             ("papers/write_through.pdf", DocKind::Paper, 177),
         ]
     );
-    let image = out.docs[6].image.as_ref().unwrap();
+    let image = out.docs[5].image.as_ref().unwrap();
     assert_eq!(image.0, "image/png");
     assert_eq!(image.1.len(), 9_371);
-    assert_eq!(out.docs[4].rel, "office/capacity.xlsx");
+    assert_eq!(out.docs[3].rel, "office/capacity.xlsx");
 }
 
 #[test]
@@ -83,13 +82,13 @@ fn office_files_convert_like_graphify() {
     assert_eq!(converted_name("office/runbook.docx"), "runbook_b3207a85.md");
     let dir = tempfile::tempdir().unwrap();
     let out = ingest_mixed(Some(dir.path()));
-    let capacity = &out.docs[4];
+    let capacity = &out.docs[3];
     assert_eq!(
         capacity.text,
         "<!-- converted from capacity.xlsx -->\n\n## Sheet: Capacity\n| service | jobs_per_s |\n| --- | --- |\n| JobQueue | 120 |\n| Cache | 900 |"
     );
     assert_eq!(
-        out.docs[5].text,
+        out.docs[4].text,
         "<!-- converted from runbook.docx -->\n\nQueue Runbook\nWhen the queue backs up, call run_job for each pending job and watch the cache hit rate.\nEscalation\nPage the on-call owner of JobQueue if latency exceeds 2 seconds."
     );
     let written = fs::read_to_string(dir.path().join("capacity_e7fd8f6a.md")).unwrap();
@@ -140,8 +139,8 @@ fn budget_250_chunks_like_graphify() {
     assert_eq!(
         names,
         [
-            vec!["README.md", "queue.yaml"],
-            vec!["glossary.txt", "guide.md", "capacity.xlsx"],
+            vec!["README.md", "glossary.txt"],
+            vec!["guide.md", "capacity.xlsx"],
             vec!["runbook.docx"],
             vec!["architecture.png"],
             vec!["write_through.pdf"],

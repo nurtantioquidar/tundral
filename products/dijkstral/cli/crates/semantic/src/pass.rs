@@ -256,7 +256,7 @@ impl Documents for SemanticPass {
         let inputs: Vec<MergeInput> = outcome
             .extracted
             .iter()
-            .map(|e| MergeInput::new(e.raw.clone(), e.cached))
+            .map(|e| MergeInput::new(e.raw.clone()))
             .collect();
         let stats = merge(graph, &dispatched(&self.docs), &inputs);
         let mut notes = self.notes.clone();

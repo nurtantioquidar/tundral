@@ -9,7 +9,7 @@
 mod json;
 mod shell;
 mod toml;
-mod yaml;
+pub mod yaml;
 
 use std::cell::RefCell;
 

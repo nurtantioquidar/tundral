@@ -3,8 +3,10 @@
 This document specifies what Graphify does with everything that is not code: which files it sends
 to a model, how it packs and sends them, what it expects back, how the reply becomes graph nodes,
 edges and hyperedges, how results are cached, how communities are named by a model, and the
-LLM-free markdown structure that `graphify update` adds. The reference is PyPI `graphifyy` 0.9.86,
-the release of `graphify-format.md` and `graphify-query.md`.
+LLM-free markdown structure that `graphify update` adds. The reference is PyPI `graphifyy` 0.9.97,
+the release of `graphify-format.md` (`graphify-query.md` stays on 0.9.86). It was first written
+against 0.9.86; the 0.9.97 changes were found by running both releases on the same probes and
+replies, and are marked "(0.9.97)" below.
 
 Method. Everything was observed by running Graphify, never by reading its source, prompts or skill
 files. Model traffic went through `bench/llm_shim.py`, a localhost OpenAI-compatible server
@@ -47,8 +49,13 @@ Status labels, as in the other specs: **Rule** (observed consistently; reproduce
   dispatched with a warning `PDF text extraction skipped: 'pypdf' is not installed`; `.docx` and
   `.xlsx` are not counted or sent at all.
 - Semantic probes used a second venv, `$DIJKSTRAL_BENCH_HOME/tools/graphify-0.9.86-semantic`, with
-  `graphifyy[leiden,mcp,openai,pdf,office]==0.9.86` plus `watchdog` (for `watch`). The `video`
-  extra (`faster-whisper`, `yt-dlp`) was not installed.
+  `graphifyy[leiden,mcp,openai,pdf,office]==0.9.86` plus `watchdog` (for `watch`), and
+  `graphify-0.9.97-semantic` with the same extras at 0.9.97. The `video` extra (`faster-whisper`,
+  `yt-dlp`) was not installed.
+- Every golden below was regenerated with 0.9.97 without a model call: the recorded Codex replies
+  of `mixed.transcript` were replayed (the shim falls back to the recorded reply in order, since
+  0.9.97's requests no longer carry `config/queue.yaml`) and the crafted replies served
+  statically. The same procedure on 0.9.86 reproduced the previous goldens as data.
 - With no key and no `--backend`, `extract` stops before any request:
   `error: no LLM API key found (N doc/paper/image file(s) need semantic extraction). Set
   GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude),
@@ -60,7 +67,7 @@ Goldens in `tests/fixtures/semantic/`:
 
 | File | Produced by |
 |---|---|
-| `markdown/` | LLM-free markdown probe corpus (code in Python, TS, Rust; markdown, mdx, rst, txt, yaml, html) |
+| `markdown/` | LLM-free markdown probe corpus (code in Python, TS, Rust and YAML; markdown, mdx, rst, txt, html) |
 | `markdown.update.graphify.json` | `graphify update` (clustered), re-indented like the other goldens |
 | `markdown.update_raw.graphify.json` | `graphify update --no-cluster` |
 | `markdown.graphify_report.md` | the `update` report (title line names the scratch dir `mdc`) |
@@ -94,7 +101,7 @@ files`.
 
 | Class | Extensions (case-insensitive) | Sent as |
 |---|---|---|
-| doc | `.md .mdx .rst .txt .html .yaml .yml` (also `CMakeLists.txt`) | raw file text (HTML and RST are not converted) |
+| doc | `.md .mdx .rst .txt .html` (also `CMakeLists.txt`) | raw file text (HTML and RST are not converted) |
 | doc (office) | `.docx .xlsx` (only with the `office` extra) | converted to markdown first (§2.2), the converted file is sent |
 | paper | `.pdf` | extracted text (pypdf), §4.4 |
 | image | `.png .jpg` probed (`.jpeg .gif .webp` are listed as image types by the `update` report) | a separate `image_url` content part with the raw file bytes |
@@ -111,6 +118,8 @@ files`.
   bytes); the bytes are base64-encoded unchanged (`data:image/png;base64,` + 12,496 chars for a
   9,371-byte PNG).
 - **Rule.** Code files never go to the model; they are extracted locally as in `--code-only`.
+  (0.9.97) `.yaml`/`.yml` are code (format spec §46): `mixed/config/queue.yaml` is no longer
+  sent, so the fixture dispatches seven files and a reply's nodes for it are out of scope (§7.1).
 - **Rule.** `extract` without `--code-only` does **not** build the markdown page/heading structure
   of §3: markdown files are only sent to the model.
 
@@ -133,7 +142,7 @@ files`.
 ## 3. Markdown structure without a model (`update`)
 
 `graphify update` (no model) adds structural nodes for `.md` and `.mdx` files (extension
-case-insensitive: `UPPER.MD` counts). `.rst .txt .yaml .yml .html` produce nothing there;
+case-insensitive: `UPPER.MD` counts). `.rst .txt .html` produce nothing there;
 `.markdown` is "not classified". Goldens: `markdown.update*.graphify.json`; every rule below was
 also probed separately (heading forms, front matter variants, 25 link forms, a 400-name sweep of
 backtick references).
@@ -153,27 +162,45 @@ backtick references).
 
 ### 3.2 Front matter
 
-- **Rule.** Only when line 1 is exactly `---` and a later line is exactly `---`. Between them, each
-  non-indented `key: value` line with a non-empty value becomes `frontmatter[key] = value`:
-  - the value is stripped, one pair of surrounding `"` or `'` removed, then HTML-escaped with
-    quotes (`<b>&"'</b>` → `&lt;b&gt;&amp;&quot;&#x27;&lt;/b&gt;`); every value is a string
-    (`2`, `true`, `null`, `{a: 1}`, `[a, b]`, `>` kept as text);
-  - keys are kept verbatim (spaces and case);
-  - a repeated key keeps the last value;
-  - empty values (`key:`), indented lines (list items, nested maps) and `#` comment lines are
-    dropped.
-- **Rule.** No front matter, or one with no usable pair, means no `frontmatter` key at all. An
-  unclosed block, a block not on line 1 and TOML `+++` blocks are not front matter.
+- **Rule.** Only when line 1, stripped, is `---` (` --- `, `---\t` count; a BOM or a blank first
+  line does not), and a later stripped line is `---` or `...`.
+- **Rule (0.9.97).** The block between them is read as YAML by a safe YAML 1.1 loader (the
+  constructor of format spec §46). When it loads to a non-empty mapping, `frontmatter` is that
+  mapping with typed values: `2` → `2`, `0x1F` → `31`, `017` → `15`, `1:30` → `90`,
+  `1.0e+3` → `1000.0` (`1e3` stays a string), `yes`/`off` → `true`/`false`, `~` and `key:` →
+  `null`, lists and nested mappings kept, aliases and `<<` merges expanded, a repeated key in its
+  first position with its last value (and `1`, `1.0`, `true` are one key). Keys become Python's
+  `str()` of them (`1`, `True`, `None`, `2026-01-02`); dates and datetimes become their `str()`
+  (`2026-01-02 03:04:05+00:00` for a `Z` time, fractions to microseconds); `!!binary` the
+  `repr` of the bytes (`b'hello'`), `!!set` the `repr` of a set, `!!omap`/`!!pairs` lists of
+  `[key, value]`. Every string, keys and nested values included, loses its ASCII control
+  characters (`\t`, `\n`, `\r`, DEL; not NEL, U+2028 or NBSP) and is then HTML-escaped with
+  quotes (`<b>&"'</b>` → `&lt;b&gt;&amp;&quot;&#x27;&lt;/b&gt;`); `|` and `>` blocks therefore lose
+  their line breaks (`line1line2`).
+- **Rule.** When the block is not valid YAML (a custom tag `!Ref`, `[unclosed`, a tab-indented
+  line, a `--- x` or `----` line inside it), each non-indented `key: value` line with a non-empty
+  value becomes `frontmatter[key] = value` as text, as 0.9.86 read every block: the value
+  stripped, one pair of surrounding quotes removed, HTML-escaped; keys verbatim; the last of a
+  repeated key; empty values, indented lines and `#` lines dropped.
+- **Rule.** No front matter, valid YAML that is not a mapping (a list, a scalar, `{}`), or a
+  fallback with no usable pair, means no `frontmatter` key at all. An unclosed block, a block not
+  on line 1 and TOML `+++` blocks are not front matter.
+- **dijkstral.** `.inf`, `.nan` and integers beyond 64 bits have no JSON value: Graphify writes
+  bare `Infinity`/`NaN` (not JSON) and the exact integer; dijkstral writes `null` and the nearest
+  float. A `!!set` is listed in insertion order (Python's order varies by process).
 - **Rule.** Lines inside the block are not scanned for headings (`# a comment` is no heading), but
   line numbers count from the top of the file.
 
 ### 3.3 Heading nodes
 
-- **Rule.** A heading is a line matching `^#{1,6} +(.+)` at column 0 (no leading spaces).
-  `#NoSpace`, `####### seven`, a bare `#`, setext underlines and a heading behind a UTF-8 BOM are
-  not headings. CRLF files work.
-- **Rule.** Label = the text after the hashes, stripped, verbatim: closing hashes stay
-  (`Closing hashes ##`), inline markup stays (`Install \`pip\``, `Deep [link](http://x.y) heading`).
+- **Rule.** A heading is a line of up to three spaces (0.9.97; 0.9.86 required column 0), one to
+  six `#`, and a space or tab. Four spaces or a tab before the `#`, `#NoSpace`, `####### seven`,
+  a bare `#`, setext underlines and a heading behind a UTF-8 BOM are not headings. CRLF files
+  work.
+- **Rule.** Label = the text after the hashes, stripped, without (0.9.97) a closing run of `#`
+  that follows a space or tab (`Closing hashes ##` → `Closing hashes`; `A#`, `Escaped \#` and
+  `Trail ##x` keep theirs). A heading whose text is only that run (`# #`) is none. Inline markup
+  stays (`Install \`pip\``, `Deep [link](http://x.y) heading`).
 - **Rule.** Id = `<file id before collision renaming>_<slug(label)>` (§4.1 slug: Unicode letters
   kept, `Café — Ünïcode 🚀` → `h_café_ünïcode`). If that id already exists in the file, the
   heading's line number is appended: `same_same`, `same_same_3`, `same_same_5`; `Setup` and
@@ -181,9 +208,13 @@ backtick references).
   (`tools_util_util_notes` under page `tools_util_md_tools_util`).
 - **Rule.** Fields: `file_type: "document"`, `node_kind: "heading"`, `source_location: "L<line>"`,
   `_origin: "ast"`.
-- **Rule.** Lines inside a backtick fence (```` ``` ````) are skipped. **Quirk:** tilde fences
-  (`~~~`) and HTML comments are not skipped: `## Tilde fenced heading` and `# Comment heading`
-  become headings.
+- **Rule (0.9.97).** Lines inside a fenced block are skipped, the fence lines too. On a stripped
+  line (any indentation, spaces or tabs), three or more backticks with no backtick after them, or
+  three or more tildes, open a fence; it closes on a stripped line of only that character, at
+  least as many (```` ```` ```` closes ```` ``` ````, `~~~` does not close ```` ``` ````, ```` ``` x ````
+  does not close); an unclosed fence runs to the end of the file. (0.9.86 toggled on any line
+  starting with ```` ``` ```` and ignored tildes.) **Quirk:** HTML comments are not skipped:
+  `# Comment heading` becomes a heading.
 - **Rule (nesting).** `contains` edges, `EXTRACTED`, `weight 1.0`, `source_location` = the child's
   line: each heading's parent is the nearest preceding heading with a smaller level, else the page.
   A file starting at `##` hangs it under the page; a later `#` also goes under the page and an
@@ -191,8 +222,8 @@ backtick references).
 
 ### 3.4 Backtick references to code
 
-- **Rule.** Every inline code span outside backtick fences (also in lists, tables, headings, tilde
-  fences, indented code blocks and HTML comments) is a candidate. Spans are found per line: a run
+- **Rule.** Every inline code span outside fenced blocks (also in lists, tables, headings,
+  indented code blocks and HTML comments; since 0.9.97 not in tilde fences) is a candidate. Spans are found per line: a run
   of N backticks opens a span that the next run of exactly N backticks closes, so
   ``` `` `%||%` `` ``` is one span and ``` ``run` and `jump`` ``` another; an opening run with no
   closing run on the line is plain text (``` `` unclosed and `hop` ``` still yields `hop`), and
@@ -276,7 +307,7 @@ backtick references).
 ### 3.5 Links between documents
 
 - **Rule.** Link targets come from inline links `[t](dest)` (also inside headings, inline code and
-  tilde fences, but not backtick fences), reference definitions `[r]: dest` (the edge is at the
+  indented code blocks, but not fenced blocks), reference definitions `[r]: dest` (the edge is at the
   definition line), and wiki links `[[name]]` / `[[name|alias]]` / `[[sub/name]]` /
   `[[name.md]]`. Images `![…](…)`, autolinks `<x.md>`, HTML `href`, `http(s):`, `mailto:` and
   absolute `/x.md` are ignored.
@@ -454,8 +485,15 @@ runs. "Raw" is `extract --no-cluster`, "clustered" the default build.
 - **Rule.** A node without `id` is dropped. A node without `label` or `source_file` is kept
   without the key.
 - **Rule.** An edge whose `source` or `target` is neither a reply node nor an existing graph node
-  is dropped (`ghost_node`, a label used as id, an edge to a dropped out-of-scope node). Edges to
-  AST nodes are kept (`readme_job_service → src_app_util_slugify`).
+  is dropped (`ghost_node`, a label used as id). Edges to AST nodes are kept
+  (`readme_job_service → src_app_util_slugify`).
+- **Rule (0.9.97).** An edge naming the id of a reply node dropped as out of scope is dropped,
+  even when a graph node has that id (the reply's `config_queue → readme_cache` against the YAML
+  file node `config_queue`) or a later in-scope reply node reuses it.
+- **Rule (0.9.97).** An edge whose given `source_file` was not dispatched in this run is dropped
+  when either end is a node of the code graph (`src_app_util_slugify → readme_c3` attributed to
+  `config/queue.yaml`, or to `nothere.md`); between reply nodes it is kept. 0.9.86 dropped every
+  edge whose `source_file` was not dispatched. An edge with no `source_file` is not checked.
 - **Rule.** The same id twice in one reply keeps the **first** occurrence (`note: node 'dup_node'
   was extracted twice from 'README.md' under different labels — keeping 'first', dropping
   'second'`). **Quirk:** raw output shows the second.
@@ -488,18 +526,27 @@ runs. "Raw" is `extract --no-cluster`, "clustered" the default build.
   exact match rule (case, partial words).
 - **Rule.** Other node keys pass through (`x_custom`, `confidence`, `rationale`, `author`, …),
   except `community`, which is removed. Clustered key order is the usual `id, label`, then sorted.
-- **Rule.** Fresh semantic nodes and edges have no `_origin`; nodes and edges read back from the
-  cache or kept by `update` have `_origin: "semantic"` (**Quirk**, §9.4).
+- **Rule (0.9.97).** Every semantic node and edge without an `_origin` gets
+  `_origin: "semantic"`, fresh or read back from the cache; a value the reply gave (`"ast"`) is
+  kept. Hyperedges get none. (0.9.86 marked only cached and `update`-kept ones, §9.4.)
 
 ### 7.3 Edges
 
-- **Rule.** A missing `source_file` is filled from the source node's `source_file`
-  (`queue_cfg → paper` gets `config/queue.yaml`). `source_location` and `weight` are not added when
+- **Rule.** A missing `source_file` is filled from the source node's `source_file`, else the
+  target's (`loose → src_app_util` gets `src/app/util.py`). `source_location` and `weight` are not added when
   absent; given values are kept (`weight: 0.5`).
-- **Rule.** `confidence_score` in the clustered graph: kept when numeric; missing or non-numeric
-  (`"high"`) → `EXTRACTED` 1.0, `INFERRED` 0.55, `AMBIGUOUS` 0.2, invalid or missing confidence 1.0
-  (format spec §2.5). The invalid `confidence` value itself is kept (`"maybe"`), and an edge with
-  no `relation` or `confidence` is kept without the key.
+- **Rule (confidence).** A number is taken as the score the model meant: `confidence` becomes
+  `INFERRED` and, without a `confidence_score`, the number is the score (`0.5` → 0.5). A string
+  is matched without case (`extracted` → `EXTRACTED`) and (0.9.97) any other string becomes
+  `INFERRED` (`maybe`, `UNKNOWN`, `""`, `" INFERRED"`; 0.9.86 kept them). `null` or `false` given
+  with a score become `INFERRED`; `true`, and `null`/`false` with no score, are kept and score
+  1.0. An edge with no `relation` or `confidence` is kept without the key.
+- **Rule (score).** In the clustered graph a given `confidence_score` is read as Python's
+  `float()` would (`" 0.4 "`, `"1e-1"`, `true`, `false` read; `-0.0` kept); unreadable, negative
+  or not finite (`"high"`, `null`, `[0.3]`, `-0.3`, `"inf"`) → 1.0. A missing score follows the
+  normalised confidence: `EXTRACTED` 1.0, `INFERRED` 0.55, `AMBIGUOUS` 0.2, anything kept 1.0
+  (format spec §2.5). Raw output has the normalised confidence but the reply's own score
+  (`"high"`, `null`, and a number moved from `confidence`).
 - **Rule.** Any relation string is kept (`mentions`, `shares_data_with`). Self-loops are kept.
   Extra keys (`context`, `x_edge`) pass through.
 - **Rule (fold, resolved 2026-10-15).** Probed with crafted replies through the static shim on
@@ -551,7 +598,7 @@ runs. "Raw" is `extract --no-cluster`, "clustered" the default build.
 ### 8.1 `graph.json`
 
 - **Rule.** Clustered: `graph` becomes `{"hyperedges": [...], "schema_version": 1,
-  "graphify_version": "0.9.86"}` (key `hyperedges` first) whenever there are hyperedges; the
+  "graphify_version": "0.9.97"}` (key `hyperedges` first) whenever there are hyperedges; the
   top-level `hyperedges` holds the same list; `built_at_commit` as in format spec §2.1.
 - **Rule.** Raw (`--no-cluster`): keys `nodes, edges, hyperedges, input_tokens, output_tokens`
   with the summed API usage of this run (`16843`, `3275` for the fixture; through the shim these are
@@ -644,8 +691,8 @@ dijkstral's `extract` writes the report too (Graphify's does not), with this run
 ### 9.4 Determinism
 
 - **Rule.** Replaying the same replies gives byte-identical `graph.json` and analysis.
-- **Quirk.** A rerun served from the cache differs from the fresh run only by
-  `_origin: "semantic"` on every semantic node and edge (also after `update` and `label`).
+- **Rule (0.9.97).** A rerun served from the cache equals the fresh run (in 0.9.86 it differed by
+  `_origin: "semantic"`, quirk S5).
 
 ### 9.5 dijkstral's cache (deliberate differences)
 
@@ -724,11 +771,11 @@ compares against `dijkstral-out/semantic/index.json`, which also feeds `check-up
 
 | # | Quirk | Where |
 |---|---|---|
-| S1 | Tilde fences and HTML comments are not skipped: headings and backtick references inside them count. | §3.3, §3.4 |
+| S1 | HTML comments are not skipped: headings and backtick references inside them count (0.9.97 skips tilde fences). | §3.3, §3.4 |
 | S2 | Office conversions under `graphify-out/converted/` become markdown pages in `update`. | §2.2 |
 | S3 | A link to `x.markdown` reaches page `x` from `x.md`; links resolve before collision renaming and dangle afterwards. | §3.5 |
 | S4 | Raw output shows the last of two same-id reply nodes and the semantic attributes of an AST collision; the clustered graph keeps the first / the AST node. | §7.1, §7.2 |
-| S5 | Cached and fresh runs differ by `_origin: "semantic"`. | §9.4 |
+| S5 | 0.9.86 only: cached and fresh runs differed by `_origin: "semantic"`. | §9.4 |
 | S6 | A non-canonical `source_file` spelling overwrites the canonical file's cache entry. | §9.1 |
 | S7 | Hyperedges are written twice (`hyperedges` and `graph.hyperedges`). | §7.4 |
 | S8 | The report's token line counts only the writing command, not the graph's history. | §8.2 |

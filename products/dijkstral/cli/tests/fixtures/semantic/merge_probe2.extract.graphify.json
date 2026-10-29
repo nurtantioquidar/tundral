@@ -18,7 +18,7 @@
    }
   ],
   "schema_version": 1,
-  "graphify_version": "0.9.86"
+  "graphify_version": "0.9.97"
  },
  "nodes": [
   {
@@ -27,7 +27,7 @@
    "_callable": true,
    "_callable_class": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 1,
    "file_type": "code",
    "norm_label": "jobqueue",
    "source_file": "src/app/service.py",
@@ -38,7 +38,7 @@
    "label": ".__init__()",
    "_callable": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 1,
    "file_type": "code",
    "norm_label": ".__init__()",
    "source_file": "src/app/service.py",
@@ -49,7 +49,7 @@
    "label": ".push()",
    "_callable": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 1,
    "file_type": "code",
    "norm_label": ".push()",
    "source_file": "src/app/service.py",
@@ -60,7 +60,7 @@
    "label": "run_job()",
    "_callable": true,
    "_origin": "ast",
-   "community": 0,
+   "community": 1,
    "file_type": "code",
    "norm_label": "run_job()",
    "source_file": "src/app/service.py",
@@ -71,17 +71,77 @@
    "label": "slugify()",
    "_callable": true,
    "_origin": "ast",
-   "community": 1,
+   "community": 2,
    "file_type": "code",
    "norm_label": "slugify()",
    "source_file": "src/app/util.py",
    "source_location": "L1"
   },
   {
+   "id": "config_queue",
+   "label": "queue.yaml",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "queue.yaml",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1"
+  },
+  {
+   "id": "config_queue_cache",
+   "label": "cache",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "cache",
+   "source_file": "config/queue.yaml",
+   "source_location": "L4"
+  },
+  {
+   "id": "config_queue_cache_policy",
+   "label": "policy",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "policy",
+   "source_file": "config/queue.yaml",
+   "source_location": "L5"
+  },
+  {
+   "id": "config_queue_queue",
+   "label": "queue",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "queue",
+   "source_file": "config/queue.yaml",
+   "source_location": "L1"
+  },
+  {
+   "id": "config_queue_queue_max_items",
+   "label": "max_items",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "max_items",
+   "source_file": "config/queue.yaml",
+   "source_location": "L3"
+  },
+  {
+   "id": "config_queue_queue_name",
+   "label": "name",
+   "_origin": "ast",
+   "community": 0,
+   "file_type": "code",
+   "norm_label": "name",
+   "source_file": "config/queue.yaml",
+   "source_location": "L2"
+  },
+  {
    "id": "src_app_service_rationale_7",
    "label": "In-memory queue of pending jobs.",
    "_origin": "ast",
-   "community": 0,
+   "community": 1,
    "file_type": "rationale",
    "norm_label": "in-memory queue of pending jobs.",
    "source_file": "src/app/service.py",
@@ -91,7 +151,7 @@
    "id": "src_app_service",
    "label": "service.py",
    "_origin": "ast",
-   "community": 1,
+   "community": 2,
    "file_type": "code",
    "norm_label": "service.py",
    "source_file": "src/app/service.py",
@@ -101,7 +161,7 @@
    "id": "src_app_util",
    "label": "util.py",
    "_origin": "ast",
-   "community": 1,
+   "community": 2,
    "file_type": "code",
    "norm_label": "util.py",
    "source_file": "src/app/util.py",
@@ -111,7 +171,7 @@
    "id": "src_app_service_rationale_1",
    "label": "Job service: queue jobs and run them.",
    "_origin": "ast",
-   "community": 1,
+   "community": 2,
    "file_type": "rationale",
    "norm_label": "job service: queue jobs and run them.",
    "source_file": "src/app/service.py",
@@ -121,7 +181,7 @@
    "id": "src_app_init",
    "label": "__init__.py",
    "_origin": "ast",
-   "community": 8,
+   "community": 9,
    "file_type": "code",
    "norm_label": "__init__.py",
    "source_file": "src/app/__init__.py",
@@ -130,15 +190,26 @@
   {
    "id": "t_code_ev",
    "label": "JobQueue",
-   "community": 0,
+   "_origin": "semantic",
+   "community": 1,
    "file_type": "code",
    "norm_label": "jobqueue",
    "source_file": "docs/glossary.txt"
   },
   {
+   "id": "t_audio",
+   "label": "audio typed",
+   "_origin": "semantic",
+   "community": 10,
+   "file_type": "concept",
+   "norm_label": "audio typed",
+   "source_file": "docs/glossary.txt"
+  },
+  {
    "id": "t_code_noev",
    "label": "Nonexistent Thing",
-   "community": 10,
+   "_origin": "semantic",
+   "community": 11,
    "file_type": "code",
    "norm_label": "nonexistent thing",
    "source_file": "docs/glossary.txt",
@@ -147,7 +218,8 @@
   {
    "id": "t_concept_noev",
    "label": "Another Missing Thing",
-   "community": 11,
+   "_origin": "semantic",
+   "community": 12,
    "file_type": "concept",
    "norm_label": "another missing thing",
    "source_file": "docs/glossary.txt"
@@ -155,7 +227,8 @@
   {
    "id": "t_rationale_noev",
    "label": "Missing rationale",
-   "community": 12,
+   "_origin": "semantic",
+   "community": 13,
    "file_type": "rationale",
    "norm_label": "missing rationale",
    "source_file": "docs/glossary.txt"
@@ -163,7 +236,8 @@
   {
    "id": "t_upper",
    "label": "upper typed",
-   "community": 13,
+   "_origin": "semantic",
+   "community": 14,
    "file_type": "concept",
    "norm_label": "upper typed",
    "source_file": "docs/glossary.txt"
@@ -171,7 +245,8 @@
   {
    "id": "t_video",
    "label": "video typed",
-   "community": 14,
+   "_origin": "semantic",
+   "community": 15,
    "file_type": "concept",
    "norm_label": "video typed",
    "source_file": "docs/glossary.txt"
@@ -179,7 +254,8 @@
   {
    "id": "x_glossary",
    "label": "stem suffix",
-   "community": 15,
+   "_origin": "semantic",
+   "community": 16,
    "file_type": "concept",
    "norm_label": "stem suffix",
    "source_file": "docs/glossary.txt"
@@ -187,7 +263,8 @@
   {
    "id": "capacity_sheet",
    "label": "original stem prefixed",
-   "community": 2,
+   "_origin": "semantic",
+   "community": 3,
    "file_type": "document",
    "norm_label": "original stem prefixed",
    "source_file": "graphify-out/converted/capacity_e7fd8f6a.md"
@@ -195,7 +272,8 @@
   {
    "id": "graphify_out_converted_capacity_e7fd8f6a_sheet",
    "label": "converted stem prefixed",
-   "community": 2,
+   "_origin": "semantic",
+   "community": 3,
    "file_type": "document",
    "norm_label": "converted stem prefixed",
    "source_file": "graphify-out/converted/capacity_e7fd8f6a.md"
@@ -203,7 +281,8 @@
   {
    "id": "docs_glossary",
    "label": "stem only",
-   "community": 3,
+   "_origin": "semantic",
+   "community": 4,
    "file_type": "concept",
    "norm_label": "stem only",
    "source_file": "docs/glossary.txt"
@@ -211,7 +290,8 @@
   {
    "id": "docs_glossary_x",
    "label": "stem prefixed",
-   "community": 3,
+   "_origin": "semantic",
+   "community": 4,
    "file_type": "concept",
    "norm_label": "stem prefixed",
    "source_file": "docs/glossary.txt"
@@ -219,7 +299,8 @@
   {
    "id": "docs_glossary_y",
    "label": "stem prefixed duplicate of y",
-   "community": 4,
+   "_origin": "semantic",
+   "community": 5,
    "file_type": "concept",
    "norm_label": "stem prefixed duplicate of y",
    "source_file": "docs/glossary.txt"
@@ -227,7 +308,8 @@
   {
    "id": "docs_glossary_z",
    "label": "capital stem",
-   "community": 5,
+   "_origin": "semantic",
+   "community": 6,
    "file_type": "concept",
    "norm_label": "capital stem",
    "source_file": "docs/glossary.txt"
@@ -235,7 +317,8 @@
   {
    "id": "glossaryx",
    "label": "stem no underscore",
-   "community": 6,
+   "_origin": "semantic",
+   "community": 7,
    "file_type": "concept",
    "norm_label": "stem no underscore",
    "source_file": "docs/glossary.txt"
@@ -243,17 +326,10 @@
   {
    "id": "guide_slug",
    "label": "stem of another file",
-   "community": 7,
+   "_origin": "semantic",
+   "community": 8,
    "file_type": "concept",
    "norm_label": "stem of another file",
-   "source_file": "docs/glossary.txt"
-  },
-  {
-   "id": "t_audio",
-   "label": "audio typed",
-   "community": 9,
-   "file_type": "concept",
-   "norm_label": "audio typed",
    "source_file": "docs/glossary.txt"
   }
  ],
@@ -303,6 +379,61 @@
    "confidence_score": 1.0,
    "context": "import",
    "source_file": "src/app/service.py",
+   "source_location": "L3",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue",
+   "target": "config_queue_queue",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
+   "source_location": "L1",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue",
+   "target": "config_queue_cache",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
+   "source_location": "L4",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue_cache",
+   "target": "config_queue_cache_policy",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
+   "source_location": "L5",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue_queue",
+   "target": "config_queue_queue_name",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
+   "source_location": "L2",
+   "weight": 1.0
+  },
+  {
+   "source": "config_queue_queue",
+   "target": "config_queue_queue_max_items",
+   "relation": "contains",
+   "_origin": "ast",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "config/queue.yaml",
    "source_location": "L3",
    "weight": 1.0
   },
@@ -399,6 +530,7 @@
    "source": "capacity_sheet",
    "target": "graphify_out_converted_capacity_e7fd8f6a_sheet",
    "relation": "references",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "graphify-out/converted/capacity_e7fd8f6a.md"
@@ -407,6 +539,7 @@
    "source": "docs_glossary_x",
    "target": "docs_glossary",
    "relation": "references",
+   "_origin": "semantic",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "docs/glossary.txt"
@@ -415,6 +548,7 @@
    "source": "docs_glossary_y",
    "target": "docs_glossary_y",
    "relation": "semantically_similar_to",
+   "_origin": "semantic",
    "confidence": "INFERRED",
    "confidence_score": 0.8,
    "source_file": "docs/glossary.txt"
@@ -423,6 +557,7 @@
    "source": "t_code_ev",
    "target": "src_app_service_jobqueue",
    "relation": "implements",
+   "_origin": "semantic",
    "confidence": "INFERRED",
    "confidence_score": 0.9,
    "source_file": "docs/glossary.txt"
