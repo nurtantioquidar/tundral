@@ -89,6 +89,7 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   <line>| <up to 2 source lines best matching its label, for a document fact>
   called/used by (<n>[, <k> in tests]):
     <enclosing › caller> [<relation>] <file>:<line>  | <the call-site line>
+      which also calls: <labels> (+n)        (flow questions, first 2 callers)
   imported by: <files> (+n)
   calls: <labels> (+n)
 ```
@@ -103,6 +104,11 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   the others are one line: their count and two names. Importers (`imports`, `imports_from`,
   `re_exports`, `dynamic_import`) are listed by file, at most 8. Callees are the outgoing `calls`,
   `indirect_call` and `uses` links, by label, at most 10.
+- **Rule (flow steps).** For a question with two flow ends (§1, whether or not it names symbols),
+  the first two callers outside tests also list what else they call: their outgoing `calls`,
+  `indirect_call` and `uses` links other than the anchor, in call-site order, one per label, at
+  most 10. A flow's middle is often the function that calls one step after another; this names
+  its other steps without another round trip.
 - **Rule.** Source lines are read from `--root`, by default the directory holding the graph's
   `dijkstral-out/` or `graphify-out/` (else the current directory), cut to 160 characters; a file
   above 2 MiB or unreadable contributes no lines.

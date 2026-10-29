@@ -21,6 +21,8 @@ const MAX_DOC_ANCHORS: usize = 8;
 const DEF_LINES: usize = 4;
 const MAX_CALLERS: usize = 12;
 const MAX_CALLEES: usize = 10;
+/// For a flow question, how many of an anchor's callers also list what else they call.
+const FLOW_CALLERS: usize = 2;
 const MAX_IMPORTERS: usize = 8;
 const LINE_CHARS: usize = 160;
 const MAX_FILE_BYTES: u64 = 2 << 20;
@@ -559,13 +561,34 @@ fn label_lines(src: &mut Sources, file: &str, label: &str) -> Vec<(usize, String
         .collect()
 }
 
-/// One anchor's section.
+/// A node's callees (calls, indirect calls, uses) in call-site order, one per label.
+fn callees_in_order(ix: &Index, i: u32) -> Vec<u32> {
+    let mut v: Vec<(usize, u32)> = Vec::new();
+    for e in ix.incident(i) {
+        let (a, b) = ix.endpoints(e);
+        let rel = ix.relation(e);
+        if a == i && b != i && (rel == "calls" || rel == "indirect_call" || rel == "uses") {
+            let line = line_no(ix.edge(e).source_location.unwrap_or("")).unwrap_or(usize::MAX);
+            v.push((line, b));
+        }
+    }
+    v.sort();
+    let mut seen = HashSet::new();
+    v.into_iter()
+        .map(|(_, b)| b)
+        .filter(|&b| seen.insert(ix.label(b)))
+        .collect()
+}
+
+/// One anchor's section. For a flow question (`flow`), the first [`FLOW_CALLERS`] callers
+/// outside tests also list what else they call, in call order: the steps around the anchor.
 fn section(
     ix: &Index,
     src: &mut Sources,
     i: u32,
     hits: &[(usize, String)],
     def_lines: usize,
+    flow: bool,
 ) -> String {
     let mut s = String::new();
     let _ = writeln!(s, "## {}  {}", display(ix, i), place(ix, i));
@@ -642,7 +665,7 @@ fn section(
             .copied()
             .filter(|&(c, _)| !is_test_path(ix.source_file(c)))
             .collect();
-        for &(c, e) in core.iter().take(MAX_CALLERS) {
+        for (k, &(c, e)) in core.iter().take(MAX_CALLERS).enumerate() {
             let edge = ix.edge(e);
             let file = edge
                 .source_file
@@ -655,6 +678,30 @@ fn section(
                 .map(|t| format!("  | {}", clip_to(t.trim(), CALL_SITE_CHARS)))
                 .unwrap_or_default();
             let _ = writeln!(s, "    {} [{}] {at}{code}", display(ix, c), ix.relation(e));
+            if flow && k < FLOW_CALLERS && !is_file_node(ix, c) {
+                let steps: Vec<u32> = callees_in_order(ix, c)
+                    .into_iter()
+                    .filter(|&x| x != i)
+                    .collect();
+                if !steps.is_empty() {
+                    let names: Vec<&str> = steps
+                        .iter()
+                        .take(MAX_CALLEES)
+                        .map(|&x| ix.label(x))
+                        .collect();
+                    let more = steps.len().saturating_sub(MAX_CALLEES);
+                    let _ = writeln!(
+                        s,
+                        "      which also calls: {}{}",
+                        names.join(", "),
+                        if more > 0 {
+                            format!(" (+{more})")
+                        } else {
+                            String::new()
+                        }
+                    );
+                }
+            }
         }
         if core.len() > MAX_CALLERS {
             let _ = writeln!(
@@ -1545,13 +1592,14 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
         return None;
     }
     let limit = budget.max(200) * 4;
+    let flow = flow_ends(question).is_some();
     let mut out = String::new();
     let mut cut = 0;
     for (rank, &i) in anchors.iter().enumerate() {
         let none = Vec::new();
         // The first two anchors show their definition; later ones only its first lines.
         let def = if rank < 2 { DEF_LINES } else { 2 };
-        let sec = section(ix, &mut src, i, hits.get(&i).unwrap_or(&none), def);
+        let sec = section(ix, &mut src, i, hits.get(&i).unwrap_or(&none), def, flow);
         if !out.is_empty() && out.len() + sec.len() > limit {
             cut += 1;
             continue;
@@ -1760,6 +1808,47 @@ mod tests {
             ))
         );
         assert_eq!(flow_ends("Who calls solve_dependencies?"), None);
+    }
+
+    #[test]
+    fn flow_questions_list_what_callers_also_call() {
+        let node = |id: &str, label: &str, line: u32| {
+            serde_json::json!({"id": id, "label": label, "file_type": "code",
+                "source_file": "src/run.py", "source_location": format!("L{line}")})
+        };
+        let call = |s: &str, t: &str, line: u32| {
+            serde_json::json!({"source": s, "target": t, "relation": "calls",
+                "source_file": "src/run.py", "source_location": format!("L{line}")})
+        };
+        let doc = serde_json::json!({
+            "directed": false, "multigraph": false, "graph": {},
+            "nodes": [
+                node("run", "run()", 1),
+                node("walk", "walk_entries()", 10),
+                node("build", "build_haystack()", 20),
+                node("search", "search_file()", 30),
+            ],
+            "links": [
+                call("run", "search", 4),
+                call("run", "walk", 2),
+                call("run", "build", 3),
+            ]
+        });
+        let ix = Index::from_graph_json(doc.to_string().as_bytes()).unwrap();
+        let search = (0..ix.node_count() as u32)
+            .find(|&i| ix.label(i) == "search_file()")
+            .unwrap();
+        let mut src = Sources {
+            root: PathBuf::from("/nonexistent"),
+            files: HashMap::new(),
+        };
+        let flow = section(&ix, &mut src, search, &[], 2, true);
+        assert!(
+            flow.contains("      which also calls: walk_entries(), build_haystack()\n"),
+            "{flow}"
+        );
+        let plain = section(&ix, &mut src, search, &[], 2, false);
+        assert!(!plain.contains("which also calls"), "{plain}");
     }
 
     #[test]
