@@ -11,8 +11,6 @@ use serde_json::Value;
 /// Documented, deliberate differences (quirks not reproduced; see docs/graphify-format.md §15).
 /// Each entry is a line as printed by the parity summary.
 const ALLOWED: &[&str] = &[
-    // Cargo.toml `[package]` node (§11.6): emitted by the TOML extractor, owned elsewhere.
-    "pkg_shapes",
     // Q14: generic type parameters (`T` of `Wrapper<T>`/`Pair<T>`, `F` of `apply<F>`) are not
     // type references, so neither their stubs nor the edges to them are emitted.
     "t",
@@ -22,23 +20,26 @@ const ALLOWED: &[&str] = &[
     "src_model_wrapper -references-> t",
     "src_model_wrapper_t_new -references-> t",
     "src_util_mod_apply -references-> f",
-    // Q6: the clustered build's file-stem remap is not reproduced, so `use std::fmt` stays on the
-    // external `fmt` instead of the unrelated `src/util/fmt.rs`, and `use super::model::*` keeps
-    // its external `model` (the file edge to `src/model.rs` comes from module resolution).
+    // Q6: a module leaf resolves by file stem whatever its path, so `use std::fmt` lands on the
+    // unrelated `src/util/fmt.rs`; dijkstral keeps the external `fmt`.
     "fmt",
-    "model",
     "src_model -imports_from-> fmt",
     "src_model -imports_from-> src_util_fmt",
-    "src_util_mod -imports_from-> model",
-    // Q7 not reproduced: `use` paths resolve through the module tree to the defining file
-    // (`shapes::Round` → the `pub use` in `lib.rs` → `src/model.rs`; `self::fmt::render`).
-    "src_lib -imports_from-> src_model",
-    "src_lib -imports_from-> src_util_fmt",
+    // R1 (§11.3): Graphify resolves a `use` leaf by its name alone, and `render` is defined in
+    // two files, so it gives up; the module tree says `util::fmt::render` (and `shapes::render`
+    // through the `pub use`, `self::fmt::render as render_shape`).
+    "render",
+    "render_as_render_shape",
+    "src_lib -imports_from-> render",
+    "src_main -imports_from-> render",
+    "src_util_mod -imports_from-> render_as_render_shape",
+    "src_lib -imports_from-> src_util_fmt_render",
+    "src_main -imports_from-> src_util_fmt_render",
+    "src_util_mod -imports_from-> src_util_fmt_render",
+    // Q7 not reproduced: a leaf Graphify leaves unresolved (a crate-name path such as
+    // `shapes::model::{round_kind, Circle}`) still links its file to the defining file.
     "src_main -imports_from-> src_lib",
     "src_main -imports_from-> src_model",
-    "src_main -imports_from-> src_util_fmt",
-    "src_util_fmt -imports_from-> src_model",
-    "src_util_mod -imports_from-> src_util_fmt",
     "tests_it -imports_from-> src_model",
     "tests_it -imports_from-> src_util_mod",
     // Q23 not reproduced: calls resolve through the module tree. Path-qualified calls
@@ -128,11 +129,14 @@ fn use_paths_resolve_through_the_module_tree() {
         ("b/tests/feature.rs", "use crate::hay::SHERLOCK;\n"),
     ]);
     for want in [
-        // Through the `pub use` re-export in `a/src/lib.rs`, across crates.
-        "b_src_main -imports_from-> a_src_paint",
+        // The leaf's own edge names the definition (§11.3): `crate_a::Brush` follows the stub
+        // the `pub use` in `a/src/lib.rs` resolved, across crates.
+        "b_src_main -imports_from-> a_src_paint_brush",
+        "b_src_main -imports_from-> b_src_flags_defs_flag",
+        "b_src_flags_mod -imports_from-> b_src_flags_defs_flag",
+        "b_tests_feature -imports_from-> b_tests_hay_sherlock",
+        // A `use` inside a function body has no leaf edge; its file → file edge stays.
         "b_src_main -imports_from-> b_src_flags_defs",
-        "b_src_flags_mod -imports_from-> b_src_flags_defs",
-        "b_tests_feature -imports_from-> b_tests_hay",
     ] {
         assert!(l.contains(want), "missing {want}: {l:#?}");
     }

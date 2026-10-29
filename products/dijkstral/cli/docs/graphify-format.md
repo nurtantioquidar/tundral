@@ -1072,7 +1072,8 @@ All Rust nodes carry `file_type: "code"`, `_origin: "ast"`, `source_file`, `sour
 |---|---|---|---|---|
 | file | `F` | basename (`mod.rs`); raw output disambiguates duplicate basenames with a path suffix (`x/dupe.rs`) | – | – |
 | `struct` (named, tuple, unit), `enum`, `trait` | `F_slug(name)` | `Name` | `_rust_declaration_count` | `contains` from `F` |
-| `union`, `type` alias, trait associated `type` | **not emitted** | | | |
+| `type` alias at module level, inline modules included (0.9.97; generic `type R<T> = …` too) | `F_slug(name)` (`src_lib_registry`) | `Name` | `_rust_declaration_count` (two `#[cfg]` aliases → `2`, first line) | `contains` from `F`; no references from its right-hand side |
+| `union`, trait/impl associated `type`, `type` inside a fn body | **not emitted** | | | |
 | enum variant | `F_enum_variant` (`src_model_kind_round`) | `Round` | – | `case_of` from enum |
 | free `fn` (incl. `async`, `const`, `unsafe`, `pub(crate)`, `extern "C" { fn }`) | `F_slug(name)` | `name()` | – | `contains` from `F` |
 | method / associated fn in `impl` or `trait` (incl. default methods) | `<owner>_slug(name)` | `.name()` | – | `method` from owner |
@@ -1091,6 +1092,14 @@ Inline `mod` blocks (including `#[cfg(test)] mod tests`) are flattened into the 
 items get `F_name` ids and a `contains` edge from `F` (`src_model_fixture`,
 `src_model_area_is_positive`; `inner::helper` → `src_util_mod_helper`). Test files (`tests/it.rs`)
 and `#[test]` fns are ordinary nodes; there is no test-specific handling.
+
+**Case collisions (0.9.97).** File-level items whose ids collide although their names differ
+(only in case) keep the plain id when they are a type (struct, enum, trait, alias) and take
+`F_slug(name)_<sha1(name)[:6]>` when they are a function, constant or static: `struct Logger` +
+`const LOGGER` → `src_lib_logger` and `src_lib_logger_d3a35e`; `static MSG` + `fn msg()` → both
+suffixed; `fn e()` + `fn E()` → `src_lib_e_58e6b3`, `src_lib_e_e0184a` (ripgrep:
+`crates_core_messages_messages_17f346`/`…_85cda8`). Equal names are not suffixed (below), and an
+enum variant and a method of the enum (`B`/`.b()`) still share one node.
 
 **Duplicate ids: first definition wins.** Flattening makes `util::inner::helper` (L7) and
 `util::inner::deeper::helper` (L13) both `src_util_mod_helper`; only the L7 node exists and every
@@ -1149,21 +1158,22 @@ Rules, all observed:
    `Settings` used in `src/util/fmt.rs` and `src/util/mod.rs` → `src_util_fmt_rs_settings` and
    `src_util_mod_rs_settings`. Note `_rs_`: unlike file ids, the extension is kept. External
    import stubs are never file-scoped. ripgrep: `crates_cli_src_process_rs_read`.
-3. **Resolution:** after file-scoping, a stub whose label equals the label of exactly one
-   declared struct/enum/trait node is deleted and every edge pointing at its id is redirected to
-   that node (EXTRACTED, no `confidence_score`). With 0 or ≥2 candidates the stub stays
-   (`Match` in ripgrep has 5 declarations → stubs remain). Candidates are restricted by language:
+3. **Resolution (0.9.97):** a stub whose name the file imports resolves through that import
+   (§11.3) or not at all: `use std::fs::File` keeps the stub `file` although the repository
+   declares one `File`, and so does ripgrep's `use grep::printer::ColorSpecs` (another crate).
+   Any other stub (globs count as not importing) binds by label: the only declared
+   struct/enum/trait/alias of that label (with 0 or ≥2 candidates the stub stays: `Match` in
+   ripgrep has 5 declarations); a global stub binds EXTRACTED, a file-scoped one **INFERRED,
+   score 0.55** (`src_util_mod_render -references-> src_model_circle` through `use super::model::*`;
+   0.9.86 bound every stub EXTRACTED and ignored imports). Candidates are restricted by language:
    a Rust stub does not resolve to a Python class in a `.py` file, but *does* resolve to one in an
-   extensionless script (`benchsuite/benchsuite`; ripgrep `use std::process::Command` →
-   `benchsuite_benchsuite_command`). *Quirk.*
-4. **Import rewiring is a side effect of rule 3.** Import edges point at `slug(last segment)`.
-   When a *global* (non-file-scoped) type stub with that same id is resolved, the import edge is
-   redirected with it; otherwise it stays on the external stub. The path is ignored entirely:
-   `use std::fmt::Circle` resolves to the repo's `Circle` if any one other file mentions `Circle`
-   as a type. Consequences in the fixture: `use shapes::{.., Shape}` in `main.rs` →
-   `src_model_shape` (only `lib.rs` uses `Shape` as a type); `use shapes::model::{.., Circle}` →
-   external `circle` (two files use `Circle` as a type → file-scoped → not shared). *Quirk:
-   reproduce for parity, but this is name coincidence, not module resolution.*
+   extensionless script (`benchsuite/benchsuite`). *Quirk.*
+4. **Import rewiring.** Import edges point at the stub id of their leaf (§11.3); when that id is
+   redirected — a local leaf resolved, or a global type stub of that id resolved — every file's
+   edge to it follows, whatever its path: `use shapes::fromroot` in `src/main.rs` lands on
+   `src_model_fromroot` because `src/lib.rs` has `pub use crate::model::fromroot`, while
+   `use shapes::model::round_kind` stays external when no local import names `round_kind`.
+   *Quirk: name coincidence, not module resolution.*
 
 **Clustered-build file-stem remap** (clustered/`update` output only; raw `--no-cluster` is never
 remapped). An external stub whose label equals the filename stem of exactly one file node is
@@ -1192,27 +1202,39 @@ ripgrep: 21/21 such stubs remapped (`hostname`, `path` → `crates_printer_src_p
 Every Rust import edge is `relation: "imports_from"`, `context: "import"`, EXTRACTED, weight 1.0,
 `source` = `F`, `source_location` = line of the imported leaf itself (in a multi-line group each
 leaf reports its own line: `use std::{\n ffi::OsStr,\n io::{\n self,\n Read }}` → L2, L4, L5). Rust never emits `imports` or `re_exports`; `pub use` / `pub(crate) use` are treated
-like `use`. One edge per imported leaf, target = stub id of the last path segment:
+like `use`. One edge per imported leaf; `use` inside a fn body, `extern crate x [as y];` and
+`mod x;` give nothing. The edge first targets the leaf's **stub id**:
 
-| form | target id(s) |
+| form | stub id(s) |
 |---|---|
 | `use std::borrow::Cow;` | `cow` |
 | `use std::collections::{HashMap, HashSet};` | `hashmap`, `hashset` |
 | `use std::{ffi::OsStr, io::{self, Read}, path::Path};` | `osstr`, `io` (`self` → parent segment), `read`, `path` |
-| `use crate::model::{Shape, Circle as Round};` | `src_model_shape` (via rule 4), `circle_as_round` |
-| `use self::fmt::render as render_shape;` | `render_as_render_shape` |
-| `use a::b::{self as bee};` | `b_as_bee` |
+| `use self::fmt::render as render_shape;`, `use a::b::{self as bee};` | `render_as_render_shape`, `b_as_bee` |
 | `use x::y::Z as _;` | `z_as` (trailing `_` trimmed) |
 | `use super::model::*;` / `use super::*;` | `model` / `super` (segment before `*`) |
-| `use q::{r::*, s::T as Tee};` | `r`, `t_as_tee` |
-| `use crate::model;` | `model` |
-| `use ::absolute::Thing;` | `thing` |
-| `use Single;` | `single` |
-| `use` inside an inline `mod` | emitted on `F` at its own line |
-| `use` inside a fn body, `extern crate x [as y];`, `mod x;` | nothing |
+| `use crate::model;`, `use ::absolute::Thing;`, `use Single;` | `model`, `thing`, `single` |
 
-There is no module-path resolution: `crate::`, `self::`, `super::`, the crate name (`shapes::`)
-and external crates are all handled identically, and `mod model;` declarations produce no edge.
+(rule 1 of §11.2: a type stub of the same id in the file takes the edge). **0.9.97 then resolves
+local leaves**: a path starting with `crate`, `self`, `super` or a module the file declares
+(`model::Kind` in `lib.rs`; not `util::h1` from a `main.rs` that declares no `mod util`, not the
+package's own crate name `shapes::…`) names the **definition** whose name is its last segment —
+a function, struct, enum, trait, alias, const, static, macro (`src_model_macro_sq`) or enum
+variant (`Kind::A` → `src_model_kind_a`); `Circle as Round` names `Circle`. A module leaf or a
+glob names the module's file when it is a `name.rs` (`use crate::util::fmt` → `src_util_fmt`,
+`use super::model::*` → `src_model`) but not a directory's `mod.rs` (`use crate::util` stays
+`util`); methods (`Circle::new`) and inline modules stay external. Graphify finds the definition
+**by name alone**: the path is not checked (`use crate::util::Circle` finds `model.rs`'s
+`Circle`) and a name defined twice resolves nothing (`render`, `dup`, `Kind` → externals).
+The stub id is redirected, so other files' edges to it follow (§11.2 rule 4).
+
+dijkstral resolves the same local leaves through its module tree (`resolve/rust/modules.rs`):
+identical where the name is unique, and the defining item where Graphify's name lookup gives up
+or guesses (quirk **R1**; ripgrep: `use grep_regex::RegexMatcher` is Graphify's
+`searcher/src/testutil.rs` `RegexMatcher` through rule 4). Leaves Graphify leaves unresolved
+but the module tree places in the repository (crate names, workspace crates, `mod.rs`
+modules, `use` in fn bodies) keep a file → file edge to the defining file (Q7 not reproduced).
+ripgrep `.rs` against 0.9.97: `imports_from` 692 shared, 174 ours only, 119 Graphify's only.
 
 ### 11.4 Edges
 
@@ -1362,7 +1384,8 @@ ripgrep: 11 package nodes, 16 `depends_on` edges.
 
 ### 11.7 Rust quirks summary (reproduce for parity, flag in dijkstral-native data)
 
-1. Import resolution is name coincidence via type-stub ids (rule 4), not module resolution.
+1. Import resolution is by unique definition name and stub-id rewiring (§11.3, rule 4), not
+   module resolution (R1: a name defined twice resolves nothing, a wrong path still resolves).
 2. The clustered build's file-stem remap rewires `use std::fmt` to a repo file `fmt.rs` and drops
    cross-language import edges.
 3. Generic-impl and foreign-impl owner nodes are disconnected duplicates of the real type.
