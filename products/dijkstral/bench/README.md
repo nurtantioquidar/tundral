@@ -1342,7 +1342,9 @@ questions at 1.4–1.7× dijkstral's median tokens; on Kubernetes' pod-schedulin
 but not `findNodesThatFitPod` or `prioritizeNodes`, one call further down. The YAML does not
 crowd `context`: no section of its output names a YAML file on any of the 20 Kubernetes questions.
 
-Not comparable with the earlier tables except through pass and fact recall: the judge was
+On a blind set written afterwards (okhttp and excalidraw, below) this lead does not hold:
+dijkstral ties Graphify there. Not comparable with the earlier tables except through pass and
+fact recall: the judge was
 `gpt-6.1-sol` there and is `gpt-6-luna` here (no graph's judged-correct rate is 66% here against
 48%, with pass 64% against 60%), and fresh tokens per run rose by about 0.2M for no graph and
 dijkstral alike (0.58M → 0.78M, 0.60M → 0.80M), which points at Codex 0.165.0 rather than at
@@ -1378,3 +1380,45 @@ within the spread of 33 sessions; total tokens fell 6%. Fresh tokens are not com
 runs hit the prompt cache less (64–76% of input, against 77–81% in the full runs), so their fresh
 tokens per run (248k against 192k) measure cache conditions, not the change. Kept. Raw:
 `results/agent-1793266452.json`, `agent-1793266554.json`, `agent-1793266649.json`.
+
+### Blind set: okhttp and excalidraw — 2026-10-29
+
+Every set above was written while dijkstral was being built, and `context` was tuned on fastapi
+and ripgrep with Kubernetes checked often enough that it was no longer unseen. So a new set was
+written blind (`agent/questions/README.md`, "Held-out set"): 8 flow and architecture questions
+each on okhttp (Kotlin/Java) and excalidraw (TypeScript), by an author who saw neither tool's
+code or output, committed (`55cd9e5`) before any tool ran on it.
+
+Offline, one `context` call holds 0.18 of the blind set's key facts (1 of 16 questions complete),
+against 0.74 on the 60 questions above and 0.64 on Kubernetes alone; the flow steps of
+`c0e1b89` change 3 of the 16 outputs and add nothing. The graph holds 71 of the 75 identifiers
+and all 3 files among the facts, so extraction is not the gap: `context`'s choice of what to show
+fits the questions it was tuned on.
+
+Agents, three arms, three runs, the same setup as the 0.9.97 table above (`gpt-6-luna` answers
+and judges, codex-cli 0.165.0, Graphify 0.9.97, dijkstral `c0e1b89`), all arms in one window:
+
+| arm | pass | fact recall | judge | judge correct | median tokens | total tokens per run | fresh tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| no graph | 73% ± 10 | 0.68 ± 0.04 | 0.89 ± 0.06 | 81% ± 11 | 93,572 | 1.45M | 0.33M ± 0.05 | 25.1k |
+| Graphify 0.9.97 | **85% ± 4** | **0.79 ± 0.04** | **0.95 ± 0.02** | **92% ± 7** | 103,901 | 1.62M | 0.35M ± 0.04 | **23.6k** |
+| dijkstral | 81% ± 0 | 0.73 ± 0.06 | 0.94 ± 0.00 | 90% ± 4 | **83,664** | **1.41M** | 0.35M ± 0.11 | 24.3k |
+
+| pass / judge correct | no graph | Graphify 0.9.97 | dijkstral |
+|---|---|---|---|
+| okhttp (8) | 75% / 96% | 83% / 88% | 71% / 96% |
+| excalidraw (8) | 71% / 67% | 88% / 96% | 92% / 83% |
+| flow (8) | 75% / 83% | 79% / 88% | 75% / 83% |
+| architecture (8) | 71% / 79% | 92% / 96% | 88% / 96% |
+
+On questions nobody tuned for, dijkstral and Graphify are level: Graphify is a few points ahead on
+every accuracy measure, inside the spread of 48 sessions per arm, and both beat no graph. Their
+fresh tokens per correct answer are the same within a tenth; dijkstral's sessions are the
+shortest (median 84k tokens against Graphify's 104k, 13% fewer tokens per run), which the prompt
+cache absorbs (75–79% of input cached in every arm). The lead in the tables above — 87% against
+75% judged correct, 40% fewer fresh tokens per correct answer than Graphify — comes largely from `context`
+fitting its tuning questions, and is not a claim to publish. What generalises from it is
+narrower: a graph helps the agent over no graph, and dijkstral's builds are far faster
+(timing table above). Next for `context`: rules that hold on unseen code, tuned on a second new
+set so this one stays blind. Raw: `results/agent-1793269946.json`, `agent-1793270347.json`,
+`agent-1793270716.json`.
