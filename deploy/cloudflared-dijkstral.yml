@@ -1,0 +1,14 @@
+# dijkstral.tundral.ai: a locally managed Cloudflare Tunnel from charon, so no port opens there
+# (products/dijkstral/DIJKSTRAL_HOSTED_DESIGN.md §4). Charon's module
+# (nix/hosts/charon/apps/dijkstral.nix in the nix configuration) generates this same ingress;
+# change both together. Check a rule with:
+#   cloudflared tunnel --config deploy/cloudflared-dijkstral.yml ingress rule <url>
+#
+# Only MCP and GitHub's webhooks reach the service; /internal/* and /healthz never leave the host.
+# The web app, when it exists, replaces the 404 catch-all.
+tunnel: dijkstral
+ingress:
+  - hostname: dijkstral.tundral.ai
+    path: ^/(mcp/[^/]+/[^/]+|github/webhook)$
+    service: http://127.0.0.1:8095
+  - service: http_status:404
