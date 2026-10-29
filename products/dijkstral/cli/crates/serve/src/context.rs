@@ -173,7 +173,9 @@ fn named_symbols(question: &str) -> Vec<String> {
     while let Some(a) = rest.find('`') {
         let after = &rest[a + 1..];
         let Some(b) = after.find('`') else { break };
-        push(&after[..b]);
+        for name in span_names(&after[..b]) {
+            push(&name);
+        }
         rest = &after[b + 1..];
     }
     for t in kind_names(question) {
@@ -197,6 +199,78 @@ fn named_symbols(question: &str) -> Vec<String> {
         {
             push(w);
         }
+    }
+    out
+}
+
+/// The names in one backticked span. A bare name is kept whole (`APIRouter.include_router()`),
+/// a selector loses its argument labels (`responseDecodable(of:)` → `responseDecodable()`), and a
+/// code expression gives its qualified names, call heads and CamelCase words, string literals
+/// skipped (`AF.request(url, encoding: JSONEncoding.default)` → `AF.request()`,
+/// `JSONEncoding.default`).
+fn span_names(span: &str) -> Vec<String> {
+    let ident = |c: char| c.is_alphanumeric() || c == '_';
+    let bare = |s: &str| {
+        s.chars()
+            .all(|c| ident(c) || matches!(c, '.' | ':' | '(' | ')'))
+    };
+    if bare(span) {
+        return match span.split_once('(') {
+            Some((head, args)) if !args.starts_with(')') && !head.is_empty() => {
+                vec![format!("{head}()")]
+            }
+            _ => vec![span.to_string()],
+        };
+    }
+    let mut code = String::with_capacity(span.len());
+    let mut quote: Option<char> = None;
+    for c in span.chars() {
+        match quote {
+            Some(q) if c == q => quote = None,
+            Some(_) => {}
+            None if c == '"' || c == '\'' => {
+                quote = Some(c);
+                code.push(' ');
+            }
+            None => code.push(c),
+        }
+    }
+    let chars: Vec<char> = code.chars().collect();
+    let mut out = Vec::new();
+    let mut k = 0;
+    while k < chars.len() {
+        let starts = (ident(chars[k]) && !chars[k].is_ascii_digit())
+            && (k == 0 || !(ident(chars[k - 1]) || chars[k - 1] == '.'));
+        if !starts {
+            k += 1;
+            continue;
+        }
+        let mut end = k;
+        loop {
+            while end < chars.len() && ident(chars[end]) {
+                end += 1;
+            }
+            let sep = if chars.get(end) == Some(&'.') {
+                1
+            } else if chars.get(end) == Some(&':') && chars.get(end + 1) == Some(&':') {
+                2
+            } else {
+                0
+            };
+            if sep == 0 || !chars.get(end + sep).is_some_and(|&c| ident(c)) {
+                break;
+            }
+            end += sep;
+        }
+        let name: String = chars[k..end].iter().collect();
+        let call = matches!(chars.get(end), Some('(' | '<'));
+        let qualified = name.contains('.') || name.contains("::");
+        let camel =
+            name.chars().skip(1).any(char::is_uppercase) && name.chars().any(char::is_lowercase);
+        if qualified || camel || call {
+            out.push(if call { format!("{name}()") } else { name });
+        }
+        k = end;
     }
     out
 }
@@ -291,17 +365,25 @@ fn resolve_name(ix: &Index, name: &str) -> Vec<u32> {
 /// Named anchors as `(explicit, bare CamelCase)`: an explicit name (backticked, with `_`, `.`,
 /// `::` or `()`, or beside a kind word) is what the question is about; a bare CamelCase word that
 /// spells a label exactly (and is no hub) may only be context, so it does not stop the search.
-fn named_anchors_split(ix: &Index, question: &str) -> (Vec<u32>, Vec<u32>) {
+fn named_anchors_split(ix: &Index, question: &str) -> (Vec<u32>, Vec<u32>, Vec<u32>) {
     let explicit_marks =
         |n: &str| n.contains('_') || n.contains('.') || n.contains("::") || n.ends_with("()");
     let mut backticked: Vec<String> = named_symbols(&backticks_only(question));
     backticked.extend(kind_names(question));
+    let in_examples = example_names(question);
     let hub = query::hub_threshold(ix);
-    let (mut strong, mut weak): (Vec<u32>, Vec<u32>) = (Vec::new(), Vec::new());
+    let (mut strong, mut weak, mut examples): (Vec<u32>, Vec<u32>, Vec<u32>) =
+        (Vec::new(), Vec::new(), Vec::new());
     for name in named_symbols(question) {
         let explicit = explicit_marks(&name) || backticked.contains(&name);
         for i in resolve_name(ix, &name) {
             if is_file_node(ix, i) && !name.contains('/') && !name.contains(".py") {
+                continue;
+            }
+            if in_examples.contains(&name) {
+                if !examples.contains(&i) {
+                    examples.push(i);
+                }
                 continue;
             }
             if explicit {
@@ -317,7 +399,23 @@ fn named_anchors_split(ix: &Index, question: &str) -> (Vec<u32>, Vec<u32>) {
         }
     }
     strong.truncate(MAX_ANCHORS);
-    (strong, weak)
+    examples.truncate(EXAMPLE_ANCHORS);
+    (strong, weak, examples)
+}
+
+/// The names inside backticked code expressions (`AF.request(url, …)`), not bare names: the code
+/// illustrates the question, so its names join the search instead of replacing it.
+fn example_names(question: &str) -> Vec<String> {
+    let bare = |s: &str| {
+        s.chars()
+            .all(|c| c.is_alphanumeric() || matches!(c, '_' | '.' | ':' | '(' | ')'))
+    };
+    question
+        .split('`')
+        .enumerate()
+        .filter(|&(k, s)| k % 2 == 1 && !bare(s))
+        .flat_map(|(_, s)| span_names(s))
+        .collect()
 }
 
 /// Only the backticked spans of a question, so their names count as explicit.
@@ -821,6 +919,10 @@ const CODE_SCAFFOLD: &[&str] = &[
 const TEXT_ANCHORS: usize = 4;
 /// Code-text matches added after the symbols a question names.
 const AFTER_NAMED: usize = 2;
+/// Symbols listed by name after the anchors.
+const NAME_LIST: usize = 20;
+/// Names from backticked code expressions kept as anchors.
+const EXAMPLE_ANCHORS: usize = 2;
 
 /// Per node: how often each question term occurs, and its matching lines with the terms each
 /// carries (a bit per term).
@@ -843,25 +945,140 @@ fn ident_words(line: &str) -> Vec<String> {
         .filter(|t| !t.is_empty())
     {
         out.push(stem(&tok.to_lowercase()));
-        let cs: Vec<char> = tok.chars().collect();
-        let mut start = 0;
-        for k in 1..cs.len() {
-            // `readJSON|Body`: lower→upper, and the last capital of a run before a lower one.
-            let lower_upper =
-                cs[k].is_uppercase() && (cs[k - 1].is_lowercase() || cs[k - 1].is_ascii_digit());
-            let acronym_end = cs[k].is_uppercase()
-                && cs[k - 1].is_uppercase()
-                && cs.get(k + 1).is_some_and(|c| c.is_lowercase());
-            if lower_upper || acronym_end {
-                out.push(stem(
-                    &cs[start..k].iter().collect::<String>().to_lowercase(),
-                ));
-                start = k;
-            }
+        let parts = camel_parts(tok);
+        if parts.len() > 1 {
+            out.extend(parts);
         }
-        if start > 0 {
-            out.push(stem(&cs[start..].iter().collect::<String>().to_lowercase()));
+    }
+    out
+}
+
+/// A token's words at case changes, stemmed: `readJSONBody` → read, json, body.
+fn camel_parts(tok: &str) -> Vec<String> {
+    let cs: Vec<char> = tok.chars().collect();
+    let mut out = Vec::new();
+    let mut start = 0;
+    for k in 1..cs.len() {
+        // `readJSON|Body`: lower→upper, and the last capital of a run before a lower one.
+        let lower_upper =
+            cs[k].is_uppercase() && (cs[k - 1].is_lowercase() || cs[k - 1].is_ascii_digit());
+        let acronym_end = cs[k].is_uppercase()
+            && cs[k - 1].is_uppercase()
+            && cs.get(k + 1).is_some_and(|c| c.is_lowercase());
+        if lower_upper || acronym_end {
+            out.push(stem(
+                &cs[start..k].iter().collect::<String>().to_lowercase(),
+            ));
+            start = k;
         }
+    }
+    out.push(stem(&cs[start..].iter().collect::<String>().to_lowercase()));
+    out
+}
+
+/// The words of a symbol's name, stemmed: `SafeAggregateSink` → safe, aggregate, sink;
+/// `get_item_details` → get, item, detail.
+fn name_parts(label: &str) -> Vec<String> {
+    label
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|t| !t.is_empty())
+        .flat_map(camel_parts)
+        .collect()
+}
+
+/// Symbols outside tests whose names carry the question's words, grouped by file: each scores
+/// the rarity (idf among those names) of the words it shares with the question, times the root
+/// of the share of its name those words make up. Questions put in a reader's words what the code
+/// often names outright (`SafeAggregateSink`, `FilteringSink` for "how sinks are combined and
+/// filtered"), where the text of a function body does not.
+fn name_list(ix: &Index, question: &str, shown: &[u32]) -> String {
+    let terms: Vec<Vec<String>> = code_terms(question).iter().map(|t| spellings(t)).collect();
+    if terms.is_empty() {
+        return String::new();
+    }
+    // A label can share a term only if its lower case contains the term's spelling (less a
+    // final `y`, which `ies` stems to): most labels are passed over without being split.
+    let keys: Vec<memchr::memmem::Finder> = terms
+        .iter()
+        .flatten()
+        .map(|t| t.trim_end_matches('y'))
+        .filter(|k| !k.is_empty())
+        .map(|k| memchr::memmem::Finder::new(k.as_bytes()).into_owned())
+        .collect();
+    // Test files are decided once per file, not once per symbol.
+    let mut test_file: HashMap<&str, bool> = HashMap::new();
+    let mut lower: Vec<u8> = Vec::new();
+    let mut n = 0usize;
+    let mut cands: Vec<(u32, Vec<usize>, usize)> = Vec::new();
+    for i in 0..ix.node_count() as u32 {
+        if !is_code(ix, i) {
+            continue;
+        }
+        let (file, label) = (ix.source_file(i), ix.label(i));
+        let test = *test_file.entry(file).or_insert_with(|| is_test_path(file));
+        if test || ix.id(i).contains("_tests_") || label.trim_start_matches('.').starts_with("test")
+        {
+            continue;
+        }
+        n += 1;
+        lower.clear();
+        lower.extend(label.bytes().map(|b| b.to_ascii_lowercase()));
+        if !keys.iter().any(|k| k.find(&lower).is_some())
+            || file.is_empty()
+            || is_config(file)
+            || is_file_node(ix, i)
+        {
+            continue;
+        }
+        let parts = name_parts(label);
+        let hit: Vec<usize> = (0..terms.len())
+            .filter(|&t| parts.iter().any(|p| terms[t].contains(p)))
+            .collect();
+        let words = parts
+            .iter()
+            .filter(|p| terms.iter().any(|t| t.contains(p)))
+            .count();
+        if !hit.is_empty() {
+            cands.push((i, hit, words * 1000 / parts.len().max(1)));
+        }
+    }
+    let n = n.max(1) as f64;
+    let mut df = vec![0usize; terms.len()];
+    for (_, hit, _) in &cands {
+        for &t in hit {
+            df[t] += 1;
+        }
+    }
+    let mut ranked: Vec<(f64, u32)> = cands
+        .iter()
+        .filter(|(i, _, _)| !shown.contains(i))
+        .map(|(i, hit, share)| {
+            let idf: f64 = hit.iter().map(|&t| (n / df[t] as f64).ln().max(0.0)).sum();
+            (idf * (*share as f64 / 1000.0).sqrt(), *i)
+        })
+        .collect();
+    ranked.sort_by(|a, b| b.0.total_cmp(&a.0).then(a.1.cmp(&b.1)));
+    let mut seen: HashSet<(&str, &str)> = HashSet::new();
+    let mut groups: Vec<(&str, Vec<&str>)> = Vec::new();
+    for (_, i) in ranked {
+        let (file, label) = (ix.source_file(i), ix.label(i).trim_start_matches('.'));
+        if !seen.insert((file, label)) {
+            continue;
+        }
+        match groups.iter_mut().find(|(f, _)| *f == file) {
+            Some((_, v)) => v.push(label),
+            None => groups.push((file, vec![label])),
+        }
+        if seen.len() == NAME_LIST {
+            break;
+        }
+    }
+    if groups.is_empty() {
+        return String::new();
+    }
+    let mut out = String::from("names sharing the question's words:\n");
+    for (file, labels) in groups {
+        let _ = writeln!(out, "  {file}: {}", labels.join(", "));
     }
     out
 }
@@ -1518,7 +1735,7 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
     // Named symbols first; for a code question that names none, the functions whose text
     // matches it; otherwise `query`'s seeds (documents keep their facts).
     let mut hits: HashMap<u32, Vec<(usize, String)>> = HashMap::new();
-    let (mut anchors, weak) = named_anchors_split(ix, question);
+    let (mut anchors, weak, examples) = named_anchors_split(ix, question);
     let named = !anchors.is_empty();
     let mut chain_text = String::new();
     let has_code = (0..ix.node_count() as u32).any(|i| is_code(ix, i));
@@ -1579,6 +1796,12 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
             }
         }
     }
+    // Names from a code example join what the search found; they do not replace it.
+    for i in examples {
+        if !anchors.contains(&i) {
+            anchors.push(i);
+        }
+    }
     // Bare CamelCase names the question mentions come after what the search found.
     for i in weak {
         if anchors.len() < MAX_ANCHORS + 1 && !anchors.contains(&i) {
@@ -1616,6 +1839,13 @@ pub fn render(ix: &Index, root: &Path, question: &str, budget: usize) -> Option<
         let map = overview(ix, question);
         if out.len() + map.len() <= limit + 1200 {
             out.push_str(&map);
+            out.push('\n');
+        }
+    }
+    if has_code {
+        let names = name_list(ix, question, &anchors);
+        if !names.is_empty() {
+            out.push_str(&names);
             out.push('\n');
         }
     }
@@ -1667,6 +1897,32 @@ mod tests {
             named_symbols("Which parts call util.PatchPodStatus?"),
             ["util.PatchPodStatus"]
         );
+    }
+
+    #[test]
+    fn backticked_code_gives_its_names() {
+        assert_eq!(
+            span_names("responseDecodable(of:)"),
+            ["responseDecodable()"]
+        );
+        assert_eq!(
+            span_names("APIRouter.include_router()"),
+            ["APIRouter.include_router()"]
+        );
+        assert_eq!(
+            span_names(
+                "AF.request(url, method: .post, parameters: params, encoding: JSONEncoding.default)"
+            ),
+            ["AF.request()", "JSONEncoding.default"]
+        );
+        assert_eq!(
+            span_names(r#"using (LogContext.PushProperty("OrderId", id)) { ... }"#),
+            ["LogContext.PushProperty()"]
+        );
+        assert_eq!(span_names("ForContext<T>()"), ["ForContext()"]);
+        assert_eq!(span_names("write-to:File.path"), ["File.path"]);
+        assert!(span_names(r#"import "mylib" as lib;"#).is_empty());
+        assert!(span_names(".a.b |= . + 1").is_empty());
     }
 
     #[test]
@@ -1849,6 +2105,54 @@ mod tests {
         );
         let plain = section(&ix, &mut src, search, &[], 2, false);
         assert!(!plain.contains("which also calls"), "{plain}");
+    }
+
+    #[test]
+    fn code_examples_are_examples_and_bare_names_are_not() {
+        assert_eq!(
+            example_names(
+                "How does `x: Annotated[str, Depends(get_x)]` reach `solve_dependencies`?"
+            ),
+            ["Depends()"]
+        );
+        assert!(example_names("Which code calls `solve_dependencies` or `Sink`?").is_empty());
+    }
+
+    #[test]
+    fn names_sharing_the_question_words_are_listed_by_file() {
+        let node = |id: &str, label: &str, file: &str| {
+            serde_json::json!({"id": id, "label": label, "file_type": "code",
+                "source_file": file, "source_location": "L1"})
+        };
+        let doc = serde_json::json!({
+            "directed": false, "multigraph": false, "graph": {},
+            "nodes": [
+                node("agg", "SafeAggregateSink", "src/Core/Sinks/SafeAggregateSink.cs"),
+                node("filt", "FilteringSink", "src/Core/Sinks/FilteringSink.cs"),
+                node("log", "Logger", "src/Core/Logger.cs"),
+                node("write", ".Write()", "src/Core/Logger.cs"),
+                node("t", "FilteringSinkTests", "test/Core/FilteringSinkTests.cs"),
+                node("cfg", "LoggerConfiguration", "src/LoggerConfiguration.cs"),
+            ],
+            "links": []
+        });
+        let ix = Index::from_graph_json(doc.to_string().as_bytes()).unwrap();
+        let shown: Vec<u32> = (0..ix.node_count() as u32)
+            .filter(|&i| ix.label(i) == "Logger")
+            .collect();
+        let list = name_list(
+            &ix,
+            "How are sinks filtered before a logger writes?",
+            &shown,
+        );
+        assert_eq!(
+            list,
+            "names sharing the question's words:\n  \
+             src/Core/Sinks/FilteringSink.cs: FilteringSink\n  \
+             src/Core/Logger.cs: Write()\n  \
+             src/LoggerConfiguration.cs: LoggerConfiguration\n  \
+             src/Core/Sinks/SafeAggregateSink.cs: SafeAggregateSink\n"
+        );
     }
 
     #[test]

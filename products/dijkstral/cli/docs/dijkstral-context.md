@@ -39,6 +39,15 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
   documentation code and benchmarks: `examples/`, `docs_src/`, `samples/`, `bench…/`), become
   anchors, each with its three best matching lines not already shown; anchors after the second show
   only the first 2 lines of their definition.
+- **Rule (code examples).** A backticked span that is a bare name (letters, digits, `_`, `.`,
+  `:`, `(`, `)`) names a symbol as it stands, a selector losing its argument labels
+  (`responseDecodable(of:)` → `responseDecodable()`). A span that is a code expression
+  (`AF.request(url, encoding: JSONEncoding.default)`, `` `using (LogContext.PushProperty("Id", id))` ``)
+  illustrates the question instead: its qualified names, call heads (a name followed by `(` or
+  `<`) and CamelCase words, string literals skipped (`AF.request()`, `JSONEncoding.default`), are
+  resolved like named symbols, at most 2, but they do not stop the code-text and flow searches;
+  they are added after what those found. The code a question quotes is often the caller's, while
+  its subject is the mechanism behind it (`x: Annotated[str, Depends(get_x)]`).
 - **Rule (named and unnamed).** A question that names symbols may still be about code it does not
   name ("which steps run when `X` changes"): its two best code-text matches not already anchored
   follow the named symbols, ranked as above.
@@ -71,7 +80,8 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
 - **Rule (speed).** The code is scanned once per question, files in parallel, for the union of
   the terms of the whole question and of a flow's two ends; a line is split into words only when
   its lower case contains one of the terms (a stem is a substring of every word it matches).
-  About 0.4 s on Kubernetes with a warm page cache.
+  About 0.4 s on Kubernetes with a warm page cache. The name list (§3) adds about 0.13 s there
+  and a few milliseconds on repositories of a few thousand symbols.
 
 - **Rule (descriptions).** Comment lines (`#`, `//`, `/*`, `*`, …) and the lines of Python
   docstrings (between `"""` or `'''`) are the code described in plain words: their terms
@@ -115,7 +125,24 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
 - **Rule (document facts).** A label's best lines contain most of its content words (stem
   equality: `babies` ~ `baby`, `friendly` ≁ `friend`), at least two of them or its only one.
 
-## 3. Documents and the budget
+## 3. Names, documents and the budget
+
+```text
+names sharing the question's words:
+  <file>: <label>, <label>
+```
+
+- **Rule (names).** For a graph with code, after the anchors (and the call chain and the map of
+  areas), the answer lists up to 20 more symbols whose names carry the question's terms (§1
+  code text: stemmed, scaffolding removed, abbreviations matched), grouped by file in order of
+  each file's best symbol. A symbol is a code node outside tests that is not a file node and not
+  already an anchor; its name's words are its label split at non-alphanumerics and case changes
+  (`SafeAggregateSink` → safe, aggregate, sink), stemmed. It scores the sum over the terms it
+  shares of ln(n / df), n the code nodes outside tests and df those of them whose names share
+  the term, times √(the share of its name's words that are terms); one entry per file and
+  label. Questions put in a reader's words what code often names outright (`FilteringSink`,
+  `LoggerFilterConfiguration` for "how are global filters layered in"), where function bodies do
+  not use those words; this is also what Graphify's `query` gets right, without its edges.
 
 - **Rule.** When the anchors are document nodes, the answer ends with a search for every
   occurrence of the question's subject — the graph summarises, and a "how many", "all of" or
@@ -129,10 +156,13 @@ dijkstral context "<question>" [--budget N] [--root DIR] [--graph PATH]
 ## 4. Tests
 
 `crates/serve/src/context.rs` unit tests (name detection, stems, identifier words, label lines,
-paths) and `crates/cli/tests/query_goldens.rs` `context_answers_with_source_lines` on the Python
-fixture. Its effect on agents is measured by `bench/agent/` (`bench/README.md`, stage 7); the
-share of a question's key facts its output already contains is the offline measure used while
-tuning it, on fastapi and ripgrep, with Kubernetes held out (`bench/agent/context_eval.py`).
+paths, code examples, the name list) and `crates/cli/tests/query_goldens.rs`
+`context_answers_with_source_lines` on the Python fixture. Its effect on agents is measured by
+`bench/agent/` (`bench/README.md`, stage 7); the share of a question's key facts its output
+already contains is the offline measure used while tuning it, on fastapi and ripgrep and on the
+second tuning set (erpnext, jq, serilog, alamofire: flow and architecture questions written like
+the blind set's), with Kubernetes held out and okhttp and excalidraw blind
+(`bench/agent/context_eval.py`).
 Meaning-based retrieval was measured as a separate prototype and not adopted
 (`dijkstral-context-semantic.md`; code on branch `feature/dijkstral-context-embeddings-prototype`).
 Reranking candidates with a hosted classifier (TypeSafe Jev) was measured the same way and not
