@@ -1297,3 +1297,52 @@ dijkstral is faster (4× to 496×) and lower in peak memory in all 57 scenarios,
 now build graphs of the same size, so the Kubernetes rows compare equal work. Indexing Kubernetes'
 YAML (180k more nodes) took dijkstral's cold build from 9.16 s and 2,701 MB to 11.86 s and
 3,460 MB; the time goes to clustering, writing and caching the larger graph, not to extraction.
+
+### Agent outcome at Graphify 0.9.97 parity — 2026-10-29
+
+The key-fact set (60 questions: fastapi, ripgrep, Kubernetes) rerun with both graphs rebuilt:
+Graphify 0.9.97 against dijkstral at `f844c0a` (the release build of the timing table above), so
+the Kubernetes graphs of both tools now include its YAML. `GRAPHIFY_VERSION=0.9.97`, `gpt-6-luna`
+(medium) answers, three runs per arm; the judge is `gpt-6-luna` (medium) too, codex-cli 0.165.0.
+
+| arm | pass | fact recall | judge | judge correct | median tokens | fresh tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| no graph | 64% ± 4 | 0.68 ± 0.04 | 0.77 ± 0.03 | 66% ± 3 | 41,844 | 0.78M ± 0.08 | 19.9k |
+| Graphify 0.9.97 | 81% ± 1 | 0.78 ± 0.01 | 0.86 ± 0.01 | 75% ± 0 | 71,339 | 1.13M ± 0.07 | 25.1k |
+| dijkstral | **84% ± 2** | **0.85 ± 0.02** | **0.92 ± 0.01** | **87% ± 3** | 52,534 | 0.80M ± 0.09 | **15.4k** |
+
+Mean ± standard deviation over the three runs; median tokens over all 180 sessions of an arm; per
+correct answer = fresh tokens of the three runs / judged-correct answers of the three runs. By
+question kind and by corpus (three runs pooled; pass / judge correct, then median tokens or fresh
+tokens per correct answer):
+
+| kind | no graph | Graphify 0.9.97 | dijkstral |
+|---|---|---|---|
+| locate (45) | 62% / 60%, 47,026 | 76% / 71%, 75,688 | **91% / 93%**, 54,454 |
+| callers (45) | 47% / 56%, 26,090 | 71% / 56%, 54,843 | **78% / 82%**, 25,385 |
+| impact (36) | 75% / 83%, 40,585 | 78% / 78%, 71,921 | **81% / 86%**, 43,364 |
+| flow (27) | 52% / 59%, 63,852 | **96% / 93%**, 120,963 | 81% / 89%, 87,758 |
+| architecture (27) | 93% / 74%, 72,506 | **96% / 93%**, 96,044 | 89% / 85%, 57,948 |
+
+| corpus | no graph | Graphify 0.9.97 | dijkstral |
+|---|---|---|---|
+| fastapi | 65% / 63%, 16.0k | 92% / 85%, 16.7k | **95% / 93%, 11.0k** |
+| ripgrep | 67% / 63%, 22.0k | 78% / 73%, 24.1k | **83% / 83%, 16.9k** |
+| kubernetes | 60% / 70%, 21.5k | 73% / 67%, 37.1k | 73% / **85%, 18.6k** |
+
+dijkstral answers the most questions correctly at the lowest cost per correct answer. Its lead
+over Graphify in judged-correct answers (87% against 75%) is well outside the spread; in pass rate
+(84% against 81%) it is within it. Graphify 0.9.97 does much better than 0.9.86 did (pass 74% ± 5
+in the tables above) but spends 1.4× dijkstral's fresh tokens per run (4.1 tool calls per session
+against 2.9) and the most per correct answer, more than no graph. It wins the flow and architecture
+questions at 1.4–1.7× dijkstral's median tokens; on Kubernetes' pod-scheduling trace
+(`kubernetes-k18`, 0 of 3) `context` names `scheduleOnePod`, `schedulingCycle` and `bindingCycle`
+but not `findNodesThatFitPod` or `prioritizeNodes`, one call further down. The YAML does not
+crowd `context`: no section of its output names a YAML file on any of the 20 Kubernetes questions.
+
+Not comparable with the earlier tables except through pass and fact recall: the judge was
+`gpt-6.1-sol` there and is `gpt-6-luna` here (no graph's judged-correct rate is 66% here against
+48%, with pass 64% against 60%), and fresh tokens per run rose by about 0.2M for no graph and
+dijkstral alike (0.58M → 0.78M, 0.60M → 0.80M), which points at Codex 0.165.0 rather than at
+either graph. Raw summaries: `results/agent-1793260984.json`, `agent-1793262342.json`,
+`agent-1793263650.json`; session events in `$DIJKSTRAL_BENCH_HOME/agent/sessions-0997-r{1,2,3}/`.
