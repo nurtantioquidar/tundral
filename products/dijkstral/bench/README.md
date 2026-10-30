@@ -1608,3 +1608,30 @@ name more key facts than Graphify's (pass 97% against 93%), are judged correct a
 against 86 of 96 sessions, inside the spread), and use 5% fewer tokens per run, with fresh
 tokens per correct answer within a few percent. Raw: `results/agent-1793326428.json`,
 `agent-1793326667.json`, `agent-1793326898.json`.
+
+On the first blind set, untouched for this question, the adopted wording (`b05de11`, dijkstral arm
+only, three runs, the same setup; the other arms are those of 2026-10-29):
+
+| arm (first blind set, 16 questions) | pass | fact recall | judge correct | facts but judged incorrect | median tokens | total tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| no graph | 73% ± 10 | 0.68 | 81% ± 11 (39 of 48) | 4 | 93,572 | 1.45M | 25.1k |
+| Graphify 0.9.97 | 85% ± 4 | **0.79** | **92% ± 7 (44)** | **3** | 103,901 | 1.62M | 23.6k |
+| dijkstral, "answer from it" (`b7b137c`) | 83% ± 4 | 0.75 | 83% ± 10 (40) | 8 | 85,654 | 1.45M | 28.2k |
+| dijkstral, "a map" (`b05de11`) | 85% ± 4 | 0.75 | 90% ± 4 (43) | 5 | **80,738** | **1.43M** | **21.4k** |
+
+Both blind sets, 48 questions, with each tool's current agent instructions:
+
+| arm | pass | fact recall | judge correct | facts but judged incorrect | median tokens | total tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| no graph | 78% ± 6 | 0.74 | 78% ± 2 (113 of 144) | 14 | 68,452 | 3.32M | 19.7k |
+| Graphify 0.9.97 | 90% ± 3 | 0.82 | 90% ± 7 (130) | **8** | 87,202 | 4.20M | 19.3k |
+| dijkstral, "a map" (`b05de11`) | **93% ± 3** | **0.84** | 89% ± 3 (128) | 16 | **76,067** | **3.88M** | **18.8k** |
+
+On 48 questions nobody tuned for, dijkstral with the adopted wording is level with Graphify:
+judged correct in 128 sessions against 130 of 144, a few points ahead on key facts, in sessions
+13% shorter at the median and 8% cheaper in total tokens, 3% in fresh tokens per correct answer.
+Its agents now read at least as much source as Graphify's (883 lines per session, median, on the
+first set against Graphify's 692). That is the claim the benchmark supports: parity in answers
+on unseen code, at lower cost, with builds many times faster (timing tables above); not an
+accuracy lead. Raw: `results/agent-1793327612.json`, `agent-1793327733.json`,
+`agent-1793327865.json`.
