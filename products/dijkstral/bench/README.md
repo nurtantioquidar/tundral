@@ -1524,3 +1524,53 @@ the same in fresh tokens. Reading more is therefore not what Graphify's blind-se
 or not on its own, and the variant is not adopted. Raw: `results/agent-1793321472.json` (A1),
 `agent-1793321695.json` (B1), `agent-1793321934.json` (A2), `agent-1793322175.json` (B2),
 `agent-1793322434.json` (A3), `agent-1793322680.json` (B3).
+
+### Second blind set: munit, guzzle, sinatra and ecto — 2026-10-30
+
+To tell a real gap from noise on more than 16 questions, a second blind set was written the same
+way (`agent/questions/README.md`, "Second blind set": 8 flow and architecture questions each on
+munit, guzzle, sinatra and ecto, committed in `20c8a4c` before any tool ran on it), and the
+three arms ran on it in one window: three runs, `gpt-6-luna` answering and judging, codex-cli
+0.165.0, Graphify 0.9.97, dijkstral `b7b137c`.
+
+| arm | pass | fact recall | judge | judge correct | median tokens | total tokens per run | fresh tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| no graph | 81% ± 6 | 0.77 ± 0.03 | 0.87 ± 0.05 | 77% ± 9 | 59,496 | 1.88M | 0.42M ± 0.06 | 16.9k |
+| Graphify 0.9.97 | **93% ± 5** | 0.84 ± 0.02 | **0.93 ± 0.06** | **90% ± 8** | 79,260 | 2.59M | 0.49M ± 0.02 | **17.1k** |
+| dijkstral | **93% ± 4** | **0.85 ± 0.02** | 0.91 ± 0.02 | 83% ± 2 | **76,618** | **2.51M** | 0.49M ± 0.02 | 18.3k |
+
+| pass / judge correct | no graph | Graphify 0.9.97 | dijkstral |
+|---|---|---|---|
+| ecto (8) | 88% / 79% | 96% / 88% | 88% / 88% |
+| guzzle (8) | 67% / 67% | 83% / 88% | 100% / 92% |
+| munit (8) | 75% / 71% | 92% / 88% | 88% / 79% |
+| sinatra (8) | 96% / 92% | 100% / 96% | 96% / 75% |
+| flow (16) | 77% / 77% | 90% / 92% | 90% / 88% |
+| architecture (16) | 85% / 77% | 96% / 88% | 96% / 79% |
+
+Both blind sets together, 48 questions (the first set's dijkstral arm is `b7b137c`, run some hours
+after its other two arms):
+
+| arm | pass | fact recall | judge correct | median tokens | fresh tokens per correct answer |
+|---|---:|---:|---:|---:|---:|
+| no graph | 78% ± 6 | 0.74 | 78% ± 2 | 68,452 | 19.7k |
+| Graphify 0.9.97 | 90% ± 3 | 0.82 | 90% ± 7 | 87,202 | 19.3k |
+| dijkstral `b7b137c` | 90% ± 2 | 0.81 | 83% ± 4 | 78,014 | 21.6k |
+
+On code nobody tuned for, dijkstral's agents name the key facts exactly as often as Graphify's,
+in shorter sessions (median 78k tokens against 87k), but the judge accepts 7 points fewer of their
+answers (120 of 144 sessions against 130). The difference is in answers that have the facts and are
+still judged incorrect: 16% of dijkstral's sessions on the second set (15 of 96) and 17% on the
+first with `b7b137c`, against 5–6% for Graphify and 7% for dijkstral on the second tuning set. Counting words
+in the judge's reasons (never reading them, as the sets are blind), dijkstral's rejected answers
+are cited for something missing more often than for a wrong claim (21 against 11 over both sets,
+the first with both dijkstral builds; Graphify 7 and 7), and its agents read less source than Graphify's (379 against 470 lines per
+session, median, on the second set). So the gap is answers that stop short, not answers led astray.
+Offline, one `context` call holds 0.54 of the second set's key facts with `b7b137c`, 0.37 with
+`c0e1b89` (both scored once, after the agent runs); one judge reason from this set was displayed
+by mistake while checking the cache format, and no change follows from it.
+
+The "map, not the answer" wording (above) was tested on the second tuning set, where dijkstral's
+answers were not stopping short (pass-but-judged-incorrect 7%), so a tie there does not rule it
+out on unseen code. Raw: `results/agent-1793324338.json`, `agent-1793324967.json`,
+`agent-1793325616.json`.
