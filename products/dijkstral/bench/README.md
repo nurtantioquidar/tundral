@@ -1574,3 +1574,36 @@ The "map, not the answer" wording (above) was tested on the second tuning set, w
 answers were not stopping short (pass-but-judged-incorrect 7%), so a tie there does not rule it
 out on unseen code. Raw: `results/agent-1793324338.json`, `agent-1793324967.json`,
 `agent-1793325616.json`.
+
+### "A map, not the answer", adopted — 2026-10-30
+
+The wording above was adopted (`46ec3a7`; the skill text says the same in `b05de11`) on the
+second tuning set's evidence: no less accurate and 6% fewer tokens. It was then measured once on
+the second blind set: the dijkstral arm only, three runs, about half an hour after that set's other
+arms. That this blind set was used for the measurement came from its own aggregate
+diagnosis (answers that stop short), so it is no longer untouched for this question; no further
+change was chosen on it.
+
+| arm (second blind set, 32 questions) | pass | fact recall | judge | judge correct | facts but judged incorrect | median tokens | total tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| no graph | 81% ± 6 | 0.77 ± 0.03 | 0.87 ± 0.05 | 77% ± 9 (74 of 96) | 10 | 59,496 | 1.88M | 16.9k |
+| Graphify 0.9.97 | 93% ± 5 | 0.84 ± 0.02 | 0.93 ± 0.06 | **90% ± 8 (86)** | **5** | 79,260 | 2.59M | **17.1k** |
+| dijkstral, "answer from it" (`b7b137c`) | 93% ± 4 | 0.85 ± 0.02 | 0.91 ± 0.02 | 83% ± 2 (80) | 15 | 76,618 | 2.51M | 18.3k |
+| dijkstral, "a map" (`b05de11`) | **97% ± 5** | **0.88 ± 0.01** | **0.94 ± 0.03** | 89% ± 5 (85) | 11 | **75,125** | **2.45M** | 17.5k |
+
+| pass / judge correct | Graphify 0.9.97 | dijkstral, "answer from it" | dijkstral, "a map" |
+|---|---|---|---|
+| ecto (8) | 96% / 88% | 88% / 88% | 96% / 92% |
+| guzzle (8) | 83% / 88% | 100% / 92% | 100% / 88% |
+| munit (8) | 92% / 88% | 88% / 79% | 92% / 79% |
+| sinatra (8) | 100% / 96% | 96% / 75% | 100% / 96% |
+| flow (16) | 90% / 92% | 90% / 88% | 96% / 94% |
+| architecture (16) | 96% / 88% | 96% / 79% | 98% / 83% |
+
+On unseen code the gap closes: dijkstral's agents now read source as Graphify's do (540 lines per
+session, median, against 379 before and Graphify's 470), call `context` once instead of twice,
+and leave less out (judge reasons citing an omission: 4 against 10, keyword counts only). They
+name more key facts than Graphify's (pass 97% against 93%), are judged correct as often (85
+against 86 of 96 sessions, inside the spread), and use 5% fewer tokens per run, with fresh
+tokens per correct answer within a few percent. Raw: `results/agent-1793326428.json`,
+`agent-1793326667.json`, `agent-1793326898.json`.
