@@ -1468,4 +1468,31 @@ No tuning question lost recall. Answers grow from a median of 3,240 to 4,205 cha
 3,583 to 4,738), about 250 tokens. The blind gain (+0.14) matches the second set's (+0.15), so the
 changes generalise rather than fit; `context` still finds less on unseen code than on the code it
 was first tuned on. The name list costs about 0.13 s per call on Kubernetes, a few milliseconds
-elsewhere. Whether agents answer better with it is for an agent run on the blind set.
+elsewhere.
+
+Agents on the blind set with `b7b137c`: the dijkstral arm only, three runs, the same setup as the
+blind table above (`gpt-6-luna` answers and judges, codex-cli 0.165.0), set beside that table's
+arms, which ran some hours earlier:
+
+| arm | pass | fact recall | judge | judge correct | median tokens | total tokens per run | fresh tokens per run | per correct answer |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| no graph | 73% ± 10 | 0.68 ± 0.04 | 0.89 ± 0.06 | 81% ± 11 | 93,572 | 1.45M | 0.33M ± 0.05 | 25.1k |
+| Graphify 0.9.97 | 85% ± 4 | 0.79 ± 0.04 | 0.95 ± 0.02 | 92% ± 7 | 103,901 | 1.62M | 0.35M ± 0.04 | 23.6k |
+| dijkstral `c0e1b89` | 81% ± 0 | 0.73 ± 0.06 | 0.94 ± 0.00 | 90% ± 4 | 83,664 | 1.41M | 0.35M ± 0.11 | 24.3k |
+| dijkstral `b7b137c` | 83% ± 4 | 0.75 ± 0.03 | 0.91 ± 0.04 | 83% ± 10 | 85,654 | 1.45M | 0.38M ± 0.07 | 28.2k |
+
+| pass / judge correct | dijkstral `c0e1b89` | dijkstral `b7b137c` |
+|---|---|---|
+| okhttp (8) | 71% / 96% | 75% / 92% |
+| excalidraw (8) | 92% / 83% | 92% / 75% |
+| flow (8) | 75% / 83% | 83% / 75% |
+| architecture (8) | 88% / 96% | 83% / 92% |
+
+The offline gain does not carry over to agents: two points more pass and fact recall, seven fewer
+judged correct (40 of 48 sessions against 43), each inside the spread between runs, at about the
+same tokens. An agent already finds most of what the name list adds by itself, a few commands
+later; a single call's share of the key facts was a fair guide while it was low on the first
+set, and is not one here. Graphify stays a few points ahead on accuracy, inside the same spread.
+`b7b137c` is kept (it helps offline everywhere and costs agents nothing measurable), and no
+agent-accuracy lead over Graphify is claimed. Raw: `results/agent-1793280195.json`,
+`agent-1793280339.json`, `agent-1793280503.json`.
