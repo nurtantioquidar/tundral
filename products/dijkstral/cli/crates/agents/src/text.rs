@@ -34,12 +34,15 @@ pub const CLAUDE_SECTION: &str = "## dijkstral
 This project has a dijkstral code graph in `dijkstral-out/`.
 
 - Start every question about this code with one call: `dijkstral context \"<question>\"`. It
-  returns the symbols the question is about with their definition lines, their callers (with the
-  calling lines) and what they call, often the whole answer: answer from it.
-- Only for what it lacks: `dijkstral explain A B --incoming` (callers of several symbols),
-  `dijkstral affected <symbol>` (what a change affects), `dijkstral path <a> <b>`. Each cites
-  `file:line`; read only those lines, several ranges in one `sed -n` call.
-- The graph is a map, not a full record: for literal strings, exact values and dates, and when a
+  points to where the answer is: the symbols the question is about with their definition lines,
+  their callers (with the calling lines) and what they call, and other symbols named like the
+  question, each with `file:line`.
+- It is a map, not the answer: before answering, read the code it points to (several ranges in
+  one `sed -n` call) and check there each step or part you name. When it does not show what the
+  question asks about, search the text with `rg`.
+- For more of the structure: `dijkstral explain A B --incoming` (callers of several symbols),
+  `dijkstral affected <symbol>` (what a change affects), `dijkstral path <a> <b>`.
+- The graph is not a full record: for literal strings, exact values and dates, and when a
   question needs every occurrence (how many, all of, the latest), also search the text with `rg`.
 - Run `dijkstral update` after changing code; it re-extracts only the files that changed.
 ";
@@ -50,12 +53,15 @@ pub const AGENTS_SECTION: &str = "## dijkstral
 This project has a dijkstral code graph in `dijkstral-out/`.
 
 - Start every question about this code with one call: `dijkstral context \"<question>\"`. It
-  returns the symbols the question is about with their definition lines, their callers (with the
-  calling lines) and what they call, often the whole answer: answer from it.
-- Only for what it lacks: `dijkstral explain A B --incoming` (callers of several symbols),
-  `dijkstral affected <symbol>` (what a change affects), `dijkstral path <a> <b>`. Each cites
-  `file:line`; read only those lines, several ranges in one `sed -n` call.
-- The graph is a map, not a full record: for literal strings, exact values and dates, and when a
+  points to where the answer is: the symbols the question is about with their definition lines,
+  their callers (with the calling lines) and what they call, and other symbols named like the
+  question, each with `file:line`.
+- It is a map, not the answer: before answering, read the code it points to (several ranges in
+  one `sed -n` call) and check there each step or part you name. When it does not show what the
+  question asks about, search the text with `rg`.
+- For more of the structure: `dijkstral explain A B --incoming` (callers of several symbols),
+  `dijkstral affected <symbol>` (what a change affects), `dijkstral path <a> <b>`.
+- The graph is not a full record: for literal strings, exact values and dates, and when a
   question needs every occurrence (how many, all of, the latest), also search the text with `rg`.
 - Run `dijkstral update` after changing code; it re-extracts only the files that changed.
 ";
