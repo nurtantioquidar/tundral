@@ -1,0 +1,486 @@
+{
+ "repo": "sinatra",
+ "commit": "599a007a779dc9940e49f34e9077220f4c209f4b",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [],
+ "indexers": [],
+ "oracle_commit": null,
+ "questions": {
+  "sinatra-k01": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "call!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "dispatch!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "route!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "process_route",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "route_eval",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "992-1016",
+     "note": "call dups the instance; call! wraps dispatch! in invoke and finishes the response"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1066-1131",
+     "note": "route! walks routes then superclass routes; route_eval throws :halt; process_route matches pattern, conditions and merges params"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1167-1207",
+     "note": "invoke turns the halted value into status/body; dispatch! runs static!, before filters and route!"
+    }
+   ]
+  },
+  "sinatra-k02": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "dispatch!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "handle_exception!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "error_block!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "http_status",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "274-283",
+     "note": "Sinatra::Error, BadRequest and NotFound define http_status"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1183-1273",
+     "note": "dispatch! rescues into handle_exception!; status from http_status; error_block! looks up handlers by class, superclass and status"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1402-1408",
+     "note": "error registers handlers via compile! into @errors keyed by class or code"
+    }
+   ]
+  },
+  "sinatra-k03": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "compile_template",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "find_template",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "TemplateCache",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "Tilt",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "layout_missing",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "755-757",
+     "note": "erb delegates to render"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "822-940",
+     "note": "find_template, render (layout recursion, catch :layout_missing), compile_template (template_cache.fetch, Tilt[engine])"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "951-970",
+     "note": "TemplateCache"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "983-1002",
+     "note": "instance creates TemplateCache; call! clears it when reload_templates"
+    }
+   ]
+  },
+  "sinatra-k04": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "static!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "send_file",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "Rack::Files",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "sinatra.static_file",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "static_cache_control",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "428-450",
+     "note": "send_file serves via Rack::Files#serving and halts"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1147-1164",
+     "note": "static! resolves under public_folder, sets sinatra.static_file, cache control and headers"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1183-1207",
+     "note": "dispatch! calls static! before filters/routes; after filters skipped for static files"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "2015-2019",
+     "note": "public_folder, static, static_cache_control, static_headers defaults"
+    }
+   ]
+  },
+  "sinatra-k05": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "setup_default_middleware",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "setup_middleware",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "Rack::Builder",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "ExtendedRack",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "Rack::Protection",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "225-256",
+     "note": "ExtendedRack"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1338-1345",
+     "note": "middleware includes superclass middleware first"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1586-1589",
+     "note": "use appends to @middleware and resets @prototype"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1653-1682",
+     "note": "prototype, new wraps build(instance) in Wrapper, build uses Rack::Builder, class call"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1821-1889",
+     "note": "setup_default_middleware order, setup_middleware, logging, protection, sessions"
+    }
+   ]
+  },
+  "sinatra-k06": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "add_filter",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "filter!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "compile!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "process_route",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1057-1063",
+     "note": "filter! runs superclass filters first, each via process_route"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1313-1327",
+     "note": "reset! gives each class its own filters hash"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1488-1502",
+     "note": "before/after -> add_filter -> filters[type] << compile!"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1797-1819",
+     "note": "compile! builds Mustermann pattern, conditions, wrapper"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1192-1206",
+     "note": "dispatch! runs before filters before route!, after filters in ensure"
+    }
+   ]
+  },
+  "sinatra-k07": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "lib/sinatra/main.rb",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "Delegator",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb",
+      "lib/sinatra/main.rb"
+     ]
+    },
+    {
+     "fact": "Sinatra::Application",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "run!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb",
+      "lib/sinatra/main.rb"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/sinatra/main.rb",
+     "lines": "1-56",
+     "note": "option parsing, Application app_file/run, at_exit run!, extend Sinatra::Delegator"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "2087-2127",
+     "note": "Application < Base defaults; Delegator.delegate and target = Application"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1610-1644",
+     "note": "run! picks Rackup::Handler and calls start_server"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1693-1710",
+     "note": "start_server runs the handler"
+    }
+   ]
+  },
+  "sinatra-k08": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "AcceptEntry",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "MimeTypeEntry",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "preferred_type",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    },
+    {
+     "fact": "compile!",
+     "type": "symbol",
+     "in": [
+      "lib/sinatra/base.rb"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "36-62",
+     "note": "accept builds sorted AcceptEntry list; preferred_type matches via MimeTypeEntry"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "94-164",
+     "note": "AcceptEntry priority ordering; MimeTypeEntry#accepts?"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1759-1776",
+     "note": "provides condition uses preferred_type and sets content_type"
+    },
+    {
+     "file": "lib/sinatra/base.rb",
+     "lines": "1797-1815",
+     "note": "compile! sends each route option (e.g. provides) as a condition-adding call"
+    }
+   ]
+  }
+ }
+}

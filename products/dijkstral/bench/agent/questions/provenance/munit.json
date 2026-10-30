@@ -1,0 +1,591 @@
+{
+ "repo": "munit",
+ "commit": "031dbe8243308413d763c96add3c7e95c7e61ee9",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [],
+ "indexers": [],
+ "oracle_commit": null,
+ "questions": {
+  "munit-k01": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "munitTestsBuffer",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FunSuite.scala"
+     ]
+    },
+    {
+     "fact": "munitTestTransform",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FunSuite.scala",
+      "munit/shared/src/main/scala/munit/TestTransforms.scala"
+     ]
+    },
+    {
+     "fact": "munitValueTransform",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FunSuite.scala",
+      "munit/shared/src/main/scala/munit/ValueTransforms.scala"
+     ]
+    },
+    {
+     "fact": "waitAtMost",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FunSuite.scala",
+      "munit/jvm/src/main/scala/munit/internal/PlatformCompat.scala"
+     ]
+    },
+    {
+     "fact": "runTestBody",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/MUnitRunner.scala"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "munit/shared/src/main/scala/munit/FunSuite.scala",
+     "lines": "25-44",
+     "note": "test() wraps the body in munitValueTransform and waitForCompletion (PlatformCompat.waitAtMost with munitTimeout), applies munitTestTransform, appends to munitTestsBuffer; munitTests() applies munitSuiteTransform"
+    },
+    {
+     "file": "munit/jvm/src/main/scala/munit/internal/PlatformCompat.scala",
+     "lines": "43-67",
+     "note": "JVM waitAtMost schedules a TimeoutException after the duration"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/MUnitRunner.scala",
+     "lines": "40-41",
+     "note": "runner takes its tests from suite.munitTests()"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/MUnitRunner.scala",
+     "lines": "99-125",
+     "note": "runAsync runs beforeAll, then runTest for each test, then afterAll"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/MUnitRunner.scala",
+     "lines": "280-339",
+     "note": "runTestBody: runBeforeEach, test.body(), runAfterEach"
+    }
+   ]
+  },
+  "munit-k02": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "failEqualsComparison",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/Compare.scala",
+      "munit/shared/src/main/scala/munit/Assertions.scala"
+     ]
+    },
+    {
+     "fact": "assertNoDiff",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/Diffs.scala",
+      "munit/shared/src/main/scala/munit/Compare.scala"
+     ]
+    },
+    {
+     "fact": "createUnifiedDiff",
+     "type": "symbol",
+     "in": [
+      "munit-diff/shared/src/main/scala/munit/diff/Diff.scala"
+     ]
+    },
+    {
+     "fact": "MyersDiff",
+     "type": "symbol",
+     "in": [
+      "munit-diff/shared/src/main/scala/munit/diff/MyersDiff.scala",
+      "munit-diff/shared/src/main/scala/munit/diff/DiffUtils.scala"
+     ]
+    },
+    {
+     "fact": "ComparisonFailException",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/ComparisonFailException.scala",
+      "munit/shared/src/main/scala/munit/Assertions.scala"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "munit/shared/src/main/scala/munit/Assertions.scala",
+     "lines": "127-159",
+     "note": "assertEquals calls compare.failEqualsComparison"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/Compare.scala",
+     "lines": "55-99",
+     "note": "failEqualsComparison: Diffs.assertNoDiff on printed values, then on toString, then failComparison"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/Diffs.scala",
+     "lines": "21-36",
+     "note": "assertNoDiff builds Diff and hands createReport to the handler"
+    },
+    {
+     "file": "munit-diff/shared/src/main/scala/munit/diff/Diff.scala",
+     "lines": "7-21",
+     "note": "Diff computes unifiedDiff from cleaned lines"
+    },
+    {
+     "file": "munit-diff/shared/src/main/scala/munit/diff/Diff.scala",
+     "lines": "96-120",
+     "note": "createUnifiedDiff: DiffUtils.diff + generateUnifiedDiff"
+    },
+    {
+     "file": "munit-diff/shared/src/main/scala/munit/diff/DiffUtils.scala",
+     "lines": "53-56",
+     "note": "DiffUtils.diff uses MyersDiff"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/Assertions.scala",
+     "lines": "320-332",
+     "note": "failComparison throws ComparisonFailException"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/ComparisonFailException.scala",
+     "lines": "21-29",
+     "note": "extends org.junit.ComparisonFailure with FailExceptionLike"
+    }
+   ]
+  },
+  "munit-k03": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "CustomFingerprint",
+     "type": "symbol",
+     "in": [
+      "munit/jvm/src/main/scala/munit/Framework.scala",
+      "junit-interface/src/main/java/munit/internal/junitinterface/CustomFingerprint.java"
+     ]
+    },
+    {
+     "fact": "JUnitComputer",
+     "type": "symbol",
+     "in": [
+      "junit-interface/src/main/java/munit/internal/junitinterface/JUnitComputer.java",
+      "junit-interface/src/main/java/munit/internal/junitinterface/JUnitRunner.java",
+      "junit-interface/src/main/java/munit/internal/junitinterface/JUnitTask.java"
+     ]
+    },
+    {
+     "fact": "JUnitRunnerWrapper",
+     "type": "symbol",
+     "in": [
+      "junit-interface/src/main/java/munit/internal/junitinterface/JUnitRunnerWrapper.java",
+      "junit-interface/src/main/java/munit/internal/junitinterface/JUnitComputer.java"
+     ]
+    },
+    {
+     "fact": "EventDispatcher",
+     "type": "symbol",
+     "in": [
+      "junit-interface/src/main/java/munit/internal/junitinterface/EventDispatcher.java",
+      "junit-interface/src/main/java/munit/internal/junitinterface/JUnitTask.java"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "munit/jvm/src/main/scala/munit/Framework.scala",
+     "lines": "1-20",
+     "note": "CustomFingerprint.of(\"munit.Suite\", \"munit.MUnitRunner\") and customRunners"
+    },
+    {
+     "file": "junit-interface/src/main/java/munit/internal/junitinterface/JUnitFramework.java",
+     "lines": "27-35",
+     "note": "runner() creates JUnitRunner with customRunners()"
+    },
+    {
+     "file": "junit-interface/src/main/java/munit/internal/junitinterface/JUnitRunner.java",
+     "lines": "204-218",
+     "note": "tasks() creates JUnitComputer and one JUnitTask per TaskDef"
+    },
+    {
+     "file": "junit-interface/src/main/java/munit/internal/junitinterface/JUnitTask.java",
+     "lines": "46-97",
+     "note": "execute: EventDispatcher listener on JUnitCore, Request.classes(computer, cl), filters, ju.run"
+    },
+    {
+     "file": "junit-interface/src/main/java/munit/internal/junitinterface/JUnitComputer.java",
+     "lines": "37-84",
+     "note": "customRunner/getRunner instantiate MUnitRunner, configure(settings), wrap in JUnitRunnerWrapper"
+    },
+    {
+     "file": "junit-interface/src/main/java/munit/internal/junitinterface/EventDispatcher.java",
+     "lines": "265-271",
+     "note": "post() sends events to sbt's handler.handle"
+    }
+   ]
+  },
+  "munit-k04": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "clueImpl",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala-3/munit/internal/MacroCompat.scala",
+      "munit/shared/src/main/scala/munit/internal/MacroCompatScala2.scala"
+     ]
+    },
+    {
+     "fact": "munitCaptureClues",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/Assertions.scala"
+     ]
+    },
+    {
+     "fact": "formatLine",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/internal/console/Lines.scala",
+      "munit/shared/src/main/scala/munit/Assertions.scala"
+     ]
+    },
+    {
+     "fact": "munit/shared/src/main/scala/munit/internal/console/Printers.scala",
+     "type": "file",
+     "in": []
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "munit/shared/src/main/scala/munit/Assertions.scala",
+     "lines": "31-36",
+     "note": "assert evaluates cond inside munitCaptureClues and passes the clues to fail"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/Assertions.scala",
+     "lines": "365-377",
+     "note": "munitCaptureClues / clue record Clue values"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/Clue.scala",
+     "lines": "1-11",
+     "note": "object Clue extends MacroCompat.ClueMacro"
+    },
+    {
+     "file": "munit/shared/src/main/scala-3/munit/internal/MacroCompat.scala",
+     "lines": "32-43",
+     "note": "ClueMacro.generate -> clueImpl captures source code and type"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/internal/MacroCompatScala2.scala",
+     "lines": "23-56",
+     "note": "Scala 2 clueImpl"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/internal/console/Lines.scala",
+     "lines": "31-65",
+     "note": "formatLine appends Printers.print(clues) to the message"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/internal/console/Printers.scala",
+     "lines": "21-61",
+     "note": "print renders Clues as source: type = value"
+    }
+   ]
+  },
+  "munit-k05": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "TestTransforms",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/TestTransforms.scala",
+      "munit/shared/src/main/scala/munit/FunSuite.scala"
+     ]
+    },
+    {
+     "fact": "SuiteTransforms",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/SuiteTransforms.scala",
+      "munit/shared/src/main/scala/munit/FunSuite.scala"
+     ]
+    },
+    {
+     "fact": "ValueTransforms",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/ValueTransforms.scala",
+      "munit/shared/src/main/scala/munit/FunSuite.scala"
+     ]
+    },
+    {
+     "fact": "BaseFunSuite",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FunSuite.scala",
+      "munit/shared/src/main/scala/munit/TestTransforms.scala"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "munit/shared/src/main/scala/munit/FunSuite.scala",
+     "lines": "12-27",
+     "note": "BaseFunSuite mixes in TestTransforms, SuiteTransforms, ValueTransforms; munitTests applies munitSuiteTransform"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/TestTransforms.scala",
+     "lines": "15-51",
+     "note": "munitTestTransforms = fail, flaky; munitTestTransform folds them"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/SuiteTransforms.scala",
+     "lines": "14-45",
+     "note": "munitSuiteTransforms = munitIgnore, only"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/ValueTransforms.scala",
+     "lines": "17-35",
+     "note": "munitValueTransforms = Future; munitValueTransform flattens nested values"
+    }
+   ]
+  },
+  "munit-k06": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "AnyFixture",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/AnyFixture.scala",
+      "munit/shared/src/main/scala/munit/MUnitRunner.scala"
+     ]
+    },
+    {
+     "fact": "FunFixture",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FunFixtures.scala"
+     ]
+    },
+    {
+     "fact": "suiteFixtureBefore",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/MUnitRunner.scala"
+     ]
+    },
+    {
+     "fact": "munitFixtures",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/Suite.scala",
+      "munit/shared/src/main/scala/munit/MUnitRunner.scala"
+     ]
+    },
+    {
+     "fact": "FutureFixture",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FutureFixture.scala"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "munit/shared/src/main/scala/munit/AnyFixture.scala",
+     "lines": "18-37",
+     "note": "AnyFixture lifecycle methods"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/FutureFixture.scala",
+     "lines": "20-25",
+     "note": "FutureFixture returns Future[Unit] from the hooks"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/FunFixtures.scala",
+     "lines": "9-50",
+     "note": "FunFixture setup/teardown around self.test"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/Suite.scala",
+     "lines": "25-49",
+     "note": "munitFixtures and the suite's beforeAll/beforeEach/afterEach/afterAll"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/MUnitRunner.scala",
+     "lines": "43-57",
+     "note": "suiteFixtureBefore :: suite.munitFixtures ::: suiteFixtureAfter"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/MUnitRunner.scala",
+     "lines": "163-222",
+     "note": "runBeforeAll, runAfterAll, runBeforeEach, runAfterEach over munitFixtures"
+    }
+   ]
+  },
+  "munit-k07": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "munit/js-native",
+     "type": "dir",
+     "in": []
+    },
+    {
+     "fact": "junit-interface",
+     "type": "dir",
+     "in": []
+    },
+    {
+     "fact": "PlatformCompat",
+     "type": "symbol",
+     "in": [
+      "munit/jvm/src/main/scala/munit/internal/PlatformCompat.scala",
+      "munit/js/src/main/scala/munit/internal/PlatformCompat.scala",
+      "munit/native/src/main/scala/munit/internal/PlatformCompat.scala"
+     ]
+    },
+    {
+     "fact": "MUnitRunNotifier",
+     "type": "symbol",
+     "in": [
+      "munit/js/src/main/scala/munit/internal/junitinterface/MUnitRunNotifier.scala",
+      "munit/native/src/main/scala/munit/internal/junitinterface/MUnitRunNotifier.scala",
+      "munit/js/src/main/scala/munit/internal/junitinterface/JUnitTask.scala",
+      "munit/native/src/main/scala/munit/internal/junitinterface/JUnitTask.scala"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "build.sbt",
+     "lines": "147-205",
+     "note": "junit-interface project; munit sources: shared + jvm (dependsOn junit), js + js-native, native + js-native"
+    },
+    {
+     "file": "munit/jvm/src/main/scala/munit/internal/PlatformCompat.scala",
+     "lines": "14-85",
+     "note": "JVM PlatformCompat"
+    },
+    {
+     "file": "munit/js/src/main/scala/munit/internal/PlatformCompat.scala",
+     "lines": "15-81",
+     "note": "Scala.js PlatformCompat: timers, newRunner via reflection"
+    },
+    {
+     "file": "munit/js-native/src/main/scala/munit/internal/junitinterface/JUnitFramework.scala",
+     "lines": "9-40",
+     "note": "sbt Framework creating JUnitRunner with parsed RunSettings"
+    },
+    {
+     "file": "munit/js/src/main/scala/munit/internal/junitinterface/JUnitTask.scala",
+     "lines": "31-45",
+     "note": "newRunner, filter by tags, runAsync with MUnitRunNotifier(reporter)"
+    },
+    {
+     "file": "munit/js/src/main/scala/munit/internal/junitinterface/MUnitRunNotifier.scala",
+     "lines": "1-48",
+     "note": "RunNotifier forwarding to JUnitReporter"
+    },
+    {
+     "file": "munit/native/src/main/scala/munit/internal/junitinterface/JUnitTask.scala",
+     "lines": "26-36",
+     "note": "Native task runs MUnitRunner synchronously"
+    }
+   ]
+  },
+  "munit-k08": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "FailExceptionLike",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FailExceptionLike.scala",
+      "munit/shared/src/main/scala/munit/FailException.scala",
+      "munit/shared/src/main/scala/munit/ComparisonFailException.scala"
+     ]
+    },
+    {
+     "fact": "ComparisonFailException",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/ComparisonFailException.scala"
+     ]
+    },
+    {
+     "fact": "FailSuiteException",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/FailSuiteException.scala",
+      "munit/shared/src/main/scala/munit/MUnitRunner.scala"
+     ]
+    },
+    {
+     "fact": "TestTeardownException",
+     "type": "symbol",
+     "in": [
+      "munit/shared/src/main/scala/munit/MUnitRunner.scala"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "munit/shared/src/main/scala/munit/FailExceptionLike.scala",
+     "lines": "1-22",
+     "note": "FailExceptionLike trait over AssertionError"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/FailException.scala",
+     "lines": "3-12",
+     "note": "FailException extends AssertionError with FailExceptionLike"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/ComparisonFailException.scala",
+     "lines": "21-29",
+     "note": "extends org.junit.ComparisonFailure with FailExceptionLike"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/FailSuiteException.scala",
+     "lines": "1-6",
+     "note": "FailSuiteException extends FailException"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/Assertions.scala",
+     "lines": "345-354",
+     "note": "failSuite throws FailSuiteException"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/MUnitRunner.scala",
+     "lines": "224-278",
+     "note": "runTest: suiteAborted, AssumptionViolatedException, FailSuiteException, TestTeardownException handling"
+    },
+    {
+     "file": "munit/shared/src/main/scala/munit/MUnitRunner.scala",
+     "lines": "399-404",
+     "note": "private TestTeardownException wraps afterEach failures"
+    }
+   ]
+  }
+ }
+}

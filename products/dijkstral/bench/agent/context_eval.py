@@ -15,9 +15,10 @@ index per repository can be passed (`--arg=--index --arg=/tmp/dj-embed/{repo}/po
 `dijkstral-embed`, `cli/docs/dijkstral-context-semantic.md`). `--low` lists the tuning questions
 (both sets) below half recall. Also prints the median wall time of a call per repository.
 
-`--blind` also scores the blind set (okhttp, excalidraw: flow and architecture questions written
-after the tuning, by an author who saw neither tool's output). It is printed apart, as aggregates
-only, and never enters the lines above it; never tune on it.
+`--blind` also scores the blind sets (okhttp and excalidraw; munit, guzzle, sinatra and ecto:
+flow and architecture questions written after the tuning, by authors who saw neither tool's
+output). They are printed apart, as aggregates only, and never enter the lines above them; never
+tune on them.
 """
 
 from __future__ import annotations
@@ -41,7 +42,11 @@ REPOS = ("fastapi", "ripgrep", "erpnext", "jq", "serilog", "alamofire", "kuberne
 TUNING = ("fastapi", "ripgrep")
 TUNING_2 = ("erpnext", "jq", "serilog", "alamofire")
 HELD_OUT = ("kubernetes",)
-BLIND = ("okhttp", "excalidraw")
+BLIND_SETS = {
+    "blind-1": ("okhttp", "excalidraw"),
+    "blind-2": ("munit", "guzzle", "sinatra", "ecto"),
+}
+BLIND = tuple(r for repos in BLIND_SETS.values() for r in repos)
 
 
 def main() -> None:
@@ -124,6 +129,11 @@ def main() -> None:
             print(
                 f"blind {k:16} recall {st.mean(x[0] for x in v):.2f} pass"
                 f" {sum(x[1] for x in v)}/{len(v)} chars median {int(st.median(x[2] for x in v))}"
+            )
+        for name, repos in BLIND_SETS.items():
+            b = [r for r in blind if r[0].split("-")[0] in repos]
+            print(
+                f"{name:13} recall {st.mean(r[2] for r in b):.2f} pass {sum(r[3] for r in b)}/{len(b)}"
             )
 
 

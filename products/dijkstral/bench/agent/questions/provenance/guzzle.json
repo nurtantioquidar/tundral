@@ -1,0 +1,599 @@
+{
+ "repo": "guzzle",
+ "commit": "93939470950a9b11e2e84204166ef5e048c55fe4",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [],
+ "indexers": [],
+ "oracle_commit": null,
+ "questions": {
+  "guzzle-k01": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "httpErrors",
+     "type": "symbol",
+     "in": [
+      "src/Middleware.php",
+      "src/HandlerStack.php"
+     ]
+    },
+    {
+     "fact": "src/Exception/RequestException.php",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "BodySummarizer",
+     "type": "symbol",
+     "in": [
+      "src/BodySummarizer.php",
+      "src/Exception/RequestException.php"
+     ]
+    },
+    {
+     "fact": "ClientException",
+     "type": "symbol",
+     "in": [
+      "src/Exception/ClientException.php",
+      "src/Exception/RequestException.php"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/Client.php",
+     "lines": "650-659",
+     "note": "request() sets synchronous and waits on requestAsync()"
+    },
+    {
+     "file": "src/HandlerStack.php",
+     "lines": "56-66",
+     "note": "create() pushes Middleware::httpErrors() as http_errors"
+    },
+    {
+     "file": "src/Middleware.php",
+     "lines": "88-115",
+     "note": "httpErrors throws RequestException::create for status >= 400"
+    },
+    {
+     "file": "src/Exception/RequestException.php",
+     "lines": "36-89",
+     "note": "create(): label, BodySummarizer summary, ClientException for 4xx"
+    },
+    {
+     "file": "src/BodySummarizer.php",
+     "lines": "21-28",
+     "note": "summarize() via Psr7 Message::bodySummary"
+    }
+   ]
+  },
+  "guzzle-k02": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "configureDefaults",
+     "type": "symbol",
+     "in": [
+      "src/Client.php"
+     ]
+    },
+    {
+     "fact": "extractCookies",
+     "type": "symbol",
+     "in": [
+      "src/Cookie/CookieJar.php",
+      "src/Middleware.php"
+     ]
+    },
+    {
+     "fact": "withCookieHeader",
+     "type": "symbol",
+     "in": [
+      "src/Cookie/CookieJar.php",
+      "src/Middleware.php"
+     ]
+    },
+    {
+     "fact": "fromString",
+     "type": "symbol",
+     "in": [
+      "src/Cookie/SetCookie.php",
+      "src/Cookie/CookieJar.php"
+     ]
+    },
+    {
+     "fact": "matchesDomain",
+     "type": "symbol",
+     "in": [
+      "src/Cookie/SetCookie.php",
+      "src/Cookie/CookieJar.php"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/Client.php",
+     "lines": "847-886",
+     "note": "configureDefaults: cookies => true becomes new CookieJar()"
+    },
+    {
+     "file": "src/Middleware.php",
+     "lines": "48-78",
+     "note": "cookies(): withCookieHeader before, extractCookies after"
+    },
+    {
+     "file": "src/Cookie/CookieJar.php",
+     "lines": "252-300",
+     "note": "extractCookies: SetCookie::fromString, domain/path defaults, matchesDomain, setCookie"
+    },
+    {
+     "file": "src/Cookie/CookieJar.php",
+     "lines": "376-417",
+     "note": "withCookieHeader: matchesPath, matchesDomain, isExpired, secure; Cookie header"
+    },
+    {
+     "file": "src/Cookie/SetCookie.php",
+     "lines": "45-104",
+     "note": "fromString parses a Set-Cookie value"
+    },
+    {
+     "file": "src/Cookie/SetCookie.php",
+     "lines": "413-457",
+     "note": "matchesPath, matchesDomain"
+    }
+   ]
+  },
+  "guzzle-k03": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "AuthMiddleware",
+     "type": "symbol",
+     "in": [
+      "src/AuthMiddleware.php",
+      "src/Middleware.php"
+     ]
+    },
+    {
+     "fact": "sendDigest",
+     "type": "symbol",
+     "in": [
+      "src/AuthMiddleware.php"
+     ]
+    },
+    {
+     "fact": "handleDigestResponse",
+     "type": "symbol",
+     "in": [
+      "src/AuthMiddleware.php"
+     ]
+    },
+    {
+     "fact": "selectChallenge",
+     "type": "symbol",
+     "in": [
+      "src/Auth/DigestAuth.php",
+      "src/AuthMiddleware.php"
+     ]
+    },
+    {
+     "fact": "authorizationHeader",
+     "type": "symbol",
+     "in": [
+      "src/Auth/DigestAuth.php",
+      "src/AuthMiddleware.php"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/Middleware.php",
+     "lines": "33-38",
+     "note": "auth() returns new AuthMiddleware"
+    },
+    {
+     "file": "src/AuthMiddleware.php",
+     "lines": "92-115",
+     "note": "__invoke: basic vs digest"
+    },
+    {
+     "file": "src/AuthMiddleware.php",
+     "lines": "181-247",
+     "note": "sendDigest: pre-emptive request or probe without auth, then handleDigestResponse"
+    },
+    {
+     "file": "src/AuthMiddleware.php",
+     "lines": "334-463",
+     "note": "handleDigestResponse: selectChallenge, authorizationHeader, retry with Authorization header"
+    },
+    {
+     "file": "src/Auth/DigestAuth.php",
+     "lines": "47-155",
+     "note": "selectChallenge returns a DigestChallenge; authorizationHeader computes the response"
+    }
+   ]
+  },
+  "guzzle-k04": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "applyOptions",
+     "type": "symbol",
+     "in": [
+      "src/Client.php"
+     ]
+    },
+    {
+     "fact": "getMultipartContentType",
+     "type": "symbol",
+     "in": [
+      "src/Client.php"
+     ]
+    },
+    {
+     "fact": "PrepareBodyMiddleware",
+     "type": "symbol",
+     "in": [
+      "src/PrepareBodyMiddleware.php",
+      "src/Middleware.php"
+     ]
+    },
+    {
+     "fact": "bodySize",
+     "type": "symbol",
+     "in": [
+      "src/Handler/RequestFraming.php",
+      "src/PrepareBodyMiddleware.php"
+     ]
+    },
+    {
+     "fact": "addExpectHeader",
+     "type": "symbol",
+     "in": [
+      "src/PrepareBodyMiddleware.php"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/Client.php",
+     "lines": "1524-1637",
+     "note": "applyOptions: multipart -> MultipartStream body; multipart Content-Type in _conditional headers"
+    },
+    {
+     "file": "src/Client.php",
+     "lines": "1677-1686",
+     "note": "getMultipartContentType builds multipart/form-data; boundary=..."
+    },
+    {
+     "file": "src/HandlerStack.php",
+     "lines": "56-66",
+     "note": "prepare_body is the innermost default middleware"
+    },
+    {
+     "file": "src/PrepareBodyMiddleware.php",
+     "lines": "38-122",
+     "note": "Content-Type from body uri, Content-Length or chunked, addExpectHeader"
+    },
+    {
+     "file": "src/Handler/RequestFraming.php",
+     "lines": "124-166",
+     "note": "bodySize"
+    }
+   ]
+  },
+  "guzzle-k05": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "HandlerStack",
+     "type": "symbol",
+     "in": [
+      "src/HandlerStack.php",
+      "src/Client.php"
+     ]
+    },
+    {
+     "fact": "src/Middleware.php",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "RedirectMiddleware",
+     "type": "symbol",
+     "in": [
+      "src/RedirectMiddleware.php",
+      "src/Middleware.php"
+     ]
+    },
+    {
+     "fact": "AuthMiddleware",
+     "type": "symbol",
+     "in": [
+      "src/AuthMiddleware.php",
+      "src/Middleware.php"
+     ]
+    },
+    {
+     "fact": "PrepareBodyMiddleware",
+     "type": "symbol",
+     "in": [
+      "src/PrepareBodyMiddleware.php",
+      "src/Middleware.php"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/HandlerStack.php",
+     "lines": "56-66",
+     "note": "create(): http_errors, allow_redirects, auth, cookies, prepare_body"
+    },
+    {
+     "file": "src/HandlerStack.php",
+     "lines": "200-236",
+     "note": "resolve() wraps the handler with the stack in reverse"
+    },
+    {
+     "file": "src/Middleware.php",
+     "lines": "33-78",
+     "note": "auth() -> AuthMiddleware; cookies() closure"
+    },
+    {
+     "file": "src/Middleware.php",
+     "lines": "213-219",
+     "note": "redirect() -> RedirectMiddleware"
+    },
+    {
+     "file": "src/Middleware.php",
+     "lines": "296-301",
+     "note": "prepareBody() -> PrepareBodyMiddleware"
+    },
+    {
+     "file": "src/Client.php",
+     "lines": "186-198",
+     "note": "client creates HandlerStack::create() when no handler is given"
+    }
+   ]
+  },
+  "guzzle-k06": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "chooseHandler",
+     "type": "symbol",
+     "in": [
+      "src/Utils.php",
+      "src/HandlerStack.php"
+     ]
+    },
+    {
+     "fact": "wrapSync",
+     "type": "symbol",
+     "in": [
+      "src/Handler/Proxy.php",
+      "src/Utils.php"
+     ]
+    },
+    {
+     "fact": "wrapStreaming",
+     "type": "symbol",
+     "in": [
+      "src/Handler/Proxy.php",
+      "src/Utils.php"
+     ]
+    },
+    {
+     "fact": "CurlMultiHandler",
+     "type": "symbol",
+     "in": [
+      "src/Handler/CurlMultiHandler.php",
+      "src/Utils.php"
+     ]
+    },
+    {
+     "fact": "StreamHandler",
+     "type": "symbol",
+     "in": [
+      "src/Handler/StreamHandler.php",
+      "src/Utils.php"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/HandlerStack.php",
+     "lines": "56-66",
+     "note": "create() uses Utils::chooseHandler() when no handler is given"
+    },
+    {
+     "file": "src/Utils.php",
+     "lines": "73-123",
+     "note": "chooseHandler: cURL handler, then stream handler if allow_url_fopen"
+    },
+    {
+     "file": "src/Utils.php",
+     "lines": "143-191",
+     "note": "createCurlHandler: Proxy::wrapSync(CurlMultiHandler, CurlHandler)"
+    },
+    {
+     "file": "src/Utils.php",
+     "lines": "237-245",
+     "note": "addStreamHandler: Proxy::wrapStreaming(handler, StreamHandler)"
+    },
+    {
+     "file": "src/Handler/Proxy.php",
+     "lines": "30-66",
+     "note": "wrapSync routes on the synchronous option, wrapStreaming on stream"
+    }
+   ]
+  },
+  "guzzle-k07": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "CurlFactory",
+     "type": "symbol",
+     "in": [
+      "src/Handler/CurlFactory.php",
+      "src/Handler/CurlHandler.php",
+      "src/Handler/CurlMultiHandler.php"
+     ]
+    },
+    {
+     "fact": "EasyHandle",
+     "type": "symbol",
+     "in": [
+      "src/Handler/EasyHandle.php",
+      "src/Handler/CurlFactory.php",
+      "src/Handler/CurlFactoryInterface.php"
+     ]
+    },
+    {
+     "fact": "CurlFactoryInterface",
+     "type": "symbol",
+     "in": [
+      "src/Handler/CurlFactoryInterface.php",
+      "src/Handler/CurlHandler.php",
+      "src/Handler/CurlMultiHandler.php"
+     ]
+    },
+    {
+     "fact": "HeaderProcessor",
+     "type": "symbol",
+     "in": [
+      "src/Handler/HeaderProcessor.php",
+      "src/Handler/EasyHandle.php"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/Handler/CurlFactory.php",
+     "lines": "247-392",
+     "note": "create(): validates, builds EasyHandle, applies options, header function, pooled handle"
+    },
+    {
+     "file": "src/Handler/CurlFactory.php",
+     "lines": "1038-1127",
+     "note": "finish(): release handle, resolve response or reject"
+    },
+    {
+     "file": "src/Handler/CurlFactory.php",
+     "lines": "3051-3133",
+     "note": "createHeaderFn collects header lines and calls EasyHandle::createResponse"
+    },
+    {
+     "file": "src/Handler/EasyHandle.php",
+     "lines": "163-235",
+     "note": "createResponse uses HeaderProcessor::parseHeaders and the response factory"
+    },
+    {
+     "file": "src/Handler/CurlFactoryInterface.php",
+     "lines": "1-31",
+     "note": "create/release contract"
+    },
+    {
+     "file": "src/Handler/CurlHandler.php",
+     "lines": "81-105",
+     "note": "factory->create, curl_exec, CurlFactory::finish"
+    },
+    {
+     "file": "src/Handler/CurlMultiHandler.php",
+     "lines": "240-252",
+     "note": "handle_factory option or new CurlFactory(50)"
+    },
+    {
+     "file": "src/Handler/CurlMultiHandler.php",
+     "lines": "1493-1563",
+     "note": "processMessages calls CurlFactory::finish and settles the promise"
+    },
+    {
+     "file": "src/Handler/HeaderProcessor.php",
+     "lines": "28-78",
+     "note": "parseHeaders"
+    }
+   ]
+  },
+  "guzzle-k08": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "GuzzleException",
+     "type": "symbol",
+     "in": [
+      "src/Exception/GuzzleException.php",
+      "src/Exception/TransferException.php"
+     ]
+    },
+    {
+     "fact": "TransferException",
+     "type": "symbol",
+     "in": [
+      "src/Exception/TransferException.php",
+      "src/Exception/RequestException.php",
+      "src/Exception/NetworkException.php"
+     ]
+    },
+    {
+     "fact": "NetworkException",
+     "type": "symbol",
+     "in": [
+      "src/Exception/NetworkException.php",
+      "src/Handler/CurlFactory.php"
+     ]
+    },
+    {
+     "fact": "ResponseException",
+     "type": "symbol",
+     "in": [
+      "src/Exception/ResponseException.php",
+      "src/Handler/CurlFactory.php"
+     ]
+    },
+    {
+     "fact": "createRejection",
+     "type": "symbol",
+     "in": [
+      "src/Handler/CurlFactory.php"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "src/Exception/GuzzleException.php",
+     "lines": "1-11",
+     "note": "marker interface over PSR-18 ClientExceptionInterface"
+    },
+    {
+     "file": "src/Exception/TransferException.php",
+     "lines": "1-33",
+     "note": "RuntimeException implementing GuzzleException, holds the request"
+    },
+    {
+     "file": "src/Exception/NetworkException.php",
+     "lines": "1-22",
+     "note": "extends TransferException, PSR-18 NetworkExceptionInterface"
+    },
+    {
+     "file": "src/Exception/ResponseException.php",
+     "lines": "1-63",
+     "note": "extends RequestException, carries the response"
+    },
+    {
+     "file": "src/Handler/CurlFactory.php",
+     "lines": "1287-1444",
+     "note": "createRejection maps errno to timeout/connect/network/response exceptions"
+    }
+   ]
+  }
+ }
+}

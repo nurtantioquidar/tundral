@@ -1,0 +1,662 @@
+[
+ {
+  "id": "ecto-k01",
+  "kind": "flow",
+  "question": "Trace `Repo.all(query)` from the function generated in the repo module to the list of schema structs it returns: where is the query planned and looked up in a cache, who actually runs it, and how is each raw database row turned into a struct with properly typed fields?",
+  "reference": "The generated `all` (lib/ecto/repo.ex) calls `Ecto.Repo.Queryable.all`, which converts with `Ecto.Queryable.to_query`, ensures a select and calls its private `execute`: that runs `repo.prepare_query` and `Ecto.Query.Planner.query`, which plans and casts parameters, looks the query up in the repo's ETS cache and otherwise normalizes it and calls `adapter.prepare`; `adapter.execute` returns the rows, and the preprocessor builds each struct with `struct_load!`, loading every field through `Ecto.Type.adapter_load`, before association and preload processing.",
+  "facts": [
+   {
+    "fact": "Ecto.Repo.Queryable",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex",
+     "lib/ecto/repo/queryable.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Query.Planner",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/queryable.ex",
+     "lib/ecto/query/planner.ex"
+    ]
+   },
+   {
+    "fact": "struct_load!",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/queryable.ex"
+    ]
+   },
+   {
+    "fact": "adapter_load",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/queryable.ex",
+     "lib/ecto/type.ex"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/ecto/repo.ex",
+    "lines": "537-547",
+    "note": "generated all delegates to Ecto.Repo.Queryable.all with the tuplet"
+   },
+   {
+    "file": "lib/ecto/repo/queryable.ex",
+    "lines": "13-20",
+    "note": "all: to_query, ensure_select, execute(:all)"
+   },
+   {
+    "file": "lib/ecto/repo/queryable.ex",
+    "lines": "205-265",
+    "note": "struct_load!; execute: prepare_query, Planner.query, adapter.execute, preprocessor, Assoc/Preloader"
+   },
+   {
+    "file": "lib/ecto/repo/queryable.ex",
+    "lines": "438-451",
+    "note": "load! calls Ecto.Type.adapter_load"
+   },
+   {
+    "file": "lib/ecto/query/planner.ex",
+    "lines": "136-205",
+    "note": "query: plan, cache lookup in ETS, normalize + adapter.prepare on miss"
+   },
+   {
+    "file": "lib/ecto/type.ex",
+    "lines": "1020-1026",
+    "note": "adapter_load applies the adapter's loaders"
+   }
+  ]
+ },
+ {
+  "id": "ecto-k02",
+  "kind": "flow",
+  "question": "When Repo.insert is given a changeset for a new post whose changes also contain a new author (a belongs_to) and a list of new comments (a has_many), trace how the three kinds of records get written: in what order, inside what transaction, and where does each record get the foreign key it needs?",
+  "reference": "`Ecto.Repo.Schema.insert`/`do_insert` runs inside `wrap_in_transaction` (an adapter transaction when associations or prepare callbacks are involved); `pop_assocs` splits the association changes into parents and children; `process_parents` calls `Ecto.Association.on_repo_change` to insert the author first and `change_parents` copies its key into the post's changes; after the adapter insert and `load_changes`, `process_children` calls `on_repo_change` again, and `Ecto.Association.Has.on_repo_change` sets each comment's foreign key with `update_parent_key` before inserting it through the repo.",
+  "facts": [
+   {
+    "fact": "wrap_in_transaction",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/schema.ex"
+    ]
+   },
+   {
+    "fact": "pop_assocs",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/schema.ex"
+    ]
+   },
+   {
+    "fact": "on_repo_change",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/schema.ex",
+     "lib/ecto/association.ex"
+    ]
+   },
+   {
+    "fact": "change_parents",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/schema.ex"
+    ]
+   },
+   {
+    "fact": "update_parent_key",
+    "aliases": [],
+    "in": [
+     "lib/ecto/association.ex"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/ecto/repo.ex",
+    "lines": "407-417",
+    "note": "generated insert delegates to Ecto.Repo.Schema.insert"
+   },
+   {
+    "file": "lib/ecto/repo/schema.ex",
+    "lines": "421-520",
+    "note": "do_insert: wrap_in_transaction, pop_assocs, process_parents, dump, adapter insert, load_changes, process_children"
+   },
+   {
+    "file": "lib/ecto/repo/schema.ex",
+    "lines": "1170-1276",
+    "note": "pop_assocs splits parent/child; process_parents + change_parents; process_children"
+   },
+   {
+    "file": "lib/ecto/repo/schema.ex",
+    "lines": "1343-1363",
+    "note": "wrap_in_transaction"
+   },
+   {
+    "file": "lib/ecto/association.ex",
+    "lines": "566-582",
+    "note": "Ecto.Association.on_repo_change dispatches to each association module"
+   },
+   {
+    "file": "lib/ecto/association.ex",
+    "lines": "922-952",
+    "note": "Has.on_repo_change sets the child's key with update_parent_key and calls the repo"
+   }
+  ]
+ },
+ {
+  "id": "ecto-k03",
+  "kind": "flow",
+  "question": "In `User |> where([u], u.age > ^min_age)`, trace the pinned value `min_age` from macro expansion at compile time to the value handed to the database adapter at run time: what does the macro leave in the query in place of the value, and where is the value cast to the field's type and converted for the adapter?",
+  "reference": "`where` calls `Ecto.Query.Builder.Filter.build`, which escapes the expression with `Ecto.Query.Builder.escape` (lib/ecto/query/builder.ex): the `^` clause replaces the value with `^0` and records `{min_age, {0, :age}}` as a parameter, stored in a `%Ecto.Query.BooleanExpr{}` appended to the query's wheres; at run time the planner's `plan_cache`/`merge_cache` calls `cast_and_merge_params`, whose `cast_param` casts with `Ecto.Type.cast` and converts with `Ecto.Type.adapter_dump`, producing the dump params passed to `adapter.execute`.",
+  "facts": [
+   {
+    "fact": "Ecto.Query.Builder.Filter",
+    "aliases": [
+     "Builder.Filter"
+    ],
+    "in": [
+     "lib/ecto/query/builder/filter.ex"
+    ]
+   },
+   {
+    "fact": "lib/ecto/query/builder.ex",
+    "aliases": [
+     "query/builder.ex"
+    ],
+    "in": []
+   },
+   {
+    "fact": "BooleanExpr",
+    "aliases": [],
+    "in": [
+     "lib/ecto/query/builder/filter.ex",
+     "lib/ecto/query/planner.ex"
+    ]
+   },
+   {
+    "fact": "cast_and_merge_params",
+    "aliases": [],
+    "in": [
+     "lib/ecto/query/planner.ex"
+    ]
+   },
+   {
+    "fact": "adapter_dump",
+    "aliases": [],
+    "in": [
+     "lib/ecto/query/planner.ex",
+     "lib/ecto/type.ex"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/ecto/query.ex",
+    "lines": "1861-1863",
+    "note": "where macro calls Builder.Filter.build"
+   },
+   {
+    "file": "lib/ecto/query/builder/filter.ex",
+    "lines": "65-97",
+    "note": "build escapes the expression, wraps it in BooleanExpr, apply appends to wheres"
+   },
+   {
+    "file": "lib/ecto/query/builder.ex",
+    "lines": "108-113",
+    "note": "escape replaces ^arg with ^index and records {arg, type} in params"
+   },
+   {
+    "file": "lib/ecto/query/planner.ex",
+    "lines": "906-945",
+    "note": "plan_cache/merge_cache call cast_and_merge_params per expression"
+   },
+   {
+    "file": "lib/ecto/query/planner.ex",
+    "lines": "1047-1061",
+    "note": "cast_and_merge_params"
+   },
+   {
+    "file": "lib/ecto/query/planner.ex",
+    "lines": "1144-1163",
+    "note": "cast_param: field type, cast, dump"
+   },
+   {
+    "file": "lib/ecto/query/planner.ex",
+    "lines": "2618-2645",
+    "note": "Ecto.Type.cast and Ecto.Type.adapter_dump"
+   },
+   {
+    "file": "lib/ecto/repo/queryable.ex",
+    "lines": "229-248",
+    "note": "dump_params passed to adapter.execute"
+   }
+  ]
+ },
+ {
+  "id": "ecto-k04",
+  "kind": "flow",
+  "question": "Trace `Repo.preload(posts, :comments)`: how are the keys to look up collected from the posts, what query fetches the comments and how is it executed, when can several associations be fetched concurrently, and how are the fetched comments put back onto the right post?",
+  "reference": "`Repo.preload` calls `Ecto.Repo.Preloader.preload`; `preload_each` expands the preloads and `prepare_queries` collects owner keys with `fetch_ids` (skipping already loaded associations) and wraps a `fetch_query` closure per association, which builds the query with the association's `assoc_query` (for `Ecto.Association.Has`, `where related_key in ^ids`), adds the related key to the select and runs it through `Ecto.Repo.Queryable.all`; `maybe_pmap` runs the closures with `Task.async_stream` when there are several and no connection is checked out; `assoc_map` groups results by key and `load_assoc` puts them on each struct.",
+  "facts": [
+   {
+    "fact": "Ecto.Repo.Preloader",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex",
+     "lib/ecto/repo/preloader.ex"
+    ]
+   },
+   {
+    "fact": "fetch_ids",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/preloader.ex"
+    ]
+   },
+   {
+    "fact": "assoc_query",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/preloader.ex",
+     "lib/ecto/association.ex"
+    ]
+   },
+   {
+    "fact": "maybe_pmap",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/preloader.ex"
+    ]
+   },
+   {
+    "fact": "load_assoc",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/preloader.ex"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/ecto/repo.ex",
+    "lines": "716-725",
+    "note": "generated preload delegates to Ecto.Repo.Preloader.preload"
+   },
+   {
+    "file": "lib/ecto/repo/preloader.ex",
+    "lines": "54-180",
+    "note": "preload, preload_each, prepare_queries, maybe_pmap"
+   },
+   {
+    "file": "lib/ecto/repo/preloader.ex",
+    "lines": "332-434",
+    "note": "fetch_ids; fetch_query uses assoc_query and Ecto.Repo.Queryable.all"
+   },
+   {
+    "file": "lib/ecto/repo/preloader.ex",
+    "lines": "552-609",
+    "note": "assoc_map groups by key; load_assoc sets the field"
+   },
+   {
+    "file": "lib/ecto/association.ex",
+    "lines": "868-878",
+    "note": "Has.assoc_query filters by related_key"
+   }
+  ]
+ },
+ {
+  "id": "ecto-k05",
+  "kind": "architecture",
+  "question": "How is a started repo organised at run time: what does its start_link put under supervision, where are the adapter's per-repo metadata and the prepared-query cache kept, and how does each repo function call find them, including calls routed to a repo instance started under a different name?",
+  "reference": "`start_link` (lib/ecto/repo.ex) starts `Ecto.Repo.Supervisor`, whose `init` reads the config, calls `adapter.init`, creates the query cache ETS table with `Ecto.Query.Planner.new_query_cache` and wraps the adapter's child spec so `start_child` registers the metadata (pid, adapter, cache) in `Ecto.Repo.Registry`, an ETS-backed GenServer started by `Ecto.Application`; every generated function resolves `get_dynamic_repo()` and calls `Ecto.Repo.Supervisor.tuplet`, which looks the metadata up in the registry.",
+  "facts": [
+   {
+    "fact": "Ecto.Repo.Supervisor",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex",
+     "lib/ecto/repo/supervisor.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Repo.Registry",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/supervisor.ex",
+     "lib/ecto/repo/registry.ex",
+     "lib/ecto/application.ex"
+    ]
+   },
+   {
+    "fact": "new_query_cache",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo/supervisor.ex",
+     "lib/ecto/query/planner.ex"
+    ]
+   },
+   {
+    "fact": "tuplet",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex",
+     "lib/ecto/repo/supervisor.ex"
+    ]
+   },
+   {
+    "fact": "get_dynamic_repo",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/ecto/repo.ex",
+    "lines": "255-316",
+    "note": "__using__: compile_config, start_link, checkout via Registry.lookup, get/put_dynamic_repo"
+   },
+   {
+    "file": "lib/ecto/repo/supervisor.ex",
+    "lines": "18-22",
+    "note": "start_link"
+   },
+   {
+    "file": "lib/ecto/repo/supervisor.ex",
+    "lines": "181-237",
+    "note": "tuplet looks up the registry; init calls adapter.init, new_query_cache; start_child associates meta"
+   },
+   {
+    "file": "lib/ecto/repo/registry.ex",
+    "lines": "1-51",
+    "note": "ETS-backed registry keyed by pid"
+   },
+   {
+    "file": "lib/ecto/application.ex",
+    "lines": "1-15",
+    "note": "Ecto.Application starts Ecto.Repo.Registry"
+   },
+   {
+    "file": "lib/ecto/query/planner.ex",
+    "lines": "107-109",
+    "note": "new_query_cache creates the ETS table"
+   }
+  ]
+ },
+ {
+  "id": "ecto-k06",
+  "kind": "architecture",
+  "question": "How is the contract between Ecto and a database adapter divided up: which behaviours can an adapter implement besides the core one, which repo functions does each enable, and where does Ecto find out which of them a given adapter implements?",
+  "reference": "lib/ecto/adapter.ex is the core behaviour (init, checkout, loaders/dumpers); `Ecto.Adapter.Queryable` (prepare/execute/stream) enables all/one/stream/update_all/delete_all, `Ecto.Adapter.Schema` (insert/update/delete/insert_all) enables the write functions unless the repo is read-only, `Ecto.Adapter.Transaction` enables transact/transaction/rollback, and `Ecto.Adapter.Storage` (storage_up/down) backs the ecto.create and ecto.drop mix tasks; `Ecto.Repo.Supervisor.compile_config` reads the adapter's declared behaviours and `__using__` in lib/ecto/repo.ex defines each group only when its behaviour is in that list.",
+  "facts": [
+   {
+    "fact": "Ecto.Adapter.Queryable",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex",
+     "lib/ecto/adapter/queryable.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Adapter.Schema",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex",
+     "lib/ecto/adapter/schema.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Adapter.Transaction",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex",
+     "lib/ecto/adapter/transaction.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Adapter.Storage",
+    "aliases": [],
+    "in": [
+     "lib/ecto/adapter/storage.ex",
+     "lib/mix/tasks/ecto.create.ex"
+    ]
+   },
+   {
+    "fact": "compile_config",
+    "aliases": [],
+    "in": [
+     "lib/ecto/repo.ex",
+     "lib/ecto/repo/supervisor.ex"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/ecto/repo/supervisor.ex",
+    "lines": "72-97",
+    "note": "compile_config collects the adapter's behaviours"
+   },
+   {
+    "file": "lib/ecto/repo.ex",
+    "lines": "255-266",
+    "note": "__using__ receives behaviours from compile_config"
+   },
+   {
+    "file": "lib/ecto/repo.ex",
+    "lines": "362-412",
+    "note": "Transaction and Schema groups gated on behaviours (and read_only)"
+   },
+   {
+    "file": "lib/ecto/repo.ex",
+    "lines": "509-547",
+    "note": "Queryable group gated on behaviours"
+   },
+   {
+    "file": "lib/ecto/adapter.ex",
+    "lines": "28-130",
+    "note": "core callbacks: init, checkout, loaders, dumpers"
+   },
+   {
+    "file": "lib/ecto/adapter/queryable.ex",
+    "lines": "58-95",
+    "note": "prepare, execute, stream"
+   },
+   {
+    "file": "lib/ecto/adapter/schema.ex",
+    "lines": "37-90",
+    "note": "autogenerate, insert_all, insert, update, delete"
+   },
+   {
+    "file": "lib/ecto/adapter/transaction.ex",
+    "lines": "15-30",
+    "note": "transaction, in_transaction?, rollback"
+   },
+   {
+    "file": "lib/ecto/adapter/storage.ex",
+    "lines": "21-52",
+    "note": "storage_up, storage_down, storage_status"
+   }
+  ]
+ },
+ {
+  "id": "ecto-k07",
+  "kind": "architecture",
+  "question": "How are associations organised: what does a has_many, belongs_to or many_to_many line in a schema turn into, which module implements each kind of association (including one that goes through another association), and what value sits in the struct field before the association is loaded?",
+  "reference": "The schema macros call `Ecto.Schema.__has_many__`/`__belongs_to__`/`__many_to_many__`, which call `association/5`: it sets the field's default to `%Ecto.Association.NotLoaded{}`, builds the reflection struct with the kind's `struct/3` callback and stores it in `@ecto_assocs`; the kinds are `Ecto.Association.Has` (has_many/has_one), `Ecto.Association.HasThrough` (`:through`), `Ecto.Association.BelongsTo` and `Ecto.Association.ManyToMany`, all implementing the `Ecto.Association` behaviour (assoc_query, on_repo_change, preload_info...) in lib/ecto/association.ex.",
+  "facts": [
+   {
+    "fact": "Ecto.Association.Has",
+    "aliases": [],
+    "in": [
+     "lib/ecto/schema.ex",
+     "lib/ecto/association.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Association.BelongsTo",
+    "aliases": [],
+    "in": [
+     "lib/ecto/schema.ex",
+     "lib/ecto/association.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Association.ManyToMany",
+    "aliases": [],
+    "in": [
+     "lib/ecto/schema.ex",
+     "lib/ecto/association.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Association.HasThrough",
+    "aliases": [],
+    "in": [
+     "lib/ecto/schema.ex",
+     "lib/ecto/association.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Association.NotLoaded",
+    "aliases": [],
+    "in": [
+     "lib/ecto/schema.ex",
+     "lib/ecto/association.ex"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/ecto/schema.ex",
+    "lines": "1974-1986",
+    "note": "association/5: NotLoaded default, association.struct, @ecto_assocs"
+   },
+   {
+    "file": "lib/ecto/schema.ex",
+    "lines": "2164-2258",
+    "note": "__has_many__/__has_one__/__belongs_to__/__many_to_many__ pick the association module"
+   },
+   {
+    "file": "lib/ecto/association.ex",
+    "lines": "1-140",
+    "note": "NotLoaded struct; Ecto.Association behaviour callbacks"
+   },
+   {
+    "file": "lib/ecto/association.ex",
+    "lines": "715-720",
+    "note": "defmodule Ecto.Association.Has"
+   },
+   {
+    "file": "lib/ecto/association.ex",
+    "lines": "997-1000",
+    "note": "defmodule Ecto.Association.HasThrough"
+   },
+   {
+    "file": "lib/ecto/association.ex",
+    "lines": "1089-1092",
+    "note": "defmodule Ecto.Association.BelongsTo"
+   },
+   {
+    "file": "lib/ecto/association.ex",
+    "lines": "1277-1280",
+    "note": "defmodule Ecto.Association.ManyToMany"
+   }
+  ]
+ },
+ {
+  "id": "ecto-k08",
+  "kind": "architecture",
+  "question": "How is Ecto's type system layered: which field types are handled by Ecto itself, what must a custom type module provide, how do types that need per-field options (such as the allowed values of an enum field) differ, and how do embedded schemas fit in as field types?",
+  "reference": "`Ecto.Type` (lib/ecto/type.ex) handles the base and composite types itself and defines the behaviour a custom type implements (type, cast, load, dump, equal?, embed_as); `Ecto.ParameterizedType` is the variant whose callbacks receive params produced by `init/1` when the schema compiles (`check_field_type!` in lib/ecto/schema.ex calls `Ecto.ParameterizedType.init`, storing `{:parameterized, {module, params}}`); `Ecto.Enum` is such a type, and `Ecto.Embedded` is the parameterized type behind embeds_one/embeds_many fields.",
+  "facts": [
+   {
+    "fact": "Ecto.Type",
+    "aliases": [],
+    "in": [
+     "lib/ecto/type.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.ParameterizedType",
+    "aliases": [],
+    "in": [
+     "lib/ecto/parameterized_type.ex",
+     "lib/ecto/schema.ex",
+     "lib/ecto/enum.ex",
+     "lib/ecto/embedded.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Enum",
+    "aliases": [],
+    "in": [
+     "lib/ecto/enum.ex"
+    ]
+   },
+   {
+    "fact": "Ecto.Embedded",
+    "aliases": [],
+    "in": [
+     "lib/ecto/embedded.ex",
+     "lib/ecto/schema.ex"
+    ]
+   },
+   {
+    "fact": "check_field_type!",
+    "aliases": [],
+    "in": [
+     "lib/ecto/schema.ex"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/ecto/type.ex",
+    "lines": "200-321",
+    "note": "base and composite types; Ecto.Type behaviour callbacks"
+   },
+   {
+    "file": "lib/ecto/type.ex",
+    "lines": "536-541",
+    "note": "dump dispatches {:parameterized, {module, params}} to the module"
+   },
+   {
+    "file": "lib/ecto/parameterized_type.ex",
+    "lines": "116-220",
+    "note": "ParameterizedType callbacks with params; init/2 builds {:parameterized, ...}"
+   },
+   {
+    "file": "lib/ecto/schema.ex",
+    "lines": "2616-2649",
+    "note": "check_field_type!: base type, Ecto.Type module, or ParameterizedType.init"
+   },
+   {
+    "file": "lib/ecto/schema.ex",
+    "lines": "2557-2564",
+    "note": "embed defines the field as {:parameterized, {Ecto.Embedded, struct}}"
+   },
+   {
+    "file": "lib/ecto/enum.ex",
+    "lines": "70-80",
+    "note": "Ecto.Enum uses Ecto.ParameterizedType; init reads :values"
+   },
+   {
+    "file": "lib/ecto/embedded.ex",
+    "lines": "1-59",
+    "note": "Ecto.Embedded uses Ecto.ParameterizedType"
+   }
+  ]
+ }
+]

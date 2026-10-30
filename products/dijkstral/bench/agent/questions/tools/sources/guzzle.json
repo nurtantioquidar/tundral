@@ -1,0 +1,174 @@
+[
+ {
+  "id": "guzzle-k01",
+  "kind": "flow",
+  "question": "When a GET made with `$client->request()` receives a 404, how does that response become a thrown exception, and where is the excerpt of the response body in the exception message produced?",
+  "reference": "`HandlerStack::create` pushes `Middleware::httpErrors()` as 'http_errors'; with the default `http_errors` option on, its `then` callback throws `RequestException::create` (src/Exception/RequestException.php) for any status >= 400, which labels it 'Client error', appends a `BodySummarizer::summarize` excerpt (Psr7 `Message::bodySummary`) and returns a `ClientException` (a `BadResponseException`); `Client::request` calls `->wait()` on the rejected promise, which throws it.",
+  "facts": [
+   {"fact": "httpErrors", "aliases": [], "in": ["src/Middleware.php", "src/HandlerStack.php"]},
+   {"fact": "src/Exception/RequestException.php", "aliases": ["RequestException.php"], "in": []},
+   {"fact": "BodySummarizer", "aliases": [], "in": ["src/BodySummarizer.php", "src/Exception/RequestException.php"]},
+   {"fact": "ClientException", "aliases": [], "in": ["src/Exception/ClientException.php", "src/Exception/RequestException.php"]}
+  ],
+  "min_facts": 3,
+  "read": [
+   {"file": "src/Client.php", "lines": "650-659", "note": "request() sets synchronous and waits on requestAsync()"},
+   {"file": "src/HandlerStack.php", "lines": "56-66", "note": "create() pushes Middleware::httpErrors() as http_errors"},
+   {"file": "src/Middleware.php", "lines": "88-115", "note": "httpErrors throws RequestException::create for status >= 400"},
+   {"file": "src/Exception/RequestException.php", "lines": "36-89", "note": "create(): label, BodySummarizer summary, ClientException for 4xx"},
+   {"file": "src/BodySummarizer.php", "lines": "21-28", "note": "summarize() via Psr7 Message::bodySummary"}
+  ]
+ },
+ {
+  "id": "guzzle-k02",
+  "kind": "flow",
+  "question": "With `'cookies' => true` set on the client, trace how a Set-Cookie header in one response is parsed and stored, and how that cookie is attached to a later request to the same host.",
+  "reference": "`Client::configureDefaults` (src/Client.php) turns `cookies => true` into one shared `CookieJar`; the cookies layer that `HandlerStack::create` pushes (`Middleware::cookies`) calls `CookieJar::withCookieHeader` before sending and `CookieJar::extractCookies` when the response arrives; `extractCookies` parses each Set-Cookie with `SetCookie::fromString`, fills in host-only domain and default path, checks `matchesDomain` and the secure/prefix rules and stores it with `setCookie`; `withCookieHeader` selects stored cookies by `matchesPath`, `matchesDomain`, expiry and the secure flag and sets the Cookie header.",
+  "facts": [
+   {"fact": "configureDefaults", "aliases": [], "in": ["src/Client.php"]},
+   {"fact": "extractCookies", "aliases": [], "in": ["src/Cookie/CookieJar.php", "src/Middleware.php"]},
+   {"fact": "withCookieHeader", "aliases": [], "in": ["src/Cookie/CookieJar.php", "src/Middleware.php"]},
+   {"fact": "fromString", "aliases": [], "in": ["src/Cookie/SetCookie.php", "src/Cookie/CookieJar.php"]},
+   {"fact": "matchesDomain", "aliases": [], "in": ["src/Cookie/SetCookie.php", "src/Cookie/CookieJar.php"]}
+  ],
+  "min_facts": 3,
+  "read": [
+   {"file": "src/Client.php", "lines": "847-886", "note": "configureDefaults: cookies => true becomes new CookieJar()"},
+   {"file": "src/Middleware.php", "lines": "48-78", "note": "cookies(): withCookieHeader before, extractCookies after"},
+   {"file": "src/Cookie/CookieJar.php", "lines": "252-300", "note": "extractCookies: SetCookie::fromString, domain/path defaults, matchesDomain, setCookie"},
+   {"file": "src/Cookie/CookieJar.php", "lines": "376-417", "note": "withCookieHeader: matchesPath, matchesDomain, isExpired, secure; Cookie header"},
+   {"file": "src/Cookie/SetCookie.php", "lines": "45-104", "note": "fromString parses a Set-Cookie value"},
+   {"file": "src/Cookie/SetCookie.php", "lines": "413-457", "note": "matchesPath, matchesDomain"}
+  ]
+ },
+ {
+  "id": "guzzle-k03",
+  "kind": "flow",
+  "question": "When a request is sent with `'auth' => [$user, $pass, 'digest']`, what happens between the first attempt and the retried request that carries the digest credentials, and where are those credentials computed?",
+  "reference": "`Middleware::auth` wraps the handler in `AuthMiddleware` (src/AuthMiddleware.php); its `__invoke` normalises the auth option and calls `sendDigest`, which sends a credential-less probe (or a pre-emptive request from a cached challenge); `handleDigestResponse` takes the 401, picks a `DigestChallenge` with `DigestAuth::selectChallenge` (src/Auth/DigestAuth.php), builds the header with `DigestAuth::authorizationHeader` (nonce count, cnonce) and re-sends the request with it, caching the challenge on success.",
+  "facts": [
+   {"fact": "AuthMiddleware", "aliases": [], "in": ["src/AuthMiddleware.php", "src/Middleware.php"]},
+   {"fact": "sendDigest", "aliases": [], "in": ["src/AuthMiddleware.php"]},
+   {"fact": "handleDigestResponse", "aliases": [], "in": ["src/AuthMiddleware.php"]},
+   {"fact": "selectChallenge", "aliases": [], "in": ["src/Auth/DigestAuth.php", "src/AuthMiddleware.php"]},
+   {"fact": "authorizationHeader", "aliases": [], "in": ["src/Auth/DigestAuth.php", "src/AuthMiddleware.php"]}
+  ],
+  "min_facts": 3,
+  "read": [
+   {"file": "src/Middleware.php", "lines": "33-38", "note": "auth() returns new AuthMiddleware"},
+   {"file": "src/AuthMiddleware.php", "lines": "92-115", "note": "__invoke: basic vs digest"},
+   {"file": "src/AuthMiddleware.php", "lines": "181-247", "note": "sendDigest: pre-emptive request or probe without auth, then handleDigestResponse"},
+   {"file": "src/AuthMiddleware.php", "lines": "334-463", "note": "handleDigestResponse: selectChallenge, authorizationHeader, retry with Authorization header"},
+   {"file": "src/Auth/DigestAuth.php", "lines": "47-155", "note": "selectChallenge returns a DigestChallenge; authorizationHeader computes the response"}
+  ]
+ },
+ {
+  "id": "guzzle-k04",
+  "kind": "flow",
+  "question": "For a request sent with the `multipart` option, how does Guzzle produce the request body, the multipart Content-Type with its boundary, and the Content-Length (or chunked) and Expect headers before the request reaches the transport?",
+  "reference": "`Client::applyOptions` (src/Client.php) turns `multipart` into a `Psr7\\MultipartStream` body and, after `Psr7\\Utils::modifyRequest`, sets the conditional Content-Type from `getMultipartContentType` (quoting the boundary when needed); then `PrepareBodyMiddleware` (pushed as 'prepare_body' by `HandlerStack::create`) measures the body with `RequestFraming::bodySize`, adds Content-Length or Transfer-Encoding: chunked, and `addExpectHeader` adds Expect: 100-Continue for large, unsized or non-seekable bodies.",
+  "facts": [
+   {"fact": "applyOptions", "aliases": [], "in": ["src/Client.php"]},
+   {"fact": "getMultipartContentType", "aliases": [], "in": ["src/Client.php"]},
+   {"fact": "PrepareBodyMiddleware", "aliases": [], "in": ["src/PrepareBodyMiddleware.php", "src/Middleware.php"]},
+   {"fact": "bodySize", "aliases": [], "in": ["src/Handler/RequestFraming.php", "src/PrepareBodyMiddleware.php"]},
+   {"fact": "addExpectHeader", "aliases": [], "in": ["src/PrepareBodyMiddleware.php"]}
+  ],
+  "min_facts": 3,
+  "read": [
+   {"file": "src/Client.php", "lines": "1524-1637", "note": "applyOptions: multipart -> MultipartStream body; multipart Content-Type in _conditional headers"},
+   {"file": "src/Client.php", "lines": "1677-1686", "note": "getMultipartContentType builds multipart/form-data; boundary=..."},
+   {"file": "src/HandlerStack.php", "lines": "56-66", "note": "prepare_body is the innermost default middleware"},
+   {"file": "src/PrepareBodyMiddleware.php", "lines": "38-122", "note": "Content-Type from body uri, Content-Length or chunked, addExpectHeader"},
+   {"file": "src/Handler/RequestFraming.php", "lines": "124-166", "note": "bodySize"}
+  ]
+ },
+ {
+  "id": "guzzle-k05",
+  "kind": "architecture",
+  "question": "How is Guzzle's default request pipeline organised: which layers wrap the transport by default and in what order, how are they composed into a single callable, and where does each layer's logic live?",
+  "reference": "`HandlerStack` (src/HandlerStack.php) holds the transport plus named middleware; `HandlerStack::create` pushes, in order, http_errors, allow_redirects, auth, cookies and prepare_body, each built by a static factory in `Middleware` (src/Middleware.php); `resolve()` folds the list in reverse around the handler, so http_errors is outermost and prepare_body innermost. The http_errors and cookies layers are closures in src/Middleware.php; redirects, auth and body preparation are the classes `RedirectMiddleware`, `AuthMiddleware` and `PrepareBodyMiddleware`.",
+  "facts": [
+   {"fact": "HandlerStack", "aliases": [], "in": ["src/HandlerStack.php", "src/Client.php"]},
+   {"fact": "src/Middleware.php", "aliases": ["Middleware.php"], "in": []},
+   {"fact": "RedirectMiddleware", "aliases": [], "in": ["src/RedirectMiddleware.php", "src/Middleware.php"]},
+   {"fact": "AuthMiddleware", "aliases": [], "in": ["src/AuthMiddleware.php", "src/Middleware.php"]},
+   {"fact": "PrepareBodyMiddleware", "aliases": [], "in": ["src/PrepareBodyMiddleware.php", "src/Middleware.php"]}
+  ],
+  "min_facts": 3,
+  "read": [
+   {"file": "src/HandlerStack.php", "lines": "56-66", "note": "create(): http_errors, allow_redirects, auth, cookies, prepare_body"},
+   {"file": "src/HandlerStack.php", "lines": "200-236", "note": "resolve() wraps the handler with the stack in reverse"},
+   {"file": "src/Middleware.php", "lines": "33-78", "note": "auth() -> AuthMiddleware; cookies() closure"},
+   {"file": "src/Middleware.php", "lines": "213-219", "note": "redirect() -> RedirectMiddleware"},
+   {"file": "src/Middleware.php", "lines": "296-301", "note": "prepareBody() -> PrepareBodyMiddleware"},
+   {"file": "src/Client.php", "lines": "186-198", "note": "client creates HandlerStack::create() when no handler is given"}
+  ]
+ },
+ {
+  "id": "guzzle-k06",
+  "kind": "architecture",
+  "question": "When a client is created without a custom handler, how does Guzzle decide which transport sends each request: which transports are available, how is the default assembled, and how is an individual request routed to one of them at send time?",
+  "reference": "`HandlerStack::create` calls `Utils::chooseHandler` (src/Utils.php), which prefers cURL: a `CurlMultiHandler` for asynchronous transfers combined by `Proxy::wrapSync` with a blocking `CurlHandler` used when the `synchronous` option is set (or only one of them, depending on available cURL functions and connection caps); when allow_url_fopen is on it adds the PHP-stream `StreamHandler` with `Proxy::wrapStreaming`, used for requests with the `stream` option (or alone when cURL is unavailable). The closures in src/Handler/Proxy.php make the per-request choice.",
+  "facts": [
+   {"fact": "chooseHandler", "aliases": [], "in": ["src/Utils.php", "src/HandlerStack.php"]},
+   {"fact": "wrapSync", "aliases": [], "in": ["src/Handler/Proxy.php", "src/Utils.php"]},
+   {"fact": "wrapStreaming", "aliases": [], "in": ["src/Handler/Proxy.php", "src/Utils.php"]},
+   {"fact": "CurlMultiHandler", "aliases": [], "in": ["src/Handler/CurlMultiHandler.php", "src/Utils.php"]},
+   {"fact": "StreamHandler", "aliases": [], "in": ["src/Handler/StreamHandler.php", "src/Utils.php"]}
+  ],
+  "min_facts": 3,
+  "read": [
+   {"file": "src/HandlerStack.php", "lines": "56-66", "note": "create() uses Utils::chooseHandler() when no handler is given"},
+   {"file": "src/Utils.php", "lines": "73-123", "note": "chooseHandler: cURL handler, then stream handler if allow_url_fopen"},
+   {"file": "src/Utils.php", "lines": "143-191", "note": "createCurlHandler: Proxy::wrapSync(CurlMultiHandler, CurlHandler)"},
+   {"file": "src/Utils.php", "lines": "237-245", "note": "addStreamHandler: Proxy::wrapStreaming(handler, StreamHandler)"},
+   {"file": "src/Handler/Proxy.php", "lines": "30-66", "note": "wrapSync routes on the synchronous option, wrapStreaming on stream"}
+  ]
+ },
+ {
+  "id": "guzzle-k07",
+  "kind": "architecture",
+  "question": "How is the cURL-based transport organised internally: what builds and configures each libcurl handle and later turns a finished transfer into a response or an error, what object carries one transfer's state, what contract do the blocking and the concurrent cURL handlers share, and where are raw response header lines parsed?",
+  "reference": "`CurlFactory` (src/Handler/CurlFactory.php) creates and pools handles (`create`/`release`), applies the request options and the header callback (`createHeaderFn`), and `CurlFactory::finish` resolves or rejects the transfer; each transfer's state lives in an `EasyHandle` (src/Handler/EasyHandle.php), whose `createResponse` builds the PSR-7 response; `CurlHandler` (curl_exec) and `CurlMultiHandler` (the curl_multi event loop) both hold a `CurlFactoryInterface`, replaceable via the handle_factory option; header lines are parsed by `HeaderProcessor` (src/Handler/HeaderProcessor.php).",
+  "facts": [
+   {"fact": "CurlFactory", "aliases": [], "in": ["src/Handler/CurlFactory.php", "src/Handler/CurlHandler.php", "src/Handler/CurlMultiHandler.php"]},
+   {"fact": "EasyHandle", "aliases": [], "in": ["src/Handler/EasyHandle.php", "src/Handler/CurlFactory.php", "src/Handler/CurlFactoryInterface.php"]},
+   {"fact": "CurlFactoryInterface", "aliases": [], "in": ["src/Handler/CurlFactoryInterface.php", "src/Handler/CurlHandler.php", "src/Handler/CurlMultiHandler.php"]},
+   {"fact": "HeaderProcessor", "aliases": [], "in": ["src/Handler/HeaderProcessor.php", "src/Handler/EasyHandle.php"]}
+  ],
+  "min_facts": 3,
+  "read": [
+   {"file": "src/Handler/CurlFactory.php", "lines": "247-392", "note": "create(): validates, builds EasyHandle, applies options, header function, pooled handle"},
+   {"file": "src/Handler/CurlFactory.php", "lines": "1038-1127", "note": "finish(): release handle, resolve response or reject"},
+   {"file": "src/Handler/CurlFactory.php", "lines": "3051-3133", "note": "createHeaderFn collects header lines and calls EasyHandle::createResponse"},
+   {"file": "src/Handler/EasyHandle.php", "lines": "163-235", "note": "createResponse uses HeaderProcessor::parseHeaders and the response factory"},
+   {"file": "src/Handler/CurlFactoryInterface.php", "lines": "1-31", "note": "create/release contract"},
+   {"file": "src/Handler/CurlHandler.php", "lines": "81-105", "note": "factory->create, curl_exec, CurlFactory::finish"},
+   {"file": "src/Handler/CurlMultiHandler.php", "lines": "240-252", "note": "handle_factory option or new CurlFactory(50)"},
+   {"file": "src/Handler/CurlMultiHandler.php", "lines": "1493-1563", "note": "processMessages calls CurlFactory::finish and settles the promise"},
+   {"file": "src/Handler/HeaderProcessor.php", "lines": "28-78", "note": "parseHeaders"}
+  ]
+ },
+ {
+  "id": "guzzle-k08",
+  "kind": "architecture",
+  "question": "How are Guzzle's exception types organised, and how does the cURL transport decide which of them a failed transfer is rejected with, for example a timeout, a refused connection, or a failure after the response headers arrived?",
+  "reference": "Everything implements the `GuzzleException` interface; `TransferException` (src/Exception/TransferException.php, carries the request) is the base of `RequestException` (PSR-18 RequestExceptionInterface) and `NetworkException` (PSR-18 NetworkExceptionInterface; parent of `ConnectException`/`ConnectTimeoutException` and `NetworkTimeoutException`); `ResponseException` extends RequestException and carries a response (parent of `BadResponseException` with Client/ServerException, `ResponseTransferException` with `ResponseTimeoutException`, and `TooManyRedirectsException`). `CurlFactory::createRejection` maps the cURL error: timeouts by whether a response or the connect phase was reached, connection errors to `ConnectException`, other network errors to `NetworkException`, failures after a response to `ResponseTransferException`/`ResponseException`.",
+  "facts": [
+   {"fact": "GuzzleException", "aliases": [], "in": ["src/Exception/GuzzleException.php", "src/Exception/TransferException.php"]},
+   {"fact": "TransferException", "aliases": [], "in": ["src/Exception/TransferException.php", "src/Exception/RequestException.php", "src/Exception/NetworkException.php"]},
+   {"fact": "NetworkException", "aliases": [], "in": ["src/Exception/NetworkException.php", "src/Handler/CurlFactory.php"]},
+   {"fact": "ResponseException", "aliases": [], "in": ["src/Exception/ResponseException.php", "src/Handler/CurlFactory.php"]},
+   {"fact": "createRejection", "aliases": [], "in": ["src/Handler/CurlFactory.php"]}
+  ],
+  "min_facts": 3,
+  "read": [
+   {"file": "src/Exception/GuzzleException.php", "lines": "1-11", "note": "marker interface over PSR-18 ClientExceptionInterface"},
+   {"file": "src/Exception/TransferException.php", "lines": "1-33", "note": "RuntimeException implementing GuzzleException, holds the request"},
+   {"file": "src/Exception/NetworkException.php", "lines": "1-22", "note": "extends TransferException, PSR-18 NetworkExceptionInterface"},
+   {"file": "src/Exception/ResponseException.php", "lines": "1-63", "note": "extends RequestException, carries the response"},
+   {"file": "src/Handler/CurlFactory.php", "lines": "1287-1444", "note": "createRejection maps errno to timeout/connect/network/response exceptions"}
+  ]
+ }
+]

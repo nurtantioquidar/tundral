@@ -1,0 +1,642 @@
+{
+ "repo": "ecto",
+ "commit": "f6eb492964dbd32bc6924d5330d1cc05b41e89a1",
+ "method": "callers/impact facts: SCIP definitions and reference occurrences from the accuracy indexes, attributed to enclosing definitions by the accuracy oracle; every fact re-checked against the source at the pinned commit (check.py). locate/architecture/flow facts: the source ranges listed under `read`.",
+ "scip_parts": [],
+ "indexers": [],
+ "oracle_commit": null,
+ "questions": {
+  "ecto-k01": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "Ecto.Repo.Queryable",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex",
+      "lib/ecto/repo/queryable.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Query.Planner",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/queryable.ex",
+      "lib/ecto/query/planner.ex"
+     ]
+    },
+    {
+     "fact": "struct_load!",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/queryable.ex"
+     ]
+    },
+    {
+     "fact": "adapter_load",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/queryable.ex",
+      "lib/ecto/type.ex"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/ecto/repo.ex",
+     "lines": "537-547",
+     "note": "generated all delegates to Ecto.Repo.Queryable.all with the tuplet"
+    },
+    {
+     "file": "lib/ecto/repo/queryable.ex",
+     "lines": "13-20",
+     "note": "all: to_query, ensure_select, execute(:all)"
+    },
+    {
+     "file": "lib/ecto/repo/queryable.ex",
+     "lines": "205-265",
+     "note": "struct_load!; execute: prepare_query, Planner.query, adapter.execute, preprocessor, Assoc/Preloader"
+    },
+    {
+     "file": "lib/ecto/repo/queryable.ex",
+     "lines": "438-451",
+     "note": "load! calls Ecto.Type.adapter_load"
+    },
+    {
+     "file": "lib/ecto/query/planner.ex",
+     "lines": "136-205",
+     "note": "query: plan, cache lookup in ETS, normalize + adapter.prepare on miss"
+    },
+    {
+     "file": "lib/ecto/type.ex",
+     "lines": "1020-1026",
+     "note": "adapter_load applies the adapter's loaders"
+    }
+   ]
+  },
+  "ecto-k02": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "wrap_in_transaction",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/schema.ex"
+     ]
+    },
+    {
+     "fact": "pop_assocs",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/schema.ex"
+     ]
+    },
+    {
+     "fact": "on_repo_change",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/schema.ex",
+      "lib/ecto/association.ex"
+     ]
+    },
+    {
+     "fact": "change_parents",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/schema.ex"
+     ]
+    },
+    {
+     "fact": "update_parent_key",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/association.ex"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/ecto/repo.ex",
+     "lines": "407-417",
+     "note": "generated insert delegates to Ecto.Repo.Schema.insert"
+    },
+    {
+     "file": "lib/ecto/repo/schema.ex",
+     "lines": "421-520",
+     "note": "do_insert: wrap_in_transaction, pop_assocs, process_parents, dump, adapter insert, load_changes, process_children"
+    },
+    {
+     "file": "lib/ecto/repo/schema.ex",
+     "lines": "1170-1276",
+     "note": "pop_assocs splits parent/child; process_parents + change_parents; process_children"
+    },
+    {
+     "file": "lib/ecto/repo/schema.ex",
+     "lines": "1343-1363",
+     "note": "wrap_in_transaction"
+    },
+    {
+     "file": "lib/ecto/association.ex",
+     "lines": "566-582",
+     "note": "Ecto.Association.on_repo_change dispatches to each association module"
+    },
+    {
+     "file": "lib/ecto/association.ex",
+     "lines": "922-952",
+     "note": "Has.on_repo_change sets the child's key with update_parent_key and calls the repo"
+    }
+   ]
+  },
+  "ecto-k03": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "Ecto.Query.Builder.Filter",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/query/builder/filter.ex"
+     ]
+    },
+    {
+     "fact": "lib/ecto/query/builder.ex",
+     "type": "file",
+     "in": []
+    },
+    {
+     "fact": "BooleanExpr",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/query/builder/filter.ex",
+      "lib/ecto/query/planner.ex"
+     ]
+    },
+    {
+     "fact": "cast_and_merge_params",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/query/planner.ex"
+     ]
+    },
+    {
+     "fact": "adapter_dump",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/query/planner.ex",
+      "lib/ecto/type.ex"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/ecto/query.ex",
+     "lines": "1861-1863",
+     "note": "where macro calls Builder.Filter.build"
+    },
+    {
+     "file": "lib/ecto/query/builder/filter.ex",
+     "lines": "65-97",
+     "note": "build escapes the expression, wraps it in BooleanExpr, apply appends to wheres"
+    },
+    {
+     "file": "lib/ecto/query/builder.ex",
+     "lines": "108-113",
+     "note": "escape replaces ^arg with ^index and records {arg, type} in params"
+    },
+    {
+     "file": "lib/ecto/query/planner.ex",
+     "lines": "906-945",
+     "note": "plan_cache/merge_cache call cast_and_merge_params per expression"
+    },
+    {
+     "file": "lib/ecto/query/planner.ex",
+     "lines": "1047-1061",
+     "note": "cast_and_merge_params"
+    },
+    {
+     "file": "lib/ecto/query/planner.ex",
+     "lines": "1144-1163",
+     "note": "cast_param: field type, cast, dump"
+    },
+    {
+     "file": "lib/ecto/query/planner.ex",
+     "lines": "2618-2645",
+     "note": "Ecto.Type.cast and Ecto.Type.adapter_dump"
+    },
+    {
+     "file": "lib/ecto/repo/queryable.ex",
+     "lines": "229-248",
+     "note": "dump_params passed to adapter.execute"
+    }
+   ]
+  },
+  "ecto-k04": {
+   "kind": "flow",
+   "facts": [
+    {
+     "fact": "Ecto.Repo.Preloader",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex",
+      "lib/ecto/repo/preloader.ex"
+     ]
+    },
+    {
+     "fact": "fetch_ids",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/preloader.ex"
+     ]
+    },
+    {
+     "fact": "assoc_query",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/preloader.ex",
+      "lib/ecto/association.ex"
+     ]
+    },
+    {
+     "fact": "maybe_pmap",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/preloader.ex"
+     ]
+    },
+    {
+     "fact": "load_assoc",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/preloader.ex"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/ecto/repo.ex",
+     "lines": "716-725",
+     "note": "generated preload delegates to Ecto.Repo.Preloader.preload"
+    },
+    {
+     "file": "lib/ecto/repo/preloader.ex",
+     "lines": "54-180",
+     "note": "preload, preload_each, prepare_queries, maybe_pmap"
+    },
+    {
+     "file": "lib/ecto/repo/preloader.ex",
+     "lines": "332-434",
+     "note": "fetch_ids; fetch_query uses assoc_query and Ecto.Repo.Queryable.all"
+    },
+    {
+     "file": "lib/ecto/repo/preloader.ex",
+     "lines": "552-609",
+     "note": "assoc_map groups by key; load_assoc sets the field"
+    },
+    {
+     "file": "lib/ecto/association.ex",
+     "lines": "868-878",
+     "note": "Has.assoc_query filters by related_key"
+    }
+   ]
+  },
+  "ecto-k05": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "Ecto.Repo.Supervisor",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex",
+      "lib/ecto/repo/supervisor.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Repo.Registry",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/supervisor.ex",
+      "lib/ecto/repo/registry.ex",
+      "lib/ecto/application.ex"
+     ]
+    },
+    {
+     "fact": "new_query_cache",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo/supervisor.ex",
+      "lib/ecto/query/planner.ex"
+     ]
+    },
+    {
+     "fact": "tuplet",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex",
+      "lib/ecto/repo/supervisor.ex"
+     ]
+    },
+    {
+     "fact": "get_dynamic_repo",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/ecto/repo.ex",
+     "lines": "255-316",
+     "note": "__using__: compile_config, start_link, checkout via Registry.lookup, get/put_dynamic_repo"
+    },
+    {
+     "file": "lib/ecto/repo/supervisor.ex",
+     "lines": "18-22",
+     "note": "start_link"
+    },
+    {
+     "file": "lib/ecto/repo/supervisor.ex",
+     "lines": "181-237",
+     "note": "tuplet looks up the registry; init calls adapter.init, new_query_cache; start_child associates meta"
+    },
+    {
+     "file": "lib/ecto/repo/registry.ex",
+     "lines": "1-51",
+     "note": "ETS-backed registry keyed by pid"
+    },
+    {
+     "file": "lib/ecto/application.ex",
+     "lines": "1-15",
+     "note": "Ecto.Application starts Ecto.Repo.Registry"
+    },
+    {
+     "file": "lib/ecto/query/planner.ex",
+     "lines": "107-109",
+     "note": "new_query_cache creates the ETS table"
+    }
+   ]
+  },
+  "ecto-k06": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "Ecto.Adapter.Queryable",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex",
+      "lib/ecto/adapter/queryable.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Adapter.Schema",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex",
+      "lib/ecto/adapter/schema.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Adapter.Transaction",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex",
+      "lib/ecto/adapter/transaction.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Adapter.Storage",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/adapter/storage.ex",
+      "lib/mix/tasks/ecto.create.ex"
+     ]
+    },
+    {
+     "fact": "compile_config",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/repo.ex",
+      "lib/ecto/repo/supervisor.ex"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/ecto/repo/supervisor.ex",
+     "lines": "72-97",
+     "note": "compile_config collects the adapter's behaviours"
+    },
+    {
+     "file": "lib/ecto/repo.ex",
+     "lines": "255-266",
+     "note": "__using__ receives behaviours from compile_config"
+    },
+    {
+     "file": "lib/ecto/repo.ex",
+     "lines": "362-412",
+     "note": "Transaction and Schema groups gated on behaviours (and read_only)"
+    },
+    {
+     "file": "lib/ecto/repo.ex",
+     "lines": "509-547",
+     "note": "Queryable group gated on behaviours"
+    },
+    {
+     "file": "lib/ecto/adapter.ex",
+     "lines": "28-130",
+     "note": "core callbacks: init, checkout, loaders, dumpers"
+    },
+    {
+     "file": "lib/ecto/adapter/queryable.ex",
+     "lines": "58-95",
+     "note": "prepare, execute, stream"
+    },
+    {
+     "file": "lib/ecto/adapter/schema.ex",
+     "lines": "37-90",
+     "note": "autogenerate, insert_all, insert, update, delete"
+    },
+    {
+     "file": "lib/ecto/adapter/transaction.ex",
+     "lines": "15-30",
+     "note": "transaction, in_transaction?, rollback"
+    },
+    {
+     "file": "lib/ecto/adapter/storage.ex",
+     "lines": "21-52",
+     "note": "storage_up, storage_down, storage_status"
+    }
+   ]
+  },
+  "ecto-k07": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "Ecto.Association.Has",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/schema.ex",
+      "lib/ecto/association.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Association.BelongsTo",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/schema.ex",
+      "lib/ecto/association.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Association.ManyToMany",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/schema.ex",
+      "lib/ecto/association.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Association.HasThrough",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/schema.ex",
+      "lib/ecto/association.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Association.NotLoaded",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/schema.ex",
+      "lib/ecto/association.ex"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/ecto/schema.ex",
+     "lines": "1974-1986",
+     "note": "association/5: NotLoaded default, association.struct, @ecto_assocs"
+    },
+    {
+     "file": "lib/ecto/schema.ex",
+     "lines": "2164-2258",
+     "note": "__has_many__/__has_one__/__belongs_to__/__many_to_many__ pick the association module"
+    },
+    {
+     "file": "lib/ecto/association.ex",
+     "lines": "1-140",
+     "note": "NotLoaded struct; Ecto.Association behaviour callbacks"
+    },
+    {
+     "file": "lib/ecto/association.ex",
+     "lines": "715-720",
+     "note": "defmodule Ecto.Association.Has"
+    },
+    {
+     "file": "lib/ecto/association.ex",
+     "lines": "997-1000",
+     "note": "defmodule Ecto.Association.HasThrough"
+    },
+    {
+     "file": "lib/ecto/association.ex",
+     "lines": "1089-1092",
+     "note": "defmodule Ecto.Association.BelongsTo"
+    },
+    {
+     "file": "lib/ecto/association.ex",
+     "lines": "1277-1280",
+     "note": "defmodule Ecto.Association.ManyToMany"
+    }
+   ]
+  },
+  "ecto-k08": {
+   "kind": "architecture",
+   "facts": [
+    {
+     "fact": "Ecto.Type",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/type.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.ParameterizedType",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/parameterized_type.ex",
+      "lib/ecto/schema.ex",
+      "lib/ecto/enum.ex",
+      "lib/ecto/embedded.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Enum",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/enum.ex"
+     ]
+    },
+    {
+     "fact": "Ecto.Embedded",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/embedded.ex",
+      "lib/ecto/schema.ex"
+     ]
+    },
+    {
+     "fact": "check_field_type!",
+     "type": "symbol",
+     "in": [
+      "lib/ecto/schema.ex"
+     ]
+    }
+   ],
+   "scip": [],
+   "read": [
+    {
+     "file": "lib/ecto/type.ex",
+     "lines": "200-321",
+     "note": "base and composite types; Ecto.Type behaviour callbacks"
+    },
+    {
+     "file": "lib/ecto/type.ex",
+     "lines": "536-541",
+     "note": "dump dispatches {:parameterized, {module, params}} to the module"
+    },
+    {
+     "file": "lib/ecto/parameterized_type.ex",
+     "lines": "116-220",
+     "note": "ParameterizedType callbacks with params; init/2 builds {:parameterized, ...}"
+    },
+    {
+     "file": "lib/ecto/schema.ex",
+     "lines": "2616-2649",
+     "note": "check_field_type!: base type, Ecto.Type module, or ParameterizedType.init"
+    },
+    {
+     "file": "lib/ecto/schema.ex",
+     "lines": "2557-2564",
+     "note": "embed defines the field as {:parameterized, {Ecto.Embedded, struct}}"
+    },
+    {
+     "file": "lib/ecto/enum.ex",
+     "lines": "70-80",
+     "note": "Ecto.Enum uses Ecto.ParameterizedType; init reads :values"
+    },
+    {
+     "file": "lib/ecto/embedded.ex",
+     "lines": "1-59",
+     "note": "Ecto.Embedded uses Ecto.ParameterizedType"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,504 @@
+[
+ {
+  "id": "sinatra-k01",
+  "kind": "flow",
+  "question": "Trace a request inside a Sinatra application instance, from the method the middleware stack invokes to the route block's return value ending up as the response status and body: which methods run in between, and how is the matching route chosen when both the app and its parent class define routes?",
+  "reference": "`Base#call` dups the app and runs `call!`, which wraps `dispatch!` in `invoke` (catching `:halt`); `dispatch!` merges request params and runs static files and before filters, then `route!` walks the routes for the request method on the class and then its superclasses, `process_route` matches the compiled Mustermann pattern and conditions and merges path params, and `route_eval` throws `:halt` with the block's value, which `invoke` turns into status and body (lib/sinatra/base.rb).",
+  "facts": [
+   {
+    "fact": "call!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "dispatch!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "route!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "process_route",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "route_eval",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "992-1016",
+    "note": "call dups the instance; call! wraps dispatch! in invoke and finishes the response"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1066-1131",
+    "note": "route! walks routes then superclass routes; route_eval throws :halt; process_route matches pattern, conditions and merges params"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1167-1207",
+    "note": "invoke turns the halted value into status/body; dispatch! runs static!, before filters and route!"
+   }
+  ]
+ },
+ {
+  "id": "sinatra-k02",
+  "kind": "flow",
+  "question": "When a route block raises an exception, trace how it turns into the response the client receives: where is it caught, how is the status code decided, and how is a handler that the app registered for that exception class (or one of its ancestors) or for a status code found and run?",
+  "reference": "`dispatch!` rescues the exception and calls `handle_exception!`, which stores it in `sinatra.error`, takes the status from `http_status` (Sinatra::Error subclasses such as NotFound and BadRequest) or 500, and asks `error_block!` for a handler registered with `error`: it looks up the exception class (walking the app's superclasses and then the exception's superclasses) and then the status code, running each handler through `process_route` (lib/sinatra/base.rb).",
+  "facts": [
+   {
+    "fact": "dispatch!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "handle_exception!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "error_block!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "http_status",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "274-283",
+    "note": "Sinatra::Error, BadRequest and NotFound define http_status"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1183-1273",
+    "note": "dispatch! rescues into handle_exception!; status from http_status; error_block! looks up handlers by class, superclass and status"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1402-1408",
+    "note": "error registers handlers via compile! into @errors keyed by class or code"
+   }
+  ]
+ },
+ {
+  "id": "sinatra-k03",
+  "kind": "flow",
+  "question": "When a route calls `erb :index`, trace how the template file is found on disk, compiled, cached between renders and wrapped in a layout, including what happens when no layout file exists.",
+  "reference": "`erb` calls the private `render`, which merges engine options from settings and calls `compile_template`; for a Symbol it fetches from the instance's `TemplateCache` (cleared per request when reload_templates is on), uses an inline/named template if defined, otherwise `find_template` yields `views/index.<ext>` candidates for the extensions `Tilt` maps to the engine; after rendering, `render` recurses for the layout, and a missing layout file throws `:layout_missing`, which `render` catches to return the bare output (lib/sinatra/base.rb).",
+  "facts": [
+   {
+    "fact": "compile_template",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "find_template",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "TemplateCache",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "Tilt",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "layout_missing",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "755-757",
+    "note": "erb delegates to render"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "822-940",
+    "note": "find_template, render (layout recursion, catch :layout_missing), compile_template (template_cache.fetch, Tilt[engine])"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "951-970",
+    "note": "TemplateCache"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "983-1002",
+    "note": "instance creates TemplateCache; call! clears it when reload_templates"
+   }
+  ]
+ },
+ {
+  "id": "sinatra-k04",
+  "kind": "flow",
+  "question": "Trace a GET request for a file that exists in the app's public folder: where is the file detected, how is it sent, which settings shape the response headers, and which parts of normal request processing are skipped?",
+  "reference": "In `dispatch!`, `static!` runs first for GET/HEAD when the `static` setting is on: it resolves the path under `public_folder`, rejects paths escaping it, sets `env['sinatra.static_file']`, applies `static_cache_control` and `static_headers`, and calls `send_file`, which serves the file through `Rack::Files#serving` and halts, so before filters and routes never run, and `dispatch!` skips after filters because `sinatra.static_file` is set (lib/sinatra/base.rb).",
+  "facts": [
+   {
+    "fact": "static!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "send_file",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "Rack::Files",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "sinatra.static_file",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "static_cache_control",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "428-450",
+    "note": "send_file serves via Rack::Files#serving and halts"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1147-1164",
+    "note": "static! resolves under public_folder, sets sinatra.static_file, cache control and headers"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1183-1207",
+    "note": "dispatch! calls static! before filters/routes; after filters skipped for static files"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "2015-2019",
+    "note": "public_folder, static, static_cache_control, static_headers defaults"
+   }
+  ]
+ },
+ {
+  "id": "sinatra-k05",
+  "kind": "architecture",
+  "question": "Which Rack middleware sits in front of a Sinatra app's own request handling, how is that chain assembled when the app is instantiated, and where do middlewares the app adds itself end up relative to the built-in ones?",
+  "reference": "`Base.new` wraps the instance with `build`, which creates a `Rack::Builder`, calls `setup_default_middleware` (`ExtendedRack`, `ShowExceptions` when show_exceptions is on, `Rack::MethodOverride`, `Rack::Head`, logging, sessions, `Rack::Protection` and its HostAuthorization) and then `setup_middleware` (the `use` entries of the class and its superclasses, after the built-ins), runs the instance last and returns a `Wrapper`; `use` clears the cached `prototype` so the chain is rebuilt (lib/sinatra/base.rb).",
+  "facts": [
+   {
+    "fact": "setup_default_middleware",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "setup_middleware",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "Rack::Builder",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "ExtendedRack",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "Rack::Protection",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "225-256",
+    "note": "ExtendedRack"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1338-1345",
+    "note": "middleware includes superclass middleware first"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1586-1589",
+    "note": "use appends to @middleware and resets @prototype"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1653-1682",
+    "note": "prototype, new wraps build(instance) in Wrapper, build uses Rack::Builder, class call"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1821-1889",
+    "note": "setup_default_middleware order, setup_middleware, logging, protection, sessions"
+   }
+  ]
+ },
+ {
+  "id": "sinatra-k06",
+  "kind": "architecture",
+  "question": "How are before and after filters organised: where does a filter declaration get stored, how are filters inherited from a parent application class run and in what order, and how does a filter declared for a path pattern decide whether it applies to a request?",
+  "reference": "`before` and `after` call `add_filter`, which stores `compile!(type, path, block)` (a Mustermann pattern, the pending conditions and a wrapper; default path /.*/) in the class's `filters[type]`; `filter!` first recurses into the superclass and then runs the class's own filters, each through `process_route`, which calls the block only when the path pattern and conditions match; `dispatch!` runs before filters ahead of `route!` and after filters in its ensure block (lib/sinatra/base.rb).",
+  "facts": [
+   {
+    "fact": "add_filter",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "filter!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "compile!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "process_route",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1057-1063",
+    "note": "filter! runs superclass filters first, each via process_route"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1313-1327",
+    "note": "reset! gives each class its own filters hash"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1488-1502",
+    "note": "before/after -> add_filter -> filters[type] << compile!"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1797-1819",
+    "note": "compile! builds Mustermann pattern, conditions, wrapper"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1192-1206",
+    "note": "dispatch! runs before filters before route!, after filters in ensure"
+   }
+  ]
+ },
+ {
+  "id": "sinatra-k07",
+  "kind": "architecture",
+  "question": "How is the classic style (a script that requires 'sinatra' and defines routes at the top level) wired onto the modular core: which class receives the top-level calls, how do they get there, which defaults differ from a plain subclass of the base class, and what starts the web server when the script ends?",
+  "reference": "lib/sinatra/main.rb sets `Sinatra::Application`'s app_file and run setting (and command-line options), extends the top-level object with `Delegator`, which forwards `get`, `set`, `use` and the other DSL methods to `Delegator.target` (Application), and registers `at_exit { Application.run! }`; `Application < Base` in lib/sinatra/base.rb turns on logging, method_override and run, and `run!` picks a Rackup handler and calls `start_server`.",
+  "facts": [
+   {
+    "fact": "lib/sinatra/main.rb",
+    "aliases": [
+     "sinatra/main.rb"
+    ],
+    "in": []
+   },
+   {
+    "fact": "Delegator",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb",
+     "lib/sinatra/main.rb"
+    ]
+   },
+   {
+    "fact": "Sinatra::Application",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "run!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb",
+     "lib/sinatra/main.rb"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/sinatra/main.rb",
+    "lines": "1-56",
+    "note": "option parsing, Application app_file/run, at_exit run!, extend Sinatra::Delegator"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "2087-2127",
+    "note": "Application < Base defaults; Delegator.delegate and target = Application"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1610-1644",
+    "note": "run! picks Rackup::Handler and calls start_server"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1693-1710",
+    "note": "start_server runs the handler"
+   }
+  ]
+ },
+ {
+  "id": "sinatra-k08",
+  "kind": "architecture",
+  "question": "How is content negotiation organised: which classes model the entries of a request's Accept header and the media types a route offers, how are the header's entries ranked, and how does a route limited to certain formats both match a request and set the response content type?",
+  "reference": "`Request#accept` parses the Accept header into `AcceptEntry` objects sorted by their priority (q value, wildcards, parameter count), and `preferred_type` returns the first offered type whose `MimeTypeEntry` accepts an entry; a route option such as `provides:` is turned by `compile!` into a call to the `provides` condition, which matches when the response type is already one of the offered types or `preferred_type` finds one, and then sets `content_type` (lib/sinatra/base.rb).",
+  "facts": [
+   {
+    "fact": "AcceptEntry",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "MimeTypeEntry",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "preferred_type",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   },
+   {
+    "fact": "compile!",
+    "aliases": [],
+    "in": [
+     "lib/sinatra/base.rb"
+    ]
+   }
+  ],
+  "min_facts": 3,
+  "read": [
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "36-62",
+    "note": "accept builds sorted AcceptEntry list; preferred_type matches via MimeTypeEntry"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "94-164",
+    "note": "AcceptEntry priority ordering; MimeTypeEntry#accepts?"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1759-1776",
+    "note": "provides condition uses preferred_type and sets content_type"
+   },
+   {
+    "file": "lib/sinatra/base.rb",
+    "lines": "1797-1815",
+    "note": "compile! sends each route option (e.g. provides) as a condition-adding call"
+   }
+  ]
+ }
+]

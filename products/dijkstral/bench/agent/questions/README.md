@@ -92,6 +92,18 @@ blind set does not use, so that `context` can be tuned on questions like the bli
 the blind set stays unseen. It was committed before any change was tuned on it;
 `../context_eval.py` reports it per question as `tuning-2`.
 
+### Second blind set: munit, guzzle, sinatra and ecto
+
+Added on 2026-10-30, to tell a real gap between the tools from noise on more than the first
+blind set's 16 questions: 8 questions each for munit (Scala), guzzle (PHP), sinatra (Ruby) and
+ecto (Elixir), 4 flow and 4 architecture per repository, at the commits pinned in
+`../../corpus.toml`. Written like the first blind set (the same brief, from the source code only,
+by authors who saw neither tool's output or code nor any other question set but fastapi's and
+ripgrep's style examples, without SCIP), and committed before any tool ran on it.
+`../context_eval.py --blind` reports it as `blind-2`, aggregates only; never tune on it. sinatra's
+code is almost all `lib/sinatra/base.rb`, so its questions follow calls within that file more
+than across files.
+
 ### Scope notes
 
 - **kubernetes**: the SCIP index covers `pkg/scheduler/...` and
@@ -139,3 +151,7 @@ Counts at the time of writing:
 | jq | 0 | 0 | 0 | 4 | 4 | 8 |
 | serilog | 0 | 0 | 0 | 4 | 4 | 8 |
 | alamofire | 0 | 0 | 0 | 4 | 4 | 8 |
+| munit | 0 | 0 | 0 | 4 | 4 | 8 |
+| guzzle | 0 | 0 | 0 | 4 | 4 | 8 |
+| sinatra | 0 | 0 | 0 | 4 | 4 | 8 |
+| ecto | 0 | 0 | 0 | 4 | 4 | 8 |
