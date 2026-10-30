@@ -1521,7 +1521,8 @@ both:
 The wording moves the behaviour as intended (half again as much source read, `context` called
 once instead of twice) and the accuracy not at all; sessions get 6% cheaper in total tokens and
 the same in fresh tokens. Reading more is therefore not what Graphify's blind-set lead comes from,
-or not on its own, and the variant is not adopted. Raw: `results/agent-1793321472.json` (A1),
+or not on its own, and the variant was not adopted then (it was later: see "A map, not the
+answer", adopted, below). Raw: `results/agent-1793321472.json` (A1),
 `agent-1793321695.json` (B1), `agent-1793321934.json` (A2), `agent-1793322175.json` (B2),
 `agent-1793322434.json` (A3), `agent-1793322680.json` (B3).
 
