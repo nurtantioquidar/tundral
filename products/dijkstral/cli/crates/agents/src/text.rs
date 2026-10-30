@@ -103,7 +103,7 @@ for it: it uses their model quota.
 - `dijkstral context \"<question>\"`: start here. One call returns the symbols the question is
   about (or the best-matching ones) with their definition lines, callers with the calling lines,
   and callees; for documents, the matching facts with their source lines and a search for every
-  occurrence. Often the whole answer.
+  occurrence. A map, not the answer: read the code it cites before answering.
 - `dijkstral explain <symbol>...`: symbols and all their connections; `--incoming` only callers
   and users, `--outgoing` only what they use, `--all` every connection.
 - `dijkstral affected <symbol>`: what depends on the symbol (`--depth N`, default 2).
