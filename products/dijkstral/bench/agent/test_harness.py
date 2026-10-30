@@ -12,6 +12,8 @@ driven by the local fake provider (a shell command and a successful MCP call);
 from __future__ import annotations
 
 import argparse
+import concurrent.futures as cf
+import dataclasses
 import json
 import os
 import shutil
@@ -484,6 +486,19 @@ class Harness(unittest.TestCase):
                 tool_dir_name("graphify", True), "graphify-0.9.97-semantic"
             )
             self.assertEqual(tool_dir_name("dijkstral", False), "dijkstral")
+
+    def test_parallel_prepares_repoint_the_tool_link(self):
+        old = self.tmp / "bin/dijkstral-old"
+        old.parent.mkdir(parents=True, exist_ok=True)
+        old.write_bytes(b"old")
+        self.ctx.dijkstral.write_bytes(b"new")
+        run.link_tool_dir(dataclasses.replace(self.ctx, dijkstral=old), "dijkstral", False)
+        with cf.ThreadPoolExecutor(8) as pool:
+            for f in [pool.submit(run.link_tool_dir, self.ctx, "dijkstral", False) for _ in range(16)]:
+                f.result()
+        d = self.ctx.tool_dir("dijkstral", False)
+        self.assertEqual(os.readlink(d / "dijkstral"), str(self.ctx.dijkstral))
+        self.assertEqual(sorted(p.name for p in d.iterdir()), ["dijkstral", "dijkstral-live"])
 
     def test_a_rebuilt_dijkstral_is_refused(self):
         binary = self.ctx.dijkstral

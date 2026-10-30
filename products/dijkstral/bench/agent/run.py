@@ -1218,9 +1218,14 @@ def link_tool_dir(ctx: Ctx, arm: str, semantic: bool) -> None:
         }
     for name, target in targets.items():
         link = d / name
-        if link.is_symlink() or link.exists():
-            link.unlink()
-        link.symlink_to(target)
+        if link.is_symlink() and os.readlink(link) == str(target):
+            continue
+        # Parallel prepares share this directory: make the new link aside and rename it over the
+        # old one, so no prepare sees the name missing or finds it taken.
+        tmp = d / f".{name}.{os.getpid()}.{threading.get_ident()}"
+        tmp.unlink(missing_ok=True)
+        tmp.symlink_to(target)
+        os.replace(tmp, link)
 
 
 def tool_versions(ctx: Ctx, arm: str, semantic: bool) -> dict:
