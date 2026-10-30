@@ -1496,3 +1496,31 @@ set, and is not one here. Graphify stays a few points ahead on accuracy, inside 
 `b7b137c` is kept (it helps offline everywhere and costs agents nothing measurable), and no
 agent-accuracy lead over Graphify is claimed. Raw: `results/agent-1793280195.json`,
 `agent-1793280339.json`, `agent-1793280503.json`.
+
+### Agent instructions: "a map, not the answer" — 2026-10-30
+
+On the blind set, Graphify's agents read about 40% more source than dijkstral's (692 against about
+500 lines per session, median), call the graph less (1.3 against 2.1 calls, first in 60% of
+sessions against 100%) and search more, which matches what each installer tells the agent:
+dijkstral's `AGENTS.md` called `context` "often the whole answer: answer from it", worded while
+`context` held most of the facts of the first set; Graphify's has the agent query first and then
+read the located lines. (Codex runs dijkstral's PreToolUse hook, but the hook adds nothing there,
+so the `AGENTS.md` section is the only steer.)
+
+A variant (`9a6011d`, branch `feature/dijkstral-agents-read-source`) calls `context` a map, not the
+answer: read the code it points to before answering, and search when it does not show what is
+asked. Measured on the second tuning set (32 questions), the dijkstral arm only, three runs per
+wording, interleaved A B A B A B, `gpt-6-luna` answering and judging, `context` at `b7b137c` in
+both:
+
+| wording | pass | fact recall | judge | judge correct | median tokens | total tokens per run | fresh tokens per run | per correct answer | source lines read | `context` calls |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| A: "answer from it" (`b7b137c`) | 90% ± 7 | 0.79 ± 0.01 | 0.93 ± 0.01 | 90% ± 5 | 84,984 | 2.84M | 0.58M ± 0.11 | 20.3k | 418 | 1.9 |
+| B: "a map, not the answer" (`9a6011d`) | 91% ± 0 | 0.81 ± 0.02 | 0.94 ± 0.04 | 90% ± 7 | 76,389 | 2.66M | 0.60M ± 0.07 | 20.8k | 614 | 1.2 |
+
+The wording moves the behaviour as intended (half again as much source read, `context` called
+once instead of twice) and the accuracy not at all; sessions get 6% cheaper in total tokens and
+the same in fresh tokens. Reading more is therefore not what Graphify's blind-set lead comes from,
+or not on its own, and the variant is not adopted. Raw: `results/agent-1793321472.json` (A1),
+`agent-1793321695.json` (B1), `agent-1793321934.json` (A2), `agent-1793322175.json` (B2),
+`agent-1793322434.json` (A3), `agent-1793322680.json` (B3).
